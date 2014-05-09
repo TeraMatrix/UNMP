@@ -1,0 +1,2718 @@
+
+-- File Name : IDU_1.7.smi
+-- Date      : Tue Nov 30 18:26:45 IST 2010
+-- Author    : AdventNet Agent Toolkit C Edition - MibEditor 6
+
+
+--This MIB Defination has the collection of Managed Objects as per the Vihaan IDU Specification Version 0.5
+--The Managed Objects are :
+---1) The Idu Location Info,Idu System Info,MAC Address,Admin State
+--IDU
+
+IDU	DEFINITIONS ::= BEGIN
+	IMPORTS
+		TEXTUAL-CONVENTION, RowStatus, TruthValue, TimeInterval, DisplayString
+			FROM SNMPv2-TC
+		DisplayString
+			FROM RFC1213-MIB
+		MODULE-COMPLIANCE, OBJECT-GROUP
+			FROM SNMPv2-CONF
+		MODULE-IDENTITY, OBJECT-TYPE, mib-2, Counter32, Counter64, Integer32, Unsigned32, TimeTicks, IpAddress, enterprises, Gauge32
+			FROM SNMPv2-SMI;
+
+	vihaan	MODULE-IDENTITY
+		LAST-UPDATED	"200608251250Z"
+		ORGANIZATION	"Vihaan Networks Limited"
+		CONTACT-INFO	"246 Phase 4 Udyog Vihar ,Gurgaon, Haryana "
+		DESCRIPTION		"Description  "
+		REVISION		"200608251250Z"
+		DESCRIPTION		" This description will only carry data on the basic of release note in the revision"
+		::=  {  enterprises  26149  }
+
+-- TEXTUAL-CONVENTIONS --
+	AdminStatusLULR ::= TEXTUAL-CONVENTION 
+		DISPLAY-HINT	""
+		STATUS			current
+		DESCRIPTION
+			"This Object represents the admin status of an object: 'lock' indicates that the manager has 
+
+       made this instance of an object or an object out of use, this is an immediate shutdown request
+
+       'unlock' indicates a normal state where that instance of an object or an object is provided by the 
+
+       manager for normal use
+
+       'reset' indicate a manager command to reset the instance of an object"
+		SYNTAX 			INTEGER  { locked ( 1 ) , unlocked ( 2 ) , reset ( 3 ) } 
+
+	TimerInterval ::= TEXTUAL-CONVENTION 
+		DISPLAY-HINT	""
+		STATUS			current
+		DESCRIPTION
+			""
+		SYNTAX 			TimeInterval  ( 0 .. 65536  ) 
+
+	OperationStatus ::= TEXTUAL-CONVENTION 
+		DISPLAY-HINT	""
+		STATUS			current
+		DESCRIPTION
+			"The status of an instance of an object or an object is : 'enabled' indicates that it operatable and the 
+
+       dependent objects can use it, while 'disabled' indicates that it is not."
+		SYNTAX 			INTEGER  { enabled ( 1 ) , disabled ( 2 ) } 
+
+	AdminStatusLUL ::= TEXTUAL-CONVENTION 
+		DISPLAY-HINT	""
+		STATUS			current
+		DESCRIPTION
+			"This Object represents the admin status of an object: 'lock' indicates that the manager has 
+
+       made this instance of an object or an object out of use, this is an immediate shutdown request
+
+       'unlock' indicates a normal state where that instance of an object or an object is provided by the 
+
+       manager for normal use
+
+       'shutdown' indicate a manager command to shutdown the instance of an object or an object 
+
+       immediatly where allowing the existing user of that instance or an object the right to use 
+
+       for a limited period defined by the agent.Not in current Scope"
+		SYNTAX 			INTEGER  { locked ( 1 ) , unlocked ( 2 ) } 
+
+	DateAndTime ::= TEXTUAL-CONVENTION 
+		DISPLAY-HINT	"2d-1d-1d,1d:1d:1d.1d,1a1d:1d"
+		STATUS			current
+		DESCRIPTION
+			"A date-time specification.
+
+
+
+            field  octets  contents                  range
+
+              1      1   	 day                       1..31
+
+              2      2     month                     1..12
+
+              3      3-4   year                      0..65536
+
+              4       5    hour                      0..23
+
+              5       6    minutes                   0..59
+
+              6       7    seconds                   0..60
+
+                           (use 60 for leap-second)
+
+              7       8    deci-seconds              0..9
+
+              8       9    direction from UTC        '+' / '-'
+
+              9      10    hours from UTC            0..11
+
+             10      11    minutes from UTC          0..59
+
+
+
+            For example, Tuesday May 26, 1992 at 1:30:15 PM EDT would be
+
+            displayed as: 26-5-1992,13:30:15.0,-4:0
+
+            Note that if only local time is known, then timezone
+
+            information (fields 8-10) is not present."
+		SYNTAX 			OCTET STRING  ( SIZE ( 8 | 11  ) ) 
+
+	org	OBJECT IDENTIFIER
+		::=  {  iso  3  }
+
+	dod	OBJECT IDENTIFIER
+		::=  {  org  6  }
+
+	internet	OBJECT IDENTIFIER
+		::=  {  dod  1  }
+
+	mgmt	OBJECT IDENTIFIER
+		::=  {  internet  2  }
+
+	private	OBJECT IDENTIFIER
+		::=  {  internet  4  }
+
+	mib-2	OBJECT IDENTIFIER
+		::=  {  mgmt  1  }
+
+	enterprises	OBJECT IDENTIFIER
+		::=  {  private  1  }
+
+	gsm	OBJECT IDENTIFIER
+		::=  {  vihaan  1  }
+
+	transmission	OBJECT IDENTIFIER
+		::=  {  vihaan  2  }
+
+	idu	OBJECT IDENTIFIER
+		::=  {  transmission  1  }
+
+	iduinfo	OBJECT IDENTIFIER
+		::=  {  idu  1  }
+
+	iduConfiguration	OBJECT IDENTIFIER
+		::=  {  idu  2  }
+
+	iduStatus	OBJECT IDENTIFIER
+		::=  {  idu  3  }
+
+	iduStatistics	OBJECT IDENTIFIER
+		::=  {  idu  4  }
+
+	swUpgrade	OBJECT IDENTIFIER
+		::=  {  idu  5  }
+
+	switch	OBJECT IDENTIFIER
+		::=  {  idu  6  }
+
+	iduAdminStateTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  IduAdminStateEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"IDU Admin State Table"
+		::=  { iduinfo  1 }
+
+	iduAdminStateEntry	OBJECT-TYPE
+		SYNTAX		IduAdminStateEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Row Description"
+		INDEX		{  stateId  }
+		::=  { iduAdminStateTable 1 }
+
+	IduAdminStateEntry  ::=  SEQUENCE {
+		stateId  Integer32,
+		adminstate  INTEGER
+		}
+
+
+	stateId	OBJECT-TYPE	
+		SYNTAX			Integer32  ( -2147483648 .. 2147483647  ) 
+		MAX-ACCESS		not-accessible
+		STATUS			current
+		DESCRIPTION		"Dummy Index Value"
+		::=  {  iduAdminStateEntry  1  }
+
+
+	adminstate	OBJECT-TYPE	
+		SYNTAX			INTEGER  { unlocked ( 1 ) , locked ( 0 ) } 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"IDU's Administrative Status"
+		DEFVAL			{ unlocked }
+		::=  {  iduAdminStateEntry  2  }
+
+	iduInfoTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  IduInfoEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"IDU System Info Table"
+		::=  { iduinfo  2 }
+
+	iduInfoEntry	OBJECT-TYPE
+		SYNTAX		IduInfoEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Row Description"
+		INDEX		{  infoIndex  }
+		::=  { iduInfoTable 1 }
+
+	IduInfoEntry  ::=  SEQUENCE {
+		infoIndex  Integer32,
+		hwSerialNumber  DisplayString,
+		hwType  INTEGER,
+		hwConfigE1  INTEGER,
+		hwConfigEth  INTEGER,
+		hwConfigAlarm  INTEGER,
+		systemterfaceMac  OCTET STRING,
+		tdmoipInterfaceMac  OCTET STRING,
+		currentTemperature  Integer32,
+		sysUptime  Unsigned32
+		}
+
+
+	infoIndex	OBJECT-TYPE	
+		SYNTAX			Integer32  ( -2147483648 .. 2147483647  ) 
+		MAX-ACCESS		not-accessible
+		STATUS			current
+		DESCRIPTION		"Dummy Index Value"
+		::=  {  iduInfoEntry  1  }
+
+
+	hwSerialNumber	OBJECT-TYPE	
+		SYNTAX			DisplayString  ( SIZE ( 1 .. 19  ) ) 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Hardware Serial Number"
+		::=  {  iduInfoEntry  2  }
+
+
+	hwType	OBJECT-TYPE	
+		SYNTAX			INTEGER  { masterIDU ( 0 ) , slaveIDU ( 1 ) } 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Hardware type (Master IDU/Slave IDU)"
+		::=  {  iduInfoEntry  3  }
+
+
+	hwConfigE1	OBJECT-TYPE	
+		SYNTAX			INTEGER  { oneE1 ( 0 ) , twoE1 ( 1 ) , fourE1 ( 2 ) , eightE1 ( 3 ) } 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Number of E1 ports available in the hardware configuration"
+		DEFVAL			{ fourE1 }
+		::=  {  iduInfoEntry  4  }
+
+
+	hwConfigEth	OBJECT-TYPE	
+		SYNTAX			INTEGER  { oneEth ( 0 ) , twoEth ( 1 ) } 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Number of ethernet ports availabe in hardware configuration"
+		DEFVAL			{ twoEth }
+		::=  {  iduInfoEntry  5  }
+
+
+	hwConfigAlarm	OBJECT-TYPE	
+		SYNTAX			INTEGER  { available ( 0 ) , notAvailable ( 1 ) } 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Availability of alarm ports in hardware configuration"
+		DEFVAL			{ available }
+		::=  {  iduInfoEntry  6  }
+
+
+	systemterfaceMac	OBJECT-TYPE	
+		SYNTAX			OCTET STRING  ( SIZE ( 17  ) ) 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"ODU Interface Mac Address"
+		::=  {  iduInfoEntry  7  }
+
+
+	tdmoipInterfaceMac	OBJECT-TYPE	
+		SYNTAX			OCTET STRING  ( SIZE ( 17  ) ) 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"TDMoIP Interface Mac Address"
+		::=  {  iduInfoEntry  8  }
+
+
+	currentTemperature	OBJECT-TYPE	
+		SYNTAX			Integer32  ( -40 .. 70  ) 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Current Temperature"
+		::=  {  iduInfoEntry  9  }
+
+
+	sysUptime	OBJECT-TYPE	
+		SYNTAX			Unsigned32  ( 0 .. 4294967295  ) 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"System uptime"
+		::=  {  iduInfoEntry  10  }
+
+	tdmoipNetworkInterfaceConfigurationTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  TdmoipNetworkInterfaceConfigurationEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Description"
+		::=  { iduConfiguration  1 }
+
+	tdmoipNetworkInterfaceConfigurationEntry	OBJECT-TYPE
+		SYNTAX		TdmoipNetworkInterfaceConfigurationEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Row Description"
+		INDEX		{  interfaceid  }
+		::=  { tdmoipNetworkInterfaceConfigurationTable 1 }
+
+	TdmoipNetworkInterfaceConfigurationEntry  ::=  SEQUENCE {
+		interfaceid  Integer32,
+		ipaddress  IpAddress
+		}
+
+
+	interfaceid	OBJECT-TYPE	
+		SYNTAX			Integer32
+		MAX-ACCESS		not-accessible
+		STATUS			current
+		DESCRIPTION		"Dummy Index Value"
+		::=  {  tdmoipNetworkInterfaceConfigurationEntry  1  }
+
+
+	ipaddress	OBJECT-TYPE	
+		SYNTAX			IpAddress
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"TDMoIP Source Ip Address"
+		::=  {  tdmoipNetworkInterfaceConfigurationEntry  2  }
+
+	linkConfigurationTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  LinkConfigurationEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Description"
+		::=  { iduConfiguration  2 }
+
+	linkConfigurationEntry	OBJECT-TYPE
+		SYNTAX		LinkConfigurationEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Row Description"
+		INDEX		{  portNumber, bundleNumber  }
+		::=  { linkConfigurationTable 1 }
+
+	LinkConfigurationEntry  ::=  SEQUENCE {
+		bundleNumber  Integer32,
+		adminStatus  INTEGER,
+		srcBundleID  Integer32,
+		dstBundleID  Integer32,
+		dstIPAddr  IpAddress,
+		tsaAssign  OCTET STRING,
+		clockRecovery  INTEGER,
+		bundleSize  Integer32,
+		bufferSize  Integer32,
+		rowStatus  RowStatus
+		}
+
+
+	bundleNumber	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 0 .. 63  ) 
+		MAX-ACCESS		not-accessible
+		STATUS			current
+		DESCRIPTION		"Which bundle to use from 64 available bundle"
+		::=  {  linkConfigurationEntry  2  }
+
+
+	adminStatus	OBJECT-TYPE	
+		SYNTAX			INTEGER  { unlocked ( 1 ) , locked ( 0 ) } 
+		MAX-ACCESS		read-create
+		STATUS			current
+		DESCRIPTION		"TDMoIP Link status"
+		::=  {  linkConfigurationEntry  3  }
+
+
+	srcBundleID	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 0 .. 63  ) 
+		MAX-ACCESS		read-create
+		STATUS			current
+		DESCRIPTION		"Source Bundule Identifier"
+		::=  {  linkConfigurationEntry  4  }
+
+
+	dstBundleID	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 0 .. 63  ) 
+		MAX-ACCESS		read-create
+		STATUS			current
+		DESCRIPTION		"Destination Bundle Identifier"
+		::=  {  linkConfigurationEntry  5  }
+
+
+	dstIPAddr	OBJECT-TYPE	
+		SYNTAX			IpAddress
+		MAX-ACCESS		read-create
+		STATUS			current
+		DESCRIPTION		"Destination Bundle IP Address"
+		::=  {  linkConfigurationEntry  6  }
+
+
+	tsaAssign	OBJECT-TYPE	
+		SYNTAX			OCTET STRING  ( SIZE ( 32  ) ) 
+		MAX-ACCESS		read-create
+		STATUS			current
+		DESCRIPTION		"Column Description"
+		::=  {  linkConfigurationEntry  7  }
+
+
+	clockRecovery	OBJECT-TYPE	
+		SYNTAX			INTEGER  { enable ( 1 ) , disable ( 0 ) } 
+		MAX-ACCESS		read-create
+		STATUS			current
+		DESCRIPTION		"Clock recovery requirment"
+		::=  {  linkConfigurationEntry  8  }
+
+
+	bundleSize	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 1 .. 99  ) 
+		MAX-ACCESS		read-create
+		STATUS			current
+		DESCRIPTION		"Size of the payload should be send in one packet. Number of frames per packet."
+		::=  {  linkConfigurationEntry  9  }
+
+
+	bufferSize	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 1000 .. 25000  ) 
+		MAX-ACCESS		read-create
+		STATUS			current
+		DESCRIPTION		"Jitter buffer size in micro seconds"
+		::=  {  linkConfigurationEntry  10  }
+
+
+	rowStatus	OBJECT-TYPE	
+		SYNTAX			RowStatus  { active ( 1 ) , notInService ( 2 ) , notReady ( 3 ) , createAndGo ( 4 ) , createAndWait ( 5 ) , destroy ( 6 ) } 
+		MAX-ACCESS		read-create
+		STATUS			current
+		DESCRIPTION		"Row Status"
+		::=  {  linkConfigurationEntry  11  }
+
+	e1PortConfigurationTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  E1PortConfigurationEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Contains TDMoIP E1 port configuration parameters. This is persistent table. By default all the E1 ports are configured, therefore rows in the table exists by default.
+Number of rows  Dependent on the location of the IDU. It is 2 on BSC side and 1 on BTS side."
+		::=  { iduConfiguration  3 }
+
+	e1PortConfigurationEntry	OBJECT-TYPE
+		SYNTAX		E1PortConfigurationEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Row Description"
+		INDEX		{  portNumber  }
+		::=  { e1PortConfigurationTable 1 }
+
+	E1PortConfigurationEntry  ::=  SEQUENCE {
+		portNumber  Integer32,
+		adminState  INTEGER,
+		clockSource  INTEGER,
+		lineType  INTEGER,
+		lineCode  INTEGER
+		}
+
+
+	portNumber	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 1 .. 8  ) 
+		MAX-ACCESS		not-accessible
+		STATUS			current
+		DESCRIPTION		"Port number to be configured."
+		::=  {  e1PortConfigurationEntry  1  }
+
+
+	adminState	OBJECT-TYPE	
+		SYNTAX			INTEGER  { unlocked ( 1 ) , locked ( 0 ) } 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"E1 Port Status"
+		::=  {  e1PortConfigurationEntry  2  }
+
+
+	clockSource	OBJECT-TYPE	
+		SYNTAX			INTEGER  { rclk ( 0 ) , adaptive ( 1 ) } 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Clock source for  port"
+		::=  {  e1PortConfigurationEntry  3  }
+
+
+	lineType	OBJECT-TYPE	
+		SYNTAX			INTEGER  { framedWithoutCRC ( 1 ) , framedWithCRC ( 2 ) , unframed ( 0 ) } 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Line type selection"
+		DEFVAL			{ framedWithoutCRC }
+		::=  {  e1PortConfigurationEntry  4  }
+
+
+	lineCode	OBJECT-TYPE	
+		SYNTAX			INTEGER  { hdb3 ( 0 ) , ami ( 1 ) } 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Line type selection"
+		DEFVAL			{ hdb3 }
+		::=  {  e1PortConfigurationEntry  5  }
+
+	networkConfigurationsTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  NetworkConfigurationsEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Contains IDU network configuration parameters. This is persistent table.
+Number of rows: 2 on BSC side and 1 on BTS side."
+		::=  { iduConfiguration  4 }
+
+	networkConfigurationsEntry	OBJECT-TYPE
+		SYNTAX		NetworkConfigurationsEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Row Description"
+		INDEX		{  interface  }
+		::=  { networkConfigurationsTable 1 }
+
+	NetworkConfigurationsEntry  ::=  SEQUENCE {
+		interface  INTEGER,
+		ipaddr  IpAddress,
+		netmask  IpAddress,
+		gateway  IpAddress,
+		autoIpConfig  INTEGER
+		}
+
+
+	interface	OBJECT-TYPE	
+		SYNTAX			INTEGER  { systemIP ( 0 ) } 
+		MAX-ACCESS		not-accessible
+		STATUS			current
+		DESCRIPTION		"interface name"
+		::=  {  networkConfigurationsEntry  1  }
+
+
+	ipaddr	OBJECT-TYPE	
+		SYNTAX			IpAddress
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"IP Address of the interface"
+		::=  {  networkConfigurationsEntry  2  }
+
+
+	netmask	OBJECT-TYPE	
+		SYNTAX			IpAddress
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Netmask"
+		::=  {  networkConfigurationsEntry  3  }
+
+
+	gateway	OBJECT-TYPE	
+		SYNTAX			IpAddress
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Gateway Address"
+		::=  {  networkConfigurationsEntry  4  }
+
+
+	autoIpConfig	OBJECT-TYPE	
+		SYNTAX			INTEGER  { no ( 0 ) , yes ( 1 ) } 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Indicates if IP can be autoconfigured (Dynamically with DHCP)"
+		DEFVAL			{ yes }
+		::=  {  networkConfigurationsEntry  5  }
+
+	rtcConfigurationTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  RtcConfigurationEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Contains system time information and parameters for configuring RTC. This is persistent table,Number of rows:1"
+		::=  { iduConfiguration  6 }
+
+	rtcConfigurationEntry	OBJECT-TYPE
+		SYNTAX		RtcConfigurationEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Row Description"
+		INDEX		{  rtcIndex  }
+		::=  { rtcConfigurationTable 1 }
+
+	RtcConfigurationEntry  ::=  SEQUENCE {
+		rtcIndex  Integer32,
+		year  Integer32,
+		month  Integer32,
+		day  Integer32,
+		hour  Integer32,
+		min  Integer32,
+		sec  Integer32
+		}
+
+
+	rtcIndex	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 0 .. 1  ) 
+		MAX-ACCESS		not-accessible
+		STATUS			current
+		DESCRIPTION		"Dummy Index Value"
+		::=  {  rtcConfigurationEntry  1  }
+
+
+	year	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 1970 .. 2037  ) 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Year"
+		::=  {  rtcConfigurationEntry  2  }
+
+
+	month	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 1 .. 12  ) 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Month"
+		::=  {  rtcConfigurationEntry  3  }
+
+
+	day	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 1 .. 31  ) 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Date"
+		::=  {  rtcConfigurationEntry  4  }
+
+
+	hour	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 0 .. 23  ) 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Hour"
+		::=  {  rtcConfigurationEntry  6  }
+
+
+	min	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 0 .. 59  ) 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Minute"
+		::=  {  rtcConfigurationEntry  7  }
+
+
+	sec	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 0 .. 59  ) 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Column Description"
+		::=  {  rtcConfigurationEntry  8  }
+
+	temperatureSensorConfigurationTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  TemperatureSensorConfigurationEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Contains board temperature threshold settings and configuration parameters. This is persistent table,
+Number of rows:1"
+		::=  { iduConfiguration  7 }
+
+	temperatureSensorConfigurationEntry	OBJECT-TYPE
+		SYNTAX		TemperatureSensorConfigurationEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Row Description"
+		INDEX		{  tempIndex  }
+		::=  { temperatureSensorConfigurationTable 1 }
+
+	TemperatureSensorConfigurationEntry  ::=  SEQUENCE {
+		tempIndex  Integer32,
+		tempMax  Integer32,
+		tempMin  Integer32
+		}
+
+
+	tempIndex	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 0 .. 1  ) 
+		MAX-ACCESS		not-accessible
+		STATUS			current
+		DESCRIPTION		"Dummy Index Value"
+		::=  {  temperatureSensorConfigurationEntry  1  }
+
+
+	tempMax	OBJECT-TYPE	
+		SYNTAX			Integer32  ( -40 .. 70  ) 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"TDMoIP temperature threshold (degree Celsius)"
+		::=  {  temperatureSensorConfigurationEntry  2  }
+
+
+	tempMin	OBJECT-TYPE	
+		SYNTAX			Integer32  ( -40 .. 70  ) 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Minimum temperature threshold (degree Celsius)"
+		::=  {  temperatureSensorConfigurationEntry  3  }
+
+	omcConfigurationTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  OmcConfigurationEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"The table contains OMC configuration information. Number of rows 1. This is persistent table."
+		::=  { iduConfiguration  8 }
+
+	omcConfigurationEntry	OBJECT-TYPE
+		SYNTAX		OmcConfigurationEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Row Description"
+		INDEX		{  omcIndex  }
+		::=  { omcConfigurationTable 1 }
+
+	OmcConfigurationEntry  ::=  SEQUENCE {
+		omcIndex  Integer32,
+		omcIpAddress  IpAddress,
+		periodicStatsTimer  Unsigned32
+		}
+
+
+	omcIndex	OBJECT-TYPE	
+		SYNTAX			Integer32
+		MAX-ACCESS		not-accessible
+		STATUS			current
+		DESCRIPTION		"Dummy Index"
+		::=  {  omcConfigurationEntry  1  }
+
+
+	omcIpAddress	OBJECT-TYPE	
+		SYNTAX			IpAddress
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"IP address of OMC server"
+		::=  {  omcConfigurationEntry  2  }
+
+
+	periodicStatsTimer	OBJECT-TYPE	
+		SYNTAX			Unsigned32  ( 5 .. 1440  ) 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Timer for periodic collection and transfer of statistics and alarm files to OMC-T (in minutes)"
+		DEFVAL			{ 30 }
+		::=  {  omcConfigurationEntry  3  }
+
+	sysOmcRegistrationTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  SysOmcRegistrationEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Contains registration data that NE uses to register with OMC"
+		::=  { iduConfiguration  9 }
+
+	sysOmcRegistrationEntry	OBJECT-TYPE
+		SYNTAX		SysOmcRegistrationEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Row Description"
+		INDEX		{  sysOmcRegistrationIndex  }
+		::=  { sysOmcRegistrationTable 1 }
+
+	SysOmcRegistrationEntry  ::=  SEQUENCE {
+		sysOmcRegistrationIndex  Integer32,
+		sysOmcRegisterContactAddr  DisplayString,
+		sysOmcRegisterContactPerson  DisplayString,
+		sysOmcRegisterContactMobile  DisplayString,
+		sysOmcRegisterAlternateContact  DisplayString,
+		sysOmcRegisterContactEmail  DisplayString
+		}
+
+
+	sysOmcRegistrationIndex	OBJECT-TYPE	
+		SYNTAX			Integer32
+		MAX-ACCESS		not-accessible
+		STATUS			current
+		DESCRIPTION		"Dummy Index Value"
+		::=  {  sysOmcRegistrationEntry  1  }
+
+
+	sysOmcRegisterContactAddr	OBJECT-TYPE	
+		SYNTAX			DisplayString  ( SIZE ( 1 .. 19  ) ) 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Contact address of person looking after site"
+		::=  {  sysOmcRegistrationEntry  2  }
+
+
+	sysOmcRegisterContactPerson	OBJECT-TYPE	
+		SYNTAX			DisplayString  ( SIZE ( 1 .. 19  ) ) 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Name of the contact person"
+		::=  {  sysOmcRegistrationEntry  3  }
+
+
+	sysOmcRegisterContactMobile	OBJECT-TYPE	
+		SYNTAX			DisplayString  ( SIZE ( 1 .. 19  ) ) 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Mobile number of contact person"
+		::=  {  sysOmcRegistrationEntry  4  }
+
+
+	sysOmcRegisterAlternateContact	OBJECT-TYPE	
+		SYNTAX			DisplayString  ( SIZE ( 1 .. 19  ) ) 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Name of alternate contact person"
+		::=  {  sysOmcRegistrationEntry  5  }
+
+
+	sysOmcRegisterContactEmail	OBJECT-TYPE	
+		SYNTAX			DisplayString  ( SIZE ( 1 .. 19  ) ) 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"E-mail of contact person"
+		::=  {  sysOmcRegistrationEntry  6  }
+
+	sectorIdentificationTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  SectorIdentificationEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"This table contains the Sector Identification Table. Number of rows 1. This is persistent table."
+		::=  { iduConfiguration  10 }
+
+	sectorIdentificationEntry	OBJECT-TYPE
+		SYNTAX		SectorIdentificationEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Row Description"
+		INDEX		{  sectorIndex  }
+		::=  { sectorIdentificationTable 1 }
+
+	SectorIdentificationEntry  ::=  SEQUENCE {
+		sectorIndex  Integer32,
+		countryCode  Integer32,
+		operatorCode  Integer32,
+		deploymentCode  Integer32,
+		sectorCode  Integer32
+		}
+
+
+	sectorIndex	OBJECT-TYPE	
+		SYNTAX			Integer32
+		MAX-ACCESS		not-accessible
+		STATUS			current
+		DESCRIPTION		"Column Description"
+		::=  {  sectorIdentificationEntry  1  }
+
+
+	countryCode	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 0 .. 255  ) 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Country Code"
+		::=  {  sectorIdentificationEntry  2  }
+
+
+	operatorCode	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 0 .. 255  ) 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Operator Code"
+		::=  {  sectorIdentificationEntry  3  }
+
+
+	deploymentCode	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 0 .. 255  ) 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Deployment Code"
+		::=  {  sectorIdentificationEntry  4  }
+
+
+	sectorCode	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 0 .. 255  ) 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Sector Code"
+		::=  {  sectorIdentificationEntry  5  }
+
+	poeConfigurationTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  PoeConfigurationEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"POE configuration"
+		::=  { iduConfiguration  11 }
+
+	poeConfigurationEntry	OBJECT-TYPE
+		SYNTAX		PoeConfigurationEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Row Description"
+		INDEX		{  indexId  }
+		::=  { poeConfigurationTable 1 }
+
+	PoeConfigurationEntry  ::=  SEQUENCE {
+		indexId  Integer32,
+		poeAdminStatus  INTEGER
+		}
+
+
+	indexId	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 1 .. 2  ) 
+		MAX-ACCESS		not-accessible
+		STATUS			current
+		DESCRIPTION		"Column Description"
+		::=  {  poeConfigurationEntry  1  }
+
+
+	poeAdminStatus	OBJECT-TYPE	
+		SYNTAX			INTEGER  { locked ( 0 ) , unlocked ( 1 ) } 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"POE configuration for enable or disbale"
+		DEFVAL			{ locked }
+		::=  {  poeConfigurationEntry  2  }
+
+	alarmPortConfigurationTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  AlarmPortConfigurationEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Description"
+		::=  { iduConfiguration  12 }
+
+	alarmPortConfigurationEntry	OBJECT-TYPE
+		SYNTAX		AlarmPortConfigurationEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Row Description"
+		INDEX		{  alarmPin  }
+		::=  { alarmPortConfigurationTable 1 }
+
+	AlarmPortConfigurationEntry  ::=  SEQUENCE {
+		alarmPin  INTEGER,
+		alarmAdminStatus  INTEGER,
+		alarmString  DisplayString,
+		alarmLevel  INTEGER
+		}
+
+
+	alarmPin	OBJECT-TYPE	
+		SYNTAX			INTEGER  { input1 ( 0 ) , input2 ( 1 ) , output1 ( 2 ) , output2 ( 3 ) } 
+		MAX-ACCESS		not-accessible
+		STATUS			current
+		DESCRIPTION		"alarm pin that need to be configured"
+		::=  {  alarmPortConfigurationEntry  1  }
+
+
+	alarmAdminStatus	OBJECT-TYPE	
+		SYNTAX			INTEGER  { locked ( 0 ) , unlocked ( 1 ) } 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Alarm pin admin status"
+		DEFVAL			{ locked }
+		::=  {  alarmPortConfigurationEntry  2  }
+
+
+	alarmString	OBJECT-TYPE	
+		SYNTAX			DisplayString  ( SIZE ( 1 .. 255  ) ) 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"alarm string"
+		::=  {  alarmPortConfigurationEntry  3  }
+
+
+	alarmLevel	OBJECT-TYPE	
+		SYNTAX			INTEGER  { criticalAlm ( 0 ) , majorAlm ( 1 ) , minorAlm ( 2 ) , infoAlm ( 3 ) } 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Alarm Criticality"
+		DEFVAL			{ infoAlm }
+		::=  {  alarmPortConfigurationEntry  4  }
+
+	alarmOutConfigTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  AlarmOutConfigEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Description"
+		::=  { iduConfiguration  13 }
+
+	alarmOutConfigEntry	OBJECT-TYPE
+		SYNTAX		AlarmOutConfigEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Row Description"
+		INDEX		{  alarmOutPin  }
+		::=  { alarmOutConfigTable 1 }
+
+	AlarmOutConfigEntry  ::=  SEQUENCE {
+		alarmOutPin  INTEGER,
+		alarmPinState  INTEGER
+		}
+
+
+	alarmOutPin	OBJECT-TYPE	
+		SYNTAX			INTEGER  { output1 ( 2 ) , output2 ( 3 ) } 
+		MAX-ACCESS		not-accessible
+		STATUS			current
+		DESCRIPTION		"Alarm pin need to be configured"
+		::=  {  alarmOutConfigEntry  1  }
+
+
+	alarmPinState	OBJECT-TYPE	
+		SYNTAX			INTEGER  { low ( 0 ) , high ( 1 ) } 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Alarm pin state"
+		DEFVAL			{ low }
+		::=  {  alarmOutConfigEntry  2  }
+
+	linkStatusTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  LinkStatusEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Contains TDMoIP Link status, Shows the link alarms exposed by TDMoIP chip. This is non-persistent table.
+Number of rows: 64"
+		::=  { iduStatus  1 }
+
+	linkStatusEntry	OBJECT-TYPE
+		SYNTAX		LinkStatusEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Row Description"
+		INDEX		{  portNumber, bundleNum  }
+		::=  { linkStatusTable 1 }
+
+	LinkStatusEntry  ::=  SEQUENCE {
+		bundleNum  Integer32,
+		operationalStatus  INTEGER,
+		minJBLevel  Integer32,
+		maxJBLevel  Integer32,
+		underrunOccured  INTEGER,
+		overrunOccured  INTEGER
+		}
+
+
+	bundleNum	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 0 .. 63  ) 
+		MAX-ACCESS		not-accessible
+		STATUS			current
+		DESCRIPTION		"Which bundle to use from 64 available bundle"
+		::=  {  linkStatusEntry  2  }
+
+
+	operationalStatus	OBJECT-TYPE	
+		SYNTAX			INTEGER  { disabled ( 0 ) , enabled ( 1 ) } 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Operational state of the bundle"
+		::=  {  linkStatusEntry  3  }
+
+
+	minJBLevel	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 0 .. 511  ) 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"The minimal level the jitter buffered has reachedsince the last time the register was read. After this register is read ,the TDMoP sets  field all to ones"
+		::=  {  linkStatusEntry  9  }
+
+
+	maxJBLevel	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 0 .. 511  ) 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"The TDMoIPum level the jitter buffered has reached since the last time the register was read. After this register is read ,the TDMoP sets  field all to zero"
+		::=  {  linkStatusEntry  10  }
+
+
+	underrunOccured	OBJECT-TYPE	
+		SYNTAX			INTEGER  { bitset ( 1 ) , bitclear ( 0 ) } 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Indicates that jitter buffer is in underrun state,means the rate data is entering is slower than data leaving"
+		::=  {  linkStatusEntry  12  }
+
+
+	overrunOccured	OBJECT-TYPE	
+		SYNTAX			INTEGER  { bitset ( 1 ) , bitclear ( 0 ) } 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Indicates that jitter buffer is in overrun  state,means there is no room for new data"
+		::=  {  linkStatusEntry  13  }
+
+	e1PortStatusTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  E1PortStatusEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Contains TDMoIP E1 port status, Shows the E1 port alarms exposed by TDMoIP chip. This is non-persistent table.
+Number of rows  Fixed depending on the location of IDU."
+		::=  { iduStatus  2 }
+
+	e1PortStatusEntry	OBJECT-TYPE
+		SYNTAX		E1PortStatusEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Row Description"
+		INDEX		{  portNum  }
+		::=  { e1PortStatusTable 1 }
+
+	E1PortStatusEntry  ::=  SEQUENCE {
+		portNum  Integer32,
+		opStatus  INTEGER,
+		los  INTEGER,
+		lof  INTEGER,
+		ais  INTEGER,
+		rai  INTEGER,
+		rxFrameSlip  INTEGER,
+		txFrameSlip  INTEGER,
+		bpv  Integer32,
+		adptClkState  INTEGER,
+		holdOverStatus  INTEGER
+		}
+
+
+	portNum	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 1 .. 8  ) 
+		MAX-ACCESS		not-accessible
+		STATUS			current
+		DESCRIPTION		"Port Number"
+		::=  {  e1PortStatusEntry  1  }
+
+
+	opStatus	OBJECT-TYPE	
+		SYNTAX			INTEGER  { disable ( 0 ) , enable ( 1 ) } 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Operational status of E1 port."
+		::=  {  e1PortStatusEntry  2  }
+
+
+	los	OBJECT-TYPE	
+		SYNTAX			INTEGER  { bitclear ( 0 ) , bitset ( 1 ) } 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Set criteria-192 consecutive zeroes received
+clear criteria-14 or more ones received out of 112 bit position"
+		::=  {  e1PortStatusEntry  3  }
+
+
+	lof	OBJECT-TYPE	
+		SYNTAX			INTEGER  { bitclear ( 0 ) , bitset ( 1 ) } 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Set criteria-Two or more errored frames bit out of every four,five or six frame bit
+clear criteria-Less than two errored frames bit out of every four ,five or six frame bits"
+		::=  {  e1PortStatusEntry  4  }
+
+
+	ais	OBJECT-TYPE	
+		SYNTAX			INTEGER  { bitclear ( 0 ) , bitset ( 1 ) } 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Alarm Indication signal"
+		::=  {  e1PortStatusEntry  5  }
+
+
+	rai	OBJECT-TYPE	
+		SYNTAX			INTEGER  { bitclear ( 0 ) , bitset ( 1 ) } 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Remmote Alarm Indication"
+		::=  {  e1PortStatusEntry  6  }
+
+
+	rxFrameSlip	OBJECT-TYPE	
+		SYNTAX			INTEGER  { bitclear ( 0 ) , bitset ( 1 ) } 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Receive frame slip"
+		::=  {  e1PortStatusEntry  7  }
+
+
+	txFrameSlip	OBJECT-TYPE	
+		SYNTAX			INTEGER  { bitset ( 1 ) , bitclear ( 0 ) } 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Transmit frame slip"
+		::=  {  e1PortStatusEntry  8  }
+
+
+	bpv	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 0 .. 65535  ) 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"bpv line error count"
+		::=  {  e1PortStatusEntry  9  }
+
+
+	adptClkState	OBJECT-TYPE	
+		SYNTAX			INTEGER  { stateIdle ( 0 ) , stateSelfTest ( 1 ) , stateAcquistion ( 2 ) , stateTracking1 ( 3 ) , stateTracking2 ( 4 ) , stateRecovered ( 5 ) , stateNotActive ( 6 ) } 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Clock status of Adaptive recovery clock"
+		::=  {  e1PortStatusEntry  10  }
+
+
+	holdOverStatus	OBJECT-TYPE	
+		SYNTAX			INTEGER  { inHoldOverMode ( 1 ) , inNormalMode ( 0 ) } 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Indicates whether the Maxim chip is working in Hold over mode or normal mode"
+		::=  {  e1PortStatusEntry  11  }
+
+	tdmoipNetworkInterfaceStatisticsTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  TdmoipNetworkInterfaceStatisticsEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Description"
+		::=  { iduStatistics  1 }
+
+	tdmoipNetworkInterfaceStatisticsEntry	OBJECT-TYPE
+		SYNTAX		TdmoipNetworkInterfaceStatisticsEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Row Description"
+		INDEX		{  indexid  }
+		::=  { tdmoipNetworkInterfaceStatisticsTable 1 }
+
+	TdmoipNetworkInterfaceStatisticsEntry  ::=  SEQUENCE {
+		indexid  Integer32,
+		bytesTransmitted  Unsigned32,
+		bytesReceived  Unsigned32,
+		framesTransmittedOk  Unsigned32,
+		framesReceivedOk  Unsigned32,
+		goodClassifiedFramesRx  Unsigned32,
+		checksumErrorPackets  Unsigned32
+		}
+
+
+	indexid	OBJECT-TYPE	
+		SYNTAX			Integer32
+		MAX-ACCESS		not-accessible
+		STATUS			current
+		DESCRIPTION		"Dummy Index Value"
+		::=  {  tdmoipNetworkInterfaceStatisticsEntry  1  }
+
+
+	bytesTransmitted	OBJECT-TYPE	
+		SYNTAX			Unsigned32  ( 0 .. 4294967295  ) 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Number of Bytes Transferred to ethernet(good packets which passed CRC check only)"
+		::=  {  tdmoipNetworkInterfaceStatisticsEntry  2  }
+
+
+	bytesReceived	OBJECT-TYPE	
+		SYNTAX			Unsigned32  ( 0 .. 4294967295  ) 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Number of Bytes Received from ethernet(good packets which passed CRC check only)"
+		::=  {  tdmoipNetworkInterfaceStatisticsEntry  3  }
+
+
+	framesTransmittedOk	OBJECT-TYPE	
+		SYNTAX			Unsigned32  ( 0 .. 4294967295  ) 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Number of packets transferred"
+		::=  {  tdmoipNetworkInterfaceStatisticsEntry  4  }
+
+
+	framesReceivedOk	OBJECT-TYPE	
+		SYNTAX			Unsigned32  ( 0 .. 4294967295  ) 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Number of packets received"
+		::=  {  tdmoipNetworkInterfaceStatisticsEntry  5  }
+
+
+	goodClassifiedFramesRx	OBJECT-TYPE	
+		SYNTAX			Unsigned32  ( 0 .. 4294967295  ) 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Number of packets that pass the packet classifier and are not discarded"
+		::=  {  tdmoipNetworkInterfaceStatisticsEntry  6  }
+
+
+	checksumErrorPackets	OBJECT-TYPE	
+		SYNTAX			Unsigned32  ( 0 .. 4294967295  ) 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Number of packets,detected by packet classifier,as packet with IP checksum error"
+		::=  {  tdmoipNetworkInterfaceStatisticsEntry  7  }
+
+	linkStatisticsTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  LinkStatisticsEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Contains TDMoIP link statistics, holds the link statistics exposed by TDMoIP chip. This is non-persistent table.
+Maximum number of rows: 64"
+		::=  { iduStatistics  2 }
+
+	linkStatisticsEntry	OBJECT-TYPE
+		SYNTAX		LinkStatisticsEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Row Description"
+		INDEX		{  portNumber, bundlenumber  }
+		::=  { linkStatisticsTable 1 }
+
+	LinkStatisticsEntry  ::=  SEQUENCE {
+		bundlenumber  Integer32,
+		goodFramesToEth  Unsigned32,
+		goodFramesRx  Unsigned32,
+		lostPacketsAtRx  Unsigned32,
+		discardedPackets  Unsigned32,
+		reorderedPackets  Unsigned32,
+		underrunEvents  Unsigned32
+		}
+
+
+	bundlenumber	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 0 .. 63  ) 
+		MAX-ACCESS		not-accessible
+		STATUS			current
+		DESCRIPTION		"Bundle number for which the statistics is to be collected."
+		::=  {  linkStatisticsEntry  2  }
+
+
+	goodFramesToEth	OBJECT-TYPE	
+		SYNTAX			Unsigned32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Number of good frames transmitted to Ethernet"
+		::=  {  linkStatisticsEntry  3  }
+
+
+	goodFramesRx	OBJECT-TYPE	
+		SYNTAX			Unsigned32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Number of good  frames received from Ethernet"
+		::=  {  linkStatisticsEntry  4  }
+
+
+	lostPacketsAtRx	OBJECT-TYPE	
+		SYNTAX			Unsigned32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Number of lost packets encountered by RX_AAL1,RX_AAL2,RX_HDLC"
+		::=  {  linkStatisticsEntry  5  }
+
+
+	discardedPackets	OBJECT-TYPE	
+		SYNTAX			Unsigned32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Number of received packets that were discarded by CESoPSN hardware machine"
+		::=  {  linkStatisticsEntry  6  }
+
+
+	reorderedPackets	OBJECT-TYPE	
+		SYNTAX			Unsigned32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Number of received misordered packets that were successfully reordered by CESoPSN hardware machine"
+		::=  {  linkStatisticsEntry  7  }
+
+
+	underrunEvents	OBJECT-TYPE	
+		SYNTAX			Unsigned32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Number of underrun events"
+		::=  {  linkStatisticsEntry  8  }
+
+	iduNetworkStatisticsTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  IduNetworkStatisticsEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Contains the Network statistics of all the Ethernet devices in IDU. This is non-persistent table.
+Number of rows: 2 on BSC side and 1 on BTS side"
+		::=  { iduStatistics  3 }
+
+	iduNetworkStatisticsEntry	OBJECT-TYPE
+		SYNTAX		IduNetworkStatisticsEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Row Description"
+		INDEX		{  interfaceName  }
+		::=  { iduNetworkStatisticsTable 1 }
+
+	IduNetworkStatisticsEntry  ::=  SEQUENCE {
+		interfaceName  INTEGER,
+		rxPackets  Unsigned32,
+		txPackets  Unsigned32,
+		rxBytes  Unsigned32,
+		txBytes  Unsigned32,
+		rxErrors  Unsigned32,
+		txErrors  Unsigned32,
+		rxDropped  Unsigned32,
+		txDropped  Unsigned32,
+		multicasts  Unsigned32,
+		collisions  Unsigned32
+		}
+
+
+	interfaceName	OBJECT-TYPE	
+		SYNTAX			INTEGER  { systemIP ( 0 ) } 
+		MAX-ACCESS		not-accessible
+		STATUS			current
+		DESCRIPTION		"Contains the Network statistics of all the Ethernet devices in IDU. This is non-persistent table.
+Number of rows: 2 on BSC side and 1 on BTS side"
+		::=  {  iduNetworkStatisticsEntry  1  }
+
+
+	rxPackets	OBJECT-TYPE	
+		SYNTAX			Unsigned32  ( 0 .. 4294967295  ) 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"total packets received"
+		::=  {  iduNetworkStatisticsEntry  2  }
+
+
+	txPackets	OBJECT-TYPE	
+		SYNTAX			Unsigned32  ( 0 .. 4294967295  ) 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"total packets transmitted"
+		::=  {  iduNetworkStatisticsEntry  3  }
+
+
+	rxBytes	OBJECT-TYPE	
+		SYNTAX			Unsigned32  ( 0 .. 4294967295  ) 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"total bytes received"
+		::=  {  iduNetworkStatisticsEntry  4  }
+
+
+	txBytes	OBJECT-TYPE	
+		SYNTAX			Unsigned32  ( 0 .. 4294967295  ) 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"total bytes transmitted"
+		::=  {  iduNetworkStatisticsEntry  5  }
+
+
+	rxErrors	OBJECT-TYPE	
+		SYNTAX			Unsigned32  ( 0 .. 4294967295  ) 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"bad packets received"
+		::=  {  iduNetworkStatisticsEntry  6  }
+
+
+	txErrors	OBJECT-TYPE	
+		SYNTAX			Unsigned32  ( 0 .. 4294967295  ) 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"packet transmit problems"
+		::=  {  iduNetworkStatisticsEntry  7  }
+
+
+	rxDropped	OBJECT-TYPE	
+		SYNTAX			Unsigned32  ( 0 .. 4294967295  ) 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"no space in linux buffers"
+		::=  {  iduNetworkStatisticsEntry  8  }
+
+
+	txDropped	OBJECT-TYPE	
+		SYNTAX			Unsigned32  ( 0 .. 4294967295  ) 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"no space available in linux"
+		::=  {  iduNetworkStatisticsEntry  9  }
+
+
+	multicasts	OBJECT-TYPE	
+		SYNTAX			Unsigned32  ( 0 .. 4294967295  ) 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"multicast packets received"
+		::=  {  iduNetworkStatisticsEntry  10  }
+
+
+	collisions	OBJECT-TYPE	
+		SYNTAX			Unsigned32  ( 0 .. 4294967295  ) 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Collisions Occured"
+		::=  {  iduNetworkStatisticsEntry  11  }
+
+	swPrimaryPortStatisticsTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  SwPrimaryPortStatisticsEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Description"
+		::=  { iduStatistics  4 }
+
+	swPrimaryPortStatisticsEntry	OBJECT-TYPE
+		SYNTAX		SwPrimaryPortStatisticsEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Row Description"
+		INDEX		{  swportnumber  }
+		::=  { swPrimaryPortStatisticsTable 1 }
+
+	SwPrimaryPortStatisticsEntry  ::=  SEQUENCE {
+		swportnumber  INTEGER,
+		framesRx  Integer32,
+		framesTx  Integer32,
+		inDiscard  Integer32,
+		inGoodOctets  Integer32,
+		inBadOctets  Integer32,
+		outOctets  Integer32
+		}
+
+
+	swportnumber	OBJECT-TYPE	
+		SYNTAX			INTEGER  { oduPort ( 0 ) , eth1Port ( 2 ) , eth2Port ( 3 ) , cpuPort ( 4 ) , maximPort ( 5 ) } 
+		MAX-ACCESS		not-accessible
+		STATUS			current
+		DESCRIPTION		"Column Description"
+		::=  {  swPrimaryPortStatisticsEntry  1  }
+
+
+	framesRx	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 0 .. 4294967295  ) 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Column Description"
+		::=  {  swPrimaryPortStatisticsEntry  2  }
+
+
+	framesTx	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 0 .. 4294967295  ) 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Column Description"
+		::=  {  swPrimaryPortStatisticsEntry  3  }
+
+
+	inDiscard	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 0 .. 4294967295  ) 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Column Description"
+		::=  {  swPrimaryPortStatisticsEntry  4  }
+
+
+	inGoodOctets	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 0 .. 4294967295  ) 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Column Description"
+		::=  {  swPrimaryPortStatisticsEntry  5  }
+
+
+	inBadOctets	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 0 .. 4294967295  ) 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Column Description"
+		::=  {  swPrimaryPortStatisticsEntry  6  }
+
+
+	outOctets	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 0 .. 4294967295  ) 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Column Description"
+		::=  {  swPrimaryPortStatisticsEntry  7  }
+
+	portSecondaryStatisticsTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  PortSecondaryStatisticsEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Description"
+		::=  { iduStatistics  5 }
+
+	portSecondaryStatisticsEntry	OBJECT-TYPE
+		SYNTAX		PortSecondaryStatisticsEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Row Description"
+		INDEX		{  switchPortNum  }
+		::=  { portSecondaryStatisticsTable 1 }
+
+	PortSecondaryStatisticsEntry  ::=  SEQUENCE {
+		switchPortNum  INTEGER,
+		inUnicast  Integer32,
+		outUnicast  Integer32,
+		inBroadcast  Integer32,
+		outBroadcast  Integer32,
+		inMulticast  Integer32,
+		outMulricast  Integer32,
+		inUndersizeRx  Integer32,
+		inFragmentsRx  Integer32,
+		inOversizeRx  Integer32,
+		inJabberRx  Integer32,
+		inMacRcvErrorRx  Integer32,
+		inFCSErrorRx  Integer32,
+		outFCSErrorTx  Integer32,
+		deferedTx  Integer32,
+		collisionTx  Integer32,
+		lateTx  Integer32,
+		exessiveTx  Integer32,
+		singleTx  Integer32,
+		multipleTx  Integer32
+		}
+
+
+	switchPortNum	OBJECT-TYPE	
+		SYNTAX			INTEGER  { oduPort ( 0 ) , eth1Port ( 2 ) , eth2Port ( 3 ) , cpuPort ( 4 ) , maximPort ( 5 ) } 
+		MAX-ACCESS		not-accessible
+		STATUS			current
+		DESCRIPTION		"Column Description"
+		::=  {  portSecondaryStatisticsEntry  1  }
+
+
+	inUnicast	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 0 .. 4294967295  ) 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Column Description"
+		::=  {  portSecondaryStatisticsEntry  2  }
+
+
+	outUnicast	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 0 .. 4294967295  ) 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Column Description"
+		::=  {  portSecondaryStatisticsEntry  3  }
+
+
+	inBroadcast	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 0 .. 4294967295  ) 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Column Description"
+		::=  {  portSecondaryStatisticsEntry  4  }
+
+
+	outBroadcast	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 0 .. 4294967295  ) 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Column Description"
+		::=  {  portSecondaryStatisticsEntry  5  }
+
+
+	inMulticast	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 0 .. 4294967295  ) 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Column Description"
+		::=  {  portSecondaryStatisticsEntry  6  }
+
+
+	outMulricast	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 0 .. 4294967295  ) 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Column Description"
+		::=  {  portSecondaryStatisticsEntry  7  }
+
+
+	inUndersizeRx	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 0 .. 4294967295  ) 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Column Description"
+		::=  {  portSecondaryStatisticsEntry  8  }
+
+
+	inFragmentsRx	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 0 .. 4294967295  ) 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Column Description"
+		::=  {  portSecondaryStatisticsEntry  9  }
+
+
+	inOversizeRx	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 0 .. 4294967295  ) 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Column Description"
+		::=  {  portSecondaryStatisticsEntry  10  }
+
+
+	inJabberRx	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 0 .. 4294967295  ) 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Column Description"
+		::=  {  portSecondaryStatisticsEntry  11  }
+
+
+	inMacRcvErrorRx	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 0 .. 4294967295  ) 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Column Description"
+		::=  {  portSecondaryStatisticsEntry  12  }
+
+
+	inFCSErrorRx	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 0 .. 4294967295  ) 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Column Description"
+		::=  {  portSecondaryStatisticsEntry  13  }
+
+
+	outFCSErrorTx	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 0 .. 4294967295  ) 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Column Description"
+		::=  {  portSecondaryStatisticsEntry  14  }
+
+
+	deferedTx	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 0 .. 4294967295  ) 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Column Description"
+		::=  {  portSecondaryStatisticsEntry  15  }
+
+
+	collisionTx	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 0 .. 4294967295  ) 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Column Description"
+		::=  {  portSecondaryStatisticsEntry  16  }
+
+
+	lateTx	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 0 .. 4294967295  ) 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Column Description"
+		::=  {  portSecondaryStatisticsEntry  17  }
+
+
+	exessiveTx	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 0 .. 4294967295  ) 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Column Description"
+		::=  {  portSecondaryStatisticsEntry  18  }
+
+
+	singleTx	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 0 .. 4294967295  ) 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Column Description"
+		::=  {  portSecondaryStatisticsEntry  19  }
+
+
+	multipleTx	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 0 .. 4294967295  ) 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Column Description"
+		::=  {  portSecondaryStatisticsEntry  20  }
+
+	iduOmOperationsTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  IduOmOperationsEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Contains O&M operations for  IDU"
+		::=  { swUpgrade  1 }
+
+	iduOmOperationsEntry	OBJECT-TYPE
+		SYNTAX		IduOmOperationsEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Row Description"
+		INDEX		{  omIndex  }
+		::=  { iduOmOperationsTable 1 }
+
+	IduOmOperationsEntry  ::=  SEQUENCE {
+		omIndex  Integer32,
+		omOperationReq  INTEGER,
+		userName  DisplayString,
+		password  DisplayString,
+		ftpServerAddress  IpAddress,
+		pathName  DisplayString,
+		omOperationResult  INTEGER,
+		omSpecificCause  INTEGER
+		}
+
+
+	omIndex	OBJECT-TYPE	
+		SYNTAX			Integer32
+		MAX-ACCESS		not-accessible
+		STATUS			current
+		DESCRIPTION		"Dummy Index Value"
+		::=  {  iduOmOperationsEntry  1  }
+
+
+	omOperationReq	OBJECT-TYPE	
+		SYNTAX			INTEGER  { noOperation ( 0 ) , startDownload ( 1 ) , activateSW ( 2 ) , restoreDefaultConfig ( 3 ) , flashCommit ( 4 ) , reboot ( 5 ) } 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Request for the specific O&M operation."
+		::=  {  iduOmOperationsEntry  2  }
+
+
+	userName	OBJECT-TYPE	
+		SYNTAX			DisplayString  ( SIZE ( 1 .. 14  ) ) 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"User name for FTP. This field is only required when omOperationReq is STARTSWDOWNLOAD."
+		::=  {  iduOmOperationsEntry  3  }
+
+
+	password	OBJECT-TYPE	
+		SYNTAX			DisplayString  ( SIZE ( 1 .. 14  ) ) 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Password for FTP. This field is only required when omOperationReq is STARTSWDOWNLOAD"
+		::=  {  iduOmOperationsEntry  4  }
+
+
+	ftpServerAddress	OBJECT-TYPE	
+		SYNTAX			IpAddress
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"IP address of the FTP server. This field is only required when omOperationReq is STARTSWDOWNLOAD."
+		::=  {  iduOmOperationsEntry  5  }
+
+
+	pathName	OBJECT-TYPE	
+		SYNTAX			DisplayString  ( SIZE ( 1 .. 99  ) ) 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Path of the upgrade image file on the FTP server. This field is only required when omOperationReq is STARTSWDOWNLOAD"
+		::=  {  iduOmOperationsEntry  6  }
+
+
+	omOperationResult	OBJECT-TYPE	
+		SYNTAX			INTEGER  { idle ( 0 ) , ongoing ( 1 ) , pass ( 2 ) , fail ( 3 ) } 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Result of operation."
+		::=  {  iduOmOperationsEntry  7  }
+
+
+	omSpecificCause	OBJECT-TYPE	
+		SYNTAX			INTEGER  { noError ( 0 ) , fileNotFound ( 1 ) , authenticationFailed ( 2 ) , networkProblems ( 3 ) , diskFull ( 4 ) , hwCompatibilityFailed ( 5 ) , checksumFailed ( 6 ) , flashError ( 7 ) } 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Cause of failure of an operation. Value in this field is valid only if omOperationResult is FAIL"
+		::=  {  iduOmOperationsEntry  8  }
+
+	swStatusTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  SwStatusEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Contains software version information for the running SW state"
+		::=  { swUpgrade  2 }
+
+	swStatusEntry	OBJECT-TYPE
+		SYNTAX		SwStatusEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Row Description"
+		INDEX		{  swStatusIndex  }
+		::=  { swStatusTable 1 }
+
+	SwStatusEntry  ::=  SEQUENCE {
+		swStatusIndex  Integer32,
+		activeVersion  DisplayString,
+		passiveVersion  DisplayString,
+		bootloaderVersion  DisplayString
+		}
+
+
+	swStatusIndex	OBJECT-TYPE	
+		SYNTAX			Integer32
+		MAX-ACCESS		not-accessible
+		STATUS			current
+		DESCRIPTION		"Dummy Index Value"
+		::=  {  swStatusEntry  1  }
+
+
+	activeVersion	OBJECT-TYPE	
+		SYNTAX			DisplayString  ( SIZE ( 1 .. 31  ) ) 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Active Version Number"
+		::=  {  swStatusEntry  2  }
+
+
+	passiveVersion	OBJECT-TYPE	
+		SYNTAX			DisplayString  ( SIZE ( 1 .. 31  ) ) 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Passive Software Version"
+		::=  {  swStatusEntry  3  }
+
+
+	bootloaderVersion	OBJECT-TYPE	
+		SYNTAX			DisplayString  ( SIZE ( 1 .. 49  ) ) 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Version information about bootloader"
+		::=  {  swStatusEntry  4  }
+
+	switchPortconfigTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  SwitchPortconfigEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Description"
+		::=  { switch  1 }
+
+	switchPortconfigEntry	OBJECT-TYPE
+		SYNTAX		SwitchPortconfigEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Row Description"
+		INDEX		{  switchportNum  }
+		::=  { switchPortconfigTable 1 }
+
+	SwitchPortconfigEntry  ::=  SEQUENCE {
+		switchportNum  INTEGER,
+		swadminState  INTEGER,
+		swlinkMode  INTEGER,
+		portvid  Unsigned32,
+		macauthState  INTEGER,
+		mirroringdirection  INTEGER,
+		portdotqmode  INTEGER,
+		macflowcontrol  INTEGER
+		}
+
+
+	switchportNum	OBJECT-TYPE	
+		SYNTAX			INTEGER  { odu ( 0 ) , eth0 ( 2 ) , eth1 ( 3 ) , cpu ( 4 ) , tdmoip ( 5 ) } 
+		MAX-ACCESS		not-accessible
+		STATUS			current
+		DESCRIPTION		"switch port number"
+		::=  {  switchPortconfigEntry  1  }
+
+
+	swadminState	OBJECT-TYPE	
+		SYNTAX			INTEGER  { locked ( 0 ) , unlocked ( 1 ) } 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"administrate state of switch"
+		DEFVAL			{ unlocked }
+		::=  {  switchPortconfigEntry  2  }
+
+
+	swlinkMode	OBJECT-TYPE	
+		SYNTAX			INTEGER  { auto ( 0 ) , speed100mbps ( 2 ) , speed10mbps ( 3 ) } 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"switch link mode"
+		DEFVAL			{ auto }
+		::=  {  switchPortconfigEntry  3  }
+
+
+	portvid	OBJECT-TYPE	
+		SYNTAX			Unsigned32  ( 0 .. 4095  ) 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"VID assigned to port"
+		DEFVAL			{ 1 }
+		::=  {  switchPortconfigEntry  4  }
+
+
+	macauthState	OBJECT-TYPE	
+		SYNTAX			INTEGER  { disable ( 0 ) , acceptspecificmac ( 1 ) } 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"state of mac filtering on the port"
+		DEFVAL			{ disable }
+		::=  {  switchPortconfigEntry  5  }
+
+
+	mirroringdirection	OBJECT-TYPE	
+		SYNTAX			INTEGER  { disable ( 0 ) , mirrortx ( 1 ) , mirrortxrx ( 2 ) } 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"direction in which mirror reqd"
+		DEFVAL			{ disable }
+		::=  {  switchPortconfigEntry  6  }
+
+
+	portdotqmode	OBJECT-TYPE	
+		SYNTAX			INTEGER  { disable ( 0 ) , fallback ( 1 ) , check ( 2 ) } 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"how port respond to tagged or untagged packet"
+		DEFVAL			{ disable }
+		::=  {  switchPortconfigEntry  7  }
+
+
+	macflowcontrol	OBJECT-TYPE	
+		SYNTAX			INTEGER  { macflowdisable ( 0 ) , macflowenable ( 1 ) } 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"enable or disble mac flow control on this port"
+		DEFVAL			{ macflowdisable }
+		::=  {  switchPortconfigEntry  8  }
+
+	portBwTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  PortBwEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Description"
+		::=  { switch  2 }
+
+	portBwEntry	OBJECT-TYPE
+		SYNTAX		PortBwEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Row Description"
+		INDEX		{  switchportnum  }
+		::=  { portBwTable 1 }
+
+	PortBwEntry  ::=  SEQUENCE {
+		switchportnum  INTEGER,
+		egressbwvalue  Integer32,
+		ingressbwvalue  Integer32
+		}
+
+
+	switchportnum	OBJECT-TYPE	
+		SYNTAX			INTEGER  { odu ( 0 ) , eth0 ( 2 ) , eth1 ( 3 ) , cpu ( 4 ) , tdmoip ( 5 ) } 
+		MAX-ACCESS		not-accessible
+		STATUS			current
+		DESCRIPTION		"switch port number"
+		::=  {  portBwEntry  1  }
+
+
+	egressbwvalue	OBJECT-TYPE	
+		SYNTAX			Integer32
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"egress bw value of switch port"
+		DEFVAL			{ 0 }
+		::=  {  portBwEntry  2  }
+
+
+	ingressbwvalue	OBJECT-TYPE	
+		SYNTAX			Integer32
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"ingress bw value"
+		DEFVAL			{ 0 }
+		::=  {  portBwEntry  3  }
+
+	portqinqTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  PortqinqEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Description"
+		::=  { switch  3 }
+
+	portqinqEntry	OBJECT-TYPE
+		SYNTAX		PortqinqEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Row Description"
+		INDEX		{  switchportnumber  }
+		::=  { portqinqTable 1 }
+
+	PortqinqEntry  ::=  SEQUENCE {
+		switchportnumber  INTEGER,
+		portqinqstate  INTEGER,
+		providertag  Unsigned32
+		}
+
+
+	switchportnumber	OBJECT-TYPE	
+		SYNTAX			INTEGER  { odu ( 0 ) , eth0 ( 2 ) , eth1 ( 3 ) , cpu ( 4 ) , tdmoip ( 5 ) } 
+		MAX-ACCESS		not-accessible
+		STATUS			current
+		DESCRIPTION		"Column Description"
+		::=  {  portqinqEntry  1  }
+
+
+	portqinqstate	OBJECT-TYPE	
+		SYNTAX			INTEGER  { disable ( 0 ) , enable ( 1 ) } 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Column Description"
+		DEFVAL			{ disable }
+		::=  {  portqinqEntry  2  }
+
+
+	providertag	OBJECT-TYPE	
+		SYNTAX			Unsigned32  ( 0 .. 65535  ) 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Description"
+		DEFVAL			{ 37120 }
+		::=  {  portqinqEntry  3  }
+
+	mirroringportTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  MirroringportEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Description"
+		::=  { switch  4 }
+
+	mirroringportEntry	OBJECT-TYPE
+		SYNTAX		MirroringportEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Row Description"
+		INDEX		{  mirroringindexid  }
+		::=  { mirroringportTable 1 }
+
+	MirroringportEntry  ::=  SEQUENCE {
+		mirroringindexid  Integer32,
+		mirroringport  INTEGER
+		}
+
+
+	mirroringindexid	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 1 .. 6  ) 
+		MAX-ACCESS		not-accessible
+		STATUS			current
+		DESCRIPTION		"Column Description"
+		::=  {  mirroringportEntry  1  }
+
+
+	mirroringport	OBJECT-TYPE	
+		SYNTAX			INTEGER  { odu ( 0 ) , eth0 ( 2 ) , eth1 ( 3 ) } 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Column Description"
+		DEFVAL			{ eth1 }
+		::=  {  mirroringportEntry  2  }
+
+	vlanconfigTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  VlanconfigEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Description"
+		::=  { switch  5 }
+
+	vlanconfigEntry	OBJECT-TYPE
+		SYNTAX		VlanconfigEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Row Description"
+		INDEX		{  vlanid  }
+		::=  { vlanconfigTable 1 }
+
+	VlanconfigEntry  ::=  SEQUENCE {
+		vlanid  Unsigned32,
+		vlanname  DisplayString,
+		vlantype  INTEGER,
+		vlantag  Unsigned32,
+		memberports  Integer32,
+		vlanrowstatus  RowStatus
+		}
+
+
+	vlanid	OBJECT-TYPE	
+		SYNTAX			Unsigned32  ( 1 .. 16  ) 
+		MAX-ACCESS		not-accessible
+		STATUS			current
+		DESCRIPTION		"Column Description"
+		::=  {  vlanconfigEntry  1  }
+
+
+	vlanname	OBJECT-TYPE	
+		SYNTAX			DisplayString  ( SIZE ( 1 .. 10  ) ) 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Column Description"
+		DEFVAL			{ "vlan" }
+		::=  {  vlanconfigEntry  2  }
+
+
+	vlantype	OBJECT-TYPE	
+		SYNTAX			INTEGER  { portbased ( 0 ) , tagbased ( 1 ) } 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Description"
+		DEFVAL			{ tagbased }
+		::=  {  vlanconfigEntry  3  }
+
+
+	vlantag	OBJECT-TYPE	
+		SYNTAX			Unsigned32  ( 0 .. 4095  ) 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Description"
+		::=  {  vlanconfigEntry  4  }
+
+
+	memberports	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 0 .. 127  ) 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Description"
+		DEFVAL			{ 0 }
+		::=  {  vlanconfigEntry  5  }
+
+
+	vlanrowstatus	OBJECT-TYPE	
+		SYNTAX			RowStatus  { active ( 1 ) , notinservice ( 2 ) , notready ( 3 ) , createandgo ( 4 ) , createandwait ( 5 ) , destroy ( 6 ) } 
+		MAX-ACCESS		read-create
+		STATUS			current
+		DESCRIPTION		"Description"
+		::=  {  vlanconfigEntry  6  }
+
+	atuconfigTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  AtuconfigEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Description"
+		::=  { switch  6 }
+
+	atuconfigEntry	OBJECT-TYPE
+		SYNTAX		AtuconfigEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Row Description"
+		INDEX		{  atuid  }
+		::=  { atuconfigTable 1 }
+
+	AtuconfigEntry  ::=  SEQUENCE {
+		atuid  Unsigned32,
+		atustate  INTEGER,
+		entrytype  INTEGER,
+		priority  Unsigned32,
+		macaddress  OCTET STRING,
+		atumemberports  Integer32
+		}
+
+
+	atuid	OBJECT-TYPE	
+		SYNTAX			Unsigned32  ( 1 .. 10  ) 
+		MAX-ACCESS		not-accessible
+		STATUS			current
+		DESCRIPTION		"Column Description"
+		::=  {  atuconfigEntry  1  }
+
+
+	atustate	OBJECT-TYPE	
+		SYNTAX			INTEGER  { disable ( 0 ) , enable ( 1 ) } 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Column Description"
+		DEFVAL			{ disable }
+		::=  {  atuconfigEntry  2  }
+
+
+	entrytype	OBJECT-TYPE	
+		SYNTAX			INTEGER  { static ( 0 ) , mgmt ( 1 ) , priorityoverride ( 2 ) } 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Column Description"
+		DEFVAL			{ static }
+		::=  {  atuconfigEntry  3  }
+
+
+	priority	OBJECT-TYPE	
+		SYNTAX			Unsigned32  ( 0 .. 3  ) 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Column Description"
+		DEFVAL			{ 0 }
+		::=  {  atuconfigEntry  4  }
+
+
+	macaddress	OBJECT-TYPE	
+		SYNTAX			OCTET STRING  ( SIZE ( 6  ) ) 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Column Description"
+		DEFVAL			{ 0 }
+		::=  {  atuconfigEntry  5  }
+
+
+	atumemberports	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 0 .. 127  ) 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Column Description"
+		::=  {  atuconfigEntry  6  }
+
+	aclportTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  AclportEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Description"
+		::=  { switch  7 }
+
+	aclportEntry	OBJECT-TYPE
+		SYNTAX		AclportEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Row Description"
+		INDEX		{  aclportnum, aclindex  }
+		::=  { aclportTable 1 }
+
+	AclportEntry  ::=  SEQUENCE {
+		aclportnum  INTEGER,
+		aclindex  Unsigned32,
+		aclmacaddress  OCTET STRING,
+		portrowstatus  RowStatus
+		}
+
+
+	aclportnum	OBJECT-TYPE	
+		SYNTAX			INTEGER  { odu ( 0 ) , eth0 ( 2 ) , eth1 ( 3 ) , cpu ( 4 ) , tdmoip ( 5 ) } 
+		MAX-ACCESS		not-accessible
+		STATUS			current
+		DESCRIPTION		"Column Description"
+		::=  {  aclportEntry  1  }
+
+
+	aclindex	OBJECT-TYPE	
+		SYNTAX			Unsigned32  ( 1 .. 5  ) 
+		MAX-ACCESS		not-accessible
+		STATUS			current
+		DESCRIPTION		"Column Description"
+		::=  {  aclportEntry  2  }
+
+
+	aclmacaddress	OBJECT-TYPE	
+		SYNTAX			OCTET STRING  ( SIZE ( 17  ) ) 
+		MAX-ACCESS		read-create
+		STATUS			current
+		DESCRIPTION		"Column Description"
+		::=  {  aclportEntry  3  }
+
+
+	portrowstatus	OBJECT-TYPE	
+		SYNTAX			RowStatus  { active ( 1 ) , notinservice ( 2 ) , notready ( 3 ) , createandgo ( 4 ) , createandwait ( 5 ) , destroy ( 6 ) } 
+		MAX-ACCESS		read-create
+		STATUS			current
+		DESCRIPTION		"Column Description"
+		::=  {  aclportEntry  4  }
+
+	switchportstatusTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  SwitchportstatusEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Description"
+		::=  { switch  8 }
+
+	switchportstatusEntry	OBJECT-TYPE
+		SYNTAX		SwitchportstatusEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Row Description"
+		INDEX		{  switchstatportnum  }
+		::=  { switchportstatusTable 1 }
+
+	SwitchportstatusEntry  ::=  SEQUENCE {
+		switchstatportnum  INTEGER,
+		opstate  INTEGER,
+		linkspeed  INTEGER
+		}
+
+
+	switchstatportnum	OBJECT-TYPE	
+		SYNTAX			INTEGER  { odu ( 0 ) , eth0 ( 2 ) , eth1 ( 3 ) , cpu ( 4 ) , tdmoip ( 5 ) } 
+		MAX-ACCESS		not-accessible
+		STATUS			current
+		DESCRIPTION		"Column Description"
+		::=  {  switchportstatusEntry  1  }
+
+
+	opstate	OBJECT-TYPE	
+		SYNTAX			INTEGER  { disable ( 0 ) , enable ( 1 ) } 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Column Description"
+		DEFVAL			{ enable }
+		::=  {  switchportstatusEntry  2  }
+
+
+	linkspeed	OBJECT-TYPE	
+		SYNTAX			INTEGER  { speed100mbps ( 2 ) , speed10mbps ( 3 ) } 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Column Description"
+		::=  {  switchportstatusEntry  3  }
+
+	portstatisticsTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  PortstatisticsEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Description"
+		::=  { switch  9 }
+
+	portstatisticsEntry	OBJECT-TYPE
+		SYNTAX		PortstatisticsEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Row Description"
+		INDEX		{  softwarestatportnum  }
+		::=  { portstatisticsTable 1 }
+
+	PortstatisticsEntry  ::=  SEQUENCE {
+		softwarestatportnum  INTEGER,
+		framerx  Unsigned32,
+		frametx  Unsigned32,
+		indiscards  Integer32,
+		ingoodoctets  Integer32,
+		inbadoctet  Integer32,
+		outoctets  Integer32
+		}
+
+
+	softwarestatportnum	OBJECT-TYPE	
+		SYNTAX			INTEGER  { odu ( 0 ) , eth0 ( 2 ) , eth1 ( 3 ) , cpu ( 4 ) , tdmoip ( 5 ) } 
+		MAX-ACCESS		not-accessible
+		STATUS			current
+		DESCRIPTION		"Column Description"
+		::=  {  portstatisticsEntry  1  }
+
+
+	framerx	OBJECT-TYPE	
+		SYNTAX			Unsigned32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Column Description"
+		::=  {  portstatisticsEntry  2  }
+
+
+	frametx	OBJECT-TYPE	
+		SYNTAX			Unsigned32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Column Description"
+		::=  {  portstatisticsEntry  3  }
+
+
+	indiscards	OBJECT-TYPE	
+		SYNTAX			Integer32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Column Description"
+		::=  {  portstatisticsEntry  4  }
+
+
+	ingoodoctets	OBJECT-TYPE	
+		SYNTAX			Integer32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Column Description"
+		::=  {  portstatisticsEntry  5  }
+
+
+	inbadoctet	OBJECT-TYPE	
+		SYNTAX			Integer32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Column Description"
+		::=  {  portstatisticsEntry  6  }
+
+
+	outoctets	OBJECT-TYPE	
+		SYNTAX			Integer32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Description"
+		::=  {  portstatisticsEntry  7  }
+
+	portstatgoodframeTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  PortstatgoodframeEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Description"
+		::=  { switch  10 }
+
+	portstatgoodframeEntry	OBJECT-TYPE
+		SYNTAX		PortstatgoodframeEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Row Description"
+		INDEX		{  softwaregoodframeportnum  }
+		::=  { portstatgoodframeTable 1 }
+
+	PortstatgoodframeEntry  ::=  SEQUENCE {
+		softwaregoodframeportnum  INTEGER,
+		inunicast  Unsigned32,
+		outunicast  Unsigned32,
+		inbroadcast  Unsigned32,
+		outbroadcast  Unsigned32,
+		inmulticast  Unsigned32,
+		outmulticast  Unsigned32
+		}
+
+
+	softwaregoodframeportnum	OBJECT-TYPE	
+		SYNTAX			INTEGER  { odu ( 0 ) , eth0 ( 2 ) , eth1 ( 3 ) , cpu ( 4 ) , tdmoip ( 5 ) } 
+		MAX-ACCESS		not-accessible
+		STATUS			current
+		DESCRIPTION		"Column Description"
+		::=  {  portstatgoodframeEntry  1  }
+
+
+	inunicast	OBJECT-TYPE	
+		SYNTAX			Unsigned32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Column Description"
+		::=  {  portstatgoodframeEntry  2  }
+
+
+	outunicast	OBJECT-TYPE	
+		SYNTAX			Unsigned32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Column Description"
+		::=  {  portstatgoodframeEntry  3  }
+
+
+	inbroadcast	OBJECT-TYPE	
+		SYNTAX			Unsigned32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Column Description"
+		::=  {  portstatgoodframeEntry  4  }
+
+
+	outbroadcast	OBJECT-TYPE	
+		SYNTAX			Unsigned32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Column Description"
+		::=  {  portstatgoodframeEntry  5  }
+
+
+	inmulticast	OBJECT-TYPE	
+		SYNTAX			Unsigned32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Column Description"
+		::=  {  portstatgoodframeEntry  6  }
+
+
+	outmulticast	OBJECT-TYPE	
+		SYNTAX			Unsigned32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Column Description"
+		::=  {  portstatgoodframeEntry  7  }
+
+	portstatbadframeTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  PortstatbadframeEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Description"
+		::=  { switch  11 }
+
+	portstatbadframeEntry	OBJECT-TYPE
+		SYNTAX		PortstatbadframeEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Row Description"
+		INDEX		{  switchbadframeport  }
+		::=  { portstatbadframeTable 1 }
+
+	PortstatbadframeEntry  ::=  SEQUENCE {
+		switchbadframeport  INTEGER,
+		inundersizerx  Unsigned32,
+		infragmnetsrx  Unsigned32,
+		inoversizerx  Unsigned32,
+		inmacrcverrorrx  Unsigned32,
+		injabberrx  Unsigned32,
+		infcserrorrx  Integer32,
+		outfcserrtx  Unsigned32,
+		defferedtx  Unsigned32,
+		collisiontx  Unsigned32,
+		latetx  Integer32,
+		excessivetx  Integer32,
+		singletx  Integer32,
+		multipletx  Integer32
+		}
+
+
+	switchbadframeport	OBJECT-TYPE	
+		SYNTAX			INTEGER  { odu ( 0 ) , eth0 ( 2 ) , eth1 ( 3 ) , cpu ( 4 ) , tdmoip ( 5 ) } 
+		MAX-ACCESS		not-accessible
+		STATUS			current
+		DESCRIPTION		"Column Description"
+		::=  {  portstatbadframeEntry  1  }
+
+
+	inundersizerx	OBJECT-TYPE	
+		SYNTAX			Unsigned32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Column Description"
+		::=  {  portstatbadframeEntry  2  }
+
+
+	infragmnetsrx	OBJECT-TYPE	
+		SYNTAX			Unsigned32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Column Description"
+		::=  {  portstatbadframeEntry  3  }
+
+
+	inoversizerx	OBJECT-TYPE	
+		SYNTAX			Unsigned32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Column Description"
+		::=  {  portstatbadframeEntry  4  }
+
+
+	inmacrcverrorrx	OBJECT-TYPE	
+		SYNTAX			Unsigned32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Column Description"
+		::=  {  portstatbadframeEntry  5  }
+
+
+	injabberrx	OBJECT-TYPE	
+		SYNTAX			Unsigned32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Column Description"
+		::=  {  portstatbadframeEntry  6  }
+
+
+	infcserrorrx	OBJECT-TYPE	
+		SYNTAX			Integer32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Column Description"
+		::=  {  portstatbadframeEntry  7  }
+
+
+	outfcserrtx	OBJECT-TYPE	
+		SYNTAX			Unsigned32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Column Description"
+		::=  {  portstatbadframeEntry  8  }
+
+
+	defferedtx	OBJECT-TYPE	
+		SYNTAX			Unsigned32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Column Description"
+		::=  {  portstatbadframeEntry  9  }
+
+
+	collisiontx	OBJECT-TYPE	
+		SYNTAX			Unsigned32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Column Description"
+		::=  {  portstatbadframeEntry  10  }
+
+
+	latetx	OBJECT-TYPE	
+		SYNTAX			Integer32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Column Description"
+		::=  {  portstatbadframeEntry  11  }
+
+
+	excessivetx	OBJECT-TYPE	
+		SYNTAX			Integer32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Column Description"
+		::=  {  portstatbadframeEntry  12  }
+
+
+	singletx	OBJECT-TYPE	
+		SYNTAX			Integer32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Column Description"
+		::=  {  portstatbadframeEntry  13  }
+
+
+	multipletx	OBJECT-TYPE	
+		SYNTAX			Integer32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Column Description"
+		::=  {  portstatbadframeEntry  14  }
+
+END
