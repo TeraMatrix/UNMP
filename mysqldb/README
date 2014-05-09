@@ -1,0 +1,41 @@
+Installation Instructions - 
+
+Steps - 
+
+1. mysql -uroot -proot nms  < complete_db_structure.sql
+
+2. 
+python resetTable.py
+mysql -uroot -proot  nms < resetTable.sql
+
+3. mysql -uroot -proot nms < default_data.sql
+
+4. mysql -uroot -proot nms < encrypt_password_in_SHA.sql
+
+5. mysql -uroot -proot nms < alter_table_unmp_login.sql
+
+6. mysql -uroot -proot nms < add_FK_user_login.sql
+
+7. mysql -uroot -proot nms  < add_old_pwd_in_user_login.sql
+8. mysql -uroot -proot nms  < password_expiry.sql
+
+9.
+python resetPartition.py
+mysql -uroot -proot nms  < resetPartition.sql
+
+10.
+cat /dev/null > resetTable.sql
+cat /dev/null > resetPartition.sql
+
+11.  mysql -uroot -proot nms < ubr_trigger.sql
+12.  mysql -uroot -proot nms < ubre_trigger.sql
+13.  mysql -uroot -proot nms < idu_trigger.sql
+14.  mysql -uroot -proot nms < ap_trigger.sql
+15. mysql -uroot -proot nms < UBR_common_dashboard_procedure.sql
+
+16. mysql -uroot -proot -e "CREATE DATABASE IF NOT EXISTS snmptt"
+17. mysql -uroot- proot snmptt < snmptt.sql
+
+
+@TODO:
+  Improve the SNMPTT wrokflow
