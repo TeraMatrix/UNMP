@@ -10,19 +10,17 @@
 #<span class="search-input"><input type="text" /></span>
 # this is used for searching
 
-from datetime import datetime, timedelta
-
-
+from datetime import datetime,timedelta
 class Report(object):
     @staticmethod
-    def list_form(result, host_data, device_type_user_selected_id, device_type_user_selected_name):
+    def list_form(result,host_data,device_type_user_selected_id,device_type_user_selected_name):
         now = datetime.now()
-        old = now + timedelta(minutes=-180)
-        cday = str(now.day) + "/" + str(now.month) + "/" + str(now.year)
-        ctime = str(now.hour) + ":" + str(now.minute)
-        oday = str(old.day) + "/" + str(old.month) + "/" + str(old.year)
-        otime = str(old.hour) + ":" + str(old.minute)
-        html_view = '\
+        old=now+timedelta(minutes=-180)
+        cday=str(now.day)+"/"+str(now.month)+"/"+str(now.year)
+        ctime=str(now.hour)+":"+str(now.minute)
+        oday=str(old.day)+"/"+str(old.month)+"/"+str(old.year)
+        otime=str(old.hour)+":"+str(old.minute)
+        html_view='\
             <table class=\"tt-table\" cellspacing=\"0\" cellpadding=\"0\" width=\"100%%\">\
                     <tr>\
                         <th id=\"form_title\" class=\"cell-title\">View/Save Report </th>\
@@ -33,17 +31,16 @@ class Report(object):
 		<form name="get_main_reporting_data" id="get_main_reporting_data" action="main_reporting_get_excel.py"  method=\"get\">\
 		<div class="row-elem">\
 		<label class=\"lbl lbl-big\" style="width:100px;">Hostgroup:</label>\
-		<select name="multiselect_hostgroup" id="multiselect_hostgroup" class="multiselect" multiple="multiple" title="Click to select an option">' % (str(host_data), str(result), device_type_user_selected_id, device_type_user_selected_name)
-        dict_hg = {}
+		<select name="multiselect_hostgroup" id="multiselect_hostgroup" class="multiselect" multiple="multiple" title="Click to select an option">'%(str(host_data),str(result),device_type_user_selected_id,device_type_user_selected_name)
+        dict_hg={}		    
         for i in result:
-            if(str(i[0]) in dict_hg):
+            if(dict_hg.has_key(str(i[0]))):
                 pass
             else:
-                html_view += '<option value="%s">%s</option>' % (
-                    str(i[0]), str(i[1]))
-                dict_hg[str(i[0])] = str(i[1])
-        html_view += '</select></div>'
-        html_view += '<div class=\"row-elem\">\
+                html_view+='<option value="%s">%s</option>'%(str(i[0]),str(i[1]))
+                dict_hg[str(i[0])]=str(i[1])
+        html_view+='</select></div>'
+        html_view+='<div class=\"row-elem\">\
 	        <label class=\"lbl lbl-big\" style="width:100px;">Device Type:</label>\
 		<select name="multiselect_device" id="multiselect_device" class="multiselect" multiple="multiple" title="Click to select an option">\
 		</select></div>\
@@ -120,31 +117,28 @@ class Report(object):
 					</ul>\
 				</div>\
 			</fieldset>\
-		</div>' % (oday, otime, cday, ctime)
+		</div>'%(oday,otime,cday,ctime)
         return html_view
         #<div id="selectedList"></div>\
 
     @staticmethod
-    def get_columns(selected_columns, non_selected_columns):
+    def get_columns(selected_columns,non_selected_columns):
         liList = ""
-        plusList = ""
-        if(non_selected_columns != [""]):
+        plusList=""
+        if(non_selected_columns!=[""]):
             for row in non_selected_columns:
-                plusList += "<li>" + row + "<img src=\"images/add16.png\" class=\"plus plus\" alt=\"+\" title=\"Add\" id=\"" + \
-                    row + "\" name=\"" + row + "\"/></li>"
+                plusList += "<li>" + row + "<img src=\"images/add16.png\" class=\"plus plus\" alt=\"+\" title=\"Add\" id=\"" + row + "\" name=\"" + row + "\"/></li>"
         minusList = ""
         for row in selected_columns:
-            minusList += "<li>" + row + "<img src=\"images/minus16.png\" class=\"minus minus\" alt=\"-\" title=\"Remove\" id=\"" + row + "\" name=\"" + \
-                row + "\"/></li>"
-        selectList = ""
+            minusList += "<li>" + row + "<img src=\"images/minus16.png\" class=\"minus minus\" alt=\"-\" title=\"Remove\" id=\"" + row + "\" name=\"" + row + "\"/></li>"
+        selectList=""
         selectList += "<div class=\"multiSelectList\" id=\"multiSelectList\" style=\"margin-left:120px;margin-top:-10px;\">"
-        selectList += "<input type=\"hidden\" id=\"hd\" name=\"hd\" value=\"%s\"/>" % (
-            ",".join(selected_columns))
+        selectList += "<input type=\"hidden\" id=\"hd\" name=\"hd\" value=\"%s\"/>"%(",".join(selected_columns))
         selectList += "<input type=\"hidden\" id=\"hdTemp\" name=\"hdTemp\" />"
         selectList += "<div class=\"selected\">"
-        selectList += "<div class=\"shead\"><span id=\"count\">%s</span><span> Select Columns</span><a href=\"#\" id=\"rm\">Remove all</a>" % (len(selected_columns))
+        selectList += "<div class=\"shead\"><span id=\"count\">%s</span><span> Select Columns</span><a href=\"#\" id=\"rm\">Remove all</a>"%(len(selected_columns))
         selectList += "</div>"
-        selectList += "<ul>" + minusList
+        selectList += "<ul>"+minusList 
         selectList += "</ul></div>"
 #        selectList += "</div>"
         selectList += "<div class=\"nonSelected\">"
@@ -183,3 +177,5 @@ class Report(object):
         		More Options >>:</button>:Click and select the headings for which report will be generated.</div></div>"\
             "</div>"
         return html_view
+
+

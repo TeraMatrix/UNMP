@@ -379,6 +379,7 @@ function createGraph(graphName,graphFullName)
 			{
 				headData[headData.length] = {"sTitle":result[i]["name"],"sClass":"center","asSorting":["desc"]};
 				tableI = result[i]["data"].length;
+				tableI = result[i]["data"].length;
 				for(var j=0;j<result[i]["data"].length;j++)
 				{
 					if(i==0)

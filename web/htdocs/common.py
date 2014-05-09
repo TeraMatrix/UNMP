@@ -4,36 +4,31 @@
 @author: Yogesh Kumar
 @since: 04-Nov-2011
 @version: 0.1
-@note: All Views That are Common.
+@note: All Views That are Common. 
 @organization: Codescape Consultants Pvt. Ltd.
 @copyright: 2011 Yogesh Kumar for Codescape Consultants Pvt. Ltd.
 @see: http://www.codescape.in
 '''
 
-
 class Common(object):
     @staticmethod
-    def make_select_list(value=[], name=[], selected=None, list_id="list", list_name="list", title="Please Choose Value", message=None):
-        list_options = "%s" % (("<option value=\"\">%s</option>" %
-                               message) if message != None else "")
+    def make_select_list(value=[],name=[],selected = None,list_id = "list",list_name = "list",title="Please Choose Value",message=None):
+        list_options = "%s" % (("<option value=\"\">%s</option>" % message) if message != None else "")
 
         value_length = len(value)
-        name_length = len(name)
+        name_length = len(name) 
         if value_length == name_length:
-            for i in range(0, value_length):
+            for i in range(0,value_length):
                 if selected == value[i]:
-                    list_options += "<option value=\"%s\" selected=\"selected\">%s</option>" % (
-                        value[i], name[i])
+                    list_options += "<option value=\"%s\" selected=\"selected\">%s</option>" % (value[i],name[i])
                 else:
-                    list_options += "<option value=\"%s\">%s</option>" % (
-                        value[i], name[i])
+                    list_options += "<option value=\"%s\">%s</option>" % (value[i],name[i])  
 
         list_html = ""\
             "<select id=\"" + str(list_id) + "\" name=\"" + str(list_name) + "\" title=\"" + str(title) + "\">"\
             "" + str(list_options) + ""\
             "</select>"
         return list_html
-
 
 class LocalSystem(object):
     @staticmethod

@@ -1,13 +1,11 @@
 #!/usr/bin/python2.6
 
-from datetime import datetime, timedelta
-
-
+from datetime import datetime,timedelta
 class Log(object):
     @staticmethod
     def create_log_form():
         try:
-            html_view = ' <table cellpadding="0" cellspacing="0" border="0" class=\"display\" id=\"log_table\" style=\"text-align:center;\"> \
+            html_view=' <table cellpadding="0" cellspacing="0" border="0" class=\"display\" id=\"log_table\" style=\"text-align:center;\"> \
 					<colgroup>\
 					<col width=\"15%\"/>\
 					<col width=\"15%\"/>\
@@ -22,65 +20,63 @@ class Log(object):
 					</thead> \
 				</table>'
             return html_view
-        except Exception, e:
+        except Exception,e:
             return str(e)
 
     @staticmethod
-    def manage_events(group="", user_details=[]):
-        from datetime import datetime, timedelta
+    def manage_events(group="",user_details=[]):
+        from datetime import datetime,timedelta
         import calendar
         now = datetime.now()
-        month_str = ""
-        month_var = now.month
-        year_var = now.year
+        month_str=""
+        month_var=now.month
+        year_var=now.year
         d = datetime.now()
         m = d.month
         y = d.year
-        n = m - 2 if m > 2 else 0  # month till before you want
+        n = m-2 if m>2 else 0 # month till before you want
         li = []
         if m < 0:
             y = d.year - 1
             m = 12 - abs(m)
         elif m > 0:
-            for i in range(n, m):
-                li.append(str(y) + "_" + str(m))
+            for i in range(n,m):
+                li.append(str(y)+"_"+str(m))
                 m -= 1
-            y = y - 1
+            y = y-1
 
-        # for i in range(0,12-m-n):
+        #for i in range(0,12-m-n):
         #    li.append(str(y)+"_"+str(12-i))
 
-        # li.reverse()
-        user_menu = ""
-        user_display_option = "style=\"display:none\" "
+        #li.reverse()
+        user_menu=""
+        user_display_option="style=\"display:none\" "
 
         for i in li:
-            temp = i.split("_")
-            month_str += "<option value=%s>%s %s</option>" % (
-                i, calendar.month_name[int(temp[1])], temp[0])
+            temp=i.split("_")
+            month_str+= "<option value=%s>%s %s</option>"%(i,calendar.month_name[int(temp[1])],temp[0])
 
-        month_str += "<option value='all'>All months</option>\
+        month_str+= "<option value='all'>All months</option>\
         <option value=20>Custom Date Range</option>"
 
         now = datetime.now()
-        old = now + timedelta(minutes=-30)
-        cday = str(now.day) + "/" + str(now.month) + "/" + str(now.year)
-        ctime = str(now.hour) + ":" + str(now.minute)
-        oday = str(old.day) + "/" + str(old.month) + "/" + str(old.year)
-        otime = str(old.hour) + ":" + str(old.minute)
+        old=now+timedelta(minutes=-30)
+        cday=str(now.day)+"/"+str(now.month)+"/"+str(now.year)
+        ctime=str(now.hour)+":"+str(now.minute)
+        oday=str(old.day)+"/"+str(old.month)+"/"+str(old.year)
+        otime=str(old.hour)+":"+str(old.minute)
 
-        if group.lower() == "superadmin" or group.lower() == "admin":
-            log_html = '<option value=\"0\">Information log</option>\
+        if group.lower()=="superadmin" or group.lower()=="admin":
+            log_html='<option value=\"0\">Information log</option>\
 		<option value=\"1\">Warning log</option>\
 		<option value=\"2\">Error log</option>\
 		<option value=\"3\">User trail</option>\
 		<option value=\"10\">All logs</option>'
             for user in user_details:
-                user_menu += "<option value=\"%s\">%s</option>" % (
-                    user[0], user[0])
-            user_display_option = ""
+                user_menu+="<option value=\"%s\">%s</option>"%(user[0],user[0])
+            user_display_option=""
         else:
-            log_html = '<option value=\"0\">User log</option>\
+            log_html='<option value=\"0\">User log</option>\
 		<option value=\"1\">Warning log</option>\
 		<option value=\"2\">Error log</option>\
 		<option value=\"10\">All logs</option>'
@@ -149,13 +145,13 @@ class Log(object):
 	<th>Description</th> \
 	</tr> \
 	</thead> \
-	</table>' % (month_str, log_html, user_display_option, user_display_option, user_menu, oday, otime, cday, ctime)
+	</table>'%(month_str,log_html, user_display_option,user_display_option, user_menu, oday,otime,cday,ctime)
         return html_view
 
     @staticmethod
     def make_header_log(log_data):
         try:
-            html_str = "<table id=\"header_log_table\" cellspacing=\"0\" cellpadding=\"0\" >\
+            html_str="<table id=\"header_log_table\" cellspacing=\"0\" cellpadding=\"0\" >\
 			<colgroup>\
 				<col width=\"15%\"/>\
 				<col width=\"15%\"/>\
@@ -166,27 +162,25 @@ class Log(object):
 		     	<th>Description</th>\
 		     </tr>"
             for i in log_data:
-                html_str += "<tr>\
+                html_str+="<tr>\
 	    		  	<td align=\"center\">%s</td>\
 	    		  	<td align=\"center\">%s</td>\
 	    		  	<td align=\"center\">%s</td>\
-	    		   </tr>" % (i[0], i[1], i[2])
-            html_str += "</table><a style=\"color:#fff;clear:both;margin-top:-5px;display:block;\" href=\"log_user.py\">More Details</a>"
+	    		   </tr>"%(i[0],i[1],i[2])
+            html_str+="</table><a style=\"color:#fff;clear:both;margin-top:-5px;display:block;\" href=\"log_user.py\">More Details</a>"
             return html_str
-        except Exception, e:
+        except Exception,e:
             return str(e)
 
+
     @staticmethod
-    def make_alarm_header_log(log_data, device_type_dict):
+    def make_alarm_header_log(log_data,device_type_dict):
         try:
-            alarm_dic = {"1": "Informational", "0": "Normal",
-                         "2": "Normal", "3": "Minor", "4": "Major", "5": "Crititcal"}
-# device_type_dict={'odu16':'UBR','odu100':'UBRe','idu4':'IDU','ap25':'Access
-# Point'}
-            if device_type_dict == {}:
-                device_type_dict = {'odu16': 'RM18', 'odu100': 'RM',
-                                    'idu4': 'IDU', 'ap25': 'Access Point', 'ccu': 'CCU'}
-            html_str = "<table id=\"header_log_table\" cellspacing=\"0\" cellpadding=\"0\">\
+            alarm_dic={"1":"Informational","0":"Normal","2":"Normal","3":"Minor","4":"Major","5":"Crititcal"}
+#	    device_type_dict={'odu16':'UBR','odu100':'UBRe','idu4':'IDU','ap25':'Access Point'}
+            if device_type_dict=={}:
+                device_type_dict={'odu16':'RM18','odu100':'RM','idu4':'IDU','ap25':'Access Point','ccu':'CCU'}
+            html_str="<table id=\"header_log_table\" cellspacing=\"0\" cellpadding=\"0\">\
 			<colgroup>\
 				<col width=\"6%\"/>\
 				<col width=\"10%\"/>\
@@ -207,7 +201,7 @@ class Log(object):
 		     	<th>Description</th>\
 		     </tr>"
             for i in log_data:
-                html_str += "<tr>\
+                html_str+="<tr>\
 	    		  	<td align=\"center\">%s</td>\
 	    		  	<td align=\"center\">%s</td>\
 	    		  	<td align=\"center\">%s</td>\
@@ -216,11 +210,11 @@ class Log(object):
 	    		  	<td align=\"center\">%s</td>\
 	    		  	<td align=\"center\">%s</td>\
 	    		  	<td align=\"center\">%s</td>\
-	    		   </tr>" % (alarm_dic[str(i[0])], i[1], i[2], i[3], device_type_dict.get(i[4], ""), i[5], i[6], i[7])
-            html_str += "</table><a style=\"color:#fff;clear:both;padding:10px;display:block;\" href=\"status_snmptt.py\">More Details</a>"
+	    		   </tr>"%(alarm_dic[str(i[0])],i[1],i[2],i[3],device_type_dict.get(i[4],""),i[5],i[6],i[7])
+            html_str+="</table><a style=\"color:#fff;clear:both;padding:10px;display:block;\" href=\"status_snmptt.py\">More Details</a>"
             return html_str
-        except Exception, e:
-            return str(e)
+        except Exception,e:
+            return str(e)            
 
     @staticmethod
     def view_page_tip_log_user():
@@ -238,4 +232,4 @@ class Log(object):
             "<div>Superadmin/Admins can view the user trail of different users. </div>"\
             "<br/>"\
             "</div>"
-        return html_view
+        return html_view                         

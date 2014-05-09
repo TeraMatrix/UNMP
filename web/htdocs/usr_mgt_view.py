@@ -10,34 +10,20 @@ from htmllib import *
 import usr_mgt_bll
 from common_bll import EventLog, Essential
 from license_bll import LicenseBll
-import re
 
-def is_valid_passwd(passwd):
-    '''
-    Verifies password consist of 2 Num, 2 alpha, 2 special,
-    and minmum 8 characters in length
-    '''
-    regexp = re.compile('((?=(.*\d.*){2,})(?=(.*[a-zA-Z].*){2,})\
-(?=(.*[\\\@\#\$\(\)\{\;\_\&\}\[\]\!\~\,\.\!\*\^\?\/\|\<\:\>\+\=\-\_\%\"\'].*){2,}).{8,20})')
-    return bool(regexp.match(passwd))
-
-special_check = lambda x: 1 if set(
-    "\"\`~!#$%^&*(){}[]+=|?<>:;").intersection(x) else 0
-space_check = lambda x: 1 if set(" ").intersection(x) else 0
-
-
-def validate_name(nm, type):
+special_check = lambda x:  1 if set("\"\`~!#$%^&*(){}[]+=|?<>:;").intersection(x) else 0
+space_check = lambda x:  1 if set(" ").intersection(x) else 0
+def validate_name(nm,type):
     if space_check(nm) == 0:
-        if type == "user":  # user
-            result = usr_mgt_bll.check_name(nm, "user")
-        elif type == "group":  # group
-            result = usr_mgt_bll.check_name(nm, "group")
+        if type == "user": # user
+            result = usr_mgt_bll.check_name(nm,"user")
+        elif type == "group": # group
+            result = usr_mgt_bll.check_name(nm,"group")
         else:
             result = 1
-        if result == 0:
+        if result == 0:         
             return 0
     return 1
-
 
 def add_users_togroup(h):
     global html
@@ -51,20 +37,18 @@ def add_users_togroup(h):
     user_ids = html.var("user_ids")
     users = html.var("users")
     newGroupID = html.var("group_id")
-    result, flag = 1, 1
+    result,flag = 1,1
     if user_ids != '':
-        # user_names_list = users.split(",")
-        if users.find(session_user + " ") == -1:
+        #user_names_list = users.split(",")
+        if users.find(session_user+" ") == -1:
             user_ids_list = user_ids.split(",")
             lb = LicenseBll()
             users_no = lb.check_license_for_useringroup(grp_name)
             if users_no >= len(user_ids_list):
-                result = usr_mgt_bll.add_user_in_group(
-                    user_ids_list, newGroupID)
+                result = usr_mgt_bll.add_user_in_group(user_ids_list,newGroupID)
             else:
-                else_str = "Maximum number of allowed users of a type %s have reached" % (
-                    grp_name)
-                flag = 0
+                else_str = "Maximum number of allowed users of a type %s have reached"%(grp_name)
+                flag = 0        
         else:
             else_str = "Assigning self to another Usergroup is restricted"
             flag = 0
@@ -74,7 +58,7 @@ def add_users_togroup(h):
 
     result_json = {}
 
-    if flag == 0 and result == 1:
+    if flag == 0 and result == 1:         
         result_json['success'] = 2
         result_json['result'] = else_str
     elif result == 0:
@@ -82,23 +66,20 @@ def add_users_togroup(h):
         users = html.var('users')
         sel_group = html.var('sel_group')
         if sel_group:
-            info_str = " Users: %s have been moved from Group: %s to Group: %s" % (
-                users, sel_group, grp_name)
+            info_str = " Users: %s have been moved from Group: %s to Group: %s"%(users,sel_group,grp_name)            
         else:
-            info_str = " Users: %s have been assigned to Group: %s" % (
-                users, grp_name)
+            info_str = " Users: %s have been assigned to Group: %s"%(users,grp_name)
         el = EventLog()
-        el.log_event(info_str, session_user)
+        el.log_event(info_str,session_user)
     elif flag == 1 and result == 1:
         result_json['success'] = 1
-        result_json[
-            'result'] = " Some field contains special characters (like \" \, etc.) "
+        result_json['result'] = " Some field contains special characters (like \" \, etc.) "
     else:
         result_json['success'] = 1
-        result_json[
-            'result'] = " UNMP server has encounterd an error. Please REFRESH your page. still having problem contact support team. code   "
+        result_json['result'] = " UNMP server has encounterd an error. Please REFRESH your page. still having problem contact support team. code   "  
 
     html.write(str(result_json))
+
 
 
 def del_users_fromgroup(h):
@@ -111,9 +92,9 @@ def del_users_fromgroup(h):
         session_user = "NotAvailable"
     users = html.var("users")
     user_ids = html.var("user_ids")
-    result, flag = 1, 1
+    result,flag = 1,1
     if user_ids != '':
-        if users.find(session_user + " ") == -1:
+        if users.find(session_user+" ") == -1:
             user_ids_list = user_ids.split(",")
             result = usr_mgt_bll.del_user_from_group(user_ids_list)
         else:
@@ -125,7 +106,7 @@ def del_users_fromgroup(h):
 
     result_json = {}
 
-    if flag == 0 and result == 1:
+    if flag == 0 and result == 1:         
         result_json['success'] = 2
         result_json['result'] = else_str
     elif result == 0:
@@ -133,20 +114,18 @@ def del_users_fromgroup(h):
         result_json['success'] = 0
         users = html.var('users')
         grp_name = html.var('grp_name')
-        info_str = " Users: %s have been deleted from Group: %s" % (
-            users, grp_name)
+        info_str = " Users: %s have been deleted from Group: %s"%(users,grp_name)
         el = EventLog()
-        el.log_event(info_str, session_user)
+        el.log_event(info_str,session_user)
     elif flag == 1 and result == 1:
         result_json['success'] = 1
-        result_json[
-            'result'] = " Some field contains special characters (like \" \, etc.) "
+        result_json['result'] = " Some field contains special characters (like \" \, etc.) "
     else:
         result_json['success'] = 1
-        result_json[
-            'result'] = " UNMP server has encounterd an error. Please REFRESH your page. still having problem contact support team. code   "
+        result_json['result'] = " UNMP server has encounterd an error. Please REFRESH your page. still having problem contact support team. code   "  
 
     html.write(str(result_json))
+
 
 
 def group_info(h):
@@ -163,63 +142,57 @@ def group_info(h):
                                         <th class=\"cell-title\" style=\"text-align:left;\">Creation Time</td>\
                                      </tr>"
     if table == 1:
-        group_str += "<tr> Well, its really embarasing But its seems there is No data availabe. Sorry </tr>"
+        group_str +="<tr> Well, its really embarasing But its seems there is No data availabe. Sorry </tr>"
     else:
         group_str += "<tr>"
         for tup in table:
-            group_str += "<td class=\"cell-info1\">%s</td>" % tup
+            group_str += "<td class=\"cell-info1\">%s</td>"%tup
         group_str += "</tr>"
-    group_str += "</tbody></table> "
+    group_str +="</tbody></table> "
     html.write(group_str)
-
 
 def group_users(h):
     global html
     html = h
     light_box = html.var("light_box")
     table = usr_mgt_bll.get_group_users(html.var("group_id"))
-    if table == 1:
+    if table == 1 :
         html.write("[]")
     else:
-        make_list = lambda x: [
-            " - " if i == None or i == '' else str(i) for i in x]
+        make_list = lambda x: [" - " if i == None or i == '' else str(i) for i in x]
         gpUser_list = []
         for gpUser in table:
             gpUser_list.append(make_list(gpUser))
 
         html.write(str(gpUser_list))
 
-
 def user_view(h):
     global html
     html = h
-    css_list = ["css/demo_page.css", "css/demo_table_jui.css",
-                "css/jquery-ui-1.8.4.custom.css"]
-    javascript_list = ["js/jquery.dataTables.min.js",
-                       "js/pages/user_mgt.js", "js/ccpl_utility.js"]
-
+    css_list = ["css/demo_page.css","css/demo_table_jui.css","css/jquery-ui-1.8.4.custom.css"]
+    javascript_list = ["js/jquery.dataTables.min.js","js/pages/user_mgt.js","js/ccpl_utility.js"]
+    
     add_btn = "<div class=\"header-icon\"><img onclick=\"addUser();\" class=\"n-tip-image\" \
     src=\"images/%s/round_plus.png\" id=\"add_user\" name=\"add_user\" \
     style=\"width: 16px; height: 16px; margin: 6px 20px 6px 10px;\" \
     original-title=\"Add User\"></div>" % theme
-
+    
     edit_btn = "<div class=\"header-icon\"><img onclick=\"editUser();\" class=\"n-tip-image\" \
     src=\"images/%s/doc_edit.png\" id=\"edit_user\" name=\"edit_user\" \
     style=\"width: 16px; height: 16px; margin: 6px 20px 6px 10px;\" original-title=\"Edit User\"></div>" % theme
-
+    
     del_btn = "<div class=\"header-icon\"><img onclick=\"delUser();\" class=\"n-tip-image\" \
     src=\"images/%s/round_minus.png\" id=\"del_user\" name=\"del_user_tip\" \
     style=\"width: 16px; height: 16px; margin: 6px 20px 6px 10px;\" original-title=\"Delete User\"></div>" % theme
-
+    
     all_btn = del_btn + edit_btn + add_btn
-    # all_btn = edit_btn
-    html.new_header("User Management", "manage_user.py", all_btn,
-                    css_list, javascript_list)
+    #all_btn = edit_btn
+    html.new_header("User Management","manage_user.py",all_btn,css_list,javascript_list)
     html.write("<div id=\"user_datatable\">\
                     <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"display\" id=\"user_table\" style=\"width:100%;\"></table>\
                 </div>\
                 <div id=\"user_form\" style=\"display:none;\">\
-                    <form action=\"add_user.py\" method=\"get\" id=\"add_user_form\" name=\"add_user_form\" autocomplete=\"off\" >\
+                    <form action=\"add_user.py\" method=\"get\" id=\"add_user_form\" name=\"add_user_form\">\
                         <div class=\"form-div\">\
 				    <table class=\"tt-table\" cellspacing=\"0\" cellpadding=\"0\" width=\"100%%\">\
 				        <tr>\
@@ -237,14 +210,14 @@ def user_view(h):
                                 </div>\
                                 <div class=\"row-elem\">\
                                     <label class=\"lbl lbl-big\" for=\"password\">Password</label>\
-                                    <input type=\"password\" id=\"password\" name=\"password\" title=\"Must be at least 8 characters. \"/>\
+                                    <input type=\"password\" id=\"password\" name=\"password\" title=\"Must be at least 6 characters. \"/>\
                                 </div>\
                                 <div class=\"row-elem\">\
                                     <label class=\"lbl lbl-big\" for=\"cpassword\">Confirm Password</label>\
                                     <input type=\"password\" id=\"cpassword\" name=\"cpassword\" title=\"Must be same as Password\"/>\
                                 </div>\
                                 <div class=\"row-elem\">\
-                                    <label class=\"lbl lbl-big\" for=\"group\">Select Group</label>" + groups_select_list("", "", "Default") + "\
+                                    <label class=\"lbl lbl-big\" for=\"group\">Select Group</label>" + groups_select_list("","","Default") + "\
                                 </div>\
                                 <div class=\"row-elem\">\
                                     <label class=\"lbl lbl-big\" for=\"first_name\">First Name</label>\
@@ -287,7 +260,6 @@ def user_view(h):
                 </div>")
     html.new_footer()
 
-
 def add_user(h):
     global html
     html = h
@@ -298,16 +270,7 @@ def add_user(h):
     lb_result = lb.check_license_for_user(ugroup)
 #    html.write(str(lb.check_license_for_user(ugroup))+" : "+str(lb.get_allowed_user(ugroup))+str())
     if lb_result == True:
-        var_list = ['user_name',
-        			'password',
-        			'first_name',
-        			'last_name',
-        			'groups',
-        			'company',
-        			'designation',
-        			'address',
-        			'mobile',
-        			'email_id']
+        var_list = ['user_name','password','first_name','last_name','groups','company','designation','address','mobile','email_id']
         #v_result = validate(html,var_list)
         var_dict_ul = {}
         var_dict = {}
@@ -315,35 +278,35 @@ def add_user(h):
         name_not = 0
         for i in var_list:
             if i == 'user_name' :
-                if validate_name(html.var(i),"user"):
+                if validate_name(html.var(i),"user") == 0:
+                    pass
+                else:
                     name_not = 1
                     break
-            if i == 'password':
-                if not is_valid_passwd(html.var(i)):
-                    result_json['success'] = 1
-                    result_json['result'] = " Password should consist of \
-2 Numeric, 2 alpha, 2 special"
-                    return
-            else:
-                if special_check(html.var(i)):
-                    flag = 1
-                    break
 
-            if i == 'user_name' or i == 'password':
+            if i == 'user_name' or i == 'password' or i == 'groups':
+                pass
+            if special_check(html.var(i)) == 0:
+                flag = 0
+            else:
+                flag = 1
+                break
+            if i == 'user_name' or i == 'password': 
                 var_dict_ul[i] = html.var(i)
             elif i == 'groups':
                 var_dict_ug[i] = html.var(i)
             else:
                 var_dict[i] = html.var(i)
 
+
         if name_not == 1:
             result_json['success'] = 1
-            result_json['result'] = " user already exists"
+            result_json['result'] = " Name Not valid, Choose Unique Name, No space"
         else:
 
             result = 1
-            if flag == 0:
-                result = usr_mgt_bll.add_user(var_dict, var_dict_ul, var_dict_ug)
+            if flag == 0:         
+                result = usr_mgt_bll.add_user(var_dict,var_dict_ul,var_dict_ug)
             else:
                 result_json['success'] = 1
                 result_json['result'] = " Some field contains special characters (like \" \, etc.) "
@@ -359,11 +322,10 @@ def add_user(h):
         result_json['success'] = 1
         result_json['result'] = " UNMP server has encounterd an error. \
         Please REFRESH your page. still having problem contact support team. code "
-
+        
     elif lb_result == "groupFlase" :
         result_json['success'] = 1
-        result_json[
-            'result'] = "Maximum number of allowed users of a type %s have reached" % (ugroup)
+        result_json['result'] = "Maximum number of allowed users of a type %s have reached"%(ugroup)        
     else:
         result_json['success'] = 1
         result_json['result'] = "Maximum number of allowed users have reached. \
@@ -371,15 +333,18 @@ def add_user(h):
 
     html.write(str(result_json))
 
+
+
+
 def add_group(h):
     global html
     html = h
-    var_list = ['group_id', 'group_name', 'description', 'role']
+    var_list = ['group_id','group_name','description','role']
     var_dict = {}
-    name_not = 0
+    name_not = 0 
     for i in var_list:
         if i == 'group_name':
-            if validate_name(html.var(i), "group") == 0:
+            if validate_name(html.var(i),"group") == 0:
                 pass
             else:
                 name_not = 1
@@ -396,48 +361,46 @@ def add_group(h):
     if lb.check_license_for_usergroup() == True:
         if name_not == 1:
             result_json['success'] = 1
-            result_json[
-                'result'] = " Name Not valid, Choose Unique Name, No space"
+            result_json['result'] = " Name Not valid, Choose Unique Name, No space"       
         else:
-            result = usr_mgt_bll.add_group(
-                var_dict)  # modify it it take only one arg
+            result = usr_mgt_bll.add_group(var_dict) # modify it it take only one arg
 
             if result == 0:
                 result_json['success'] = 0
             else:
                 result_json['success'] = 1
                 result_json['result'] = " UNMP server has encounterd an error. \
-                Please REFRESH your page. still having problem contact support team. code   " + str(result)
-
+                Please REFRESH your page. still having problem contact support team. code   "+str(result)
+                
     else:
         result_json['success'] = 1
         result_json['result'] = "Maximum number of allowed usergroup have reached. \
         To Complete this action you need to upgrade your license please contact sales team."
-
-    html.write(str(result_json))
+        
+    html.write(str(result_json))    
 
 
 def edit_user_view(h):
     global html
     html = h
-    username = html.req.session['username']
+    username =  html.req.session['username']
     user_name = html.var('user_name')
     grp_flag = 0
     if username != user_name:
-        sess_grp_name = html.req.session['group']
+        sess_grp_name = html.req.session['group']                  
         user_id = html.var('user_id')
         if sess_grp_name.lower() != "superadmin":
             grp_name = usr_mgt_bll.get_group_name(user_id)
             if grp_name == "SuperAdmin":
                 grp_flag = 1
 
-        if grp_flag == 0:
-
+        if grp_flag == 0:                
+            o_dict = {}
+            _dict = type(o_dict)  
             user_detail_dict = usr_mgt_bll.edit_user_view(user_id)
 
-            if type(user_detail_dict) is dict:
-                user_detail_dict.update({'group_list': groups_select_list(
-                    user_detail_dict['group_name'], "", "Default")})
+            if type(user_detail_dict) == _dict :
+                user_detail_dict.update({'group_list':groups_select_list(user_detail_dict['group_name'],"","Default")})
                 form_str = "<form action=\"edit_user.py\" method=\"get\" id=\"edit_user_form\" name=\"edit_user_form\">\
                                     <div class=\"form-div\">\
         				<table class=\"tt-table\" cellspacing=\"0\" cellpadding=\"0\" width=\"100%%\">\
@@ -494,7 +457,7 @@ def edit_user_view(h):
         		                            <label class=\"lbl lbl-big\" for=\"new_password\">New Password</label>\
         		                            <input type=\"password\" id=\"new_password\" name=\"new_password\" \
                                                 title=\"Assign New Password to User OR <br/> leave blank if doesn't want to change it \
-                                                <br/> Password must be at least 8 characters. <br/>consist of 2 alpha, 2 numeric, 2 special\"/>\
+                                                <br/> Must be at least 6 characters. <br/>Must be alphabet + numeric\"/>\
                                             </div>\
                                             <div class=\"row-elem\">\
                 	                            <label class=\"lbl lbl-big\" for=\"cpassword\">Confirm Password</label>\
@@ -508,16 +471,16 @@ def edit_user_view(h):
                                                 <span class=\"cancel\">Cancel</span>\
                                             </button>\
                                     </div>\
-                                </form>" % user_detail_dict
+                                </form>"%user_detail_dict
                 html.write(form_str)
             elif user_detail_dict == 11:
                 html.write("NOUSERAVAILABLEWITHTHISID")
             else:
                 html.write("SOMEERROROCCURMAYBEDBERROR")
         elif grp_flag == 1:
-            html.write("SUPERADMINCANNOTEDIT")
+            html.write("SUPERADMINCANNOTEDIT")          
         else:
-            html.write("SOMEERROROCCURMAYBEDBERROR")
+            html.write("SOMEERROROCCURMAYBEDBERROR")                           
     else:
         html.write("CANNOTEDITYOURSELF")
 #    html.write(str(user_detail_dict))
@@ -526,10 +489,11 @@ def edit_user_view(h):
 def edit_group_view(h):
     global html
     html = h
-
+    o_dict = {}
+    _dict = type(o_dict)  
     group_id = html.var('group_id')
     grp_flag = 0
-    grp_name = usr_mgt_bll.get_group_name(group_id, 1)
+    grp_name = usr_mgt_bll.get_group_name(group_id,1)
     if grp_name == "SuperAdmin":
         grp_flag = 1
 
@@ -538,9 +502,8 @@ def edit_group_view(h):
     if grp_flag == 0:
         group_detail_dict = usr_mgt_bll.edit_group_view(group_id)
 
-        if type(group_detail_dict) is dict:
-            group_detail_dict.update({'role_list': roles_select_list(
-                group_detail_dict['role_id'])})
+        if type(group_detail_dict) == _dict:
+            group_detail_dict.update({'role_list':roles_select_list(group_detail_dict['role_id'])})
             form_str = "<form action=\"edit_group.py\" method=\"get\" id=\"edit_group_form\" name=\"edit_user_form\">\
                                 <div class=\"form-div\">\
 				        <table cellspacing=\"0\" cellpadding=\"0\" width=\"100%%\" class=\"tt-table\">\
@@ -573,7 +536,7 @@ def edit_group_view(h):
                                             <span class=\"cancel\">Cancel</span>\
                                         </button>\
                                  </div>\
-                            </form>" % group_detail_dict
+                            </form>"%group_detail_dict
             html.write(form_str)
         elif group_detail_dict == 11:
             html.write("NOUSERAVAILABLEWITHTHISID")
@@ -582,17 +545,17 @@ def edit_group_view(h):
     elif grp_flag == 1:
         html.write("CANNOTEDITSUPERADMIN")
     else:
-        html.write("SOMEERROROCCURMAYBEDBERROR")
+        html.write("SOMEERROROCCURMAYBEDBERROR")                    
 
 
 def edit_group(h):
     global html
     html = h
-    # var_list = ['group_id','description','role']
-    var_list = ['group_id', 'description']
-    # var_dict_ul = {}
+    #var_list = ['group_id','description','role']
+    var_list = ['group_id','description']
+    #var_dict_ul = {}
     var_dict = {}
-    # var_dict_ug = {}
+    #var_dict_ug = {}
     flag = 1
     for i in var_list:
         if special_check(html.var(i)) == 0:
@@ -602,34 +565,34 @@ def edit_group(h):
             flag = 1
             break
 
-    result = 1
+    result = 1    
     result_json = {}
     session_user = html.req.session['username']
     if session_user:
         pass
     else:
         session_user = "NotAvailable"
-    var_dict['session_user'] = session_user
-    if flag == 0:
+    var_dict['session_user'] = session_user    
+    if flag == 0:    
         result = usr_mgt_bll.edit_group(var_dict)
     else:
         result_json['success'] = 1
         result_json['result'] = " Some field contains special characters "
 
+
     if result == 0:
         result_json['success'] = 0
-        info_str = " Group %s has been Updated \n New Details " % html.var(
-            'group_name')
-        info_str += " role : " + html.var('role_name')
+        info_str = " Group %s has been Updated \n New Details "%html.var('group_name')
+        info_str += " role : "+html.var('role_name')
         if html.var('description').strip() != '':
-            info_str += ", description : " + html.var('description')
+            info_str += ", description : "+html.var('description')
         el = EventLog()
-        el.log_event(info_str, session_user)
+        el.log_event(info_str,session_user)
 
     elif flag == 0:
         result_json['success'] = 1
         result_json['result'] = " UNMP server has encounterd an error. \
-        Please REFRESH your page. still having problem contact support team. code   " + str(result)
+        Please REFRESH your page. still having problem contact support team. code   "+str(result)
 
     html.write(str(result_json))
 
@@ -644,34 +607,32 @@ def check_name(h):
     if space_check(name) == 0:
         __space = 0
     if __space == 0:
-        if type == "user":  # user
-            result = usr_mgt_bll.check_name(name, "user")
-        elif type == "group":  # group
-            result = usr_mgt_bll.check_name(name, "group")
+        if type == "user": # user
+            result = usr_mgt_bll.check_name(name,"user")
+        elif type == "group": # group
+            result = usr_mgt_bll.check_name(name,"group")
         else:
             result = 1
     else:
         result = 1
 
     if result == 0:
-        result = {'success': 0}
+        result = {'success':0}
     else:
-        result = {'success': 1}
+        result = {'success':1}  
 
-    html.write(str(result))
-
+    html.write(str(result))  
 
 def show_user_profile(h):
-    # same as edit_ser_view but all fields are disabled now
+    #same as edit_ser_view but all fields are disabled now 
     pass
-
 
 def add_useringp_view(h):
     global html
-    html = h
-    gp_id = html.var("gp_id")
+    html = h 
+    gp_id = html.var("gp_id")  
     html_str = "<div><div class=\"user-group-th\" id=\"selectGroupDiv\">\
-                            Select Group" + groups_select_list("Default", gp_id) + "\
+                            Select Group" + groups_select_list("Default",gp_id) + "\
                         </div>\
                         <div id=\"user_ingp_head\" class=\"user-group-th\" >\
                             <Strong>Users In Group</Strong><span id=\"search_user_gp\"> Search: <input type=\"text\" id=\"search_user_gp\" ></span> \
@@ -690,12 +651,13 @@ def add_useringp_view(h):
     html.write(html_str)
 
 
+
 def move_usertogp_view(h):
     global html
-    html = h
+    html = h   
     gp_id = html.var("gp_id")
     html_str = "<div><div class=\"user-group-th\" id=\"selectGroupDiv\">\
-                            Select Group " + groups_select_list("", gp_id, "Default") + "\
+                            Select Group " + groups_select_list("",gp_id,"Default") + "\
                         </div>\
                         <div>\
                             <button type=\"submit\" class=\"yo-small yo-button\" onclick=\"boxMoveUsers();\">\
@@ -705,7 +667,6 @@ def move_usertogp_view(h):
                 </div>"
     html.write(html_str)
 
-
 def edit_user(h):
     global html
     html = h
@@ -713,12 +674,11 @@ def edit_user(h):
     ugroup = html.var('grp_name')
     user_id = html.var('user_id')
     result_json = {}
-    lb_result = lb.check_license_for_group(ugroup, user_id)
-    # html.write(str(lb_result)+str(ugroup))
-    if lb_result == True:
-        var_list = ['user_id', 'first_name', 'last_name', 'groups',
-                    'company', 'designation', 'address', 'mobile', 'email_id']
-        # var_dict_ul = {}
+    lb_result = lb.check_license_for_group(ugroup,user_id)
+    #html.write(str(lb_result)+str(ugroup))
+    if lb_result == True:    
+        var_list = ['user_id','first_name','last_name','groups','company','designation','address','mobile','email_id']
+        #var_dict_ul = {}
         var_dict = {}
         var_dict_ug = {}
         for i in var_list:
@@ -730,14 +690,14 @@ def edit_user(h):
             else:
                 var_dict[i] = html.var(i)
 
-        # html.write(str(var_dict)+str(var_dict_rg))
+        #html.write(str(var_dict)+str(var_dict_rg))
         if html.var('new_password'):
             passwd_dict = {}
-            passwd_dict['passwd'] = html.var('new_password')
-            passwd_dict['user_id'] = html.var('user_id')
-            result = usr_mgt_bll.edit_user(var_dict, var_dict_ug, passwd_dict)
+            passwd_dict['passwd'] = html.var('new_password') 
+            passwd_dict['user_id'] = html.var('user_id') 
+            result = usr_mgt_bll.edit_user(var_dict,var_dict_ug,passwd_dict)
         else:
-            result = usr_mgt_bll.edit_user(var_dict, var_dict_ug)
+            result = usr_mgt_bll.edit_user(var_dict,var_dict_ug)
 
         session_user = html.req.session['username']
         if session_user:
@@ -746,30 +706,29 @@ def edit_user(h):
             session_user = "NotAvailable"
         if result == 0:
             result_json['success'] = 0
-            # f = open("/home/nms/Desktop/event.rg","a")
-            # f.write("\nEdit var_dict "+html.var('grp_name')+"\n")
-            # f.flush()
-            # f.close()
-            info_str = " User %s has been Updated \n New Details " % html.var(
-                'user_name')
+            #f = open("/home/nms/Desktop/event.rg","a")
+            #f.write("\nEdit var_dict "+html.var('grp_name')+"\n")
+            #f.flush()
+            #f.close()
+            info_str = " User %s has been Updated \n New Details "%html.var('user_name')
             var_dict.pop('user_id')
-            info_str += " group : " + html.var('grp_name')
+            info_str += " group : "+html.var('grp_name')
             for i in var_dict:
                 if var_dict[i].strip() != '':
-                    info_str += ", " + i
-                    info_str += ": " + var_dict[i]
+                    info_str += ", "+i
+                    info_str += ": "+var_dict[i]
             el = EventLog()
-            el.log_event(info_str, session_user)
+            el.log_event(info_str,session_user)
+
 
         else:
             result_json['success'] = 1
             result_json['result'] = " UNMP server has encounterd an error. \
-            Please REFRESH your page. still having problem contact support team. code   " + str(result)
+            Please REFRESH your page. still having problem contact support team. code   "+str(result)
 
     else:
         result_json['success'] = 1
-        result_json[
-            'result'] = "Maximum number of allowed users of a type %s have reached" % (ugroup)
+        result_json['result'] = "Maximum number of allowed users of a type %s have reached"%(ugroup)
 
     html.write(str(result_json))
 
@@ -777,7 +736,7 @@ def edit_user(h):
 def change_password(h):
     global html
     html = h
-    var_tuple = ('user_id', 'user_name', 'old_password', 'password')
+    var_tuple = ('user_id','user_name','old_password','password')
     var_dict = []
     for i in var_tuple:
         var_dict[i] = html.var(i)
@@ -794,32 +753,30 @@ def change_password(h):
     else:
         result_json['success'] = 1
         result_json['result'] = " UNMP server has encounterd an error. \
-        Please REFRESH your page. still having problem contact support team. code   " + str(result)
+        Please REFRESH your page. still having problem contact support team. code   "+str(result)
 
     html.write(str(result_json))
 
-    pass
-
+    pass              
 
 def del_user(h):
     global html
     html = h
     user_names = html.var("user_names")
-    session_user = html.req.session['username']
+    session_user =  html.req.session['username']  
     result_json = {}
     user_names_list = user_names.split(",")
     grp_flag = 0
     if user_names_list.count(session_user) == 0:
         session_users_list = usr_mgt_bll.is_loggedin_users(user_names_list)
-        if isinstance(session_users_list, list):
+        if isinstance(session_users_list,list):
             result_json['success'] = 1
-            result_json['result'] = " User(s) %s logged in. <BR>Deleting of logged in user is restricted" % (
-                ''.join(session_users_list))
-            html.write(str(result_json))
-        else:
+            result_json['result'] = " User(s) %s logged in. <BR>Deleting of logged in user is restricted"%(''.join(session_users_list))                        
+            html.write(str(result_json))            
+        else:        
             user_ids = html.var("user_ids")
             user_ids_list = user_ids.split(",")
-            sess_grp_name = html.req.session['group']
+            sess_grp_name = html.req.session['group']                  
             if sess_grp_name.lower() != "superadmin":
                 for user_id in user_ids_list:
                     grp_name = usr_mgt_bll.get_group_name(user_id)
@@ -827,44 +784,43 @@ def del_user(h):
                         grp_flag = 1
                         break
 
-            if grp_flag == 0:
-                result = usr_mgt_bll.del_user(user_ids_list)
+            if grp_flag == 0:                
+                result = usr_mgt_bll.del_user(user_ids_list)                   
                 if result == 0:
                     result_json['success'] = 0
-                    result_json['result'] = str(user_names) + str(session_user)
-                    info_str = " User(s) %s has been Deleted" % user_names
+                    result_json['result'] = str(user_names)+str(session_user)
+                    info_str = " User(s) %s has been Deleted"%user_names
                     el = EventLog()
-                    el.log_event(info_str, session_user)
+                    el.log_event(info_str,session_user)
                 else:
                     result_json['success'] = 1
                     result_json['result'] = " UNMP server has encounterd an error. \
-                    Please REFRESH your page. still having problem contact support team. code   " + str(result)
+                    Please REFRESH your page. still having problem contact support team. code   "+str(result)
 
                 html.write(str(result_json))
             elif grp_flag == 1:
                 result_json['success'] = 1
-                result_json[
-                    'result'] = " Deleting SuperAdmin type user is not allowed."
+                result_json['result'] = " Deleting SuperAdmin type user is not allowed."                        
                 html.write(str(result_json))
             else:
                 result_json['success'] = 1
-                result_json[
-                    'result'] = " Remain unchanged error code : '%s' " % str(grp_flag)
-                html.write(str(result_json))
+                result_json['result'] = " Remain unchanged error code : '%s' "%str(grp_flag)                        
+                html.write(str(result_json))                   
     else:
         result_json['success'] = 1
         result_json['result'] = " Self deletion is restricted"
         html.write(str(result_json))
 
 
+
 def del_group(h):
     global html
     html = h
     group_id = html.var("group_id")
-    # group_ids_list = group_ids.split(",")
+    #group_ids_list = group_ids.split(",")
     grp_flag = 0
     selfgrp_name = html.req.session["group"]
-    grp_name = usr_mgt_bll.get_group_name(group_id, 1)
+    grp_name = usr_mgt_bll.get_group_name(group_id,1)
 
     if grp_name == selfgrp_name:
         grp_flag = 2
@@ -875,7 +831,7 @@ def del_group(h):
     result_json = {}
 
     if grp_flag == 0:
-        result = usr_mgt_bll.del_group(group_id, 0)
+        result = usr_mgt_bll.del_group(group_id,0) 
 
         if result == 0:
             result_json['success'] = 0
@@ -883,17 +839,16 @@ def del_group(h):
         else:
             result_json['success'] = 1
             result_json['result'] = " UNMP server has encounterd an error. \
-            Please REFRESH your page. still having problem contact support team. code   " + str(result)
+            Please REFRESH your page. still having problem contact support team. code   "+str(result)
     elif grp_flag == 1:
         result_json['success'] = 1
-        result_json['result'] = " Can not delete SuperAdmin group "
+        result_json['result'] = " Can not delete SuperAdmin group "                        
     elif grp_flag == 2:
         result_json['success'] = 1
-        result_json['result'] = " Can not delete your assigned group "
+        result_json['result'] = " Can not delete your assigned group "                                
     else:
         result_json['success'] = 1
-        result_json[
-            'result'] = " Remain unchanged error code : '%s' " % str(grp_flag)
+        result_json['result'] = " Remain unchanged error code : '%s' "%str(grp_flag)              
 
     html.write(str(result_json))
 
@@ -906,29 +861,26 @@ def user_detail_table(h):
         table = []
     html.write(str(table))
 
-
 def group_user_view(h):
     global html
     html = h
-    css_list = ["css/demo_page.css", "css/demo_table_jui.css",
-                "css/jquery-ui-1.8.4.custom.css"]
+    css_list = ["css/demo_page.css","css/demo_table_jui.css","css/jquery-ui-1.8.4.custom.css"]
     javascript_list = ["js/pages/group_mgt.js"]
     add_btn = "<div class=\"header-icon\"><img onclick=\"addGroup();\" class=\"n-tip-image\" \
     src=\"images/%s/round_plus.png\" id=\"add_group\" name=\"add_group\" \
     style=\"width: 16px; height: 16px; margin: 6px 20px 6px 10px;\" original-title=\"Add Group\"></div>" % theme
-
+    
     edit_btn = "<div class=\"header-icon\"><img onclick=\"editGroup();\" class=\"n-tip-image\" \
     src=\"images/%s/doc_edit.png\" id=\"edit_group\" name=\"edit_group\" \
     style=\"width: 16px; height: 16px; margin: 6px 20px 6px 10px;\" original-title=\"Edit Group\"></div>" % theme
-
+    
     del_btn = "<div class=\"header-icon\"><img onclick=\"delGroup();\" class=\"n-tip-image\" \
     src=\"images/%s/round_minus.png\" id=\"del_group\" name=\"del_group\" \
     style=\"width: 16px; height: 16px; margin: 6px 20px 6px 10px;\" original-title=\"Delete Group\"></div>" % theme
-
-    # all_btn = del_btn + edit_btn + add_btn
+    
+    #all_btn = del_btn + edit_btn + add_btn
     all_btn = edit_btn
-    html.new_header("User Group Management", "manage_group.py",
-                    all_btn, css_list, javascript_list)
+    html.new_header("User Group Management","manage_group.py",all_btn,css_list,javascript_list)
     html.write("\
 	<table id=\"group_datatable\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\">\
 		<colgroup>\
@@ -1024,26 +976,26 @@ def group_table(h):
     global html
     html = h
     group_str = ""
-    sess_gp_name = html.req.session['group']
+    sess_gp_name = html.req.session['group']   
     if sess_gp_name.lower() != 'superadmin':
         table = usr_mgt_bll.get_group_details()
     else:
-        table = usr_mgt_bll.get_group_details(0)  # is superadmin
+        table = usr_mgt_bll.get_group_details(0) # is superadmin
     if table == 1:
-        group_str += "<p style=\"border-bottom:1px solid #DDD;padding:5px 10px;height:18px;> \
+        group_str +="<p style=\"border-bottom:1px solid #DDD;padding:5px 10px;height:18px;> \
         Well, its really embarasing But its seems there is No data availabe. Sorry</p>"
     else:
         for tup in table:
-            group_str += "<p class=\"gp-name\" style=\"border-bottom:1px solid #DDD;padding:5px 10px;height:18px;\" id=\"%s\" >%s</p>" % tup
+            group_str += "<p class=\"gp-name\" style=\"border-bottom:1px solid #DDD;padding:5px 10px;height:18px;\" id=\"%s\" >%s</p>"%tup
     html.write(group_str)
 
 
-def groups_select_list(selectedGroup, gp_id="", gp_name=""):
+def groups_select_list(selectedGroup,gp_id = "",gp_name = ""):
     global html
-    sess_gp_name = html.req.session['group']
+    sess_gp_name = html.req.session['group']   
     selectString = "<select id=\"groups\" name=\"groups\" title=\"Select Group\">\
     <option value=\"\" class='required' >-- Select Group --</option>"
-
+    
     groups_list = usr_mgt_bll.get_group_list()
 
     if sess_gp_name.lower() != 'superadmin':
@@ -1056,67 +1008,59 @@ def groups_select_list(selectedGroup, gp_id="", gp_name=""):
             if gp_id == str(groupName[1]):
                 pass
             elif gp_name_list.count(str(groupName[0])) > 0:
-                pass
+                pass  
             elif selectedGroup == str(groupName[0]):
 
-                selectString += "<option value=\"" + str(
-                    groupName[1]) + "\" selected=\"selected\">" + str(groupName[0]) + "</option>"
+                selectString += "<option value=\"" + str(groupName[1]) + "\" selected=\"selected\">" + str(groupName[0]) + "</option>"
             else:
 
-                selectString += "<option value=\"" + str(
-                    groupName[1]) + "\">" + str(groupName[0]) + "</option>"
+                selectString += "<option value=\"" + str(groupName[1]) + "\">" + str(groupName[0]) + "</option>"
     selectString += "</select>"
     return selectString
 
-
-def hostgroups_select_list(selectedGroup, gp_id=""):
+def hostgroups_select_list(selectedGroup,gp_id=""):
     global html
-    sess_grp_name = html.req.session['group']
+    sess_grp_name = html.req.session['group']                  
     hg_ids_list = []
     flag = 0
     if sess_grp_name.lower() != "superadmin":
         flag = 1
-        user_id = html.req.session['user_id']
+        user_id = html.req.session['user_id']                      
         es = Essential()
-        hg_ids_list = es.get_hostgroup_ids(user_id)
+        hg_ids_list = es.get_hostgroup_ids(user_id)    
         if hg_ids_list.count(gp_id) > 0:
             hg_ids_list.remove(gp_id)
     selectString = "<select id=\"groups\" name=\"groups\" title=\"Select Hostgroup\">\
     <option value=\"\" class='required' >-- Select Hostgroup --</option>"
-
+    
     groups_list = usr_mgt_bll.get_hostgroup_list()
     if groups_list == 1:
         pass
     else:
         for groupName in groups_list:
             if gp_id == str(groupName[1]):
-                pass
+                pass              
             elif hg_ids_list.count(str(groupName[1])) == 0 and flag == 1:
                 pass
             elif selectedGroup == str(groupName[0]):
-                selectString += "<option value=\"" + str(
-                    groupName[1]) + "\" selected=\"selected\">" + str(groupName[0]) + "</option>"
+                selectString += "<option value=\"" + str(groupName[1]) + "\" selected=\"selected\">" + str(groupName[0]) + "</option>"
             else:
-                selectString += "<option value=\"" + str(
-                    groupName[1]) + "\">" + str(groupName[0]) + "</option>"
+                selectString += "<option value=\"" + str(groupName[1]) + "\">" + str(groupName[0]) + "</option>"
     selectString += "</select>"
     return selectString
-
 
 def roles_select_list(selectedRole):
     selectString = "<select id=\"role\" name=\"role\"  disabled=\"disabled\" onchange=\"this.selectedIndex = 1;\" title=\"Select Role\"><option value=\"\" class='required' >-- Select Role --</option>"
     role_list = usr_mgt_bll.get_role_list()
-    # role_list = ['Admin','Operator','Guest']
+    #role_list = ['Admin','Operator','Guest']
     if role_list == 1:
         pass
     else:
         for roleName in role_list:
             if selectedRole == str(roleName[1]):
-                selectString += "<option value=\"" + str(
-                    roleName[1]) + "\" selected=\"selected\">" + str(roleName[0]) + "</option>"
+                selectString += "<option value=\"" + str(roleName[1]) + "\" selected=\"selected\">" + str(roleName[0]) + "</option>"
             else:
-                selectString += "<option value=\"" + str(
-                    roleName[1]) + "\">" + str(roleName[0]) + "</option>"
+                selectString += "<option value=\"" + str(roleName[1]) + "\">" + str(roleName[0]) + "</option>"
     selectString += "</select>"
     return selectString
 
@@ -1124,24 +1068,22 @@ def roles_select_list(selectedRole):
 def group_to_hg_view(h):
     global html
     html = h
-    css_list = ["css/demo_page.css", "css/demo_table_jui.css",
-                "css/jquery-ui-1.8.4.custom.css"]
+    css_list = ["css/demo_page.css","css/demo_table_jui.css","css/jquery-ui-1.8.4.custom.css"]
     javascript_list = ["js/pages/group_mgt.js"]
     add_btn = "<div class=\"header-icon\"><img onclick=\"addGroup();\" class=\"n-tip-image\" \
     src=\"images/%s/round_plus.png\" id=\"add_group\" name=\"add_group\" \
     style=\"width: 16px; height: 16px; margin: 6px 20px 6px 10px;\" original-title=\"Add Group\"></div>" % theme
-
+    
     edit_btn = "<div class=\"header-icon\"><img onclick=\"editGroup();\" class=\"n-tip-image\" \
     src=\"images/%s/doc_edit.png\" id=\"edit_group\" name=\"edit_group\" \
     style=\"width: 16px; height: 16px; margin: 6px 20px 6px 10px;\" original-title=\"Edit Group\"></div>" % theme
-
+    
     del_btn = "<div class=\"header-icon\"><img onclick=\"delGroup();\" \
     class=\"n-tip-image\" src=\"images/%s/round_minus.png\" id=\"del_group\" name=\"del_group\" \
     style=\"width: 16px; height: 16px; margin: 6px 20px 6px 10px;\" original-title=\"Delete Group\"></div>" % theme
-    # all_btn = del_btn + edit_btn + add_btn
+    #all_btn = del_btn + edit_btn + add_btn
     all_btn = edit_btn
-    html.new_header("Group to HostGroup Management", "manage_group.py",
-                    all_btn, css_list, javascript_list)
+    html.new_header("Group to HostGroup Management","manage_group.py",all_btn,css_list,javascript_list)
     html.write("<table id=\"group_datatable\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\">\
 		<colgroup>\
 			<col width=\"150px\" style=\"width:150px;\"/>\
@@ -1241,37 +1183,36 @@ def group_hostgroups1(h):
     group_id = html.var("group_id")
     all = html.var("all")
     table = usr_mgt_bll.show_hostgroups(group_id)
-    if table == 1:
+    if table == 1 :
         html.write("[]")
     else:
-        make_list = lambda x: [
-            " - " if i == None or i == '' else str(i) for i in x]
+        make_list = lambda x: [" - " if i == None or i == '' else str(i) for i in x]
         gpHG_list = []
         for gpHG in table:
             gpHG_list.append(make_list(gpHG))
 
         html.write(str(gpHG_list))
 
-
 def show_hostgroups(h):
     global html
     html = h
+    tup__ = ()
+    tup__ = type(tup__)
     light_box = html.var("light_box")
     group_id = html.var("group_id")
     all = html.var("all")
-    if all == "0":
-        table = usr_mgt_bll.show_hostgroups(group_id, 0)
-        # html.write(str(table))
+    if all == "0": 
+        table = usr_mgt_bll.show_hostgroups(group_id,0)
+        #html.write(str(table))
     else:
         table = usr_mgt_bll.show_hostgroups(group_id)
-        # html.write(str(table))
+        #html.write(str(table))
 
-    if type(table) is tuple:
+    if type(table) == tup__:
         if len(table) < 1:
             gpHG_list = []
         else:
-            make_list = lambda x: [
-                " - " if i == None or i == '' else str(i) for i in x]
+            make_list = lambda x: [" - " if i == None or i == '' else str(i) for i in x]
             gpHG_list = []
             for gpHG in table:
                 gpHG_list.append(make_list(gpHG))
@@ -1285,9 +1226,9 @@ def add_hgingp_view(h):
         generate view for light box
     """
     global html
-    # Select Group" + groups_select_list("") + "<input type=\"button\" value=\"Show All Hostgroup\" onclick=\"show_all_hg();\" />\
+    #Select Group" + groups_select_list("") + "<input type=\"button\" value=\"Show All Hostgroup\" onclick=\"show_all_hg();\" />\
     #<div class=\"user-group-th\" id=\"selectGroupDiv\" ><input type=\"button\" value=\"Show All Hostgroup\" onclick=\"show_all_hg();\" /> </div>
-    html = h
+    html = h   
     html_str = "<div>\
                         <div id=\"hg_ingrp_head\" class=\"user-group-th\" >\
                         <Strong>Hostgroups Assign to Group</Strong>\
@@ -1313,10 +1254,10 @@ def add_hostgroup_togroup(h):
     hg_ids = html.var("hg_ids")
     newGroupID = html.var("group_id")
 
-    result, flag = 1, 1
+    result,flag = 1,1
     if hg_ids != '':
         hg_ids_list = hg_ids.split(",")
-        result = usr_mgt_bll.add_hg_togroup(hg_ids_list, newGroupID)
+        result = usr_mgt_bll.add_hg_togroup(hg_ids_list,newGroupID)
     else:
         else_str = "Remain Unchanged No Hostgroup Selected"
         flag = 0
@@ -1327,25 +1268,22 @@ def add_hostgroup_togroup(h):
         pass
     else:
         session_user = "NotAvailable"
-    if flag == 0:
+    if flag == 0:         
         result_json['success'] = 0
         result_json['result'] = else_str
     elif result == 0:
         result_json['success'] = 0
         hg_names = html.var('hg_names')
         grp_name = html.var('grp_name')
-        info_str = " Hostgroups: %s have been assigned to Group: %s" % (
-            hg_names, grp_name)
+        info_str = " Hostgroups: %s have been assigned to Group: %s"%(hg_names,grp_name)
         el = EventLog()
-        el.log_event(info_str, session_user)
+        el.log_event(info_str,session_user)
     elif flag == 1 and result == 1:
         result_json['success'] = 1
-        result_json[
-            'result'] = " Some field contains special characters (like \" \, etc.) "
+        result_json['result'] = " Some field contains special characters (like \" \, etc.) "
     else:
         result_json['success'] = 1
-        result_json[
-            'result'] = " UNMP server has encounterd an error. Please REFRESH your page. still having problem contact support team. code   "
+        result_json['result'] = " UNMP server has encounterd an error. Please REFRESH your page. still having problem contact support team. code   "  
 
     html.write(str(result_json))
 
@@ -1356,10 +1294,10 @@ def add_group_tohostgroup(h):
     gp_ids = html.var("gp_ids")
     newHgroupID = html.var("hostgroup_id")
 
-    result, flag = 1, 1
+    result,flag = 1,1
     if gp_ids != '':
         gp_ids_list = gp_ids.split(",")
-        result = usr_mgt_bll.add_gp_tohostgroup(gp_ids_list, newHgroupID)
+        result = usr_mgt_bll.add_gp_tohostgroup(gp_ids_list,newHgroupID)
     else:
         else_str = "Remain Unchanged No Hostgroup Selected"
         flag = 0
@@ -1370,28 +1308,26 @@ def add_group_tohostgroup(h):
         pass
     else:
         session_user = "NotAvailable"
-    if flag == 0:
+    if flag == 0:         
         result_json['success'] = 0
         result_json['result'] = else_str
     elif result == 0:
         result_json['success'] = 0
         hg_name = html.var('hg_name')
         grp_names = html.var('grp_names')
-        info_str = " Groups: %s have been assigned to Hostroup: %s" % (
-            grp_names, hg_name)
+        info_str = " Groups: %s have been assigned to Hostroup: %s"%(grp_names,hg_name)
         el = EventLog()
-        el.log_event(info_str, session_user)
+        el.log_event(info_str,session_user)
     elif flag == 1 and result == 1:
         result_json['success'] = 1
-        result_json[
-            'result'] = " Some field contains special characters (like \" \, etc.) "
+        result_json['result'] = " Some field contains special characters (like \" \, etc.) "
     else:
         result_json['success'] = 1
         result_json['result'] = " UNMP server has encounterd an error. \
-        Please REFRESH your page. still having problem contact support team. code   " + result
+        Please REFRESH your page. still having problem contact support team. code   " +result 
+        
 
     html.write(str(result_json))
-
 
 def move_group_tohostgroup(h):
     global html
@@ -1402,19 +1338,18 @@ def move_group_tohostgroup(h):
     grp_flag = 0
     if session_group.lower() != "SuperAdmin".lower():
         for grp_id in gp_ids_list:
-            grp_name = usr_mgt_bll.get_group_name(grp_id, 1)
+            grp_name = usr_mgt_bll.get_group_name(grp_id,1)
             if grp_name == "SuperAdmin":
                 grp_flag = 1
-                break
+                break   
     result_json = {}
     if grp_flag == 0:
         newHgroupID = html.var("hostgroup_id")
-        oldHgroupID = html.var("old_hostgroup_id")
-        result, flag = 1, 1
+        oldHgroupID = html.var("old_hostgroup_id") 
+        result,flag = 1,1
         if gp_ids != '':
             gp_ids_list = gp_ids.split(",")
-            result = usr_mgt_bll.move_group_tohg(
-                gp_ids_list, newHgroupID, oldHgroupID)
+            result = usr_mgt_bll.move_group_tohg(gp_ids_list,newHgroupID,oldHgroupID)
         else:
             else_str = "Remain Unchanged No Hostgroup Selected"
             flag = 0
@@ -1425,7 +1360,7 @@ def move_group_tohostgroup(h):
             pass
         else:
             session_user = "NotAvailable"
-        if flag == 0:
+        if flag == 0:         
             result_json['success'] = 0
             result_json['result'] = else_str
         elif result == 0:
@@ -1433,24 +1368,21 @@ def move_group_tohostgroup(h):
             hg_name = html.var('hg_name')
             grp_names = html.var('grp_names')
             sel_hg = html.var('sel_hg')
-            info_str = " Groups: %s have been re-assigned from Hostgroup: %s to Hostgroup: %s" % (
-                grp_names, sel_hg, hg_name)
+            info_str = " Groups: %s have been re-assigned from Hostgroup: %s to Hostgroup: %s"%(grp_names,sel_hg,hg_name)
             el = EventLog()
-            el.log_event(info_str, session_user)
+            el.log_event(info_str,session_user)
 
         elif flag == 1 and result == 1:
             result_json['success'] = 1
-            result_json[
-                'result'] = " Some field contains special characters (like \" \, etc.) "
+            result_json['result'] = " Some field contains special characters (like \" \, etc.) "
         else:
             result_json['success'] = 1
             result_json['result'] = " UNMP server has encounterd an error. \
-            Please REFRESH your page. still having problem contact support team. code  " + result
+            Please REFRESH your page. still having problem contact support team. code  "+result  
 
     else:
         result_json['success'] = 1
-        result_json[
-            'result'] = " Can not perform operation on SuperAdmin group "
+        result_json['result'] = " Can not perform operation on SuperAdmin group "            
     html.write(str(result_json))
 
 
@@ -1459,13 +1391,12 @@ def move_hostgroup_togroup(h):
     html = h
     hg_ids = html.var("hg_ids")
     newGroupID = html.var("group_id")
-    oldGroupID = html.var("old_group_id")
-    result, flag = 1, 1
+    oldGroupID = html.var("old_group_id") 
+    result,flag = 1,1
 
     if hg_ids != '':
         hg_ids_list = hg_ids.split(",")
-        result = usr_mgt_bll.move_hg_togroup(
-            hg_ids_list, newGroupID, oldGroupID)
+        result = usr_mgt_bll.move_hg_togroup(hg_ids_list,newGroupID,oldGroupID)
     else:
         else_str = "Remain Unchanged No Hostgroup Selected"
         flag = 0
@@ -1476,7 +1407,7 @@ def move_hostgroup_togroup(h):
         pass
     else:
         session_user = "NotAvailable"
-    if flag == 0:
+    if flag == 0:         
         result_json['success'] = 0
         result_json['result'] = else_str
     elif result == 0:
@@ -1484,28 +1415,26 @@ def move_hostgroup_togroup(h):
         hg_names = html.var('hg_names')
         grp_name = html.var('grp_name')
         sel_group = html.var('sel_group')
-        info_str = " Hostgroups: %s have been re-assigned from Group: %s to Group: %s" % (
-            hg_names, sel_group, grp_name)
+        info_str = " Hostgroups: %s have been re-assigned from Group: %s to Group: %s"%(hg_names,sel_group,grp_name)
         el = EventLog()
-        el.log_event(info_str, session_user)
+        el.log_event(info_str,session_user)
     elif flag == 1 and result == 1:
         result_json['success'] = 1
-        result_json[
-            'result'] = " Some field contains special characters (like \" \, etc.) "
+        result_json['result'] = " Some field contains special characters (like \" \, etc.) "
     else:
         result_json['success'] = 1
         result_json['result'] = " UNMP server has encounterd an error. \
-        Please REFRESH your page. still having problem contact support team. code   " + result
+        Please REFRESH your page. still having problem contact support team. code   " +result 
 
     html.write(str(result_json))
 
 
 def move_hgtogp_view(h):
     global html
-    html = h
+    html = h   
     gp_id = html.var("gp_id")
     html_str = "<div><div class=\"user-group-th\" id=\"selectGroupDiv\">\
-                            Select Group" + groups_select_list("", gp_id, "Default") + "\
+                            Select Group" + groups_select_list("",gp_id,"Default") + "\
                         </div>\
                         <div>\
                             <button type=\"submit\" class=\"yo-small yo-button\" onclick=\"boxMoveHg();\">\
@@ -1513,7 +1442,8 @@ def move_hgtogp_view(h):
                             </button>\
                         </div>\
                 </div>"
-    html.write(html_str)
+    html.write(html_str)   
+
 
 
 def del_hostgroup_fromgroup(h):
@@ -1523,7 +1453,7 @@ def del_hostgroup_fromgroup(h):
     hg_ids = html.var("hg_ids")
     groupID = html.var("group_id")
     hg_ids_list = hg_ids.split(",")
-    result = usr_mgt_bll.del_hg_fromgroup(hg_ids_list, groupID)
+    result = usr_mgt_bll.del_hg_fromgroup(hg_ids_list,groupID)
     session_user = html.req.session['username']
     if session_user:
         pass
@@ -1533,17 +1463,15 @@ def del_hostgroup_fromgroup(h):
         result_json['success'] = 0
         hg_names = html.var('hg_names')
         grp_name = html.var('grp_name')
-        info_str = " Hostgroups: %s have been removed from Group: %s" % (
-            hg_names, grp_name)
+        info_str = " Hostgroups: %s have been removed from Group: %s"%(hg_names,grp_name)
         el = EventLog()
-        el.log_event(info_str, session_user)
+        el.log_event(info_str,session_user)        
     else:
         result_json['success'] = 1
         result_json['result'] = " UNMP server has encounterd an error. \
-        Please REFRESH your page. still having problem contact support team. code   " + str(result)
+        Please REFRESH your page. still having problem contact support team. code   "+str(result)
 
     html.write(str(result_json))
-
 
 def del_group_fromhostgroup(h):
     global html
@@ -1555,14 +1483,14 @@ def del_group_fromhostgroup(h):
     grp_flag = 0
     if session_group.lower() != "SuperAdmin".lower():
         for grp_id in gp_ids_list:
-            grp_name = usr_mgt_bll.get_group_name(grp_id, 1)
+            grp_name = usr_mgt_bll.get_group_name(grp_id,1)
             if grp_name == "SuperAdmin":
                 grp_flag = 1
-                break
+                break   
     result_json = {}
-    if grp_flag == 0:
+    if grp_flag == 0:    
         hgroupID = html.var("hostgroup_id")
-        result = usr_mgt_bll.del_gp_fromhostgroup(gp_ids_list, hgroupID)
+        result = usr_mgt_bll.del_gp_fromhostgroup(gp_ids_list,hgroupID)
         session_user = html.req.session['username']
         session_group = html.req.session['group']
         if session_user:
@@ -1573,45 +1501,40 @@ def del_group_fromhostgroup(h):
             result_json['success'] = 0
             hg_name = html.var('hg_name')
             grp_names = html.var('grp_names')
-            info_str = " Groups: %s have been removed from Hostgroup: %s" % (
-                grp_names, hg_name)
+            info_str = " Groups: %s have been removed from Hostgroup: %s"%(grp_names,hg_name)
             el = EventLog()
-            el.log_event(info_str, session_user)
+            el.log_event(info_str,session_user)        
         else:
             result_json['success'] = 1
             result_json['result'] = " UNMP server has encounterd an error. \
-            Please REFRESH your page. still having problem contact support team. code   " + str(result)
+            Please REFRESH your page. still having problem contact support team. code   "+str(result)
 
     else:
         result_json['success'] = 1
-        result_json[
-            'result'] = " Can not perform operation on SuperAdmin group "
+        result_json['result'] = " Can not perform operation on SuperAdmin group "    
     html.write(str(result_json))
 #=================================================================
-
 
 def hostgroup_group_view(h):
     global html
     html = h
-    css_list = ["css/demo_page.css", "css/demo_table_jui.css",
-                "css/jquery-ui-1.8.4.custom.css"]
+    css_list = ["css/demo_page.css","css/demo_table_jui.css","css/jquery-ui-1.8.4.custom.css"]
     javascript_list = ["js/pages/hostgroup_mgt.js"]
     add_btn = "<div class=\"header-icon\"><img onclick=\"addHostGroup();\" class=\"n-tip-image\" \
     src=\"images/%s/round_plus.png\" id=\"add_hostgroup\" name=\"add_hostgroup\" \
     style=\"width: 16px; height: 16px; margin: 6px 20px 6px 10px;\" original-title=\"Add HostGroup\"></div>" % theme
-
+    
     edit_btn = "<div class=\"header-icon\"><img onclick=\"editHostGroup();\" class=\"n-tip-image\" \
     src=\"images/%s/doc_edit.png\" id=\"edit_hostgroup\" name=\"edit_hostgroup\" \
     style=\"width: 16px; height: 16px; margin: 6px 20px 6px 10px;\" original-title=\"Edit HostGroup\"></div>" % theme
-
+    
     del_btn = "<div class=\"header-icon\"><img onclick=\"delHostGroup();\" \
     class=\"n-tip-image\" src=\"images/%s/round_minus.png\" id=\"del_hostgroup\" name=\"del_hostgroup\" \
     style=\"width: 16px; height: 16px; margin: 6px 20px 6px 10px;\" original-title=\"Delete HostGroup\"></div>" % theme
-
-    # all_btn = del_btn + edit_btn + add_btn
+    
+    #all_btn = del_btn + edit_btn + add_btn
     all_btn = ""
-    html.new_header("HostGroup to Group Management", "manage_group.py",
-                    all_btn, css_list, javascript_list)
+    html.new_header("HostGroup to Group Management","manage_group.py",all_btn,css_list,javascript_list)
     html.write("<table id=\"hostgroup_table\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\">\
 		<colgroup>\
 			<col width=\"150px\" style=\"width:150px;\"/>\
@@ -1679,14 +1602,13 @@ def hostgroup_table(h):
     hostgroup_str = ""
     table = usr_mgt_bll.get_hostgroup_details()
     if table == 1:
-        hostgroup_str += "<p style=\"border-bottom:1px solid #DDD;padding:5px 10px;height:18px;> \
+        hostgroup_str +="<p style=\"border-bottom:1px solid #DDD;padding:5px 10px;height:18px;> \
         Well, its really embarasing But its seems there is No data availabe. Sorry</p>"
-
+        
     else:
         for tup in table:
-            hostgroup_str += "<p class=\"hg-name\" style=\"border-bottom:1px solid #DDD;padding:5px 10px;height:18px;\" id=\"%s\" >%s</p>" % tup
+            hostgroup_str += "<p class=\"hg-name\" style=\"border-bottom:1px solid #DDD;padding:5px 10px;height:18px;\" id=\"%s\" >%s</p>"%tup
     html.write(hostgroup_str)
-
 
 def hostgroup_info(h):
     global html
@@ -1703,15 +1625,14 @@ def hostgroup_info(h):
                                      </tr>"
 
     if table == 1:
-        hostgroup_str += "<tr> Well, its really embarrasing But it seems there is No data availabe. Sorry </tr>"
+        hostgroup_str +="<tr> Well, its really embarrasing But it seems there is No data availabe. Sorry </tr>"
     else:
         hostgroup_str += "<tr>"
         for tup in table:
-            hostgroup_str += "<td class=\"cell-info1\">%s</td>" % tup
+            hostgroup_str += "<td class=\"cell-info1\">%s</td>"%tup
         hostgroup_str += "</tr>"
-    hostgroup_str += "</tbody></table> "
+    hostgroup_str +="</tbody></table> "
     html.write(hostgroup_str)
-
 
 def hostgroup_groups(h):
     global html
@@ -1723,40 +1644,39 @@ def hostgroup_groups(h):
     <tbody><tr> <th colspan=\"4\" class=\"user-group-th\"> \
                     Groups Assign to Hostgroup <span style=\"float:right;\"> Search: <input type=\"text\"></span>\
                 </th>  </tr>"
-
+    
     if table == 1:
-        hostgroup_str += "<tr><td colspan=\"4\"> No User In this Group, click on Add for add user </td><tr>"
+        hostgroup_str +="<tr><td colspan=\"4\"> No User In this Group, click on Add for add user </td><tr>"
 
     else:
-        mod = 3 - (len(table) % 3)
-        devide = (len(table) / 3) * 3
+        mod = 3-(len(table)%3) 
+        devide = (len(table)/3)*3
         i = 0
 
         if len(table) <= 3:
-            mod = 3 - len(table)
+            mod = 3-len(table)    
         else:
 
             hostgroup_str += "<tr>"
             for tup in table:
                 i += 1
-                hostgroup_str += "<td class=\"cell-info1\"><input type=\"checkbox\" name=\"group_check\" value=\"%s\"/> %s </td>" % tup
-                if i == devide:
+                hostgroup_str += "<td class=\"cell-info1\"><input type=\"checkbox\" name=\"group_check\" value=\"%s\"/> %s </td>"%tup
+                if i == devide :
                     hostgroup_str += "</tr>"
                     break
-                if i % 3 == 0:
-                    hostgroup_str += "</tr><tr>"
+                if i%3 == 0:
+                    hostgroup_str += "</tr><tr>"   
 
         if i < len(table):
             hostgroup_str += "<tr>"
-            for j in xrange(i, len(table)):
-                hostgroup_str += "<td class=\"cell-info1\"><input type=\"checkbox\" name=\"group_check\" value=\"%s\"/> %s </td>" % table[
-                    j]
+            for j in xrange(i,len(table)):
+                hostgroup_str += "<td class=\"cell-info1\"><input type=\"checkbox\" name=\"group_check\" value=\"%s\"/> %s </td>"%table[j]     
 
-            for i in xrange(0, mod):
+            for i in xrange(0,mod):
                 hostgroup_str += "<td class=\"cell-info1\"></td>"
             hostgroup_str += "</tr>"
 
-    hostgroup_str += "</tbody></table>"
+    hostgroup_str +="</tbody></table>"
     if light_box == None:
         hostgroup_str += "<div id=\"status-header\">\
                         <div class=\"user-header-icon\">\
@@ -1784,8 +1704,8 @@ def add_gpinhg_view(h):
         generate view for light box
     """
     global html
-    html = h
-    # Select Hostgroup" + hostgroups_select_list("") + "
+    html = h   
+    #Select Hostgroup" + hostgroups_select_list("") + "
     html_str = "<div><div id=\"grp_inhg_head\" class=\"user-group-th\" >\
                         <Strong>Assign Groups To Hostgroup</Strong>\
                         <span id=\"search_grp\" style=\"float:right;\"> Search: <input type=\"text\" id=\"search_grp\" >\
@@ -1804,31 +1724,30 @@ def add_gpinhg_view(h):
                 </div>"
     html.write(html_str)
 
-
 def show_groups(h):
     global html
     html = h
     grp_value = 0
     sess_grp_name = html.req.session['group']
     if sess_grp_name.lower() == 'superadmin':
-        grp_value = 1
-
+        grp_value = 1                      
+    tup__ = ()
+    tup__ = type(tup__)
     light_box = html.var("light_box")
     group_id = html.var("hostgroup_id")
     all_var = html.var("all")
-    if all_var == "0":
-        table = usr_mgt_bll.show_groups(group_id, 0, grp_value)
-        # html.write(str(table))
+    if all_var == "0": 
+        table = usr_mgt_bll.show_groups(group_id,0,grp_value)
+        #html.write(str(table))
     else:
-        table = usr_mgt_bll.show_groups(group_id, 1, grp_value)
-        # html.write(str(table))
+        table = usr_mgt_bll.show_groups(group_id,1,grp_value)
+        #html.write(str(table))
 
-    if type(table) is tuple:
+    if type(table) == tup__:
         if len(table) < 1:
             gpHG_list = []
         else:
-            make_list = lambda x: [
-                " - " if i == None or i == '' else str(i) for i in x]
+            make_list = lambda x: [" - " if i == None or i == '' else str(i) for i in x]
             gpHG_list = []
             for gpHG in table:
                 gpHG_list.append(make_list(gpHG))
@@ -1836,13 +1755,12 @@ def show_groups(h):
         gpHG_list = table
     html.write(str(gpHG_list))
 
-
 def move_gptohg_view(h):
     global html
-    html = h
+    html = h   
     hg_id = html.var("hg_id")
     html_str = "<div><div class=\"user-group-th\" id=\"selectGroupDiv\">\
-                            Select Host Group " + hostgroups_select_list("", hg_id) + "\
+                            Select Host Group " + hostgroups_select_list("",hg_id) + "\
                         </div>\
                         <div>\
                             <button type=\"submit\" class=\"yo-small yo-button\" onclick=\"boxMoveGrp();\">\
@@ -1852,58 +1770,51 @@ def move_gptohg_view(h):
                 </div>"
     html.write(html_str)
 
-
 def manage_role(h):
     global html
     html = h
-    css_list = ["css/demo_page.css", "css/demo_table_jui.css",
-                "css/jquery-ui-1.8.4.custom.css"]
+    css_list = ["css/demo_page.css","css/demo_table_jui.css","css/jquery-ui-1.8.4.custom.css"]
     javascript_list = ["js/jquery.dataTables.min.js"]
     add_btn = "<div class=\"header-icon\"><img onclick=\"addUser();\" class=\"n-tip-image\" \
     src=\"images/%s/round_plus.png\" id=\"add_user\" name=\"add_user\" \
     style=\"width: 16px; height: 16px; margin: 6px 20px 6px 10px;\" original-title=\"Add User\"></div>" % theme
-
+    
     edit_btn = "<div class=\"header-icon\"><img onclick=\"editUser();\" class=\"n-tip-image\" \
     src=\"images/%s/doc_edit.png\" id=\"edit_user\" name=\"edit_user\" \
     style=\"width: 16px; height: 16px; margin: 6px 20px 6px 10px;\" original-title=\"Edit User\"></div>" % theme
-
+    
     del_btn = "<div class=\"header-icon\"><img onclick=\"delUser();\" \
     class=\"n-tip-image\" src=\"images/%s/round_minus.png\" id=\"del_user\" name=\"del_user_tip\" \
     style=\"width: 16px; height: 16px; margin: 6px 20px 6px 10px;\" original-title=\"Delete User\"></div>" % theme
-
+    
     all_btn = del_btn + edit_btn + add_btn
     all_btn = ""
-    html.new_header(
-        "Manage Role", "manage_role.py", all_btn, css_list, javascript_list)
+    html.new_header("Manage Role","manage_role.py",all_btn,css_list,javascript_list)
     html.write("<p style=\"margin:10px;\">Page Under Progress...</p>")
     html.new_footer()
-
 
 def user_settings(h):
     global html
     html = h
-    css_list = ["css/demo_page.css", "css/demo_table_jui.css",
-                "css/jquery-ui-1.8.4.custom.css"]
+    css_list = ["css/demo_page.css","css/demo_table_jui.css","css/jquery-ui-1.8.4.custom.css"]
     javascript_list = ["js/jquery.dataTables.min.js"]
     add_btn = "<div class=\"header-icon\"><img onclick=\"addUser();\" class=\"n-tip-image\" \
     src=\"images/%s/round_plus.png\" id=\"add_user\" name=\"add_user\" \
     style=\"width: 16px; height: 16px; margin: 6px 20px 6px 10px;\" original-title=\"Add User\"></div>" % theme
-
+    
     edit_btn = "<div class=\"header-icon\"><img onclick=\"editUser();\" class=\"n-tip-image\" \
     src=\"images/%s/doc_edit.png\" id=\"edit_user\" name=\"edit_user\" style=\"width: 16px; \
     height: 16px; margin: 6px 20px 6px 10px;\" original-title=\"Edit User\"></div>" % theme
-
+    
     del_btn = "<div class=\"header-icon\"><img onclick=\"delUser();\" class=\"n-tip-image\" \
     src=\"images/%s/round_minus.png\" id=\"del_user\" name=\"del_user_tip\" \
     style=\"width: 16px; height: 16px; margin: 6px 20px 6px 10px;\" original-title=\"Delete User\"></div>" % theme
-
+    
     all_btn = del_btn + edit_btn + add_btn
     all_btn = ""
-    html.new_header("User Settings", "", all_btn, css_list, javascript_list)
-    html.write(
-        "<p style=\"margin:10px;\"><strong>User Name: </strong> omdadmin</p>")
-    html.write(
-        "<p style=\"margin:10px;\"><strong>Role: </strong> Administrator</p>")
+    html.new_header("User Settings","",all_btn,css_list,javascript_list)
+    html.write("<p style=\"margin:10px;\"><strong>User Name: </strong> omdadmin</p>")
+    html.write("<p style=\"margin:10px;\"><strong>Role: </strong> Administrator</p>")
     html.new_footer()
 
 
@@ -1935,78 +1846,6 @@ def page_tip_user_main(h):
         </div>\
         <br/>\
         </div>".format(theme)
-    html.write(str(html_view))
-
-def page_tip_change_password(h):
-    global html
-    html = h
-    html_view = """
-        <div id="help_container">
-            <h1>How do I change my password?</h1>
-            <div><h3><strong>To change your password</strong></h3>
-            </div>
-            <div>
-                <ol style="padding: 20px; ">
-                    <li>Enter your old password</li>
-                    <li>Enter a new password. New password must be <strong>different\
-                     than the old one</strong> and should be consist of <strong>two alpha, two numeric, \
-                     two special symbols, with eight length</strong></li>
-                    <li>Confirm your new password</li>
-                    <li>Click <span style="font-weight: 700;">save</span> to submit\
-                    your password changes</li>
-                </ol>
-
-            </div>
-        </div>
-        """
-    html.write(str(html_view))
-
-def page_tip_change_user_setting(h):
-    global html
-    html = h
-    html_view = """
-    <div id="cboxLoadedContent" style="width: 572px; overflow: auto; height: 338px;" xmlns="http://www.w3.org/1999/html"
-     xmlns="http://www.w3.org/1999/html">
-    <div id="help_container">
-        <h1>Changing Personal information</h1>
-        <div><h3><strong>To change the personal information</strong></h3>
-        </div>
-        <div>
-            <ol style="padding: 20px; ">
-                <li>Select <strong>Personal Information</strong> on tab menu</li>
-                <li>Enter your details in the fields provided</li>
-                <li>The omitted fields be left intact</li>
-                <li>Click <span style="font-weight: 700;">save</span> to submit                    your personal information changes</li>
-            </ol>
-
-        </div>
-    </div>
-    <div id="help_container">
-        <h1>Changing the Password</h1>
-        <div><h3><strong>To change the password</strong></h3>
-        </div>
-        <div>
-            <ol style="padding: 20px; ">
-                <li>Select <strong>Change Password</strong> on tab menu</li>
-                <li>Enter the old password</li>
-                <li>Enter a new password. New password must be <strong>different from the old password</strong>
-                    and must follow the requirement of having
-                    <strong>
-                        <ul>
-                            <li> Minimum 2 alpha characters,</li>
-                            <li> Minimum 2 numeric characters,</li>
-                            <li> Minimum 2 special characters</li>
-                            <li> Minimium length of password must be 8 characters </li>
-                        </ul>
-                    </strong>
-                </li>
-                <li>Confirm your new password</li>
-                <li>Click <span style="font-weight: 700;">save</span> to submit                    your password changes</li>
-            </ol>
-
-        </div>
-    </div>
-    """
     html.write(str(html_view))
 
 

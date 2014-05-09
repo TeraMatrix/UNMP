@@ -1,18 +1,18 @@
-#!/usr/bin/python2.6
+#!/usr/bin/python2.6    
 
 ############################################################################################
 #  AUTHOR : RAJENDRA SHARMA, RAHUL GAUATM
 #  LAST DATE OF RELEASE :     9 April 2012
-#
+#  
 #  REQUIRED : MYSQLdb,PYTHON,SNMPTT DATABASE, SNMPTT FILE
 #  WORKING OF THIS DEAMON : THIS SELECT THE TRAP FROM SNMPTT DATABASE AND STORE IN TRAP_ALARMS TABLE ACCORDING TO REQUIRED FORMET.
 #                           ALSO MASK TRAP AS ALARM ACCORDING USER DEFINATION
 #
 #############################################################################################
 
-# import module
+# import module 
 import os.path
-import sys
+import sys 
 from daemon import Daemon
 import MySQLdb
 import time
@@ -42,7 +42,7 @@ mask_file = "/omd/daemon/alarm_mask.rg"     # alarm mask file
 mysql_file = '/omd/daemon/config.rg'
 
 if os.path.isfile(mysql_file) and os.path.isfile(mask_file):    # getting variables from config file
-    maskfile_stat = 0
+    maskfile_stat = 0    
     execfile(mysql_file)
 else:
     sys.exit()
@@ -75,7 +75,7 @@ def trap_daemon():
         cursor = db.cursor()                    #-- CURSOR CREATION ------#
         cursor.execute("SELECT index_id FROM id_info WHERE deamon_name = 'D1'")   ## ---- SELECT INDEX_ID FROM  SNMPTT.ID_INFO FOR IDENTIFIED LAST EXECUTION---#
         INDEX=cursor.fetchall()
-        if len(INDEX) > 0: # -------THIS CHECK INDEX_ID EXIST OR NOT IN SNMPTT.ID_INFO  --------#
+        if len(INDEX) > 0: # -------THIS CHECK INDEX_ID EXIST OR NOT IN SNMPTT.ID_INFO  --------# 
             #-- THIS SELECT NO OF  TRAP  ACCORDING TO CONDTION ------#
             sql = "SELECT id,eventname,eventid,agentip,uptime,traptime,formatline FROM snmptt WHERE id > %s" %INDEX[0]
             cursor.execute(sql)
@@ -84,7 +84,7 @@ def trap_daemon():
             data_len = len(snmptt_trap_data)
             if data_len > 0:
                 new_index_id= snmptt_trap_data[len(snmptt_trap_data)-1][0]
-                cursor.execute("UPDATE id_info set index_id=%s,time_stamp='%s' WHERE deamon_name = 'D1'"% (new_index_id,datetime.now()))  ## ----  update index id  value in snmptt.id_info table ------##
+                cursor.execute("UPDATE id_info set index_id=%s,time_stamp='%s' WHERE deamon_name = 'D1'"% (new_index_id,datetime.now()))  ## ----  update index id  value in snmptt.id_info table ------## 
                 db.commit()  #---   SAVE THE ENTRY IN DATABASE -----#
         else:
             cursor.execute("INSERT INTO id_info (index_id, deamon_name, time_stamp) values('%s','%s','%s')"%(0,'D1',datetime.now()) )  ## --- create first time entry forsnmptt.id_info  table ----####
@@ -113,7 +113,7 @@ def trap_daemon():
         if len(snmptt_trap_data) > 0:
             trap_executed = 1
             db=MySQLdb.connect(hostname,username,password,schema)  ## --- CREATE DATABASE CONNECTION  ---- ##
-            cursor = db.cursor()                                   # -- CREATE CURSOR-------#
+            cursor = db.cursor()                                   # -- CREATE CURSOR-------# 
             for_str=[]
             for row in snmptt_trap_data:
                 try:
@@ -128,7 +128,7 @@ def trap_daemon():
                                 temp_str = for_str[8]
                             device_date = datetime.strptime(temp_str,device_date_format)
                         except:
-                            pass
+                            pass                        
                     else:
                         main_str=row[6]
                         sub_str=re.split('[:]',row[6])
@@ -137,7 +137,7 @@ def trap_daemon():
                             main_str=main_str.replace(replace_str,'')
                             main_str=main_str.replace('\\','').replace('"','')
                         for_str=[i.strip() for i in main_str.split('|')]
-
+                        
                         try:
                             device_date = datetime.strptime(for_str[8],device_date_format)
                         except:
@@ -186,11 +186,11 @@ def current_clear_daemon():
             logging.info(" current clear : New Mask file uploaded ")
 
         db=MySQLdb.connect(hostname,username,password,schema)
-        #db=MySQLdb.connect("172.22.0.95",username,password,"nms_p")
-        cursor = db.cursor()
-        cursor.execute("SELECT timestamp FROM daemon_timestamp WHERE daemon_name='D2'")
+        #db=MySQLdb.connect("172.22.0.95",username,password,"nms_p")  
+        cursor = db.cursor()                                   
+        cursor.execute("SELECT timestamp FROM daemon_timestamp WHERE daemon_name='D2'")  
         daemon_timestamp=cursor.fetchall()
-        if len(daemon_timestamp) > 0:
+        if len(daemon_timestamp) > 0:  
             sql="SELECT * FROM trap_alarms WHERE timestamp between '%s' and now() order by event_id"%(daemon_timestamp[0][0])
             cursor.execute(sql)
             history_alarms=cursor.fetchall()
@@ -203,7 +203,7 @@ def current_clear_daemon():
             ins_query="INSERT INTO daemon_timestamp (daemon_name,timestamp) values('D2',now())"
             cursor.execute(ins_query)
             db.commit()
-            cursor.close()
+            cursor.close() 
             history_alarms=()
             return
 
@@ -216,7 +216,7 @@ def current_clear_daemon():
         #logging.info(" real_alarm_list : "+str(real_alarm_list))
         #logging.info("clear_alarm_dict  : "+str(clear_alarm_dict))
         #logging.info(" mask_severity_dict : "+str(mask_severity_dict))
-
+        
         for row_alarm in history_alarms:
             try:
                 if prev_event != row_alarm[1]:
@@ -229,7 +229,7 @@ def current_clear_daemon():
                         temp_severity_dict = odu16_mask_severity_dict
                         temp_clear_dict = odu16_clear_alarm_dict
                     else:
-                        #logging.info("  in RU100 trap ")
+                        #logging.info("  in RU100 trap ")                
                         temp_alarm_dict = mask_alarm_dict
                         temp_alarm_list = real_alarm_list
                         temp_severity_dict = mask_severity_dict
@@ -239,7 +239,7 @@ def current_clear_daemon():
                 #print map_value,row_alarm[8]
                 #logging.info("-----------------")
                 #logging.info(" 1: "+str(row_alarm))
-
+                
                 # map_value means its a current alarm
                 if map_value:
                     #logging.info(" 2: is a current alarm")
@@ -249,13 +249,13 @@ def current_clear_daemon():
                     current_info=cursor.fetchall()
                     # current alarm found
                     if len(current_info) > 0:
-                        #logging.info(" 3: previous entry in current table found ")
-                        #if real alarm
+                        #logging.info(" 3: previous entry in current table found ") 
+                        #if real alarm 
                         if temp_alarm_list.count(row_alarm[7]):
-                            #logging.info("4: is a real alarm ")
+                            #logging.info("4: is a real alarm ")  
                             # real alarm is below severity 2 then it will be treated as clear
                             if (row_alarm[6] < 2) and  (time.mktime(row_alarm[14].timetuple())  > time.mktime(current_info[0][14].timetuple())) \
-                               and (row_alarm[7] != current_info[0][7]) and (current_info[0][8] == row_alarm[8]):   #future changeable
+                               and (row_alarm[7] != current_info[0][7]) and (current_info[0][8] == row_alarm[8]):   #future changeable  
                                 cursor.execute("INSERT INTO trap_alarm_clear (event_id, trap_id, agent_id, trap_date, trap_receive_date, \
                                 serevity, trap_event_id, trap_event_type, manage_obj_id, manage_obj_name, component_id, trap_ip, description, \
                                 device_sent_date, timestamp) values ('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s', now())\
@@ -289,10 +289,10 @@ def current_clear_daemon():
                                        current_info[0][0],row_alarm[14])
                                     cursor.execute(sql)
                                     db.commit()
-
+                                    
                         # it not real alarm [ a normal trap masked by user]
                         else:
-                            #logging.info(" 4: is NOT A real alarm ")
+                            #logging.info(" 4: is NOT A real alarm ")  
                             # Then we will update the existing current alarm's info [ current has come again ]
                             sql="UPDATE trap_alarm_current set trap_id = '%s',agent_id = '%s',trap_date = '%s',trap_receive_date = '%s',\
                             serevity = '%s',trap_event_id = '%s',trap_event_type = '%s',manage_obj_id = '%s',manage_obj_name = '%s',\
@@ -302,7 +302,7 @@ def current_clear_daemon():
                                current_info[0][0],row_alarm[14])
                             cursor.execute(sql)
                             db.commit()
-
+                    
                     # alarm is current but not found in db so insert a fresh row
                     else:
                         #logging.info(" 3: New current entry should made for this current alarm ")
@@ -313,21 +313,21 @@ def current_clear_daemon():
                            row_alarm[7],row_alarm[8],row_alarm[9],row_alarm[10],row_alarm[11],row_alarm[12],row_alarm[13],row_alarm[14])
                         cursor.execute(sql)
                         db.commit()
-
-                # map_value not found so it should be clear alarm
+                        
+                # map_value not found so it should be clear alarm 
                 else:
                     #logging.info(" 2: Can be a clear alarm ")
                     key_li = [key for key, value in temp_alarm_dict.iteritems() if value == str(row_alarm[7])]
-
+                    
                     #logging.info(" 3: Can be a clear alarm : check key_li : ", str(key_li))
                     # with the help of key_li we will try to find that if this alarm is mapped with any current alarm
-                    # if mapped then see if we have any current alarm in current table. only then we have to clear it.
+                    # if mapped then see if we have any current alarm in current table. only then we have to clear it.                     
                     if len(key_li) > 0:
                         sql="SELECT * FROM  trap_alarm_current WHERE trap_event_id='%s' and manage_obj_id='%s'and manage_obj_name='%s' \
                         and agent_id='%s' and event_id='%s'"% (key_li[0],row_alarm[9],row_alarm[10],row_alarm[3],row_alarm[1])
                         cursor.execute(sql)
                         current_info=cursor.fetchall()
-
+                        
                         # found a current in respect to this clear alarm so we have to clear it.
                         if len(current_info) > 0:
                             cursor.execute("INSERT INTO trap_alarm_clear (event_id,trap_id,agent_id,trap_date,trap_receive_date,serevity,\
@@ -339,11 +339,11 @@ def current_clear_daemon():
                             db.commit()
                             # delete all current alarm related to that id, becoz we have cleared it.
                             sql="DELETE FROM trap_alarm_current WHERE trap_alarm_current_id='%s'"% current_info[0][0]
-                            cursor.execute(sql)
+                            cursor.execute(sql)    
                             db.commit()
             except Exception,e:
                 logging.error(" EXCEPTION in current clear inner loop : "+str(traceback.format_exc()))
-
+                
     except MySQLdb.Error as e:
         pass
         logging.error(" MySQL EXCEPTION in current clear "+str(traceback.format_exc()))
@@ -375,7 +375,7 @@ class MyDaemon(Daemon):
                 trap_daemon()
                 if trap_executed:
                     current_clear_daemon()
-                time.sleep(5)
+                time.sleep(5)    
 
         except Exception as e:
             print " Exception in trap_alarm daemon : ",+str(traceback.format_exc())
@@ -391,7 +391,7 @@ def write_time(action):        # if start then action = 0 / if stop then action 
         if len(file_lines) < 1:
             flag = 1
             f.close()
-            f = open(file_name,'w')
+            f = open(file_name,'w')    
     except IOError, err:
         f = open(file_name,'w')
         flag = 1
@@ -404,7 +404,7 @@ def write_time(action):        # if start then action = 0 / if stop then action 
             f.close()
             start_time = datetime.strftime(datetime.today(),'%c')
             line_write = start_time+"\n"+stop_time
-            f = open(file_name,'w')
+            f = open(file_name,'w')    
             #print "start ",line_write
             f.writelines(line_write)
             f.flush()
@@ -416,13 +416,13 @@ def write_time(action):        # if start then action = 0 / if stop then action 
             if start_time.find("\n") == -1:
                 line_write = start_time+"\n"+stop_time
             else:
-                line_write = start_time+stop_time
-            f = open(file_name,'w')
+                line_write = start_time+stop_time 
+            f = open(file_name,'w')    
             #print "stop ",line_write
             f.writelines(line_write)
             f.flush()
             f.close()
-    elif flag == 1:
+    elif flag == 1:  
         if action == 0:
             start_time = datetime.strftime(datetime.today(),'%c')
             line_write = start_time
@@ -431,7 +431,7 @@ def write_time(action):        # if start then action = 0 / if stop then action 
             f.flush()
             f.close()
         elif action == 1:
-            start_time = datetime.strftime(datetime.today(),'%c')
+            start_time = datetime.strftime(datetime.today(),'%c') 
             stop_time = datetime.strftime(datetime.today(),'%c')
             line_write = start_time+"\n"+stop_time
             #print line_write
@@ -441,7 +441,7 @@ def write_time(action):        # if start then action = 0 / if stop then action 
 
 ########################
 if __name__ == "__main__":
-    daemon = MyDaemon('/omd/daemon/tmp/unmp-trap.pid', 'unmp-alarm')
+    daemon = MyDaemon('/omd/daemon/tmp/unmp-trap.pid')
     if len(sys.argv) == 2:
         if 'start' == sys.argv[1]:
             write_time(0)
@@ -455,7 +455,7 @@ if __name__ == "__main__":
             daemon.status()
         else:
             print " Unknown command"
-            print " Usage: unmp-alarm status | start | stop | restart | help | log \n     Please use help option if you are using it first time"
+            print " Usage: unmp-alarm status | start | stop | restart | help | log \n     Please use help option if you are using it first time" 
             sys.exit(2)
         sys.exit(0)
     else:

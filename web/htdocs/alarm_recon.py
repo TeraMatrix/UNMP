@@ -1,10 +1,9 @@
 
-
 def view():
     success = 1
     #
     try:
-        s = ''
+        s =  ''
         s += """<div>
                 <script type="text/javascript" src="js/alarm_recon.js"></script>
                 <div id="outer_div">
@@ -19,7 +18,7 @@ def view():
                                     <td class="cell-label">Host Alias</td>
                                     <td class="cell-info">%(alias)s</td>
                                     <td class="cell-label">IP Address</td>
-                                    <td class="cell-info">%(ip)s</td>
+                                    <td class="cell-info">%(ip)s</td>                                    
                                 </tr>
                                 <tr>
                                     <td class="cell-label">Last Run</td>
@@ -65,11 +64,11 @@ def view():
                     </div>
             </div></div>"""
         success = 0
-    except Exception, e:
+    except Exception,e:
         s = e
     finally:
         return s
 
-
+    
 #<button type="submit" class="yo-small yo-button" id="show_recon_alarm" style="margin-left:25px;" >
-#                            Show Reconcilied Alarms</button>
+#                            Show Reconcilied Alarms</button>    

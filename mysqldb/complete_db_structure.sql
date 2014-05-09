@@ -4515,7 +4515,6 @@ CREATE TABLE IF NOT EXISTS `odu100_raConfTable` (
   `antennaPort` int(8) DEFAULT NULL,
   `linkDistance` int(10) NOT NULL DEFAULT '0',
   `anc` int(8) DEFAULT NULL,
-  `forceMimo` int(11) DEFAULT '0',
   PRIMARY KEY (`odu100_raConfTable_id`),
   KEY `FK_odu100_raConfTable` (`config_profile_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
@@ -4799,7 +4798,7 @@ DROP TABLE IF EXISTS `odu100_synchStatisticsTable`;
 CREATE TABLE IF NOT EXISTS `odu100_synchStatisticsTable` (
   `odu100_synchStatisticsTable_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `host_id` int(10) unsigned DEFAULT NULL,
-  `syncConfigIndex` int(32) DEFAULT NULL,
+  `synchStatsIndex` int(32) DEFAULT NULL,
   `syncLostCounter` int(10) unsigned DEFAULT NULL,
   `timestamp` datetime NOT NULL,
   PRIMARY KEY (`odu100_synchStatisticsTable_id`,`timestamp`),
@@ -4810,7 +4809,7 @@ DROP TABLE IF EXISTS `odu100_synchStatusTable`;
 CREATE TABLE IF NOT EXISTS `odu100_synchStatusTable` (
   `odu100_synchStatusTable_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `host_id` int(10) unsigned DEFAULT NULL,
-  `syncConfigIndex` int(32) DEFAULT NULL,
+  `synchStatsIndex` int(32) DEFAULT NULL,
   `syncoperationalState` int(8) DEFAULT NULL,
   `syncrasterTime` int(32) DEFAULT NULL,
   `timerAdjust` int(32) DEFAULT NULL,
@@ -4904,10 +4903,15 @@ CREATE TABLE IF NOT EXISTS `odu100_7_2_20_oids` (
   `coloumn_name` varchar(128) DEFAULT NULL,
   `indexes_name` varchar(64) DEFAULT NULL,
   PRIMARY KEY (`oid_id`),
-  KEY `FK_odu100_7_2_20_oids` (`device_type_id`),
-  KEY `FK_odu100_7_2_20_oids_dependant_id` (`dependent_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
+  KEY `FK_oids` (`device_type_id`),
+  KEY `FK_oids_dependant_id` (`dependent_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=242 ;
 
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `odu100_7_2_20_oids_multivalues`
+--
 DROP TABLE IF EXISTS `odu100_7_2_20_oids_multivalues`;
 CREATE TABLE IF NOT EXISTS `odu100_7_2_20_oids_multivalues` (
   `oids_multivalue_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -4915,10 +4919,14 @@ CREATE TABLE IF NOT EXISTS `odu100_7_2_20_oids_multivalues` (
   `value` varchar(128) DEFAULT NULL,
   `name` varchar(128) DEFAULT NULL,
   PRIMARY KEY (`oids_multivalue_id`),
-  KEY `FK_odu100_7_2_20_oids_multivalues` (`oid_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
+  KEY `FK_oids_multivalues` (`oid_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=131 ;
 
+-- --------------------------------------------------------
 
+--
+-- Table structure for table `odu100_7_2_20_oid_table`
+--
 DROP TABLE IF EXISTS `odu100_7_2_20_oid_table`;
 CREATE TABLE IF NOT EXISTS `odu100_7_2_20_oid_table` (
   `table_name` varchar(64) NOT NULL,
@@ -4927,8 +4935,7 @@ CREATE TABLE IF NOT EXISTS `odu100_7_2_20_oid_table` (
   `is_recon` int(11) NOT NULL DEFAULT '1' COMMENT '1 = run reconciliation for table',
   `status` int(11) NOT NULL DEFAULT '0' COMMENT '0 = reconciliation has not been run',
   `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -4953,10 +4960,15 @@ CREATE TABLE IF NOT EXISTS `odu100_7_2_25_oids` (
   `coloumn_name` varchar(128) DEFAULT NULL,
   `indexes_name` varchar(64) DEFAULT NULL,
   PRIMARY KEY (`oid_id`),
-  KEY `FK_odu100_7_2_25_oids` (`device_type_id`),
-  KEY `FK_odu100_7_2_25_oids_dependant_id` (`dependent_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
+  KEY `FK_oids` (`device_type_id`),
+  KEY `FK_oids_dependant_id` (`dependent_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=262 ;
 
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `odu100_7_2_25_oids_multivalues`
+--
 DROP TABLE IF EXISTS `odu100_7_2_25_oids_multivalues`;
 CREATE TABLE IF NOT EXISTS `odu100_7_2_25_oids_multivalues` (
   `oids_multivalue_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -4964,10 +4976,14 @@ CREATE TABLE IF NOT EXISTS `odu100_7_2_25_oids_multivalues` (
   `value` varchar(128) DEFAULT NULL,
   `name` varchar(128) DEFAULT NULL,
   PRIMARY KEY (`oids_multivalue_id`),
-  KEY `FK_odu100_7_2_25_oids_multivalues` (`oid_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
+  KEY `FK_oids_multivalues` (`oid_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=167 ;
 
+-- --------------------------------------------------------
 
+--
+-- Table structure for table `odu100_7_2_25_oid_table`
+--
 DROP TABLE IF EXISTS `odu100_7_2_25_oid_table`;
 CREATE TABLE IF NOT EXISTS `odu100_7_2_25_oid_table` (
   `table_name` varchar(64) NOT NULL,
@@ -4976,48 +4992,7 @@ CREATE TABLE IF NOT EXISTS `odu100_7_2_25_oid_table` (
   `is_recon` int(11) NOT NULL DEFAULT '1' COMMENT '1 = run reconciliation for table',
   `status` int(11) NOT NULL DEFAULT '0' COMMENT '0 = reconciliation has not been run',
   `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
-CREATE TABLE IF NOT EXISTS `odu100_7_2_29_oids` (
-  `oid_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `device_type_id` varchar(16) DEFAULT NULL,
-  `oid` varchar(256) DEFAULT NULL,
-  `oid_name` varchar(256) DEFAULT NULL,
-  `oid_type` varchar(16) DEFAULT NULL,
-  `oid_datatype` varchar(16) NOT NULL,
-  `access` smallint(6) DEFAULT NULL,
-  `default_value` varchar(256) DEFAULT NULL,
-  `min_value` varchar(128) DEFAULT NULL,
-  `max_value` varchar(256) DEFAULT NULL,
-  `indexes` varchar(256) DEFAULT NULL,
-  `dependent_id` int(10) unsigned DEFAULT NULL,
-  `multivalue` smallint(6) DEFAULT '0',
-  `table_name` varchar(128) DEFAULT NULL,
-  `coloumn_name` varchar(128) DEFAULT NULL,
-  `indexes_name` varchar(64) DEFAULT NULL,
-  `description` text NOT NULL,
-  PRIMARY KEY (`oid_id`),
-  KEY `FK_odu100_7_2_29_oids` (`device_type_id`),
-  KEY `FK_odu100_7_2_29_oids_dependant_id` (`dependent_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
-
-CREATE TABLE IF NOT EXISTS `odu100_7_2_29_oids_multivalues` (
-  `oids_multivalue_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `oid_id` int(10) unsigned DEFAULT NULL,
-  `value` varchar(128) DEFAULT NULL,
-  `name` varchar(128) DEFAULT NULL,
-  PRIMARY KEY (`oids_multivalue_id`),
-  KEY `FK_odu100_7_2_29_oids_multivalues` (`oid_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 ;
-
-CREATE TABLE IF NOT EXISTS `odu100_7_2_29_oid_table` (
-  `table_name` varchar(64) NOT NULL,
-  `table_oid` varchar(64) NOT NULL,
-  `varbinds` tinyint(4) NOT NULL DEFAULT '15',
-  `is_recon` int(11) NOT NULL DEFAULT '1' COMMENT '1 = run reconciliation for table',
-  `status` int(11) NOT NULL DEFAULT '0' COMMENT '0 = reconciliation has not been run',
-  `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -5906,7 +5881,7 @@ CREATE TABLE IF NOT EXISTS `user_login` (
 
 ALTER TABLE `alarm_recon`
   ADD CONSTRAINT `alarm_recon_ibfk_1` FOREIGN KEY (`host_id`) REFERENCES `hosts` (`host_id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
+  
 ALTER TABLE `ap25_accesspointIPsettings`
   ADD CONSTRAINT `ap25_accesspointIPsettings_ibfk_1` FOREIGN KEY (`config_profile_id`) REFERENCES `config_profiles` (`config_profile_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
@@ -6527,34 +6502,17 @@ ALTER TABLE `user_login`
 ALTER TABLE `odu100_ipFilterTable`
   ADD CONSTRAINT `FK_odu100_ipFilterTable` FOREIGN KEY (`host_id`) REFERENCES `hosts` (`host_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE `odu100_macFilterTable`
-  ADD CONSTRAINT `FK_odu100_macFilterTable` FOREIGN KEY (`host_id`) REFERENCES `hosts` (`host_id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
+  ADD CONSTRAINT `FK_odu100_macFilterTable` FOREIGN KEY (`host_id`) REFERENCES `hosts` (`host_id`) ON DELETE CASCADE ON UPDATE CASCADE;  
 ALTER TABLE `odu100_7_2_20_oids`
-  ADD CONSTRAINT `FK_odu100_7_2_20_oids` FOREIGN KEY (`device_type_id`) REFERENCES `device_type` (`device_type_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `FK_odu100_7_2_20_oids_dependant_id` FOREIGN KEY (`dependent_id`) REFERENCES `odu100_7_2_20_oids` (`oid_id`) ON DELETE SET NULL ON UPDATE CASCADE;
-
+  ADD CONSTRAINT `FK_oids` FOREIGN KEY (`device_type_id`) REFERENCES `device_type` (`device_type_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `FK_oids_dependant_id` FOREIGN KEY (`dependent_id`) REFERENCES `oids` (`oid_id`) ON DELETE SET NULL ON UPDATE CASCADE;
 ALTER TABLE `odu100_7_2_20_oids_multivalues`
-  ADD CONSTRAINT `FK_odu100_7_2_20_oids_multivalues` FOREIGN KEY (`oid_id`) REFERENCES `odu100_7_2_20_oids` (`oid_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `FK_oids_multivalues` FOREIGN KEY (`oid_id`) REFERENCES `oids` (`oid_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 ALTER TABLE `odu100_7_2_25_oids`
-  ADD CONSTRAINT `FK_odu100_7_2_25_oids` FOREIGN KEY (`device_type_id`) REFERENCES `device_type` (`device_type_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `FK_odu100_7_2_25_oids_dependant_id` FOREIGN KEY (`dependent_id`) REFERENCES `odu100_7_2_25_oids` (`oid_id`) ON DELETE SET NULL ON UPDATE CASCADE;
-
+  ADD CONSTRAINT `FK_oids` FOREIGN KEY (`device_type_id`) REFERENCES `device_type` (`device_type_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `FK_oids_dependant_id` FOREIGN KEY (`dependent_id`) REFERENCES `oids` (`oid_id`) ON DELETE SET NULL ON UPDATE CASCADE;
 ALTER TABLE `odu100_7_2_25_oids_multivalues`
-  ADD CONSTRAINT `FK_odu100_7_2_25_oids_multivalues` FOREIGN KEY (`oid_id`) REFERENCES `odu100_7_2_25_oids` (`oid_id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Constraints for table `odu100_7_2_29_oids`
---
-ALTER TABLE `odu100_7_2_29_oids`
-  ADD CONSTRAINT `FK_odu100_7_2_29_oids` FOREIGN KEY (`device_type_id`) REFERENCES `device_type` (`device_type_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `FK_odu100_7_2_29_oids_dependant_id` FOREIGN KEY (`dependent_id`) REFERENCES `odu100_7_2_29_oids` (`oid_id`) ON DELETE SET NULL ON UPDATE CASCADE;
-
---
--- Constraints for table `odu100_7_2_29_oids_multivalues`
---
-ALTER TABLE `odu100_7_2_29_oids_multivalues`
-  ADD CONSTRAINT `FK_odu100_7_2_29_oids_multivalues` FOREIGN KEY (`oid_id`) REFERENCES `odu100_7_2_29_oids` (`oid_id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
+  ADD CONSTRAINT `FK_oids_multivalues` FOREIGN KEY (`oid_id`) REFERENCES `oids` (`oid_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 SET FOREIGN_KEY_CHECKS=1;
 

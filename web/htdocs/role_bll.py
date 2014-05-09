@@ -2,8 +2,8 @@
 
 import MySQLdb
 import uuid
-# from unmp_config import SystemConfig
-# from gi.overrides.keysyms import cursor
+#from unmp_config import SystemConfig
+#from gi.overrides.keysyms import cursor
 
 # select = 2
 # delete = 3
@@ -11,8 +11,8 @@ import uuid
 # update = 5
 
 
-global global_db
 
+global global_db
 
 def db_connect():
     """
@@ -21,13 +21,13 @@ def db_connect():
     db = None
     global global_db
     try:
-        db = MySQLdb.connect("localhost", "root", "root", "nms_copy")
+        db = MySQLdb.connect("localhost","root","root","nms_copy")
         global_db = db
         print " $$$ $$$ Database Connect successful "
     except MySQLdb.Error as e:
-        print "/*/*/* MYSQLdb Exception (db connect) : " + str(e)
+        print "/*/*/* MYSQLdb Exception (db connect) : "+str(e)
     except Exception as e:
-        print "/*/*/* Database Exception (db connect) : " + str(e)
+        print "/*/*/* Database Exception (db connect) : "+str(e)
 
 
 def db_close():
@@ -39,10 +39,10 @@ def db_close():
         global_db.close()
         print " db connection closed"
     except Exception as e:
-        print "/*/*/* Database Exception ( db close ) : " + str(e)
+        print "/*/*/* Database Exception ( db close ) : "+str(e)
 
 
-def get_role_details(action, role_id=None):
+def get_role_details(action,role_id=None):
     db_connect()
 
     global global_db
@@ -53,9 +53,9 @@ def get_role_details(action, role_id=None):
         if action == "list":
             selectQuery = "SELECT  r.`role_id`, r.role_name FROM roles AS r WHERE r.is_deleted <> 1 and r.is_default <> 0"
         elif action == "form" and role_id != None:
-            selectQuery = "SELECT  r.`role_id`, r.role_name, r.parent_id, r.description  FROM roles AS r WHERE r.is_deleted <> 1 and r.is_default <> 0 and r.role_id = \"%s\" " % role_id
+            selectQuery = "SELECT  r.`role_id`, r.role_name, r.parent_id, r.description  FROM roles AS r WHERE r.is_deleted <> 1 and r.is_default <> 0 and r.role_id = \"%s\" "%role_id
         elif action == "details" and role_id != None:
-            selectQuery = "SELECT r.updated_by, r.timestamp, r.created_by, r.creation_time   FROM roles AS r WHERE r.is_deleted <> 1 and r.is_default <> 0 and r.role_id = \"%s\" " % role_id
+            selectQuery = "SELECT r.updated_by, r.timestamp, r.created_by, r.creation_time   FROM roles AS r WHERE r.is_deleted <> 1 and r.is_default <> 0 and r.role_id = \"%s\" "%role_id
         else:
             db_close()
             return "internal failure in role view"
@@ -64,14 +64,14 @@ def get_role_details(action, role_id=None):
             role_tuple = cursor.fetchall()
         cursor.close()
         db_close()
-        if len(role_tuple) < 1:
+        if len(role_tuple) < 1 :
             return 11
         else:
 #            make_list = lambda x: [" - " if i == None or i == '' else i for i in x]
 #            role_list = []
 #            for role in role_tuple:
 #                role_list.append(make_list(role))
-            return role_tuple
+            return role_tuple    
     except Exception as e:
         return 111
 
@@ -91,7 +91,6 @@ def copy_it():
 
     except Exception as e:
         return str(e)
-
 
 def get_snapindata():
     db_connect()
@@ -126,7 +125,7 @@ def get_page_links(role_id):
 
         link_tuple = 1
 
-        sel_query = "select `pages_link_id` from `role_pages_link` where `role_id` = \"%s\" " % role_id
+        sel_query = "select `pages_link_id` from `role_pages_link` where `role_id` = \"%s\" "%role_id
         cursor = global_db.cursor()
         if cursor.execute(sel_query) != 0:
             link_tuple = cursor.fetchall()
@@ -138,7 +137,7 @@ def get_page_links(role_id):
         return link_tuple
 
     except Exception as e:
-        return 1
+        return 1    
 
 
 def get_pagedata(snapin_tuple):
@@ -155,12 +154,13 @@ def get_pagedata(snapin_tuple):
         or_flag = 0
         for snapin_id in snapin_tuple:
             if or_flag == 0:
-                sel_query += "snapin_id =  '%s' " % (snapin_id[0])
+                sel_query += "snapin_id =  '%s' "%(snapin_id[0])
                 or_flag = 1
             else:
-                sel_query += "OR snapin_id =  '%s' " % (snapin_id[0])
+                sel_query += "OR snapin_id =  '%s' "%(snapin_id[0])
 
         sel_query += "AND is_deleted <> 1"
+
 
         if cursor.execute(sel_query) != 0:
             pages_tuple = cursor.fetchall()
@@ -173,6 +173,7 @@ def get_pagedata(snapin_tuple):
 
     except Exception as e:
         return str(e)
+
 
 
 def get_moduledata(page_list):
@@ -189,12 +190,13 @@ def get_moduledata(page_list):
         or_flag = 0
         for page_id in page_list:
             if or_flag == 0:
-                sel_query += "page_id =  '%s' " % (page_id)
+                sel_query += "page_id =  '%s' "%(page_id)
                 or_flag = 1
             else:
-                sel_query += "OR page_id =  '%s' " % (page_id)
+                sel_query += "OR page_id =  '%s' "%(page_id)
 
         sel_query += "AND is_deleted <> 1"
+
 
         if cursor.execute(sel_query) != 0:
             module_tuple = cursor.fetchall()
@@ -209,26 +211,26 @@ def get_moduledata(page_list):
         return str(e)
 
 
-def check_rolename(name, type):
+def check_rolename(name,type):
     db_connect()
     global global_db
     try:
         if global_db.open != 1:
             return 1
         if type == "role":
-            selectQuery = "SELECT role_name FROM `roles` WHERE `role_name` = \"%s\"" % name.strip()
+            selectQuery = "SELECT role_name FROM `roles` WHERE `role_name` = \"%s\""%name.strip()
         else:
             db_close()
             return 1
         cursor = global_db.cursor()
         queryVal = cursor.execute(selectQuery)
-        result = 1
+        result = 1 
         if queryVal == 0:
             result = 0
         elif queryVal == 1:
             result = 1
         else:
-            result = 1
+            result = 1     
         cursor.close()
         db_close()
         return result
@@ -237,7 +239,8 @@ def check_rolename(name, type):
         return 1
 
 
-# def add_role(role_name,prole_id,description,plink_list):
+
+#def add_role(role_name,prole_id,description,plink_list):
 #    db_connect()
 #    global global_db
 #    try:
@@ -246,16 +249,16 @@ def check_rolename(name, type):
 #        role_id = uuid.uuid1()
 #        ins_query = "INSERT INTO `roles` (`role_id`, `role_name`, `description`, `parent_id`, `timestamp`, `created_by`, `creation_time`, `updated_by`)\
 #        VALUES (\"%s\", \"%s\", \"%s\", \"%s\", CURRENT_TIMESTAMP, 'cscape', CURRENT_TIMESTAMP, 'cscape')"%(role_id,role_name,description,prole_id)
-#
+#        
 #        ins_query2 = "INSERT INTO `role_pages_link` (`role_pages_link_id`, `role_id`, `pages_link_id`) VALUES"
-#        i = 0
+#        i = 0   
 #        for plinkid in plink_list:
 #            i += 1
 #            if i == len(plink_list):
 #                ins_query2 += " (uuid(),\"%s\",\"%s\") "%(role_id,plinkid)
 #            else:
 #                ins_query2 += " (uuid(),\"%s\",\"%s\") ,"%(role_id,plinkid)
-#
+#        
 #        cursor = global_db.cursor()
 #        if cursor.execute(ins_query) > 0:
 #            if cursor.execute(ins_query2) > 0:
@@ -264,15 +267,16 @@ def check_rolename(name, type):
 #            else:
 #                result = 11
 #        else:
-#            result = 111
-#
+#            result = 111 
+#             
 #        cursor.close()
 #        db_close()
 #        return result
-#
+#    
 #    except Exception as e:
 #        return str(e)
-def add_role(role_name, prole_id, description):
+
+def add_role(role_name,prole_id,description):
     db_connect()
     global global_db
     try:
@@ -280,14 +284,15 @@ def add_role(role_name, prole_id, description):
             return 1
         role_id = uuid.uuid1()
         ins_query = "INSERT INTO `roles` (`role_id`, `role_name`, `description`, `parent_id`, `timestamp`, `created_by`, `creation_time`, `updated_by`)\
-        VALUES (\"%s\", \"%s\", \"%s\", \"%s\", CURRENT_TIMESTAMP, 'cscape', CURRENT_TIMESTAMP, 'cscape')" % (role_id, role_name, description, prole_id)
+        VALUES (\"%s\", \"%s\", \"%s\", \"%s\", CURRENT_TIMESTAMP, 'cscape', CURRENT_TIMESTAMP, 'cscape')"%(role_id,role_name,description,prole_id)
+
 
         cursor = global_db.cursor()
         if cursor.execute(ins_query) > 0:
             global_db.commit()
             result = 0
         else:
-            result = 111
+            result = 111 
 
         cursor.close()
         db_close()
@@ -297,7 +302,7 @@ def add_role(role_name, prole_id, description):
         return str(e)
 
 
-def edit_role(role_id, description, p_role_id, plink_list=None):
+def edit_role(role_id,description,p_role_id,plink_list = None):
     db_connect()
     global global_db
     try:
@@ -306,26 +311,22 @@ def edit_role(role_id, description, p_role_id, plink_list=None):
 
         st_r = ""
 
-        update_query = "update `roles` set `description` = \"%s\", `parent_id` = \"%s\" , `timestamp` = CURRENT_TIMESTAMP, `updated_by` = 'cscape' where role_id=\"%s\" " % (
-            description, p_role_id, role_id)
+        update_query = "update `roles` set `description` = \"%s\", `parent_id` = \"%s\" , `timestamp` = CURRENT_TIMESTAMP, `updated_by` = 'cscape' where role_id=\"%s\" "%(description,p_role_id,role_id) 
         if plink_list != None:
 
-            del_query = "DELETE from `role_pages_link` where `role_id` = \"%s\" " % (
-                role_id)
+            del_query = "DELETE from `role_pages_link` where `role_id` = \"%s\" "%(role_id) 
 
             ins_query = "INSERT INTO `role_pages_link` (`role_pages_link_id`, `role_id`, `pages_link_id`) VALUES"
-            i = 0
+            i = 0   
             for plinkid in plink_list:
                 i += 1
                 if i == len(plink_list):
-                    ins_query += " (uuid(),\"%s\",\"%s\") " % (
-                        role_id, plinkid)
+                    ins_query += " (uuid(),\"%s\",\"%s\") "%(role_id,plinkid)
                 else:
-                    ins_query += " (uuid(),\"%s\",\"%s\") ," % (
-                        role_id, plinkid)
+                    ins_query += " (uuid(),\"%s\",\"%s\") ,"%(role_id,plinkid)
 
-            # st_r += " up "+update_query+"  del "+del_query+"  ins "+ins_query
-            # return st_r
+            #st_r += " up "+update_query+"  del "+del_query+"  ins "+ins_query
+            #return st_r
             cursor = global_db.cursor()
             cursor.execute(update_query)
             cursor.execute(del_query)
@@ -338,8 +339,8 @@ def edit_role(role_id, description, p_role_id, plink_list=None):
         result = 0
         #    else:
         #        result = 11
-        # else:
-        #    result = 111
+        #else:
+        #    result = 111 
 
         cursor.close()
         db_close()
@@ -356,11 +357,11 @@ def del_role(role_id):
         if global_db.open != 1:
             return 1
 
-        sel_query = "select group_id from groups where role_id = \"%s\" " % role_id
+        sel_query = "select group_id from groups where role_id = \"%s\" "%role_id
 
         sel_def_id = "select role_id from roles where is_default = 0 "
 
-        del_query = "delete from roles where role_id = \"%s\" " % role_id
+        del_query = "delete from roles where role_id = \"%s\" "%role_id
 
         cursor = global_db.cursor()
 
@@ -369,7 +370,7 @@ def del_role(role_id):
         if cursor.execute(sel_def_id) > 0:
             default_id_tup = cursor.fetchall()
             default_id = default_id_tup[0][0]
-            up_query = "update groups set role_id = \"%s\" " % default_id
+            up_query = "update groups set role_id = \"%s\" "%default_id
         else:
             result = 2
 
@@ -379,15 +380,15 @@ def del_role(role_id):
                 comma = 0
                 for group_id in groupids_tuple:
                     if comma == 0:
-                        up_query += " Where group_id = \"%s\" " % group_id[0]
+                        up_query += " Where group_id = \"%s\" "%group_id[0]
                         comma = 1
                     else:
-                        up_query += " OR group_id = \"%s\" " % group_id[0]
+                        up_query += " OR group_id = \"%s\" "%group_id[0]
 
                 if cursor.execute(up_query) > 0:
                     result = 0
                 else:
-                    result = 5
+                    result = 5                               
         else:
             result = 2
 
@@ -403,8 +404,8 @@ def del_role(role_id):
         return result
 
     except Exception as e:
-        return str(e)
+        return str(e)  
 
 
-def update_grp_inrole(role_id, groupid_list):
+def update_grp_inrole(role_id,groupid_list):
     pass

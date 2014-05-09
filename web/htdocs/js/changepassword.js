@@ -15,11 +15,11 @@ function formValidation(formId)
 						},
 						password: {
 							required: true,
-							minlength: 8
+							minlength: 6
 						},
 						cpassword: {
 							required: true,
-							minlength: 8,
+							minlength: 6,
 							equalTo: "#password"
 						}
 					},
@@ -30,11 +30,11 @@ function formValidation(formId)
 						},
 						password: {
 							required: "*",
-							minlength: " Your password must be at least 8 characters long: ChangedPwd"
+							minlength: " Your password must be at least 6 characters long"
 						},
 						cpassword: {
 							required: "*",
-							inlength: " Your password must be at least 8 characters long: ChangedPwd",
+							minlength: " Your password must be at least 6 characters long",
 							equalTo: " Please enter the same password as above"
 						}
 					}

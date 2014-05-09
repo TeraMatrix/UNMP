@@ -5,8 +5,8 @@ $(document).ready(function(){
 	$("#addhosttable").click(function(){
 		$(this).slideUp(1000);$("#formDiv").slideDown(1000,function(){$("#hostGroupName").focus();});
 	})
-	jQuery.validator.addMethod("noSpace", function(value, element) {
-  										return value.indexOf(" ") < 0 && value != "";
+	jQuery.validator.addMethod("noSpace", function(value, element) { 
+  										return value.indexOf(" ") < 0 && value != ""; 
 									}, "No space please and don't leave it empty");
 });
 function formForHostGroup(action,hostGroupName)
@@ -14,8 +14,8 @@ function formForHostGroup(action,hostGroupName)
 	$.ajax({
 			type: "get",
 			url: "form_for_hostgroup.py?action=" + action + "&hostGroupName=" + hostGroupName,
-                        success: function(result) {
-							$("#formDiv").html(result);
+                        success: function(result) { 
+							$("#formDiv").html(result); 
 							if(action == "edit")
 							{
 								actionForHostGroup("edit");
@@ -69,12 +69,8 @@ function actionForHostGroup(act)
 							loadingHideHostGroup(false);
 							alert("Host Group Name and Alias both are require fields.");
 						}
-						$("img#del_hostgroup").show();
-						$("img#add_hostgroup").show();
 					},
 				error: function(){
-						$("img#del_hostgroup").show();
-						$("img#add_hostgroup").show();
 						loadingHideHostGroup(false);
 						alert("Some Error Occur");
 					}
@@ -142,8 +138,8 @@ function gridViewHostGroup()
 	$.ajax({
 			type: "get",
 			url: "grid_view_hostgroup.py",
-                        success: function(result) {
-							$("#gridviewDiv").html(result);
+                        success: function(result) { 
+							$("#gridviewDiv").html(result); 
 						  }
 		});
 }

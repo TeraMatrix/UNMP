@@ -221,15 +221,15 @@ $(function(){
 	/* create object of divs */
 	$gridViewDiv = $("div#grid_view_div");
 	$formDiv = $("div#form_div");
-
+	
 	/* show grid view only hide other */
 	$gridViewDiv.show();
 	$formDiv.hide();
-
+	
 	// spin loading object
 	$spinLoading = $("div#spin_loading");		// create object that hold loading circle
 	$spinMainLoading = $("div#main_loading");	// create object that hold loading squire
-
+	
 	// page tip [for page tip write this code on each page please dont forget to change "href" value because this link create your help tip page]
 	$("#page_tip").colorbox(
 	{
@@ -241,14 +241,14 @@ $(function(){
 		height:"350px"
 	});
 	$("div.yo-tabs").yoTabs();
-
+	
 	/* Add Data Table Tr Selecter Click Handler*/
 	dataTableClickHandler();
-
+	
 	/* Call Active Host Data Table */
 	$gridViewDiscoveredHostTableObj = $("table#grid_view_discovered_host");
 	//gridViewDeletedHost();
-
+	
 	/* Active Host Tab*/
 	$("a#discovered_host_tab").click(function(e){
 		e.preventDefault();
@@ -259,7 +259,7 @@ $(function(){
 		}
 		hideAllToolTip();
 	});
-
+	
 	/* PING Tab*/
 	$("a#ping_tab").click(function(e){
 		e.preventDefault();
@@ -274,7 +274,7 @@ $(function(){
 		}
 		hideAllToolTip();
 	});
-
+	
 	/* SNMP Tab*/
 	$("a#snmp_tab").click(function(e){
 		e.preventDefault();
@@ -289,7 +289,7 @@ $(function(){
 		}
 		hideAllToolTip();
 	});
-
+	
 	/* UPNP Tab*/
 	$("a#upnp_tab").click(function(e){
 		e.preventDefault();
@@ -304,7 +304,7 @@ $(function(){
 		}
 		hideAllToolTip();
 	});
-
+	
 	/* It Shows Active Host as Default Host Grid View */
 	$("a#discovered_host_tab").click();
 });
@@ -315,13 +315,13 @@ function dataTableClickHandler()
 	$("table#grid_view_discovered_host tbody tr").live('click', function () {
 		var id = this.id;
 		var index = jQuery.inArray(id, $gridViewDiscoveredHostSelectedTr);
-
+		
 		if ( index === -1 ) {
 			$gridViewDiscoveredHostSelectedTr.push( id );
 		} else {
 			$gridViewDiscoveredHostSelectedTr.splice( index, 1 );
 		}
-
+		
 		$(this).toggleClass('row_selected');
 	});
 }
@@ -341,7 +341,7 @@ function gridViewDiscoveredHost()
 		"bStateSave": false,
 		"bStateSave": false,
 		"fnServerData": function(sSource,aoData,fnCallback){
-			$.getJSON( sSource, aoData, function (json) {
+			$.getJSON( sSource, aoData, function (json) { 
 				/**
 				 * Insert an extra argument to the request: rm.
 				 * It's the the name of the CGI form parameter that
@@ -535,7 +535,7 @@ function validatePingForm($formObj)
 				positiveNumber:"Timeout Should be Positive"
 			}
 		}
-	});
+	});	
 }
 function run_ping(discovery_id)
 {
@@ -560,7 +560,7 @@ function run_ping(discovery_id)
 					else
 					{
 						$().toastmessage('showErrorToast', messages[result.msg]);
-					}
+					}			
 		}
 	})
 }
@@ -587,7 +587,7 @@ function run_snmp(discovery_id)
 					else
 					{
 						$().toastmessage('showErrorToast', messages[result.msg]);
-					}
+					}			
 		}
 	})
 }
@@ -795,7 +795,7 @@ function validateSnmpForm($formObj)
 				alphaNumeric:"SNMP Version Should be Alpha Numeric"
 			}
 		}
-	});
+	});	
 }
 function run_upnp(discovery_id)
 {
@@ -820,7 +820,7 @@ function run_upnp(discovery_id)
 					else
 					{
 						$().toastmessage('showErrorToast', messages[result.msg]);
-					}
+					}			
 		}
 	})
 }
@@ -969,14 +969,14 @@ function validateUpnpForm($formObj)
 				positiveNumber:"Timeout Should be Positive"
 			}
 		}
-	});
+	});	
 }
 
 function addHost()
 {
 	var selectedRow = new Array();
 	selectedRow = fnGetSelected($gridViewDiscoveredHostDataTable)
-	var rLength = selectedRow.length;
+	var rLength = selectedRow.length; 
 	if(rLength==0)
 	{
 		$.prompt(messages["noneSelectedError"],{prefix:'jqismooth'});
@@ -989,7 +989,7 @@ function addHost()
 			var aData = [];
 			var iRow = $gridViewDiscoveredHostDataTable.fnGetPosition(selectedRow[i]);
 			aData = $gridViewDiscoveredHostDataTable.fnGetData(iRow);
-
+			
 			//selected host details
 			selectedHostName = aData[2];
 			selectedHostAlias = aData[2];
@@ -997,12 +997,12 @@ function addHost()
 			selectedMacAddress = aData[3];
 			selectedDeviceType = String(aData[4]).toLowerCase();
 		}
-
+		
 		actionName = "add";
 		if(formStatus == 0)
 		{
 			createForm(actionName);
-			formStatus = 1;
+			formStatus = 1;		
 		}
 		else
 		{
@@ -1061,7 +1061,7 @@ function fetchRAMacAddress()
 {
 	var ipAddress = $formInput.eq($formInputIndex["ip_address"]).val();
 	var selectedDeviceType = $formSelectList.eq($formSelectListIndex["device_type"]).val();
-
+	
 	if(ipAddress != "" && ipAddress.match(ipValidate) && selectedDeviceType != "")
 	{
 
@@ -1131,7 +1131,7 @@ function fetchRAMacAddress()
 {
 	var ipAddress = $formInput.eq($formInputIndex["ip_address"]).val();
 	var selectedDeviceType = $formSelectList.eq($formSelectListIndex["device_type"]).val();
-
+	
 	if(ipAddress != "" && ipAddress.match(ipValidate) && selectedDeviceType != "")
 	{
 		if(selectedDeviceType == "odu16")
@@ -1194,7 +1194,7 @@ function fetchMasterMacAddress()
 {
 	var ipAddress = $formInput.eq($formInputIndex["ip_address"]).val();
 	var selectedDeviceType = $formSelectList.eq($formSelectListIndex["device_type"]).val();
-
+	
 	if(ipAddress != "" && ipAddress.match(ipValidate) && selectedDeviceType != "")
 	{
 
@@ -1237,7 +1237,7 @@ function fetchMasterMacAddress()
 function fetchMacAddress(){
 	var ipAddress = $formInput.eq($formInputIndex["ip_address"]).val();
 	var selectedDeviceType = $formSelectList.eq($formSelectListIndex["device_type"]).val();
-
+	
 	if(ipAddress != "" && ipAddress.match(ipValidate) && selectedDeviceType != "")
 	{
 		$("#mac_loading,#radio_mac_loading").show();
@@ -1262,7 +1262,7 @@ function fetchMacAddress(){
 					else
 					{
 						$().toastmessage('showErrorToast', result.result);
-					}
+					}	
 				}
 				$("#mac_loading,#radio_mac_loading").hide();
 				$("#a_fetch_mac,#a_fetch_radio_mac").show();
@@ -1339,7 +1339,7 @@ function fetchNetworkDetails()
 /*
 function masterMACListChange(masterMAC){
 	alert('check');
-}
+} 
 */
 
 // to bind device type change event (select list).
@@ -1348,33 +1348,33 @@ function deviceTypeChange(deviceTypeSelectList)
 	deviceTypeSelectList.change(function(){
 		var selectedDeviceType = $(this).val();
 		var ipAddress = $formInput.eq($formInputIndex["ip_address"]).val();
-
+		
 		$("#mac_loading,#radio_mac_loading").hide();
-		$("#a_fetch_mac,#a_fetch_radio_mac").hide();
-
-
+		$("#a_fetch_mac,#a_fetch_radio_mac").hide();		
+		
+	
 		if(ipAddress.match(ipValidate) && selectedDeviceType != "")
 		{
-
+		    
 		}
 		else
 		{
 			if(selectedDeviceType != "")
 			{
-				$().toastmessage('showWarningToast', "Please enter valid IP address, then choose device type");
+				$().toastmessage('showWarningToast', "Please enter valid IP address, then choose device type");		
 				return;
 			}
 			else if(ipAddress.match(ipValidate))
 			{
-				$().toastmessage('showWarningToast', "Please choose device type");
+				$().toastmessage('showWarningToast', "Please choose device type");		
 				return;
 			}
-
-			$().toastmessage('showNoticeToast', "Please enter valid IP address, then choose device type first");
+			
+			$().toastmessage('showNoticeToast', "Please enter valid IP address, then choose device type first");		
             return;
-
+			
 		}
-
+		
 
 		// spacial case which is you can remove when you get fetch all devices http and snmp cradentails separately
 		if(actionName == "add")
@@ -1663,7 +1663,7 @@ function deviceTypeChange(deviceTypeSelectList)
 				$RadioMacDiv.hide();
 				$hardwareVersionDiv.hide();
 				$serialNumberDiv.hide();
-
+				
 			}
 			else if(selectedDeviceType == "idu8")
 			{
@@ -1737,7 +1737,7 @@ function createForm(act,id)
 			$formDiv.html(result);
 			addFormToolTip();	// to add form tool top
 			cancelForm();		// to bind form cancel button events
-
+			
 			// create jQuery object of forms elements
 			$form = $("form#form_host");
 			$formTitle = $("form#form_host th#form_title");
@@ -1750,7 +1750,7 @@ function createForm(act,id)
 			$formEditButton = $("form#form_host button[id='edit_host']");
 			$RaMacDiv = $("#ra_mac_div,#node_type_div","form#form_host");
 			$MasterSlaveDiv = $("#master_slave_div","form#form_host");
-
+			
 			// device network details div
 			$ap25NetworkDiv = $("div.ap25-only");
 			$ccuNetworkDiv = $("div.ccu-only");
@@ -1763,14 +1763,14 @@ function createForm(act,id)
 			$hardwareVersionDiv = $("div.hardware");
 			$serialNumberDiv = $("div.serial");
 			submitForm($form);	// to bind form submit request
-
+			
 			if(act == "edit")
 			{
 				editForm(id);		// when action is edit host
 			}
 			else
 			{
-				addForm();		// when action is add host
+				addForm();		// when action is add host 
 			}
 			spinStop($spinLoading,$spinMainLoading);
 			deviceTypeChange($formSelectList.eq($formSelectListIndex["device_type"]));	// bind device type change event
@@ -1808,7 +1808,7 @@ function getAllFirmwareDict(){
 function getHardwareInformation(deviceType){
 	var ipAddress = $formInput.eq($formInputIndex["ip_address"]).val();
 	var selectedDeviceType = $formSelectList.eq($formSelectListIndex["device_type"]).val();
-
+	
 	if(ipAddress != "" && ipAddress.match(ipValidate) && selectedDeviceType != "")
 	{
 		//$("#firmware_loading").show();
@@ -1828,10 +1828,10 @@ function getHardwareInformation(deviceType){
 					else{
 						$formInput.eq($formInputIndex["serial_number"]).val(result["serial_number"]);
 						$formInput.eq($formInputIndex["hardware_version"]).val(result["hardware_version"]);
-
+					
 					}
-
-
+					
+					
 				}
 			});
 			//$("#firmware_loading").hide();
@@ -1848,7 +1848,7 @@ function getHardwareInformation(deviceType){
 function getFirmwareVersion(deviceType){
 	var ipAddress = $formInput.eq($formInputIndex["ip_address"]).val();
 	var selectedDeviceType = $formSelectList.eq($formSelectListIndex["device_type"]).val();
-
+	
 	if(ipAddress != "" && ipAddress.match(ipValidate) && selectedDeviceType != "")
 	{
 		$("#firmware_loading").show();
@@ -1866,13 +1866,13 @@ function getFirmwareVersion(deviceType){
 						$().toastmessage('showErrorToast', result['result']);
 					}
 					firmwareSelectList(result.result,selectedDeviceType);
-
+					
 				},
 				complete:function(){
 				$("#firmware_loading").hide();
 			$("a#a_firmware_version").show();
 				}
-			});
+			});		
 	}
 	else
 	{
@@ -1882,7 +1882,7 @@ function getFirmwareVersion(deviceType){
 
 function firmwareSelectList(selectedFirmware,deviceType)
 {
-	if (firmwareVersion[deviceType] != undefined || firmwareVersion[deviceType]){
+	if (firmwareVersion[deviceType] != undefined || firmwareVersion[deviceType]){	
 		var optionStr = "<option value =\"\"> -- Select Firmware Version --</option>";
 		for (var i = 0,firmLen = firmwareVersion[deviceType].length;i < firmLen ; i ++){
 			if(String(firmwareVersion[deviceType][i])==selectedFirmware)
@@ -1913,14 +1913,14 @@ function addFormToolTip()
 }
 function addForm()
 {
-
+	
 	$formTitle.html("Add Host");
 	$form.attr("action","add_host.py");
 	//$formInput.val("");
 	//$formTextarea.val("");
 	$formAddButton.css({"display":"inline-block"});
 	$formEditButton.hide();
-	showForm();
+	showForm();		
 	if(!hostDefaultDetails)
 	{
 		loadDefault();
@@ -1929,7 +1929,7 @@ function addForm()
 	{
 		setValues(hostDefaultDetails);
 	}
-
+	
 }
 function loadDefault()
 {
@@ -2040,11 +2040,11 @@ function submitForm($formObj)
 							{
 								$.prompt(messages["raMacWarning"],{prefix:'jqismooth'});
 							}
-
+							
 						}
 						catch(err)
 						{
-
+							
 						}
 					}
 					else
@@ -2063,7 +2063,7 @@ function submitForm($formObj)
 					{
 						$.prompt(messages["ap25NetworkDetailsError"],{prefix:'jqismooth'});
 						spinStop($spinLoading,$spinMainLoading);
-						return false
+						return false	
 					}
 				}
 			}
@@ -2104,7 +2104,7 @@ function submitForm($formObj)
 				{
 					$.prompt(messages["ccuDhcpNetmaskError"],{prefix:'jqismooth'});
 					spinStop($spinLoading,$spinMainLoading);
-					return false
+					return false	
 				}
 			}
 			$.ajax({
@@ -2130,7 +2130,7 @@ function submitForm($formObj)
 							else
 							{
 								$gridViewDiscoveredHostFetched = 0;
-							}
+							} 
 						}
 					}
 					else
@@ -2447,7 +2447,7 @@ function setValues(details)
 	$formInput.eq($formInputIndex["idu4_vlan_tag"]).val(details["idu4_vlan_tag"]);
 	$formInput.eq($formInputIndex["idu4_tdm_ip"]).val(details["idu4_tdm_ip"]);
 	$formInput.eq($formInputIndex["ccu_dhcp_netmask"]).val(details["ccu_dhcp_netmask"]);
-
+	
 	$formPassword.eq($formPasswordIndex["http_password"]).val(details["http_password"]);
 	$formPassword.eq($formPasswordIndex["ssh_password"]).val(details["ssh_password"]);
 	$formTextarea.eq($formTextareaIndex["host_comment"]).val(details["host_comment"]);
@@ -2457,12 +2457,12 @@ function setValues(details)
 		$formCheckbox.eq($formCheckboxIndex["lock_position"]).attr("checked",true);
 	else
 		$formCheckbox.eq($formCheckboxIndex["lock_position"]).attr("checked",false);
-
+		
 	if(details["idu4_management_mode"] == 1)
 		$formCheckbox.eq($formCheckboxIndex["idu4_management_mode"]).attr("checked",true);
 	else
 		$formCheckbox.eq($formCheckboxIndex["idu4_management_mode"]).attr("checked",false);
-
+		
 	$formSelectList.eq($formSelectListIndex["device_type"]).val(selectedDeviceType);
 	$formSelectList.eq($formSelectListIndex["device_type"]).change();
 	$formSelectList.eq($formSelectListIndex["node_type"]).val(details["node_type"]);
@@ -2543,25 +2543,20 @@ function hideForm()
 {
 	$gridViewDiv.show();
 	$formDiv.hide();
-	$("img#add_host").show();
-	$("img#del_host").show();
 	hideAllToolTip();
-
 }
 function showForm()
 {
 	$gridViewDiv.hide();
-	$formDiv.show();
-	$("img#add_host").hide();
-	$("img#del_host").hide();
-}
+	$formDiv.show();	
+} 
 function delHost()
 {
 	actionName = "delConfirm";
 	hideForm();
 	var selectedRow = new Array();
 	selectedRow = fnGetSelected($gridViewDiscoveredHostDataTable)
-	var rLength = selectedRow.length;
+	var rLength = selectedRow.length; 
 	if(rLength==0)
 	{
 		$.prompt(messages["noneSelectedError"],{prefix:'jqismooth'});
@@ -2569,7 +2564,7 @@ function delHost()
 	else
 	{
 		$.prompt(messages[actionName],{ buttons:{Ok:true,Cancel:false}, prefix:'jqismooth',callback:delHostCallback });
-	}
+	}	
 }
 
 function delHostCallback(v,m){
@@ -2589,7 +2584,7 @@ function delHostCallback(v,m){
 			var aData = [];
 			var iRow = $gridViewDiscoveredHostDataTable.fnGetPosition(selectedRow[i]);
 			aData = $gridViewDiscoveredHostDataTable.fnGetData(iRow);
-
+			
 			hostId.push(String(aData[0]));
 			discoveryType.push(aData[1]);
 		}
@@ -2613,7 +2608,7 @@ function delHostCallback(v,m){
 						else
 						{
 							$gridViewDiscoveredHostFetched = 0;
-						}
+						} 
 					}
 				}
 				else
@@ -2634,7 +2629,7 @@ function fnGetSelected( oTableLocal )
 {
 	var aReturn = new Array();
 	var aTrs = oTableLocal.fnGetNodes();
-
+	
 	for ( var i=0 ; i<aTrs.length ; i++ )
 	{
 		if ( $(aTrs[i]).hasClass('row_selected') )

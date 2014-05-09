@@ -24,10 +24,7 @@
 # to the Free Software Foundation, Inc., 51 Franklin St,  Fifth Floor,
 # Boston, MA 02110-1301 USA.
 
-import config
-import htmllib
-import pprint
-import sidebar
+import config, htmllib, pprint, sidebar
 from lib import *
 
 
@@ -56,7 +53,6 @@ def page_view_permissions(h):
     html.write("</ul>\n")
     html.new_footer()
 
-
 def page_edit_permissions(h):
     global html
     html = h
@@ -68,13 +64,13 @@ def page_edit_permissions(h):
     permissions = {}
     if html.var("save"):
         for perm in config.permissions_by_order:
-            mays = [role for role in config.roles if html.var(
-                "p_%s_%s" % (role, perm["name"]))]
+            mays = [ role for role in config.roles if html.var("p_%s_%s" % (role, perm["name"])) ]
             permissions[perm["name"]] = mays
 
         config.save_permissions(permissions)
         config.load_permissions()
         html.message("Permissions have been saved.")
+
 
     html.begin_form("permissions")
     html.write('<table class="form">\n')
@@ -91,16 +87,14 @@ def page_edit_permissions(h):
             section_title = config.permission_sections[section]
             if section != current_section:
                 current_section = section
-                html.write('<tr><td class="legend border hilite" colspan=%d><b>%s</b></td></tr>\n' % (len(config.roles)
-                           + 1, section_title))
+                html.write('<tr><td class="legend border hilite" colspan=%d><b>%s</b></td></tr>\n' % (len(config.roles) + 1, section_title))
 
         if current_section == None:
-            title = "<b>%s</b><br><i>%s</i>" % (
-                perm["title"], perm["description"])
-            classes = "legend border"
+            title = "<b>%s</b><br><i>%s</i>" % (perm["title"], perm["description"])
+            classes="legend border"
         else:
             title = perm["title"]
-            classes = "legend border sub"
+            classes="legend border sub"
 
         html.write("<tr><td class=\"%s\">%s</td>" % (classes, title))
         for role in config.roles:
@@ -110,8 +104,7 @@ def page_edit_permissions(h):
             html.write("</td>")
         html.write("</tr>\n")
 
-    html.write('<tr><td></td><td style="text-align:center;" class="legend border button" colspan=%d>' % (len(
-        config.roles)))
+    html.write('<tr><td></td><td style="text-align:center;" class="legend border button" colspan=%d>' % (len(config.roles)))
     html.button("save", "Save")
     html.write("</td></tr>\n")
     html.write("</table>\n")

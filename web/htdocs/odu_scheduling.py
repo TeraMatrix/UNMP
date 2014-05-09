@@ -1,29 +1,12 @@
 #!/usr/bin/python2.6
 
-import config
-import htmllib
-import pprint
-import sidebar
-import views
-import time
-import defaults
-import os
-import cgi
-import xml.dom.minidom
-import subprocess
-import commands
-import MySQLdb
-import datetime
-import urllib2
-import base64
-import socket
-import sys
+import config, htmllib, pprint, sidebar, views, time, defaults, os, cgi, xml.dom.minidom, subprocess, commands, MySQLdb, datetime, urllib2, base64, socket, sys
 from lib import *
 from nms_config import *
 from odu_scheduling_bll import OduSchedulingBll
 
 
-################################## Scheduling ############################
+################################## Scheduling #####################################
 class OduScheduling(object):
     @staticmethod
     def view_Scheduling_Details(res):
@@ -37,26 +20,27 @@ class OduScheduling(object):
 		    			<th>Devices</th>\
 		    			<th>Status</th>\
 		    		</tr>'
-        if (len(res) == 0):
-            html_str += "<tr><td></td><td>No Data Exists</td><td></td></tr>"
-            html_str += "</div>"
-            return html_str
-        #  <img id=\"close_view\" class="img-link" src="images/new/close.png" onclick="back_scheduling_status();" style="float: right; margin: 7px;" original-title="Close"\>\
-        for i in range(0, len(res)):
-            html_str += '<tr>\
+        if (len(res)==0):
+            html_str+="<tr><td></td><td>No Data Exists</td><td></td></tr>"
+            html_str+="</div>"
+            return html_str	
+        #  <img id=\"close_view\" class="img-link" src="images/new/close.png" onclick="back_scheduling_status();" style="float: right; margin: 7px;" original-title="Close"\>\    	    
+        for i in range(0,len(res)):
+            html_str+='<tr>\
 		   <td class=" vertline" align="center">%s</td>\
 		   <td class=" vertline" align="center">%s</td>\
 		   <td class=" vertline" align="center">%s</td>\
-		   </tr>' % (res[i][0], res[i][1], res[i][2])
+		   </tr>'%(res[i][0],res[i][1],res[i][2])
 
-        html_str += "</div>"
+        html_str+="</div>"
         return html_str
+
 
     @staticmethod
     def create_scheduling_form(device_list):
     #<div id=\"notifi_sche_on\" style=\"width:100%;\"></div>\
 #    		<h2 style=\"text-align:center\">Scheduled Action Status</h2>\
-        html_str = "\
+        html_str="\
         <div id=\"scheduling_button_div\" style=\"width:30%; float: right; margin: 2% 10% 0% 67%; position: absolute;\">\
 		<h2 class=\".fc-header-title\" style=\"text-align:center\" >Scheduled Action Status</h2>\
 		<table class=\"display\" name=\"scheduled_action_status_table\" id=\"scheduled_action_status_table\" width=\"100%%\" >\
@@ -76,10 +60,10 @@ class OduScheduling(object):
             "<td style=\"padding:3px\">\
 						<select id=\"device_select_list\" name=\"device_select_list\">"
 
-        if len(device_list) > 0:
+        if len(device_list) > 0 :
             for i in device_list:
-                html_str += '<option value="%s">%s</option>' % (i[0], i[1])
-        html_str += "</select>\
+                html_str+='<option value="%s">%s</option>'%(i[0],i[1])					
+        html_str+="</select>\
 					</td></tr>"\
             "<tr>"\
             "<td style=\"padding:6px\" >Event<input type=\"hidden\" id=\"scheduleId\" name=\"scheduleId\" value=\"0\" /></td>"\
@@ -138,11 +122,10 @@ class OduScheduling(object):
             "<td></td>"\
             "<td style=\"padding:6px\" >Day: <select id=\"dates\" name=\"dates\">"
 
-        for k in range(1, 32):
-            html_str += "<option value=\"" + str(k) + "\">" + \
-                str(k) + "</option>"
+        for k in range(1,32):
+            html_str+="<option value=\"" + str(k) + "\">" + str(k) + "</option>"
 
-        html_str += "</select></td>"\
+        html_str+="</select></td>"\
             "</tr>"\
             "<tr id=\"trMonth\" style=\"display:none;\">"\
             "<td></td>"\
@@ -181,7 +164,7 @@ class OduScheduling(object):
 
     @staticmethod
     def create_scheduling_form_remain():
-        html_str = "</div></td>"\
+        html_str="</div></td>"\
             "</tr>"\
             "<tr>"\
             "<td style=\"padding:6px\" >\
@@ -192,7 +175,7 @@ class OduScheduling(object):
 		<div>"
 #                                <input type=\"text\" id=\"selected_firmware\" name=\"selected_firmware\" value=\"\" readonly=\"readonly\"/>"
 #                                <input type=\"button\" name=\"select_file\" id=\"select_file\" value=\"Choose File\" class=\"yo-small yo-button\"/ >\
-        html_str += "              <input type=\"button\" name=\"upload_new_file\" id=\"upload_new_file\" value=\"Upload New File\" class=\"yo-small yo-button\"/>\
+        html_str+="              <input type=\"button\" name=\"upload_new_file\" id=\"upload_new_file\" value=\"Upload New File\" class=\"yo-small yo-button\"/>\
                 </div>\
         </div></td>\
         </tr>\
@@ -211,48 +194,32 @@ class OduScheduling(object):
             "</div>"
         return html_str
 
-# function to create firmware update
+
+# function to create firmware update 
     # @staticmethod
-    # def device_firmware_view(h):
-        # html.write("<form method=\"post\" enctype=\"multipart/form-data\"
-        # action=\"firmware_file_upload.py\" style=\"font-size:10px;\"><input
-        # type=\"hidden\" name=\"host_id\" value=\"%s\"/><input type=\"hidden\"
-        # name=\"device_type\" value=\"%s\"/><input type=\"hidden\"
-        # name=\"device_list_state\" value=\"%s\"/><label style=\"margin-top:
-        # 15px;margin-right: 25px;\" class=\"lbl\">Firmware File</label><input
-        # style=\"font-size:10px;\" type=\"file\" name=\"file_uploader\"
-        # id=\"file_uploader\"><button name=\"button_uploader\"
-        # id=\"button_uploader\" type=\"file\" style=\"font-size:10px;\" class
-        # =\"yo-button yo-small\"><span
-        # class=\"upload\">Upload</span></button></form>" %
-        # (host_id,device_type,device_list_state))
+    #def device_firmware_view(h):
+        #html.write("<form method=\"post\" enctype=\"multipart/form-data\" action=\"firmware_file_upload.py\" style=\"font-size:10px;\"><input type=\"hidden\" name=\"host_id\" value=\"%s\"/><input type=\"hidden\" name=\"device_type\" value=\"%s\"/><input type=\"hidden\" name=\"device_list_state\" value=\"%s\"/><label style=\"margin-top: 15px;margin-right: 25px;\" class=\"lbl\">Firmware File</label><input style=\"font-size:10px;\" type=\"file\" name=\"file_uploader\" id=\"file_uploader\"><button name=\"button_uploader\" id=\"button_uploader\" type=\"file\" style=\"font-size:10px;\" class=\"yo-button yo-small\"><span class=\"upload\">Upload</span></button></form>" % (host_id,device_type,device_list_state))
+
+
+
 # function to create multiple selection list for access point
     @staticmethod
-    def odu_multiple_select_list(odu_list, selectListId, result):
+    def odu_multiple_select_list(odu_list, selectListId,result):
         selectList = ""
         liList = ""
         for row in result:
-            liList += "<li>" + row[1] + "<img src=\"images/add16.png\" class=\"plus plus" + selectListId + \
-                "\" alt=\"+\" title=\"Add\" id=\"" + str(
-                    row[0]) + "\" name=\"" + row[1] + "\"/></li>"
-        selectList += "<div class=\"multiSelectList\" id=\"multiSelectList" + \
-            selectListId + "\" style=\"position:;\">"
-        selectList += "<input type=\"hidden\" id=\"hd" + \
-            selectListId + "\" name=\"hd" + selectListId + "\" value=\"\" />"
-        selectList += "<input type=\"hidden\" id=\"hdTemp" + selectListId + \
-            "\" name=\"hdTemp" + selectListId + "\" value=\"" + \
-            odu_list + "\" />"
+            liList += "<li>" + row[1] + "<img src=\"images/add16.png\" class=\"plus plus" + selectListId + "\" alt=\"+\" title=\"Add\" id=\"" + str(row[0]) + "\" name=\"" + row[1] + "\"/></li>"
+        selectList += "<div class=\"multiSelectList\" id=\"multiSelectList" + selectListId + "\" style=\"position:;\">"
+        selectList += "<input type=\"hidden\" id=\"hd" + selectListId + "\" name=\"hd" + selectListId + "\" value=\"\" />"
+        selectList += "<input type=\"hidden\" id=\"hdTemp" + selectListId + "\" name=\"hdTemp" + selectListId + "\" value=\"" + odu_list + "\" />"
         selectList += "<div class=\"selected\">"
-        selectList += "<div class=\"shead\"><span id=\"count\">0</span><span> Device(s)</span><a href=\"#\" id=\"rm" + \
-            selectListId + \
-            "\">Remove all</a>"
+        selectList += "<div class=\"shead\"><span id=\"count\">0</span><span> Device(s)</span><a href=\"#\" id=\"rm" + selectListId + "\">Remove all</a>"
         selectList += "</div>"
-        selectList += "<ul>"  # <li>asdf<img src=\"images/minus16.png\" class=\"minus\" alt=\"-\" title=\"Remove\" /></li>
+        selectList += "<ul>" #<li>asdf<img src=\"images/minus16.png\" class=\"minus\" alt=\"-\" title=\"Remove\" /></li>
         selectList += "</ul>"
         selectList += "</div>"
         selectList += "<div class=\"nonSelected\">"
-        selectList += "<div class=\"shead\"><a href=\"#\" id=\"add" + \
-            selectListId + "\">Add all</a>"
+        selectList += "<div class=\"shead\"><a href=\"#\" id=\"add" + selectListId + "\">Add all</a>"
         selectList += "</div>"
         selectList += "<ul>" + liList
         selectList += "</ul>"
@@ -275,17 +242,16 @@ class OduScheduling(object):
                 jsonData += "{"
                 jsonData += "id:" + str(srow[0]) + ","
                 jsonData += "title:\"" + srow[1] + "\","
-                jsonData += "start: new Date(" + sDate[0] + "," + str(
-                    int(sDate[1]) - 1) + "," + sDate[2] + "," + sTime[0] + "," + sTime[1] + "),"
-                jsonData += "end: new Date(" + eDate[0] + "," + str(
-                    int(eDate[1]) - 1) + "," + eDate[2] + "," + eTime[0] + "," + eTime[1] + "),"
+                jsonData += "start: new Date(" + sDate[0] + ","+ str(int(sDate[1]) - 1 ) + ","+ sDate[2] + ","+ sTime[0] + ","+ sTime[1] + "),"
+                jsonData += "end: new Date(" + eDate[0] + ","+ str(int(eDate[1]) - 1 ) + ","+ eDate[2] + ","+ eTime[0] + ","+ eTime[1] + "),"
                 jsonData += "allDay: false"
                 jsonData += "}"
                 i += 1
             jsonData += "]}"
             return jsonData
-        except Exception, e:
+        except Exception , e:
             return "{events:[]}"
+
 
     @staticmethod
     def load_repeative_events(schedule):
@@ -303,7 +269,7 @@ class OduScheduling(object):
                     daily += "{"
                     daily += "id:" + str(srow[0]) + ","
                     daily += "title:\"" + srow[1] + "\","
-                    daily += "start:\"" + str(srow[4]) + "\","
+                    daily += "start:\"" + str(srow[4]) + "\"," 
                     daily += "end: \"" + str(srow[5]) + "\","
                     daily += "allDay: false"
                     daily += "}"
@@ -315,7 +281,7 @@ class OduScheduling(object):
                     weekly += "{"
                     weekly += "id:" + str(srow[0]) + ","
                     weekly += "title:\"" + srow[1] + "\","
-                    weekly += "start:\"" + str(srow[4]) + "\","
+                    weekly += "start:\"" + str(srow[4]) + "\"," 
                     weekly += "end: \"" + str(srow[5]) + "\","
                     weekly += "sun: " + str(srow[8]) + ","
                     weekly += "mon: " + str(srow[9]) + ","
@@ -334,7 +300,7 @@ class OduScheduling(object):
                     monthly += "{"
                     monthly += "id:" + str(srow[0]) + ","
                     monthly += "title:\"" + srow[1] + "\","
-                    monthly += "start:\"" + str(srow[4]) + "\","
+                    monthly += "start:\"" + str(srow[4]) + "\"," 
                     monthly += "end: \"" + str(srow[5]) + "\","
                     monthly += "date: " + str(srow[27]) + ","
                     monthly += "jan: " + str(srow[15]) + ","
@@ -357,6 +323,7 @@ class OduScheduling(object):
         except:
             return ("{daily:[],weekly:[],monthly:[]}")
 
+
     @staticmethod
     def view_odu_list(result):
         tableString = """
@@ -370,21 +337,20 @@ class OduScheduling(object):
                			<th>Host Name</th>
                		</tr>
                """
-        i = 0
+        i = 0;
         for row in result:
             i += 1
-            tableString += "<tr><td>" + str(i) + "</td><td>" + row[1] + "</td><td>" + row[0] + \
-                "</td><td>" + row[3] + "</td></tr>"
+            tableString += "<tr><td>" + str(i) + "</td><td>" + row[1]+ "</td><td>" + row[0]+ "</td><td>" + row[3]+ "</td></tr>"
         tableString += "</tbody></table>"
         return tableString
 
-################################## Scheduling ############################
+################################## Scheduling #####################################
 
-#################################### AP Radio Status #####################
+#################################### AP Radio Status ##############################
     @staticmethod
     def radio_status(result):
         socket.setdefaulttimeout(1)
-        tableString = "<table style=\"margin-bottom: 0px;\" id=\"iconmeaningtable\" class=\"yo-table\" width=\"100%\"><colgroup><col width=\"auto\"><col width=\"1%\"><col width=\"6%\"><col width=\"1%\"><col width=\"6%\"><col width=\"1%\"><col width=\"6%\"></colgroup><tbody><tr><th></th><th style=\"padding: 5px 0px 5px 10px;\"><img width=\"10px\" alt=\"enable\" src=\"images/status-0.png\"></th><th>enable</th><th style=\"padding: 5px 0px 5px 10px;\"><img width=\"10px\" alt=\"disable\" src=\"images/status-2.png\"></th><th>disable</th><th style=\"padding: 5px 0px 5px 10px;\"><img width=\"10px\" alt=\"unknown\" src=\"images/status-3.png\"></th><th>unknown</th></tr></tbody></table>"
+        tableString ="<table style=\"margin-bottom: 0px;\" id=\"iconmeaningtable\" class=\"yo-table\" width=\"100%\"><colgroup><col width=\"auto\"><col width=\"1%\"><col width=\"6%\"><col width=\"1%\"><col width=\"6%\"><col width=\"1%\"><col width=\"6%\"></colgroup><tbody><tr><th></th><th style=\"padding: 5px 0px 5px 10px;\"><img width=\"10px\" alt=\"enable\" src=\"images/status-0.png\"></th><th>enable</th><th style=\"padding: 5px 0px 5px 10px;\"><img width=\"10px\" alt=\"disable\" src=\"images/status-2.png\"></th><th>disable</th><th style=\"padding: 5px 0px 5px 10px;\"><img width=\"10px\" alt=\"unknown\" src=\"images/status-3.png\"></th><th>unknown</th></tr></tbody></table>"
 
         tableString += "<table class=\"yo-table\" width=\"100%\"><colgroup><col width=\"5%\"><col width=\"25%\"><col width=\"5%\"><col width=\"25%\"><col width=\"35%\"><col width=\"5%\"></colgroup><tbody>"
         tableString += "<tr><th>S.No.</th><th>IP Address</th><th>Status</th><th>Retry Action Time</th><th>Action Msg</th><th></th></tr>"
@@ -400,13 +366,12 @@ class OduScheduling(object):
 
             try:
                 req = urllib2.Request(url)
-                auth_string = base64.encodestring(
-                    "%s:%s" % (username, password))
+                auth_string = base64.encodestring("%s:%s" % (username,password))
                 req.add_header("Authorization", "Basic %s" % auth_string)
                 f = urllib2.urlopen(req)
                 response = f.read()
             except urllib2.HTTPError, e:
-                response = str(e.code)  # send http error code
+                response = str(e.code)	# send http error code
             except:
                 response = "Notwork Unreachable"
 
@@ -419,7 +384,7 @@ class OduScheduling(object):
             elif response == "501":
                 message = "Server Error"
             else:
-                message = "Access Point not connected"
+                message = "Access Point not connected"          
 
             currentStatus = ""
             if response.find("RadioStatus = 11") != -1:
@@ -431,7 +396,7 @@ class OduScheduling(object):
             if response.find("RadioStatus = 00") != -1:
                 currentStatus = "Disable"
 
-            odu_bll_obj = OduSchedulingBll()
+            odu_bll_obj=OduSchedulingBll()
             result2 = odu_bll_obj.radio_status_repeat(row[0])
 
             retryTime = "-"
@@ -446,20 +411,14 @@ class OduScheduling(object):
                 tableString += "<td><img width=\"10px\" alt=\"enable\" title=\"Enable\" src=\"images/status-0.png\"></td>"
                 tableString += "<td>" + retryTime + "</td>"
                 tableString += "<td>" + retryMsg + "</td>"
-                tableString += "<td><a href=\"javascript:disableRadio('" + row[2] + "','" + username + "','" + \
-                    password + "','" + \
-                    port + \
-                    "')\">Disable</a></td>"
+                tableString += "<td><a href=\"javascript:disableRadio('" + row[2] + "','" + username + "','" + password + "','" + port + "')\">Disable</a></td>"
             elif currentStatus == "Disable":
                 tableString += "<td><img width=\"10px\" alt=\"disable\" title=\"Disable\" src=\"images/status-2.png\"></td>"
                 tableString += "<td>" + retryTime + "</td>"
                 tableString += "<td>" + retryMsg + "</td>"
-                tableString += "<td><a href=\"javascript:enableRadio('" + row[2] + "','" + username + "','" + \
-                    password + "','" + \
-                    port + "')\">Enable</a></td>"
+                tableString += "<td><a href=\"javascript:enableRadio('" + row[2] + "','" + username + "','" + password + "','" + port + "')\">Enable</a></td>"
             else:
-                tableString += "<td><img width=\"10px\" alt=\"unknown\" title=\"" + message + \
-                    "\" src=\"images/status-3.png\"></td>"
+                tableString += "<td><img width=\"10px\" alt=\"unknown\" title=\"" + message + "\" src=\"images/status-3.png\"></td>"
                 tableString += "<td>-</td>"
                 tableString += "<td>" + message + "</td>"
                 tableString += "<td>-</td>"
@@ -467,6 +426,8 @@ class OduScheduling(object):
 
         tableString += "</tbody></table>"
         return tableString
+
+
 
     @staticmethod
     def view_page_tip_scheduling():

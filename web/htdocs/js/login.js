@@ -1,20 +1,18 @@
+
 $(function(){
 	// Loading - Spin Object
-	var spinLoading = $("div#spin_loading");		// loading circle
-	var spinMainLoading = $("div#main_loading");	// loading squire
+	var spinLoading = $("div#spin_loading");		// create object that hold loading circle
+	var spinMainLoading = $("div#main_loading");	// create object that hold loading squire
 	var loginBox = $("#login_box");
 	var doc = $(document);
 	var pageHeight = doc.height();
 	var pageWidth = doc.width();
 	var loginBoxHeight = loginBox.height();
 	var loginBoxWidth = loginBox.width();
-	var loginBoxPositionTop = String(((pageHeight/2) - 
-	                          (loginBoxHeight/2))*100/pageHeight) + "%";
-	var loginBoxPositionLeft = String(((pageWidth/2) - 
-	                          (loginBoxWidth/2))*100/pageWidth) + "%";
+	var loginBoxPositionTop = String(((pageHeight/2) - (loginBoxHeight/2))*100/pageHeight) + "%";
+	var loginBoxPositionLeft = String(((pageWidth/2) - (loginBoxWidth/2))*100/pageWidth) + "%";
 	// spin loading object
-	//loginBox.css({"top":loginBoxPositionTop,
-	//              "left":loginBoxPositionLeft});
+	//loginBox.css({"top":loginBoxPositionTop,"left":loginBoxPositionLeft});
 	$("input[name='username']").focus();
 	$('body').addClass('login_body');
 	$("#login_form").submit(function(){
@@ -30,48 +28,39 @@ $(function(){
 					success:function(result){
 						try
 						{
-						  jsonResult = eval("(" + result + ")");
-							switch(+(jsonResult.success)){
-								case 4:	// password expiry warning 
-								  $().toastmessage('showNoticeToast', jsonResult.result);
-									setTimeout(function(){
-										spinStop(spinLoading,spinMainLoading);
-										window.location.reload();							
-									}, 3000);
-									break;	
-								case 0:	// successful login!  			
+							jsonResult = eval("(" + result + ")");
+							if(jsonResult.success == 0)
+							{
+								spinStop(spinLoading,spinMainLoading);
+								//parent.side.location = jsonResult.result[0];
+								window.location.reload();
+							}
+							else 
+								if(jsonResult.success == 2)
+								{
 									spinStop(spinLoading,spinMainLoading);
-									window.location.reload();							
-									break;
-								case 2: // user alteady login from some where else
-									spinStop(spinLoading,spinMainLoading);
-									$.prompt('This account is cuurenlty logged in from other location. You will be logged out from all other sessions. Do you want to continue?',
-														{ 
-															buttons: {Ok:true}, 
-															prefix: 'jqismooth',
-															callback: sessionUser 
-														}
-													);
-									break;
-								case 1:	// username or(/and) password invalid
-								case 3: // entered old-password									
-								default: 
-									spinStop(spinLoading,spinMainLoading);
+									$.prompt('This account seems to be logged in from some other location too.You will be logged out from all the other sessions.',{ buttons:{Ok:true}, prefix:'jqismooth',callback:sessionUser });
+								}
+								else
+								{	spinStop(spinLoading,spinMainLoading);
 									$().toastmessage('showErrorToast', jsonResult.result);
-							}						
-						}
+									//spinStop(spinLoading,spinMainLoading);
+								}
+							}
 						catch(error)
 						{
 							spinStop(spinLoading,spinMainLoading);
-							$().toastmessage('showErrorToast', "Please Enter Username and Password.");	
-							//$().toastmessage('showErrorToast', "Please Enter Valid Username and Password-JS-Bug" + error.message);
+							$().toastmessage('showErrorToast', "Please Enter Valid Username and Password ");
+							//$().toastmessage('showErrorToast', result);
+							//spinStop(spinLoading,spinMainLoading);
 						}	
 					}
 				});
-		}
+			}
+
 		else
 		{
-			$().toastmessage('showErrorToast', "Please Enter Username and Password.");	
+			$().toastmessage('showErrorToast', "Please Enter Username and Password.");
 		}
 		return false;		
 	});

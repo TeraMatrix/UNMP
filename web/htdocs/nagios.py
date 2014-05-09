@@ -10,29 +10,25 @@
 #<span class="search-input"><input type="text" /></span>
 # this is used for searching
 
-from datetime import datetime, timedelta
-
-
+from datetime import datetime,timedelta
 class Nagios(object):
     @staticmethod
     def advanced_host_settings(result={}):
         try:
-
-            service_dict = {}
-            service_dict['snmp_uptime'] = result.get(
-                'snmp_uptime', ['', '', ''])
-            service_dict['statistics_service'] = result.get(
-                'statistics_service', ['', '', ''])
-            html_view = ['<div style=\"width:98%%\">\
+        	
+        	service_dict = {}
+		service_dict['snmp_uptime'] = result.get('snmp_uptime',['','',''])
+		service_dict['statistics_service'] = result.get('statistics_service',['','',''])
+		html_view = ['<div style=\"width:98%%\">\
 			<div class=\"row-elem\"><h3>Uptime service(Heartbeat Rate):</h3></div>\
 			<div class=\"row-elem\">\
 				<label class=\"lbl lbl-big\" for=\"advanced_max_check_attempts_snmp_uptime\">max check attempts</label>\
-				<input type=\"text\" id=\"advanced_max_check_attempts_snmp_uptime\" name=\"advanced_max_check_attempts_snmp_uptime\" value=\"%s\" />' % (str(service_dict["snmp_uptime"][0]))]
-            html_view.append('</div>\
+				<input type=\"text\" id=\"advanced_max_check_attempts_snmp_uptime\" name=\"advanced_max_check_attempts_snmp_uptime\" value=\"%s\" />'%(str(service_dict["snmp_uptime"][0]))]
+		html_view.append('</div>\
 			<div class=\"row-elem\">\
 			   	<label class=\"lbl lbl-big\" style="width:100px;margin-right:57px" >service check time:</label>\
 			   	<select name="advanced_check_interval_snmp_uptime" id="advanced_check_interval_snmp_uptime" class="multiselect" title="Click to select an option">')
-            html_view.append('<option value=' + str(service_dict["snmp_uptime"][1]) + '>' + str(service_dict["snmp_uptime"][1]) + ' mins</option>\
+		html_view.append('<option value='+str(service_dict["snmp_uptime"][1])+'>'+str(service_dict["snmp_uptime"][1])+' mins</option>\
 					<option value=1>1 mins</option>\
 					<option value=5>5 mins</option>\
 					<option value=10>10 mins</option>\
@@ -49,7 +45,7 @@ class Nagios(object):
 			<div class=\"row-elem\">\
 			   	<label class=\"lbl lbl-big\" style="width:100px;margin-right:57px" >service retry time:</label>\
 			   	<select name="advanced_retry_interval_snmp_uptime" id="advanced_retry_interval_snmp_uptime" class="multiselect" title="Click to select an option">')
-            html_view.append('<option value=' + str(service_dict["snmp_uptime"][2]) + '>' + str(service_dict["snmp_uptime"][2]) + ' mins</option>\
+		html_view.append('<option value='+str(service_dict["snmp_uptime"][2])+'>'+str(service_dict["snmp_uptime"][2])+' mins</option>\
 					<option value=1>1 mins</option>\
 					<option value=5>5 mins</option>\
 					<option value=10>10 mins</option>\
@@ -67,13 +63,13 @@ class Nagios(object):
 			<div class=\"row-elem\">\
 				<label class=\"lbl lbl-big\" for=\"advanced_max_check_attempts_statistics_service\">max check attempts</label>')
 
-            html_view.append('<input type=\"text\" id=\"advanced_max_check_attempts_statistics_service\" name=\"advanced_max_check_attempts_statistics_service\" value=\"%s\" />' % (str(service_dict["statistics_service"][0])))
-            html_view.append('</div>\
+		html_view.append('<input type=\"text\" id=\"advanced_max_check_attempts_statistics_service\" name=\"advanced_max_check_attempts_statistics_service\" value=\"%s\" />'%(str(service_dict["statistics_service"][0])))
+		html_view.append('</div>\
 			<div class=\"row-elem\">\
 			   	<label class=\"lbl lbl-big\" style="width:100px;margin-right:57px" >service check time:</label>\
 			   	<select name="advanced_check_interval_statistics_service" id="advanced_check_interval_statistics_service" class="multiselect" title="Click to select an option">')
 
-            html_view.append('<option value=' + str(service_dict["statistics_service"][1]) + '>' + str(service_dict["statistics_service"][1]) + ' mins</option>\
+		html_view.append('<option value='+str(service_dict["statistics_service"][1])+'>'+str(service_dict["statistics_service"][1])+' mins</option>\
 					<option value=5>5 mins</option>\
 					<option value=10>10 mins</option>\
 					<option value=15>15 mins</option>\
@@ -90,7 +86,7 @@ class Nagios(object):
 			   	<label class=\"lbl lbl-big\" style="width:100px;margin-right:57px" >service retry time:</label>\
 			   	<select name="advanced_retry_interval_statistics_service" id="advanced_retry_interval_statistics_service" class="multiselect" title="Click to select an option">')
 
-            html_view.append('<option value=' + str(service_dict["statistics_service"][2]) + '>' + str(service_dict["statistics_service"][2]) + ' mins</option>\
+		html_view.append('<option value='+str(service_dict["statistics_service"][2])+'>'+str(service_dict["statistics_service"][2])+' mins</option>\
 					<option value=5>5 mins</option>\
 					<option value=10>10 mins</option>\
 					<option value=15>15 mins</option>\
@@ -105,14 +101,14 @@ class Nagios(object):
 			</div>\
 			<button type=\"button\" class=\"yo-small yo-button\" id=\"apply_advanced_host_settings\"><span class=\"edit\">Apply</span></button>\
 			<button type=\"button\" class=\"yo-small yo-button\" id=\"close_advanced_host_settings\"><span class=\"cancel\">Cancel</span></button></div>')
-
-            return ''.join(html_view)
-        except Exception, e:
-            return str(e)
-
+		
+		return ''.join(html_view)
+        except Exception,e:
+                return str(e)        
+        
     @staticmethod
     def main_menu():
-        html_view = '\
+        html_view='\
  	     <input type=\"text\" id=\"nagios_module\" value=\"nagios_hosts\" style=\"display:none\"/>\
 	     <div id="div_table_paginate">\
 	     	<table cellpadding="0" cellspacing="0" border="0" class=\"display\" id=\"host_table_paginate\" style=\"text-align:center;\"> \
@@ -306,9 +302,10 @@ class Nagios(object):
         </form>'
         return html_view
 
+
     @staticmethod
     def main_menu_host_inventory():
-        html_view = '\
+        html_view='\
  	     <input type=\"text\" id=\"nagios_module\" value=\"nagios_hosts\" style=\"display:none\"/>\
 	     <form  action=\"save_nagios_edit_host.py\" method=\"get\" id=\"edit_nagios_host_form\" name=\"edit_nagios_host_form\" >\
                 <div class=\"form-div\">\
@@ -467,10 +464,9 @@ class Nagios(object):
             </div>\
         </form>'
         return html_view
-
     @staticmethod
     def main_menu_host_template():
-        html_view = '\
+        html_view='\
  	     <input type=\"text\" id=\"nagios_module\" value=\"nagios_host_template\" style=\"display:none\"/>\
 	     <div id="div_table_paginate">\
 	     	<table cellpadding="0" cellspacing="0" border="0" class=\"display\" id=\"host_template_table_paginate\" style=\"text-align:center;\"> \
@@ -660,10 +656,10 @@ class Nagios(object):
             </div>\
         </form>'
         return html_view
-
+        
     @staticmethod
     def main_menu_service():
-        html_view = '\
+        html_view='\
  	     <input type=\"text\" id=\"nagios_module\" value=\"nagios_service\" style=\"display:none\"/>\
 	     <div id="div_table_paginate">\
 	     	<table cellpadding="0" cellspacing="0" border="0" class=\"display\" id=\"service_table_paginate\" style=\"text-align:center;\"> \
@@ -890,7 +886,7 @@ class Nagios(object):
 
     @staticmethod
     def main_menu_service_template():
-        html_view = '\
+        html_view='\
  	     <input type=\"text\" id=\"nagios_module\" value=\"nagios_service_template\" style=\"display:none\"/>\
 	     <div id="div_table_paginate">\
 	     	<table cellpadding="0" cellspacing="0" border="0" class=\"display\" id=\"service_template_table_paginate\" style=\"text-align:center;\"> \
@@ -1115,9 +1111,11 @@ class Nagios(object):
         </form>'
         return html_view
 
+
+
     @staticmethod
     def main_menu_hostgroup():
-        html_view = '\
+        html_view='\
  	     <input type=\"text\" id=\"nagios_module\" value=\"nagios_hostgroup\" style=\"display:none\"/>\
 	     <div id="div_table_paginate">\
 	     	<table cellpadding="0" cellspacing="0" border="0" class=\"display\" id=\"hostgroup_table_paginate\" style=\"text-align:center;\"> \
@@ -1179,7 +1177,7 @@ class Nagios(object):
 
     @staticmethod
     def main_menu_hostgroup_inventory():
-        html_view = '\
+        html_view='\
  	     <input type=\"text\" id=\"nagios_module\" value=\"nagios_hostgroup\" style=\"display:none\"/>\
 	     <form action=\"save_nagios_hostgroup_inventory.py\" method=\"get\" id=\"edit_nagios_hostgroup_inventory_form\" name=\"edit_nagios_hostgroup_inventory_form\" >\
                 <div class=\"form-div\">\
@@ -1333,9 +1331,10 @@ class Nagios(object):
         return html_view
         return html_view
 
+
     @staticmethod
     def main_menu_servicegroup():
-        html_view = '\
+        html_view='\
  	     <input type=\"text\" id=\"nagios_module\" value=\"nagios_servicegroup\" style=\"display:none\"/>\
 	     <div id="div_table_paginate">\
 	     	<table cellpadding="0" cellspacing="0" border="0" class=\"display\" id=\"servicegroup_table_paginate\" style=\"text-align:center;\"> \
@@ -1398,10 +1397,11 @@ class Nagios(object):
             </div>\
         </form>'
         return html_view
-
+        
+        
     @staticmethod
     def main_menu_command():
-        html_view = '\
+        html_view='\
  	     <input type=\"text\" id=\"nagios_module\" value=\"nagios_command\" style=\"display:none\"/>\
 	     <div id="div_table_paginate">\
 	     	<table cellpadding="0" cellspacing="0" border="0" class=\"display\" id=\"command_table_paginate\" style=\"text-align:center;\"> \
@@ -1447,7 +1447,7 @@ class Nagios(object):
 
     @staticmethod
     def main_menu_hostdependency():
-        html_view = '\
+        html_view='\
  	     <input type=\"text\" id=\"nagios_module\" value=\"nagios_hostdependency\" style=\"display:none\"/>\
 	     <div id="div_table_paginate">\
 	     	<table cellpadding="0" cellspacing="0" border="0" class=\"display\" id=\"hostdependency_table_paginate\" style=\"text-align:center;\"> \
@@ -1521,7 +1521,7 @@ class Nagios(object):
 
     @staticmethod
     def main_menu_servicedependency():
-        html_view = '\
+        html_view='\
  	     <input type=\"text\" id=\"nagios_module\" value=\"nagios_servicedependency\" style=\"display:none\"/>\
 	     <div id="div_table_paginate">\
 	     	<table cellpadding="0" cellspacing="0" border="0" class=\"display\" id=\"servicedependency_table_paginate\" style=\"text-align:center;\"> \
@@ -1606,50 +1606,45 @@ class Nagios(object):
             </div>\
         </form>'
         return html_view
-
+        
+        
     @staticmethod
-    def get_columns(selected_columns, non_selected_columns, heading):
-        liList = ""
-        plusList = ""
-        if(non_selected_columns != [""]):
-            for row in non_selected_columns:
-                plusList += "<li>" + row + "<img src=\"images/add16.png\" class=\"plus plus\" alt=\"+\" title=\"Add\" id=\"" + \
-                    row + "\" name=\"" + row + "\"/></li>"
+    def get_columns(selected_columns,non_selected_columns,heading):
+	liList = ""
+        plusList=""
+        if(non_selected_columns!=[""]):
+	    for row in non_selected_columns:
+                plusList += "<li>" + row + "<img src=\"images/add16.png\" class=\"plus plus\" alt=\"+\" title=\"Add\" id=\"" + row + "\" name=\"" + row + "\"/></li>"
         minusList = ""
-        if(selected_columns != [""]):
-            for row in selected_columns:
-                minusList += "<li>" + row + "<img src=\"images/minus16.png\" class=\"minus minus\" alt=\"-\" title=\"Remove\" id=\"" + row + \
-                    "\" name=\"" + row + "\"/></li>"
-        selectList = []
-        selectList.append('<div style="vertical-align: middle; width: 30px; text-align: center; padding-top: 45.5px;margin-left: 120px;"><span id="moveable_vertical"><img onclick="moveElementsUpDown(\'0\', \'top\')" src="images/new_icons/icon_top_24.gif" style="cursor: pointer;" ><img onclick="moveElementsUpDown(\'0\', \'up\')" src="images/new_icons/icon_up_24.gif" style="cursor: pointer;"><img onclick="moveElementsUpDown(\'0\', \'down\')" src="images/new_icons/icon_down_24.gif" style="cursor: pointer;" ><img onclick="moveElementsUpDown(\'0\', \'bottom\')" src="images/new_icons/icon_bottom_24.gif" style="cursor: pointer;"></span></div>')
-        selectList.append(
-            "<div class=\"multiSelectList\" id=\"multiSelectList\" style=\"margin-left:165px;margin-top:-150px;\" multiple="" >")
-        selectList.append("<input type=\"hidden\" id=\"hd\" name=\"hd\" value=\"%s\"/>" % (
-            ",".join(selected_columns)))
-        selectList.append(
-            "<input type=\"hidden\" id=\"hdTemp\" name=\"hdTemp\" />")
+        if(selected_columns!=[""]):
+	    for row in selected_columns:
+                minusList += "<li>" + row + "<img src=\"images/minus16.png\" class=\"minus minus\" alt=\"-\" title=\"Remove\" id=\"" + row + "\" name=\"" + row + "\"/></li>"
+	selectList=[]
+	selectList.append('<div style="vertical-align: middle; width: 30px; text-align: center; padding-top: 45.5px;margin-left: 120px;"><span id="moveable_vertical"><img onclick="moveElementsUpDown(\'0\', \'top\')" src="images/new_icons/icon_top_24.gif" style="cursor: pointer;" ><img onclick="moveElementsUpDown(\'0\', \'up\')" src="images/new_icons/icon_up_24.gif" style="cursor: pointer;"><img onclick="moveElementsUpDown(\'0\', \'down\')" src="images/new_icons/icon_down_24.gif" style="cursor: pointer;" ><img onclick="moveElementsUpDown(\'0\', \'bottom\')" src="images/new_icons/icon_bottom_24.gif" style="cursor: pointer;"></span></div>')   
+        selectList.append("<div class=\"multiSelectList\" id=\"multiSelectList\" style=\"margin-left:165px;margin-top:-150px;\" multiple="" >")
+        selectList.append("<input type=\"hidden\" id=\"hd\" name=\"hd\" value=\"%s\"/>"%(",".join(selected_columns)))
+        selectList.append("<input type=\"hidden\" id=\"hdTemp\" name=\"hdTemp\" />")
         selectList.append("<div class=\"selected\">")
-        selectList.append("<div class=\"shead\"><span id=\"count\">%s</span><span>%s</span><a href=\"#\" id=\"rm\">Remove all</a>" % (len(
-            selected_columns), heading))
+        selectList.append("<div class=\"shead\"><span id=\"count\">%s</span><span>%s</span><a href=\"#\" id=\"rm\">Remove all</a>"%(len(selected_columns),heading))
         selectList.append("</div>")
-        selectList.append("<ul>" + minusList)
+        selectList.append("<ul>"+minusList)
         selectList.append("</ul></div>")
 #        selectList.append("</div>"
         selectList.append("<div class=\"nonSelected\">")
-        selectList.append(
-            "<div class=\"shead\"><a href=\"#\" id=\"add\">Add all</a>")
+        selectList.append("<div class=\"shead\"><a href=\"#\" id=\"add\">Add all</a>")
         selectList.append("</div>")
         selectList.append("<ul>" + plusList)
         selectList.append("</ul>")
         selectList.append("</div>")
-        selectList.append("</div>")
-
-        return ''.join(selectList)
-
+        selectList.append("</div>")        
+        
+	return ''.join(selectList)
+	
+	
     @staticmethod
     def settings_nagios(result):
         try:
-            s = '<table class="yo-table" width="100%" cellpadding="0" cellspacing="0" style="text-align:left">\
+            s='<table class="yo-table" width="100%" cellpadding="0" cellspacing="0" style="text-align:left">\
 	       <colgroup width="35%"></colgroup>\
 	       <colgroup width="15%"></colgroup>\
 	       <colgroup width="auto"></colgroup>\
@@ -1659,8 +1654,8 @@ class Nagios(object):
 		    <th>Actions</th>\
 		  </tr>\
 		<tr>'
-            if result == "Nagios is running":
-                s += '  	<td class=" vertline" style="text-align:left"><label id="nagios_label" style="text-align:left">Running</label></td>\
+            if result=="Nagios is running":
+                s+='  	<td class=" vertline" style="text-align:left"><label id="nagios_label" style="text-align:left">Running</label></td>\
 		   <td style="text-align:left">\
                 <img src="images/new/status-0.png" style=\"cursor:pointer;\"  title="ON" id="nagios_on" class="daemon-img w-tip-image"/>\
 			<img src="images/new/status-2.png" style=\"cursor:pointer;display:none\"  title="OFF" id="nagios_off" class="daemon-img w-tip-image"/>\
@@ -1670,7 +1665,7 @@ class Nagios(object):
 			<img src="images/new/restart.png"  style=\"cursor:pointer;\" title="Restart" id="nagios_restart" class="daemon-img restart w-tip-image"/> &nbsp; &nbsp;\
 			<img src="images/new/stop.png"  style=\"cursor:pointer;\"title="Stop" id="nagios_stop" class="daemon-img stop w-tip-image"/></td>'
             else:
-                s += '\
+                s+='\
 	        <td class=" vertline" style="text-align:left"><label id="nagios_label" style="text-align:left">Stopped</label></td>\
 		   <td style="text-align:left">\
 		     	<img src="images/new/status-0.png" style=\"cursor:pointer;display:none\"  title="ON" id="nagios_on" class="daemon-img w-tip-image"/>\
@@ -1681,8 +1676,8 @@ class Nagios(object):
 			<img src="images/new/restart.png"  style=\"cursor:pointer;display:none\" title="Restart" id="nagios_restart"  \
 			class="daemon-img restart w-tip-image"/> &nbsp; &nbsp;\
 			<img src="images/new/stop.png"  style=\"cursor:pointer;display:none\" title="Stop" id="nagios_stop" class="daemon-img stop w-tip-image"/></td>'
-            if result == "Nagios is running":
-                s += '\
+            if result=="Nagios is running":    
+                s+='\
             </tr>\
             <tr id ="sync_nagios" style="bottom:0;position:absolute;display:none">\
                 <td style="text-align:left">\
@@ -1695,7 +1690,7 @@ class Nagios(object):
             </table>\
             <table><td id="error_nagios_info"></td></table>'
             else:
-                s += '</tr>\
+                s+='</tr>\
             <tr id ="sync_nagios" style="bottom:0;position:absolute">\
                 <td style="text-align:left">\
                     Recommended option:\
@@ -1706,15 +1701,15 @@ class Nagios(object):
                 </tr>\
             </table>\
             <table><td id="error_nagios_info"></td></table>'
-
+            
             return s
-        except Exception, e:
+        except Exception,e:
             return str(e)
-
+            
     @staticmethod
     def restore_config_nagios(backup_di):
         try:
-            s = ['<div style="height:92%; overflow:auto">\
+            s=['<div style="height:92%; overflow:auto">\
             <table class="yo-table display" width="100%" cellpadding="0" cellspacing="0" style="text-align:left" id="backup_table">\
             <tbody>\
 	       <colgroup width="5%"></colgroup>\
@@ -1725,26 +1720,26 @@ class Nagios(object):
 		    <th><font style="font-size:14px">Time</font></th>\
 		    <th><font style="font-size:14px">Info</font></th>\
 		  </tr>']
-            if backup_di["success"] == 0:
+            if backup_di["success"]==0:
                 file_name_li = backup_di["file_list"]
-                log_data_li = backup_di["log_data"]
+                log_data_li = backup_di["log_data"]                
                 for i in range(len(log_data_li)):
                     log_data = log_data_li[i].split('::')
                     time_var = log_data[0].strip()
-                    if(time_var + ".tar.bz2") in file_name_li:
+                    if(time_var+".tar.bz2") in file_name_li:
                         s.append('<tr><td class=" vertline" style="text-align:left"><input type="radio" value="%s" name="option" id="option%s" class="table_option"/></td>\
 		   <td style="text-align:left"><font style="font-size:13px">%s</font></td>\
 		   <td style="text-align:left"><font style="font-size:13px">%s</font></td>\
-		   </tr>' % (time_var, time_var, time_var, log_data[1]))
-
-            s.append('</tbody></table></div><div style="bottom:0;position:absolute;">\
+		   </tr>'%(time_var,time_var,time_var,log_data[1]))
+		   
+	    s.append('</tbody></table></div><div style="bottom:0;position:absolute;">\
                     <button type=\"button\" class=\"yo-small yo-button\" id=\"restore_config_button\"><span class=\"edit\">Restore</span></button>\
                     <button type=\"button\" class=\"yo-small yo-button\" id=\"close_restore_config\"><span class=\"cancel\">Cancel</span></button>\
             </div>')
-            return ' '.join(s)
-        except Exception, e:
-            return str(e)
-
+	    return ' '.join(s)
+        except Exception,e:
+            return str(e)        
+            
     @staticmethod
     def view_page_tip_nagios_host():
         html_view = "\
@@ -1783,8 +1778,8 @@ class Nagios(object):
         <div class=\"action-tip\"><div class=\"img-div\"><img style=\"width:16px;height:16px;\" src=\"images/{0}/checkbox_checked.png\"/></div><div class=\"txt-div\">Verify configuration</div></div>\
         <div class=\"action-tip\"><div class=\"img-div\"><img style=\"width:16px;height:16px;\" src=\"images/{0}/mail.png\"/></div><div class=\"txt-div\">Restore configuration</div></div>\
         </div>".format(theme)
-        return html_view
-
+        return html_view        
+        
     @staticmethod
     def view_page_tip_nagios_service():
         html_view = "\
@@ -1806,7 +1801,6 @@ class Nagios(object):
         <div class=\"action-tip\"><div class=\"img-div\"><img style=\"width:16px;height:16px;\" src=\"images/{0}/mail.png\"/></div><div class=\"txt-div\">Restore configuration</div></div>\
         </div>".format(theme)
         return html_view
-
     @staticmethod
     def view_page_tip_nagios_service_template():
         html_view = "\
@@ -1827,8 +1821,8 @@ class Nagios(object):
         <div class=\"action-tip\"><div class=\"img-div\"><img style=\"width:16px;height:16px;\" src=\"images/{0}/checkbox_checked.png\"/></div><div class=\"txt-div\">Verify configuration</div></div>\
         <div class=\"action-tip\"><div class=\"img-div\"><img style=\"width:16px;height:16px;\" src=\"images/{0}/mail.png\"/></div><div class=\"txt-div\">Restore configuration</div></div>\
         </div>".format(theme)
-        return html_view
-
+        return html_view  
+        
     @staticmethod
     def view_page_tip_nagios_hostgroup():
         html_view = "\
@@ -1847,8 +1841,7 @@ class Nagios(object):
         <div class=\"action-tip\"><div class=\"img-div\"><img style=\"width:16px;height:16px;\" src=\"images/{0}/checkbox_checked.png\"/></div><div class=\"txt-div\">Verify configuration</div></div>\
         <div class=\"action-tip\"><div class=\"img-div\"><img style=\"width:16px;height:16px;\" src=\"images/{0}/mail.png\"/></div><div class=\"txt-div\">Restore configuration</div></div>\
         </div>".format(theme)
-        return html_view
-
+        return html_view    
     @staticmethod
     def view_page_tip_nagios_servicegroup():
         html_view = "\
@@ -1870,7 +1863,7 @@ class Nagios(object):
         <div class=\"action-tip\"><div class=\"img-div\"><img style=\"width:16px;height:16px;\" src=\"images/{0}/mail.png\"/></div><div class=\"txt-div\">Restore configuration</div></div>\
         </div>".format(theme)
         return html_view
-
+        
     @staticmethod
     def view_page_tip_nagios_hostdependency():
         html_view = "\
@@ -1892,7 +1885,6 @@ class Nagios(object):
         <div class=\"action-tip\"><div class=\"img-div\"><img style=\"width:16px;height:16px;\" src=\"images/{0}/mail.png\"/></div><div class=\"txt-div\">Restore configuration</div></div>\
         </div>".format(theme)
         return html_view
-
     @staticmethod
     def view_page_tip_nagios_servicedependency():
         html_view = "\
@@ -1913,8 +1905,8 @@ class Nagios(object):
         <div class=\"action-tip\"><div class=\"img-div\"><img style=\"width:16px;height:16px;\" src=\"images/{0}/checkbox_checked.png\"/></div><div class=\"txt-div\">Verify configuration</div></div>\
         <div class=\"action-tip\"><div class=\"img-div\"><img style=\"width:16px;height:16px;\" src=\"images/{0}/mail.png\"/></div><div class=\"txt-div\">Restore configuration</div></div>\
         </div>".format(theme)
-        return html_view
-
+        return html_view      
+    
     @staticmethod
     def view_page_tip_nagios_command():
         html_view = "\
@@ -1940,29 +1932,29 @@ class Nagios(object):
     @staticmethod
     def view_page_tip_nagios_inventory_hosts():
         html_view = ""\
-            "<div id=\"help_container\">"\
-            "<h1>Advanced Settings</h1>"\
-            "<br/>"\
-            "<div>On this page you can view and configure different nagios parameters of hosts.</div>"\
-            "<br/>"\
-            "<div>There are various advanced parameters available to configure a host.</div>"\
-            "<br/>"\
-            "<div>After modifying the settings click on 'Save' to save them in the system, or press 'Cancel' to return.</div>"\
-            "<br/>"\
-            "</div>"
+        "<div id=\"help_container\">"\
+        "<h1>Advanced Settings</h1>"\
+        "<br/>"\
+        "<div>On this page you can view and configure different nagios parameters of hosts.</div>"\
+        "<br/>"\
+        "<div>There are various advanced parameters available to configure a host.</div>"\
+        "<br/>"\
+        "<div>After modifying the settings click on 'Save' to save them in the system, or press 'Cancel' to return.</div>"\
+        "<br/>"\
+        "</div>"
         return html_view
 
     @staticmethod
     def view_page_tip_nagios_inventory_hostgroups():
         html_view = ""\
-            "<div id=\"help_container\">"\
-            "<h1>Advanced Settings</h1>"\
-            "<br/>"\
-            "<div>On this page you can view and configure different nagios parameters of hostgroups.</div>"\
-            "<br/>"\
-            "<div>There are various advanced parameters available to configure a hostgroup.</div>"\
-            "<br/>"\
-            "<div>After modifying the settings click on 'Save' to save them in the system, or press 'Cancel' to return.</div>"\
-            "<br/>"\
-            "</div>"
+        "<div id=\"help_container\">"\
+        "<h1>Advanced Settings</h1>"\
+        "<br/>"\
+        "<div>On this page you can view and configure different nagios parameters of hostgroups.</div>"\
+        "<br/>"\
+        "<div>There are various advanced parameters available to configure a hostgroup.</div>"\
+        "<br/>"\
+        "<div>After modifying the settings click on 'Save' to save them in the system, or press 'Cancel' to return.</div>"\
+        "<br/>"\
+        "</div>"
         return html_view

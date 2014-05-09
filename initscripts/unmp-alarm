@@ -2,18 +2,18 @@
 #chkconfig: 345 99 01
 #/etc/init.d/scripts
 
-# Startup script to log alarms/trap in database
+
 
 ### BEGIN INIT INFO
-# Developer:    Rajendra Sharma
-# Provides:     CodeScape Consultants Pvt. Ltd.
+# Developer:         Rajendra Sharma and Rahul Gautam
+# Provides:          CodeScape Consultants Pvt. Ltd.
 # Required-Start:    
 # Required-Stop:     
 # Default-Start:     
 # Default-Stop:      
-# Short-Description:  
-# Description:  First Daemon fill trap alarm database
-#               Second Daemon fill data base trap_alarm_current and trap_alarm_clear according to condition            
+# Short-Description: Its start to fill the  database tables  
+# Description:       First Daemon fill trap alarm database
+#		     Second Daemon fill data base trap_alarm_current and trap_alarm_clear according to condition            
 # ServiceName:
 #
 ### END INIT INFO
@@ -23,56 +23,57 @@ AUTOSTART=1
 
 PROGNAME=$0
 
+
 trap="/omd/daemon/trap_alarm.py"
-log="/omd/daemon/log/trap_log.log"
 case "$1" in
     start)
-    	$trap "$1"
+	$trap "$1"
     ;;
     stop)
-    	$trap "$1"
+	echo
+	$trap "$1"
+	echo
     ;;
     restart)
-    	$trap "$1"
+	echo
+	$trap "$1"
+	echo
     ;;
     help)
-        echo
-        echo "          *** Unified Network Management Platform ***"
-        echo
-        echo "  Daemon: Filter the current and clear alarm from all alarm."
-        echo
-        echo "  Author: Rajendra Sharma "
-        echo
-        echo "  Provider:  CodeScape Consultants Pvt. Ltd."
-        echo
-        echo "     Usage: unmp-alarm start | stop | restart | help | status "
-        echo
-        echo
+	echo
+	echo "          *** Unified Network Management Platform ***"
+	echo
+        echo "  Daemon: 1. Log all events and alarms. 2. Filter the current and clear alarm from all alarm."
+	echo
+	echo "  Author: Rahul Gauatm "
+	echo
+	echo "  Provider:  CodeScape Consultants Pvt. Ltd."
+	echo
+	echo "     Usage: unmp-alarm start | stop | restart | help | status "
+	echo
+	echo
     ;;
     status)
-	    $trap "$1"
-    	exit $?
-    ;;
-    log)        
-	    echo
-	    echo "  opening Discovery Server's Log File, Path is  $log  ..."
-	    echo "                                                          ............"
-        tail -n 30 $log
-	    echo 
+	echo
+	echo " Alarm Status \/ "
+	echo
+	$trap "$1"
+	echo
     ;;
     '')
 	echo
-	    echo "  usage: unmp-alarm start | stop | restart | help |  status "
-	    echo
-	    echo " Please use help option if you are using it first time "
-	    exit 1
+	echo "  usage: unmp-alarm start | stop | restart | help |  status "
+	echo
+	echo " Please use help option if you are using it first time "
+	exit 1
     ;;
     *)
-	    echo
-	    echo "  usage: unmp-alarm start | stop | restart | help | status "
-	    echo
-	    echo " Please use help option if you are using it first time "
-	    exit 1   
+	echo
+	echo "  usage: unmp-alarm start | stop | restart | help | status "
+	echo
+	echo " Please use help option if you are using it first time "
+	exit 1   
+
     ;;
 esac
 

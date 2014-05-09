@@ -18,7 +18,6 @@
 import config
 from htmllib import *
 
-
 def login(h):
     global html
     html = h
@@ -46,19 +45,17 @@ def login(h):
     </div>'
     css_list = ["css/style.css"]
     js_list = ["js/login.js"]
-    html.new_header("Login", "", "", css_list, js_list)
+    html.new_header("Login","","",css_list,js_list);
     html.write(login_box)
     html.new_footer()
-
 
 def unmp_login(h):
     global html
     html = h
     if config.check_user(html.req.session["username"]) > 0:
-        html.write(str({"success": 0, "result": ["side.py", "main.py"]}))
+        html.write(str({"success":0,"result":["side.py","main.py"]}))
     else:
-        html.write(str({"success": 1, "result": "Worng Username or Password"}))
-
+        html.write(str({"success":1,"result":"Worng Username or Password"}))
 
 def unmp_logout(h):
     global html

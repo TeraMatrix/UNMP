@@ -10,20 +10,18 @@
 #<span class="search-input"><input type="text" /></span>
 # this is used for searching
 
-from datetime import datetime, timedelta
-
-
+from datetime import datetime,timedelta
 class Report(object):
     @staticmethod
     def create_crc_phy_form():
         try:
             now = datetime.now()
-            old = now + timedelta(days=-3)
-            cday = str(now.day) + "/" + str(now.month) + "/" + str(now.year)
-            ctime = str(now.hour) + ":" + str(now.minute)
-            oday = str(old.day) + "/" + str(old.month) + "/" + str(old.year)
-            otime = "00:00"
-            html_view = '\
+            old=now+timedelta(days=-3)
+            cday=str(now.day)+"/"+str(now.month)+"/"+str(now.year)
+            ctime=str(now.hour)+":"+str(now.minute)
+            oday=str(old.day)+"/"+str(old.month)+"/"+str(old.year)
+            otime="00:00"
+            html_view='\
             <table class=\"tt-table\" cellspacing=\"0\" cellpadding=\"0\" width=\"100%%\">\
                     <tr>\
                         <th id=\"form_title\" class=\"cell-title\">View/Save Report </th>\
@@ -92,21 +90,22 @@ class Report(object):
 		            	</tr>\
                 	</table>\
 			<table class="display" name="total_report_table" id="total_report_table" width="100%%" style=\"display: none;\">\
-			</table>' % (oday, otime, cday, ctime)
+			</table>'%(oday,otime,cday,ctime)
             return html_view
-        except Exception, e:
+        except Exception,e:
             return str(e)
+
 
     @staticmethod
     def create_rssi_form():
         try:
             now = datetime.now()
-            old = now + timedelta(days=-3)
-            cday = str(now.day) + "/" + str(now.month) + "/" + str(now.year)
-            ctime = str(now.hour) + ":" + str(now.minute)
-            oday = str(old.day) + "/" + str(old.month) + "/" + str(old.year)
-            otime = "00:00"
-            html_view = '\
+            old=now+timedelta(days=-3)
+            cday=str(now.day)+"/"+str(now.month)+"/"+str(now.year)
+            ctime=str(now.hour)+":"+str(now.minute)
+            oday=str(old.day)+"/"+str(old.month)+"/"+str(old.year)
+            otime="00:00"
+            html_view='\
             <table class=\"tt-table\" cellspacing=\"0\" cellpadding=\"0\" width=\"100%%\">\
                     <tr>\
                         <th id=\"form_title\" class=\"cell-title\">View/Save Report </th>\
@@ -175,22 +174,22 @@ class Report(object):
 		            	</tr>\
                 	</table>\
 			<table class="display" name="total_report_table" id="total_report_table" width="100%%" style=\"display: none;\">\
-			</table>' % (oday, otime, cday, ctime)
+			</table>'%(oday,otime,cday,ctime)
             return html_view
 
-        except Exception, e:
+        except Exception,e:
             return str(e)
 
     @staticmethod
     def create_network_usage_form():
         try:
             now = datetime.now()
-            old = now + timedelta(days=-3)
-            cday = str(now.day) + "/" + str(now.month) + "/" + str(now.year)
-            ctime = str(now.hour) + ":" + str(now.minute)
-            oday = str(old.day) + "/" + str(old.month) + "/" + str(old.year)
-            otime = "00:00"
-            html_view = '\
+            old=now+timedelta(days=-3)
+            cday=str(now.day)+"/"+str(now.month)+"/"+str(now.year)
+            ctime=str(now.hour)+":"+str(now.minute)
+            oday=str(old.day)+"/"+str(old.month)+"/"+str(old.year)
+            otime="00:00"
+            html_view='\
             <table class=\"tt-table\" cellspacing=\"0\" cellpadding=\"0\" width=\"100%%\">\
                     <tr>\
                         <th id=\"form_title\" class=\"cell-title\">View/Save Report </th>\
@@ -252,22 +251,24 @@ class Report(object):
 		            	</tr>\
                 	</table>\
 			<table class="display" name="total_report_table" id="total_report_table" width="100%%" style=\"display: none;\">\
-			</table>' % (oday, otime, cday, ctime)
+			</table>'%(oday,otime,cday,ctime)
             return html_view
 
-        except Exception, e:
+        except Exception,e:
             return str(e)
+
+
 
     @staticmethod
     def create_network_outage_form():
         try:
             now = datetime.now()
-            old = now + timedelta(days=-3)
-            cday = str(now.day) + "/" + str(now.month) + "/" + str(now.year)
-            ctime = str(now.hour) + ":" + str(now.minute)
-            oday = str(old.day) + "/" + str(old.month) + "/" + str(old.year)
-            otime = "00:00"
-            html_view = '\
+            old=now+timedelta(days=-3)
+            cday=str(now.day)+"/"+str(now.month)+"/"+str(now.year)
+            ctime=str(now.hour)+":"+str(now.minute)
+            oday=str(old.day)+"/"+str(old.month)+"/"+str(old.year)
+            otime="00:00"
+            html_view='\
             <table class=\"tt-table\" cellspacing=\"0\" cellpadding=\"0\" width=\"100%%\">\
                     <tr>\
                         <th id=\"form_title\" class=\"cell-title\">View/Save Report </th>\
@@ -329,22 +330,24 @@ class Report(object):
 		            	</tr>\
                 	</table>\
 			<table class="display" name="total_report_table" id="total_report_table" width="100%%" style=\"display: none;\">\
-			</table>' % (oday, otime, cday, ctime)
+			</table>'%(oday,otime,cday,ctime)
             return html_view
 
-        except Exception, e:
+        except Exception,e:
             return str(e)
+
+
 
     @staticmethod
     def create_trap_form():
         try:
             now = datetime.now()
-            old = now + timedelta(days=-3)
-            cday = str(now.day) + "/" + str(now.month) + "/" + str(now.year)
-            ctime = str(now.hour) + ":" + str(now.minute)
-            oday = str(old.day) + "/" + str(old.month) + "/" + str(old.year)
-            otime = "00:00"
-            html_view = '\
+            old=now+timedelta(days=-3)
+            cday=str(now.day)+"/"+str(now.month)+"/"+str(now.year)
+            ctime=str(now.hour)+":"+str(now.minute)
+            oday=str(old.day)+"/"+str(old.month)+"/"+str(old.year)
+            otime="00:00"
+            html_view='\
             <table class=\"tt-table\" cellspacing=\"0\" cellpadding=\"0\" width=\"100%%\">\
                     <tr>\
                         <th id=\"form_title\" class=\"cell-title\">View/Save Report </th>\
@@ -406,15 +409,17 @@ class Report(object):
 		            	</tr>\
                 	</table>\
 			<table class="display" name="total_report_table" id="total_report_table" width="100%%" style=\"display: none;\">\
-			</table>' % (oday, otime, cday, ctime)
+			</table>'%(oday,otime,cday,ctime)
             return html_view
 
-        except Exception, e:
+        except Exception,e:
             return str(e)
+
+
 
     @staticmethod
     def invetory_view2():
-        html_view = ""\
+        html_view=""\
             "<div class=\"form-div\">"\
             "<table cellspacing=\"0\" cellpadding=\"0\" width=\"100%\" class=\"tt-table\"><tbody><tr><th class=\"cell-title\" >Active Host</th></tr></tbody></table>"\
             "<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"display\" id=\"grid_view_active_host\"></table>"\
@@ -427,20 +432,20 @@ class Report(object):
                     <th></th></tr></thead>\
                     </table>"
         "<table cellspacing=\"0\" cellpadding=\"0\" width=\"100%\" style=\"margin-top:15px;\" class=\"tt-table\"><tbody><tr><th class=\"cell-title\" >Disabled Host</th></tr></tbody></table>"\
-        "<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"display\" id=\"grid_view_disable_host\"></table>"\
-        "<table cellspacing=\"0\" cellpadding=\"0\" width=\"100%\" style=\"margin-top:15px;\" class=\"tt-table\"><tbody><tr><th class=\"cell-title\" >Discovered Host</th></tr></tbody></table>"\
-        "<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"display\" id=\"grid_view_discovered_host\"></table>"\
-        "<table cellspacing=\"0\" cellpadding=\"0\" width=\"100%\" style=\"margin-top:15px;\" class=\"tt-table\"><tbody><tr><th class=\"cell-title\" >Deleted Host</th></tr></tbody></table>"\
-        "<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"display\" id=\"grid_view_deleted_host\"></table>"\
-        "</div>"\
-        "<div class=\"form-div-footer\">"\
-        "<button id=\"excel_rpt_inventory\" class=\"yo-small yo-button\" type=\"button\" onclick=\"inventory_report();\"><span class=\"report\">Report</span></button>"\
-        "</div>"
+	"<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"display\" id=\"grid_view_disable_host\"></table>"\
+	"<table cellspacing=\"0\" cellpadding=\"0\" width=\"100%\" style=\"margin-top:15px;\" class=\"tt-table\"><tbody><tr><th class=\"cell-title\" >Discovered Host</th></tr></tbody></table>"\
+	"<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"display\" id=\"grid_view_discovered_host\"></table>"\
+	"<table cellspacing=\"0\" cellpadding=\"0\" width=\"100%\" style=\"margin-top:15px;\" class=\"tt-table\"><tbody><tr><th class=\"cell-title\" >Deleted Host</th></tr></tbody></table>"\
+	"<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"display\" id=\"grid_view_deleted_host\"></table>"\
+	"</div>"\
+	"<div class=\"form-div-footer\">"\
+	"<button id=\"excel_rpt_inventory\" class=\"yo-small yo-button\" type=\"button\" onclick=\"inventory_report();\"><span class=\"report\">Report</span></button>"\
+	"</div>"
         return html_view
 
     @staticmethod
     def invetory_view():
-        html_view = ""\
+        html_view=""\
             "<div id=\"grid_view_div\" class=\"form-div\">"\
             "<div class=\"yo-tabs\" id=\"main_grid_view_div\">"\
             "<ul>"\
@@ -506,6 +511,7 @@ class Report(object):
             "</div>"
         return html_view
 
+
     @staticmethod
     def page_tip_crc_phy():
         html_view = ""\
@@ -529,6 +535,7 @@ class Report(object):
             "<div><b>Important</b>: If you used searching for information(report) so you get information(report) on search based result instead of no of devices else you get result on no of devices bases.</div>"\
             "</div>"
         return html_view
+
 
     @staticmethod
     def page_tip_rssi():
@@ -554,6 +561,8 @@ class Report(object):
             "</div>"
         return html_view
 
+
+
     @staticmethod
     def page_tip_network_usage():
         html_view = ""\
@@ -577,6 +586,7 @@ class Report(object):
             "<div><b>Important</b>: If you used searching for information(report) so you get information(report) on search based result instead of no of devices else you get result on no of devices bases.</div>"\
             "</div>"
         return html_view
+
 
     @staticmethod
     def page_tip_network_outage():
@@ -602,6 +612,7 @@ class Report(object):
             "</div>"
         return html_view
 
+
     @staticmethod
     def page_tip_trap():
         html_view = ""\
@@ -626,6 +637,8 @@ class Report(object):
             "</div>"
         return html_view
 
+
+
     @staticmethod
     def page_tip_for_inventory():
         html_view = ""\
@@ -639,3 +652,6 @@ class Report(object):
             "<br/>"\
             "</div>"
         return html_view
+
+
+

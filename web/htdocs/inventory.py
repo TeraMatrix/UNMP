@@ -4,7 +4,7 @@
 @author: Yogesh Kumar
 @since: 23-Oct-2011
 @version: 0.1
-@note: All Views Related with Inventory.
+@note: All Views Related with Inventory. 
 @organization: Codescape Consultants Pvt. Ltd.
 @copyright: 2011 Yogesh Kumar for Codescape Consultants Pvt. Ltd.
 @see: http://www.codescape.in
@@ -13,7 +13,6 @@
 # if set to 1 means show advanced options for nagios
 # if set to 0 means don't show advanced options
 flag_nagios_call = 0
-
 
 class Host(object):
     @staticmethod
@@ -100,7 +99,7 @@ class Host(object):
         return html_view
 
     @staticmethod
-    def create_form(device_type_select_list, host_state_select_list, host_priority_select_list, host_vendor_select_list, host_os_select_list, host_parent_select_list, dns_state_select_list, snmp_version_select_list, host_hostgroups_select_list, master_select_list):
+    def create_form(device_type_select_list,host_state_select_list,host_priority_select_list,host_vendor_select_list,host_os_select_list,host_parent_select_list,dns_state_select_list,snmp_version_select_list,host_hostgroups_select_list,master_select_list):
         html_view = ""\
             "<form action=\"#\" id=\"form_host\" method=\"get\"> "\
             "<div class=\"form-div\">"\
@@ -210,7 +209,7 @@ class Host(object):
             "<input type=\"text\" id=\"gateway\" name=\"gateway\" title=\"Enter Gateway Address\" /> "\
             "</div>"\
             "<div class=\"row-elem\">"\
-            "<label class=\"lbl lbl-big\" for=\"dns_state\">DHCP State</label>"\
+            "<label class=\"lbl lbl-big\" for=\"dns_state\">DNS State</label>"\
             "" + dns_state_select_list + ""\
             "</div>"\
             "<div class=\"row-elem odu100-only\" style=\"display:none;\">"\
@@ -346,8 +345,8 @@ class Host(object):
             "<button type=\"submit\" class=\"yo-small yo-button\" id=\"edit_host\"><span class=\"edit\">Edit</span></button>"\
             "<button type=\"button\" class=\"yo-small yo-button\" id=\"cancel_host\"><span class=\"cancel\">Cancel</span></button>"
         if flag_nagios_call:
-            html_view += "<button type=\"button\" class=\"yo-small yo-button\" id=\"advanced_settings\" onclick=\"advance_settings_colorbox();\" ><span class=\"edit\">Advanced Settings</span></button>"
-        html_view += "</div"\
+            html_view+="<button type=\"button\" class=\"yo-small yo-button\" id=\"advanced_settings\" onclick=\"advance_settings_colorbox();\" ><span class=\"edit\">Advanced Settings</span></button>"
+        html_view+="</div"\
             "</form>"
         return html_view
 
@@ -373,7 +372,6 @@ class Host(object):
             <div><strong>Note:</strong> User can't delete or edit Localhost.</div>\
             </div>".format(theme)
         return html_view
-
 
 class Hostgroup(object):
     @staticmethod
@@ -419,8 +417,8 @@ class Hostgroup(object):
             "<button type=\"submit\" class=\"yo-small yo-button\" id=\"edit_hostgroup\"><span class=\"edit\">Edit</span></button>"\
             "<button type=\"button\" class=\"yo-small yo-button\" id=\"cancel_hostgroup\"><span class=\"cancel\">Cancel</span></button>"
         if flag_nagios_call:
-            html_view += "<button type=\"button\" class=\"yo-small yo-button\" id=\"advanced_settings\" onclick=\"advance_settings_colorbox();\" ><span class=\"edit\">Advanced Settings</span></button>"
-        html_view += "</div"\
+            html_view+="<button type=\"button\" class=\"yo-small yo-button\" id=\"advanced_settings\" onclick=\"advance_settings_colorbox();\" ><span class=\"edit\">Advanced Settings</span></button>"
+        html_view+="</div"\
             "</form>"
         return html_view
 
@@ -449,7 +447,6 @@ class Hostgroup(object):
             <div class=\"action-tip\"><div class=\"img-div img-div2\"><img style=\"width:16px;height:16px;\" src=\"images/new/close.png\"/></div><div class=\"txt-div\">Cancel Manage Group</div></div>\
             </div>".format(theme)
         return html_view
-
 
 class Discovery(object):
     @staticmethod
@@ -501,7 +498,7 @@ class Discovery(object):
 
     @staticmethod
     def ping_form():
-        html_view = ""\
+        html_view =""\
             "<form action=\"ping_discovery.py\" id=\"form_ping\" method=\"get\" style=\"padding:0px;\"> "\
             "<div class=\"form-div\" style=\"position:relative;\">"\
             "<table class=\"tt-table\" cellspacing=\"0\" cellpadding=\"0\" width=\"100%\">"\
@@ -545,7 +542,7 @@ class Discovery(object):
 
     @staticmethod
     def snmp_form(snmp_version_list):
-        html_view = ""\
+        html_view =""\
             "<form action=\"snmp_discovery.py\" id=\"form_snmp\" method=\"get\" style=\"padding:0px;\"> "\
             "<div class=\"form-div\" style=\"position:relative;\">"\
             "<table class=\"tt-table\" cellspacing=\"0\" cellpadding=\"0\" width=\"100%\">"\
@@ -601,7 +598,7 @@ class Discovery(object):
 
     @staticmethod
     def upnp_form():
-        html_view = ""\
+        html_view =""\
             "<form action=\"upnp_discovery.py\" id=\"form_upnp\" method=\"get\" style=\"padding:0px;\"> "\
             "<div class=\"form-div\" style=\"position:relative;\">"\
             "<table class=\"tt-table\" cellspacing=\"0\" cellpadding=\"0\" width=\"100%\">"\
@@ -650,8 +647,6 @@ class Discovery(object):
         #"<div class=\"action-tip\"><div class=\"txt-div\"><strong>TCP : </strong> This Type of Discovery use TCP Protocol and Find the device on Network</div></div>"\
         #"<div class=\"action-tip\"><div class=\"txt-div\"><strong>Discovered Host : </strong> This Show all discovered hosts.</div></div>"\
         return html_view
-
-
 class Service(object):
     @staticmethod
     def manage_service():
@@ -677,29 +672,27 @@ class Service(object):
         return html_view
 
     @staticmethod
-    def edit_service_details(host_alias, service_obj):
-        html_view = '<div style="display:block;overflow:hidden"><h2>%s</h2>' % str(
-            host_alias)
-        service_names = ""
+    def edit_service_details(host_alias,service_obj):
+        html_view='<div style="display:block;overflow:hidden"><h2>%s</h2>'%str(host_alias)
+        service_names=""
         for service in service_obj:
-            html_view += '<div class=\"row-elem\"><h3>%s%s:</h3></div>' % (
-                service[0], "(Heartbeat Rate)" if service[0].lower().find("uptime") != -1 else "")
-            html_view += '<div class=\"row-elem\">\
+            html_view+='<div class=\"row-elem\"><h3>%s%s:</h3></div>'%(service[0],"(Heartbeat Rate)" if service[0].lower().find("uptime")!=-1 else "")
+            html_view+='<div class=\"row-elem\">\
 	   	<label class=\"lbl lbl-big\" style="width:100px;" >service check time:</label>\
-	   	<select name="%s" id="%s" class="multiselect" title="Click to select an option">' % (service[0].replace(" ", "_"), service[0].replace(" ", "_"))
-            # if service[0].lower().find("uptime")!=-1:
+	   	<select name="%s" id="%s" class="multiselect" title="Click to select an option">'%(service[0].replace(" ","_"),service[0].replace(" ","_"))
+            #if service[0].lower().find("uptime")!=-1:
             #	html_view+='<option value=%s>%s</option></select></div>'%(str(service[1]),str(service[1]))
-            # else:\
-            timing = str(service[1]) + " mins"
-            if str(service[1]) == "518400":
-                timing = "Yearly"
-            elif str(service[1]) == "43200":
-                timing = "Monthly"
-            elif str(service[1]) == "1440":
-                timing = "Daily"
-            elif str(service[1]) == "720":
-                timing = "12 Hours"
-            html_view += '\
+            #else:\
+            timing=str(service[1])+ " mins"
+            if str(service[1])=="518400":
+                timing="Yearly"
+            elif str(service[1])=="43200":
+                timing="Monthly"
+            elif str(service[1])=="1440":
+                timing="Daily"
+            elif str(service[1])=="720":
+                timing="12 Hours"
+            html_view+='\
 	        <option value=%s>%s (current time)</option>\
 		<option value=5>5 mins</option>\
 		<option value=10>10 mins</option>\
@@ -712,11 +705,10 @@ class Service(object):
 		<option value=43200>Monthly</option>\
 		<option value=518400>Yearly</option>\
 		</select>\
-		</div>' % (str(service[1]), timing)
-            service_names += str(service[0]) + ","
-        html_view += '<input type="hidden" id="service_names" value="%s"/></div>' % (
-            service_names)
-        return html_view
+		</div>'%(str(service[1]),timing)
+            service_names+=str(service[0])+","
+        html_view+='<input type="hidden" id="service_names" value="%s"/></div>'%(service_names)
+        return html_view        
 
     @staticmethod
     def page_tip_service():
@@ -816,7 +808,6 @@ class Vendor(object):
             <div class=\"action-tip\"><div class=\"img-div\"><img style=\"width:16px;height:16px;\" src=\"images/{0}/round_minus.png\"/></div><div class=\"txt-div\">Delete Vendor</div></div>\
             </div>".format(theme)
         return html_view
-
 
 class BlackListMac(object):
     @staticmethod

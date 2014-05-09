@@ -5,98 +5,92 @@ from ap_profiling_bll import APGetData
 from common_bll import Essential
 
 # create the global object
-obj_essential = Essential()
-host_status_dic = {0: 'No operation', 1: 'Firmware download', 2: 'Firmware upgrade', 3: 'Restore default config', 4: 'Flash commit', 5: 'Reboot', 6: 'Site survey', 7: 'Calculate BW', 8: 'Uptime service', 9: 'Statistics gathering', 10: 'Reconciliation', 11: 'Table reconciliation', 12:
-                   'Set operation', 13: 'Live monitoring', 14: 'Status capturing', 15: 'Refreshing Site Survey', '16': 'Refreshing RA Channel List'}
-contory_code_val = 0
-
+obj_essential = Essential ()
+host_status_dic = {0:'No operation', 1:'Firmware download', 2:'Firmware upgrade', 3:'Restore default config', 4:'Flash commit', 5:'Reboot', 6:'Site survey', 7:'Calculate BW', 8:'Uptime service', 9:'Statistics gathering', 10:'Reconciliation', 11:'Table reconciliation', 12:'Set operation', 13:'Live monitoring', 14:'Status capturing',15:'Refreshing Site Survey','16':'Refreshing RA Channel List'}
+contory_code_val=0
 
 class APForms(object):
-
+   
     @staticmethod
-    def country_code_select_list(selected_field, selected_list_state, selected_list_id, is_readonly, select_list_initial_msg):
+    def country_code_select_list(selected_field,selected_list_state,selected_list_id,is_readonly,select_list_initial_msg):
         global contory_code_val
-        contory_code_val = selected_field
-        vap_select_dic = {}
+        contory_code_val=selected_field
+        vap_select_dic = {} 
         #{'name':['DISABLE','ENABLE'],'value':[0,1]}
-        country_code_dic = {"name": ['Default', 'Debug', 'Albania', 'Algeria', 'Argentina', 'Armenia', 'Australia', 'Austria', 'Azerbaijan', 'Bahrain', 'Belarus', 'Belgium', 'Belize', 'Bolvia', 'Bosnia-herzegovina', 'Brazil',
-                                     'Brunei-darussalam', 'Bulgaria', 'Canada', 'Chile', 'China', 'Colombia', 'Costa-rica', 'Croatia', 'Cyprus', 'Czech-republic', 'Denmark', 'Dominican-republic', 'Ecuador', 'Egypt',
-                                     'El-salvador', 'Estonia', 'Finland', 'France', 'Georgia', 'Germany', 'Greece', 'Guatemala', 'Honduras',
-                                     'Hong-kong', 'Hungary', 'Iceland', 'India', 'Indonesia', 'Iran', 'Ireland', 'Israel', 'Italy', 'Jamaica', 'Japan', 'Jordan', 'Kazakhstan', 'Kenya',
-                                     'North-korea', 'Kuwait', 'Latvia', 'Lebanon', 'Liechtenstein', 'Lithuania', 'Luxembourg', 'Macau', 'Macedonia', 'Malaysia', 'Malta', 'Mexico', 'Monaco', 'Morocco', 'Netherlands', 'New-zealand', 'Norway', 'Oman',
-                                     'Pakistan', 'Panama', 'Peru', 'Philippines', 'Poland', 'Portugal', 'Puerto-rico', 'Qatar', 'Romania', 'Russia', 'Saudi-arabia', 'Serbia-montenegro', 'Singapore', 'Slovak-republic', 'Slovenia', 'South-africa',
-                                     'Spain', 'Sri-lanka', 'Sweden', 'Switzerland', 'Syria', 'Taiwan', 'Thailand', 'Trinidad-and-tobago', 'Tunisia', 'Turkey', 'Ukraine', 'United-arab-emirates', 'United-kingdom', 'United-states', 'Uruguay',
-                                     'Uzbekistan', 'Venezuela', 'Viet-nam', 'Yemen', 'Zimbawe'],
-                                    "value": [0, 511, 8, 12, 32, 51, 36, 40, 31, 48, 112, 56, 84, 68, 70, 76, 96, 100, 124, 152, 156, 170, 188, 191, 196, 203, 208, 214, 218, 818, 222,
-                                    233, 246, 250, 268, 276, 300, 320, 340, 344, 348, 352,
-                                    356, 360, 364, 372, 376, 380, 388, 392, 400, 398, 404, 408, 414, 428, 422, 438, 440, 442, 446, 807, 458, 470, 484, 492, 504, 528, 554,
-                                    578, 512, 586, 591, 604, 608, 616, 620, 630, 634, 642, 643, 682, 891,
-                                    702, 703, 705, 710, 724, 144, 752, 756, 760, 158, 764, 780, 788, 792, 804, 784, 826, 840, 858, 860, 862, 704, 887, 716]}
-        return MakeSelectListUsingDictionary.make_select_list_using_dictionary(country_code_dic, selected_field, selected_list_state, selected_list_id, is_readonly, select_list_initial_msg)
-
+        country_code_dic = {"name":['Default','Debug','Albania','Algeria','Argentina','Armenia','Australia','Austria','Azerbaijan','Bahrain','Belarus','Belgium','Belize','Bolvia','Bosnia-herzegovina','Brazil',\
+                                    'Brunei-darussalam','Bulgaria','Canada','Chile','China','Colombia','Costa-rica','Croatia','Cyprus','Czech-republic','Denmark','Dominican-republic','Ecuador','Egypt',\
+                                    'El-salvador','Estonia','Finland','France','Georgia','Germany','Greece','Guatemala','Honduras',\
+                                    'Hong-kong','Hungary','Iceland','India','Indonesia','Iran','Ireland','Israel','Italy','Jamaica','Japan','Jordan','Kazakhstan','Kenya',\
+                                    'North-korea','Kuwait','Latvia','Lebanon','Liechtenstein','Lithuania','Luxembourg','Macau','Macedonia','Malaysia','Malta','Mexico','Monaco','Morocco','Netherlands','New-zealand','Norway','Oman',\
+                                    'Pakistan','Panama','Peru','Philippines','Poland','Portugal','Puerto-rico','Qatar','Romania','Russia','Saudi-arabia','Serbia-montenegro','Singapore','Slovak-republic','Slovenia','South-africa',\
+                                    'Spain','Sri-lanka','Sweden','Switzerland','Syria','Taiwan','Thailand','Trinidad-and-tobago','Tunisia','Turkey','Ukraine','United-arab-emirates','United-kingdom','United-states','Uruguay',\
+'Uzbekistan','Venezuela','Viet-nam','Yemen','Zimbawe'],\
+                                "value":[0,511,8,12,32,51,36,40,31,48,112,56,84,68,70,76,96,100,124,152,156,170,188,191,196,203,208,214,218,818,222,\
+                                        233,246,250,268,276,300,320,340,344,348,352,\
+                                        356,360,364,372,376,380,388,392,400,398,404,408,414,428,422,438,440,442,446,807,458,470,484,492,504,528,554,\
+                                        578,512,586,591,604,608,616,620,630,634,642,643,682,891,\
+                                        702,703,705,710,724,144,752,756,760,158,764,780,788,792,804,784,826,840,858,860,862,704,887,716]}
+        return MakeSelectListUsingDictionary.make_select_list_using_dictionary(country_code_dic,selected_field,selected_list_state,selected_list_id,is_readonly,select_list_initial_msg)
     @staticmethod
-    def vap_select_list(selected_field, selected_list_state, selected_list_id, is_readonly, select_list_initial_msg):
-        vap_select_dic = {}
+    def vap_select_list(selected_field,selected_list_state,selected_list_id,is_readonly,select_list_initial_msg):
+        vap_select_dic = {} 
         #{'name':['DISABLE','ENABLE'],'value':[0,1]}
-        vap_select_dic = {"name": [1, 2, 3, 4, 5, 6, 7, 8],
-                                  "value": [1, 2, 3, 4, 5, 6, 7, 8]}
-        return MakeSelectListUsingDictionary.make_select_list_using_dictionary(vap_select_dic, selected_field, selected_list_state, selected_list_id, is_readonly, select_list_initial_msg)
-
+        vap_select_dic = {"name":[1,2,3,4,5,6,7,8],"value":[1,2,3,4,5,6,7,8]}
+        return MakeSelectListUsingDictionary.make_select_list_using_dictionary(vap_select_dic,selected_field,selected_list_state,selected_list_id,is_readonly,select_list_initial_msg)
+    
     @staticmethod
-    def radio_channel_select_list(selected_field, selected_list_state, selected_list_id, is_readonly, select_list_initial_msg):
+    def radio_channel_select_list(selected_field,selected_list_state,selected_list_id,is_readonly,select_list_initial_msg):
         channel_dic = {}
         global contory_code_val
         j = 1
-        i = 2.412
-        last = 2.479
-        if contory_code_val == 0:
-            last = 2.475
-        while(i < last):
-            channel_dic.setdefault(
-                'name', []).append("Channel-%s" % (j) + ":%s" % (i))
-            channel_dic.setdefault('value', []).append(j)
-            i = i + 0.005
-            j = j + 1
-        return MakeSelectListUsingDictionary.make_select_list_using_dictionary(channel_dic, selected_field, selected_list_state, selected_list_id, is_readonly, select_list_initial_msg)
-
+        i=2.412
+        last=2.479
+        if contory_code_val==0:
+            last=2.475
+        while(i<last):
+            channel_dic.setdefault('name',[]).append("Channel-%s"%(j)+":%s"%(i))
+            channel_dic.setdefault('value',[]).append(j)
+            i=i+0.005
+            j=j+1
+        return MakeSelectListUsingDictionary.make_select_list_using_dictionary(channel_dic,selected_field,selected_list_state,selected_list_id,is_readonly,select_list_initial_msg)
+    
     @staticmethod
-    def radio_mode_select_list(selected_field, selected_list_state, selected_list_id, is_readonly, select_list_initial_msg):
+    def radio_mode_select_list(selected_field,selected_list_state,selected_list_id,is_readonly,select_list_initial_msg):
         mode_dic = {}
-        mode_dic = {'name': ['WiFi 11g', 'WiFi 11gn HT20', 'WiFi 11gn HT40+',
-                             'WiFi 11gn HT40-'], 'value': ['0', '1', '2', '3']}
-        return MakeSelectListUsingDictionary.make_select_list_using_dictionary(mode_dic, selected_field, selected_list_state, selected_list_id, is_readonly, select_list_initial_msg)
+        mode_dic={'name':['WiFi 11g','WiFi 11gn HT20','WiFi 11gn HT40+','WiFi 11gn HT40-'],'value':['0','1','2','3']}        
+        return MakeSelectListUsingDictionary.make_select_list_using_dictionary(mode_dic,selected_field,selected_list_state,selected_list_id,is_readonly,select_list_initial_msg)
 
     @staticmethod
-    def txpower_select_list(selected_field, selected_list_state, selected_list_id, is_readonly, select_list_initial_msg):
+    def txpower_select_list(selected_field,selected_list_state,selected_list_id,is_readonly,select_list_initial_msg):
         txpower_dic = {}
-        txpower_dic.setdefault('name', []).append("Default")
-        txpower_dic.setdefault('value', []).append(0)
-        for i in range(1, 31):
-            txpower_dic.setdefault('name', []).append(i)
-            txpower_dic.setdefault('value', []).append(i)
-        return MakeSelectListUsingDictionary.make_select_list_using_dictionary(txpower_dic, selected_field, selected_list_state, selected_list_id, is_readonly, select_list_initial_msg)
-
+        txpower_dic.setdefault('name',[]).append("Default")
+        txpower_dic.setdefault('value',[]).append(0)
+        for i in range(1,31):
+            txpower_dic.setdefault('name',[]).append(i)
+            txpower_dic.setdefault('value',[]).append(i)
+        return MakeSelectListUsingDictionary.make_select_list_using_dictionary(txpower_dic,selected_field,selected_list_state,selected_list_id,is_readonly,select_list_initial_msg)
+    
     @staticmethod
-    def vap_list(select_vaps, selected_field, selected_list_state, selected_list_id, is_readonly, select_list_initial_msg):
+    def vap_list(select_vaps,selected_field,selected_list_state,selected_list_id,is_readonly,select_list_initial_msg):
         vap_dic = {}
-        for i in range(0, select_vaps):
-            vap_dic.setdefault('name', []).append("VAP %s" % (i + 1))
-            vap_dic.setdefault('value', []).append(i + 1)
-        return MakeSelectListUsingDictionary.make_select_list_using_dictionary(vap_dic, selected_field, selected_list_state, selected_list_id, is_readonly, select_list_initial_msg)
-
+        for i in range(0,select_vaps):
+            vap_dic.setdefault('name',[]).append("VAP %s"%(i+1))
+            vap_dic.setdefault('value',[]).append(i+1)
+        return MakeSelectListUsingDictionary.make_select_list_using_dictionary(vap_dic,selected_field,selected_list_state,selected_list_id,is_readonly,select_list_initial_msg)
+    
     @staticmethod
-    def threshold_select_list(selected_field, selected_list_state, selected_list_id, is_readonly, select_list_initial_msg):
+    def threshold_select_list(selected_field,selected_list_state,selected_list_id,is_readonly,select_list_initial_msg):
         threshold_dic = {}
-        threshold_dic = {'name': ['Off', 'Fixed'], 'value': ['0', '1']}
-        return MakeSelectListUsingDictionary.make_select_list_using_dictionary(threshold_dic, selected_field, selected_list_state, selected_list_id, is_readonly, select_list_initial_msg)
+        threshold_dic={'name':['Off','Fixed'],'value':['0','1']}        
+        return MakeSelectListUsingDictionary.make_select_list_using_dictionary(threshold_dic,selected_field,selected_list_state,selected_list_id,is_readonly,select_list_initial_msg)
 
+    
     @staticmethod
-    def radio_configuration(host_id, selected_device):
+    def radio_configuration(host_id,selected_device):
         obj_bll_get_data = APGetData()
-        get_radio_data = obj_bll_get_data.ap_get_data(
-            'Ap25RadioSetup', host_id)
-        form_view = ""
-        form_view += "<form id=\"ap_radio_form\" name=\"ap_radio_form\" action=\"ap_radio_form_action.py\" method=\"get\">\
+        get_radio_data = obj_bll_get_data.ap_get_data('Ap25RadioSetup',host_id)
+        form_view=""
+        form_view+="<form id=\"ap_radio_form\" name=\"ap_radio_form\" action=\"ap_radio_form_action.py\" method=\"get\">\
                         <div class=\"row-elem\">\
                             <label class=\"lbl\">Radio</label>\
                             <input type=\"radio\" value=\"1\" name=\"radioSetup.radioState\" />\
@@ -215,53 +209,34 @@ class APForms(object):
                             <input type=\"submit\" name =\"ap_common_submit\" id=\"id_ok\" value=\"Ok\" style=\"Display:None\" onClick=\"return commonFormSubmit('ap_radio_form',this)\" class=\"yo-small yo-button\" style=\"display:none\"/>\
                             <input type = \"hidden\" id=\"common_rec\" name=\"common_rec\" form_name=\"radio_configuration\" tablename=\"radioSetup\"/>\
                         </div>\
-                    </form>" % (get_radio_data[0].radioState if len(get_radio_data) > 0 else "",
-                                get_radio_data[0].radioAPmode if len(
-                                get_radio_data) > 0 else "",
-                                get_radio_data[0].radioManagementVLANstate if len(
-                                get_radio_data) > 0 else "",
-                                APForms.country_code_select_list(int(get_radio_data[0].radioCountryCode) if len(
-                                get_radio_data) > 0 else "", "enabled", "radioSetup.radioCountryCode", False, "Country"),
-                                APForms.vap_select_list(get_radio_data[0].numberOfVAPs if len(
-                                get_radio_data) > 0 else "", "enabled", "radioSetup.numberofVAPs", False, "Vap"),
-                                APForms.radio_channel_select_list(get_radio_data[0].radioChannel if len(
-                                get_radio_data) > 0 else "", "enabled", "radioSetup.radioChannel", False, "Channel"),
-                                APForms.radio_mode_select_list(str(get_radio_data[0].wifiMode) if len(
-                                get_radio_data) > 0 else "", "enabled", "radioSetup.wifiMode", False, "Mode"),
-                                get_radio_data[0].radioChannelWidth if len(
-                                get_radio_data) > 0 else "",
-                                get_radio_data[0].radioTXChainMask if len(
-                                get_radio_data) > 0 else "",
-                                get_radio_data[0].radioRXChainMask if len(
-                                get_radio_data) > 0 else "",
-                                APForms.txpower_select_list(get_radio_data[0].radioTxPower if len(
-                                get_radio_data) > 0 else "", "enabled", "radioSetup.radioTxPower", False, "TxPower"),
-                                get_radio_data[0].radioGatingIndex if len(
-                                get_radio_data) > 0 else "",
-                                get_radio_data[0].radioAggregation if len(
-                                get_radio_data) > 0 else "",
-                                get_radio_data[0].radioAggFrames if len(
-                                get_radio_data) > 0 else "",
-                                get_radio_data[0].radioAggSize if len(
-                                get_radio_data) > 0 else "",
-                                get_radio_data[0].radioAggMinSize if len(
-                                get_radio_data) > 0 else ""
-                                )
+                    </form>"%(get_radio_data[0].radioState if len(get_radio_data)>0 else "",\
+                            get_radio_data[0].radioAPmode if len(get_radio_data)>0 else "",\
+                            get_radio_data[0].radioManagementVLANstate if len(get_radio_data)>0 else "",\
+                            APForms.country_code_select_list(int(get_radio_data[0].radioCountryCode) if len(get_radio_data)>0 else "","enabled","radioSetup.radioCountryCode",False,"Country"),\
+                            APForms.vap_select_list(get_radio_data[0].numberOfVAPs if len(get_radio_data)>0 else "","enabled","radioSetup.numberofVAPs",False,"Vap"),\
+                            APForms.radio_channel_select_list(get_radio_data[0].radioChannel if len(get_radio_data)>0 else "","enabled","radioSetup.radioChannel",False,"Channel"),\
+                            APForms.radio_mode_select_list(str(get_radio_data[0].wifiMode) if len(get_radio_data)>0 else "","enabled","radioSetup.wifiMode",False,"Mode"),\
+                            get_radio_data[0].radioChannelWidth if len(get_radio_data)>0 else "",\
+                            get_radio_data[0].radioTXChainMask if len(get_radio_data)>0 else "",\
+                            get_radio_data[0].radioRXChainMask if len(get_radio_data)>0 else "",\
+                            APForms.txpower_select_list(get_radio_data[0].radioTxPower if len(get_radio_data)>0 else "","enabled","radioSetup.radioTxPower",False,"TxPower"),\
+                            get_radio_data[0].radioGatingIndex if len(get_radio_data)>0 else "",\
+                            get_radio_data[0].radioAggregation if len(get_radio_data)>0 else "",\
+                            get_radio_data[0].radioAggFrames if len(get_radio_data)>0 else "",\
+                            get_radio_data[0].radioAggSize if len(get_radio_data)>0 else "",\
+                            get_radio_data[0].radioAggMinSize if len(get_radio_data)>0 else ""
+                            )    
         return str(form_view)
 
     @staticmethod
-    def vap_configuration(host_id, selected_device):
+    def vap_configuration(host_id,selected_device):
         obj_bll_get_data = APGetData()
-        basic_vap_setup = obj_bll_get_data.ap_get_data(
-            'Ap25BasicVAPconfigTable', host_id)
-        basic_vap_security = obj_bll_get_data.ap_get_data(
-            'Ap25BasicVAPsecurity', host_id)
-        wep_data = obj_bll_get_data.ap_get_data(
-            'Ap25VapWEPsecurityConfigTable', host_id)
-        wpa_data = obj_bll_get_data.ap_get_data(
-            'Ap25VapWPAsecurityConfigTable', host_id)
-        form_view = ""
-        form_view += "<form id=\"ap_vap_form\" name=\"ap_vap_form\" action=\"ap_vap_form_action.py\" method=\"get\">\
+        basic_vap_setup = obj_bll_get_data.ap_get_data('Ap25BasicVAPconfigTable',host_id)
+        basic_vap_security = obj_bll_get_data.ap_get_data('Ap25BasicVAPsecurity',host_id)
+        wep_data = obj_bll_get_data.ap_get_data('Ap25VapWEPsecurityConfigTable',host_id)
+        wpa_data = obj_bll_get_data.ap_get_data('Ap25VapWPAsecurityConfigTable',host_id)
+        form_view=""
+        form_view+="<form id=\"ap_vap_form\" name=\"ap_vap_form\" action=\"ap_vap_form_action.py\" method=\"get\">\
                         \
                         <div class=\"row-elem\">\
                             <label class=\"lbl\">Select VAP</label>\
@@ -450,90 +425,57 @@ class APForms(object):
                             <input type=\"hidden\" name=\"selectionvap_id\" id=\"selectionvap_id\" value=\"%s\"/>\
                             <input type = \"hidden\" id=\"common_rec\" name=\"common_rec\" form_name=\"vap_configuration\" tablename=\"basicVAPconfigTable,vapWEPsecurityConfigTable,vapWPAsecurityConfigTable\"/>\
                         </div>\
-                    </form>" % (APForms.vap_list(8, 1, "enabled", "vapselectionid", False, "VAP"), basic_vap_setup[0].vapESSID if len(basic_vap_setup) > 0 else "",
-                                int(basic_vap_setup[0].vapHiddenESSIDstate) if len(
-                                basic_vap_setup) > 0 else 0,
-                                "checked=checked" if len(basic_vap_setup) > 0 and int(
-                                basic_vap_setup[
-                                    0].vapHiddenESSIDstate) == 1 else "",
-                                basic_vap_setup[0].vlanId if len(
-                                basic_vap_setup) > 0 else "",
-                                basic_vap_setup[
-                                0].vlanPriority if len(
-                                    basic_vap_setup) > 0 else "",
-                                basic_vap_setup[
-                                0].vapRadioMac if len(
-                                    basic_vap_setup) > 0 else "",
-            APForms.threshold_select_list('0', "enabled", "rts_mode", False, "Threshold"), basic_vap_setup[
-                                                  0].vapRTSthresholdValue if len(basic_vap_setup) > 0 else "",
-                    APForms.threshold_select_list('0', "enabled", "frag_mode", False, "Threshold"), basic_vap_setup[
-                                                  0].vapFragmentationThresholdValue if len(basic_vap_setup) > 0 else "",
-                    basic_vap_setup[0].vapBeaconInterval if len(
-                        basic_vap_setup) > 0 else "",
-                    "checked=checked" if basic_vap_security[
-                        0].vapSecurityMode == 0 else "" if len(basic_vap_security) > 0 else "",
-                    "checked=checked" if basic_vap_security[
-                        0].vapSecurityMode == 1 else "" if len(basic_vap_security) > 0 else "",
-                    "checked=checked" if wep_data[
-                        0].vapWEPmode == 0 else "" if len(wep_data) > 0 else "",
-                    "checked=checked" if wep_data[
-                        0].vapWEPmode == 1 else "" if len(wep_data) > 0 else "",
-                    "checked=checked" if wep_data[
-                        0].vapWEPmode == 2 else "" if len(wep_data) > 0 else "",
-                    wep_data[0].vapWEPkey1 if len(wep_data) > 0 else "",
-                    "checked=checked" if wep_data[
-                        0].vapWEPprimaryKey == 1 else "" if len(wep_data) > 0 else "",
-                    wep_data[0].vapWEPkey2 if len(wep_data) > 0 else "",
-                    "checked=checked" if wep_data[
-                        0].vapWEPprimaryKey == 2 else "" if len(wep_data) > 0 else "",
-                    wep_data[0].vapWEPkey3 if len(wep_data) > 0 else "",
-                    "checked=checked" if wep_data[
-                        0].vapWEPprimaryKey == 3 else "" if len(wep_data) > 0 else "",
-                    wep_data[0].vapWEPkey4 if len(wep_data) > 0 else "",
-                    "checked=checked" if wep_data[
-                        0].vapWEPprimaryKey == 4 else "" if len(wep_data) > 0 else "",
-                    "checked=checked" if basic_vap_security[
-                        0].vapSecurityMode == 2 else "" if len(basic_vap_security) > 0 else "",
-                    wpa_data[
-                        0].vapWPArekeyInterval if len(wpa_data) > 0 else "",
-                    wpa_data[0].vapWPAmasterReKey if len(wpa_data) > 0 else "",
-                    wpa_data[0].vapWEPrekeyInt if len(wpa_data) > 0 else "",
-                    "checked=checked" if wpa_data[
-                        0].vapWPAkeyMode == 0 else "" if len(wpa_data) > 0 else "",
-                    wpa_data[0].vapWPAconfigPSKPassPhrase if len(
-                        wpa_data) > 0 else "",
-                    "checked=checked" if wpa_data[
-                        0].vapWPAkeyMode == 1 else "" if len(wpa_data) > 0 else "",
-                    "checked=checked" if wpa_data[
-                        0].vapWPArsnPreAuth == 0 else "" if len(wpa_data) > 0 else "",
-                    "checked=checked" if wpa_data[
-                        0].vapWPArsnPreAuth == 1 else "" if len(wpa_data) > 0 else "",
-                    wpa_data[0].vapWPArsnPreAuthInterface if len(
-                        wpa_data) > 0 else "",
-                    wpa_data[
-                        0].vapWPAeapReAuthPeriod if len(wpa_data) > 0 else "",
-                    wpa_data[0].vapWPAserverIP if len(wpa_data) > 0 else "",
-                    wpa_data[0].vapWPAserverPort if len(wpa_data) > 0 else "",
-                    wpa_data[
-                        0].vapWPAsharedSecret if len(wpa_data) > 0 else "",
-                    basic_vap_setup[0].vapselection_id if len(basic_vap_setup) > 0 else "")
+                    </form>"%(APForms.vap_list(8,1,"enabled","vapselectionid",False,"VAP"),basic_vap_setup[0].vapESSID if len(basic_vap_setup)>0 else "",\
+                                        int(basic_vap_setup[0].vapHiddenESSIDstate) if len(basic_vap_setup)>0 else 0,\
+                    "checked=checked" if len(basic_vap_setup)>0 and int(basic_vap_setup[0].vapHiddenESSIDstate)==1 else "",\
+                    basic_vap_setup[0].vlanId if len(basic_vap_setup)>0 else "",\
+                    basic_vap_setup[0].vlanPriority if len(basic_vap_setup)>0 else "",\
+                    basic_vap_setup[0].vapRadioMac if len(basic_vap_setup)>0 else "",\
+                    APForms.threshold_select_list('0',"enabled","rts_mode",False,"Threshold"),basic_vap_setup[0].vapRTSthresholdValue if len(basic_vap_setup)>0 else "",\
+                    APForms.threshold_select_list('0',"enabled","frag_mode",False,"Threshold"),basic_vap_setup[0].vapFragmentationThresholdValue if len(basic_vap_setup)>0 else "",\
+                    basic_vap_setup[0].vapBeaconInterval if len(basic_vap_setup)>0 else "",\
+                    "checked=checked" if basic_vap_security[0].vapSecurityMode==0 else "" if len(basic_vap_security)>0 else "",\
+                    "checked=checked" if basic_vap_security[0].vapSecurityMode==1 else "" if len(basic_vap_security)>0 else "",\
+                    "checked=checked" if wep_data[0].vapWEPmode==0 else "" if len(wep_data)>0 else "",\
+                    "checked=checked" if wep_data[0].vapWEPmode==1 else "" if len(wep_data)>0 else "",\
+                    "checked=checked" if wep_data[0].vapWEPmode==2 else "" if len(wep_data)>0 else "",\
+                    wep_data[0].vapWEPkey1 if len(wep_data)>0 else "",\
+                    "checked=checked" if wep_data[0].vapWEPprimaryKey==1 else "" if len(wep_data)>0 else "",\
+                    wep_data[0].vapWEPkey2 if len(wep_data)>0 else "",\
+                    "checked=checked" if wep_data[0].vapWEPprimaryKey==2 else "" if len(wep_data)>0 else "",\
+                    wep_data[0].vapWEPkey3 if len(wep_data)>0 else "",\
+                    "checked=checked" if wep_data[0].vapWEPprimaryKey==3 else "" if len(wep_data)>0 else "",\
+                    wep_data[0].vapWEPkey4 if len(wep_data)>0 else "",\
+                    "checked=checked" if wep_data[0].vapWEPprimaryKey==4 else "" if len(wep_data)>0 else "",\
+                    "checked=checked" if basic_vap_security[0].vapSecurityMode==2 else "" if len(basic_vap_security)>0 else "",\
+                    wpa_data[0].vapWPArekeyInterval if len(wpa_data)>0 else "",\
+                    wpa_data[0].vapWPAmasterReKey if len(wpa_data)>0 else "",\
+                    wpa_data[0].vapWEPrekeyInt if len(wpa_data)>0 else "",\
+                    "checked=checked" if wpa_data[0].vapWPAkeyMode==0 else "" if len(wpa_data)>0 else "",\
+                    wpa_data[0].vapWPAconfigPSKPassPhrase if len(wpa_data)>0 else "",\
+                    "checked=checked" if wpa_data[0].vapWPAkeyMode==1 else "" if len(wpa_data)>0 else "",\
+                    "checked=checked" if wpa_data[0].vapWPArsnPreAuth==0 else "" if len(wpa_data)>0 else "",\
+                    "checked=checked" if wpa_data[0].vapWPArsnPreAuth==1 else "" if len(wpa_data)>0 else "",\
+                    wpa_data[0].vapWPArsnPreAuthInterface if len(wpa_data)>0 else "",\
+                    wpa_data[0].vapWPAeapReAuthPeriod if len(wpa_data)>0 else "",\
+                    wpa_data[0].vapWPAserverIP if len(wpa_data)>0 else "",\
+                    wpa_data[0].vapWPAserverPort if len(wpa_data)>0 else "",\
+                    wpa_data[0].vapWPAsharedSecret if len(wpa_data)>0 else "",\
+                    basic_vap_setup[0].vapselection_id if len(basic_vap_setup)>0 else "")
         return form_view
-
+    
     @staticmethod
-    def acl_configuration(host_id, selected_device):
+    def acl_configuration(host_id,selected_device):
         select_vaps = 0
         total_mac_enteries = 0
         obj_bll_get_data = APGetData()
-        get_radio_data = obj_bll_get_data.ap_get_data(
-            'Ap25RadioSetup', host_id)
-        get_basic_acl_data = obj_bll_get_data.ap_get_data(
-            'Ap25BasicACLconfigTable', host_id)
-        get_acl_statistics = obj_bll_get_data.ap_get_data(
-            'Ap25AclStatisticsTable', host_id)
-        get_mac_data = obj_bll_get_data.ap_get_data('Ap25AclMacTable', host_id)
-        if len(get_radio_data) > 0:
+        get_radio_data = obj_bll_get_data.ap_get_data('Ap25RadioSetup',host_id)
+        get_basic_acl_data = obj_bll_get_data.ap_get_data('Ap25BasicACLconfigTable',host_id)
+        get_acl_statistics = obj_bll_get_data.ap_get_data('Ap25AclStatisticsTable',host_id)
+        get_mac_data = obj_bll_get_data.ap_get_data('Ap25AclMacTable',host_id)
+        if len(get_radio_data)>0:
             select_vaps = get_radio_data[0].numberOfVAPs
-        form_view = ""
+        form_view=""
 ##        form_view += "<div id=\"acl_table_summary\">\
 ##                        <fieldset><legend>ACL Summary</legend>\
 ##                        <table class=\"yo-table\" style=\"width:100%\" cellspacing=\"0\" cellpadding=\"0\" style=\"margin:10px\">"
@@ -547,8 +489,8 @@ class APForms(object):
 ##        form_view+="<td>%s</td>"%(total_mac_enteries)
 ##        form_view+="<tr/>"
 ##        form_view +="</fieldset></table></div>"
-
-        form_view += "<fieldset><legend>ACL Setting</legend>\
+        
+        form_view +="<fieldset><legend>ACL Setting</legend>\
                         <form id=\"ap_acl_form\" name=\"ap_acl_form\" action=\"ap_acl_form_action.py\" method=\"get\">\
                             <div class=\"row-elem\">\
                                 <label class=\"lbl\">Select VAP</label>\
@@ -605,29 +547,27 @@ class APForms(object):
                                             <th>Serial No.</th>\
                                             <th>MAC Address</th>\
                                         </tr>\
-                                    </thead><tbody>" % (APForms.vap_list(8, 1, "enabled", "vapSelection.selectVap", False, "VAP"),
-                                                   get_basic_acl_data[0].aclState if len(
-                                                       get_basic_acl_data) > 0 else 0,
-                                                   get_basic_acl_data[0].aclMode if len(
-                                                       get_basic_acl_data) > 0 else 0,
-                                                   get_basic_acl_data[0].vapselection_id if len(get_basic_acl_data) > 0 else 1, select_vaps)
-        if len(get_mac_data) > 0:
-            for i in range(0, len(get_mac_data)):
-                form_view += "<tr>\
+                                    </thead><tbody>"%(APForms.vap_list(8,1,"enabled","vapSelection.selectVap",False,"VAP"),\
+                                                   get_basic_acl_data[0].aclState if len(get_basic_acl_data)>0 else 0,\
+                                                   get_basic_acl_data[0].aclMode if len(get_basic_acl_data)>0 else 0,\
+                                                   get_basic_acl_data[0].vapselection_id if len(get_basic_acl_data)>0 else 1,select_vaps)
+        if len(get_mac_data)>0:
+            for i in range(0,len(get_mac_data)):
+                form_view+="<tr>\
                                 <td><input type=\"checkbox\" name=\"mac_chk\" id=\"mac_chk\" value=\"%s\"/>\
                                 <td>%s</td>\
                                 <td>%s</td>\
-                            </tr>" % (get_mac_data[i].macaddress, i + 1, get_mac_data[i].macaddress)
-        form_view += "</tbody></table></div></div>"
-        form_view += "</fieldset>"
+                            </tr>"%(get_mac_data[i].macaddress,i+1,get_mac_data[i].macaddress)                                        
+        form_view+="</tbody></table></div></div>"
+        form_view+="</fieldset>"
         return form_view
-
+    
     @staticmethod
-    def services(host_id, selected_device):
+    def services(host_id,selected_device):
         obj_bll_get_data = APGetData()
-        get_radio_data = obj_bll_get_data.ap_get_data('Ap25Services', host_id)
+        get_radio_data = obj_bll_get_data.ap_get_data('Ap25Services',host_id)
         form_view = ""
-        form_view += "<form id=\"ap_service_form\" name=\"ap_service_form\" action=\"ap_service_form_action.py\" method=\"get\">\
+        form_view+="<form id=\"ap_service_form\" name=\"ap_service_form\" action=\"ap_service_form_action.py\" method=\"get\">\
                         <div class=\"row-elem\" style=\"position:relative\">\
                             <div style=\"position:relative\">\
                                 <label class=\"lbl\">UPNP Server</label>\
@@ -662,21 +602,18 @@ class APForms(object):
                             <input type=\"submit\" name =\"ap_common_submit\" id=\"id_ok\" value=\"Ok\" style=\"Display:None\" onClick=\"return commonFormSubmit('ap_service_form',this)\" class=\"yo-small yo-button\" />\
                             <input type = \"hidden\" id=\"common_rec\" name=\"common_rec\" form_name=\"services\" tablename=\"services\"/>\
                         </div>\
-                    </form>" % (get_radio_data[0].upnpServerStatus if len(get_radio_data) > 0 else "",
-                            get_radio_data[0].systemLogStatus if len(
-                                get_radio_data) > 0 else "",
-                            get_radio_data[0].systemLogIP if len(
-                                get_radio_data) > 0 else "",
-                            get_radio_data[0].systemLogPort if len(get_radio_data) > 0 else "")
+                    </form>"%(get_radio_data[0].upnpServerStatus  if len(get_radio_data)>0 else "",
+                            get_radio_data[0].systemLogStatus if len(get_radio_data)>0 else "",\
+                            get_radio_data[0].systemLogIP if len(get_radio_data)>0 else "",\
+                            get_radio_data[0].systemLogPort if len(get_radio_data)>0 else "")
         return form_view
-
+    
     @staticmethod
-    def dhcpServer(host_id, selected_device):
+    def dhcpServer(host_id,selected_device):
         obj_bll_get_data = APGetData()
-        get_radio_data = obj_bll_get_data.ap_get_data(
-            'Ap25DhcpServer', host_id)
+        get_radio_data = obj_bll_get_data.ap_get_data('Ap25DhcpServer',host_id)
         form_view = ""
-        form_view += "<form id=\"ap_dhcp_form\" name=\"ap_dhcp_form\" action=\"ap_dhcp_form_action.py\" method=\"get\">\
+        form_view+="<form id=\"ap_dhcp_form\" name=\"ap_dhcp_form\" action=\"ap_dhcp_form_action.py\" method=\"get\">\
                         <div class=\"row-elem\">\
                             <label class=\"lbl\">DHCP Server</label>\
                             <input id=\"dhcp_enable\" type=\"radio\" value=\"1\" name=\"dhcpServer.dhcpServerStatus\" onClick=\"dhcpServices();\">\
@@ -712,20 +649,18 @@ class APForms(object):
                             <input type=\"submit\" name =\"ap_common_submit\" id=\"id_ok\" value=\"Ok\" style=\"Display:None\" onClick=\"return commonFormSubmit('ap_dhcp_form',this)\" class=\"yo-small yo-button\" />\
                             <input type = \"hidden\" id=\"common_rec\" name=\"common_rec\" form_name=\"dhcpServer\" tablename=\"dhcpServer\"/>\
                         </div>\
-                    </form>" % (get_radio_data[0].dhcpServerStatus if len(get_radio_data) > 0 else "",
-                            get_radio_data[0].dhcpStartIPaddress if len(
-                                get_radio_data) > 0 else "",
-                            get_radio_data[0].dhcpEndIPaddress if len(
-                                get_radio_data) > 0 else "",
-                            get_radio_data[0].dhcpSubnetMask if len(
-                                get_radio_data) > 0 else "",
-                            get_radio_data[0].dhcpClientLeaseTime if len(get_radio_data) > 0 else "")
+                    </form>"%(get_radio_data[0].dhcpServerStatus  if len(get_radio_data)>0 else "",
+                            get_radio_data[0].dhcpStartIPaddress if len(get_radio_data)>0 else "",\
+                            get_radio_data[0].dhcpEndIPaddress if len(get_radio_data)>0 else "",\
+                            get_radio_data[0].dhcpSubnetMask if len(get_radio_data)>0 else "",\
+                            get_radio_data[0].dhcpClientLeaseTime if len(get_radio_data)>0 else "")
         return form_view
 
+    
     @staticmethod
     def acl_add_form():
         form_view = ""
-        form_view += "<form id=\"acl_add_form\" name=\"acl_add_form\" action=\"acl_add_form_action.py\" method=\"get\">\
+        form_view+="<form id=\"acl_add_form\" name=\"acl_add_form\" action=\"acl_add_form_action.py\" method=\"get\">\
                         <div class=\"row-elem\">\
                             <input id=\"single_add\" type=\"radio\" value=\"1\" name=\"mac_add\" onClick=\"Macadd();\" checked=\"\">\
                             Single Add&nbsp;&nbsp;\
@@ -746,11 +681,10 @@ class APForms(object):
                         </div>\
                     </form>"
         return form_view
-
     @staticmethod
     def acl_upload_form():
         form_view = ""
-        form_view += "<form id=\"acl_update_form\" name=\"acl_update_form\" action=\"acl_update_form_action\" method=\"get\">\
+        form_view+="<form id=\"acl_update_form\" name=\"acl_update_form\" action=\"acl_update_form_action\" method=\"get\">\
                         <div class=\"row-elem\">\
                             <label class=\"lbl\">MAC Address File</label>\
                             <input id=\"mac_file\" type=\"file\" name=\"mac_file\">\
@@ -763,14 +697,14 @@ class APForms(object):
                         </div>\
                     </form>"
         return form_view
-
+    
     @staticmethod
-    def edit_client_form(client_details, group_name):
-        status = ""
-        if group_name.lower() == "guest":
-            status = "disabled=\"disabled\""
-
-        form_view = "\
+    def edit_client_form(client_details,group_name):
+    	status=""
+    	if group_name.lower()=="guest":
+    	    status="disabled=\"disabled\""
+    	    
+        form_view="\
         <form action=\"edit_ap_client_details.py\" method=\"get\" id=\"edit_client\">\
             <div class=\"row-elem\">\
                 <label for=\"client_mac\" class=\"lbl lbl-big\">Client Mac</label>\
@@ -789,16 +723,16 @@ class APForms(object):
                 <input class=\"yo-small yo-button\" type=\"submit\" value=\"Submit\"  %s/>\
             </div>\
         </form>\
-        " % (client_details['client_mac'], client_details['client_id'], client_details['client_name'], status, client_details['client_ip'], status, status)
+        " % (client_details['client_mac'],client_details['client_id'],client_details['client_name'],status,client_details['client_ip'],status,status)
         return form_view
 
-
+  
 class APProfiling(object):
-
+    
     @staticmethod
     def ap_listing():
         table_view = "<div id =\"ap_device_div\">"
-        table_view += "<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"display\" id=\"device_data_table\" style=\"text-align:center;width:100%\">\
+        table_view+= "<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"display\" id=\"device_data_table\" style=\"text-align:center;width:100%\">\
                     <thead>\
                         <tr>\
                             <th>Device Status</th>\
@@ -837,15 +771,15 @@ class APProfiling(object):
                 <div></div>\
                 <div></div>\
                 </div>"
-        # eturn table_view
+        #eturn table_view
 #<th>Transmitted Bytes</th>\
-                            #<th>Recieved Bytes</th>\
-        return table_view  # +table_view2
-
+                            #<th>Recieved Bytes</th>\            
+        return table_view#+table_view2
+    
     @staticmethod
     def client_listing():
         table_view = "<div>"
-        table_view += "<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"display\" id=\"client_data_table\" style=\"text-align:center;width:100%\">\
+        table_view+= "<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"display\" id=\"client_data_table\" style=\"text-align:center;width:100%\">\
                     <thead>\
                         <tr>\
                             <th>Current Connection State</th>\
@@ -865,15 +799,15 @@ class APProfiling(object):
                 <div></div>\
                 </div>"
         return table_view
-
+    
     @staticmethod
     def page_tip_ap_listing():
         try:
             """
             @param h : html Class Object
-            @var html : this is html Class Object defined globally
+            @var html : this is html Class Object defined globally 
             @since : 12 December 2011
-            @version :0.0
+            @version :0.0 
             @date : 12 December 2011
             @note : This function is used for diplaying the help of odu Listing page.Every link help.Every button Help.What output display.Every Image description.
             @organisation : Codescape Consultants Pvt. Ltd.
@@ -902,36 +836,35 @@ class APProfiling(object):
             </div>"\
             "</div>"
             return (str(html_view))
-        except Exception, e:
+        except Exception,e:
             return str(e)
 
+    
     @staticmethod
-    def ap_profiling_form(group_name, host_id, selected_device, device_list_parameter):
+    def ap_profiling_form(group_name,host_id,selected_device,device_list_parameter):
         """
-        @author : Anuj Samariya
+        @author : Anuj Samariya 
         @param h : html Class Object
-        @var html : this is html Class Object defined globally
+        @var html : this is html Class Object defined globally 
         @var host_id : this is used to store the Host Id which is come from the page
-        @device_list_param : this is used to store all the details of device
+        @device_list_param : this is used to store all the details of device 
         @tab_str : this is used to store the form string
-        @var odu_configuration_object : this is used to store the object of class OduConfiguration
+        @var odu_configuration_object : this is used to store the object of class OduConfiguration  
         @since : 20 August 2011
-        @version :0.0
+        @version :0.0 
         @date : 20 Augugst 2011
         @note : this function is used to write the forms of odu100 on the page
         @organisation : Codescape Consultants Pvt. Ltd.
         @copyright : 2011 Anuj Samariya from Codescape Consultants Pvt. Ltd.
         """
-        if device_list_parameter == "" or device_list_parameter == []:
+        if device_list_parameter == "" or device_list_parameter ==[]:
             return "No Configuration Profile Exist"
-        elif device_list_parameter[0].config_profile_id == None or device_list_parameter[0].config_profile_id == "":
+        elif device_list_parameter[0].config_profile_id == None or device_list_parameter[0].config_profile_id=="":
             return "No Configuration Exist.Please Add Host Again"
         else:
             tab_str = ""
-            tab_str += "<input type=\"hidden\" name=\"host_id\" id=\"host_id\" value=\"%s\"/><input type=\"hidden\" name=\"device_type\" id=\"device_type\" value=\"%s\"/>" % (
-                host_id, selected_device)
-            tab_str += "<input type=\"hidden\" name=\"group_name\" id=\"group_name\" value=\"%s\"/>" % (
-                group_name)
+            tab_str += "<input type=\"hidden\" name=\"host_id\" id=\"host_id\" value=\"%s\"/><input type=\"hidden\" name=\"device_type\" id=\"device_type\" value=\"%s\"/>"%(host_id,selected_device)
+            tab_str += "<input type=\"hidden\" name=\"group_name\" id=\"group_name\" value=\"%s\"/>"%(group_name)
             tab_str += "<div class=\"yo-tabs\" id=\"config_tabs\" style=\"display:block\">\
                             <ul>\
                                 <li><a class=\"active\" href=\"#content_1\">Radio Configuration</a></li>\
@@ -959,16 +892,18 @@ class APProfiling(object):
                             <div id=\"content_5\" class=\"tab-content form-div\" style=\"margin-bottom: 0px; margin-top: 26px; display: block;\">\
                                 %s\
                             </div>\
-                        </div>" % (APForms.radio_configuration(host_id, selected_device), APForms.vap_configuration(host_id, selected_device), APForms.acl_configuration(host_id, selected_device), APForms.services(host_id, selected_device), APForms.dhcpServer(host_id, selected_device))
+                        </div>"%(APForms.radio_configuration(host_id,selected_device),APForms.vap_configuration(host_id,selected_device),APForms.acl_configuration(host_id,selected_device),APForms.services(host_id,selected_device),APForms.dhcpServer(host_id,selected_device))
             return tab_str
 
+            
+        
+        
     @staticmethod
-    def ap_div(ip_address, mac_address, host_id):
+    def ap_div(ip_address,mac_address,host_id):
         global obj_essential
         obj_get_data = APGetData()
-        ap_admin_state_data = obj_get_data.ap_get_data(
-            "Ap25RadioSetup", host_id)
-        if len(ap_admin_state_data) > 0:
+        ap_admin_state_data = obj_get_data.ap_get_data("Ap25RadioSetup",host_id)
+        if len(ap_admin_state_data)>0:
             if ap_admin_state_data[0].radioState == 0:
                 image_class = "red"
                 state = 0
@@ -979,19 +914,21 @@ class APProfiling(object):
                 html_label = "Radio Enabled"
 
             op_status = obj_essential.get_hoststatus(host_id)
-            if op_status == None:
+            if op_status==None:
                 op_img = "images/host_status0.png"
                 op_title = host_status_dic[0]
-            elif op_status == 0:
+            elif op_status==0:
                 op_img = "images/host_status0.png"
                 op_title = host_status_dic[op_status]
             else:
                 op_img = "images/host_status1.png"
                 op_title = host_status_dic[op_status]
 
+        
+        
         profile_str = ""
         profile_str += "<div id=\"ap_form_div\" class=\"form-div\" style=\"margin-top: 56px;\"></div>"
-        profile_str += "<div class=\"form-div-footer\">\
+        profile_str +="<div class=\"form-div-footer\">\
                             <div style=\"float: left;margin-left:15px\">\
                                 <ul class=\"button_group\" style=\"margin:10px 0 0 10px !important;\"><li><a id=\"admin_state\" class=\"%s n-reconcile imgEditodu16\" state=\"%s\" onclick=\"radio_enable_disable(event,this,'%s','radioSetup.radioState');\"/>%s</a></li></ul>\
                             </div>\
@@ -1007,16 +944,15 @@ class APProfiling(object):
                                 <input type=\"hidden\" name=\"mac_address\" value=\"%s\" />\
                                 <input type=\"hidden\" name=\"host_id\" value=\"%s\" />\
                             </div>\
-                        </div>" % (image_class, state, host_id, html_label, op_img, op_title, ip_address, mac_address, host_id)
+                        </div>" %(image_class,state,host_id,html_label,op_img,op_title,ip_address,mac_address,host_id)
         return profile_str
-
+    
     @staticmethod
-    def ap_profile_call(group_name, host_id, device_type, device_list_parameter):
+    def ap_profile_call(group_name,host_id,device_type,device_list_parameter):
         tab_str = ""
         if host_id == "" or host_id == "None":
-            tab_str += "There is No Host Exist</div>"
+            tab_str+="There is No Host Exist</div>"
         else:
             if device_type == UNMPDeviceType.ap25:
-                tab_str += APProfiling.ap_profiling_form(
-                    group_name, host_id, device_type, device_list_parameter)  # function call , it is used to make a form of selected profiling
+                tab_str += APProfiling.ap_profiling_form(group_name,host_id,device_type,device_list_parameter)# function call , it is used to make a form of selected profiling  
         return tab_str
