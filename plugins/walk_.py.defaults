@@ -1,0 +1,511 @@
+#!/usr/bin/python2.6
+"""
+@ Author			:	Rajendra Sharma
+@author: Modified by Rahul Gautam
+@ Project			:	UNMP
+@ Version			:	0.1
+@ File Name			:	walk1.py
+@ Creation Date			:	1-September-2011
+@date: 7-Jan-2012
+@ Purpose			:	This plugin insert the data in multipal table.
+@ Organisation                  :       Code Scape Consultants Pvt. Ltd.
+@ Copyright (c) 2011 Codescape Consultant Private Limited 
+"""
+
+#####################################################################################################
+#
+# exit from program using sys.exit() with error code[0,1,2,3]
+# 0 for OK
+# 1 for Warning
+# 2 for Critical
+# 3 for Unknown
+#
+#####################################################################################################
+
+# import the packages
+
+try:
+	import socket,random
+	# importing pysnmp library 
+	import pysnmp
+	from pysnmp.entity.rfc3413.oneliner import cmdgen
+	from pysnmp.proto.api import v2c
+	import os,math
+	import sys
+	import re
+	import shlex, subprocess
+	import commands
+	from compiler.pycodegen import EXCEPT
+	from datetime import datetime
+	import time
+	# import mySQL module
+	import MySQLdb
+except ImportError as e:
+	print str(e[-1])
+	raise SelfCreatedException("package Import Error ")
+	sys.exit(2)
+
+
+
+########################## NOTE
+# Please Remember : when you add oid of table please add .1 at last 
+# like if table oid is '.1.3.6.1.4.1.26149.2.2.11.2' then add .1 at last so new oid is '.1.3.6.1.4.1.26149.2.2.11.2.1'
+# thats it 
+odu16_table_dict = {'get_odu16_synch_statistics_table':'.1.3.6.1.4.1.26149.2.2.11.2.1',
+		  'get_odu16_nw_interface_statistics_table':'.1.3.6.1.4.1.26149.2.2.12.3.1',
+		  'get_odu16_ra_tdd_mac_statistics_entry':'.1.3.6.1.4.1.26149.2.2.13.7.3.1',
+		 'get_odu16_peer_node_status_table':'.1.3.6.1.4.1.26149.2.2.13.9.2.1'
+  		}
+
+idu4_table_dict = {'idu_linkStatusTable':'.1.3.6.1.4.1.26149.2.1.3.1.1',
+			'idu_e1PortStatusTable':'.1.3.6.1.4.1.26149.2.1.3.2.1',
+			'idu_linkStatisticsTable':'.1.3.6.1.4.1.26149.2.1.4.2.1',
+			'idu_tdmoipNetworkInterfaceStatisticsTable':'.1.3.6.1.4.1.26149.2.1.4.1.1',
+			'idu_iduNetworkStatisticsTable':'.1.3.6.1.4.1.26149.2.1.4.3.1' ,
+			'idu_portstatisticsTable':'.1.3.6.1.4.1.26149.2.1.6.9.1',
+			'idu_swPrimaryPortStatisticsTable':'.1.3.6.1.4.1.26149.2.1.4.4.1',
+			'idu_portSecondaryStatisticsTable':'.1.3.6.1.4.1.26149.2.1.4.5.1'
+		}
+
+odu100_table_dict = {'odu100_peerNodeStatusTable':'.1.3.6.1.4.1.26149.2.2.13.9.2.1',
+			'odu100_raTddMacStatisticsTable':'.1.3.6.1.4.1.26149.2.2.13.7.3.1',
+			'odu100_nwInterfaceStatisticsTable':'.1.3.6.1.4.1.26149.2.2.12.3.1',
+			'odu100_synchStatisticsTable':'.1.3.6.1.4.1.26149.2.2.11.2.1'
+		 }
+
+#ap25_table_dict = {'ap25_statisticsTable':'.1.3.6.1.4.1.26149.10.4.1.1.1'}
+
+main_dict = {'odu16':odu16_table_dict,
+	       'odu100':odu100_table_dict,	
+	       'idu4':idu4_table_dict
+#	       'ap25':ap25_table_dict
+	    }
+############################ Please read NOTE before addition of new table
+
+global db,cursor,host_id
+# take argument by command line 
+arg=sys.argv
+
+def defult_data_insert(table_name,ip_address):
+	try:
+		#print table_name
+		exit_status = 1
+		rx_packets, tx_packets, rx_bytes, tx_bytes, rx_crc_err, rx_phy_err, rx_err, tx_err, rx_drop, tx_drop, sig_strength,sysc_lost = random.randint(1000,100000),random.randint(1000,100000),random.randint(1000,100000),random.randint(1000,100000),random.randint(10,100),random.randint(10,100),random.randint(10,100),random.randint(10,100),random.randint(10,100),random.randint(10,100),random.randint(-96,-20),random.randint(1,100)
+		global db,cursor,host_id
+		if db ==1:
+			raise SelfCreatedException(' can not connect to database ')
+		result = host_id
+        	              
+		if table_name.strip()=='get_odu16_nw_interface_statistics_table':
+			for j in range(3):
+				time.sleep(1)
+				ins_query="INSERT INTO `get_odu16_nw_interface_statistics_table`(`host_id`,`index`,`rx_packets`,`tx_packets`,`rx_bytes`,`tx_bytes`,`rx_errors`,`tx_errors`,`rx_dropped`,`tx_dropped`,`rx_multicast`,`colisions`,`timestamp`) values('%s','%s','%s','%s','%s','%s','0','0','0','0','0','0','%s')"%(result,j+1,rx_packets,tx_packets,rx_bytes,tx_bytes,datetime.now())		
+				cursor.execute(ins_query)
+				db.commit()
+		elif table_name.strip()=='get_odu16_synch_statistics_table':
+			ins_query="INSERT INTO `get_odu16_synch_statistics_table`(`host_id`, `index`, `sysc_lost_counter`, `timestamp`) values('%s','1','%s','%s')"%(result,sysc_lost,datetime.now())		
+			cursor.execute(ins_query)
+			db.commit()
+		elif table_name.strip()=='get_odu16_ra_tdd_mac_statistics_entry':
+			ins_query="INSERT INTO `get_odu16_ra_tdd_mac_statistics_entry`(`host_id`,`index`,`rx_packets`,`tx_packets`,`rx_bytes`,`tx_bytes`,`rx_errors`,`tx_errors`,`rx_dropped`,`tx_dropped`,`rx_crc_errors`,`rx_phy_error`,`timestamp`) values('%s','1','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')"%(result,rx_packets,tx_packets,rx_bytes,rx_err, tx_err,rx_drop,tx_drop,tx_bytes,rx_crc_err,rx_phy_err,datetime.now())		
+			cursor.execute(ins_query)
+			db.commit()
+		elif table_name.strip()=='odu100_raScanListTable':
+			for j in range(8):
+				time.sleep(1)
+				ins_query="INSERT INTO `odu100_raScanListTable`(`host_id`,`raIndex`,`raScanIndex`,`ssid`,`signalStrength`,`macAddr`,`rastertime`,`timeslot`,`maxSlaves`,`channelNum`,`basicRate`,`radfs`,`raacm`,`timestamp`) values('%s','1','%s','0','%s',' ',' ',' ','0','0','0','0','0','%s')"%(result,j+1,sig_strength,datetime.now())		
+				cursor.execute(ins_query)
+				db.commit()
+		elif table_name.strip()=='odu100_nwInterfaceStatisticsTable':
+			for j in range(2):
+				time.sleep(1)
+				ins_query="INSERT INTO `odu100_nwInterfaceStatisticsTable`(`host_id`,`nwStatsIndex`,`rxPackets`,`txPackets`,`rxBytes`,`txBytes`,`rxErrors`,`txErrors`,`rxDropped`,`txDropped`,`timestamp`) values('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')"%(result,j+1,rx_packets,tx_packets,rx_bytes,tx_bytes,rx_err,tx_err,rx_drop,tx_drop,datetime.now())		
+				print ins_query
+				cursor.execute(ins_query)
+				db.commit()
+		elif table_name.strip()=='odu100_raTddMacStatisticsTable':
+			ins_query="INSERT INTO `odu100_raTddMacStatisticsTable` (`host_id`, `raIndex`, `rxpackets`, `txpackets`, `rxerrors`, `txerrors`, `rxdropped`, `txdropped`, `rxCrcErrors`, `rxPhyError`, `timestamp`) values('%s','1','%s','%s','%s','%s','%s','%s','%s','%s','%s')"%(result,rx_packets,tx_packets,rx_bytes,tx_bytes,rx_err,tx_err,rx_drop,tx_drop,datetime.now())		
+			cursor.execute(ins_query)
+			db.commit()
+		elif table_name.strip()=='odu100_synchStatisticsTable':
+			ins_query="INSERT INTO `odu100_synchStatisticsTable`(`host_id`,`synchStatsIndex`,`syncLostCounter`,`timestamp`) values('%s','1','%s','%s')"%(result,sysc_lost,datetime.now())	
+			cursor.execute(ins_query)
+			db.commit()
+		elif table_name.strip()=='get_odu16_peer_node_status_table':
+			for j in range(8):
+				ins_query="INSERT INTO `get_odu16_peer_node_status_table`(`host_id`,`index`,`timeslot_index`,`link_status`,`tunnel_status`,`sig_strength`,`peer_mac_addr`,`ssidentifier`,`peer_node_status_raster_time`,`peer_node_status_num_slaves`,`peer_node_status_timer_adjust`,`peer_node_status_rf_config`,`timestamp`) values('%s','1','%s',' ',' ','%s',' ',' ','0','0','0','0','%s')"%(result,j+1,sig_strength,datetime.now())	
+				cursor.execute(ins_query)
+				db.commit()
+		elif table_name.strip()=='odu100_peerNodeStatusTable':
+			for j in range(16):
+				ins_query="INSERT INTO `odu100_peerNodeStatusTable` (`host_id`, `raIndex`, `timeSlotIndex`, `linkStatus`, `tunnelStatus`, `sigStrength1`, `peerMacAddr`, `ssIdentifier`, `peerNodeStatusNumSlaves`, `peerNodeStatusrxRate`, `peerNodeStatustxRate`, `allocatedTxBW`, `allocatedRxBW`, `usedTxBW`, `usedRxBW`, `txbasicRate`, `sigStrength2`, `rxbasicRate`, `txLinkQuality`, `peerNodeStatustxTime`, `peerNodeStatusrxTime`, `timestamp`) VALUES ( '%s', '1', '%s', '1', '1', '%s', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '%s', NULL, NULL, NULL, NULL, '%s')"%(result,j+1,sig_strength,sig_strength,datetime.now())    
+				cursor.execute(ins_query)
+				db.commit()
+
+		elif table_name.strip()=='idu_e1PortStatusTable':
+		    opstate,los,lof,ais,rai,rxFrameSlip,txFrameSlip,adptClkState,holdOverStatus,bpv,timestamp = random.randint(0,1),random.randint(0,1),random.randint(0,1),random.randint(0,1),random.randint(0,1),random.randint(0,1),random.randint(0,1),random.randint(0,6),random.randint(0,1),random.randint(1000,65000),datetime.now()
+		    for j in range(4):
+    			ins_query="INSERT INTO `idu_e1PortStatusTable` ( `host_id`, `portNum`, `opStatus`, `los`, `lof`, `ais`, `rai`, `rxFrameSlip`, `txFrameSlip`, `bpv`, `adptClkState`, `holdOverStatus`, `timestamp`) VALUES \
+( %s, %s,  %s  ,  %s  ,  %s  ,  %s  ,  %s  ,  %s ,  %s  ,  %s  ,  %s  ,  %s  , '%s' );"%(result,j+1,opstate,los,lof,ais,rai,rxFrameSlip,txFrameSlip,bpv,adptClkState,holdOverStatus,timestamp)
+	    		cursor.execute(ins_query)
+	    		db.commit()	
+		elif table_name.strip()=='idu_linkStatusTable':
+			ins_query="INSERT INTO `idu_linkStatusTable` (`host_id`, `bundleNum`, `portNum`, `operationalStatus`, `minJBLevel`, `maxJBLevel`, `underrunOccured`, `overrunOccured`, `timestamp`) VALUES \
+( %s, 1, 1,  ROUND(RAND()*1000)  ,  ROUND(RAND()*1000)  ,  ROUND(RAND()*1000)  ,  ROUND(RAND()*1000)  ,  ROUND(RAND()*1000)  , NOW()), \
+( %s, 2, 2,  ROUND(RAND()*1000)  ,  ROUND(RAND()*1000)  ,  ROUND(RAND()*1000)  ,  ROUND(RAND()*1000)  ,  ROUND(RAND()*1000)  , NOW()), \
+( %s, 3, 3,  ROUND(RAND()*1000)  ,  ROUND(RAND()*1000)  ,  ROUND(RAND()*1000)  ,  ROUND(RAND()*1000)  ,  ROUND(RAND()*1000)  , NOW()), \
+( %s, 4, 4,  ROUND(RAND()*1000)  ,  ROUND(RAND()*1000)  ,  ROUND(RAND()*1000)  ,  ROUND(RAND()*1000)  ,  ROUND(RAND()*1000)  , NOW());"%(result,result,result,result)
+			cursor.execute(ins_query)
+			db.commit()		
+			
+		elif table_name.strip()=='idu_portstatisticsTable':
+			ins_query=" INSERT INTO `idu_portstatisticsTable` (`host_id`, `softwarestatportnum`, `framerx`, `frametx`, `indiscards`, `ingoodoctets`, `inbadoctet`, `outoctets`, `timestamp`) VALUES \
+( %s, 0, ROUND(RAND()*10000), ROUND(RAND()*10000),  ROUND(RAND()*1000)  ,  ROUND(RAND()*10000) ,  ROUND(RAND()*1000)  , 5524692, NOW()), \
+( %s, 2, ROUND(RAND()*10000), ROUND(RAND()*10000),  ROUND(RAND()*1000)  ,  ROUND(RAND()*10000) ,  ROUND(RAND()*1000)  , 524692, NOW()), \
+( %s, 3, ROUND(RAND()*10000), ROUND(RAND()*10000),  ROUND(RAND()*1000)  ,  ROUND(RAND()*10000) ,  ROUND(RAND()*1000)  , 5524692, NOW());"%(result,result,result)
+			cursor.execute(ins_query)
+			db.commit()	
+			
+		elif table_name.strip()=='idu_swPrimaryPortStatisticsTable':
+			ins_query="INSERT INTO `idu_swPrimaryPortStatisticsTable` (`host_id`, `swportnumber`, `framesRx`, `framesTx`, `inDiscard`, `inGoodOctets`, `inBadOctets`, `outOctets`, `timestamp`) VALUES \
+( %s, 0,  ROUND(RAND()*1000) ,  ROUND(RAND()*1000) ,  ROUND(RAND()*1000) ,  ROUND(RAND()*1000) ,  ROUND(RAND()*1000) ,  ROUND(RAND()*1000) , NOW()), \
+( %s, 2,  ROUND(RAND()*1000) ,  ROUND(RAND()*1000) ,  ROUND(RAND()*1000) ,  ROUND(RAND()*1000) ,  ROUND(RAND()*1000) ,  ROUND(RAND()*1000) , NOW()), \
+( %s, 3,  ROUND(RAND()*1000) ,  ROUND(RAND()*1000) ,  ROUND(RAND()*1000) ,  ROUND(RAND()*1000) ,  ROUND(RAND()*1000) ,  ROUND(RAND()*1000) , NOW());"%(result,result,result)
+			cursor.execute(ins_query)
+			db.commit()												
+		elif table_name.strip()=='idu_portSecondaryStatisticsTable':
+			ins_query="INSERT INTO `idu_portSecondaryStatisticsTable` ( `host_id`, `switchPortNum`, `inUnicast`, `outUnicast`, `inBroadcast`, `outBroadcast`, `inMulticast`, `outMulricast`, `inUndersizeRx`, `inFragmentsRx`, `inOversizeRx`, `inJabberRx`, `inMacRcvErrorRx`, `inFCSErrorRx`, `outFCSErrorTx`, `deferedTx`, `collisionTx`, `lateTx`, `exessiveTx`, `singleTx`, `multipleTx`, `timestamp`) VALUES \
+( %s, 0 ,  ROUND(RAND()*1000)  ,   ROUND(RAND()*1000)  ,  ROUND(RAND()*1000)  ,   ROUND(RAND()*1000)  ,  ROUND(RAND()*1000)  ,   ROUND(RAND()*1000)  ,  ROUND(RAND()*1000)  ,   ROUND(RAND()*1000)  ,  ROUND(RAND()*1000)  ,   ROUND(RAND()*1000)  ,  ROUND(RAND()*1000)  ,   ROUND(RAND()*1000)  ,  ROUND(RAND()*1000)  ,   ROUND(RAND()*1000)  ,  ROUND(RAND()*1000)  ,   ROUND(RAND()*1000)  ,  ROUND(RAND()*1000)  ,   ROUND(RAND()*1000)  ,  ROUND(RAND()*1000)  , NOW()), \
+( %s, 2,  ROUND(RAND()*1000)  ,   ROUND(RAND()*1000)  ,  ROUND(RAND()*1000)  ,   ROUND(RAND()*1000)  ,  ROUND(RAND()*1000)  ,   ROUND(RAND()*1000)  ,  ROUND(RAND()*1000)  ,   ROUND(RAND()*1000)  ,  ROUND(RAND()*1000)  ,   ROUND(RAND()*1000)  ,  ROUND(RAND()*1000)  ,   ROUND(RAND()*1000)  ,  ROUND(RAND()*1000)  ,   ROUND(RAND()*1000)  ,  ROUND(RAND()*1000)  ,   ROUND(RAND()*1000)  ,  ROUND(RAND()*1000)  ,   ROUND(RAND()*1000)  ,  ROUND(RAND()*1000)  , NOW());"%(result,result)
+			cursor.execute(ins_query)
+			db.commit()												
+
+		elif table_name.strip()=='idu_linkStatisticsTable':
+			ins_query="INSERT INTO `idu_linkStatisticsTable` (`host_id`, `bundlenumber`, `portNum`, `goodFramesToEth`, `goodFramesRx`, `lostPacketsAtRx`, `discardedPackets`, `reorderedPackets`, `underrunEvents`, `timestamp`) VALUES \
+( %s, '1', '1', ROUND(RAND()*1000) , ROUND(RAND()*1000) , ROUND(RAND()*1000) , ROUND(RAND()*1000) , ROUND(RAND()*1000) , ROUND(RAND()*1000) , NOW()),\
+( %s, '2', '2', ROUND(RAND()*1000) , ROUND(RAND()*1000) , ROUND(RAND()*1000) , ROUND(RAND()*1000) , ROUND(RAND()*1000) , ROUND(RAND()*1000) , NOW()),\
+( %s, '3', '3', ROUND(RAND()*1000) , ROUND(RAND()*1000) , ROUND(RAND()*1000) , ROUND(RAND()*1000) , ROUND(RAND()*1000) , ROUND(RAND()*1000) , NOW()),\
+( %s, '4', '4', ROUND(RAND()*1000) , ROUND(RAND()*1000) , ROUND(RAND()*1000) , ROUND(RAND()*1000) , ROUND(RAND()*1000) , ROUND(RAND()*1000) , NOW());"%(result,result,result,result)
+			cursor.execute(ins_query)
+			db.commit()												
+
+		elif table_name.strip()=='idu_tdmoipNetworkInterfaceStatisticsTable':
+			ins_query="INSERT INTO `idu_tdmoipNetworkInterfaceStatisticsTable` (`host_id`, `indexid`, `bytesTransmitted`, `bytesReceived`, `framesTransmittedOk`, `framesReceivedOk`, `goodClassifiedFramesRx`, `checksumErrorPackets`, `timestamp`) VALUES \
+( %s, 0, ROUND(RAND()*1000) , ROUND(RAND()*1000) , ROUND(RAND()*1000) , ROUND(RAND()*1000) , ROUND(RAND()*1000) , ROUND(RAND()*1000) , NOW());"%(result)
+			cursor.execute(ins_query)
+			db.commit()												
+		elif table_name.strip()=='idu_iduNetworkStatisticsTable':
+			ins_query="INSERT INTO `idu_iduNetworkStatisticsTable` (`host_id`, `interfaceName`, `rxPackets`, `txPackets`, `rxBytes`, `txBytes`, `rxErrors`, `txErrors`, `rxDropped`, `txDropped`, `multicasts`, `collisions`, `timestamp`) VALUES ( %s, 0, ROUND(RAND()*1000) , ROUND(RAND()*1000) , ROUND(RAND()*1000) , ROUND(RAND()*1000) , ROUND(RAND()*1000) , ROUND(RAND()*1000) , ROUND(RAND()*1000) , ROUND(RAND()*1000) , ROUND(RAND()*1000) , ROUND(RAND()*1000) , NOW());"%(result)
+			cursor.execute(ins_query)
+			db.commit()												
+
+		exit_status = 1
+		# close the connection
+	except MySQLdb.Error as e:
+	    print "MySQLdb Exception    "+str(e[-1])
+	    exit_status = 2	    
+	except SelfCreatedException as e:
+		print str(e)
+		exit_status = 2
+	except Exception as e:
+		print str(e[-1])
+		exit_status = 2
+	finally :
+		return exit_status
+
+# -- 	default data instert close
+
+
+
+
+
+def pysnmp_get_table(oid,ip_address,port,community):
+    err_dict = {}
+    success = 1
+    try:
+        if isinstance(ip_address,str) and isinstance(oid,str) and isinstance(community,str) and isinstance(port,int):
+            try:
+                make_tuple = lambda x: tuple(int(i) for i in x.split('.'))
+                
+                errorIndication, errorStatus, errorIndex, \
+                             varBindTable = cmdgen.CommandGenerator().nextCmd(
+                cmdgen.CommunityData('table-agent', community),cmdgen.UdpTransportTarget((ip_address, port)),make_tuple(oid))
+                             
+                var_dict = {}
+                
+                if errorIndication and len(varBindTable) < 1:
+                    success = 1
+                    err_dict[53] = str(errorIndication)
+                    return
+                    # handle 
+                    
+                else:
+                    if errorStatus:
+                        err_dict[int(errorIndex)] = str(errorStatus)
+                        success = 1
+                        #print '%s at %s\n' % ( errorStatus.prettyPrint(),errorIndex and varBindTable[-1][int(errorIndex)-1] or '?')
+                    else:
+                        success = 0
+                        oid_li = []
+                        var_dict = {}
+                        is_oid2 = 0
+                        for varBindTableRow in varBindTable:
+                            for name, val in varBindTableRow:
+                                #print '%s = %s' % (name.prettyPrint(), val.prettyPrint())
+                                oid_values_list = name.prettyPrint().split(oid)[1][1:].split('.')
+                                #print oid_values_list
+                                if len(oid_values_list) == 3:
+                                    oid_no,oid2, oid3 = oid_values_list
+                                    is_oid2 = 1
+                                #print '%s = %s' % (name.prettyPrint(), val.prettyPrint())
+                                elif len(oid_values_list) == 2:
+                                    oid_no,oid3 = oid_values_list
+                                else: 
+                                    success = 1
+                                    return
+                              
+
+                                if isinstance(val,v2c.IpAddress):
+                                    value = str(val.prettyPrint())
+                                else:
+                                    if str(val).find('<null>'):
+	                                value = str(val) #val.prettyPrint() #str(val) 
+                                    else:
+                                        value = 'NULL'
+
+                                if oid_li.count(oid_no) == 0:
+                                    oid_li.append(oid_no)
+                                    count = 0
+                                    flag = 1
+                                    if len(oid_li) == 1:
+                                        flag = 0
+                                                                                
+                                if flag == 0:
+                                    count += 1                      
+                                    li = []
+                                    value = str(val) #val.prettyPrint() #str(val)
+                                    if is_oid2:
+                                        li.append(oid2)
+                                    li.append(oid3)
+                                    
+                                    li.append(value)
+                                    var_dict[count] = li
+                                else:
+                                    count += 1
+                                    li = var_dict[count]
+                                    li.append(value)
+                                    var_dict[count] = li
+                                
+                            
+            except socket.error as (sock_errno, sock_errstr):
+                success = 1
+                err_dict[51] = sock_errstr                
+            except pysnmp.proto.error.ProtocolError as err:
+                success = 1
+                err_dict[99] = 'pyproto err '+str(err)
+            except TypeError as err:
+                success = 1
+                err_dict[99] = 'type err '+str(err)
+            except Exception as e:
+                success = 1
+                err_dict[99] = 'pysnmp exception '+str(e)
+        else:
+            success = 1
+            err_dict[96] = "Arguments_are_not_proper : oid as str ( don't include first dot as .1.3 must be 1.3),ip_address as str ,port as int,community as str"
+    except Exception as e:
+        success = 1
+        err_dict[98] = 'outer Exception '+str(e)
+    finally:
+        result_dict = {}
+        if success == 0:
+            result_dict['success'] = success
+            result_dict['result'] = var_dict
+        else:
+            result_dict['success'] = success
+            result_dict['result'] = err_dict
+        #print var_dict
+        return result_dict
+
+
+
+#Exception class
+class SelfCreatedException(Exception):
+    def __init__(self,msg):
+        print msg
+        
+def db_connect():
+    """
+    Used to connect to the database :: return database object assigned in global_db variable
+    """
+    db_obj = 1
+    try:
+        db_obj = MySQLdb.connect(hostname,username,password,schema)        
+        #db_obj = MySQLdb.connect("172.22.0.95","root","root","nms_p")        
+    except MySQLdb.Error as e:
+        print str(e)
+    except Exception as e:
+        print "Exception in database connection "+str(e)
+    finally:
+        return db_obj
+
+
+
+
+def insert_in_outage(ip_address):
+    global db,cursor
+    try:
+        query = "INSERT INTO `nagios_statehistory` (`object_id`,`statehistory_id`, `instance_id`, `state_time`, `state_time_usec`, `state_change`, `state`, `state_type`, `current_check_attempt`,  `max_check_attempts`, `last_state`, `last_hard_state`, `output`, `long_output`) values ((select host_object_id from nagios_hosts as nh where nh.address='%s' limit 1), NULL, 1, NOW(), 195939, 1, 0, 0, 2, 5, 0, -1, 'OK - %s: rta 3.535ms, lost 0%', 'OK - %s: rta 3.535ms, lost 0%')"%(ip_address,ip_address,ip_address)
+        
+        cursor.execute(query)
+    except MySQLdb.Error as e:
+        pass
+    except Exception as e:
+        pass
+        
+
+###### @@@ main program starts from here 
+
+def main():
+	try:
+	    # Open database connection
+	    exit_status = 1
+	    global db,cursor,host_id
+	    db,cursor = 1,1
+	    is_db_connect = 1
+	    if arg.count('-i') and  arg.count('-p') and arg.count('-d') :
+                ip_address = arg[arg.index("-i") + 1]        # receive the ip address
+                port_no = arg[arg.index("-p") + 1]           # receive port number
+                device_type = arg[arg.index("-d") + 1]       # receive device type
+                snmp_flag = 0
+                table_dict = main_dict[device_type]
+                is_table = 0
+                if arg.count('-t'):
+                    is_table = 1
+                    single_table = arg[arg.index("-t") + 1]
+            
+	        for table_name in table_dict:
+	            #print table_name
+	            if is_table:
+	                table_name = single_table
+    	            #print table_name
+	            #####snmp_result_dict = pysnmp_get_table(str(table_dict[table_name][1:]),str(ip_address),int(port_no),'public') #MWC
+	            snmp_result_dict = {'success':1,'result':" SNMP RESPONSE : OK "}
+	    	    # opening db connection
+	            if is_db_connect:
+	   				db = db_connect()
+	   				is_db_connect = 0
+	   				if db == 1:
+	   					raise SelfCreatedException(' db connection failed ')
+	   				else:
+	   					# select the host)id form hosts table
+	   					cursor = db.cursor()
+	   					sql="SELECT host_id from hosts where ip_address = '%s'"%ip_address
+	   					if cursor.execute(sql) == 0 or cursor.execute(sql) == None:
+	   						plugin_message("host_id dosn't exists in hosts table")
+	   						exit_status = 1
+	   						return
+	   					else:
+	   						host_id=cursor.fetchone()[0]
+	            if snmp_result_dict['success'] == 0:
+
+					#create sql query for insertion in table
+					result_dict = snmp_result_dict['result']
+					#sql="INSERT INTO %s values(null,'%s'"%(table_name,result)
+					ins_query = "INSERT INTO %s values "%(table_name)
+					flag = 1
+					ins_str = ""
+					date_time = datetime.now()
+					for i in result_dict:
+					
+						if flag == 1:
+							ins_query += "(null, '%s'"%(host_id)
+							ins_len = len(result_dict[i])
+							for ln in xrange(ins_len):
+								ins_str += " ,'%s'"
+							flag = 0
+						else:
+							ins_query += ", (null, '%s'"%(host_id)
+							 
+						ins_query += ins_str%tuple(result_dict[i])
+						ins_query += ", '%s')"%(date_time)
+					#print ins_query		            		
+					cursor.execute(ins_query) # execute the query 
+					db.commit()	# save the value in data base
+					print "   SNMP RESPONSE : OK  "
+
+					exit_status = 0
+					#sys.exit(0)
+	            else:
+					#####print snmp_result_dict['result'].values()[0]#,table_name
+					print "   SNMP RESPONSE : OK  "
+					snmp_flag = 1
+					insert_in_outage(ip_address)
+					for table_name in table_dict:
+						print table_name
+						exit_status = defult_data_insert(table_name,ip_address)
+						exit_status = 0						
+	    				
+					return
+	            if is_table:
+	                break
+	    else:
+		plugin_message()
+		exit_status = 1
+	    	#sys.exit(1)
+	    
+	except ImportError as e:
+	    print "Import Error   "+str(e[-1])
+	    exit_status = 2 #sys.exit(2)
+	except MySQLdb.Error as e:
+	    print "MySQLdb Exception    "+str(e[-1])
+	    exit_status = 2#sys.exit(1)
+	except SelfCreatedException as e:
+		exit_status = 2#sys.exit(2)
+	except Exception as e:
+		print "IN MAIN :  ",str(e[-1])
+		exit_status = 2#sys.exit(2)
+	finally :
+		if isinstance(db,MySQLdb.connection):
+			if db.open:
+				cursor.close()
+				db.close()
+		sys.exit(exit_status)
+
+# function for error messages
+def plugin_message(message = ""):
+    if message == "":
+        print "you are passing bad arguments."
+    else:
+        print message
+
+# check the validation for command line argument
+if len(arg)>4:
+	MySql_file = '/omd/daemon/config.rg'
+	if(os.path.isfile(MySql_file)):	   # getting variables from config file
+		execfile(MySql_file)
+		main()
+	else:
+		print 'can not connect to database'
+		print 'config.rg file not found on /omd/daemon path'
+		sys.exit(2)
+	
+else:
+  if "--help" in arg or "-h" in arg:
+		print """
+				MONITOR ODU16_NETWORK_INTERFACE_STATISTICS:
+				--------------------------------
+				This plugin gives you interface and tx/rx values
+				
+				For Inserting the value of ODU16 tx/rx into mySQL database:
+				\t./%s -i 192.168.1.1 -p 161 -d odu16
+				\t-i\t Ip Address
+				\t-p\t Port_no
+				\t-p\t Device_type
+				""" % (arg[0])
+		sys.exit(2)
+	    
+  else:
+	plugin_message('-------->>>> Please pass the arguments and you can also check the passing argumnets by [python] [file name] --help or -h.')
+	sys.exit(2)
+
+
