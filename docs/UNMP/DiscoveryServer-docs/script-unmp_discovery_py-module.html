@@ -1,0 +1,956 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>script-unmp_discovery_py</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        Script&nbsp;unmp_discovery_py
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="script-unmp_discovery_py-module.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<!-- ==================== SCRIPT DESCRIPTION ==================== -->
+<h1 class="epydoc">Script unmp_discovery_py</h1><p class="nomargin-top"><span class="codelink"><a href="script-unmp_discovery_py-pysrc.html">source&nbsp;code</a></span></p>
+<p>Description : VNL Unicast Discovery of different Devices for 
+  NMS(UNMP)</p>
+  <p>ServiceName: unmp-ds</p>
+  <p>Author : Rahul Gautam</p>
+  <p>Date: 22-Aug-2011</p>
+  <p>(CodeScape Consultants Pvt. Ltd.)</p>
+
+<!-- ==================== CLASSES ==================== -->
+<a name="section-Classes"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Classes</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Classes"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="script-unmp_discovery_py.State_exception-class.html" class="summary-name">State_exception</a><br />
+      used to raise an exception for if rule_variable's value is 
+        exceeding 200
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="script-unmp_discovery_py.DsThread-class.html" class="summary-name">DsThread</a><br />
+      Thread that handles socket communication with device in main process
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="script-unmp_discovery_py.PsThread-class.html" class="summary-name">PsThread</a><br />
+      PsThread is a Monitoring thread that spawns a process when thread 
+      count in main process is reach to the value of thread_count global 
+      variable
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="script-unmp_discovery_py.EventThread-class.html" class="summary-name">EventThread</a><br />
+      Event thread keep track of events, exceptions, errors generated in 
+      Discovery server and insert these events in database
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="script-unmp_discovery_py.nmsThread-class.html" class="summary-name">nmsThread</a><br />
+      this class is used to handle nagios plugin request &amp; sends 
+      information of Server health, no of spawned processes, no threas up, 
+      set devices, total no of devices
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="script-unmp_discovery_py.MyDaemon-class.html" class="summary-name">MyDaemon</a><br />
+      this Class is calling main() and Daemonizing my Discovery Server it 
+      extends Daemon class and provides start stop functioality for daemon
+    </td>
+  </tr>
+</table>
+<!-- ==================== FUNCTIONS ==================== -->
+<a name="section-Functions"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Functions</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Functions"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="get_xmlattribute"></a><span class="summary-sig-name">get_xmlattribute</span>(<span class="summary-sig-arg">param_id</span>)</span><br />
+      used for retrieving information from rgconfig.xml file (not used 
+      because configuration file has custom .rg extention)</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="script-unmp_discovery_py-pysrc.html#get_xmlattribute">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="print_dumphex"></a><span class="summary-sig-name">print_dumphex</span>(<span class="summary-sig-arg">s</span>)</span><br />
+      print hex data ::not used in program</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="script-unmp_discovery_py-pysrc.html#print_dumphex">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="dumphex"></a><span class="summary-sig-name">dumphex</span>(<span class="summary-sig-arg">s</span>)</span><br />
+      Returns Hexa decimal dump of received data from device into a list</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="script-unmp_discovery_py-pysrc.html#dumphex">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="get_header"></a><span class="summary-sig-name">get_header</span>(<span class="summary-sig-arg">bytes</span>)</span><br />
+      Returns Header in the form of a list :: required parameter is 
+      complete packet in the form of Hexadecimal list</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="script-unmp_discovery_py-pysrc.html#get_header">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="get_payload"></a><span class="summary-sig-name">get_payload</span>(<span class="summary-sig-arg">bytes</span>)</span><br />
+      Returns payload as a list :: required parameter is complete packet in
+      the form of Hexadecimal list</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="script-unmp_discovery_py-pysrc.html#get_payload">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="decode_header"></a><span class="summary-sig-name">decode_header</span>(<span class="summary-sig-arg">header</span>)</span><br />
+      Returns Decoded the Header in the form of a 
+      dictionary{'param_name':'param_value'} :: required paramenter is 
+      Header as a Hexadecimal list</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="script-unmp_discovery_py-pysrc.html#decode_header">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="decode_payload"></a><span class="summary-sig-name">decode_payload</span>(<span class="summary-sig-arg">payload</span>,
+        <span class="summary-sig-arg">param_count</span>)</span><br />
+      Returns Decoded the Header in the form of a 
+      dictionary{'param_name':'param_value'} :: required paramenters 
+      (Payload as a Hexadecimal list, param_count field from decoded header
+      as int</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="script-unmp_discovery_py-pysrc.html#decode_payload">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="long_decode"></a><span class="summary-sig-name">long_decode</span>(<span class="summary-sig-arg">li_st</span>)</span><br />
+      decode long type of list value, return long value:: parameter (list)</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="script-unmp_discovery_py-pysrc.html#long_decode">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="int_decode"></a><span class="summary-sig-name">int_decode</span>(<span class="summary-sig-arg">li_st</span>)</span><br />
+      decode int type of list value, return int value :: parameter (list)</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="script-unmp_discovery_py-pysrc.html#int_decode">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="string_decode"></a><span class="summary-sig-name">string_decode</span>(<span class="summary-sig-arg">li_st</span>)</span><br />
+      decode list value, return as a string value :: parameter (list)</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="script-unmp_discovery_py-pysrc.html#string_decode">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="int_encode"></a><span class="summary-sig-name">int_encode</span>(<span class="summary-sig-arg">int_value</span>,
+        <span class="summary-sig-arg">bytes</span>)</span><br />
+      used for converting int value in hex, Returns string value (that 
+      contains Hex format) :: parametwrs (int value,and how many bytes that
+      int value is to be hold)</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="script-unmp_discovery_py-pysrc.html#int_encode">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="string_encode"></a><span class="summary-sig-name">string_encode</span>(<span class="summary-sig-arg">str_v</span>)</span><br />
+      used for converting string in hex, Returns string (that contains Hex 
+      format) :: parameter (string value)</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="script-unmp_discovery_py-pysrc.html#string_encode">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="make_header"></a><span class="summary-sig-name">make_header</span>(<span class="summary-sig-arg">rne_id</span>,
+        <span class="summary-sig-arg">rcmd_id</span>,
+        <span class="summary-sig-arg">rcmd_status</span>,
+        <span class="summary-sig-arg">rlen_of_payload</span>,
+        <span class="summary-sig-arg">rparam_count</span>,
+        <span class="summary-sig-arg">rtx_id</span>)</span><br />
+      used for making Header in hex format, Returns header in string (that 
+      contains hex format) :: all Header fields as parameter</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="script-unmp_discovery_py-pysrc.html#make_header">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="make_param"></a><span class="summary-sig-name">make_param</span>(<span class="summary-sig-arg">rparam_name</span>,
+        <span class="summary-sig-arg">rparam_size</span>,
+        <span class="summary-sig-arg">rparam_value</span>)</span><br />
+      used for making payload misc_parameter, return as a String (that 
+      contains hex format) :: parameters (parameter_name as int, param_size
+      as int, param_value as string)</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="script-unmp_discovery_py-pysrc.html#make_param">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="make_list"></a><span class="summary-sig-name">make_list</span>(<span class="summary-sig-arg">str_v</span>)</span><br />
+      returns list of a String Value :: parameter(string_value)</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="script-unmp_discovery_py-pysrc.html#make_list">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="make_str"></a><span class="summary-sig-name">make_str</span>(<span class="summary-sig-arg">hex_list</span>)</span><br />
+      returns string (that contains hex format) :: parameter(list)</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="script-unmp_discovery_py-pysrc.html#make_str">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="asciirepr"></a><span class="summary-sig-name">asciirepr</span>(<span class="summary-sig-arg">hexs</span>)</span><br />
+      replace the hexadecimal characters with ascii characters</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="script-unmp_discovery_py-pysrc.html#asciirepr">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="hexrepr"></a><span class="summary-sig-name">hexrepr</span>(<span class="summary-sig-arg">hexs</span>)</span><br />
+      replace the ascii characters with hexadecimal characters (never used 
+      in that program)</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="script-unmp_discovery_py-pysrc.html#hexrepr">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="db_connect"></a><span class="summary-sig-name">db_connect</span>()</span><br />
+      Used to connect to the database :: return database object assigned in
+      global_db variable</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="script-unmp_discovery_py-pysrc.html#db_connect">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="db_close"></a><span class="summary-sig-name">db_close</span>()</span><br />
+      closes connection with the database</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="script-unmp_discovery_py-pysrc.html#db_close">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="db_get_neid"></a><span class="summary-sig-name">db_get_neid</span>(<span class="summary-sig-arg">dip</span>)</span><br />
+      returns ne_id of device if device is previously registered</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="script-unmp_discovery_py-pysrc.html#db_get_neid">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="db_registration"></a><span class="summary-sig-name">db_registration</span>(<span class="summary-sig-arg">db_entries</span>,
+        <span class="summary-sig-arg">dip</span>)</span><br />
+      this functions used for inserting all the details of device in the 
+      database received in registration(2001) step</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="script-unmp_discovery_py-pysrc.html#db_registration">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="db_set_device"></a><span class="summary-sig-name">db_set_device</span>(<span class="summary-sig-arg">dip</span>,
+        <span class="summary-sig-arg">status</span>)</span><br />
+      when device is properly configured then this method set the is_set 
+      field to 0 in tcp_health_check table and also reset the health_check 
+      field</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="script-unmp_discovery_py-pysrc.html#db_set_device">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="db_health_check"></a><span class="summary-sig-name">db_health_check</span>(<span class="summary-sig-arg">dip</span>)</span><br />
+      this function insert device health_check in tcp_health_check table</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="script-unmp_discovery_py-pysrc.html#db_health_check">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="db_device_disconnet"></a><span class="summary-sig-name">db_device_disconnet</span>(<span class="summary-sig-arg">dip</span>)</span><br />
+      used to enter the disconnect information of device</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="script-unmp_discovery_py-pysrc.html#db_device_disconnet">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="db_events"></a><span class="summary-sig-name">db_events</span>()</span><br />
+      this function used by EventThread to insert Event in daemon Event 
+      table</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="script-unmp_discovery_py-pysrc.html#db_events">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="process_function"></a><span class="summary-sig-name">process_function</span>(<span class="summary-sig-arg">psock_list</span>,
+        <span class="summary-sig-arg">event</span>,
+        <span class="summary-sig-arg">global_db</span>)</span><br />
+      this is the target function for Process that spawns by PsThread it 
+      accepts sockets list and an Event object from main process</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="script-unmp_discovery_py-pysrc.html#process_function">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="script-unmp_discovery_py-module.html#main" class="summary-sig-name">main</a>()</span><br />
+      This module is used to add new Devices in the network management 
+      system and configure them for snmp and ftp information And asigning 
+      the device a unique network_ID for its life time.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="script-unmp_discovery_py-pysrc.html#main">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+</table>
+<!-- ==================== VARIABLES ==================== -->
+<a name="section-Variables"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Variables</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Variables"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="config_location"></a><span class="summary-name">config_location</span> = <code title="'/omd/daemon/config.rg'">'/omd/daemon/config.rg'</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="global_db"></a><span class="summary-name">global_db</span> = <code title="None">None</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="db_events_dict"></a><span class="summary-name">db_events_dict</span> = <code title="{}">{}</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="thread_count"></a><span class="summary-name">thread_count</span> = <code title="160">160</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="status_dict"></a><span class="summary-name">status_dict</span> = <code title="{}">{}</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="thread_dict"></a><span class="summary-name">thread_dict</span> = <code title="{}">{}</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="process_list"></a><span class="summary-name">process_list</span> = <code title="[]">[]</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="sock_dict"></a><span class="summary-name">sock_dict</span> = <code title="{}">{}</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="nms_ip"></a><span class="summary-name">nms_ip</span> = <code title="nms_ip">nms_ip</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="script-unmp_discovery_py-module.html#server_ip_addr" class="summary-name">server_ip_addr</a> = <code title="socket.gethostbyname_ex(socket.gethostname()) [2] [0]">socket.gethostbyname_ex(socket.gethostname())<code class="variable-ellipsis">...</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="sock_list"></a><span class="summary-name">sock_list</span> = <code title="[]">[]</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="process_dict"></a><span class="summary-name">process_dict</span> = <code title="{}">{}</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="process_event"></a><span class="summary-name">process_event</span> = <code title="{}">{}</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="thread_list"></a><span class="summary-name">thread_list</span> = <code title="[]">[]</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="device_toWatch"></a><span class="summary-name">device_toWatch</span> = <code title="[]">[]</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="rule_variable"></a><span class="summary-name">rule_variable</span> = <code title="0">0</code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="script-unmp_discovery_py-module.html#sys_omc_tuple" class="summary-name">sys_omc_tuple</a> = <code title="'sys_omc_register_active_card_hwld', 'product_id', 'sys_omc_registerne\
+_country', 'sys_omc_registerne_state', 'sys_omc_registerne_city', 'sys\
+_omc_registerne_sitebldg', 'sys_omc_register_contact_person', 'sys_omc\
+_register_contact_mobile', 'sys_omc_register_alternate_contact', 'sys_\
+omc_register_contact_email', 'sys_omc_register_contact_addr', 'sys_omc\
+_registerne_sitefloor', 'sys_omc_registerne_site_direction', 'sys_omc_\
+registerne_site_landmark', 'site_mac', 'sys_omc_registerne_site_longit\
+ude', 'sys_omc_registerne_site_latitude', 'ip_address'">'sys_omc_register_active_card_hwld', 'product_<code class="variable-ellipsis">...</code></code>
+    </td>
+  </tr>
+</table>
+<!-- ==================== FUNCTION DETAILS ==================== -->
+<a name="section-FunctionDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Function Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-FunctionDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="main"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">main</span>()</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="script-unmp_discovery_py-pysrc.html#main">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>This module is used to add new Devices in the network management 
+  system and configure them for snmp and ftp information And asigning the 
+  device a unique network_ID for its life time. It also insert the received
+  information from device in database. It creats a TCP server that listing 
+  for devices on port 6790 and accept their socket connection and start a 
+  new thread for that device communication. @Rahul Gautam ('Codescape 
+  Consultants Pvt. Ltd.')</p>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== VARIABLES DETAILS ==================== -->
+<a name="section-VariablesDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Variables Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-VariablesDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="server_ip_addr"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">server_ip_addr</h3>
+  
+  <dl class="fields">
+  </dl>
+  <dl class="fields">
+    <dt>Value:</dt>
+      <dd><table><tr><td><pre class="variable">
+socket.gethostbyname_ex(socket.gethostname()) [2] [0]
+</pre></td></tr></table>
+</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="sys_omc_tuple"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <h3 class="epydoc">sys_omc_tuple</h3>
+  
+  <dl class="fields">
+  </dl>
+  <dl class="fields">
+    <dt>Value:</dt>
+      <dd><table><tr><td><pre class="variable">
+'sys_omc_register_active_card_hwld', 'product_id', 'sys_omc_registerne<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+_country', 'sys_omc_registerne_state', 'sys_omc_registerne_city', 'sys<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+_omc_registerne_sitebldg', 'sys_omc_register_contact_person', 'sys_omc<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+_register_contact_mobile', 'sys_omc_register_alternate_contact', 'sys_<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+omc_register_contact_email', 'sys_omc_register_contact_addr', 'sys_omc<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+_registerne_sitefloor', 'sys_omc_registerne_site_direction', 'sys_omc_<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+registerne_site_landmark', 'site_mac', 'sys_omc_registerne_site_longit<span class="variable-linewrap"><img src="crarr.png" alt="\" /></span>
+ude', 'sys_omc_registerne_site_latitude', 'ip_address'
+</pre></td></tr></table>
+</dd>
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1 on Sat Sep 17 12:53:44 2011
+    </td>
+    <td align="right" class="footer">
+      Author: Rahul Gautam for CodeScape
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

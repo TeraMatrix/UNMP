@@ -1,0 +1,106 @@
+---------------- Dated On 29th June 2011 ----------------------
+CLI interface in NMS
+Traceroute implmentation in NMS
+
+
+
+---------------- Dated before 29th June 2011 ----------------------
+Mobile Site - web services
+
+SQL porting - phase 2
+
+common multiple device settings, one page to set them all - for AP now
+
+Agent-based monitoring
+
+    * Native agent for any platform
+    * Immune to connection problems
+
+
+Dashboard
+
+    * Personalized dashboard [
+    * Favourite resources 
+    * High level view
+    * create multiple tabbed dashboards [desktop image]
+
+Mapping
+
+    * automated network maps / network planning
+
+Parallel system like RAID systems, backup
+
+Ping, traceroute to a host
+
+Desktop agent to send the device data
+
+Reports and Graphs
+
+Logs and debugging functionality
+
+Sanchar scape type intelligence, according to previous data tells what could be the possible problem and solution
+
+----dashboard
+> Number of connections
+> Uptime/Downtime
+> Data in/out
+> Os Monitoring, health stats
+> Per Connection based Data in/out
+> Device network map [hold][simple][parent child relation ship for now manual]
+> Protocol based monitoring graph, like ether ape
+> Errors and warnings
+> Log/details/report/summary [no graph]
+> Services/processes graphs [agent based]
+> Collaborated graphs for all the devices
+>> Per Port Traffic [complex issue]
+
+SQL server performance
+
+Web server performance
+
+Smartphones Ready
+
+Assignment to users for a perticular task, like bug tracker
+
+Distributed Monitoring, available in nagios plugin [http://nagios.sourceforge.net/docs/2_0/distributed.html]
+
+Custom SNMP configuration, http://www.packettrap.com/product/packettrapmsp.aspx [dashboard ideas]
+
+Webservice based API, RESTFUL architecture
+
+Network Planning Tool
+
+Authentication with passwords, X.509 certificates, smart cards or RADIUS server
+
+-interesting-http://collectd.org/features.shtml
+
+syslog integration - nagios plugin available - basically is used for application/services monitoring
+
+Test the tool - http://www.cacti.net/
+
+Test the tool - nagwin - http://citylan.dl.sourceforge.net/project/sereds/Nagios/nagwin/1.0.0/Nagwin_1.0.0_Installer.zip
+
+-----------------XXX------------------XXX------------------XXX-------------------XXX----------------
+OTHER RELATED MONITORING SYSTEMS
+-----------------XXX------------------XXX------------------XXX-------------------XXX----------------
+Network Monitoring
+	
+Vblock Monitoring
+	
+VoIP Monitoring
+Server Monitoring
+	
+Cloud Monitoring
+	
+Systems Monitoring
+SLA Monitoring
+	
+Unix Monitoring
+	
+VMware Monitoring
+
+-----------------XXX------------------XXX------------------XXX-------------------XXX----------------
+
+SPLUNK
+http://www.splunk.com/product
+
