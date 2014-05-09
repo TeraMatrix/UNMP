@@ -131,29 +131,24 @@ def live_snmp():
             oid_value = table_dict[table]['oid']
             row = table_dict[table]['row']
             col = table_dict[table]['col']
-            row_count = table_dict[table].get('row_count',False)
-            unreachable = table_dict[table].get('unreachable_value',-1)
             rrd_path = table_dict[table]['file']        
             snmp_result = pysnmp_get_table(oid_value,ip_address,int(port),community,agent)
             rrd_insert_list = []
             if snmp_result['success'] == 0:
                 temp_result = snmp_result['result']
-                if not row_count:
-                    for item in row:
-                        for temp_col in col:
-                            if temp_result.get(item):
-                                if len(temp_result[item]) > temp_col:
-                                    rrd_insert_list.append(temp_result[item][temp_col])
-                                else:
-                                    rrd_insert_list.append(default)    
+                for item in row:
+                    for temp_col in col:
+                        if temp_result.get(item):
+                            if len(temp_result[item]) > temp_col:
+                                rrd_insert_list.append(temp_result[item][temp_col])
                             else:
-                                rrd_insert_list.append(default)
-                else:
-                    rrd_insert_list.append(len(temp_result))
+                                rrd_insert_list.append(default)    
+                        else:
+                            rrd_insert_list.append(default)
             else:
                 for item in row:
                     for temp_col in col:
-                        rrd_insert_list.append(unreachable) 
+                        rrd_insert_list.append(1)
             if os.path.isfile(rrd_path):
                 insert_data(rrd_path,'N',rrd_insert_list)
             # call sirs function(rrd_insert_list) # first import your func in file
@@ -560,7 +555,7 @@ class MyDaemon(Daemon):
         try:
             global round_param,mstat
             signal(SIGTERM, lambda signum, stack_frame: exit(1))
-            sleeptime = 60
+            timeout = 60
             while(round_param):
                 statn = os.stat(file_path).st_mtime
                 if mstat != statn:
@@ -568,17 +563,9 @@ class MyDaemon(Daemon):
                     round_param = 15
                     execfile(file_path,globals())        
                 round_param -= 1
-                
-                live_snmp()  # or live_cgi
-                
-                global timeout
-                try:
-                    if timeout:
-                        sleeptime = timeout
-                except:
-                    pass
+                live_snmp()
                 if round_param:
-                    time.sleep(sleeptime)
+                    time.sleep(timeout)
                 else:
                     statn = os.stat(file_path).st_mtime
                     if mstat != statn:
@@ -586,7 +573,7 @@ class MyDaemon(Daemon):
                         round_param = 15
                         execfile(file_path,globals())
                     if round_param:
-                        time.sleep(sleeptime)
+                        time.sleep(timeout)
                     else:
                         os.unlink(file_path)
                         break

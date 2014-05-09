@@ -722,15 +722,15 @@ for(i in groupJson){
 		for(var l in markers_array){
 			if(markers_array[l].title==groupJson[i].member[s].id){
 				if((markers_array[l].device_type.toLowerCase().indexOf('odu'))>=0)
-					(groupJson[i].member[s].state=='e')?markers_array[l].setIcon("images/device2.png"):markers_array[l].setIcon("images/device6.png");
+					(groupJson[i].member[s].state=='e')?markers_array[l].setIcon("images/odu-0.png"):markers_array[l].setIcon("images/Odown.png");
 				else if((markers_array[l].device_type.toLowerCase().indexOf('idu'))>=0)
-					(groupJson[i].member[s].state=='e')?markers_array[l].setIcon("images/device2.png"):markers_array[l].setIcon("images/device6.png");
+					(groupJson[i].member[s].state=='e')?markers_array[l].setIcon("images/idu-0.png"):markers_array[l].setIcon("images/Idown.png");
 				else if((markers_array[l].device_type.toLowerCase().indexOf('ap'))>=0)
-					(groupJson[i].member[s].state=='e')?markers_array[l].setIcon("images/device2.png"):markers_array[l].setIcon("images/device6.png");
+					(groupJson[i].member[s].state=='e')?markers_array[l].setIcon("images/ap0.png"):markers_array[l].setIcon("images/ap3.png");
 				else if((markers_array[l].device_type.toLowerCase().indexOf('swt'))>=0)
-					(groupJson[i].member[s].state=='e')?markers_array[l].setIcon("images/device2.png"):markers_array[l].setIcon("images/device6.png");
+					(groupJson[i].member[s].state=='e')?markers_array[l].setIcon("images/switch-0.png"):markers_array[l].setIcon("images/Sdown.png");
 				else
-					(groupJson[i].member[s].state=='e')?markers_array[l].setIcon("images/device2.png"):markers_array[l].setIcon("images/device6.png");
+					(groupJson[i].member[s].state=='e')?markers_array[l].setIcon("images/unknown-0.png"):markers_array[l].setIcon("images/Udown.png");
 
 			shost_array.push(markers_array[l]);			
 			}
@@ -1061,56 +1061,6 @@ function updateStateOfHost(updateInfo){
 					labelDict[markers_array[k].title].set('text','<div style="text-align:center;margin-top:-24px;font-size:10px;">AP<br/>'+String(updateInfo[j].client)+'</div>');
 				 }					
 				}
-			else if ((markers_array[k].device_type.toLowerCase().indexOf('ccu'))>=0){
-				if (labelFlag==0){
-					var label = new Label({
-						map: map
-					});
-					label.set('zIndex', 1234);
-					label.bindTo('position', markers_array[k], 'position');
-					label.set('text','<div style="text-align:center;margin-top:-24px;font-size:10px;">CCU<br/></div>');
-					markers_array[k].setIcon("images/device"+updateInfo[j].state+".png");
-					labelDict[markers_array[k].title]=label
-					}
-				else{
-					markers_array[k].setIcon("images/device"+updateInfo[j].state+".png");
-					labelDict[markers_array[k].title].set('text','<div style="text-align:center;margin-top:-24px;font-size:10px;">CCU<br/></div>');
-				 }					
-				}
-			else if ((markers_array[k].device_type.toLowerCase().indexOf('mou'))>=0){
-				if (labelFlag==0){
-					var label = new Label({
-						map: map
-					});
-					label.set('zIndex', 1234);
-					label.bindTo('position', markers_array[k], 'position');
-					label.set('text','<div style="text-align:center;margin-top:-24px;font-size:10px;">MOU<br/></div>');
-
-					markers_array[k].setIcon("images/device"+updateInfo[j].state+".png");
-					labelDict[markers_array[k].title]=label
-					}
-				else{
-					markers_array[k].setIcon("images/device"+updateInfo[j].state+".png");
-					labelDict[markers_array[k].title].set('text','<div style="text-align:center;margin-top:-24px;font-size:10px;">MOU<br/></div>');
-				 }					
-				}
-			else if ((markers_array[k].device_type.toLowerCase().indexOf('rou'))>=0){
-				if (labelFlag==0){
-					var label = new Label({
-						map: map
-					});
-					label.set('zIndex', 1234);
-					label.bindTo('position', markers_array[k], 'position');
-					label.set('text','<div style="text-align:center;margin-top:-24px;font-size:10px;">ROU<br/></div>');
-					markers_array[k].setIcon("images/device"+updateInfo[j].state+".png");
-					labelDict[markers_array[k].title]=label
-					}
-				else{
-					markers_array[k].setIcon("images/device"+updateInfo[j].state+".png");
-					labelDict[markers_array[k].title].set('text','<div style="text-align:center;margin-top:-24px;font-size:10px;">ROU<br/></div>');
-				 }					
-				}
-
 			else if ((markers_array[k].device_type.toLowerCase().indexOf('swt'))>=0){
 				markers_array[k].setIcon("images/switch-"+updateInfo[j].state+".png");		
 			}
@@ -1118,8 +1068,6 @@ function updateStateOfHost(updateInfo){
 				markers_array[k].setIcon("images/localhost-"+updateInfo[j].state+".png");		
 			}
 			else
-				
-				//console.log(markers_array[k].device_type.toLowerCase());
 				markers_array[k].setIcon("images/unknown-"+updateInfo[j].state+".png");		
 		}
 		}

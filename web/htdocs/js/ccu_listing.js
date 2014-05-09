@@ -76,7 +76,7 @@ $(function(){
 	})
 	$("#page_tip").colorbox(
 	{
-		href:"page_tip_ccu_listing.py",
+		href:"page_tip_idu_listing.py",
 		title: "Page Tip",
 		opacity: 0.4,
 		maxWidth: "80%",
@@ -152,7 +152,6 @@ function deviceList()
 				         
 				        fnCallback(json);
 				        $('.n-reconcile').tipsy({gravity: 'n'});
-				        oduListingTableClick();
 			        });
 		        }
                 });
@@ -194,126 +193,6 @@ function ipSelectMacDeviceType(obj,ipMacVal)
 	       });
 }
 
-function oduListingTableClick()
-{
-	var tableObj = $("table#device_data_table tr");
-	tableObj.click(function(event){
-				var elementClick = $(event.target);
-				if($(this).hasClass("listing-color") || $(this).hasClass(""))//check this type of condition because when more than one reconciliation performs the class has been 												      empty due to confliction of objects
-				{
-					if($(elementClick).hasClass("imgEditodu16"))
-					{
-						$.prompt('Reconciliation is Running. Please wait.',{prefix:'jqismooth'});
-						return false;	
-					}	
-				}
-				
-			});
-}
 
-function ccuReconcile(obj,hostId,deviceTypeId)
-{
-	reconcileHostId = hostId;
-	reconcileDeviceTypeId = deviceTypeId;
-	imgReconcileBtnObj = $(obj);
-	var imgBtn = imgReconcileBtnObj;
-	var recTableObj = imgBtn.parent().parent();
-	var tableObj = $(recTableObj);
-	if(tableObj.hasClass("listing-color"))
-	{
-	        		
-	}
-	else
-	{
-	        if(imgBtn.data("rec")==1) 
-	        {
-			        //$.prompt('Reconciliation is already Running.Please Wait',{ buttons:{Ok:true}, prefix:'jqismooth'});	
-			        spinStop($spinLoading,$spinMainLoading);
-	        }
-	        else
-	        {
-		        $.prompt('Device Configuration data would be Synchronized with the UNMP server Database',{ buttons:{Ok:true,Cancel:false}, prefix:'jqismooth',callback: ccuReconcilation});
-	        }
-	}
-}
 
-function ccuReconcilation(v,m)
-{
-	if(v != undefined && v==true && reconcileHostId && reconcileDeviceTypeId && imgReconcileBtnObj)
-	{
-		spinStop($spinLoading,$spinMainLoading);
-		var imgBtn = imgReconcileBtnObj;
-		var tableObj = imgBtn.parent().parent();
-		var objTableDetail = $(tableObj);
-		if(objTableDetail.hasClass("listing-color"))
-		{
-			$.prompt('Reconciliation is already Running.Please Wait',{ buttons:{Ok:true}, prefix:'jqismooth'});	
-		}	
-		else
-		{
-			if(imgBtn.data("rec")==undefined)
-			{
-				imgBtn.data("rec",0);
-			}		
-			if(imgBtn.data("rec")==0) 
-			{
-				imgBtn.data("rec",1);
-				var classAttr = objTableDetail.attr("class");
-				objTableDetail.attr("listClass",classAttr);
-				objTableDetail.removeClass(classAttr);
-				objTableDetail.addClass("listing-color");
-				flagClick = true;
-				$.ajax({
-					        type: "get",
-					        url : "ccu_reconciliation.py?host_id=" + reconcileHostId +"&device_type="+ reconcileDeviceTypeId,
-					        success:function(result){
-							                imgBtn.data("rec",0);
-							                flagClick = false;
-							                objTableDetail.removeClass("listing-color");
-							                objTableDetail.addClass(objTableDetail.attr("listClass"));
-							                objTableDetail.removeAttr("listClass");
-							                flagClick = false;
-							                //{'result': {0: ['RMMaster', '172.22.0.102']}, 'success': 0}
-							                if(parseInt(result.success)==0)
-							                {
-                                                                                json = result.result
-                                                                                for(var node in json)
-                                                                                {
-                                                                                        if(parseInt(node)<=35)
-									                {
-										                imgBtn.attr("src","images/new/r-red.png");
-										                imgBtn.attr("original-title",node+"% Done");
-										                $().toastmessage('showWarningToast',node+"% reconciliation done for device "+json[node][0]+"("+json[node][1]+")"+".Please reconcile the device again");
-									                }
-									                else if(parseInt(node)<=90)
-									                {
-										                imgBtn.attr("src","images/new/r-black.png");
-										                imgBtn.attr("original-title",node+"% Done");
-										                $().toastmessage('showWarningToast',node+"% reconciliation done for device "+json[node][0]+"("+json[node][1]+")"+".Please reconcile the device again");
-									                }
-									                else
-									                {
-										                imgBtn.attr("src","images/new/r-green.png");
-										                imgBtn.attr("original-title","Reconciliation "+node+" % Done");
-										                $().toastmessage('showSuccessToast',"Reconciliation done successfully for device "+json[node][0]+"("+json[node][1]+")");
-									                }
-									                break;
-								                }
-							                }
-							                else
-							                {
-							                        $().toastmessage('showErrorToast',result.result);
-							                }
-							
-					                        }
-			                });
-		                return false;
-		      	}
-            }
-        }
-        else
-        {
-        	spinStop($spinLoading,$spinMainLoading);
-        }
-	
-}
+

@@ -96,7 +96,7 @@ function graphNameShow(){
 			advancedUpdateDateTime();
 			endDateStr=endDate.split("/");
 			endTimeStr=endTime.split(":");
-			var cdate = new Date(endDateStr[2],parseInt(endDateStr[1],10)-1, endDateStr[0],endTimeStr[0],endTimeStr[1]); 
+			var cdate = new Date(endDateStr[2],parseInt(endDateStr[1])-1, endDateStr[0],endTimeStr[0],endTimeStr[1]); 
 
 				var str1  = $("#odu_start_date").val();
 				var str2  = $("#odu_end_date").val();
@@ -106,8 +106,8 @@ function graphNameShow(){
 				str2=str2.split("/");
 				str3=str3.split(":");
 				str4=str4.split(":");
-				var date1 = new Date(str1[2],parseInt(str1[1],10)-1, str1[0],str3[0],str3[1]); 
-				var date2 = new Date(str2[2],parseInt(str2[1],10)-1, str2[0],str4[0],str4[1]);
+				var date1 = new Date(str1[2],parseInt(str1[1])-1, str1[0],str3[0],str3[1]); 
+				var date2 = new Date(str2[2],parseInt(str2[1])-1, str2[0],str4[0],str4[1]);
 				if(date2 < date1)
 				{
 					 $().toastmessage('showWarningToast', "End Date can't be greater than Start Date");
@@ -319,7 +319,7 @@ function advancedSrchBtn(){
 				var h = cur_date.getHours();
 				var mi = cur_date.getMinutes();
 				var cdate=new Date(y,m,d,h,mi);*/
-				var cdate = new Date(check_str_date[2],parseInt(check_str_date[1],10)-1, check_str_date[0],check_str_time[0],check_str_time[1]); 
+				var cdate = new Date(check_str_date[2],parseInt(check_str_date[1])-1, check_str_date[0],check_str_time[0],check_str_time[1]); 
 				str1  = $("#odu_start_date").val();
 				str2  = $("#odu_end_date").val();
 				str3  = $("#odu_start_time").val();
@@ -328,8 +328,8 @@ function advancedSrchBtn(){
 				str2=str2.split("/");
 				str3=str3.split(":");
 				str4=str4.split(":");
-				var date1 = new Date(str1[2],parseInt(str1[1],10)-1, str1[0],str3[0],str3[1]); 
-				var date2 = new Date(str2[2],parseInt(str2[1],10)-1, str2[0],str4[0],str4[1]);
+				var date1 = new Date(str1[2],parseInt(str1[1])-1, str1[0],str3[0],str3[1]); 
+				var date2 = new Date(str2[2],parseInt(str2[1])-1, str2[0],str4[0],str4[1]);
 				if(date2 < date1)
 				{
 					 $().toastmessage('showWarningToast', "End Date can't be greater than Start Date");
@@ -430,7 +430,7 @@ function reportCreation(reportType){
 				advancedUpdateDateTime(); 
 				endDateStr=endDate.split("/");
 				endTimeStr=endTime.split(":");
-				var cdate = new Date(endDateStr[2],parseInt(endDateStr[1],10)-1, endDateStr[0],endTimeStr[0],endTimeStr[1]); 
+				var cdate = new Date(endDateStr[2],parseInt(endDateStr[1])-1, endDateStr[0],endTimeStr[0],endTimeStr[1]); 
 				var str1  = $("#odu_start_date").val();
 				var str2  = $("#odu_end_date").val();
 				var str3  = $("#odu_start_time").val();
@@ -439,8 +439,8 @@ function reportCreation(reportType){
 				str2=str2.split("/");
 				str3=str3.split(":");
 				str4=str4.split(":");
-				var date1 = new Date(str1[2],parseInt(str1[1],10)-1, str1[0],str3[0],str3[1]); 
-				var date2 = new Date(str2[2],parseInt(str2[1],10)-1, str2[0],str4[0],str4[1]);
+				var date1 = new Date(str1[2],parseInt(str1[1])-1, str1[0],str3[0],str3[1]); 
+				var date2 = new Date(str2[2],parseInt(str2[1])-1, str2[0],str4[0],str4[1]);
 				if(date2 < date1)
 				{
 					 $().toastmessage('showWarningToast', "End Date can't be greater than Start Date");

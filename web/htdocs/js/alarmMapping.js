@@ -398,13 +398,15 @@ function maskingValidation(formid)
 	$(formid).validate({
 		rules:{
 			'trap_event_type':{ 
-					required:true
+					required:true,
+					alpha : true
 			},
 			'trap_severity':{
 						required:true 
 			},
 			'trap_event_clear_type':{
 						required:true,
+						alpha : true,
 						notEqualTo:"#trap_event_type"
 			},
 			'clear_severity':{

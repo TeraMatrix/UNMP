@@ -15,21 +15,19 @@ var unreachable = null;
 var timer = null;
 $(function(){
 	//we call the devicelist function 
-	$("input[id='filter_ip']").ccplAutoComplete("common_ip_mac_search.py?device_type="+$("select[id='device_type']").val()+"&ip_mac_search="+1 ,{
+	$("input[id='filter_ip']").ccplAutoComplete("common_ip_mac_search.py?device_type="+$("select[id='device_type']").val()+"&ip_mac_search="+1,{
                 dataType: 'json',
                 max: 30,
-                cache:false,
                 selectedItem: $("input[id='filter_ip']").val(),
                 callAfterSelect : function(obj){
                         ipSelectMacDeviceType(obj,1);
                 }
         });
-        
-       $("input[id='filter_mac']").ccplAutoComplete("common_ip_mac_search.py?device_type="+$("select[id='device_type']").val()+"&ip_mac_search="+0 + "&search_type=" ,{
+
+        $("input[id='filter_mac']").ccplAutoComplete("common_ip_mac_search.py?device_type="+$("select[id='device_type']").val()+"&ip_mac_search="+0,{
                 dataType: 'json',
                 max: 30,
-                cache:false,
-                selectedItem: $("input[id='filter_mac']").val(),
+                selectedItem:$("input[id='filter_mac']").val(),
                 callAfterSelect : function(obj){
                         ipSelectMacDeviceType(obj,0);
                 }
@@ -127,11 +125,6 @@ function deviceList()
         {
                urlString = "ap_device_listing_table.py?ip_address=" + ip_address + "&mac_address=" + mac_address + "&device_type=" + device_type;
                parent.main.location = "ap_listing.py?ip_address=" + ip_address + "&mac_address=" + mac_address + "&selected_device_type=" + device_type;
-        }
-        else if(device_type == "ccu")
-        {
-               urlString = "ccu_device_listing_table.py?ip_address=" + ip_address + "&mac_address=" + mac_address + "&device_type=" + device_type
-               parent.main.location = "ccu_listing.py?ip_address=" + ip_address + "&mac_address=" + mac_address + "&selected_device_type=" + device_type;
         }
         else
         {

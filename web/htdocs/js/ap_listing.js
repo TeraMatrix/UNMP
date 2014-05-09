@@ -2,31 +2,26 @@ var timeSlot = 60000;
 // spin loading object
 var $spinLoading = null;		// create object that hold loading circle
 var $spinMainLoading = null;	// create object that hold loading squire
-var timecheck = 5000;	
-var chcekProcessStatus=0;
+var timecheck = 60000;	
 var ap_mode = {0:'Standard',1:'Root AP',2:'Repeater',3:'Client',4:'Multi AP',5:'Multi VLAN',6:'Dynamic VLAN'}
-var opStatusDic = {0:'No operation', 1:'Firmware download', 2:'Firmware upgrade', 3:'Restore default config', 4:'Flash commit', 5:'Reboot', 6:'Site survey', 7:'Calculate BW', 8:'Uptime service', 9:'Statistics gathering', 10:'Reconciliation', 11:'Table reconciliation', 12:'Set operation', 13:'Live monitoring', 14:'Status capturing',15:'Refreshing Site Survey','16':'Refreshing RA Channel List'}
-
 $(function(){
 	$spinLoading = $("div#spin_loading");		// create object that hold loading circle
 	$spinMainLoading = $("div#main_loading");	// create object that hold loading squire	
 
 	//we call the devicelist function 
-	$("input[id='filter_ip']").ccplAutoComplete("common_ip_mac_search.py?device_type="+$("select[id='device_type']").val()+"&ip_mac_search="+1 ,{
+	$("input[id='filter_ip']").ccplAutoComplete("common_ip_mac_search.py?device_type="+$("select[id='device_type']").val()+"&ip_mac_search="+1,{
                 dataType: 'json',
                 max: 30,
-                cache:false,
-                selectedItem: $("input[id='filter_ip']").val(),
+                selectedItem: "",
                 callAfterSelect : function(obj){
                         ipSelectMacDeviceType(obj,1);
                 }
         });
         
-       $("input[id='filter_mac']").ccplAutoComplete("common_ip_mac_search.py?device_type="+$("select[id='device_type']").val()+"&ip_mac_search="+0 + "&search_type=" ,{
+       $("input[id='filter_mac']").ccplAutoComplete("common_ip_mac_search.py?device_type="+$("select[id='device_type']").val()+"&ip_mac_search="+0,{
                 dataType: 'json',
                 max: 30,
-                cache:false,
-                selectedItem: $("input[id='filter_mac']").val(),
+                selectedItem: "",
                 callAfterSelect : function(obj){
                         ipSelectMacDeviceType(obj,0);
                 }
@@ -197,91 +192,6 @@ function apListing()
         $("#filterOptions").hide();
         $("#hide_search").show();
 }
-
-// This is for view service details
-function viewServiceDetails(host_id)
-{
-	if(!$("table#device_data_table tr").hasClass("listing-color"))
-	{
-		$.colorbox(
-		{
-			href:"view_service_details_example.py?host_id="+host_id,
-			//iframe:true,
-			title : "service details",
-			opacity: 0.4,
-			maxWidth: "90%",
-			width:"1100px",
-			height:"300px",
-			overlayClose:false
-		});
-	}	
-}
-
-
-function performActionService(oLink,action, type, site, name1, name2) {
-		    var oImg = $(oLink).find("img");
-		    oImg.attr("src","images/icon_reloading.gif");
-		    // Chrome and IE are not animating the gif during sync ajax request
-		    // So better use the async request here
-		    //get_url('nagios_action.py?action='+action+'&site='+site+'&host='+name1+'&service='+name2,actionResponseHandler, oImg);
-		    //oImg = null;
-		    
-		    $.ajax({
-			type:"get",
-			url:'nagios_action.py',//actionResponseHandler, oImg,
-			data:{"action":action,"site":site,"host":name1,"service":name2,"view_type":"UNMP"},
-			cache:false,
-			success:function(result){
-					//oLink;
-					result=result.substring(1,result.length-2);
-					result=result.split("','");
-					/*
-					0 'OK', 1337773481, 0, 'SNMP RESPONSE : OK
-					1 0
-					2 33 min
-					3 1 sec
-					4 58 sec
-					5 0.128615
-					6 SNMP RESPONSE : OK ( Host Uptime - 0 Days, 0 Hours, 34 Mins, 30 Secs)'
-					
-					*/
-					var recTableObj = $(oLink).parent().parent();
-		                        var td0 = $(recTableObj).find("td:eq(0)");
-		                        var span0=$(td0).find("span");
-		                        if(result[1]!='undefined' && result[1]!="undefined" && result[1])
-		                        {
-				                $(span0).removeClass("icon-0");
-				                $(span0).removeClass("icon-1");
-				                $(span0).removeClass("icon-2");
-				                $(span0).removeClass("icon-3");
-				                $(span0).addClass("icon-"+result[1]);
-				        }
-				        else
-				        {
-				        	var td7 = $(recTableObj).find("td:eq(6)");
-			                        $(td7).html("Service check is in progress. Please wait for atleast 120 seconds before scheduling the check again.");
-				        }
-		                        var td3 = $(recTableObj).find("td:eq(2)");
-		                        $(td3).html(result[2]);
-		                        var td4 = $(recTableObj).find("td:eq(3)");
-		                        $(td4).html(result[3]);
-		                        var td5 = $(recTableObj).find("td:eq(4)");
-		                        $(td5).html(result[4]);
-		                        var td6 = $(recTableObj).find("td:eq(5)");
-		                        $(td6).html(result[5]);
-		                        var td7 = $(recTableObj).find("td:eq(6)");
-		                        $(td7).html(result[6]);
-					oImg.attr("src","images/icon_reload.gif");
-			}
-		    });
-		    
-}
-
-
-
-
-
-
 function addClientListing()
 {
         $("#ap_device_div").hide();
@@ -483,11 +393,6 @@ function deviceList()
                urlString = "idu_device_listing_table.py?ip_address=" + ip_address + "&mac_address=" + mac_address + "&device_type=" + device_type
                parent.main.location = "idu_listing.py?ip_address=" + ip_address + "&mac_address=" + mac_address + "&selected_device_type=" + device_type;
         }
-        else if(device_type == "ccu")
-        {
-               urlString = "ccu_device_listing_table.py?ip_address=" + ip_address + "&mac_address=" + mac_address + "&device_type=" + device_type
-               parent.main.location = "ccu_listing.py?ip_address=" + ip_address + "&mac_address=" + mac_address + "&selected_device_type=" + device_type;
-        }
         else
         {
                 urlString = "ap_device_listing_table.py?ip_address=" + ip_address + "&mac_address=" + mac_address + "&device_type=" + device_type
@@ -507,8 +412,7 @@ function deviceList()
                       { "sWidth": "5%" },
                       { "sWidth": "10%" },
                       { "sWidth": "10%","bSortable": false  },
-                      { "sWidth": "25%","bSortable": false  },
-                      { "sWidth": "5%","bSortable": false  }],
+                      { "sWidth": "30%","bSortable": false  }],
                 "bDestroy": true,
                 "sAjaxSource": urlString,
                "fnServerData": function(sSource,aoData,fnCallback){
@@ -574,23 +478,22 @@ function ipSelectMacDeviceType(obj,ipMacVal)
 
 function wirelessStatus(event,obj,hostId,deviceTypeId)
 {
-	if (chcekProcessStatus==0){
-		//event.stopPropagation();
-		$(".listing-icon").removeClass("listing-icon-selected");
-		$.ajax({
-			        type: "get",
-			        url : "show_wireless_status.py?host_id=" + hostId +"&device_type_id="+ deviceTypeId,
-			        success:function(result){
-			                
-			                $(obj).parent().addClass("listing-icon-selected");
-			                $("#status_div").html(result);
-		                        $("#status_div").css({'top':event.pageY-90});
-		                        $("#status_div").css({'left':event.pageX-200-parseInt((($("#status_div").width())*2)/3)});
-		                        $("#status_div").show();
-		                   spinStop($spinLoading,$spinMainLoading);     
-			        }       
-		        });
-	}
+        //event.stopPropagation();
+        $(".listing-icon").removeClass("listing-icon-selected");
+        $.ajax({
+	                type: "get",
+	                url : "show_wireless_status.py?host_id=" + hostId +"&device_type_id="+ deviceTypeId,
+	                success:function(result){
+	                        
+	                        $(obj).parent().addClass("listing-icon-selected");
+	                        $("#status_div").html(result);
+                                $("#status_div").css({'top':event.pageY-90});
+                                $("#status_div").css({'left':event.pageX-200-parseInt((($("#status_div").width())*2)/3)});
+                                $("#status_div").show();
+                           spinStop($spinLoading,$spinMainLoading);     
+	                }       
+                });
+
 }
 
 /*function serviceStatus(event,obj,hostId,deviceTypeId)
@@ -679,11 +582,6 @@ function show_radio_admin_state(event,obj,hostId,deviceTypeId)
 function radio_enable_disable(event,obj,hostId,adminStateName)
 {
         attrValue = $(obj).attr("state");
-        var recTableObj = $("#"+hostId).parent().parent().parent();
-        var OPobj = $(recTableObj).find("td:eq(9)");
-	OPobj.html("");
-        OPobj.html('<center><div style="display:block;background:url(images/new/loading.gif) no-repeat scroll 0% 0% transparent; width: 16px; height: 16px;"><img id="operation_status" name="operation_status" src="images/host_status1.png" title="'+opStatusDic[12]+'" style=\"width:12px;height:12px;\"class=\"n-reconcile\" original-title="'+opStatusDic[12]+'"/></div></center>');
-
         if(parseInt(attrValue)==0)
         {
                 attrValue=1;
@@ -730,9 +628,6 @@ function radio_enable_disable(event,obj,hostId,adminStateName)
 	                                {
 	                                        $().toastmessage('showErrorToast',result.result);
 	                                }
-	                                OPobj.html("");
-                                        OPobj.html('<center><img id="operation_status" name="operation_status" src="'+String(result.image)+'" title="'+opStatusDic[0]+'" style=\"width:12px;height:12px;\"class=\"n-reconcile\" original-title="'+opStatusDic[0]+'"/></center>');  
-
 	                        }
 	                        
 	               });
@@ -793,7 +688,6 @@ function imgOdu16Reconcilation(v,m)
 				objTableDetail.removeClass(classAttr);
 				objTableDetail.addClass("listing-color");
 				flagClick = true;
-				$().toastmessage('showNoticeToast',"Reconciliation started successfully please wait for atleast 60 seconds.");
 				$.ajax({
 					type: "get",
 					url : "update_reconciliation.py?host_id=" + reconcileHostId +"&device_type_id="+ reconcileDeviceTypeId ,
@@ -857,12 +751,11 @@ function imgOdu16Reconcilation(v,m)
 function oduListingTableClick()
 {
 	var tableObj = $("table#device_data_table tr");
-	chcekProcessStatus=0;
+	
 	tableObj.click(function(event){
 				var elementClick = $(event.target);
 				if($(this).hasClass("listing-color") || $(this).hasClass(""))//check this type of condition because when more than one reconciliation performs the class has been 												      empty due to confliction of objects
 				{
-					chcekProcessStatus=1;
 					if($(elementClick).hasClass("imgEditodu16"))
 					{
 						$.prompt('Reconciliation is Running. Please wait.',{prefix:'jqismooth'});
@@ -1056,10 +949,6 @@ function chkRadioStatus()
 							                imgbtn.attr({"original-title":"Radio Disabled"});							        
 							        }
 							        objModeAP.html(ap_mode[parseInt(json[node][1])]);
-						                var OPobj = $(recTableObj).find("td:eq(9)");
-					                		OPobj.html("");
-					                        OPobj.html('<center><img id="operation_status" name="operation_status" src="'+json[node][2]+'" title="'+opStatusDic[json[node][3]]+'" style=\"width:12px;height:12px;\"class=\"n-reconcile\" original-title="'+opStatusDic[json[node][3]]+'"/></center>');
-
 						        }
 						}
 						callC = setTimeout(function()

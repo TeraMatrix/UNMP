@@ -1077,8 +1077,8 @@ function eventSubmit()
 	if (startDate.length == 3 && endDate.length == 3 && startTime.length == 2 && endTime.length == 2)
 	{	
 		now = new Date();
-		sDateObj = new Date(startDate[2],parseInt(startDate[1],10)-1,startDate[0],startTime[0],startTime[1],0);
-		eDateObj = new Date(endDate[2],parseInt(endDate[1],10)-1,endDate[0],endTime[0],endTime[1],0);
+		sDateObj = new Date(startDate[2],parseInt(startDate[1])-1,startDate[0],startTime[0],startTime[1],0);
+		eDateObj = new Date(endDate[2],parseInt(endDate[1])-1,endDate[0],endTime[0],endTime[1],0);
 		if((sDateObj.getTime() < now.getTime() || eDateObj.getTime() < now.getTime()) && ( sDateObj.getDate()<now.getDate() || eDateObj.getDate()<now.getDate()))
 		{
 			//alert("");
@@ -1166,8 +1166,8 @@ function addSchedule()
 					var eDate = $("#endDate").val().split("/");
 					var sTime = $("#startTime").val().split(":");
 					var eTime = $("#endTime").val().split(":");
-					var start = new Date(sDate[2],(parseInt(sDate[1],10) - 1),sDate[0],sTime[0],sTime[1]);
-					var end = new Date(eDate[2],(parseInt(eDate[1],10) - 1),eDate[0],eTime[0],eTime[1]);
+					var start = new Date(sDate[2],(parseInt(sDate[1]) - 1),sDate[0],sTime[0],sTime[1]);
+					var end = new Date(eDate[2],(parseInt(eDate[1]) - 1),eDate[0],eTime[0],eTime[1]);
 					calendar.fullCalendar('renderEvent',
 						{
 							id: result,
@@ -1390,9 +1390,9 @@ function eventUpdate()
 	if (startDate.length == 3 && endDate.length == 3 && startTime.length == 2 && endTime.length == 2)
 	{
 		now = new Date();
-		sDateObj = new Date(startDate[2],parseInt(startDate[1],10)-1,startDate[0],startTime[0],startTime[1],0);
-		eDateObj = new Date(endDate[2],parseInt(endDate[1],10)-1,endDate[0],endTime[0],endTime[1],0);
-		if((sDateObj.getTime() < now.getTime() || eDateObj.getTime() < now.getTime()) && ( sDateObj.getDate()<now.getDate() || eDateObj.getDate()<now.getDate()))
+		sDateObj = new Date(startDate[2],parseInt(startDate[1])-1,startDate[0],startTime[0],startTime[1],0);
+		eDateObj = new Date(endDate[2],parseInt(endDate[1])-1,endDate[0],endTime[0],endTime[1],0);
+		if(sDateObj.getTime() < now.getTime() || eDateObj.getTime() < now.getTime())
 		{
 		
 			//alert("");
@@ -1557,7 +1557,7 @@ function plusHostParentOption(accessPoint, Obj)
 		$(Obj).parent().parent().parent().parent().find("input[name='hd" + accessPoint + "']").val(hdval + "," +$(Obj).attr("id"))
 	}
 	countParent = $(Obj).parent().parent().parent().parent().find("span#count").html();
-	$(Obj).parent().parent().parent().parent().find("span#count").html(parseInt(countParent,10) + 1);
+	$(Obj).parent().parent().parent().parent().find("span#count").html(parseInt(countParent) + 1);
 	$(Obj).parent().remove();
 	check_count();
 }

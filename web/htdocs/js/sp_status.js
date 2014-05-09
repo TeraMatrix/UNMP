@@ -22,7 +22,7 @@ $(function(){
 	deviceTypeId=$("select[id='device_type']").val();
 	$("#device_type").change(function(){
 		$("#filter_ip").val("");
-		$("#filter_mac").val("");
+		$("#filter_mac").val("");		
 			});
 	$('#sp_start_date, #sp_start_time, #sp_end_date,  #sp_end_time').calendricalDateTimeRange({
 		isoTime:true
@@ -33,7 +33,7 @@ $(function(){
         $("input[id='btnSearch']").click(function(){
 		deviceList();
 	})
-
+        
 	$("input[id='filter_ip']").ccplAutoComplete("common_ip_mac_search.py?device_type="+deviceTypeId+"&ip_mac_search="+1,{
             dataType: 'json',
             max: 30,
@@ -42,7 +42,7 @@ $(function(){
                         ipSelectMacDeviceType(obj,1);
                 }
         });
-
+        
    $("input[id='filter_mac']").ccplAutoComplete("common_ip_mac_search.py?device_type="+deviceTypeId+"&ip_mac_search="+0,{
             dataType: 'json',
             max: 30,
@@ -52,7 +52,7 @@ $(function(){
             }
     });
 
-	$("input[id='filter_ip']").val($("input[id='filter_ip']").val());
+	$("input[id='filter_ip']").val($("input[id='filter_ip']").val());	
 	$("select[id='device_type']").val($("input[id='device_type']").val());
 	$("select[id='device_type']").val(deviceTypeId);
 
@@ -87,7 +87,7 @@ $(function(){
                         'top': 1,
                         'width': "100%",
                         'z-index': 1000});
-
+		
 	});
 	spIpAddress=$("input#filter_ip").val();
 
@@ -103,7 +103,7 @@ $(function(){
 	})
 
 	$('#sp_host_info_div').slideUp('fast');
-	// Slide up and slide down functionality starthere
+	// Slide up and slide down functionality starthere  
  	$("#tab_yo").slideUp('fast');
 	$("#sp_show_graph_list").toggle(
 				function(){
@@ -130,16 +130,15 @@ function hostInformation(){
 	 }, 1000, function()
 	 {
 	  	var $hostInfo = $("#host_info");
-		if ($hostInfo.attr('src')=="images/new_icons/round_minus.png")
+		if ($hostInfo.attr('src')=="images/new_icons/round_plus.png")
 		{
-			$hostInfo.attr('src',"images/new_icons/round_plus.png");
-			$hostInfo.attr('original-title','Show Status');
+			$hostInfo.attr('src',"images/new_icons/round_minus.png");
+			$hostInfo.attr('original-title','Hide Status')
 		}
 		else
 		{
-			$hostInfo.attr('src',"images/new_icons/round_minus.png");
-			$hostInfo.attr('original-title','Hide Status');
-
+			$hostInfo.attr('src',"images/new_icons/round_plus.png");
+			$hostInfo.attr('original-title','Show Status')
 		}
                }
              );
@@ -175,7 +174,7 @@ function specificGenericGraphJson(){
 			   {name:'ip_address',value:function() { return spIpAddress; }},{name:'graph_type',value:function() { return graph_type; }},
 			   {name:'is_table',value:function() { return true; }}];
 			   spAddDateTime();
-			   result.graphColumn=1;
+			   result.graphColumn=1;       
 			   spUpdateDateTime(); // update date time in text box
 			   if (deviceTypeId=='odu16'){
 				    $("#sp_main_graph").html("Status information dose not exist for UBR devices.");
@@ -191,7 +190,7 @@ function specificGenericGraphJson(){
 				$().toastmessage('showErrorToast',result.error_msg);
 			}
 		}
-	});
+	});  
 }
 
 
@@ -240,7 +239,7 @@ function deviceList()
 
 	if (selectListElem=="" || selectListElem==undefined)
 		selectListElem=""
-	// this ajax return the call to function get_device_data_table which is in odu_view and pass the ipaddress,macaddress,devicetype with url
+	// this ajax return the call to function get_device_data_table which is in odu_view and pass the ipaddress,macaddress,devicetype with url  
 	if (selected_device_type=='odu16' || selected_device_type=='odu100')
 		redirectPath='odu_listing.py';
 	else if (selected_device_type=='ap25')
@@ -275,7 +274,7 @@ function deviceList()
 					else if (result==1 || result=="1")
 					{
 						parent.main.location = redirectPath+"?ip_address=" + ip_address + "&mac_address=" + mac_address + "&selected_device_type=" + selected_device_type;
-
+						
 					}
 					else if (result == 2 || result == "2")
 					{
@@ -290,8 +289,8 @@ function deviceList()
 
 
 					}
-					else
-				 	{
+					else 
+				 	{	
 						$("#sp_show_msg").html("")
 						$("#tab_yo").show();
 						$("input#filter_ip").val(result);
@@ -302,11 +301,11 @@ function deviceList()
 						$("#sp_main_graph").html("");
 						spDeviceDetail();
 						specificGenericGraphJson();
-						enabledReportButton();
+						enabledReportButton();						
 					}
 				}
 		});
-
+		
 }
 
 
@@ -334,7 +333,7 @@ function ipSelectMacDeviceType(obj,ipMacVal)
             }
             else
             {
-                 $().toastmessage('showErrorToast',result.error);
+                 $().toastmessage('showErrorToast',result.error);   
             }
         }
    });
@@ -344,7 +343,7 @@ function ipSelectMacDeviceType(obj,ipMacVal)
 function redirectOnListing(redirctPath){
 		 $().toastmessage('showWarningToast',"Searched Device Doesn't Exist");
 		setTimeout(function(){
-		parent.main.location = redirectPath+"?ip_address=" + "" + "&mac_address=" + "" + "&selected_device_type=" + "";
+		parent.main.location = redirectPath+"?ip_address=" + "" + "&mac_address=" + "" + "&selected_device_type=" + "";							
 		},1500);
 }
 
@@ -364,9 +363,9 @@ function spDeviceDetail()
 			}
 			else
 			{
-				$("#sp_host_info_div").html(result.device_table);
+				$("#sp_host_info_div").html(result.device_table);	
 			}
-		    },
+		    },		
 		error:function(req,status,err){
 		}
 	});
@@ -394,7 +393,7 @@ function spAddDateTime(){
 			$("#sp_end_date").val(result.end_date);
 			$("#sp_start_time").val(result.start_time);
 			$("#sp_end_time").val(result.end_time);
-			multiSelectColumns();
+			multiSelectColumns();				
 		}
     	     }
 	});
@@ -406,7 +405,7 @@ function spAddDateTime(){
 
 function spUpdateDateTime(){
 	if(spRecursionVar!=null)
-	{
+	{	
 		clearInterval(spRecursionVar);
 	}
 	spDeviceDetail();
@@ -432,7 +431,7 @@ function trapAlarmInformation()
 				else
 				{
 					$("#event_dashboard").html(result.event_table);
-
+					
 
 				}
 			},
@@ -462,7 +461,7 @@ function advancedUpdateDateTime(){
 		}
            }
 	});
-   return false;
+   return false;	
 }
 
 
@@ -495,7 +494,7 @@ function spCommonReportCreating(redirectPath,file_name){
 	var end_date=$("#sp_end_date").val();
 	var end_time=$("#sp_end_time").val();
 	var subObj=spMainObj.options.db;
-
+	
 	for (node in spMainObj.options.db)
 	{
 		totalGraph+=1;
@@ -528,13 +527,13 @@ function spCommonReportCreating(redirectPath,file_name){
 
 		tab_option = spMainObj.options.db[node]["options"].tabList.selected;
 		ajaxData=spMainObj.options.db[node]["options"].ajax.data['table_name'];
-
+		
 		graphQuerySrting+= "&start"+String(totalGraph)+"="+spMainObj.options.db[node]["options"].startFrom;
 		graphQuerySrting+= "&limit"+String(totalGraph)+"="+spMainObj.options.db[node]["options"].itemLimit;
 
 		graphQuerySrting+= "&table_name" + String(totalGraph) + "=" + ajaxData;
 		graphQuerySrting+= "&type"+String(totalGraph)+"="+graph;
-
+		
 		graphQuerySrting+= "&field"+String(totalGraph)+"="+field;
 		graphQuerySrting+= "&cal"+String(totalGraph)+"="+cal_type;
 		graphQuerySrting+= "&tab"+String(totalGraph)+"="+tab_option;
@@ -576,7 +575,7 @@ function spCommonReportCreating(redirectPath,file_name){
 										spinStop($spinLoading,$spinMainLoading);
 
 								}
-							});
+							});  
 						}
 					}
 					});
@@ -602,13 +601,13 @@ function spCommonReportCreating(redirectPath,file_name){
 								}
 									spinStop($spinLoading,$spinMainLoading);
 							}
-					});
+					});  
 	}
 }
 
-// Selectded list function start here
+// Selectded list function start here 
 function multiSelectColumns()
-{
+{       
 	$(".plus").click(function(){
 		plusHostParentOption(this);
 	})

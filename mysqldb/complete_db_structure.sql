@@ -26,17 +26,6 @@ CREATE TABLE IF NOT EXISTS `actions` (
   PRIMARY KEY (`action_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-DROP TABLE IF EXISTS `alarm_recon`;
-CREATE TABLE IF NOT EXISTS `alarm_recon` (
-  `alarm_recon_id` int(11) NOT NULL AUTO_INCREMENT,
-  `message` varchar(120) NOT NULL DEFAULT ' ',
-  `how_many` smallint(6) NOT NULL DEFAULT '-1' COMMENT 'Number of alarms reconciled.',
-  `host_id` int(11) unsigned NOT NULL,
-  `timestamp` datetime NOT NULL,
-  PRIMARY KEY (`alarm_recon_id`),
-  UNIQUE KEY `fk_alarm_recon` (`host_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
-
 DROP TABLE IF EXISTS `analyze_ap25_statisticsTable`;
 CREATE TABLE IF NOT EXISTS `analyze_ap25_statisticsTable` (
   `analyze_ap25_statisticsTable_id` int(11) NOT NULL AUTO_INCREMENT,
@@ -921,16 +910,15 @@ CREATE TABLE IF NOT EXISTS `ap25_basicVAPconfigTable` (
   `ap25_basicVAPconfigTable_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `config_profile_id` int(10) unsigned NOT NULL,
   `vapselection_id` int(10) unsigned NOT NULL,
-  `vapESSID` varchar(32) DEFAULT NULL,
+  `vapESSID` varchar(22) DEFAULT NULL,
   `vapHiddenESSIDstate` smallint(6) DEFAULT NULL,
   `vapRTSthresholdValue` smallint(6) DEFAULT NULL,
   `vapFragmentationThresholdValue` smallint(6) DEFAULT NULL,
   `vapBeaconInterval` smallint(6) DEFAULT NULL,
-  `vlanId` int(10) DEFAULT NULL,
-  `vlanPriority` int(10) DEFAULT NULL,
-  `vapMode` int(10) DEFAULT NULL,
+  `vlanid` int(10) DEFAULT NULL,
+  `vlanpriority` int(10) DEFAULT NULL,
+  `vapmode` int(10) DEFAULT NULL,
   `vapSecurityMode` smallint(6) DEFAULT NULL,
-  `vapRadioMac` varchar(20) NOT NULL,
   PRIMARY KEY (`ap25_basicVAPconfigTable_id`),
   KEY `FK_ap25_basicVAPsetup` (`vapselection_id`),
   KEY `FK_basicVAPsetup_config` (`config_profile_id`),
@@ -959,7 +947,7 @@ CREATE TABLE IF NOT EXISTS `ap25_dhcpServer` (
   `dhcpClientLeaseTime` int(8) unsigned DEFAULT NULL,
   PRIMARY KEY (`ap25_dhcpServer_id`),
   KEY `ap25_dhcpServer_id` (`config_profile_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `ap25_oids`;
 CREATE TABLE IF NOT EXISTS `ap25_oids` (
@@ -1020,8 +1008,8 @@ CREATE TABLE IF NOT EXISTS `ap25_radioSetup` (
   `radioState` smallint(6) DEFAULT NULL,
   `radioAPmode` smallint(6) DEFAULT NULL,
   `radioManagementVLANstate` smallint(6) DEFAULT NULL,
-  `radioCountryCode` int(10) NOT NULL,
-  `numberOfVAPs` smallint(6) DEFAULT NULL,
+  `countrycode` int(10) NOT NULL,
+  `numberofVAPs` smallint(6) DEFAULT NULL,
   `radioChannel` smallint(6) DEFAULT NULL,
   `wifiMode` smallint(6) DEFAULT NULL,
   `radioTxPower` smallint(6) DEFAULT NULL,
@@ -1182,34 +1170,6 @@ CREATE TABLE IF NOT EXISTS `ap_client_details` (
   PRIMARY KEY (`client_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
 
-DROP TABLE IF EXISTS `ap25_apScanDataTable`;
-CREATE TABLE IF NOT EXISTS `ap25_apScanDataTable` (
-  `ap25_apScanDataTable_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `host_id` int(10) unsigned NOT NULL,
-  `macAddress` varchar(20) NOT NULL,
-  `essid` varchar(32) NOT NULL,
-  `frequency` varchar(10) NOT NULL,
-  `quality` varchar(10) NOT NULL,
-  `signalLevel` varchar(10) NOT NULL,
-  `noiseLevel` varchar(10) NOT NULL,
-  `beconIntervel` varchar(10) NOT NULL,
-  `Timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`ap25_apScanDataTable_id`),
-  KEY `host_id` (`host_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
-DROP TABLE IF EXISTS `ap25_dhcpClientsTable`;
-CREATE TABLE IF NOT EXISTS `ap25_dhcpClientsTable` (
-  `ap25_dhcpClientsTable_id` int(10) NOT NULL AUTO_INCREMENT,
-  `host_id` int(10) unsigned NOT NULL,
-  `dhcpClientsMACaddress` varchar(20) NOT NULL,
-  `dhcpClientsIPaddress` varchar(16) NOT NULL,
-  `dhcpClientsExpiresIn` varchar(32) NOT NULL,
-  `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`ap25_dhcpClientsTable_id`),
-  KEY `ap25_dhcpClientsTable_host_id` (`host_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 ;
-
 DROP TABLE IF EXISTS `ap_connected_client`;
 CREATE TABLE IF NOT EXISTS `ap_connected_client` (
   `ap_connected_client_id` int(11) NOT NULL AUTO_INCREMENT,
@@ -1282,12 +1242,9 @@ CREATE TABLE IF NOT EXISTS `black_list_macs` (
   PRIMARY KEY (`black_list_mac_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
---
--- Table structure for table `ccu_ccuAlarmAndThresholdTable`
---
 DROP TABLE IF EXISTS `ccu_ccuAlarmAndThresholdTable`;
 CREATE TABLE IF NOT EXISTS `ccu_ccuAlarmAndThresholdTable` (
-  `ccu_ccuAlarmAndThresholdTable_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `ccu_alarm_threshold_table_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `config_profile_id` int(10) unsigned DEFAULT NULL,
   `ccuATIndex` int(10) unsigned DEFAULT NULL,
   `ccuATHighTemperatureAlarm` tinyint(3) unsigned DEFAULT NULL,
@@ -1295,16 +1252,13 @@ CREATE TABLE IF NOT EXISTS `ccu_ccuAlarmAndThresholdTable` (
   `ccuATSMPSMaxCurrentLimit` smallint(5) unsigned DEFAULT NULL,
   `ccuATPeakLoadCurrent` smallint(5) unsigned DEFAULT NULL,
   `ccuATLowVoltageDisconnectLevel` smallint(5) unsigned DEFAULT NULL,
-  PRIMARY KEY (`ccu_ccuAlarmAndThresholdTable_id`)
+  PRIMARY KEY (`ccu_alarm_threshold_table_id`),
+  UNIQUE KEY `config_profile_id` (`config_profile_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
 
-
---
--- Table structure for table `ccu_ccuAuxIOTable`
---
 DROP TABLE IF EXISTS `ccu_ccuAuxIOTable`;
 CREATE TABLE IF NOT EXISTS `ccu_ccuAuxIOTable` (
-  `ccu_ccuAuxIOTable_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `ccu_aux_io_table_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `config_profile_id` int(10) unsigned DEFAULT NULL,
   `ccuAIIndex` int(10) DEFAULT NULL,
   `ccuAIExternalOutput1` tinyint(4) DEFAULT NULL,
@@ -1316,70 +1270,52 @@ CREATE TABLE IF NOT EXISTS `ccu_ccuAuxIOTable` (
   `ccuAIExternalInput1AlarmType` tinyint(4) DEFAULT NULL,
   `ccuAIExternalInput2AlarmType` tinyint(4) DEFAULT NULL,
   `ccuAIExternalInput3AlarmType` tinyint(4) DEFAULT NULL,
-  PRIMARY KEY (`ccu_ccuAuxIOTable_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 ;
+  PRIMARY KEY (`ccu_aux_io_table_id`),
+  UNIQUE KEY `config_profile_id` (`config_profile_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
 
--- --------------------------------------------------------
-
---
--- Table structure for table `ccu_ccuBatteryPanelConfigTable`
---
 DROP TABLE IF EXISTS `ccu_ccuBatteryPanelConfigTable`;
 CREATE TABLE IF NOT EXISTS `ccu_ccuBatteryPanelConfigTable` (
-  `ccu_ccuBatteryPanelConfigTable_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `ccu_battery_panel_config_table_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `config_profile_id` int(10) unsigned DEFAULT NULL,
   `ccuBPCIndex` int(10) DEFAULT NULL,
   `ccuBPCSiteBatteryCapacity` smallint(6) DEFAULT NULL,
   `ccuBPCSiteSolarPanelwP` smallint(6) DEFAULT NULL,
   `ccuBPCSiteSolarPanelCount` smallint(6) DEFAULT NULL,
-  `ccuBPCNewBatteryInstallationDate` varchar(13) DEFAULT NULL,
-  PRIMARY KEY (`ccu_ccuBatteryPanelConfigTable_id`)
+  `ccuBPCNewBatteryInstallationDate` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`ccu_battery_panel_config_table_id`),
+  UNIQUE KEY `config_profile_id` (`config_profile_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
 
--- --------------------------------------------------------
-
---
--- Table structure for table `ccu_ccuControlTable`
---
 DROP TABLE IF EXISTS `ccu_ccuControlTable`;
 CREATE TABLE IF NOT EXISTS `ccu_ccuControlTable` (
-  `ccu_ccuControlTable_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `ccu_control_table_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `config_profile_id` int(10) unsigned DEFAULT NULL,
   `ccuCTIndex` int(10) DEFAULT NULL,
   `ccuCTLoadTurnOff` smallint(6) DEFAULT NULL,
   `ccuCTSMPSCharging` tinyint(4) DEFAULT NULL,
   `ccuCTRestoreDefault` tinyint(4) DEFAULT NULL,
   `ccuCTCCUReset` tinyint(4) DEFAULT NULL,
-  PRIMARY KEY (`ccu_ccuControlTable_id`)
+  PRIMARY KEY (`ccu_control_table_id`),
+  UNIQUE KEY `config_profile_id` (`config_profile_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
 
-
--- --------------------------------------------------------
-
---
--- Table structure for table `ccu_ccuInformationTable`
---
 DROP TABLE IF EXISTS `ccu_ccuInformationTable`;
 CREATE TABLE IF NOT EXISTS `ccu_ccuInformationTable` (
-  `ccu_ccuInformationTable_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `ccu_InformationTable` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `host_id` int(10) unsigned DEFAULT NULL,
   `ccuITIndex` int(10) DEFAULT NULL,
   `ccuITSiteCCUType` int(10) DEFAULT NULL,
   `ccuITCCUId` varchar(20) DEFAULT NULL,
   `ccuITSerialNumber` varchar(20) DEFAULT NULL,
   `ccuITHardwareVersion` varchar(15) DEFAULT NULL,
-  PRIMARY KEY (`ccu_ccuInformationTable_id`),
+  PRIMARY KEY (`ccu_InformationTable`),
   KEY `host_id` (`host_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=19 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
 
--- --------------------------------------------------------
-
---
--- Table structure for table `ccu_ccuNetworkConfigurationTable`
---
 DROP TABLE IF EXISTS `ccu_ccuNetworkConfigurationTable`;
 CREATE TABLE IF NOT EXISTS `ccu_ccuNetworkConfigurationTable` (
-  `ccu_ccuNetworkConfigurationTable_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `ccu_NetworkConfigurationTable_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `host_id` int(10) unsigned DEFAULT NULL,
   `ccuNCIndex` int(10) DEFAULT NULL,
   `ccuNCMACAddress` varchar(20) DEFAULT NULL,
@@ -1389,19 +1325,14 @@ CREATE TABLE IF NOT EXISTS `ccu_ccuNetworkConfigurationTable` (
   `ccuNCDHCPAssignedIP` varchar(18) DEFAULT NULL,
   `ccuNCDHCPNetMask` varchar(18) DEFAULT NULL,
   `ccuNCDefaultGateway` varchar(18) DEFAULT NULL,
-  PRIMARY KEY (`ccu_ccuNetworkConfigurationTable_id`),
+  PRIMARY KEY (`ccu_NetworkConfigurationTable_id`),
   KEY `host_id` (`host_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=26 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
 
-
---
--- Table structure for table `ccu_ccuPeerInformationTable`
---
 DROP TABLE IF EXISTS `ccu_ccuPeerInformationTable`;
 CREATE TABLE IF NOT EXISTS `ccu_ccuPeerInformationTable` (
-  `ccu_ccuPeerInformationTable_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `ccu_peer_info_table_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `config_profile_id` int(10) unsigned DEFAULT NULL,
-  `ccuPIIndex` int(10) DEFAULT NULL,
   `ccuPIPeer1MACID` varchar(20) DEFAULT NULL,
   `ccuPIPeerIP1` varchar(20) NOT NULL,
   `ccuPIPeer2MACID` varchar(20) DEFAULT NULL,
@@ -1410,15 +1341,13 @@ CREATE TABLE IF NOT EXISTS `ccu_ccuPeerInformationTable` (
   `ccuPIPeerIP3` varchar(20) NOT NULL,
   `ccuPIPeer4MACID` varchar(20) DEFAULT NULL,
   `ccuPIPeerIP4` varchar(20) NOT NULL,
-  PRIMARY KEY (`ccu_ccuPeerInformationTable_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
+  PRIMARY KEY (`ccu_peer_info_table_id`),
+  UNIQUE KEY `config_profile_id` (`config_profile_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
---
--- Table structure for table `ccu_ccuRealTimeStatusTable`
---
 DROP TABLE IF EXISTS `ccu_ccuRealTimeStatusTable`;
 CREATE TABLE IF NOT EXISTS `ccu_ccuRealTimeStatusTable` (
-  `ccu_ccuRealTimeStatusTable_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `ccu_RealTimeStatusTable_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `host_id` int(10) unsigned DEFAULT NULL,
   `ccuRTSIndex` int(10) unsigned DEFAULT NULL,
   `ccuRTSSystemVoltage` int(10) DEFAULT NULL,
@@ -1433,54 +1362,36 @@ CREATE TABLE IF NOT EXISTS `ccu_ccuRealTimeStatusTable` (
   `ccuRTSACVoltageReading` int(10) DEFAULT NULL,
   `ccuRTSAlarmStatusByte` int(10) DEFAULT NULL,
   `timestamp` datetime NOT NULL,
-  PRIMARY KEY (`ccu_ccuRealTimeStatusTable_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
+  PRIMARY KEY (`ccu_RealTimeStatusTable_id`),
+  UNIQUE KEY `host_id` (`host_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
---
--- Dumping data for table `ccu_ccuRealTimeStatusTable`
---
-
-
--- --------------------------------------------------------
-
---
--- Table structure for table `ccu_ccuSiteInformationTable`
---
 DROP TABLE IF EXISTS `ccu_ccuSiteInformationTable`;
 CREATE TABLE IF NOT EXISTS `ccu_ccuSiteInformationTable` (
-  `ccu_ccuSiteInformationTable_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `ccu_site_info_table_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `config_profile_id` int(10) unsigned DEFAULT NULL,
   `ccuSITIndex` int(10) DEFAULT NULL,
   `ccuSITSiteName` varchar(65) DEFAULT NULL,
-  PRIMARY KEY (`ccu_ccuSiteInformationTable_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 ;
+  PRIMARY KEY (`ccu_site_info_table_id`),
+  UNIQUE KEY `config_profile_id` (`config_profile_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-
---
--- Table structure for table `ccu_ccuSoftwareInformationTable`
---
 DROP TABLE IF EXISTS `ccu_ccuSoftwareInformationTable`;
 CREATE TABLE IF NOT EXISTS `ccu_ccuSoftwareInformationTable` (
-  `ccu_ccuSoftwareInformationTable_id` int(10) NOT NULL AUTO_INCREMENT,
+  ` ccu_softwareinformationtable_id` int(10) NOT NULL AUTO_INCREMENT,
   `host_id` int(10) unsigned NOT NULL,
   `ccuSIIndex` int(32) unsigned DEFAULT NULL,
   `ccuSIActiveSoftwareVersion` varchar(20) DEFAULT NULL,
   `ccuSIBackupSoftwareVersion` varchar(20) DEFAULT NULL,
   `ccuSICommunicationProtocolVersion` varchar(20) DEFAULT NULL,
   `ccuSIBootLoaderVersion` varchar(13) NOT NULL,
-  PRIMARY KEY (`ccu_ccuSoftwareInformationTable_id`),
+  PRIMARY KEY (` ccu_softwareinformationtable_id`),
   KEY `host_id` (`host_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
 
-
--- --------------------------------------------------------
-
---
--- Table structure for table `ccu_ccuStatusDataTable`
---
 DROP TABLE IF EXISTS `ccu_ccuStatusDataTable`;
 CREATE TABLE IF NOT EXISTS `ccu_ccuStatusDataTable` (
-  `ccu_ccuStatusDataTable_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `ccu_StatusDataTable_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `host_id` int(10) unsigned DEFAULT NULL,
   `ccuSDIndex` int(10) unsigned DEFAULT NULL,
   `ccuSDLastRebootReason` int(10) DEFAULT NULL,
@@ -1493,16 +1404,10 @@ CREATE TABLE IF NOT EXISTS `ccu_ccuStatusDataTable` (
   `ccuSDExternalChargingStatus` int(10) DEFAULT NULL,
   `ccuSDChargeDischargeCycle` int(10) DEFAULT NULL,
   `timestamp` datetime NOT NULL,
-  PRIMARY KEY (`ccu_ccuStatusDataTable_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
+  PRIMARY KEY (`ccu_StatusDataTable_id`),
+  UNIQUE KEY `host_id` (`host_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-
-
--- --------------------------------------------------------
-
---
--- Table structure for table `ccu_oids`
---
 DROP TABLE IF EXISTS `ccu_oids`;
 CREATE TABLE IF NOT EXISTS `ccu_oids` (
   `oid_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -1523,12 +1428,8 @@ CREATE TABLE IF NOT EXISTS `ccu_oids` (
   PRIMARY KEY (`oid_id`),
   KEY `FK_oids` (`device_type_id`),
   KEY `FK_oids_dependant_id` (`dependent_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=111 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
 
-
---
--- Table structure for table `ccu_oids_multivalues`
---
 DROP TABLE IF EXISTS `ccu_oids_multivalues`;
 CREATE TABLE IF NOT EXISTS `ccu_oids_multivalues` (
   `oids_multivalue_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -1537,12 +1438,8 @@ CREATE TABLE IF NOT EXISTS `ccu_oids_multivalues` (
   `name` varchar(128) DEFAULT NULL,
   PRIMARY KEY (`oids_multivalue_id`),
   KEY `FK_oids_multivalues` (`oid_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=56 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
 
-
---
--- Table structure for table `ccu_oid_table`
---
 DROP TABLE IF EXISTS `ccu_oid_table`;
 CREATE TABLE IF NOT EXISTS `ccu_oid_table` (
   `table_name` varchar(64) NOT NULL,
@@ -1552,7 +1449,6 @@ CREATE TABLE IF NOT EXISTS `ccu_oid_table` (
   `status` int(11) NOT NULL DEFAULT '0' COMMENT '0 = reconciliation has not been run',
   `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
 
 DROP TABLE IF EXISTS `cities`;
 CREATE TABLE IF NOT EXISTS `cities` (
@@ -1699,12 +1595,9 @@ CREATE TABLE IF NOT EXISTS `event_log` (
   `event_type_id` int(10) unsigned DEFAULT '0',
   `description` text NOT NULL,
   `timestamp` datetime NOT NULL,
-  `level` tinyint(4) NOT NULL DEFAULT '0',
-  `time_taken` varchar(20) NOT NULL,
   PRIMARY KEY (`event_log_id`,`timestamp`),
   KEY `index_event_type_id` (`event_type_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 ;
-
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `event_type`;
 CREATE TABLE IF NOT EXISTS `event_type` (
@@ -2225,16 +2118,6 @@ CREATE TABLE IF NOT EXISTS `hostgroups_groups` (
   KEY `FK_hostgroups_groups_hostgroups` (`hostgroup_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
 
-DROP TABLE IF EXISTS `firmware_mapping`;
-CREATE TABLE IF NOT EXISTS `firmware_mapping` (
-  `firmware_mapping_id` varchar(16) NOT NULL,
-  `device_type_id` varchar(16) DEFAULT NULL,
-  `firmware_desc` varchar(32) DEFAULT NULL,
-  PRIMARY KEY (`firmware_mapping_id`),
-  KEY `FK_firmware_mapping` (`device_type_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
-
 DROP TABLE IF EXISTS `hosts`;
 CREATE TABLE IF NOT EXISTS `hosts` (
   `host_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -2279,7 +2162,6 @@ CREATE TABLE IF NOT EXISTS `hosts` (
   `ssh_username` varchar(64) DEFAULT NULL,
   `ssh_password` varchar(64) DEFAULT NULL,
   `ssh_port` int(11) DEFAULT NULL,
-  `firmware_mapping_id` varchar(16) NULL,
   PRIMARY KEY (`host_id`),
   KEY `FK_hosts` (`created_by`),
   KEY `FK_hosts_assets` (`host_asset_id`),
@@ -4347,6 +4229,15 @@ CREATE TABLE IF NOT EXISTS `odu100_nwInterfaceStatusTable` (
   KEY `FK_odu100_nwInterfaceStatusTable` (`host_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
 
+DROP TABLE IF EXISTS `odu100_oid_table`;
+CREATE TABLE IF NOT EXISTS `odu100_oid_table` (
+  `table_name` varchar(64) NOT NULL,
+  `table_oid` varchar(64) NOT NULL,
+  `varbinds` tinyint(4) NOT NULL DEFAULT '15',
+  `is_recon` int(11) NOT NULL DEFAULT '1' COMMENT '1 = run reconciliation for table',
+  `status` int(11) NOT NULL DEFAULT '0' COMMENT '0 = reconciliation has not been run',
+  `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `odu100_omcConfTable`;
 CREATE TABLE IF NOT EXISTS `odu100_omcConfTable` (
@@ -4513,9 +4404,7 @@ CREATE TABLE IF NOT EXISTS `odu100_raConfTable` (
   `dfs` int(8) DEFAULT NULL,
   `numSlaves` int(32) DEFAULT NULL,
   `antennaPort` int(8) DEFAULT NULL,
-  `linkDistance` int(10) NOT NULL DEFAULT '0',
-  `anc` int(8) DEFAULT NULL,
-  `forceMimo` int(11) DEFAULT '0',
+  `link_distance` int(10) NOT NULL DEFAULT '0',
   PRIMARY KEY (`odu100_raConfTable_id`),
   KEY `FK_odu100_raConfTable` (`config_profile_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
@@ -4596,12 +4485,10 @@ CREATE TABLE IF NOT EXISTS `odu100_raStatusTable` (
   `raoperationalState` int(8) DEFAULT NULL,
   `unusedTxTimeUL` int(32) DEFAULT NULL,
   `unusedTxTimeDL` int(32) DEFAULT NULL,
-  `ancStatus` enum('0','1') DEFAULT NULL,
-  `ancHwAvailable` enum('0','1') DEFAULT NULL,
   `timestamp` datetime NOT NULL,
   PRIMARY KEY (`odu100_raStatusTable_id`),
   KEY `FK_odu100_raStatusTable` (`host_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `odu100_raTddMacConfigTable`;
 CREATE TABLE IF NOT EXISTS `odu100_raTddMacConfigTable` (
@@ -4673,10 +4560,6 @@ CREATE TABLE IF NOT EXISTS `odu100_ruConfTable` (
   `countryCode` int(8) DEFAULT NULL,
   `poeState` int(8) DEFAULT NULL,
   `alignmentControl` int(32) DEFAULT NULL,
-  `ethFiltering` int(2) NOT NULL,
-  `poePort2State` int(8) DEFAULT NULL,
-  `poePort4State` int(8) DEFAULT NULL,
-  `poePort6State` int(8) DEFAULT NULL,
   PRIMARY KEY (`odu100_ruConfTable_id`),
   KEY `FK_odu100_ruConfTable` (`config_profile_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
@@ -4728,14 +4611,9 @@ CREATE TABLE IF NOT EXISTS `odu100_ruStatusTable` (
   `cpuId` int(8) DEFAULT NULL,
   `ruoperationalState` int(8) DEFAULT NULL,
   `nodeBandwidth` int(11) DEFAULT NULL,
-  `poePort2Status` int(8) DEFAULT NULL,
-  `poePort4Status` int(8) DEFAULT NULL,
-  `poePort6Status` int(8) DEFAULT NULL,
   PRIMARY KEY (`odu100_ruStatusTable_id`),
   KEY `FK_odu100_ruStatusTable` (`host_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
-
-
 
 DROP TABLE IF EXISTS `odu100_swStatusTable`;
 CREATE TABLE IF NOT EXISTS `odu100_swStatusTable` (
@@ -4748,35 +4626,6 @@ CREATE TABLE IF NOT EXISTS `odu100_swStatusTable` (
   PRIMARY KEY (`odu100_swStatusTable_id`),
   KEY `FK_odu100_swStatusTable` (`host_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
-
-
-DROP TABLE IF EXISTS `odu100_ipFilterTable`;
-CREATE TABLE IF NOT EXISTS `odu100_ipFilterTable` (
-  `odu100_ipFilterTable_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `host_id` int(10) unsigned DEFAULT NULL,
-  `ipFilterIndex` int(10) DEFAULT NULL,
-  `ipFilterIpAddress` varchar(16) DEFAULT NULL,
-  `ipFilterNetworkMask` varchar(16) NOT NULL DEFAULT '255.255.255.0',
-  `timestamp` datetime NOT NULL,
-  PRIMARY KEY (`odu100_ipFilterTable_id`),
-  KEY `FK_odu100_ipFilterTable` (`host_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
-
-
-DROP TABLE IF EXISTS `odu100_macFilterTable`;
-CREATE TABLE IF NOT EXISTS `odu100_macFilterTable` (
-  `odu100_macFilterTable_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `host_id` int(10) unsigned DEFAULT NULL,
-  `macFilterIndex` int(10) DEFAULT NULL,
-  `filterMacAddress` varchar(19) DEFAULT NULL,
-  `timestamp` datetime NOT NULL,
-  PRIMARY KEY (`odu100_macFilterTable_id`),
-  KEY `FK_odu100_macFilterTable` (`host_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
-
-
-
-
 
 DROP TABLE IF EXISTS `odu100_syncConfigTable`;
 CREATE TABLE IF NOT EXISTS `odu100_syncConfigTable` (
@@ -4799,7 +4648,7 @@ DROP TABLE IF EXISTS `odu100_synchStatisticsTable`;
 CREATE TABLE IF NOT EXISTS `odu100_synchStatisticsTable` (
   `odu100_synchStatisticsTable_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `host_id` int(10) unsigned DEFAULT NULL,
-  `syncConfigIndex` int(32) DEFAULT NULL,
+  `synchStatsIndex` int(32) DEFAULT NULL,
   `syncLostCounter` int(10) unsigned DEFAULT NULL,
   `timestamp` datetime NOT NULL,
   PRIMARY KEY (`odu100_synchStatisticsTable_id`,`timestamp`),
@@ -4810,7 +4659,7 @@ DROP TABLE IF EXISTS `odu100_synchStatusTable`;
 CREATE TABLE IF NOT EXISTS `odu100_synchStatusTable` (
   `odu100_synchStatusTable_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `host_id` int(10) unsigned DEFAULT NULL,
-  `syncConfigIndex` int(32) DEFAULT NULL,
+  `synchStatsIndex` int(32) DEFAULT NULL,
   `syncoperationalState` int(8) DEFAULT NULL,
   `syncrasterTime` int(32) DEFAULT NULL,
   `timerAdjust` int(32) DEFAULT NULL,
@@ -4885,9 +4734,8 @@ CREATE TABLE IF NOT EXISTS `odu_schedule` (
   PRIMARY KEY (`schedule_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-
-DROP TABLE IF EXISTS `odu100_7_2_20_oids`;
-CREATE TABLE IF NOT EXISTS `odu100_7_2_20_oids` (
+DROP TABLE IF EXISTS `oids`;
+CREATE TABLE IF NOT EXISTS `oids` (
   `oid_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `device_type_id` varchar(16) DEFAULT NULL,
   `oid` varchar(256) DEFAULT NULL,
@@ -4904,125 +4752,19 @@ CREATE TABLE IF NOT EXISTS `odu100_7_2_20_oids` (
   `coloumn_name` varchar(128) DEFAULT NULL,
   `indexes_name` varchar(64) DEFAULT NULL,
   PRIMARY KEY (`oid_id`),
-  KEY `FK_odu100_7_2_20_oids` (`device_type_id`),
-  KEY `FK_odu100_7_2_20_oids_dependant_id` (`dependent_id`)
+  KEY `FK_oids` (`device_type_id`),
+  KEY `FK_oids_dependant_id` (`dependent_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
 
-DROP TABLE IF EXISTS `odu100_7_2_20_oids_multivalues`;
-CREATE TABLE IF NOT EXISTS `odu100_7_2_20_oids_multivalues` (
+DROP TABLE IF EXISTS `oids_multivalues`;
+CREATE TABLE IF NOT EXISTS `oids_multivalues` (
   `oids_multivalue_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `oid_id` int(10) unsigned DEFAULT NULL,
   `value` varchar(128) DEFAULT NULL,
   `name` varchar(128) DEFAULT NULL,
   PRIMARY KEY (`oids_multivalue_id`),
-  KEY `FK_odu100_7_2_20_oids_multivalues` (`oid_id`)
+  KEY `FK_oids_multivalues` (`oid_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
-
-
-DROP TABLE IF EXISTS `odu100_7_2_20_oid_table`;
-CREATE TABLE IF NOT EXISTS `odu100_7_2_20_oid_table` (
-  `table_name` varchar(64) NOT NULL,
-  `table_oid` varchar(64) NOT NULL,
-  `varbinds` tinyint(4) NOT NULL DEFAULT '15',
-  `is_recon` int(11) NOT NULL DEFAULT '1' COMMENT '1 = run reconciliation for table',
-  `status` int(11) NOT NULL DEFAULT '0' COMMENT '0 = reconciliation has not been run',
-  `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
-
--- --------------------------------------------------------
-
---
--- Table structure for table `odu100_7_2_25_oids`
---
-DROP TABLE IF EXISTS `odu100_7_2_25_oids`;
-CREATE TABLE IF NOT EXISTS `odu100_7_2_25_oids` (
-  `oid_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `device_type_id` varchar(16) DEFAULT NULL,
-  `oid` varchar(256) DEFAULT NULL,
-  `oid_name` varchar(256) DEFAULT NULL,
-  `oid_type` varchar(16) DEFAULT NULL,
-  `access` smallint(6) DEFAULT NULL,
-  `default_value` varchar(256) DEFAULT NULL,
-  `min_value` varchar(128) DEFAULT NULL,
-  `max_value` varchar(256) DEFAULT NULL,
-  `indexes` varchar(256) DEFAULT NULL,
-  `dependent_id` int(10) unsigned DEFAULT NULL,
-  `multivalue` smallint(6) DEFAULT '0',
-  `table_name` varchar(128) DEFAULT NULL,
-  `coloumn_name` varchar(128) DEFAULT NULL,
-  `indexes_name` varchar(64) DEFAULT NULL,
-  PRIMARY KEY (`oid_id`),
-  KEY `FK_odu100_7_2_25_oids` (`device_type_id`),
-  KEY `FK_odu100_7_2_25_oids_dependant_id` (`dependent_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
-
-DROP TABLE IF EXISTS `odu100_7_2_25_oids_multivalues`;
-CREATE TABLE IF NOT EXISTS `odu100_7_2_25_oids_multivalues` (
-  `oids_multivalue_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `oid_id` int(10) unsigned DEFAULT NULL,
-  `value` varchar(128) DEFAULT NULL,
-  `name` varchar(128) DEFAULT NULL,
-  PRIMARY KEY (`oids_multivalue_id`),
-  KEY `FK_odu100_7_2_25_oids_multivalues` (`oid_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
-
-
-DROP TABLE IF EXISTS `odu100_7_2_25_oid_table`;
-CREATE TABLE IF NOT EXISTS `odu100_7_2_25_oid_table` (
-  `table_name` varchar(64) NOT NULL,
-  `table_oid` varchar(64) NOT NULL,
-  `varbinds` tinyint(4) NOT NULL DEFAULT '15',
-  `is_recon` int(11) NOT NULL DEFAULT '1' COMMENT '1 = run reconciliation for table',
-  `status` int(11) NOT NULL DEFAULT '0' COMMENT '0 = reconciliation has not been run',
-  `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
-CREATE TABLE IF NOT EXISTS `odu100_7_2_29_oids` (
-  `oid_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `device_type_id` varchar(16) DEFAULT NULL,
-  `oid` varchar(256) DEFAULT NULL,
-  `oid_name` varchar(256) DEFAULT NULL,
-  `oid_type` varchar(16) DEFAULT NULL,
-  `oid_datatype` varchar(16) NOT NULL,
-  `access` smallint(6) DEFAULT NULL,
-  `default_value` varchar(256) DEFAULT NULL,
-  `min_value` varchar(128) DEFAULT NULL,
-  `max_value` varchar(256) DEFAULT NULL,
-  `indexes` varchar(256) DEFAULT NULL,
-  `dependent_id` int(10) unsigned DEFAULT NULL,
-  `multivalue` smallint(6) DEFAULT '0',
-  `table_name` varchar(128) DEFAULT NULL,
-  `coloumn_name` varchar(128) DEFAULT NULL,
-  `indexes_name` varchar(64) DEFAULT NULL,
-  `description` text NOT NULL,
-  PRIMARY KEY (`oid_id`),
-  KEY `FK_odu100_7_2_29_oids` (`device_type_id`),
-  KEY `FK_odu100_7_2_29_oids_dependant_id` (`dependent_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
-
-CREATE TABLE IF NOT EXISTS `odu100_7_2_29_oids_multivalues` (
-  `oids_multivalue_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `oid_id` int(10) unsigned DEFAULT NULL,
-  `value` varchar(128) DEFAULT NULL,
-  `name` varchar(128) DEFAULT NULL,
-  PRIMARY KEY (`oids_multivalue_id`),
-  KEY `FK_odu100_7_2_29_oids_multivalues` (`oid_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 ;
-
-CREATE TABLE IF NOT EXISTS `odu100_7_2_29_oid_table` (
-  `table_name` varchar(64) NOT NULL,
-  `table_oid` varchar(64) NOT NULL,
-  `varbinds` tinyint(4) NOT NULL DEFAULT '15',
-  `is_recon` int(11) NOT NULL DEFAULT '1' COMMENT '1 = run reconciliation for table',
-  `status` int(11) NOT NULL DEFAULT '0' COMMENT '0 = reconciliation has not been run',
-  `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
--- --------------------------------------------------------
-
-
-
 
 DROP TABLE IF EXISTS `pages`;
 CREATE TABLE IF NOT EXISTS `pages` (
@@ -5743,9 +5485,7 @@ CREATE TABLE IF NOT EXISTS `trap_alarms` (
   `component_id` varchar(32) DEFAULT NULL,
   `trap_ip` varchar(32) DEFAULT NULL,
   `description` varchar(256) DEFAULT NULL,
-  `device_sent_date` datetime NOT NULL,
-  `is_reconcile` enum('0','1') NOT NULL DEFAULT '0',
-  `timestamp` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `timestamp` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`trap_alarm_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -5781,9 +5521,7 @@ CREATE TABLE IF NOT EXISTS `trap_alarm_clear` (
   `component_id` varchar(32) DEFAULT NULL,
   `trap_ip` varchar(32) DEFAULT NULL,
   `description` varchar(256) DEFAULT NULL,
-  `device_sent_date` datetime NOT NULL,
-  `is_reconcile` enum('0','1') NOT NULL DEFAULT '0',
-  `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`trap_alarm_clear_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -5803,9 +5541,7 @@ CREATE TABLE IF NOT EXISTS `trap_alarm_current` (
   `component_id` varchar(32) DEFAULT NULL,
   `trap_ip` varchar(32) DEFAULT NULL,
   `description` varchar(256) DEFAULT NULL,
-  `device_sent_date` datetime NOT NULL,
-  `is_reconcile` enum('0','1') NOT NULL DEFAULT '0',
-  `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`trap_alarm_current_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -5904,8 +5640,6 @@ CREATE TABLE IF NOT EXISTS `user_login` (
   KEY `FK_user_login_nms_instance` (`nms_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-ALTER TABLE `alarm_recon`
-  ADD CONSTRAINT `alarm_recon_ibfk_1` FOREIGN KEY (`host_id`) REFERENCES `hosts` (`host_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 ALTER TABLE `ap25_accesspointIPsettings`
   ADD CONSTRAINT `ap25_accesspointIPsettings_ibfk_1` FOREIGN KEY (`config_profile_id`) REFERENCES `config_profiles` (`config_profile_id`) ON DELETE CASCADE ON UPDATE CASCADE;
@@ -5973,72 +5707,38 @@ ALTER TABLE `ap_scheduling_host_mapping`
   ADD CONSTRAINT `FK_ap_scheduling_host_mapping_host` FOREIGN KEY (`host_id`) REFERENCES `hosts` (`host_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `FK_ap_scheduling_host_mapping_scheduling` FOREIGN KEY (`ap_scheduling_id`) REFERENCES `ap_scheduling` (`ap_scheduling_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
---
--- Constraints for table `ccu_ccuAlarmAndThresholdTable`
---
 ALTER TABLE `ccu_ccuAlarmAndThresholdTable`
   ADD CONSTRAINT `ccu_ccuAlarmAndThresholdTable_ibfk_1` FOREIGN KEY (`config_profile_id`) REFERENCES `config_profiles` (`config_profile_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
---
--- Constraints for table `ccu_ccuAuxIOTable`
---
 ALTER TABLE `ccu_ccuAuxIOTable`
   ADD CONSTRAINT `ccu_ccuAuxIOTable_ibfk_1` FOREIGN KEY (`config_profile_id`) REFERENCES `config_profiles` (`config_profile_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
---
--- Constraints for table `ccu_ccuBatteryPanelConfigTable`
---
 ALTER TABLE `ccu_ccuBatteryPanelConfigTable`
   ADD CONSTRAINT `ccu_ccuBatteryPanelConfigTable_ibfk_1` FOREIGN KEY (`config_profile_id`) REFERENCES `config_profiles` (`config_profile_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
---
--- Constraints for table `ccu_ccuControlTable`
---
 ALTER TABLE `ccu_ccuControlTable`
   ADD CONSTRAINT `ccu_ccuControlTable_ibfk_1` FOREIGN KEY (`config_profile_id`) REFERENCES `config_profiles` (`config_profile_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
---
--- Constraints for table `ccu_ccuInformationTable`
---
 ALTER TABLE `ccu_ccuInformationTable`
   ADD CONSTRAINT `ccu_ccuInformationTable_ibfk_1` FOREIGN KEY (`host_id`) REFERENCES `hosts` (`host_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
---
--- Constraints for table `ccu_ccuNetworkConfigurationTable`
---
 ALTER TABLE `ccu_ccuNetworkConfigurationTable`
   ADD CONSTRAINT `ccu_ccuNetworkConfigurationTable_ibfk_1` FOREIGN KEY (`host_id`) REFERENCES `hosts` (`host_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
---
--- Constraints for table `ccu_ccuPeerInformationTable`
---
 ALTER TABLE `ccu_ccuPeerInformationTable`
   ADD CONSTRAINT `ccu_ccuPeerInformationTable_ibfk_1` FOREIGN KEY (`config_profile_id`) REFERENCES `config_profiles` (`config_profile_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
---
--- Constraints for table `ccu_ccuRealTimeStatusTable`
---
 ALTER TABLE `ccu_ccuRealTimeStatusTable`
   ADD CONSTRAINT `ccu_ccuRealTimeStatusTable_ibfk_1` FOREIGN KEY (`host_id`) REFERENCES `hosts` (`host_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
---
--- Constraints for table `ccu_ccuSiteInformationTable`
---
 ALTER TABLE `ccu_ccuSiteInformationTable`
   ADD CONSTRAINT `ccu_ccuSiteInformationTable_ibfk_1` FOREIGN KEY (`config_profile_id`) REFERENCES `config_profiles` (`config_profile_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
---
--- Constraints for table `ccu_ccuSoftwareInformationTable`
---
 ALTER TABLE `ccu_ccuSoftwareInformationTable`
   ADD CONSTRAINT `ccu_ccuSoftwareInformationTable_ibfk_1` FOREIGN KEY (`host_id`) REFERENCES `hosts` (`host_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
---
--- Constraints for table `ccu_ccuStatusDataTable`
---
 ALTER TABLE `ccu_ccuStatusDataTable`
   ADD CONSTRAINT `ccu_ccuStatusDataTable_ibfk_1` FOREIGN KEY (`host_id`) REFERENCES `hosts` (`host_id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
 
 ALTER TABLE `cities`
   ADD CONSTRAINT `FK_cities_states` FOREIGN KEY (`state_id`) REFERENCES `states` (`state_id`) ON DELETE CASCADE ON UPDATE CASCADE;
@@ -6139,10 +5839,6 @@ ALTER TABLE `groups`
 ALTER TABLE `hostgroups_groups`
   ADD CONSTRAINT `FK_hostgroups_groups_groups` FOREIGN KEY (`group_id`) REFERENCES `groups` (`group_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `FK_hostgroups_groups_hostgroups` FOREIGN KEY (`hostgroup_id`) REFERENCES `hostgroups` (`hostgroup_id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
-ALTER TABLE `firmware_mapping`
-  ADD CONSTRAINT `FK_firmware_mapping` FOREIGN KEY (`device_type_id`) REFERENCES `device_type` (`device_type_id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
 
 ALTER TABLE `hosts`
   ADD CONSTRAINT `FK_hosts_assets` FOREIGN KEY (`host_asset_id`) REFERENCES `host_assets` (`host_asset_id`) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -6377,6 +6073,12 @@ ALTER TABLE `odu100_synchStatusTable`
 ALTER TABLE `odu100_sysOmcRegistrationTable`
   ADD CONSTRAINT `FK_odu100_sysOmcRegistrationTable` FOREIGN KEY (`config_profile_id`) REFERENCES `config_profiles` (`config_profile_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
+ALTER TABLE `oids`
+  ADD CONSTRAINT `FK_oids` FOREIGN KEY (`device_type_id`) REFERENCES `device_type` (`device_type_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `FK_oids_dependant_id` FOREIGN KEY (`dependent_id`) REFERENCES `oids` (`oid_id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+ALTER TABLE `oids_multivalues`
+  ADD CONSTRAINT `FK_oids_multivalues` FOREIGN KEY (`oid_id`) REFERENCES `oids` (`oid_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 ALTER TABLE `pages`
   ADD CONSTRAINT `FK_pages` FOREIGN KEY (`snapin_id`) REFERENCES `snapins` (`snapin_id`) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -6524,37 +6226,4 @@ ALTER TABLE `users_groups`
 ALTER TABLE `user_login`
   ADD CONSTRAINT `FK_user_login` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `FK_user_login_nms_instance` FOREIGN KEY (`nms_id`) REFERENCES `nms_instance` (`nms_id`) ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE `odu100_ipFilterTable`
-  ADD CONSTRAINT `FK_odu100_ipFilterTable` FOREIGN KEY (`host_id`) REFERENCES `hosts` (`host_id`) ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE `odu100_macFilterTable`
-  ADD CONSTRAINT `FK_odu100_macFilterTable` FOREIGN KEY (`host_id`) REFERENCES `hosts` (`host_id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
-ALTER TABLE `odu100_7_2_20_oids`
-  ADD CONSTRAINT `FK_odu100_7_2_20_oids` FOREIGN KEY (`device_type_id`) REFERENCES `device_type` (`device_type_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `FK_odu100_7_2_20_oids_dependant_id` FOREIGN KEY (`dependent_id`) REFERENCES `odu100_7_2_20_oids` (`oid_id`) ON DELETE SET NULL ON UPDATE CASCADE;
-
-ALTER TABLE `odu100_7_2_20_oids_multivalues`
-  ADD CONSTRAINT `FK_odu100_7_2_20_oids_multivalues` FOREIGN KEY (`oid_id`) REFERENCES `odu100_7_2_20_oids` (`oid_id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
-ALTER TABLE `odu100_7_2_25_oids`
-  ADD CONSTRAINT `FK_odu100_7_2_25_oids` FOREIGN KEY (`device_type_id`) REFERENCES `device_type` (`device_type_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `FK_odu100_7_2_25_oids_dependant_id` FOREIGN KEY (`dependent_id`) REFERENCES `odu100_7_2_25_oids` (`oid_id`) ON DELETE SET NULL ON UPDATE CASCADE;
-
-ALTER TABLE `odu100_7_2_25_oids_multivalues`
-  ADD CONSTRAINT `FK_odu100_7_2_25_oids_multivalues` FOREIGN KEY (`oid_id`) REFERENCES `odu100_7_2_25_oids` (`oid_id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Constraints for table `odu100_7_2_29_oids`
---
-ALTER TABLE `odu100_7_2_29_oids`
-  ADD CONSTRAINT `FK_odu100_7_2_29_oids` FOREIGN KEY (`device_type_id`) REFERENCES `device_type` (`device_type_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `FK_odu100_7_2_29_oids_dependant_id` FOREIGN KEY (`dependent_id`) REFERENCES `odu100_7_2_29_oids` (`oid_id`) ON DELETE SET NULL ON UPDATE CASCADE;
-
---
--- Constraints for table `odu100_7_2_29_oids_multivalues`
---
-ALTER TABLE `odu100_7_2_29_oids_multivalues`
-  ADD CONSTRAINT `FK_odu100_7_2_29_oids_multivalues` FOREIGN KEY (`oid_id`) REFERENCES `odu100_7_2_29_oids` (`oid_id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
 SET FOREIGN_KEY_CHECKS=1;
-

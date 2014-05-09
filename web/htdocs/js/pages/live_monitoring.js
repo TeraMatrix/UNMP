@@ -19,6 +19,7 @@ var $liveMonitoringDiv = null;
 var $hostDetailsDiv = null;
 var $dataTableObj = null;
 var tableI = 0;
+var monthNames = [ "Jan", "Feb", "Mar", "Apr", "May", "Jun","Jul", "Aug", "Sept", "Oct", "Nov", "Dec" ];
 var $form = {
 	"name":null,
 	"graph_name_div":null,
@@ -204,7 +205,6 @@ function createTable(selectedGraphName,headData,data)
 		},
 		"aoColumns": headData
 	});
-	$dataTableObj.fnSort( [ [0,'desc'] ] );
 }
 function createGraph(graphName,graphFullName)
 {
@@ -286,7 +286,6 @@ function createGraph(graphName,graphFullName)
 												liveChartSetInterval && clearInterval(liveChartSetInterval);
 											}
 											// add new row in table
-											//result = {"is_live": true, "data_series": [{"data": [{"y": -26.082489800000001, "x": 1341829160000}], "name": "link1"}, {"data": [{"y": 0.0, "x": 1341829160000}], "name": "link2"}, {"data": [{"y": 0.0, "x": 1341829160000}], "name": "link3"}, {"data": [{"y": 0.0, "x": 1341829160000}], "name": "link4"}, {"data": [{"y": 0.0, "x": 1341829160000}], "name": "link5"}, {"data": [{"y": 0.0, "x": 1341829160000}], "name": "link6"}, {"data": [{"y": 0.0, "x": 1341829160000}], "name": "link7"}, {"data": [{"y": 0.0, "x": 1341829160000}], "name": "link8"}, {"data": [{"y": 0.0, "x": 1341829160000}], "name": "link9"}, {"data": [{"y": 0.0, "x": 1341829160000}], "name": "link10"}, {"data": [{"y": 0.0, "x": 1341829160000}], "name": "link11"}, {"data": [{"y": 0.0, "x": 1341829160000}], "name": "link12"}, {"data": [{"y": 0.0, "x": 1341829160000}], "name": "link13"}, {"data": [{"y": 0.0, "x": 1341829160000}], "name": "link14"}, {"data": [{"y": 0.0, "x": 1341829160000}], "name": "link15"}, {"data": [{"y": 0.0, "x": 1341829160000}], "name": "link16"}], "success": 0, "unit": "dBm"}
 											var success = result["success"];
 											result = result["data_series"];
 											if(success != undefined && success == 0)
@@ -301,13 +300,14 @@ function createGraph(graphName,graphFullName)
 														newData[newData.length] = [];
 														newData[j][newData[j].length] = String(tableI);
 														var tDate = new Date(result[i]["data"][j]["x"]);
-														newData[j][newData[j].length] = timestampFormat(tDate);
-														tableI++;
+														newData[j][newData[j].length] = tDate.getDate() + "-" + monthNames[tDate.getMonth()] + "-" + tDate.getFullYear() + " " + tDate.getHours() + ":" + tDate.getMinutes() + ":" + tDate.getSeconds();
 													}
-													newData[j][newData[j].length] = result[i]["data"][j]["y"]==null && "-" || result[i]["data"][j]["y"].toFixed(2);
+													newData[j][newData[j].length] = result[i]["data"][j]["y"];
+													tableI++;
+		
 												}
+												$dataTableObj.fnAddData(newData);
 											}
-											$dataTableObj.fnAddData(newData);
 											}
 											
 											if(result.length == series.length)
@@ -377,7 +377,7 @@ function createGraph(graphName,graphFullName)
 			];
 			for(var i=0;i<result.length;i++)
 			{
-				headData[headData.length] = {"sTitle":result[i]["name"],"sClass":"center","asSorting":["desc"]};
+				headData[headData.length] = {"sTitle":result[i]["name"],"sClass":"center"};
 				tableI = result[i]["data"].length;
 				for(var j=0;j<result[i]["data"].length;j++)
 				{
@@ -386,32 +386,15 @@ function createGraph(graphName,graphFullName)
 						data[data.length] = [];
 						data[j][data[j].length] = String(j+1);
 						var tDate = new Date(result[i]["data"][j]["x"]);
-						data[j][data[j].length] = timestampFormat(tDate);
+						data[j][data[j].length] = tDate.getDate() + "-" + monthNames[tDate.getMonth()] + "-" + tDate.getFullYear() + " " + tDate.getHours() + ":" + tDate.getMinutes() + ":" + tDate.getSeconds();
 					}
-					data[j][data[j].length] = result[i]["data"][j]["y"]==null && "-" || result[i]["data"][j]["y"].toFixed(2);
+					data[j][data[j].length] = result[i]["data"][j]["y"];
 					
 				}
 			}
 			createTable(selectedGraphName,headData,data);
 		}
 	});
-}
-function timestampFormat(dateObj)
-{
-	var monthNames = [ "Jan", "Feb", "Mar", "Apr", "May", "Jun","Jul", "Aug", "Sept", "Oct", "Nov", "Dec" ];
-	var dateString = "";
-	dateString += dateObj.getDate() < 10 && ("0" + dateObj.getDate()) || dateObj.getDate();
-	dateString += "-";
-	dateString += monthNames[dateObj.getMonth()];
-	dateString += "-"
-	dateString += dateObj.getFullYear()
-	dateString += " "
-	dateString += dateObj.getHours() < 10 && ("0" + dateObj.getHours()) || dateObj.getHours();
-	dateString += ":"
-	dateString += dateObj.getMinutes() < 10 && ("0" + dateObj.getMinutes()) || dateObj.getMinutes();
-	dateString += ":"
-	dateString += dateObj.getSeconds() < 10 && ("0" + dateObj.getSeconds()) || dateObj.getSeconds();
-	return dateString;
 }
 function hostDetailsTable()
 {
@@ -567,17 +550,14 @@ function createtabs()
                 $("<span/>").addClass("excel").appendTo($excelBtn);
                 $excelBtn.click(function(e){
 	                e.stopPropagation();
-	                var recCfValue = $("#" + String(selectedGraphName) +"_select").val().split(",");
 			$.ajax({
 				type:"get",
 				url:"download_live_monitoring_excel_file.py",
 				data:{
 					"graph_name":String(selectedGraphName),
 					"device_type":hostObj["device_type"],
-					"ip_address":hostObj["ip_address"],
-					"host_id":hostObj["host_id"],
-					"resolution":recCfValue[0],
-					"cf":recCfValue[1]
+					//"ip_address":hostObj["ip_address"],
+					"host_id":hostObj["host_id"]
 				},
 				cache:false,
 				success:function(result){
@@ -594,17 +574,14 @@ function createtabs()
                 $("<span/>").addClass("csv").appendTo($csvBtn);
                 $csvBtn.click(function(e){
 	                e.stopPropagation();
-	                var recCfValue = $("#" + String(selectedGraphName) +"_select").val().split(",");
 			$.ajax({
 				type:"get",
 				url:"download_live_monitoring_csv_file.py",
 				data:{
 					"graph_name":String(selectedGraphName),
 					"device_type":hostObj["device_type"],
-					"ip_address":hostObj["ip_address"],
-					"host_id":hostObj["host_id"],
-					"resolution":recCfValue[0],
-					"cf":recCfValue[1]
+					//"ip_address":hostObj["ip_address"],
+					"host_id":hostObj["host_id"]
 				},
 				cache:false,
 				success:function(result){
@@ -622,7 +599,7 @@ function createtabs()
                 var $refreshTimeList = $("<select/>").attr({"id":String(graph) +"_select"}).css({"float":"left","vertical-align":"middle","width":"auto","margin-top":"2px"});
                 for(var i=0; i<graphObj[graph]["rra_dataset"].length;i++)
                 {
-                	var $option = $("<option/>").val(String(parseInt(graphObj[graph]["rra_dataset"][i]) * parseInt(graphObj[graph]["rrd_step"])) + "," + graphObj[graph]["rra_cf"][i]).text(refreshRateText(parseInt(graphObj[graph]["rra_dataset"][i]) * parseInt(graphObj[graph]["rrd_step"])) + " (" + graphObj[graph]["rra_cf"][i] + ")")
+                	var $option = $("<option/>").val(String(parseInt(graphObj[graph]["rra_dataset"][i]) * parseInt(graphObj[graph]["rrd_step"])) + "," + graphObj[graph]["rra_cf"][i]).text(String(parseInt(graphObj[graph]["rra_dataset"][i]) * parseInt(graphObj[graph]["rrd_step"])) + " sec (" + graphObj[graph]["rra_cf"][i] + ")")
                 	$option.appendTo($refreshTimeList);
                 }
 		$refreshTimeList.change(function(){
@@ -646,51 +623,6 @@ function createtabs()
 	else
 	{
 		$("<div class=\"error\">Live monitoring configuration doesn't exist for this device.</div>").appendTo($liveMonitoringContainer);
-	}
-}
-/*
- * function: refreshRateText
- * parameter:
- *		time : seconds (integer)
- * description: to convert second to min or hours and return converted time in string (append sec or min or hour automatically).
- * author: Yogesh Kumar
- * Date: 7-July-2012
- */
-function refreshRateText(time)
-{
-	try
-	{
-		time = parseInt(time)
-		if(time<101)
-		{
-			return(String(time) + " sec");
-		}
-		else if(time<3600)
-		{
-			if(time%60==0)
-			{
-				return(String(time/60) + " min");
-			}
-			else
-			{
-				return(parseFloat(time/60).toFixed(2) + " min");
-			}
-		}
-		else
-		{
-			if(time%3600==0)
-			{
-				return(String(time/3600) + " hour");
-			}
-			else
-			{
-				return(parseFloat(time/3600).toFixed(2) + " hour");
-			}
-		}
-	}
-	catch(err)
-	{
-		return(time);
 	}
 }
 function liveSettings()
@@ -941,7 +873,7 @@ function setDataInSettingForm(graph)
 	$form["get_dyn_name"].val(graphObj[graph]["get_dyn_name"]);
 	$form["unreachable_value"].val(graphObj[graph]["unreachable_value"]);
 	$form["rrd_step"].val(graphObj[graph]["rrd_step"]);
-	$form["rrd_size"].val(parseInt(graphObj[graph]["rrd_size"],10)/3600 );
+
 	$form["total_rra"].val(graphObj[graph]["rra_cf"].length);
 	drawRRATable();
 	
@@ -963,7 +895,7 @@ function saveSetting()
 	formData["name"]=$form["name"].find("option:selected").text()
 	formData["desc"]=$form["desc"].val();
 	formData["is_localhost"]=$form["is_localhost"].attr("checked") == true ? 1 : 0;
-	formData["is_snmp"]=$form["is_snmp"].val();
+	formData["is_snmp"]=$form["is_snmp"].val() == 1 ? "True":"False";
 	formData["oid_table"]=$form["oid_table"].val();
 	var rowIndexArr = $form["row_index"].map(function(){return $(this).val();}).get();
 	formData["row_index"] = String(rowIndexArr.getUnique());
@@ -991,42 +923,6 @@ function saveSetting()
 	formData["rra_dataset"] = String($form["rra_dataset"].map(function(){return $(this).val();}).get());
 	formData["rrd_size"] = $form["rrd_size"].val();
 	
-	
-	// jugaad
-	if($.trim($form["desc"].val()) == "")
-	{
-		$.prompt("Graph Description can't leave empty.",{prefix:'jqismooth'});
-		return false;
-	}
-	else if($.trim($form["unit"].val()) == "")
-	{
-		$.prompt("Unit can't leave empty.",{prefix:'jqismooth'});
-		return false;
-	}
-	else if($.trim($form["total_rra"].val()) == "")
-	{
-		$.prompt("Total Archive can't leave empty.",{prefix:'jqismooth'});
-		return false;
-	}
-	else if(parseInt($form["total_rra"].val()) <= 0)
-	{
-		$.prompt("Total Archive can't be zero or less then zero.",{prefix:'jqismooth'});
-		return false;
-	}
-	var isDatasetValid = true;
-	$form["rra_dataset"].each(function(){
-		if($(this).val() == "" || parseInt($(this).val()) <= 0)
-		{
-			isDatasetValid = false
-			return false;
-		}
-	});
-	if(isDatasetValid == false)
-	{
-		$.prompt("Total Dataset can't be zero or empty.",{prefix:'jqismooth'});
-		return false;
-	}
-	// jugaad end
 	spinStart($spinLoading,$spinMainLoading);
 	$.ajax({
 		type:"get",
@@ -1049,10 +945,10 @@ function saveSetting()
 					$().toastmessage('showErrorToast', messages[result.msg]);
 				}
 			}
-			//updateCurrentObject(formData);
 			isSaveSetting = true;
 		},
 		error:function(){
+			//$.prompt(messages["raMacError"],{prefix:'jqismooth'});
 			$().toastmessage('showErrorToast', messages["unknownError"]);
 		},
 		complete:function(){
@@ -1060,80 +956,6 @@ function saveSetting()
 		}
 	});
 	//dontSaveSetting();
-}
-function updateCurrentObject(formData)
-{
-	var formData = {};
-	formData["device_type"] = hostObj["device_type"];
-	formData["graph_key"]=$form["name"].val();
-	formData["name"]=$form["name"].find("option:selected").text()
-	formData["desc"]=$form["desc"].val();
-	formData["is_localhost"]=$form["is_localhost"].attr("checked") == true ? 1 : 0;
-	formData["is_snmp"]=$form["is_snmp"].val();
-	formData["oid_table"]=$form["oid_table"].val();
-	var rowIndexArr = $form["row_index"].map(function(){return $(this).val();}).get();
-	formData["row_index"] = String(rowIndexArr.getUnique());
-	var columnIndexArr = $form["column_index"].map(function(){return $(this).val();}).get();
-	formData["column_index"] = String(columnIndexArr.getUnique());
-	formData["ds_name"] = String($form["ds_name"].map(function(){return $(this).val();}).get());
-	formData["ds_type"] = $form["ds_type"].val();
-	formData["ds_heartbeat"] = $form["ds_heartbeat"].val();
-	
-	formData["ds_lower_limit"] = $form["ds_lower_limit"].val();
-	formData["ds_upper_limit"] = $form["ds_upper_limit"].val();
-	formData["unit"] = $form["unit"].val();
-	
-	
-	formData["rrd_file_name"] = $form["rrd_file_name"].val();
-	formData["timestamp"] = $form["timestamp"].val();
-	
-	formData["show_ds"] = $form["show_ds"].val();
-	formData["dyn_ds_name"] = $form["dyn_ds_name"].attr("checked") == true ? "True": "False";
-	
-	formData["get_dyn_name"] = $form["get_dyn_name"].val();
-	formData["unreachable_value"] = $form["unreachable_value"].val();
-	formData["rrd_step"] = $form["rrd_step"].val();
-	formData["rra_cf"] = String($form["rra_cf"].map(function(){return $(this).val();}).get());
-	formData["rra_dataset"] = String($form["rra_dataset"].map(function(){return $(this).val();}).get());
-	formData["rrd_size"] = $form["rrd_size"].val();
-	
-	
-	// jugaad
-	if($.trim($form["desc"].val()) == "")
-	{
-		$.prompt("Graph Description can't leave empty.",{prefix:'jqismooth'});
-		return false;
-	}
-	else if($.trim($form["unit"].val()) == "")
-	{
-		$.prompt("Unit can't leave empty.",{prefix:'jqismooth'});
-		return false;
-	}
-	else if($.trim($form["total_rra"].val()) == "")
-	{
-		$.prompt("Total Archive can't leave empty.",{prefix:'jqismooth'});
-		return false;
-	}
-	else if(parseInt($form["total_rra"].val()) <= 0)
-	{
-		$.prompt("Total Archive can't be zero or less then zero.",{prefix:'jqismooth'});
-		return false;
-	}
-	var isDatasetValid = true;
-	$form["rra_dataset"].each(function(){
-		if($(this).val() == "" || parseInt($(this).val()) <= 0)
-		{
-			isDatasetValid = false
-			return false;
-		}
-	});
-	if(isDatasetValid == false)
-	{
-		$.prompt("Total Dataset can't be zero or empty.",{prefix:'jqismooth'});
-		return false;
-	}
-
-	
 }
 function loadDefaultSetting()
 {

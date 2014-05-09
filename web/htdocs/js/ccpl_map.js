@@ -506,15 +506,15 @@ $.fn.showNMSDetails = function(nmsDetails) {
 		var isDrag;
 		for(var i=0;i<node.length;i++)	{
 			if (node[i].device_type.toLowerCase().indexOf('odu16')>=0 || node[i].device_type.toLowerCase().indexOf('odu100')>=0)
-				icon = (node[i].type == "host") ? ((node[i].state == "d") ? "images/device2.png" : "images/device6.png" ) : "images/site.png";
+				icon = (node[i].type == "host") ? ((node[i].state == "d") ? "images/Odown.png" : "images/odu-0.png" ) : "images/site.png";
 			else if (node[i].device_type.toLowerCase().indexOf('idu4')>=0)
-				icon = (node[i].type == "host") ? ((node[i].state == "d") ? "images/device2.png" : "images/device6.png" ) : "images/site.png";
+				icon = (node[i].type == "host") ? ((node[i].state == "d") ? "images/Idown.png" : "images/idu-0.png" ) : "images/site.png";
 			else if (node[i].device_type.toLowerCase().indexOf('swt')>=0)
-				icon = (node[i].type == "host") ? ((node[i].state == "d") ? "images/device2.png" : "images/device6.png" ) : "images/site.png";
+				icon = (node[i].type == "host") ? ((node[i].state == "d") ? "images/Sdown.png" : "images/switch-0.png" ) : "images/site.png";
 			else if (node[i].device_type.toLowerCase().indexOf('ap25')>=0)
-				icon = (node[i].type == "host") ? ((node[i].state == "d") ? "images/device2.png" : "images/device6.png" ) : "images/site.png";
+				icon = (node[i].type == "host") ? ((node[i].state == "d") ? "images/ap3.png.png" : "images/ap0.png" ) : "images/site.png";
 			else
-				icon = (node[i].type == "host") ? ((node[i].state == "d") ? "images/device2.png" : "images/device6.png" ) : "images/site.png";
+				icon = (node[i].type == "host") ? ((node[i].state == "d") ? "images/Udown.png" : "images/unknown-0.png" ) : "images/site.png";
 			isDrag = (node[i].lck && node[i].lck == "t") ? false : true; 
 			var marker = new google.maps.Marker({
 				

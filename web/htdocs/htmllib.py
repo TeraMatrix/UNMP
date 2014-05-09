@@ -24,20 +24,11 @@
 # to the Free Software Foundation, Inc., 51 Franklin St,  Fifth Floor,
 # Boston, MA 02110-1301 USA.
 
-import time
-import cgi
-import config
-import os
-import defaults
-import pwd
-import urllib
+import time, cgi, config, os, defaults, pwd, urllib
 from lib import *
 from sidebar import sidebar_head
 from unmp_config import SystemConfig
-import __builtin__
 
-# "blue" or "red" theme
-__builtin__.theme = "red"
 # Python 2.3 does not have 'set' in normal namespace.
 # But it can be imported from 'sets'
 try:
@@ -47,46 +38,46 @@ except NameError:
 
 # Sidebar snapin Added By Yogesh Kumar
 sidedar_snapins_category = {
-    "home": [
-        "main"
-    ],
-    "inventory": [
-        "manage_host",
-        "manage_hostgroup",
-        "discovery",
-        "manage_service",
-        "ap_listing",
-        "idu_listing",
-        "odu_listing",
-        "odu_dashboard",
-        "odu100_common_dashboard",
-        "odu_scheduling",
-        "googlemap",
-        "circle_graph",
-        "status_snmptt",
-        "alarm_mapping",
-        "manage_events",
-        "manage_logs",
-        "manage_user",
-        "manage_group",
-        "manage_login",
-        "sp_status_profiling"
-    ],
-    "reports": [
-        "main_report",
-        "analyzed_report",
-        "history_report",
-        "main_report_ap25",
-        "main_report_idu4",
-        "main_report_odu16",
-        "main_report_odu100",
-        "trapreport"
-    ],
-    "settings": [
-        "daemons_controller",
-        "manage_license",
-        "user_settings"
-    ]
+	"home":[
+		"main"
+	],
+	"inventory":[
+		"manage_host",
+		"manage_hostgroup",
+		"discovery",
+		"manage_service",
+		"ap_listing",
+		"idu_listing",
+		"odu_listing",
+		"odu_dashboard",
+		"odu100_common_dashboard",
+		"odu_scheduling",
+		"googlemap",
+		"circle_graph",
+		"status_snmptt",
+		"alarm_mapping",
+		"manage_events",
+		"manage_logs",
+		"manage_user",
+		"manage_group",
+		"manage_login",
+		"sp_status_profiling"
+	],
+	"reports":[
+		"main_report",
+		"analyzed_report",
+		"history_report",
+		"main_report_ap25",
+		"main_report_idu4",
+		"main_report_odu16",
+		"main_report_odu100",
+		"trapreport"
+	],
+	"settings":[
+		"daemons_controller",
+		"manage_license",
+		"user_settings"
+	]
 }
 
 sidebar_snapins = {}
@@ -97,8 +88,7 @@ for fn in os.listdir(snapins_dir):
     if fn.endswith(".py"):
         execfile(snapins_dir + "/" + fn)
 if defaults.omd_root:
-    local_snapins_dir = defaults.omd_root + \
-        "/local/share/check_mk/web/plugins/sidebar"
+    local_snapins_dir = defaults.omd_root + "/local/share/check_mk/web/plugins/sidebar"
     if os.path.exists(local_snapins_dir):
         for fn in os.listdir(local_snapins_dir):
             if fn.endswith(".py"):
@@ -108,10 +98,9 @@ if defaults.omd_root:
 config.declare_permission_section("sidesnap", "Sidebar snapins")
 for name, snapin in sidebar_snapins.items():
     config.declare_permission("sidesnap.%s" % name,
-                              snapin["title"],
-                              "",
-                              snapin["allowed"])
-
+        snapin["title"],
+        "",
+        snapin["allowed"])
 
 def link(text, target):
     # Convert relative links into absolute links. We have three kinds
@@ -123,37 +112,31 @@ def link(text, target):
         target = defaults.url_prefix + "check_mk/" + target
     return "<a target=\"main\" class=link href=\"%s\">%s</a>" % (target, attrencode(text))
 
-
 def bulletlink(text, target):
     return "<li class=sidebar>" + link(text, target) + "</li>\n"
 
-
-def render_snapin(html, snapin_list, selected_link):
+def render_snapin(html,snapin_list,selected_link):
     state = "closed"
     first_snapin = ""
     remain_snapin = ""
-    snapin_list = ["Nagios", "reports", "views", "Alarm", "Inventory",
-                   "Settings", "NetworkMaps", "user_management", "schedule", "Listing"]
     if len(snapin_list) == 0:
         for name in sidebar_snapins:
-            snapin = sidebar_snapins.get(name)
+            snapin = sidebar_snapins.get(name) 
             if config.role in snapin["allowed"]:
                 snapin_links = ""
                 try:
                     snapin_links = snapin["render"]()
                 except Exception, e:
                     snapin_links = "Links are not defined"
-
+                
                 if selected_link != "" and snapin_links.find(selected_link) != -1:
                     first_snapin += "<div id=\"snapin_container_%s\" class=\"snapin\">\n" % name
                     style = ""
                     headclass = "open"
                     first_snapin += '<div class="head %s" >' % headclass
-                    first_snapin += "<b class=\"heading\" >%s</b>" % snapin[
-                        "title"]
+                    first_snapin += "<b class=\"heading\" >%s</b>" % snapin["title"]
                     first_snapin += "</div>"
-                    first_snapin += "<div id=\"snapin_%s\" class=\"content\"%s>\n" % (
-                        name, style)
+                    first_snapin += "<div id=\"snapin_%s\" class=\"content\"%s>\n" % (name, style)
                     first_snapin += snapin_links
                     first_snapin += '</div></div>'
                 else:
@@ -161,34 +144,30 @@ def render_snapin(html, snapin_list, selected_link):
                     style = ' style=\"display:none\"'
                     headclass = "closed"
                     remain_snapin += '<div class="head %s" >' % headclass
-                    remain_snapin += "<b class=\"heading\" >%s</b>" % snapin[
-                        "title"]
+                    remain_snapin += "<b class=\"heading\" >%s</b>" % snapin["title"]
                     remain_snapin += "</div>"
-                    remain_snapin += "<div id=\"snapin_%s\" class=\"content\"%s>\n" % (
-                        name, style)
+                    remain_snapin += "<div id=\"snapin_%s\" class=\"content\"%s>\n" % (name, style)
                     remain_snapin += snapin_links
                     remain_snapin += '</div></div>'
     else:
         for name in sidebar_snapins:
             if name in snapin_list:
-                snapin = sidebar_snapins.get(name)
+                snapin = sidebar_snapins.get(name) 
                 if config.role in snapin["allowed"]:
                     snapin_links = ""
                     try:
                         snapin_links = snapin["render"]()
                     except Exception, e:
                         snapin_links = "Links are not defined"
-
+                
                     if selected_link != "" and snapin_links.find(selected_link) != -1:
                         first_snapin += "<div id=\"snapin_container_%s\" class=\"snapin\">\n" % name
                         style = ""
                         headclass = "closed"
                         first_snapin += '<div class="head %s" >' % headclass
-                        first_snapin += "<b class=\"heading\">%s</b>" % snapin[
-                            "title"]
+                        first_snapin += "<b class=\"heading\">%s</b>" % snapin["title"]
                         first_snapin += "</div>"
-                        first_snapin += "<div id=\"snapin_%s\" class=\"content\"%s>\n" % (
-                            name, style)
+                        first_snapin += "<div id=\"snapin_%s\" class=\"content\"%s>\n" % (name, style)
                         first_snapin += snapin_links
                         first_snapin += '</div></div>'
                     else:
@@ -196,41 +175,34 @@ def render_snapin(html, snapin_list, selected_link):
                         style = ' style=\"display:none\"'
                         headclass = "closed"
                         remain_snapin += '<div class="head %s" >' % headclass
-                        remain_snapin += "<b class=\"heading\">%s</b>" % snapin[
-                            "title"]
+                        remain_snapin += "<b class=\"heading\">%s</b>" % snapin["title"]
                         remain_snapin += "</div>"
-                        remain_snapin += "<div id=\"snapin_%s\" class=\"content\"%s>\n" % (
-                            name, style)
+                        remain_snapin += "<div id=\"snapin_%s\" class=\"content\"%s>\n" % (name, style)
                         remain_snapin += snapin_links
                         remain_snapin += '</div></div>'
-    html.write("<input type='hidden' id='selected_link' value='%s'/>" %
-               selected_link)
+    html.write("<input type='hidden' id='selected_link' value='%s'/>" % selected_link)
     html.write(first_snapin)
     html.write(remain_snapin)
 
-
-def create_side_bar(html, snapin_list, selected_link):
+def create_side_bar(html,snapin_list,selected_link):
     html.write('<div id="side_content" aa="%s">' % len(snapin_list))
-    render_snapin(html, snapin_list, selected_link)
+    render_snapin(html,snapin_list,selected_link)
     html.write('</div>')
-
 
 def snapin_exception(e):
     if config.debug:
         raise
     else:
         html.write("<div class=snapinexception>\n"
-                   "<h2>Error</h2>\n"
-                   "<p>%s</p></div>" % e)
-
+                "<h2>Error</h2>\n"
+                "<p>%s</p></div>" % e)
+  
 # End Sidebar snapin Added By Yogesh Kumar
 
 company = SystemConfig.get_company_details()
 about_us = SystemConfig.get_system_about_us()
 
 # Information about uri
-
-
 class InvalidUserInput(Exception):
     def __init__(self, varname, text):
         self.varname = varname
@@ -253,12 +225,12 @@ class uriinfo:
     def makeuri(self, addvars):
         return self.req.myfile + ".py?" + urlencode_vars(self.req.vars.items() + addvars)
 
+
     # Liste von Hidden-Felder erzeugen aus aktueller URI
     def hiddenfields(self, omit=[]):
-        return ''.join(['<input type=hidden name="%s" value="%s">\n' % i
-                        for i in self.req.vars.items()
-                        if i[0] not in omit])
-
+        return ''.join([ '<input type=hidden name="%s" value="%s">\n' % i \
+                         for i in self.req.vars.items() \
+                         if i[0] not in omit ])
 
 def attrencode(value):
     if type(value) in [str, unicode]:
@@ -267,24 +239,21 @@ def attrencode(value):
         return cgi.escape(str(value), True)
 
 # This function returns a str object, never unicode!
-
-
 def urlencode_vars(vars):
     output = ""
     for varname, value in vars:
         if output != "":
             output += "&"
 
-        if type(value) == int:
-            value = str(value)
+	if type(value) == int:
+	    value = str(value)
         if type(value) == str:
-            value = unicode(value, 'utf-8')
-
+	    value = unicode(value, 'utf-8')
+        
         output += varname
         output += "="
         output += urlencode(value)
     return output
-
 
 def urlencode(value):
     if type(value) == unicode:
@@ -293,22 +262,19 @@ def urlencode(value):
     for c in value:
         if c == " ":
             c = "+"
-        elif ord(c) <= 32 or ord(c) > 127 or c in ['+', '"', "'", "=", "&", ":", "%"]:
+        elif ord(c) <= 32 or ord(c) > 127 or c in [ '+', '"', "'", "=", "&", ":", "%" ]:
             c = "%%%02x" % ord(c)
         ret += c
     return ret
 
-
 def urldecode(value):
     return urllib.unquote_plus(value)
-
 
 def u8(c):
     if ord(c) > 127:
         return "&#%d;" % ord(c)
     else:
         return c
-
 
 def utf8_to_entities(text):
     if type(text) != unicode:
@@ -319,61 +285,57 @@ def utf8_to_entities(text):
     return n
 
 # remove all HTML-tags
-
-
 def strip_tags(ht):
     while True:
         x = ht.find('<')
         if x == -1:
             break
         y = ht.find('>')
-        ht = ht[0:x] + ht[y + 1:]
+        ht = ht[0:x] + ht[y+1:]
     return ht
 
-
 class html:
-    user = ""
-    unmp_menu_link = ["main.py", "manage_host.py", "main_report.py",
-                      "daemons_controller.py"]
-    unmp_menu_name = ["Home", "Inventory", "Reports", "Settings"]
+    user = "";
+    unmp_menu_link = ["main.py","manage_host.py","main_report.py","daemons_controller.py"]
+    unmp_menu_name = ["Home","Inventory","Reports","Settings"]
     unmp_sub_menu_link = [
-        [],
-        [],
-        [],
-        []
-    ]
+                         [],
+                         [],
+                         [],
+                         []
+                         ]
     unmp_sub_menu_name = [
-        [],
-        [],
-        [],
-        []
-    ]
+                         [],
+                         [],
+                         [],
+                         []
+                         ]
 
 # user
-    unmp_menu_link_u = ["main.py", "manage_host.py", "main_report.py"]
-    unmp_menu_name_u = ["Home", "Inventory", "Reports"]
+    unmp_menu_link_u = ["main.py","manage_host.py","main_report.py"]
+    unmp_menu_name_u = ["Home","Inventory","Reports"]
     unmp_sub_menu_link_u = [
-        [],
-        [],
-        []
-    ]
+                         [],
+                         [],
+                         []
+                         ]
     unmp_sub_menu_name_u = [
-        [],
-        [],
-        []
-    ]
+                         [],
+                         [],
+                         []
+                         ]
 
 # guest
-    unmp_menu_link_g = ["main.py", "main_report.py"]
-    unmp_menu_name_g = ["Home", "Reports"]
+    unmp_menu_link_g = ["main.py","main_report.py"]
+    unmp_menu_name_g = ["Home","Reports"]
     unmp_sub_menu_link_g = [
-        [],
-        []
-    ]
+                         [],
+                         []
+                         ]
     unmp_sub_menu_name_g = [
-        [],
-        []
-    ]
+                         [],
+                         []
+                         ]
 
     def __init__(self, req):
         self.req = req
@@ -382,7 +344,7 @@ class html:
         self.global_vars = []
         self.browser_reload = 0
         self.browser_redirect = ''
-        self.events = set([])  # currently used only for sounds
+        self.events = set([]) # currently used only for sounds
         self.req.header_sent = False
         self.output_format = "html"
 
@@ -391,7 +353,7 @@ class html:
 
     def write(self, text):
         if type(text) == unicode:
-            text = text.encode("utf-8")
+	    text = text.encode("utf-8")
         self.req.write(text)
 
     def heading(self, text):
@@ -416,7 +378,7 @@ class html:
         days = hours / 24
         return "%d days" % days
 
-    def begin_form(self, name, action=None, method="GET"):
+    def begin_form(self, name, action = None, method = "GET"):
         self.form_vars = []
         if action == None:
             action = self.req.myfile + ".py"
@@ -424,8 +386,7 @@ class html:
         self.write("<form name=%s class=%s action=\"%s\" method=%s>\n" %
                    (name, name, action, method))
         self.hidden_field("filled_in", "on")
-        self.hidden_field("_transid", str(
-            self.current_transid(self.req.session["username"])))
+        self.hidden_field("_transid", str(self.current_transid(self.req.session["username"])))
         self.hidden_fields(self.global_vars)
         self.form_name = name
 
@@ -444,19 +405,18 @@ class html:
 
     def hidden_field(self, var, value):
         if value != None:
-            self.write("<input type=hidden name=%s value=\"%s\">\n" % (
-                var, attrencode(value)))
+            self.write("<input type=hidden name=%s value=\"%s\">\n" % (var, attrencode(value)))
 
-    def hidden_fields(self, varlist=None, **args):
+    def hidden_fields(self, varlist = None, **args):
         add_action_vars = args.get("add_action_vars", False)
         if varlist != None:
             for var in varlist:
                 value = self.req.vars.get(var, "")
                 self.hidden_field(var, value)
-        else:  # add *all* get variables, that are not set by any input!
+        else: # add *all* get variables, that are not set by any input!
             for var, value in self.req.vars.items():
                 if var not in self.form_vars and \
-                        (var[0] != "_" or add_action_vars):
+                    (var[0] != "_" or add_action_vars):
                     self.hidden_field(var, value)
 
     def add_global_vars(self, varnames):
@@ -464,21 +424,19 @@ class html:
 
     # [('varname1', value1), ('varname2', value2) ]
     def makeuri(self, addvars):
-        vars = [(v, self.var(v))
-                for v in self.req.vars if not v.startswith("_")]
+        vars = [ (v, self.var(v)) for v in self.req.vars if not v.startswith("_") ]
         return self.req.myfile + ".py?" + urlencode_vars(vars + addvars)
 
     def makeuri_contextless(self, vars):
         return self.req.myfile + ".py?" + urlencode_vars(vars)
 
     def button(self, varname, title, cssclass=""):
-        self.write("<input type=submit name=\"%s\" id=\"%s\" value=\"%s\" class=\"%s\">\n" %
-                   (varname, varname, title, cssclass))
+        self.write("<input type=submit name=\"%s\" id=\"%s\" value=\"%s\" class=\"%s\">\n" % \
+                   ( varname, varname, title, cssclass))
 
     def buttonlink(self, href, text, add_transid=False):
         if add_transid:
-            href += "&_transid=%d" % self.current_transid(
-                self.req.session["username"])
+            href += "&_transid=%d" % self.current_transid(self.req.session["username"])
         self.write("<a href=\"%s\" class=button>%s</a>" % (href, text))
 
     def begin_context_buttons(self):
@@ -489,17 +447,15 @@ class html:
 
     def context_button(self, title, url, hot=False):
         self.write('<div class="contextlink%s" ' % (hot and " hot" or ""))
-        self.write(r'''onmouseover='this.style.backgroundImage="url(\"images/contextlink%s_hi.png\")";' ''' % (
-            hot and "_hot" or ""))
-        self.write(r'''onmouseout='this.style.backgroundImage="url(\"images/contextlink%s.png\")";' ''' %
-                   (hot and "_hot" or ""))
+        self.write(r'''onmouseover='this.style.backgroundImage="url(\"images/contextlink%s_hi.png\")";' ''' % (hot and "_hot" or ""))
+        self.write(r'''onmouseout='this.style.backgroundImage="url(\"images/contextlink%s.png\")";' ''' % (hot and "_hot" or ""))
         self.write('>')
         self.write('<a href="%s">%s</a></div>' % (url, title))
 
-    def number_input(self, varname, deflt="", size=8):
+    def number_input(self, varname, deflt = "", size=8):
         self.text_input(varname, str(deflt), "number", size=size)
 
-    def text_input(self, varname, default_value="", cssclass="text", **args):
+    def text_input(self, varname, default_value = "", cssclass = "text", **args):
         if default_value == None:
             default_value = ""
         addprops = ""
@@ -511,8 +467,7 @@ class html:
         html = ""
         if error:
             html = "<x class=inputerror>"
-        html += "<input type=text class=%s value=\"%s\" name=\"%s\"%s>" % (
-            cssclass, attrencode(value), varname, addprops)
+        html += "<input type=text class=%s value=\"%s\" name=\"%s\"%s>" % (cssclass, attrencode(value), varname, addprops)
         if error:
             html += "</x>"
             self.set_focus(varname)
@@ -526,29 +481,26 @@ class html:
 
     def sorted_select(self, varname, options, deflt="", onchange=None):
         # Sort according to display texts, not keys
-        swapped = [(disp, key) for key, disp in options]
+        swapped = [ (disp, key) for key, disp in options ]
         swapped.sort()
-        swapped = [(key, disp) for disp, key in swapped]
+        swapped = [ (key, disp) for disp, key in swapped ]
         html.select(self, varname, swapped, deflt, onchange)
 
     def select(self, varname, options, deflt="", onchange=None):
         current = self.var(varname, deflt)
         onchange_code = onchange and " onchange=\"%s\"" % (onchange) or ""
-        self.write("<select%s name=\"%s\" id=\"%s\" size=\"1\">\n" % (
-            onchange_code, varname, varname))
+        self.write("<select%s name=\"%s\" id=\"%s\" size=\"1\">\n" % (onchange_code, varname, varname))
         for value, text in options:
-            if value == None:
-                value = ""
+            if value == None: value = ""
             sel = value == current and " selected" or ""
-            self.write(
-                "<option value=\"%s\"%s>%s</option>\n" % (value, sel, text))
+            self.write("<option value=\"%s\"%s>%s</option>\n" % (value, sel, text))
         self.write("</select>\n")
         self.form_vars.append(varname)
 
     def radiobutton(self, varname, value, checked, text):
         checked_text = checked and " checked" or ""
         self.write("<input type=radio name=%s value=\"%s\"%s> %s &nbsp; \n" %
-                   (varname, value, checked_text, text))
+                      (varname, value, checked_text, text))
         self.form_vars.append(varname)
 
     def checkbox(self, varname, deflt=""):
@@ -557,8 +509,7 @@ class html:
             checked = " CHECKED"
         else:
             checked = ""
-        self.write("<input type=checkbox name=\"%s\"%s>" % (
-            urlencode(varname), checked))
+        self.write("<input type=checkbox name=\"%s\"%s>" % (urlencode(varname), checked))
         self.form_vars.append(varname)
 
     def datetime_input(self, varname, default_value):
@@ -620,9 +571,9 @@ class html:
             if m < 0 or m > 59 or h < 0:
                 raise Exception()
         except:
-            raise MKUserError(
-                varname, "Please enter the time in the format HH:MM")
+            raise MKUserError(varname, "Please enter the time in the format HH:MM")
         return m * 60 + h * 3600
+
 
     def html_head(self, title):
         if not self.req.header_sent:
@@ -630,14 +581,13 @@ class html:
                 u'''<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
                 <html><head>
                 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-            <title>''')
+                <title>''')
             self.req.write(title.encode("utf-8"))
             self.req.write('''</title>
                 <link rel="stylesheet" type="text/css" href="check_mk.css">
 		<link rel="stylesheet" type="text/css" href="check_mk.css">''')
             if config.custom_style_sheet:
-                self.req.write('                <link rel="stylesheet" type="text/css" href="%s">' %
-                               config.custom_style_sheet)
+               self.req.write('                <link rel="stylesheet" type="text/css" href="%s">' % config.custom_style_sheet)
             self.req.write('''
                 <script type='text/javascript' src='js/check_mk.js'></script>
                 <script type='text/javascript' src='js/hover.js'></script>
@@ -646,10 +596,10 @@ class html:
             if self.browser_reload != 0:
                 if self.browser_redirect != '':
                     self.req.write("<script type=\"text/javascript\">setReload(%s, '%s')</script>\n" %
-                                   (self.browser_reload, self.browser_redirect))
+                                                                  (self.browser_reload, self.browser_redirect))
                 else:
-                    self.req.write("<script type=\"text/javascript\">setReload(%s)</script>\n" %
-                                   self.browser_reload)
+                    self.req.write("<script type=\"text/javascript\">setReload(%s)</script>\n" % self.browser_reload)
+
 
             self.req.write("</head>\n")
             self.req.header_sent = True
@@ -661,7 +611,7 @@ class html:
         self.browser_reload = secs
 
     def set_browser_redirect(self, secs, url):
-        self.browser_reload = secs
+        self.browser_reload   = secs
         self.browser_redirect = url
 
     def header(self, title=''):
@@ -678,6 +628,7 @@ class html:
         else:
             login_text = "not logged in"
 
+
     # Edit By Yogesh Kumar
     def page_head(self, title):
         if type(self.req.session["username"]) == str:
@@ -690,23 +641,22 @@ class html:
                    (title, login_text, time.strftime("%H:%M")))
         self.write("<hr class=header>\n")
         self.write("</body></html>")
-
-    def new_html_head(self, title, css_list=[], javascript_list=[]):
+    
+    def new_html_head(self, title,css_list=[],javascript_list=[]):
         if not self.req.header_sent:
             self.req.write(
                 u'''<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
                 <html><head>
                 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-                <meta http-equiv="Cache-Control" content="no-cache"/>
-                <meta http-equiv="PRAGMA" content="no-cache"/>
-                <meta http-equiv="expires" content="0"/>
-            <title>''')
+		<meta http-equiv="Cache-Control" content="no-cache"/>
+		<meta http-equiv="PRAGMA" content="no-cache"/>
+		<meta http-equiv="expires" content="0"/>
+                <title>''')
             self.req.write(title.encode("utf-8"))
-
             self.req.write('''</title>
-		<link rel="stylesheet" type="text/css" href="css/{0}/example.css"/>
+		<link rel="stylesheet" type="text/css" href="css/example.css"/>
 		<link rel="stylesheet" type="text/css" href="css/colorbox.css"/>
-		<link rel="stylesheet" type="text/css" href="css/{0}/impromptu.css"/>
+		<link rel="stylesheet" type="text/css" href="css/impromptu.css"/>
 		<link rel="stylesheet" type="text/css" href="css/toastmessage.css"/>
 		<!--[if IE]>
 		       <link rel="stylesheet" type="text/css" href="css/ie_example.css"/>
@@ -715,17 +665,13 @@ class html:
 		       <link rel="stylesheet" type="text/css" href="css/ie8.css"/>
 		<![endif]-->
 		<!--[if IE 7]>
-		       <link rel="stylesheet" type="text/css" href="css/{0}/ie7.css"/>
+		       <link rel="stylesheet" type="text/css" href="css/ie7.css"/>
 		<![endif]-->
-		'''.format(theme))
+		''')
             for css in css_list:
-                if css in ["css/demo_table_jui.css", "css/jquery-ui-1.8.4.custom.css", "css/sidepanel.css"]:
-                    css = css.replace("/", "/" + theme + "/")
-                self.req.write(
-                    '<link rel="stylesheet" type="text/css" href="' + css + '"></link>')
+                self.req.write('<link rel="stylesheet" type="text/css" href="' + css + '"></link>')
             if config.custom_style_sheet:
-                self.req.write('<link rel="stylesheet" type="text/css" href="%s"></link>' %
-                               config.custom_style_sheet)
+                self.req.write('<link rel="stylesheet" type="text/css" href="%s"></link>' % config.custom_style_sheet)
             self.req.write('''
                 <script type='text/javascript' src='js/check_mk.js'></script>
                 <script type='text/javascript' src='js/hover.js'></script>
@@ -741,36 +687,34 @@ class html:
                 <script type='text/javascript' src='js/common.js'></script>
             ''')
             for js in javascript_list:
-                self.req.write(
-                    '<script type="text/javascript" src="' + js + '"></script>')
+                self.req.write('<script type="text/javascript" src="' + js + '"></script>')
 
             if self.browser_reload != 0:
                 if self.browser_redirect != '':
                     self.req.write("<script type=\"text/javascript\">setReload(%s, '%s')</script>\n" %
-                                   (self.browser_reload, self.browser_redirect))
+                                                                  (self.browser_reload, self.browser_redirect))
                 else:
-                    self.req.write("<script type=\"text/javascript\">setReload(%s)</script>\n" %
-                                   self.browser_reload)
+                    self.req.write("<script type=\"text/javascript\">setReload(%s)</script>\n" % self.browser_reload)
+
 
             self.req.write("</head>\n")
             self.req.header_sent = True
 
-    def new_top_heading(self, title, selected_link="", image_btn="", snapin_list=[]):
+    def new_top_heading(self, title,selected_link = "",image_btn = "",snapin_list=[]):
         rl = config.role
         if self.req.session["group"].lower() == "superadmin":
-            login_text = "<img style=\"width:16px;height:16px;\" src=\"images/new_icons/user.png\" alt=\"\" title=\"User\"/><span><b>%s</b> (%s)</span>" % (
-                self.req.session["username"], "SuperAdmin")
-        else:
-            login_text = "<img style=\"width:16px;height:16px;\" src=\"images/new_icons/user.png\" alt=\"\" title=\"User\"/><span><b>%s</b> (%s)</span>" % (
-                self.req.session["username"], rl.title())
+            login_text = "<img style=\"width:16px;height:16px;\" src=\"images/new_icons/user.png\" alt=\"\" title=\"User\"/><span><b>%s</b> (%s)</span>" % (self.req.session["username"], "SuperAdmin")
+        else:                            
+            login_text = "<img style=\"width:16px;height:16px;\" src=\"images/new_icons/user.png\" alt=\"\" title=\"User\"/><span><b>%s</b> (%s)</span>" % (self.req.session["username"], rl.title())
+
 
 #		<div id="page_title">\
 #			<span> </span>\
 #		</div>\
-        # spin loading
-        self.req.write(
-            "<div id=\"main_loading\" class=\"main_loading\"></div><div class=\"spin-loading\" id=\"spin_loading\"></div>")
 
+        # spin loading
+        self.req.write("<div id=\"main_loading\" class=\"main_loading\"></div><div class=\"spin-loading\" id=\"spin_loading\"></div>")
+        
         # header menu and sub menu
         menu = ""
         sub_menu = ""
@@ -778,51 +722,49 @@ class html:
         div_id = ""
 
         if rl == "user":
-            self.unmp_menu_link = self.unmp_menu_link_u
-            self.unmp_sub_menu_link = self.unmp_sub_menu_link_u
-            self.unmp_sub_menu_name = self.unmp_sub_menu_name_u
-            self.unmp_menu_name = self.unmp_menu_name_u
+              self.unmp_menu_link = self.unmp_menu_link_u
+              self.unmp_sub_menu_link = self.unmp_sub_menu_link_u
+              self.unmp_sub_menu_name = self.unmp_sub_menu_name_u
+              self.unmp_menu_name = self.unmp_menu_name_u
 
         elif rl == "guest":
-            self.unmp_menu_link = self.unmp_menu_link_g
-            self.unmp_sub_menu_link = self.unmp_sub_menu_link_g
-            self.unmp_sub_menu_name = self.unmp_sub_menu_name_g
-            self.unmp_menu_name = self.unmp_menu_name_g
+              self.unmp_menu_link = self.unmp_menu_link_g
+              self.unmp_sub_menu_link = self.unmp_sub_menu_link_g
+              self.unmp_sub_menu_name = self.unmp_sub_menu_name_g
+              self.unmp_menu_name = self.unmp_menu_name_g
 
-        for menu_link_i in range(len(self.unmp_menu_link) - 1, -1, -1):
+        for menu_link_i in range(len(self.unmp_menu_link)-1,-1,-1):
             active_menu = ""
             active_sub_menu = ""
             sub_menu_ = ""
             active_css = " style=\"display:none;\""
-            for sub_menu_link_i in range(0, len(self.unmp_sub_menu_link[menu_link_i])):
+            for sub_menu_link_i in range(0,len(self.unmp_sub_menu_link[menu_link_i])):
                 active_sub_menu = ""
                 if selected_link == self.unmp_sub_menu_link[menu_link_i][sub_menu_link_i]:
                     active_menu = " active"
                     active_sub_menu = " menu-link-active"
                     active_css = ""
-                sub_menu_ += '<a href="%s" class=\"menu-link%s\">%s</a>' % (
-                    self.unmp_sub_menu_link[menu_link_i][sub_menu_link_i], active_sub_menu, self.unmp_sub_menu_name[menu_link_i][sub_menu_link_i])
-            div_id_ = self.unmp_menu_link[menu_link_i].split("#")
-            if len(div_id_) > 1:
+                sub_menu_ += '<a href="%s" class=\"menu-link%s\">%s</a>' % (self.unmp_sub_menu_link[menu_link_i][sub_menu_link_i],active_sub_menu,self.unmp_sub_menu_name[menu_link_i][sub_menu_link_i])
+            div_id_ = self.unmp_menu_link[menu_link_i].split("#")     
+            if len(div_id_) >1:
                 div_id = div_id_[1]
             else:
                 div_id = div_id_[0]
             if selected_link == self.unmp_menu_link[menu_link_i]:
                 active_menu = " active"
                 active_css = ""
-
-            sub_menu_ = "<div class=\"header2_menu_div\" id=\"%s\"%s>" % (
-                div_id, active_css) + sub_menu_ + "</div>"
+                
+            sub_menu_ = "<div class=\"header2_menu_div\" id=\"%s\"%s>" %(div_id,active_css) + sub_menu_ + "</div>"
             sub_menu = sub_menu + sub_menu_
             # new logic for selected menu
-            if sidedar_snapins_category[self.unmp_menu_name[menu_link_i].lower()].count(str(selected_link).split(".py")[0]) > 0:
+            if sidedar_snapins_category[self.unmp_menu_name[menu_link_i].lower()].count(str(selected_link).split(".py")[0])>0:
                 active_menu = " active"
             else:
                 active_menu = ""
             # end new logic for selected menu
             menu += '<div class="icon%s">\
                 <a href="%s">%s</a>\
-            </div>' % (active_menu, self.unmp_menu_link[menu_link_i], self.unmp_menu_name[menu_link_i])
+            </div>' % (active_menu, self.unmp_menu_link[menu_link_i],self.unmp_menu_name[menu_link_i])
         # page header 1 and Menu
         self.req.write('\
     <div id="page_header">\
@@ -831,8 +773,8 @@ class html:
             <div id=\"tactical_view\"></div>\
             %s\
         </div>\
-    </div>' % (company["website"], company["name"], menu))
-
+    </div>' % (company["website"],company["name"],menu))
+        
         self.req.write('\
     <div id="header2">\
         %s\
@@ -848,7 +790,7 @@ class html:
                 <img src="images/new_icons/bell.png" class=\"n-tip-image\" style=\"width:16px;margin:8px;\" original-title="Alerts/Notifications">\
             </div>\
             <div class="header-icon">\
-                <img src="images/%s/wrench.png" class=\"n-tip-image\" style=\"width:16px;margin:8px;\" original-title="User Settings">\
+                <img src="images/new_icons/wrench.png" class=\"n-tip-image\" style=\"width:16px;margin:8px;\" original-title="User Settings">\
             </div>\
         </div>\
         <div id="login_user">%s</div>\
@@ -856,24 +798,24 @@ class html:
     <div class=\"sub-sub-menu\" style=\"right:auto;\" id=\"ubr_sub_menu\"><a href=\"manage_crc_phy_report.py\">CRC-PHY Error</a><a href=\"manage_rssi_report.py\">RSSI</a><a href=\"manage_network_usage_report.py\">Network Usage</a></div>\
     <div class=\"sub-sub-menu\" style=\"right:auto;\" id=\"ubre_sub_menu\"><a href=\"ubre_manage_crc_phy_report.py\">CRC-PHY Error</a><a href=\"ubre_manage_rssi_report.py\">RSSI</a><a href=\"ubre_manage_network_usage_report.py\">Network Usage</a></div>\
     <div class=\"sub-sub-menu\" style=\"right:auto;\" id=\"idu_sub_menu\"><a href=\"#\">TDMO IP</a><a href=\"#\">Port Statistic</a><a href=\"#\">Network Usage</a></div>\
-' % (sub_menu, theme, login_text)
+' % (sub_menu,login_text)
         )
-
+        
         self.req.write('\
 	<div id="header3">\
 		<div id="header3_text">%s</div>\
 		<div class="header-icon">\
-			<img class=\"n-tip-image\" src="images/%s/info.png" id=\"page_tip\" name=\"page_tip\" style=\"width:16px;height:16px;margin:6px 20px 6px 10px;\" original-title="Page Tip">\
+			<img class=\"n-tip-image\" src="images/new_icons/info.png" id=\"page_tip\" name=\"page_tip\" style=\"width:16px;height:16px;margin:6px 20px 6px 10px;\" original-title="Page Tip">\
 		</div>\
 		%s\
 	</div>\
-        ' % (title, theme, image_btn))
+        ' % (title,image_btn))
         self.req.write('\
 	<div id=\"container\">\
 		<div id=\"container_nav\">')
-        create_side_bar(self.req, snapin_list, selected_link)
-        #  <div id=\"dashboard_submenu\" rel=\"main\">\
-        #      <ul>\
+	create_side_bar(self.req,snapin_list,selected_link)
+	#  <div id=\"dashboard_submenu\" rel=\"main\">\
+	#      <ul>\
         #          <li><a href=\"localhost_dashboard.py\">UNMP System</a></li>\
 #		  <li><a href=\"odu100_common_dashboard.py?device_type=odu100\">UBRe Dashboard</a></li>\
 #		  <li><a href=\"odu_dashboard.py?device_type=odu16\">UBR Dashboard</a></li>\
@@ -924,33 +866,29 @@ class html:
 #		<li><a href="manage_license.py">License</a></li>\
 #	     </ul>\
 #	  </div>\
-        self.req.write('</div>\
+	self.req.write('</div>\
 	<div id=\"container_body\">\
         ')
 
-    def new_header(self, title='', selected_link='', image_btn='', css_list=[], javascript_list=[], snapin_list=[]):
+    def new_header(self,title='',selected_link='',image_btn='',css_list=[],javascript_list=[],snapin_list=[]):
         if self.output_format == "html":
             if not self.req.header_sent:
-                self.new_html_head(title, css_list, javascript_list)
+                self.new_html_head(title,css_list,javascript_list)
                 self.write("<body>")
                 self.req.header_sent = True
-                self.new_top_heading(
-                    title, selected_link, image_btn, snapin_list)
-
-    def new_sidebar_header(self, title='', css_list=[], javascript_list=[], company_website='', company_name=''):
-        self.new_html_head(title, css_list, javascript_list)
+                self.new_top_heading(title,selected_link,image_btn,snapin_list)
+                
+    def new_sidebar_header(self,title='',css_list=[],javascript_list=[],company_website='',company_name=''):
+        self.new_html_head(title,css_list,javascript_list)
         self.req.write("<body>")
         # spin loading
-        self.req.write(
-            "<div id=\"main_loading\" class=\"main_loading\"></div><div class=\"spin-loading\" id=\"spin_loading\"></div>")
+        self.req.write("<div id=\"main_loading\" class=\"main_loading\"></div><div class=\"spin-loading\" id=\"spin_loading\"></div>")
         logo = '<div id="logo"><a target="main" href="main.py">codescape</a></div>'
         if company_website != '' and company_name != '':
-            logo = '<div id="logo"><a target="main" href="%s">%s</a></div>' % (
-                company_website, company_name)
-        if theme == "red":
-            self.req.write('<div id="page_header">%s</div>' % logo)
-            self.req.write('<div id="header2"></div>')
-
+            logo = '<div id="logo"><a target="main" href="%s">%s</a></div>' % (company_website,company_name)
+        self.req.write('<div id="page_header">%s</div>' % logo)
+        self.req.write('<div id="header2"></div>')
+                
     def new_bottom_footer(self):
         self.req.write('</div>\n')
         self.req.write('</div>\n')
@@ -962,7 +900,7 @@ class html:
                 <a style="display:none;" class="head-link" href="#">System Log</a>\
                 <a style="display:none;" class="head-link" href="#">Traps</a>\
                 <div class="header-icon">\
-                    <img id="close_events_logs_box" src="images/{0}/error.png" class=\"s-tip-image\" style=\"width:16px;margin:6px 8px;\" original-title="Close"/>\
+                    <img id="close_events_logs_box" src="images/new_icons/error.png" class=\"s-tip-image\" style=\"width:16px;margin:6px 8px;\" original-title="Close"/>\
                 </div>\
             </div>\
 		    <div id="body">\
@@ -971,16 +909,15 @@ class html:
 			    </form>\
 		    </div>\
        	    </div>\
-        '.format(theme))
+        ')
         self.req.write('<div id=\"footer\">\
             <div id=\"version_no\" style=\"float:left;margin:10px;color:#FFF;\">%s</div>\
             <div id=\"footer_div\">\
                 <div class="footer-icon">\
-                    <img id="toggle_events_logs_box" src="images/%s/round_plus.png" class=\"s-tip-image\" style=\"width:16px;margin:6px 8px;\" original-title="Logs"/>\
+                    <img id="toggle_events_logs_box" src="images/new_icons/round_plus.png" class=\"s-tip-image\" style=\"width:16px;margin:6px 8px;\" original-title="Logs"/>\
                 </div>\
             </div>\
-        </div><div style="clear:both;"></div>' % (about_us["version"], theme))
-
+        </div><div style="clear:both;"></div>' % about_us["version"])
     def new_body_end(self):
         self.req.write("</body></html>\n")
 
@@ -989,15 +926,14 @@ class html:
             self.new_bottom_footer()
             self.new_body_end()
 
-    def new_sidebar(self, title='', option_list='', css_list=[], javascript_list=[], company_website='', company_name=''):
-        self.new_sidebar_header(title, css_list, javascript_list,
-                                "http://www.shyamtelecom.com", "SHYAM")
+    def new_sidebar(self,title='',option_list='',css_list=[],javascript_list=[],company_website='',company_name=''):
+        self.new_sidebar_header(title,css_list,javascript_list,"http://www.shyamtelecom.com","SHYAM");
         self.req.write(option_list)
         self.req.write('<div id=\"footer\">\
             <div id=\"footer_div\">\
             </div>\
         </body></html>')
-
+        
     # End Edit By Yogesh Kumar
     def body_start(self, title=''):
         self.html_head(title)
@@ -1034,6 +970,7 @@ class html:
             self.bottom_footer()
             self.body_end()
 
+
     def show_error(self, msg):
         if self.output_format == "html":
             self.write("<div class=error>%s</div>\n" % msg)
@@ -1060,11 +997,11 @@ class html:
 
     def confirm(self, msg):
         if self.var("_do_actions") == "No":
-            return  # user has pressed "No"
+            return # user has pressed "No"
         if not self.has_var("_do_confirm"):
             self.write("<div class=really>%s" % msg)
             self.begin_form("confirm")
-            self.hidden_fields(add_action_vars=True)
+            self.hidden_fields(add_action_vars = True)
             self.button("_do_confirm", "Yes!", "really")
             self.button("_do_actions", "No", "")
             self.end_form()
@@ -1074,7 +1011,7 @@ class html:
             return self.check_transaction()
 
     def do_actions(self):
-        return self.var("_do_actions") not in ["", None, "No"]
+        return self.var("_do_actions") not in [ "", None, "No" ]
 
     def set_focus(self, varname):
         self.focus_object = (self.form_name, varname)
@@ -1082,13 +1019,13 @@ class html:
     def has_var(self, varname):
         return varname in self.req.vars
 
-    def var(self, varname, deflt=None):
+    def var(self, varname, deflt = None):
         return self.req.vars.get(varname, deflt)
 
-    def multivar(self, varname, deflt=None):
+    def multivar(self, varname, deflt = None):
         return self.req.multivars.get(varname, deflt)
 
-    def var_utf8(self, varname, deflt=None):
+    def var_utf8(self, varname, deflt = None):
         return unicode(self.req.vars.get(varname, deflt), "utf-8")
 
     def set_var(self, varname, value):
@@ -1101,7 +1038,7 @@ class html:
         self.write("<script language=\"javascript\">\n%s\n</script>\n" % code)
 
     def reload_sidebar(self):
-        self.javascript("parent.frames[0].location.reload();")
+        self.javascript("parent.frames[0].location.reload();");
 
     # Get next transaction id for that user
     def current_transid(self, username):
@@ -1147,13 +1084,13 @@ class html:
 
     def play_sound(self, url):
         self.write('<object type="audio/x-wav" data="%s" height="0" width="0">'
-                   '<param name="filename" value="%s">'
-                   '<param name="autostart" value="true"><param name="playcount" value="1"></object>' % (url, url))
+                  '<param name="filename" value="%s">'
+                  '<param name="autostart" value="true"><param name="playcount" value="1"></object>' % (url, url))
         if config.debug:
             self.write("Booom (%s)" % url)
 
     def apache_user(self):
-        return pwd.getpwuid(os.getuid())[0]
+        return pwd.getpwuid( os.getuid() )[ 0 ]
 
     def omd_mode(self):
         # Load mod_python env into regular environment

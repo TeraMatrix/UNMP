@@ -26,10 +26,6 @@ function deviceList()
 	{
 	        parent.main.location = "odu_listing.py?ip_address=" + ip_address + "&mac_address=" + mac_address + "&device_type=" + selected_device_type;
 	}
-        else if(device_type == "ccu")
-        {
-	       parent.main.location = "ccu_listing.py?ip_address=" + ip_address + "&mac_address=" + mac_address + "&device_type=" + selected_device_type;
-        }
 	else
 	{
 	        // this ajax return the call to function get_device_data_table which is in odu_view and pass the ipaddress,macaddress,devicetype with url  

@@ -1,18 +1,18 @@
-<?xml version="1.0" ?><unmp>
-	<aboutus installation_datetime="22-09-2012 13:30:00" version="Version 1.9.2"/>
-	<mysql driver="mysql" hostname="localhost" password="root" port="3306" schema="nms" username="root"/>
+<?xml version="1.0"?>
+<unmp>
+	<aboutus version="Version 1.7.5" installation_datetime="16-11-2011 13:30:00"/>
+	<mysql hostname="localhost" username="root" password="root" schema="nms" driver="mysql" port="3306"/>
 	<dashboard refresh="5"/>
-	<page refresh="1" start="main.py" title="Unified Network Management Platform"/>
-	<company name="SHYAM" website="main.py"/>
-	<googlemap latitude="26.05" longitude="75.05"/>
-	<http password="password" port="" username="admin"/>
-	<snmp getsetport="161" readcomm="public" trapport="162" version="2c" writecomm="private"/>
-	<host priority="normal" state="e"/>
-	<smtp password="unknown" server="smtp.gmail.com" username="mailsender@codescape.in"/>
-	<hostconfig check_command="check-host-alive" use_template="generic-host"/>
-	<serviceconfig max_check_attempts="1" normal_check_interval="5" retry_check_interval="5" use_template="generic-service"/>
-	<pingdiscovery ip_base="192.168.1" ip_base_end="40" ip_base_start="20" service="2" timeout="10"/>
-	<snmpdiscovery community="public" ip_base="192.168.1" ip_base_end="40" ip_base_start="20" port="161" service="2" timeout="10" version="2c"/>
-	<upnpdiscovery service="2" timeout="10"/>
-	<password_expiry enable="True" expiry_age="45" warning_time="5" auto_password="False"/>
+	<page start="main.py" refresh="1" title="Network Management System" />
+	<company name="SHYAM" website="main.py" />
+	<googlemap longitude="75.05" latitude="26.05"/>
+	<http username="admin" password="password" port=""/>
+	<snmp readcomm="public" writecomm="private" getsetport="161" trapport="162" version="2c"/>
+	<host state="e" priority="normal" />
+	<smtp username="mailsender@codescape.in" password="unknown" server="smtp.gmail.com"/>
+	<hostconfig use_template="generic-host" check_command="check-host-alive"/>
+	<serviceconfig use_template="generic-service" max_check_attempts="1" normal_check_interval="5" retry_check_interval="5"/>
+	<pingdiscovery ip_base="192.168.1" ip_base_start="20" ip_base_end="40" timeout="10" service="2"/>
+	<snmpdiscovery ip_base="192.168.1" ip_base_start="20" ip_base_end="40" timeout="10" service="2" community="public" port="161" version="2c"/>
+	<upnpdiscovery timeout="10" service="2"/>
 </unmp>

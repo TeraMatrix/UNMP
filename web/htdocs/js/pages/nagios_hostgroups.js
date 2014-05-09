@@ -160,29 +160,19 @@ function edit_hostgroup_service(hostgroup_id,hostgroup_alias)
 		height:"300px",
 		overlayClose:false,
 		onComplete:function(){
-			$("#snmp_uptime_service_time").multiselect({selectedList: 1,multiple:false,noneSelectedText: 'Select Time',minWidth:50});
-			$("#snmp_uptime_hosts_list").multiselect({selectedList: 1,multiple:true,noneSelectedText: 'Select Hosts',minWidth:50}).multiselectfilter();
-			$("#snmp_uptime_hosts_list").multiselect("checkAll");
-			
 			$("#statistics_service_time").multiselect({selectedList: 1,multiple:false,noneSelectedText: 'Select Time',minWidth:50});
-			$("#statistics_service_hosts_list").multiselect({selectedList: 1,multiple:true,noneSelectedText: 'Select Hosts',minWidth:50}).multiselectfilter();
-			$("#statistics_service_hosts_list").multiselect("checkAll");
-			
-			
+			$("#hosts_list").multiselect({selectedList: 1,multiple:true,noneSelectedText: 'Select Hosts',minWidth:50}).multiselectfilter();
+			$("#hosts_list").multiselect("checkAll");
 			function applyChanges()
 			{
-				if( ($("#statistics_service_hosts_list").val()!="None" && $("#statistics_service_hosts_list").val()!=null) || ($("#snmp_uptime_hosts_list").val()!="None" && $("#snmp_uptime_hosts_list").val()!=null) )
+				if($("#hosts_list").val()!="None" && $("#hosts_list").val()!=null)
 				{
-
-				hosts_snmp_uptime_array=$("#snmp_uptime_hosts_list").val();
-				selected_snmp_uptime_time=$("#snmp_uptime_service_time").val();
-				
-				hosts_service_hosts_array=$("#statistics_service_hosts_list").val();
-				selected_service_hosts_time=$("#statistics_service_time").val();
+				hosts_array=$("#hosts_list").val();
+				selected_time=$("#statistics_service_time").val();
 				spinStart($spinLoading,$spinMainLoading);
 				$.ajax({
 					type:"get",
-					url:"apply_nagios_hostgroup_changes.py?hostgroup_id="+hostgroup_id+"&hosts_snmp_uptime_array="+hosts_snmp_uptime_array+"&selected_snmp_uptime_time="+selected_snmp_uptime_time+"&hosts_service_hosts_array="+hosts_service_hosts_array+"&selected_service_hosts_time="+selected_service_hosts_time,
+					url:"apply_nagios_hostgroup_changes.py?hostgroup_id="+hostgroup_id+"&hosts_list="+hosts_array+"&time_service="+selected_time,
 					cache:false,
 					success:function(result){
 							result=eval("("+result+")");
@@ -190,56 +180,11 @@ function edit_hostgroup_service(hostgroup_id,hostgroup_alias)
 							{
 								spinStop($spinLoading,$spinMainLoading);
 								$().toastmessage('showSuccessToast', "Servcies modified Successfully.");
-								if(hosts_service_hosts_array!=null)
+								for(var i=0;i<hosts_array.length;i++)
 								{
-									for(var i=0;i<hosts_service_hosts_array.length;i++)
+									if($("#service_box_"+hosts_array[i]).html()!="-")
 									{
-										//if($("#service_box_"+hosts_service_hosts_array[i]+"_statistics").html()!="-")
-										//{
-											if(selected_service_hosts_time==518400)
-											{
-												$("#service_box_"+hosts_service_hosts_array[i]+"_statistics").html("Y");
-											}
-											else if(selected_service_hosts_time==43200)
-											{
-												$("#service_box_"+hosts_service_hosts_array[i]+"_statistics").html("M");
-											}
-											else if(selected_service_hosts_time==1440)
-											{
-												$("#service_box_"+hosts_service_hosts_array[i]+"_statistics").html("D");
-											}
-											else
-											{
-												$("#service_box_"+hosts_service_hosts_array[i]+"_statistics").html(selected_service_hosts_time);
-											}
-											//$("#service_box_"+hosts_service_hosts_array[i]+"_statistics").html(selected_service_hosts_time);
-										//}
-									}
-								}
-								if(hosts_snmp_uptime_array)
-								{
-									for(var i=0;i<hosts_snmp_uptime_array.length;i++)
-									{
-										//if($("#service_box_"+hosts_snmp_uptime_array[i]+"_uptime").html()!="-")
-										//{
-											//$("#service_box_"+hosts_snmp_uptime_array[i]+"_uptime").html(selected_snmp_uptime_time);
-											if(selected_snmp_uptime_time==518400)
-											{
-												$("#service_box_"+hosts_snmp_uptime_array[i]+"_uptime").html("Y");
-											}
-											else if(selected_snmp_uptime_time==43200)
-											{
-												$("#service_box_"+hosts_snmp_uptime_array[i]+"_uptime").html("M");
-											}
-											else if(selected_snmp_uptime_time==1440)
-											{
-												$("#service_box_"+hosts_snmp_uptime_array[i]+"_uptime").html("D");
-											}
-											else
-											{
-												$("#service_box_"+hosts_snmp_uptime_array[i]+"_uptime").html(selected_snmp_uptime_time);
-											}
-										//}
+										$("#service_box_"+hosts_array[i]).html(selected_time);
 									}
 								}
 								$.colorbox.close();

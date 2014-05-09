@@ -90,14 +90,12 @@ def firmware_file_upload_ap_odu(ip_address,file_path,hostname_db,username_db,pas
 	        c = pycurl.Curl()
 	        b = StringIO.StringIO()
 	        file =file_path
-	        #print file_path
+	        print file_path
 	        values = [('image' , (c.FORM_FILE,  file))]
 	        if device_type=="ap25":
 	            c.setopt(pycurl.URL, "http://%s/cgi-bin/FirmwareUpgrade"%ip_address)
-	        elif device_type=="odu16":
-	            c.setopt(pycurl.URL, "http://%s:5555/cgi-bin/index"%ip_address)
 	        else:
-	            c.setopt(pycurl.URL, "http://%s/cgi-bin/index"%ip_address)
+	            c.setopt(pycurl.URL, "http://%s:5555/cgi-bin/index"%ip_address)
 	        #c.setopt(pycurl.HTTPHEADER, ['Accept: application/json'])http://172.22.0.101/cgi-bin/FirmwareUpgrade
 	        c.setopt(c.HTTPPOST,  values)
 	        c.setopt(pycurl.VERBOSE, 0)

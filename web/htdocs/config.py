@@ -24,19 +24,18 @@
 # to the Free Software Foundation, Inc., 51 Franklin St,  Fifth Floor,
 # Boston, MA 02110-1301 USA.
 
-import os
-import pprint
+import os, pprint
 from lib import *
 import defaults
 import MySQLdb
 from unmp_config import SystemConfig
 
-# admin_users=[]
-# admin_users_pass=[]
-# users=[]
-# user_pass=[]
-# guest_users=[]
-# guest_users_pass=[]
+#admin_users=[]
+#admin_users_pass=[]
+#users=[]
+#user_pass=[]
+#guest_users=[]
+#guest_users_pass=[]
 
 
 # Python 2.3 does not have 'set' in normal namespace.
@@ -56,7 +55,6 @@ except:
     defaults.omd_site = None
     defaults.omd_root = None
 
-
 def load_config():
     # reset settings which can be changed at runtime to
     # default values. Otherwise they stick to their changed
@@ -67,7 +65,7 @@ def load_config():
     global admin_users
     global admin_users_pass
     global users
-
+    
     global user_pass
     global guest_users
     global guest_users_pass
@@ -84,85 +82,86 @@ def load_config():
         execfile(filename, globals(), globals())
         # admin
         # admin
-        query = "SELECT user_name FROM user_login  join (select user_id,group_id from users_groups ) as users_groups on user_login.user_id=users_groups.user_id join (select group_id,group_name,role_id from groups) as groups on  users_groups.group_id=groups.group_id join (select role_id,role_name from roles ) as roles  on roles.role_id=groups.role_id and roles.role_name  like 'Admin' "
+        query="SELECT user_name FROM user_login  join (select user_id,group_id from users_groups ) as users_groups on user_login.user_id=users_groups.user_id join (select group_id,group_name,role_id from groups) as groups on  users_groups.group_id=groups.group_id join (select role_id,role_name from roles ) as roles  on roles.role_id=groups.role_id and roles.role_name  like 'Admin' "
         cursor.execute(query)
-        admin_tuple = cursor.fetchall()
-
-        query = "SELECT password FROM user_login  join (select user_id,group_id from users_groups ) as users_groups on user_login.user_id=users_groups.user_id join (select  group_id,group_name,role_id from groups) as groups on  users_groups.group_id=groups.group_id join (select role_id,role_name from roles )as roles  on 				roles.role_id=groups.role_id and roles.role_name  like 'Admin' "
+        admin_tuple=cursor.fetchall()
+        
+        query="SELECT password FROM user_login  join (select user_id,group_id from users_groups ) as users_groups on user_login.user_id=users_groups.user_id join (select  group_id,group_name,role_id from groups) as groups on  users_groups.group_id=groups.group_id join (select role_id,role_name from roles )as roles  on 				roles.role_id=groups.role_id and roles.role_name  like 'Admin' "
         cursor.execute(query)
-        admin_tuple_pass = cursor.fetchall()
+        admin_tuple_pass=cursor.fetchall()
         # users
-        query = "SELECT user_name FROM user_login  join (select user_id,group_id from users_groups ) as users_groups on user_login.user_id=users_groups.user_id join (select  group_id,group_name,role_id from groups) as groups on  users_groups.group_id=groups.group_id join (select role_id,role_name from roles )as roles  on 				roles.role_id=groups.role_id and roles.role_name  like 'Operator' "
+        query="SELECT user_name FROM user_login  join (select user_id,group_id from users_groups ) as users_groups on user_login.user_id=users_groups.user_id join (select  group_id,group_name,role_id from groups) as groups on  users_groups.group_id=groups.group_id join (select role_id,role_name from roles )as roles  on 				roles.role_id=groups.role_id and roles.role_name  like 'Operator' "
         cursor.execute(query)
-        users_tuple = cursor.fetchall()
-
-        query = "SELECT password FROM user_login  join (select user_id,group_id from users_groups ) as users_groups on user_login.user_id=users_groups.user_id join (select  group_id,group_name,role_id from groups) as groups on  users_groups.group_id=groups.group_id join (select role_id,role_name from roles )as roles  on 				roles.role_id=groups.role_id and roles.role_name  like 'Operator' "
+        users_tuple=cursor.fetchall()
+        
+        query="SELECT password FROM user_login  join (select user_id,group_id from users_groups ) as users_groups on user_login.user_id=users_groups.user_id join (select  group_id,group_name,role_id from groups) as groups on  users_groups.group_id=groups.group_id join (select role_id,role_name from roles )as roles  on 				roles.role_id=groups.role_id and roles.role_name  like 'Operator' "
         cursor.execute(query)
-        users_tuple_pass = cursor.fetchall()
-
+        users_tuple_pass=cursor.fetchall()
+        
         # guest
-        query = "SELECT user_name FROM user_login  join (select user_id,group_id from users_groups ) as users_groups on user_login.user_id=users_groups.user_id join (select group_id,group_name,role_id from groups) as groups on  users_groups.group_id=groups.group_id join (select role_id,role_name from roles )as roles  on  				roles.role_id=groups.role_id and roles.role_name  like 'Guest' "
+        query="SELECT user_name FROM user_login  join (select user_id,group_id from users_groups ) as users_groups on user_login.user_id=users_groups.user_id join (select group_id,group_name,role_id from groups) as groups on  users_groups.group_id=groups.group_id join (select role_id,role_name from roles )as roles  on  				roles.role_id=groups.role_id and roles.role_name  like 'Guest' "
         cursor.execute(query)
-        guest_tuple = cursor.fetchall()
-
-        query = "SELECT user_name FROM user_login  join (select user_id,group_id from users_groups ) as users_groups on user_login.user_id=users_groups.user_id join (select  group_id,group_name,role_id from groups) as groups on  users_groups.group_id=groups.group_id join (select role_id,role_name from roles )as roles  on 			roles.role_id=groups.role_id and roles.role_name  like 'Guest' "
+        guest_tuple=cursor.fetchall()
+        
+        query="SELECT user_name FROM user_login  join (select user_id,group_id from users_groups ) as users_groups on user_login.user_id=users_groups.user_id join (select  group_id,group_name,role_id from groups) as groups on  users_groups.group_id=groups.group_id join (select role_id,role_name from roles )as roles  on 			roles.role_id=groups.role_id and roles.role_name  like 'Guest' "
         cursor.execute(query)
-        guest_tuple_pass = cursor.fetchall()
-
-        admin_users = []
-        admin_users_pass = []
-        users = []
-
-        user_pass = []
-        guest_users = []
-        guest_users_pass = []
+        guest_tuple_pass=cursor.fetchall()
+        
+        admin_users=[]
+        admin_users_pass=[]
+        users=[]
+        
+        user_pass=[]
+        guest_users=[]
+        guest_users_pass=[]
 # users
         if len(admin_tuple) < 1:
             admin_users = []
         else:
-            admin_users = list(sum(admin_tuple, ()))
-
+            admin_users=list(sum(admin_tuple,()))
+            
         if len(users_tuple) < 1:
             users = []
         else:
-            users = list(sum(users_tuple, ()))
-
+            users =list(sum(users_tuple,()))
+        
         if len(guest_tuple) < 1:
             guest_users = []
         else:
-            guest_users = list(sum(guest_tuple, ()))
-
-# password
+            guest_users=list(sum(guest_tuple,()))    
+            
+# password            
         if len(admin_tuple_pass) < 1:
             admin_users_pass = []
         else:
-            admin_users_pass = list(sum(admin_tuple_pass, ()))
-
+            admin_users_pass=list(sum(admin_tuple_pass,()))
+            
         if len(users_tuple_pass) < 1:
             users_pass = []
         else:
-            users_pass = list(sum(users_tuple_pass, ()))
-
+            users_pass =list(sum(users_tuple_pass,()))
+        
         if len(guest_tuple_pass) < 1:
             guest_users_pass = []
         else:
-            guest_users_pass = list(sum(guest_tuple_pass, ()))
-
-        users = list(sum(users_tuple, ()))
-        guest_users = list(sum(guest_tuple, ()))
-
-        admin_users_pass = list(sum(admin_tuple_pass, ()))
-        users_pass = list(sum(users_tuple_pass, ()))
-        guest_users_pass = list(sum(guest_tuple_pass, ()))
-
+            guest_users_pass=list(sum(guest_tuple_pass,()))    
+                     
+        users=list(sum(users_tuple,()))
+        guest_users=list(sum(guest_tuple,()))
+        
+        admin_users_pass=list(sum(admin_tuple_pass,()))
+        users_pass=list(sum(users_tuple_pass,()))
+        guest_users_pass=list(sum(guest_tuple_pass,()))
+        
 #        exec(str(admin_users),globals(),globals())
 #        exec(str(admin_users_pass),globals(),globals())
 #        exec(str(users),globals(),globals())
 #        exec(str(users_pass),globals(),globals())
 #        exec(str(guest_users),globals(),globals())
 #        exec(str(guest_users_pass),globals(),globals())
-
-        db.close()
+        
+        
+        db.close() 
     except Exception, e:
         global user
         global role
@@ -170,9 +169,8 @@ def load_config():
         user = "nobody"
         role = None
         user_permissions = []
-        raise MKConfigError(
-            "Cannot read configuration file %s: %s:" % (filename, e))
-
+        raise MKConfigError("Cannot read configuration file %s: %s:" % (filename, e))
+    
 # -------------------------------------------------------------------
 #    ____                     _         _
 #   |  _ \ ___ _ __ _ __ ___ (_)___ ___(_) ___  _ __  ___
@@ -182,98 +180,96 @@ def load_config():
 #
 # -------------------------------------------------------------------
 
-roles = ["user", "admin", "guest"]
+roles = [ "user", "admin", "guest" ]
 
 # define default values for all settings
-debug = False
-users = []
-admin_users = []
-guest_users = []
+debug             = False
+users             = []
+admin_users       = []
+guest_users       = []
 default_user_role = "user"
 
 # Global table of available permissions. Plugins may add their own
 # permissions
-permissions_by_name = {}
+permissions_by_name  = {}
 permissions_by_order = []
-permission_sections = {}
-
+permission_sections  = {}
 
 def declare_permission(name, title, description, defaults):
-    perm = {"name": name, "title": title, "description":
-            description, "defaults": defaults}
+    perm = { "name" : name, "title" : title, "description" : description, "defaults" : defaults }
     permissions_by_name[name] = perm
     permissions_by_order.append(perm)
-
 
 def declare_permission_section(name, title):
     permission_sections[name] = title
 
 declare_permission("use",
-                   "Use Multisite at all",
-                   "Users without this permission are not let in at all",
-                   ["admin", "user", "guest"])
+     "Use Multisite at all",
+     "Users without this permission are not let in at all",
+     [ "admin", "user", "guest" ])
 
 declare_permission("edit_permissions",
-                   "Configure permissions",
-                   "Configure, which user role has which permissions",
-                   ["admin"])
+     "Configure permissions",
+     "Configure, which user role has which permissions",
+     [ "admin" ])
 
 declare_permission("manage_user",
-                   "Configure permissions",
-                   "Configure, which user role has which permissions",
-                   ["admin"])
+     "Configure permissions",
+     "Configure, which user role has which permissions",
+     [ "admin" ])
 
 declare_permission("see_all",
-                   "See all Nagios objects",
-                   "See all objects regardless of contacts and contact groups. If combined<br>with 'perform commands' then commands may be done on all objects.",
-                   ["admin", "guest", "user"])
+     "See all Nagios objects",
+     "See all objects regardless of contacts and contact groups. If combined<br>with 'perform commands' then commands may be done on all objects.",
+     [ "admin", "guest","user" ])
 
 declare_permission("edit_views",
-                   "Edit views",
-                   "Create own views and customize builtin views",
-                   ["admin", "user"])
+     "Edit views",
+     "Create own views and customize builtin views",
+     [ "admin", "user" ])
 
 declare_permission("publish_views",
-                   "Publish views",
-                   "Make views visible and usable for other users",
-                   ["admin", "user"])
+     "Publish views",
+     "Make views visible and usable for other users",
+     [ "admin", "user" ])
 
 declare_permission("force_views",
-                   "Modify builtin views",
-                   "Make own published views override builtin views for all users",
-                   ["admin"])
+     "Modify builtin views",
+     "Make own published views override builtin views for all users",
+     [ "admin" ])
 
 declare_permission("view_option_columns",
-                   "Change view display columns",
-                   "Interactively change the number of columns being displayed by a view<br>(does not edit or customize the view)",
-                   ["admin", "user", "guest"])
+     "Change view display columns",
+     "Interactively change the number of columns being displayed by a view<br>(does not edit or customize the view)",
+     [ "admin", "user", "guest" ])
 
 declare_permission("view_option_refresh",
-                   "Change view display refresh",
-                   "Interactively change the automatic browser reload of a view being displayed<br>(does not edit or customize the view)",
-                   ["admin", "user"])
+     "Change view display refresh",
+     "Interactively change the automatic browser reload of a view being displayed<br>(does not edit or customize the view)",
+     [ "admin", "user" ])
 
 declare_permission("painter_options",
-                   "Change column display options",
-                   "Some of the display columns offer options for customizing their output.<br/>For example time stamp columns can be displayed "
-                   "absolute, relative or in a mixed style. This permission allows the user to modify display options",
-                   ["admin", "user", "guest"])
+     "Change column display options",
+     "Some of the display columns offer options for customizing their output.<br/>For example time stamp columns can be displayed "
+     "absolute, relative or in a mixed style. This permission allows the user to modify display options",
+     [ "admin", "user", "guest" ])
 
 declare_permission("act",
-                   "Perform commands",
-                   "Allows users to perform Nagios commands. If now futher permissions are granted,<br>actions can only be done one objects one is a contact for",
-                   ["admin", "user", "guest"])
+     "Perform commands",
+     "Allows users to perform Nagios commands. If now futher permissions are granted,<br>actions can only be done one objects one is a contact for",
+     [ "admin", "user","guest" ])
 
 
 declare_permission("see_sidebar",
-                   "Use Check_MK sidebar",
-                   "Without this permission the Check_MK sidebar will be invisible",
-                   ["admin", "user", "guest"])
+     "Use Check_MK sidebar",
+     "Without this permission the Check_MK sidebar will be invisible",
+     [ "admin", "user", "guest" ])
 
 declare_permission("configure_sidebar",
-                   "Configure sidebar",
-                   "This allows the user to add, move and remove sidebar snapins.",
-                   ["admin", "user", "guest"])
+     "Configure sidebar",
+     "This allows the user to add, move and remove sidebar snapins.",
+     [ "admin", "user","guest" ])
+
 
 
 # Compute permissions for HTTP user and set in
@@ -296,8 +292,8 @@ def login(u):
         all += users
     if all.count(user) > 1:
         raise MKConfigError("Your username (<b>%s</b>) is listed more than once "
-                            "in multisite.mk. This is not allowed. "
-                            "Please check your config." % user)
+                "in multisite.mk. This is not allowed. "
+                "Please check your config." % user)
 
     role = role_of_user(user)
 
@@ -317,7 +313,6 @@ def login(u):
 
     read_site_config()
 
-
 def save_site_config():
     save_user_file("siteconfig", user_siteconf)
 
@@ -332,19 +327,17 @@ def role_of_user(u):
     else:
         return default_user_role
 
-
 def may(permname):
     # handle case where declare_permission is done after login
     # and permname also not contained in save configuration
     if permname not in permissions:
         perm = permissions_by_name.get(permname)
-        if not perm:  # Object does not exists, e.g. sidesnap.multisite if not is_multisite()
+        if not perm: # Object does not exists, e.g. sidesnap.multisite if not is_multisite()
             return False
         if role in perm["defaults"]:
             user_permissions.add(permname)
 
     return permname in user_permissions
-
 
 def user_may(u, permname):
     role = role_of_user(u)
@@ -352,10 +345,9 @@ def user_may(u, permname):
     if roles == None:
         perm = permissions_by_name.get(permname)
         if not perm:
-            return False  # permission target does not exist
+            return False # permission target does not exist
         roles = perm["defaults"]
     return role in roles
-
 
 def load_permissions():
     global permissions
@@ -365,37 +357,29 @@ def load_permissions():
     else:
         permissions = {}
 
-
 def save_permissions(permissions):
     write_settings_file(config_dir + "/permissions.mk", permissions)
 
 # this file edit by yogesh kumar
-
-
 def get_user_list():
     all = admin_users + guest_users
     if users != None:
         all += users
     return all
 
-
 def get_role_list():
-    return roles
-
+    return roles;
 
 def check_user(user_name):
     all = get_user_list()
     return all.count(user_name)
 
-
 def add_user(user_name, user_role):
     addUserInFile(user_name, user_role)
-
 
 def delete_user(user_name):
     user_role = role_of_user(user_name)
     deleteUserInFile(user_name, user_role)
-
 
 def update_user(user_name, user_role):
     if role_of_user(user_name) != user_role:
@@ -411,7 +395,7 @@ def addUserInFile(user_name, user_role):
     startText = ("# " + user_role)
     endText = ("# end-" + user_role)
     for line in fr:
-        if line.strip() == startText.strip() and check_writer == 1:
+        if line.strip() == startText.strip()  and check_writer == 1:
             check_writer = 0
             roleString = line
             if(user_role == "admin"):
@@ -469,7 +453,6 @@ def addUserInFile(user_name, user_role):
         fw.write(line)
     fr.close()
     fw.close()
-
 
 def deleteUserInFile(user_name, user_role):
     sitename = __file__.split("/")[3]
@@ -538,17 +521,14 @@ def deleteUserInFile(user_name, user_role):
 #
 # -------------------------------------------------------------------
 
-sites = {"": {}}
+sites = { "": {} }
 use_siteicons = False
-
 
 def sitenames():
     return sites.keys()
 
-
 def allsites():
-    return dict([(name, site(name)) for name in sitenames()])
-
+    return dict( [(name, site(name)) for name in sitenames()])
 
 def site(name):
     s = sites.get(name, {})
@@ -559,15 +539,13 @@ def site(name):
     if "socket" not in s:
         s["socket"] = "unix:" + defaults.livestatus_unix_socket
     if "url_prefix" not in s:
-        s["url_prefix"] = "../"  # relative URL from /check_mk/
+        s["url_prefix"] = "../" # relative URL from /check_mk/
     return s
-
 
 def site_is_local(name):
     s = sites.get(name, {})
     sock = s.get("socket")
     return not sock or sock.startswith("unix:")
-
 
 def is_multisite():
     if len(sites) > 1:
@@ -575,7 +553,6 @@ def is_multisite():
     # Also use Multisite mode if the one and only site is not local
     sitename = sites.keys()[0]
     return not site_is_local(sitename)
-
 
 def read_site_config():
     global user_siteconf
@@ -589,11 +566,11 @@ def read_site_config():
 #
 
 sidebar = \
-    [('tactical_overview', 'open'),
-     ('search', 'open'),
-     ('views', 'open'),
-     ('bookmarks', 'open'),
-     ('master_control', 'closed')]
+[('tactical_overview', 'open'),
+ ('search', 'open'),
+ ('views', 'open'),
+ ('bookmarks', 'open'),
+ ('master_control', 'closed')]
 
 #    _     _           _ _
 #   | |   (_)_ __ ___ (_) |_ ___
@@ -606,14 +583,14 @@ soft_query_limit = 1000
 hard_query_limit = 5000
 
 declare_permission("ignore_soft_limit",
-                   "Ignore soft query limit",
-                   "Allows to ignore the soft query limit imposed upon the number of datasets returned by a query",
-                   ["admin", "user"])
+     "Ignore soft query limit",
+     "Allows to ignore the soft query limit imposed upon the number of datasets returned by a query",
+     [ "admin", "user" ])
 
 declare_permission("ignore_hard_limit",
-                   "Ignore hard query limit",
-                   "Allows to ignore the hard query limit imposed upon the number of datasets returned by a query",
-                   ["admin"])
+     "Ignore hard query limit",
+     "Allows to ignore the hard query limit imposed upon the number of datasets returned by a query",
+     [ "admin" ])
 
 #    ____                        _
 #   / ___|  ___  _   _ _ __   __| |___
@@ -632,18 +609,16 @@ sounds = []
 #      \_/  |_|\___| \_/\_/    \___/| .__/ \__|_|\___/|_| |_|___/
 #                                   |_|
 
-# view_option_refreshes = [ 30, 60, 90, 0 ]
-# view_option_columns   = [ 1, 2, 3, 4, 5, 6, 8 ]
+#view_option_refreshes = [ 30, 60, 90, 0 ]
+#view_option_columns   = [ 1, 2, 3, 4, 5, 6, 8 ]
 
-view_option_refreshes = []
-view_option_columns = []
+view_option_refreshes = [ ]
+view_option_columns   = [ ]
 
 # MISC
-doculink_urlformat = "http://mathias-kettner.de/checkmk_%s.html"
+doculink_urlformat = "http://mathias-kettner.de/checkmk_%s.html";
 
 # Helper functions
-
-
 def load_user_file(name, deflt):
     path = user_confdir + "/" + name + ".mk"
     try:
@@ -651,14 +626,13 @@ def load_user_file(name, deflt):
     except:
         return deflt
 
-
 def save_user_file(name, content):
     path = user_confdir + "/" + name + ".mk"
     try:
         write_settings_file(path, content)
     except Exception, e:
-        raise MKConfigError("Cannot save %s options for user <b>%s</b> into <b>%s</b>: %s" %
-                            (name, user, path, e))
+        raise MKConfigError("Cannot save %s options for user <b>%s</b> into <b>%s</b>: %s" % \
+                (name, user, path, e))
 
 
 #   ____          _                    _     _       _
@@ -670,12 +644,12 @@ def save_user_file(name, content):
 
 custom_links = {}
 
-#  __     __         _
-#  \ \   / /_ _ _ __(_) ___  _   _ ___
+#  __     __         _                 
+#  \ \   / /_ _ _ __(_) ___  _   _ ___ 
 #   \ \ / / _` | '__| |/ _ \| | | / __|
 #    \ V / (_| | |  | | (_) | |_| \__ \
 #     \_/ \__,_|_|  |_|\___/ \__,_|___/
-#
+#                                      
 
 # Show livestatus errors in multi site setup if some sites are
 # not reachable.
@@ -696,12 +670,12 @@ start_url = "main.py"
 # Timeout for rescheduling of host- and servicechecks
 reschedule_timeout = 10.0
 
-#  __        __   _                      __
+#  __        __   _                      __ 
 #  \ \      / /__| |__   ___ ___  _ __  / _|
-#   \ \ /\ / / _ \ '_ \ / __/ _ \| '_ \| |_
+#   \ \ /\ / / _ \ '_ \ / __/ _ \| '_ \| |_ 
 #    \ V  V /  __/ |_) | (_| (_) | | | |  _|
-#     \_/\_/ \___|_.__/ \___\___/|_| |_|_|
-#
+#     \_/\_/ \___|_.__/ \___\___/|_| |_|_|  
+#                                           
 
 config_files = []
 host_tags = []

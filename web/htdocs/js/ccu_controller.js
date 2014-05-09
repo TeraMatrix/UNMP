@@ -58,7 +58,6 @@ function deviceList()
 						        $('.n-reconcile').tipsy({gravity: 'n'});
 						        $("#filter_mac").val($("input[name='mac_address']").val());
                                                         $("#filter_ip").val($("input[name='ip_address']").val());
-                                                        ccu_reconciliation();
 						        
 					        }
 					        spinStop($spinLoading,$spinMainLoading);
@@ -66,81 +65,6 @@ function deviceList()
 		        });
 		        
         }
-}
-
-
-
-function ccu_reconciliation()
-{
-        $("input[name='ccu_reconcile']").unbind().bind("click",function(){
-        if(reconcileState == 0 || reconcileState == null)
-        {
-	        reconciliationConfirm();       
-        }	
-        else
-        {
-	        $.prompt('Reconciliation is Running.Please Wait',{ buttons:{Ok:true}, prefix:'jqismooth'});
-        }
-});
-}
-
-
-function reconciliationConfirm()
-{
-	if(reconcileState == 0 || reconcileState == null)
-	{
-		$.prompt('Device Configuration data would be Synchronized with the UNMP server Database. \n Click Ok to confirm.',{ 
-		buttons:{Ok:true,Cancel:false}, prefix:'jqismooth',callback:reconciliation});			
-	}
-	else
-	{
-		$.prompt('Reconciliation is Running.Please Wait',{ buttons:{Ok:true}, prefix:'jqismooth'});
-	}
-}
-
-
-function reconciliation(v,m)
-{
-        if(v != undefined && v==true)
-	{
-		spinStart($spinLoading,$spinMainLoading);
-		var host_id = $("input[name='host_id']").val();
-		var device_type_id = $("input[name='device_type']").val();
-		$.ajax({
-	
-		type: "post",
-		url : "ccu_reconciliation.py?host_id=" + host_id +"&device_type_id="+device_type_id,
-		success:function(result){
-						if(parseInt(result.success)==0)
-			                        {
-                                                        json = result.result
-                                                        for(var node in json)
-                                                        {
-                                                                if(parseInt(node)<=35)
-					                        {
-						                        $().toastmessage('showWarningToast',node+"% reconciliation done for device "+json[node][0]+"("+json[node][1]+")"+".Please reconcile the device again");
-					                        }
-					                        else if(parseInt(node)<=90)
-					                        {
-						                        $().toastmessage('showWarningToast',node+"% reconciliation done for device "+json[node][0]+"("+json[node][1]+")"+".Please reconcile the device again");
-					                        }
-					                        else
-					                        {
-						                        $().toastmessage('showSuccessToast',"Reconciliation done successfully for device "+json[node][0]+"("+json[node][1]+")");
-					                        }
-					                        deviceList();
-					                        break;
-				                        }
-			                        }
-			                        else
-			                        {
-			                                $().toastmessage('showErrorToast',result.result);
-			                        }
-						spinStop($spinLoading,$spinMainLoading);
-					}
-
-			});
-	}
 }
 
 function ipSelectMacDeviceType(obj,ipMacVal)
@@ -296,11 +220,10 @@ function CommonSetRequest(formObj,btn)
 		myForm.find("input").show();
 		myForm.find("input.img-submit-button").remove();
 		myForm.find("input.img-done-button").remove();
-		myForm.find("input[id='ccu_retry']").hide();
-		myForm.find("input[id='ccu_cancel']").hide();
-		myForm.find("input[id='ccu_ok']").hide();
-		myForm.find("input[class='ui-disabled']").attr({"disabled":true});
-		myForm.find("input[id='ccu_save']").show();	
+		myForm.find("input[id='id_retry']").hide();
+		myForm.find("input[id='id_cancel']").hide();
+		myForm.find("input[id='id_ok']").hide();
+		myForm.find("input[id='id_save']").show();	
 		spinStop($spinLoading,$spinMainLoading);	
 	}
 	else
@@ -357,11 +280,11 @@ function CommonSetRequest(formObj,btn)
 									imageCreate.val("");
 									inputTextboxName.attr({"disabled":false});
 									selectListName.attr({"disabled":false});
-								//	inputradiobutton.attr({"disabled":false});
-									unSetStatus = 1;
+									inputradiobutton.attr({"disabled":false});
+									unSetStatus = 1
 									if(btnValue=="Save")
 									{
-										imgCount = imgCount+1;
+										imgCount = imgCount+1
 									}
 								}
 								imageCreate.insertAfter(inputTextboxName);
@@ -369,17 +292,17 @@ function CommonSetRequest(formObj,btn)
 							 }
 							if (imgCount >= 1)
 							{
-								myForm.find("input[id='ccu_ok']").hide();
-								myForm.find("input[id='ccu_save']").hide();
-								myForm.find("input[id='ccu_retry']").show();
-								myForm.find("input[id='ccu_cancel']").show();
+								myForm.find("input[id='id_ok']").hide();
+								myForm.find("input[id='id_save']").hide();
+								myForm.find("input[id='id_retry']").show();
+								myForm.find("input[id='id_cancel']").show();
 							}
 							else
 							{
-								myForm.find("input[id='ccu_ok']").show();
-								myForm.find("input[id='ccu_save']").hide();
-								myForm.find("input[id='ccu_retry']").hide();
-								myForm.find("input[id='ccu_cancel']").hide();
+								myForm.find("input[id='id_ok']").show();
+								myForm.find("input[id='id_save']").hide();
+								myForm.find("input[id='id_retry']").hide();
+								myForm.find("input[id='id_cancel']").hide();
 							}
 						}
 						else if(btnValue == "")
@@ -423,17 +346,17 @@ function CommonSetRequest(formObj,btn)
 							}
 							if (imgCount >= 1)
 							{
-								myForm.find("input[id='ccu_ok']").hide();
-								myForm.find("input[id='ccu_save']").hide();
-								myForm.find("input[id='ccu_retry']").show();
-								myForm.find("input[id='ccu_cancel']").show();
+								myForm.find("input[id='id_ok']").hide();
+								myForm.find("input[id='id_save']").hide();
+								myForm.find("input[id='id_retry']").show();
+								myForm.find("input[id='id_cancel']").show();
 							}
 							else
 							{
-								myForm.find("input[id='ccu_ok']").show();
-								myForm.find("input[id='ccu_save']").hide();
-								myForm.find("input[id='ccu_retry']").hide();
-								myForm.find("input[id='ccu_cancel']").hide();
+								myForm.find("input[id='id_ok']").show();
+								myForm.find("input[id='id_save']").hide();
+								myForm.find("input[id='id_retry']").hide();
+								myForm.find("input[id='id_cancel']").hide();
 							}
 							
 						}
@@ -445,10 +368,10 @@ function CommonSetRequest(formObj,btn)
 							myForm.find("select").show();
 							myForm.find("input.img-submit-button").remove();
 							myForm.find("input.img-done-button").remove();
-							myForm.find("input[id='ccu_retry']").hide();
-							myForm.find("input[id='ccu_cancel']").hide();
-							myForm.find("input[id='ccu_ok']").hide();
-							myForm.find("input[id='ccu_save']").show();
+							myForm.find("input[id='id_retry']").hide();
+							myForm.find("input[id='id_cancel']").hide();
+							myForm.find("input[id='id_ok']").hide();
+							myForm.find("input[id='id_save']").show();
 							for(var node in result)
 							{
 								if(node=="success")

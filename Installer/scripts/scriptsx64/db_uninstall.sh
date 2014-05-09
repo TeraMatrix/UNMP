@@ -25,12 +25,6 @@ rpm -ev --nodeps MySQL-shared-compat-5.1.60-1.rhel5.x86_64
 rpm -ev --nodeps MySQL-devel-community-5.1.60-1.rhel5.x86_64
 rpm -ev --nodeps MySQL-client-community-5.1.60-1.rhel5.x86_64
 rpm -ev --nodeps MySQL-server-community-5.1.60-1.rhel5.x86_64
-
-# rpm -ev --nodeps MySQL-shared-compat-5.6.10-1.rhel5
-# rpm -ev --nodeps MySQL-shared-5.6.10-1.rhel5
-# rpm -ev --nodeps MySQL-devel-5.6.10-1.rhel5
-# rpm -ev --nodeps MySQL-client-5.6.10-1.rhel5
-# rpm -ev --nodeps MySQL-server-5.6.10-1.rhel5
-
+rpm -ev --nodeps postgresql-libs-8.1.18-2.el5_4.1.x86_64
 
 

@@ -6,16 +6,15 @@ import time
 class ClientDashboardView(object):
     @staticmethod
     def header_buttons():
-        add_btn = "<div class=\"header-icon\"><img onclick=\"hostInformation();\" class=\"n-tip-image\" src=\"images/{0}/round_plus.png\" id=\"host_info\" style=\"width: 16px; height: 16px; margin: 6px 20px 6px 10px;\" original-title=\"Show Status\"></div>"
-        del_btn = "<div class=\"header-icon\"><img onclick=\"delHost();\" class=\"n-tip-image\" src=\"images/{0}/round_minus.png\" id=\"del_host\" style=\"width: 16px; height: 16px; margin: 6px 20px 6px 10px;\" original-title=\"Delete Host\"></div>".format(
-            theme)
+        add_btn = "<div class=\"header-icon\"><img onclick=\"hostInformation();\" class=\"n-tip-image\" src=\"images/new_icons/round_plus.png\" id=\"host_info\" style=\"width: 16px; height: 16px; margin: 6px 20px 6px 10px;\" original-title=\"Show Status\"></div>"
+        del_btn = "<div class=\"header-icon\"><img onclick=\"delHost();\" class=\"n-tip-image\" src=\"images/new_icons/round_minus.png\" id=\"del_host\" style=\"width: 16px; height: 16px; margin: 6px 20px 6px 10px;\" original-title=\"Delete Host\"></div>"
         header_btn = del_btn + add_btn
         return header_btn
 
     @staticmethod
     def sp_footer_tab(flag):
-        if int(flag) == 0:
-            html_page = '<div id=\"report_button_div\" class=\"form-div-footer\">\
+        if int(flag)==0:
+            html_page='<div id=\"report_button_div\" class=\"form-div-footer\">\
             <table cellspacing="9px" cellpadding="0">\
             <tr>\
             <td style="vertical-align:middle;"><input type=\"radio\" value=\"0\" name=\"option\" id=\"current_rept_div\" class=\"table_option\" width=\"12px\"/></td>\
@@ -34,13 +33,14 @@ class ClientDashboardView(object):
             </div></div>\
             '
         else:
-            html_page = '</div>'
+           html_page='</div>'
         return html_page
 
 #         <td style="text-align:left"><button type=\"submit\" id=\"sp_pdf_report\" class=\"yo-button\" style=\"margin-top:5px;\" onclick="spPDFReportGeneration();"><span class=\"save\">PDF</span></button></td>\
 
+
     @staticmethod
-    def sp_table(mac_address, sp_refresh_time, total_count, path, host_id):
+    def sp_table(mac_address,sp_refresh_time,total_count,path,host_id):
         dash_str = '\
         <input type=\"hidden\" id=\"sp_refresh_time\" name=\"refresh_time\" value=\"%s\" />\
         <input type=\"hidden\" id=\"sp_mac_address\" name=\"mac_address\" value=\"%s\" />\
@@ -57,7 +57,7 @@ class ClientDashboardView(object):
         </div>\
         <div style="position:relative;" id="main_host_info_div">\
         <div id="sp_host_info_div"></div>\
-        <div class=\"header-icon header-tab-button1\"><img onclick=\"hostInformation();\" class=\"n-tip-image\" src=\"images/%s/round_plus.png\" id=\"host_info\" style=\"width: 16px; height: 16px; margin: 6px 20px 6px 5px;\" original-title=\"Show Status\"></div>\
+        <div class=\"header-icon header-tab-button1\"><img onclick=\"hostInformation();\" class=\"n-tip-image\" src=\"images/new_icons/round_plus.png\" id=\"host_info\" style=\"width: 16px; height: 16px; margin: 6px 20px 6px 5px;\" original-title=\"Show Status\"></div>\
         <table class="tt-table" cellspacing="0px" cellpadding="0" width="100%%">\
         <tbody>\
         </tr>\
@@ -85,17 +85,19 @@ class ClientDashboardView(object):
         </td>\
         <tr>\
         </table>\
-        ' % (sp_refresh_time, mac_address, total_count, path, host_id, theme)
+        '% (sp_refresh_time,mac_address,total_count,path,host_id)
         return dash_str
+
+
 
     @staticmethod
     def client_information_view(result):
         # this is common list
-        device_detail = ''
-        if len(result['result']) > 0:
-            result = result['result'][0]
-            device_detail = '<table class="tt-table" cellspacing="0" cellpadding="0" width="100%">'
-            device_detail += '<tbody>\
+        device_detail=''
+        if  len(result['result'])>0: 
+            result=result['result'][0]
+            device_detail='<table class="tt-table" cellspacing="0" cellpadding="0" width="100%">'
+            device_detail+='<tbody>\
                             <tr>\
                             <th class="cell-title" colspan="4">\
                                 Client Status\
@@ -105,42 +107,42 @@ class ClientDashboardView(object):
                             <td class="cell-label">\
                                 AP Alias\
                             </td>\
-                            <td class="cell-info">' + str('--' if result[0] == None or result[0] == ""  else result[0]) + '</td>\
+                            <td class="cell-info">'+str('--' if result[0]==None or result[0]==""  else result[0])+'</td>\
                             <td class="cell-label">\
                                 Client Alias\
                             </td>\
-                            <td class="cell-info">' + str('--' if result[1] == None or result[1] == ""  else result[1]) + '</td>\
+                            <td class="cell-info">'+str('--' if result[1]==None or result[1]==""  else result[1])+'</td>\
                             </tr>\
                             <tr>\
                             <td class="cell-label">\
                                 MAC Address\
                             </td>\
-                            <td class="cell-info">' + str('--' if result[2] == None or result[2] == ""  else result[2]) + '</td>\
+                            <td class="cell-info">'+str('--' if result[2]==None or result[2]==""  else result[2])+'</td>\
                             <td class="cell-label">\
-                                RSSI\
+                                RSL\
                             </td>\
-                            <td class="cell-info">' + str('--' if result[3] == None or result[3] == ""  else result[3]) + '</td>\
+                            <td class="cell-info">'+str('--' if result[3]==None or result[3]==""  else result[3])+'</td>\
                             </tr>\
                             <tr>\
                             <td class="cell-label">\
                                 VAP\
                             </td>\
-                            <td class="cell-info">' + str('--' if result[4] == None or result[4] == ""  else result[4]) + '</td>\
+                            <td class="cell-info">'+str('--' if result[4]==None or result[4]==""  else result[4])+'</td>\
                             <td class="cell-label">\
-                                Total Tx(Mbps)\
+                                Total Tx\
                             </td>\
-                            <td class="cell-info">' + str('--' if result[5] == None or result[5] == "" else result[5]) + '</td>\
+                            <td class="cell-info">'+str('--' if result[5]==None or result[5]=="" else result[5])+'</td>\
                             </tr>\
                             <tr>\
                             <td class="cell-label">\
-                                Total Rx(Mbps)\
+                                Total Rx\
                             </td>\
-                            <td class="cell-info">' + str('--' if result[6] == None or result[6] == ""  else result[6]) + '</td>\
+                            <td class="cell-info">'+str('--' if result[6]==None or result[6]==""  else result[6])+'</td>\
                             </tr>\
                         <tbody></table>'
         else:
-            device_detail = '<table class="tt-table" cellspacing="0" cellpadding="0" width="100%">'
-            device_detail += '<tbody>\
+            device_detail='<table class="tt-table" cellspacing="0" cellpadding="0" width="100%">'
+            device_detail+='<tbody>\
                             <tr>\
                             <th class="cell-title" colspan="4">\
                                 Client Status\
@@ -162,7 +164,7 @@ class ClientDashboardView(object):
                             </td>\
                             <td class="cell-info">--</td>\
                             <td class="cell-label">\
-                                RSSI\
+                                RSL\
                             </td>\
                             <td class="cell-info">--</td>\
                             </tr>\
@@ -172,13 +174,13 @@ class ClientDashboardView(object):
                             </td>\
                             <td class="cell-info">--</td>\
                             <td class="cell-label">\
-                                Total Tx(Mbps)\
+                                Total Tx\
                             </td>\
                             <td class="cell-info">--</td>\
                             </tr>\
 			   <tr>\
                             <td class="cell-label">\
-                                Total Rx(Mbps)\
+                                Total Rx\
                             </td>\
                             <td class="cell-info">--</td>\
                             </tr>\
@@ -187,73 +189,61 @@ class ClientDashboardView(object):
 
     @staticmethod
     def sp_ap_client_table_view(result):
-        Client_table = '<table width="100%" border="0" cellpadding="0" cellspacing="0" class="yo-table">'
-        Client_table += '\
+        Client_table='<table width="100%" border="0" cellpadding="0" cellspacing="0" class="yo-table">'
+        Client_table +='\
 			<colgroup><col style="width:3%;"/><col style="width:11%;"/><col style="width:10%;"/><col style="width:6%;"/><col style="width:6%;"/><col style="width:10%;"/><col style="width:10%;"/><col style="width:10%;"/><col style="width:10%;"/><col style="width:10%;"/>\
   </colgroup>\
         <tr class="yo-table-head">\
             <th >No.</th>\
             <th >Client Alias</th>\
             <th >MAC Adddress</th>\
-            <th >Total Tx(Mbps)</th>\
-            <th >Total Rx(Mbps)</th>\
+            <th >Total Tx</th>\
+            <th >Total Rx</th>\
             <th >First Seen Time</th>\
             <th >First Seen AP</th>\
             <th >Last Seen Time</th>\
             <th >Last Seen AP</th>\
-            <th >Current Client Connectivity status</th>\
+            <th >Current State</th>\
         </tr>'
-        new_result = result['result']
-        count_no = 1
+	new_result=result['result']
+	count_no=1
         for i in new_result:
-            Client_table += '<tr><td>%s</td>' % count_no
-            Client_table += '<td>%s</td>' % (
-                "--" if i[0] == None or i[0] == "" else i[0])
-            Client_table += '<td>%s</td>' % (
-                "--" if i[1] == None or i[1] == "" else i[1])
-            Client_table += '<td>%s</td>' % (
-                "--" if i[2] == None or i[2] == "" else i[2])
-            Client_table += '<td>%s</td>' % (
-                "--" if i[3] == None or i[3] == "" else i[3])
-            Client_table += '<td>%s</td>' % (
-                "--" if i[4] == None or i[4] == "" else i[4])
-            Client_table += '<td>%s</td>' % (
-                "--" if i[5] == None or i[5] == "" else i[5])
-            Client_table += '<td>%s</td>' % (
-                "--" if i[6] == None or i[6] == "" else i[6])
-            Client_table += '<td>%s</td>' % (
-                "--" if i[7] == None or i[7] == "" else i[7])
-            Client_table += '<td>%s</td></tr>' % (
-                "--" if i[8] == None or i[8] == "" else i[8])
-            count_no += 1
-        if len(new_result) < 1:
-            Client_table += '<tr ><td colspan="10"><b>Client Information does not exists.</b></td></tr>'
-        return {'success': 0, 'client_table': Client_table}
+                Client_table+='<tr><td>%s</td>'%count_no
+                Client_table+='<td>%s</td>'%("--" if i[0]==None or i[0]=="" else i[0])
+                Client_table+='<td>%s</td>'%("--" if i[1]==None or i[1]=="" else i[1])
+                Client_table+='<td>%s</td>'%("--" if i[2]==None or i[2]=="" else i[2])
+                Client_table+='<td>%s</td>'%("--" if i[3]==None or i[3]=="" else i[3])
+                Client_table+='<td>%s</td>'%("--" if i[4]==None or i[4]=="" else i[4])
+                Client_table+='<td>%s</td>'%("--" if i[5]==None or i[5]=="" else i[5])
+                Client_table+='<td>%s</td>'%("--" if i[6]==None or i[6]=="" else i[6])
+                Client_table+='<td>%s</td>'%("--" if i[7]==None or i[7]=="" else i[7])
+                Client_table+='<td>%s</td></tr>'%("--" if i[8]==None or i[8]=="" else i[8])
+                count_no+=1
+        if len(new_result)<1:
+            Client_table+='<tr ><td colspan="9"><b>Client Information does not exists.</b></td></tr>'
+        return {'success':0,'client_table':Client_table}
+
 
     @staticmethod
-    def sp_get_graph(selected_columns, non_selected_columns):
+    def sp_get_graph(selected_columns,non_selected_columns):
         liList = ""
-        plusList = ""
-        if(len(non_selected_columns) > 0):
+        plusList=""
+        if(len(non_selected_columns)>0):
             for row in non_selected_columns:
-                plusList += "<li>" + row[0] + "<img src=\"images/add16.png\" class=\"plus plus\" alt=\"+\" title=\"Add\" id=\"" + \
-                    row[1] + "\" name=\"" + row[0] + "\"/></li>"
+                    plusList += "<li>" + row[0] + "<img src=\"images/add16.png\" class=\"plus plus\" alt=\"+\" title=\"Add\" id=\"" + row[1] + "\" name=\"" + row[0] + "\"/></li>"
         minusList = ""
-        sel_col_list = []
+        sel_col_list=[]
         for row in selected_columns:
             sel_col_list.append(row[1])
-            minusList += "<li>" + row[0] + "<img src=\"images/minus16.png\" class=\"minus minus\" alt=\"-\" title=\"Remove\" id=\"" + row[1] + "\" name=\"" + row[
-                0] + "\"/></li>"
-        selectList = ""
+            minusList += "<li>" + row[0] + "<img src=\"images/minus16.png\" class=\"minus minus\" alt=\"-\" title=\"Remove\" id=\"" + row[1] + "\" name=\"" + row[0] + "\"/></li>"
+        selectList=""
         selectList += "<div class=\"multiSelectList\" id=\"multiSelectList\" style=\"margin-left:120px;margin-top:-10px;\">"
-        selectList += "<input type=\"hidden\" id=\"sp\" name=\"sp\" value=\"%s\"/>" % (
-            ",".join(sel_col_list))
+        selectList += "<input type=\"hidden\" id=\"sp\" name=\"sp\" value=\"%s\"/>"%(",".join(sel_col_list))
         selectList += "<input type=\"hidden\" id=\"spTemp\" name=\"spTemp\" />"
         selectList += "<div class=\"selected\">"
-        selectList += "<div class=\"shead\"><span id=\"count\">%s</span><span> Select Graphs</span><a href=\"#\" id=\"rm\">Remove all</a>" % (
-            len(selected_columns))
+        selectList += "<div class=\"shead\"><span id=\"count\">%s</span><span> Select Graphs</span><a href=\"#\" id=\"rm\">Remove all</a>"%(len(selected_columns))
         selectList += "</div>"
-        selectList += "<ul>" + minusList
+        selectList += "<ul>"+minusList 
         selectList += "</ul></div>"
 #        selectList += "</div>"
         selectList += "<div class=\"nonSelected\">"
@@ -264,3 +254,4 @@ class ClientDashboardView(object):
         selectList += "</div>"
         selectList += "</div>"
         return selectList
+    

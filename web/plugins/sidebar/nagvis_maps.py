@@ -30,9 +30,7 @@
 # | Lars Michelsen <lm@mathias-kettner.de>            Copyright 2010 |
 # +------------------------------------------------------------------+
 
-import views
-import defaults
-
+import views, defaults
 
 def render_nagvis_maps():
     nagvis_base_url = '/nagvis'
@@ -41,7 +39,7 @@ def render_nagvis_maps():
     refresh_url = "%s/server/core/ajax_handler.php?mod=Multisite&act=getMaps" % nagvis_base_url
     return refresh_url
 
-# sidebar_snapins["nagvis_maps"] = {
+#sidebar_snapins["nagvis_maps"] = {
 #    "title":       "NagVis Maps",
 #    "description": "List of available NagVis maps. This only works with NagVis 1.5 and above. " \
 #                   "At the moment it is neccessarry to authenticate with NagVis first by opening " \

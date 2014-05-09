@@ -1,12 +1,6 @@
-#!/bin/bash
-
+#!/bin/sh
 
 ######################################################
-#
-#   To be remeber its a bash script not sh
-#   So it should always run as either
-#   # ./install_software  # currently as in UNMP_Linux.mpi
-#   OR # bash install_software
 #
 #	$1	<%InstallDir%>
 #	$2	<%Temp%>
@@ -23,20 +17,12 @@
 #
 ######################################################
 
-# -----------------------------------------------
-# @TODO: Modify install_software, separate
-# 		using functions.
-#	Store mysql packages only once
-# 	currently stores in 2 directory Thirdparty_DB and Thirdparty
-#	license size will be reduced upto 110 MB
-# -----------------------------------------------
-
 echo ""
 echo "Changing Permissions of $1 and $2 to -R 777.."
 echo ""
-chmod -R 777 $1 $2
+chmod -R 777 $1 $2 
 
-if [ "$3" == "UNMP Database" ];
+if [ "$3" == "UNMP Database" ] 
 then
 	echo ""
 	echo "UNMP Database Server is being installed.."
@@ -68,7 +54,7 @@ then
 	echo "Installing MySQL-server-community.."
 	echo ""
 	rpm -Uvh --nodeps MySQL-server-community-5.1.60-1.rhel5.i386.rpm
-
+		
 	echo ""
 	echo "Installing MySQL-client-community.."
 	echo ""
@@ -88,81 +74,21 @@ then
 	echo "Installing MySQL-community-debuginfo.."
 	echo ""
 	rpm -Uvh --nodeps MySQL-community-debuginfo-5.1.60-1.rhel5.i386.rpm
-
-	# ----------------------------------------------------
-	# -------------- for MySQL-5.6 -----------------------
-	# ----------------------------------------------------
-	# echo ""
-	# echo "Removing previously installed mysql client"
-	# echo ""
-	# rpm -ev --nodeps MySQL-client-community-5.1.60-1.rhel5
-
-	# echo ""
-	# echo "Removing previously installed mysql-server.."
-	# echo ""
-	# rpm -ev --nodeps MySQL-server-community-5.1.60-1.rhel5
-	# echo ""
-	# echo "Removing previously installed mysql-debuginfo.."
-	# echo ""
-	# rpm -ev --nodeps MySQL-community-debuginfo-5.1.60-1.rhel5
-
-	# echo ""
-	# echo "Removing previously installed mysql-shared.."
-	# echo ""
-	# rpm -ev --nodeps MySQL-shared-compat-5.1.60-1.rhel5
-
-	# echo ""
-	# echo "Removing previously installed mysql-devel.."
-	# echo ""
-	# rpm -ev --nodeps MySQL-devel-community-5.1.60-1.rhel5
-
-	# echo ""
-	# echo "Installing MySQL-server-community.."
-	# echo ""
-	# rpm -Uvh --nodeps MySQL-server-5.6.10-1.rhel5.i386.rpm
-
-	# echo ""
-	# echo "Installing MySQL-client-community.."
-	# echo ""
-	# rpm -Uvh --nodeps MySQL-client-5.6.10-1.rhel5.i386.rpm
-
-
-	# echo ""
-	# echo "Installing MySQL-devel-community.."
-	# echo ""
-	# rpm -Uvh --nodeps MySQL-devel-5.6.10-1.rhel5.i386.rpm
-
-	# echo ""
-	# echo "Installing MySQL-shared-compat.."
-	# echo ""
-	# rpm -Uvh --nodeps MySQL-shared-compat-5.6.10-1.rhel5.i386.rpm
-	# echo ""
-	# echo "Installing MySQL-shared.."
-	# echo ""
-	# rpm -Uvh --nodeps MySQL-shared-5.6.10-1.rhel5.i386.rpm
-
-	# mv /etc/my.cnf /etc/my_cnf_orig
-	# ========================================================
-
-	# ---------------------------------------------
-	# MySQL moved to 5.6
-	# so we are not using our my.cnf files
-	# @TODO: modify my.cnf according to MySQL5.6
-	# ---------------------------------------------
+	
 	ram_size=$(vmstat -s | grep 'total memory' | sed 's/\ total\ memory//' | sed 's/\ \ \ \ \ \ \ //')
 	ram_size_in_mb=$(expr $ram_size / 1024)
 
-	if [ $ram_size_in_mb -gt 512 ] && [ $ram_size_in_mb -lt 1025 ] ;
+	if [ $ram_size_in_mb -gt 512 ] && [ $ram_size_in_mb -lt 1025 ] ; 
 	then
 		rm -f /etc/my.cnf
 		cp $2/scripts/other_conf_files/my-large.cnf /etc/my.cnf
 		echo "my-large.cnf copied.."
-	elif [ $ram_size_in_mb -gt 1024 ] && [ $ram_size_in_mb -lt 2049 ] ;
+	elif [ $ram_size_in_mb -gt 1024 ] && [ $ram_size_in_mb -lt 2049 ] ; 
 	then
 		rm -f /etc/my.cnf
 		cp $2/scripts/other_conf_files/my-huge.cnf /etc/my.cnf
 		echo "my-huge.cnf copied.."
-	elif [ $ram_size_in_mb -gt 2048 ] ;
+	elif [ $ram_size_in_mb -gt 2048 ] ; 
 	then
 		rm -f /etc/my.cnf
 		cp $2/scripts/other_conf_files/my-innodb-heavy-4G.cnf /etc/my.cnf
@@ -170,8 +96,8 @@ then
 	fi
 
 	echo ""
-	echo "Removing ib_log* files.."
-	echo ""
+        echo "Removing ib_log* files.."
+        echo ""	
 	rm -rf /var/lib/mysql/ib_log*
 
 	echo ""
@@ -184,32 +110,10 @@ then
 	echo "Starting MySQL Server.."
 	echo ""
 	service mysql start
-
-
+	
 	echo ""
 	echo "Setting default password for root.."
 	echo ""
-
-	# ----------------------------------------------------
-	# -------------- for MySQL-5.6 -----------------------
-	# ----------------------------------------------------
-	# mysql -uroot -proot -e "show databases;"
-
-	# if [ $? == 0 ]
-	# then
-	# 	echo " mysql password set successfully "
-	# else
-	# 	bash $2/scripts/mysql_specific/get_mysql_pwd.sh
-	# 	mysql -uroot -proot -e "show databases;"
-	# 	echo " MYSQL PASSWORD CHECK :  $?"
-	# fi
-
-	# mysql_upgrade --force -u$6 -p$7
-	# =====================================================
-
-
-	#
-	# Usefull to set password when mysql version < mysql_5.6
 	mysqladmin -uroot password $7
 
 	echo ""
@@ -228,22 +132,21 @@ then
 	mysql $8 -h$4 -P$5 -u$6 -p$7 < "$2/idu_trigger.sql";
 	mysql $8 -h$4 -P$5 -u$6 -p$7 < "$2/UBR_common_dashboard_procedure.sql";
 
-	for files in "$2/alter_schema/*.sql";
-	do
-		for file in $files;
-		do
-			mysql $8 -h$4 -P$5 -u$6 -p$7 < "$file";
-		done;
-	done;
+	#echo ""
+	#echo "Creating default user for UNMP.."
+	#echo ""
+	#mysql -uroot -proot -sN -e "CREATE USER '$4'@'$2' IDENTIFIED BY '$5'"
 
-	for files in "$2/default_data/*.sql";
-	do
-		for file in $files;
-		do
-			mysql $8 -h$4 -P$5 -u$6 -p$7 < "$file";
-		done;
-	done;
+	echo ""
+	echo "Granting permissions to the created users.."
+	echo ""
+	mysql -uroot -proot -sN -e "GRANT ALL ON $8.* TO '$6'@'$4'"
 
+	echo ""
+	echo "Granting permission to all mysql clients to connect to the server.."
+	echo ""
+	mysql mysql -h$4 -P$5 -u$6 -p$7 -e "GRANT ALL ON $8.* to '$6'@'*' IDENTIFIED BY '$7'";
+	mysql mysql -h$4 -P$5 -u$6 -p$7 -e "FLUSH PRIVILEGES";
 
 	echo ""
 	echo "Creating SNMPTT database.."
@@ -255,28 +158,11 @@ then
 	echo ""
 	mysql snmptt -h$4 -P$5 -u$6 -p$7 < "$2/snmptt.sql";
 
-	#echo ""
-	#echo "Creating default user for UNMP.."
-	#echo ""
-	#mysql -uroot -proot -sN -e "CREATE USER '$4'@'$2' IDENTIFIED BY '$5'"
-
-	echo ""
-	echo "Granting permissions to the created users.."
-	echo ""
-	mysql -u$6 -p$7 -sN -e "GRANT ALL ON $8.* TO '$6'@'$4'"
-
-	echo ""
-	echo "Granting permission to all mysql clients to connect to the server.."
-	echo ""
-	mysql -h$4 -P$5 -u$6 -p$7 -e "GRANT ALL ON $8.* to '$6'@'*' IDENTIFIED BY '$7'";
-	mysql -h$4 -P$5 -u$6 -p$7 -e "FLUSH PRIVILEGES";
-
 	echo ""
 	echo "Copying uninstallation script.."
 	echo ""
 	cp -fv $2/scripts/scriptsx32/db_uninstall.sh $1/
 	mv -fv $1/db_uninstall.sh $1/omd_uninstall.sh
-
 else
 	cd $2/ThirdParty
 
@@ -305,7 +191,7 @@ else
 	echo "Installing Python2.6.."
 	echo ""
 	#rm -rf /usr/bin/python
-	tar -xvf Python-2.6.6.tgz
+	tar -xvf Python-2.6.6.tgz 
 	cd Python-2.6.6
 	chmod +x configure
 	./configure --enable-shared
@@ -320,6 +206,71 @@ else
 	# Running ldconfig command for configuring Python2.6
 	ldconfig
 
+	echo ""
+	echo "Installing pyasn1.."
+	echo ""
+	tar -xvf "pyasn1-0.1.1.tar.gz" 
+	cd pyasn1-0.1.1
+	python2.6 setup.py install
+	cd ..
+
+#	echo ""
+#	echo "Installing pycrypto2.0.1.."
+#	echo ""
+#	tar -xvf "pycrypto-2.0.1.tar.gz" 
+#	cd pycrypto-2.0.1
+#	python2.6 setup.py install
+#	cd ..
+	
+	echo ""
+	echo "Installing pycrypto2.6.."
+	echo ""
+	tar -xvf "pycrypto-2.6.tar.gz" 
+	cd pycrypto-2.6
+	chmod +x configure
+	./configure
+	python2.6 setup.py install
+	cd ..
+	
+	echo ""
+	echo "Installing paramiko.."
+	echo ""
+	unzip "paramiko-1.7.7.2.zip"
+	cd paramiko-1.7.7.2
+	python2.6 setup.py install
+	cd ..
+
+	echo ""
+	echo "Installing PIL / Imaging.."
+	echo ""
+	tar -xvf "Imaging-1.1.7.tar.gz" 
+	cd Imaging-1.1.7
+	python2.6 setup.py install
+	cd ..
+
+	echo ""
+	echo "Installing pysnmp.."
+	echo ""
+	tar -xvf "pysnmp-4.2.2.tar.gz" 
+	cd pysnmp-4.2.2
+	python2.6 setup.py install
+	cd ..
+
+	echo ""
+	echo "Installing sqlalchemy.."
+	echo ""
+	tar -xvf "SQLAlchemy-0.7.1.tar.gz" 
+	cd SQLAlchemy-0.7.1
+	python2.6 setup.py install
+	cd ..
+
+	echo ""
+	echo "Installing setuptools.."
+	echo ""
+	tar -xvf "setuptools-0.6c11.tar.gz" 
+	cd setuptools-0.6c11
+	python2.6 setup.py install
+	cd ..
 
 	echo ""
 	echo "Installing jdk7.."
@@ -519,7 +470,7 @@ else
 	echo ""
 	rpm -Uvh --nodeps vsftpd-2.0.5-12.el5.i386.rpm
 
-	if [ "$3" != "UNMP Server" ];
+	if [ "$3" != "UNMP Server" ] 
 	then
 		echo ""
 		echo "UNMP Database Server is being installed.."
@@ -570,90 +521,30 @@ else
 		echo ""
 		rpm -Uvh --nodeps MySQL-community-debuginfo-5.1.60-1.rhel5.i386.rpm
 
-		# ----------------------------------------------------
-		# -------------- for MySQL-5.6 -----------------------
-		# ----------------------------------------------------
-		# echo ""
-		# echo "Removing previously installed mysql client"
-		# echo ""
-		# rpm -ev --nodeps MySQL-client-community-5.1.60-1.rhel5
-
-		# echo ""
-		# echo "Removing previously installed mysql-server.."
-		# echo ""
-		# rpm -ev --nodeps MySQL-server-community-5.1.60-1.rhel5
-		# echo ""
-		# echo "Removing previously installed mysql-debuginfo.."
-		# echo ""
-		# rpm -ev --nodeps MySQL-community-debuginfo-5.1.60-1.rhel5
-
-		# echo ""
-		# echo "Removing previously installed mysql-shared.."
-		# echo ""
-		# rpm -ev --nodeps MySQL-shared-compat-5.1.60-1.rhel5
-
-		# echo ""
-		# echo "Removing previously installed mysql-devel.."
-		# echo ""
-		# rpm -ev --nodeps MySQL-devel-community-5.1.60-1.rhel5
-
-		# echo ""
-		# echo "Installing MySQL-server-community.."
-		# echo ""
-		# rpm -Uvh --nodeps MySQL-server-5.6.10-1.rhel5.i386.rpm
-
-		# echo ""
-		# echo "Installing MySQL-client-community.."
-		# echo ""
-		# rpm -Uvh --nodeps MySQL-client-5.6.10-1.rhel5.i386.rpm
-
-
-		# echo ""
-		# echo "Installing MySQL-devel-community.."
-		# echo ""
-		# rpm -Uvh --nodeps MySQL-devel-5.6.10-1.rhel5.i386.rpm
-
-		# echo ""
-		# echo "Installing MySQL-shared-compat.."
-		# echo ""
-		# rpm -Uvh --nodeps MySQL-shared-compat-5.6.10-1.rhel5.i386.rpm
-		# echo ""
-		# echo "Installing MySQL-shared.."
-		# echo ""
-		# rpm -Uvh --nodeps MySQL-shared-5.6.10-1.rhel5.i386.rpm
-
-		# mv /etc/my.cnf /etc/my_cnf_orig
-		# ========================================================
-
-		# ---------------------------------------------
-		# MySQL moved to 5.6
-		# so we are not using our my.cnf files
-		# @TODO: modify my.cnf according to MySQL5.6
-		# ---------------------------------------------
 		ram_size=$(vmstat -s | grep 'total memory' | sed 's/\ total\ memory//' | sed 's/\ \ \ \ \ \ \ //')
 		ram_size_in_mb=$(expr $ram_size / 1024)
 
-		if [ $ram_size_in_mb -gt 512 ] && [ $ram_size_in_mb -lt 1025 ] ;
+		if [ $ram_size_in_mb -gt 512 ] && [ $ram_size_in_mb -lt 1025 ] ; 
 		then
 			rm -f /etc/my.cnf
-			cp $2/scripts/other_conf_files/my-large.cnf /etc/my.cnf
+			cp -f $2/scripts/other_conf_files/my-large.cnf /etc/my.cnf
 			echo "my-large.cnf copied.."
-		elif [ $ram_size_in_mb -gt 1024 ] && [ $ram_size_in_mb -lt 2049 ] ;
+		elif [ $ram_size_in_mb -gt 1024 ] && [ $ram_size_in_mb -lt 2049 ] ; 
 		then
 			rm -f /etc/my.cnf
-			cp $2/scripts/other_conf_files/my-huge.cnf /etc/my.cnf
+			cp -f $2/scripts/other_conf_files/my-huge.cnf /etc/my.cnf
 			echo "my-huge.cnf copied.."
-		elif [ $ram_size_in_mb -gt 2048 ] ;
+		elif [ $ram_size_in_mb -gt 2048 ] ; 
 		then
 			rm -f /etc/my.cnf
 			cp $2/scripts/other_conf_files/my-innodb-heavy-4G.cnf /etc/my.cnf
 			echo "my-innodb-heavy-4G.cnf copied.."
 		fi
-
+	
 		echo ""
 		echo "Removing ib_log* files.."
-		echo ""
-		rm -rf /var/lib/mysql/ib_log*
+        	echo ""
+	        rm -rf /var/lib/mysql/ib_log*	
 
 		echo ""
 		echo "Untar SQL scripts.."
@@ -665,32 +556,10 @@ else
 		echo "Starting MySQL Server.."
 		echo ""
 		service mysql start
-
-
+		
 		echo ""
 		echo "Setting default password for root.."
 		echo ""
-
-		# ----------------------------------------------------
-		# -------------- for MySQL-5.6 -----------------------
-		# ----------------------------------------------------
-		# mysql -uroot -proot -e "show databases;"
-
-		# if [ $? == 0 ]
-		# then
-		# 	echo " mysql password set successfully "
-		# else
-		# 	bash $2/scripts/mysql_specific/get_mysql_pwd.sh
-		# 	mysql -uroot -proot -e "show databases;"
-		# 	echo " MYSQL PASSWORD CHECK :  $?"
-		# fi
-
-		# mysql_upgrade --force -u$6 -p$7
-		# =====================================================
-
-
-		#
-		# Usefull to set password when mysql version < mysql_5.6
 		mysqladmin -uroot password $7
 
 		echo ""
@@ -709,25 +578,21 @@ else
 		mysql $8 -h$4 -P$5 -u$6 -p$7 < "$2/idu_trigger.sql";
 		mysql $8 -h$4 -P$5 -u$6 -p$7 < "$2/UBR_common_dashboard_procedure.sql";
 
+		#echo ""
+		#echo "Creating default user for UNMP.."
+		#echo ""
+		#mysql -uroot -proot -sN -e "CREATE USER '$4'@'$2' IDENTIFIED BY '$5'"
 
-		for files in "$2/alter_schema/*.sql";
-		do
-			echo "$files"
-			for file in $files;
-			do
-				echo "alter_schema  $file"
-				mysql $8 -h$4 -P$5 -u$6 -p$7 < "$file";
-			done;
-		done;
+		echo ""
+		echo "Granting permissions to the created users.."
+		echo ""
+		mysql -uroot -proot -sN -e "GRANT ALL ON $8.* TO '$6'@'$4'"
 
-		for files in "$2/default_data/*.sql";
-		do
-			for file in $files;
-			do
-				echo "default_date $file"
-				mysql $8 -h$4 -P$5 -u$6 -p$7 < "$file";
-			done;
-		done;
+		echo ""
+		echo "Granting permission to all mysql clients to connect to the server.."
+		echo ""
+		mysql mysql -h$4 -P$5 -u$6 -p$7 -e "GRANT ALL ON $8.* to '$6'@'*' IDENTIFIED BY '$7'";
+		mysql mysql -h$4 -P$5 -u$6 -p$7 -e "FLUSH PRIVILEGES";
 
 		echo ""
 		echo "Creating SNMPTT database.."
@@ -738,23 +603,6 @@ else
 		echo "Firing SNMPTT database script.."
 		echo ""
 		mysql snmptt -h$4 -P$5 -u$6 -p$7 < "$2/snmptt.sql";
-
-		#echo ""
-		#echo "Creating default user for UNMP.."
-		#echo ""
-		#mysql -uroot -proot -sN -e "CREATE USER '$4'@'$2' IDENTIFIED BY '$5'"
-
-		echo ""
-		echo "Granting permissions to the created users.."
-		echo ""
-		mysql -u$6 -p$7 -sN -e "GRANT ALL ON $8.* TO '$6'@'$4'"
-
-		echo ""
-		echo "Granting permission to all mysql clients to connect to the server.."
-		echo ""
-		mysql -h$4 -P$5 -u$6 -p$7 -e "GRANT ALL ON $8.* to '$6'@'*' IDENTIFIED BY '$7'";
-		mysql -h$4 -P$5 -u$6 -p$7 -e "FLUSH PRIVILEGES";
-
 
 		echo ""
 		echo "Copying uninstallation script.."
@@ -771,158 +619,22 @@ else
 	### for RHEL Only ###
 	setsebool -P httpd_can_network_connect=1
 
-	echo ""
-	echo "Changing Python links.."
-	echo ""
-	sh $2/scripts/other_scripts/pylink.sh
-
-
 	cd $2/ThirdParty
+
 	echo ""
 	echo "Installing MySQL-python.."
 	echo ""
-	tar -xvf MySQL-python-*.tar.gz
-	cd MySQL-python-*
+	tar -xvf "MySQL-python-1.2.3.tar.gz" 
+	cd MySQL-python-1.2.3
 	rm -f site.cfg
 	cp $2/scripts/other_conf_files/site.cfg .
 	python2.6 setup.py install
 	cd ..
 
-	cd $2/ThirdParty
-	echo ""
-	echo "Installing pyasn1.."
-	echo ""
-	tar -xvf pyasn1-*.tar.gz
-	cd pyasn1-*
-	python2.6 setup.py install
-	cd ..
-
-
-	cd $2/ThirdParty
-	echo ""
-	echo "Installing pycrypto2.6.."
-	echo ""
-	tar -xvf pycrypto-2.6.tar.gz
-	cd pycrypto-2.6
-	chmod +x configure
-	./configure
-	python2.6 setup.py install
-	cd ..
-
-	cd $2/ThirdParty
-	echo ""
-	echo "Installing paramiko.."
-	echo ""
-	unzip "paramiko-*.zip"
-	cd paramiko-*
-	python2.6 setup.py install
-	cd ..
-
-	cd $2/ThirdParty
-	echo ""
-	echo "Installing PIL / Imaging.."
-	echo ""
-	tar -xvf Imaging-1.1.7.tar.gz
-	cd Imaging-1.1.7
-	python2.6 setup.py install
-	cd ..
-
-	cd $2/ThirdParty
-	echo ""
-	echo "Installing pysnmp.."
-	echo ""
-	tar -xvf pysnmp-*.tar.gz
-	cd pysnmp-*
-	python2.6 setup.py install
-	cd ..
-
-	cd $2/ThirdParty
-	echo ""
-	echo "Installing sqlalchemy.."
-	echo ""
-	tar -xvf SQLAlchemy-*.tar.gz
-	cd SQLAlchemy-*
-	python2.6 setup.py install
-	cd ..
-
-	cd $2/ThirdParty
-	echo ""
-	echo "Installing setuptools.."
-	echo ""
-	tar -xvf setuptools-0.6c11.tar.gz
-	cd setuptools-0.6c11
-	python2.6 setup.py install
-	cd ..
-
-	cd $2/ThirdParty
-	echo ""
-	echo "Installing reportlab.."
-	echo ""
-	tar -xvf reportlab-*.tar.gz
-	cd reportlab-*
-	python2.6 setup.py install
-	cd ..
-
-	cd $2/ThirdParty
-	echo ""
-	echo "Installing xlwt (Excel library).."
-	echo ""
-	tar -xvf xlwt-*.tar.gz
-	cd xlwt-*
-	python2.6 setup.py install
-	cd ..
-
-
-	cd $2/ThirdParty
-	echo ""
-	echo "Installing PyCurl.."
-	echo ""
-	tar -xvf pycurl.tar.gz
-	cd pycurl
-	sh pycurl_install.sh
-	cd ..
-
-	cd $2/ThirdParty
-	echo ""
-	echo "Installing RRD Tool.."
-	echo ""
-	tar -zxvf rrdtool-1.4.3.tar.gz
-	cd rrdtool-1.4.3
-	#Changing link to Python 2.6
-	rm -rf /usr/bin/python
-	rm -rf /usr/local/bin/python
-	ln -s /usr/bin/python2.6 /usr/bin/python
-	ln -s /usr/bin/python2.6 /usr/local/bin/python
-	chmod 777 configure
-	./configure --disable-ruby
-	make
-	make install
-	if [ -d /opt/rrdtool-1.4.3/lib/python2.6/site-packages/ ];
-	then
-		cp -rfv /opt/rrdtool-1.4.3/lib/python2.6/site-packages/*.* /usr/local/lib/python2.6/site-packages/
-	fi
-	#Changing link to Python 2.4
-	rm -rf /usr/bin/python
-	rm -rf /usr/local/bin/python
-	ln -s /usr/bin/python2.4 /usr/bin/python
-	ln -s /usr/bin/python2.4 /usr/local/bin/python
-	cd ..
-
-	cd $2/ThirdParty
-	echo ""
-	echo "Installing PsUtil.."
-	echo ""
-	tar -zxvf psutil-0.6.1.tar.gz
-	cd psutil-0.6.1
-	python2.6 setup.py install
-	cd ..
-
-
-	cd $2/ThirdParty
 	echo ""
 	echo "Installing mod_python.."
 	echo ""
-	tar -xvf mod_python-3.3.1.tgz
+	tar -xvf "mod_python-3.3.1.tgz" 
 	cd mod_python-3.3.1
 	chmod +x configure
 	./configure --with-apxs=/usr/sbin/apxs --with-python=/usr/local/bin/python2.6
@@ -971,11 +683,35 @@ else
 
 	echo ""
 	echo "Replacing Apache configuration file httpd.conf.."
-	echo ""
+	echo "" 
 	mv -fv /etc/httpd/conf/httpd.conf /etc/httpd/conf/httpd.conf.bak
 	cp -fv $2/scripts/other_conf_files/httpd.conf /etc/httpd/conf/
 
 	cd $2/ThirdParty
+
+	echo ""
+	echo "Installing reportlab.."
+	echo ""
+	tar -xvf "reportlab-2.5.tar.gz" 
+	cd reportlab-2.5
+	python2.6 setup.py install
+	cd ..
+
+	echo ""
+	echo "Installing reportlab-daily-unix.."
+	echo ""
+	tar -xvf "reportlab-daily-unix.tar.gz" 
+	cd reportlab-20111118203602
+	python2.6 setup.py install
+	cd ..
+
+	echo ""
+	echo "Installing xlwt (Excel library).."
+	echo ""
+	tar -xvf "xlwt-0.7.2.tar.gz" 
+	cd xlwt-0.7.2
+	python2.6 setup.py install
+	cd ..
 
 	echo ""
 	echo "Saving DB Info in XML files.."
@@ -992,12 +728,12 @@ else
 	user_=$(egrep -w "UNMP" /etc/passwd)
 	group_=$(egrep -w "omd" /etc/group)
 
-	if [ "$user_" != "" ]
+	if [ "$user_" != "" ] 
 	then
 		echo "Deleting UNMP user.."
 		userdel -r UNMP
 
-		if [ "$group_" != "" ]
+		if [ "$group_" != "" ] 
 		then
 			echo "Deleting omd group.."
 			groupdel -r omd
@@ -1025,8 +761,8 @@ else
 
 	echo ""
 	echo "Configuring FTP server for UNMP Server.."
-	echo ""
-	mv /etc/vsftpd/vsftpd.conf /etc/vsftpd/vsftpd.conf.bak
+	echo "" 
+	mv /etc/vsftpd/vsftpd.conf /etc/vsftpd/vsftpd.conf.bak	
 	rm /etc/vsftpd/vsftpd.conf
 	cp $2/scripts/other_conf_files/vsftpd.conf /etc/vsftpd/
 
@@ -1050,8 +786,8 @@ else
 	if [ $? -eq 0 ]; then
 	    echo
 	else
-	    adduser unmpftp
-	fi
+	    adduser unmpftp      
+	fi        
 
 	echo "unmpftp@123" | passwd --stdin "unmpftp"
 	mkdir -p /omd/unmpftp/unmpftp
@@ -1065,7 +801,7 @@ else
 
 	echo ""
 	echo "Installing ndoutils.."
-	echo ""
+	echo "" 
 	omd stop
 
 	cd $2/scripts/ndo_conf_files
@@ -1073,7 +809,7 @@ else
 	cp ndomod.cfg ndo2db.cfg nagios.cfg /opt/omd/sites/UNMP/etc/nagios/
 
 	cd $2/ThirdParty
-	tar -xvzf ndoutils-1.4b9.tar.gz
+	tar -xvzf ndoutils-1.4b9.tar.gz 
 	cd ndoutils-1.4b9
 	chmod +x configure
 	./configure
@@ -1158,32 +894,23 @@ else
 	echo ""
 	cd $2/initscripts/
 
-    # Now unmp specific daemons(unmp-*) are uses omd's init.d
-    # TODO take decision on nbi scripts currently omiting
 	for i in *
 	do
-		if [ "$i" == "unmp-all" ];
+		if [ "$i" == "unmp-all" ]; 
 		then
 			rm -rf /etc/init.d/$i
 			cp "`pwd`/$i" /etc/init.d/
 			chmod 777 /etc/init.d/$i
-		elif [[ "$i" == unmp-nbi* ]];
-		then
-		    echo "omiting $i"
-		    rm -rf /etc/init.d/$i
 		else
 			rm -rf /etc/init.d/$i
-			cp "`pwd`/$i" $1/sites/UNMP/etc/init.d/$i
-			chmod 777 $1/sites/UNMP/etc/init.d/$i
-			chown UNMP:UNMP $1/sites/UNMP/etc/init.d/$i
-			ln -s $1/sites/UNMP/etc/init.d/$i $1/sites/UNMP/etc/rc.d/99-$i
-			chown UNMP:UNMP $1/sites/UNMP/etc/rc.d/99-$i
-			#chkconfig --add $i
-			#chkconfig --level 03456 $i on
-			#service $i restart
-		fi
+			cp "`pwd`/$i" /etc/init.d/
+			chmod 777 /etc/init.d/$i
+			chkconfig --add $i
+			chkconfig --level 03456 $i on
+			service $i restart
+		fi    
 	done
-
+		
 	echo ""
 	echo "Registering cron entries.."
 	echo ""
@@ -1195,6 +922,57 @@ else
 		echo "Crontab entry for $i has been configured.."
 	done
 
+	echo ""
+	echo "Changing Python links.."
+	echo ""
+	sh $2/scripts/other_scripts/pylink.sh
+
+	echo ""
+	echo "Installing PyCurl.."
+	echo ""
+	cd $2/ThirdParty
+	tar -xvf "pycurl.tar.gz"
+	cd pycurl
+	sh pycurl_install.sh
+	cd ..
+
+	echo ""
+	echo "Installing RRD Tool.."
+	echo ""
+	cd $2/ThirdParty
+	tar -zxvf rrdtool-1.4.3.tar.gz
+	cd rrdtool-1.4.3
+
+	#Changing link to Python 2.6
+	rm -rf /usr/bin/python
+	rm -rf /usr/local/bin/python
+	ln -s /usr/bin/python2.6 /usr/bin/python
+	ln -s /usr/bin/python2.6 /usr/local/bin/python
+
+	chmod 777 configure
+	./configure --disable-ruby
+	make
+	make install
+
+	if [ -d /opt/rrdtool-1.4.3/lib/python2.6/site-packages/ ]; 
+	then
+		cp -rfv /opt/rrdtool-1.4.3/lib/python2.6/site-packages/*.* /usr/local/lib/python2.6/site-packages/
+	fi
+
+	#Changing link to Python 2.4
+	rm -rf /usr/bin/python
+	rm -rf /usr/local/bin/python
+	ln -s /usr/bin/python2.4 /usr/bin/python
+	ln -s /usr/bin/python2.4 /usr/local/bin/python
+	cd ..
+
+	echo ""
+	echo "Installing PsUtil.."
+	echo ""
+	tar -zxvf psutil-0.4.1.tar.gz
+	cd psutil-0.4.1
+	python2.6 setup.py install
+	cd ..
 
 	echo ""
 	echo "Updating apache.conf.."
@@ -1205,8 +983,8 @@ else
 
 	echo ""
 	echo "Setting permissions to files after OMD installation.."
-	echo ""
-	chmod 755 $1/versions/0.48/bin/ndo2db $1/versions/0.48/bin/ndo2db-3x
+	echo "" 
+	chmod 755 $1/versions/0.48/bin/ndo2db $1/versions/0.48/bin/ndo2db-3x 
 	chmod 777 $1/versions/0.48/skel/etc/check_mk/multisite.mk
 	chmod 777 $1/versions/0.48/etc/pnp4nagios/background.pdf
 	chmod -R 777 $1/versions/0.48/skel/etc/nagios/conf.d $1/versions/0.48/lib/nagios/plugins $1/versions/0.48/share/check_mk $1/daemon
@@ -1218,20 +996,15 @@ else
 
 	echo ""
 	echo "Setting UNMP ownership for the files.."
-	echo "1: /etc/init.d/unmp*, 2: /var/log/snmptt, 3: /var/spool/snmptt, 4: /etc/init.d/snmptt*, 5: /tmp/mp_sess, 6: /omd/daemon"
-	echo ""
-	chown -R UNMP:UNMP /etc/init.d/unmp* /var/log/snmptt /var/spool/snmptt /etc/init.d/snmptt* /tmp/mp_sess $1/daemon
-	chmod 4755 /omd/daemon/stop-ds
+	echo "1: $1, 2: /etc/init.d/unmp*, 3: /var/log/snmptt, 4: /var/spool/snmptt, 5: /etc/init.d/snmptt*, 6: /tmp/mp_sess" 
+	echo "" 
+	chown -R UNMP:omd $1 /etc/init.d/unmp* /var/log/snmptt /var/spool/snmptt /etc/init.d/snmptt* /tmp/mp_sess
 
 	chown root:root $1/sites/UNMP/lib/nagios/plugins/*
 	chmod 4755 $1/sites/UNMP/lib/nagios/plugins/*
 	chmod 777 $1/sites/UNMP/lib/nagios/plugins/snmp_uptime.py
-	# for download report folder permission
-    chown UNMP:UNMP -R $1/sites/UNMP/share/check_mk/web
-	chmod 777 -R $1/sites/UNMP/share/check_mk/web/htdocs/download
-	chmod 777 -R $1/sites/UNMP/share/check_mk/web/htdocs/xml
-	chown 777 -R $1/sites/UNMP/share/check_mk/web/htdocs/batik-1.7
-	chmod 4755 -R $1/sites/UNMP/share/check_mk/web/htdocs/batik-1.7/*.jar
-	chown o+w $1/sites/UNMP/share/check_mk/web/htdocs/download
-	chmod g+s $1/sites/UNMP/share/check_mk/web/htdocs/download
+	chown UNMP:omd $1/sites/UNMP/share/chcek_mk/web/htdocs/download
+	chown UNMP:omd $1/sites/UNMP/share/chcek_mk/web/htdocs/download/* -R
+	chown UNMP:omd $1/versions/0.48/share/check_mk/web/htdocs/download
+	chown UNMP:omd $1/versions/0.48/share/check_mk/web/htdocs/download/* -R
 fi

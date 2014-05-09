@@ -207,50 +207,14 @@ function editService(host_id,is_localhost)
 			{
 			id=service_names[i].replace(/ /g,'_');
 			$("#"+id).multiselect({selectedList: 1,multiple:false,noneSelectedText: 'Select Time',minWidth:50});
-			$("#"+id).bind("multiselectclick", function(event, ui){
-					id=$(this).attr("id");
-					var sel=$("#"+id).val();
-					if(sel!=ui.value)
-					{
-						service_hosts.push(host_id);
-						service_time.push(ui.value);
-						service_name.push(id);
-						$("#apply_changes_services_button").removeAttr('disabled');
-						if(ui.value==518400)
-						{
-							$("#service_box_"+host_id+"_"+id).html("Y");
-						}
-						else if(ui.value==43200)
-						{
-							$("#service_box_"+host_id+"_"+id).html("M");
-						}
-						else if(ui.value==1440)
-						{
-							$("#service_box_"+host_id+"_"+id).html("D");
-						}
-						else
-						{
-							$("#service_box_"+host_id+"_"+id).html(ui.value);
-						}
-						flag_change=true;
-					}
-				});
-			}
-			/*var service_names=$("#service_names").val().split(",");
-			for(var i=0;i<service_names.length-1;i++)
+			if(service_names[i].toLowerCase().indexOf("uptime")!=-1)
 			{
-			id=service_names[i].replace(/ /g,'_');
-			$("#"+id+i).multiselect({selectedList: 1,multiple:false,noneSelectedText: 'Select Time',minWidth:50});
-			//if(service_names[i].toLowerCase().indexOf("uptime")!=-1)
-			//{
-			//	$("#"+id).multiselect("disable");
-			//}
-			//else
-			//{
-			//alert("#service_box_"+host_id+"_"+id);
-			$("#"+id+i).bind("multiselectclick", function(event, ui){
-					var sel=$("#"+id+i).val();
-					alert(sel);
+				$("#"+id).multiselect("disable");
+			}
+			else
+			{
+				$("#"+id).bind("multiselectclick", function(event, ui){
+					var sel=$("#"+id).val();
 					if(sel!=ui.value)
 					{
 						service_hosts.push(host_id);
@@ -261,7 +225,8 @@ function editService(host_id,is_localhost)
 						flag_change=true;
 					}
 				});
-			//}*/
+			}
+		}
 		
 		},
 		onClosed:function(){

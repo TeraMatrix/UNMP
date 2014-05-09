@@ -15,34 +15,31 @@ var $formSelectList = null;
 var $formAddButton = null;
 var $formEditButton = null;
 
-var ipValidate = "^([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])$";
-
 var $formInputIndex = {"host_name":0,
 			"host_alias":1,
 			"ip_address":2,
 			"mac_address":3,
-			"radio_mac_address":4,
-			"ra_mac":5,
-			"netmask":6,
-			"gateway":7,
-			"odu100_vlan_tag":8,
-			"idu4_vlan_tag":9,
-			"idu4_tdm_ip":10,
-			"primary_dns":11,
-			"secondary_dns":12,
-			"ccu_dhcp_netmask":13,
-			"http_username":14,
-			"http_port":15,
-			"read_community":16,
-			"write_community":17,
-			"get_set_port":18,
-			"trap_port":19,
-			"ssh_username":20,
-			"ssh_port":21,
-			"longitude":22,
-			"latitude":23,
-			"serial_number":24,
-			"hardware_version":25
+			"ra_mac":4,
+			"netmask":5,
+			"gateway":6,
+			"odu100_vlan_tag":7,
+			"idu4_vlan_tag":8,
+			"idu4_tdm_ip":9,
+			"primary_dns":10,
+			"secondary_dns":11,
+			"ccu_dhcp_netmask":12,
+			"http_username":13,
+			"http_port":14,
+			"read_community":15,
+			"write_community":16,
+			"get_set_port":17,
+			"trap_port":18,
+			"ssh_username":19,
+			"ssh_port":20,
+			"longitude":21,
+			"latitude":22,
+			"serial_number":23,
+			"hardware_version":24
 			};
 var $formPasswordIndex = {"http_password":0,"ssh_password":1};
 var $formTextareaIndex = {"host_comment":0};
@@ -53,18 +50,17 @@ var $formCheckboxIndex = {
 			};
 var $formSelectListIndex = {
 			"device_type":0,
-			"firmware_version":1,
-			"node_type":2,
-			"master_mac":3,
-			"host_state":4,
-			"host_priority":5,
-			"host_parent":6,
-			"hostgroup":7,
-			"dns_state":8,
-			"odu100_management_mode":9,
-			"snmp_version":10,
-			"host_vendor":11,
-			"host_os":12
+			"node_type":1,
+			"master_mac":2,
+			"host_state":3,
+			"host_priority":4,
+			"host_parent":5,
+			"hostgroup":6,
+			"dns_state":7,
+			"odu100_management_mode":8,
+			"snmp_version":9,
+			"host_vendor":10,
+			"host_os":11
 			};
 
 var $RaMacDiv = null;
@@ -79,9 +75,6 @@ var $idu4NetworkDiv = null;
 var $idu8NetworkDiv = null;
 var $swt4NetworkDiv = null;
 var $genericNetworkDiv = null;
-var $hardwareVersionDiv = null;
-var $serialNumberDiv = null;
-
 
 /* Discovered Host */
 var $gridViewDiscoveredHostTableObj = null;
@@ -126,7 +119,6 @@ var selectedHostAlias = null;
 var selectedIpAddress = null;
 var selectedMacAddress = null;
 var selectedDeviceType = null;
-var firmwareVersion = {};
 
 // for default values
 var pingDefaultDetails = null;
@@ -149,17 +141,17 @@ var messages = {
 	"unknownError":"UNMP Server is busy at the moment, please try again later",
 	"loadDefaultSettingWarn":"Loading of default setting failed, please try again later",
 	"noNmsInctanceError":"UNMP Server is busy at the moment, please try again later.",
-	"ping_start":"PING Discovery started successfully, You will get discovered host within 60 secs.",
+	"ping_start":"PING Discovery started successfully, You will get discoverd host within 60 secs.",
 	"ping_pause":"PING Discovery paused",
 	"ping_restart":"PING Discovery restart successfully",
 	"ping_stop":"PING Discovery stopped",
 	"ping_complete":"PING Discovery completed successfully",
-	"snmp_start":"SNMP Discovery started successfully, You will get discovered host within 60 secs.",
+	"snmp_start":"SNMP Discovery started successfully, You will get discoverd host within 60 secs.",
 	"snmp_pause":"SNMP Discovery paused",
 	"snmp_restart":"SNMP Discovery restart successfully",
 	"snmp_stop":"SNMP Discovery stopped",
 	"snmp_complete":"SNMP Discovery completed successfully",
-	"upnp_start":"UPNP Discovery start successfully, You will get discovered host within 60 secs.",
+	"upnp_start":"UPNP Discovery start successfully, You will get discoverd host within 60 secs.",
 	"upnp_pause":"UPNP Discovery paused",
 	"upnp_restart":"UPNP Discovery restart successfully",
 	"upnp_stop":"UPNP Discovery stopped",
@@ -221,15 +213,15 @@ $(function(){
 	/* create object of divs */
 	$gridViewDiv = $("div#grid_view_div");
 	$formDiv = $("div#form_div");
-
+	
 	/* show grid view only hide other */
 	$gridViewDiv.show();
 	$formDiv.hide();
-
+	
 	// spin loading object
 	$spinLoading = $("div#spin_loading");		// create object that hold loading circle
 	$spinMainLoading = $("div#main_loading");	// create object that hold loading squire
-
+	
 	// page tip [for page tip write this code on each page please dont forget to change "href" value because this link create your help tip page]
 	$("#page_tip").colorbox(
 	{
@@ -241,14 +233,14 @@ $(function(){
 		height:"350px"
 	});
 	$("div.yo-tabs").yoTabs();
-
+	
 	/* Add Data Table Tr Selecter Click Handler*/
 	dataTableClickHandler();
-
+	
 	/* Call Active Host Data Table */
 	$gridViewDiscoveredHostTableObj = $("table#grid_view_discovered_host");
 	//gridViewDeletedHost();
-
+	
 	/* Active Host Tab*/
 	$("a#discovered_host_tab").click(function(e){
 		e.preventDefault();
@@ -259,7 +251,7 @@ $(function(){
 		}
 		hideAllToolTip();
 	});
-
+	
 	/* PING Tab*/
 	$("a#ping_tab").click(function(e){
 		e.preventDefault();
@@ -274,7 +266,7 @@ $(function(){
 		}
 		hideAllToolTip();
 	});
-
+	
 	/* SNMP Tab*/
 	$("a#snmp_tab").click(function(e){
 		e.preventDefault();
@@ -289,7 +281,7 @@ $(function(){
 		}
 		hideAllToolTip();
 	});
-
+	
 	/* UPNP Tab*/
 	$("a#upnp_tab").click(function(e){
 		e.preventDefault();
@@ -304,7 +296,7 @@ $(function(){
 		}
 		hideAllToolTip();
 	});
-
+	
 	/* It Shows Active Host as Default Host Grid View */
 	$("a#discovered_host_tab").click();
 });
@@ -315,13 +307,13 @@ function dataTableClickHandler()
 	$("table#grid_view_discovered_host tbody tr").live('click', function () {
 		var id = this.id;
 		var index = jQuery.inArray(id, $gridViewDiscoveredHostSelectedTr);
-
+		
 		if ( index === -1 ) {
 			$gridViewDiscoveredHostSelectedTr.push( id );
 		} else {
 			$gridViewDiscoveredHostSelectedTr.splice( index, 1 );
 		}
-
+		
 		$(this).toggleClass('row_selected');
 	});
 }
@@ -341,7 +333,7 @@ function gridViewDiscoveredHost()
 		"bStateSave": false,
 		"bStateSave": false,
 		"fnServerData": function(sSource,aoData,fnCallback){
-			$.getJSON( sSource, aoData, function (json) {
+			$.getJSON( sSource, aoData, function (json) { 
 				/**
 				 * Insert an extra argument to the request: rm.
 				 * It's the the name of the CGI form parameter that
@@ -535,7 +527,7 @@ function validatePingForm($formObj)
 				positiveNumber:"Timeout Should be Positive"
 			}
 		}
-	});
+	});	
 }
 function run_ping(discovery_id)
 {
@@ -554,13 +546,13 @@ function run_ping(discovery_id)
 					}
 					if(result.success == 0)
 					{
-						$().toastmessage('showSuccessToast', "Hosts Discovered Successfully");
+						$().toastmessage('showSuccessToast', "Host Discovered Successfully");
 						$("a#discovered_host_tab").click();
 					}
 					else
 					{
 						$().toastmessage('showErrorToast', messages[result.msg]);
-					}
+					}			
 		}
 	})
 }
@@ -581,13 +573,13 @@ function run_snmp(discovery_id)
 					}
 					if(result.success == 0)
 					{
-						$().toastmessage('showSuccessToast', "Hosts Discovered Successfully");
+						$().toastmessage('showSuccessToast', "Host Discovered Successfully");
 						$("a#discovered_host_tab").click();
 					}
 					else
 					{
 						$().toastmessage('showErrorToast', messages[result.msg]);
-					}
+					}			
 		}
 	})
 }
@@ -795,7 +787,7 @@ function validateSnmpForm($formObj)
 				alphaNumeric:"SNMP Version Should be Alpha Numeric"
 			}
 		}
-	});
+	});	
 }
 function run_upnp(discovery_id)
 {
@@ -814,13 +806,13 @@ function run_upnp(discovery_id)
 					}
 					if(result.success == 0)
 					{
-						$().toastmessage('showSuccessToast', "Hosts Discovered Successfully");
+						$().toastmessage('showSuccessToast', "Host Discovered Successfully");
 						$("a#discovered_host_tab").click();
 					}
 					else
 					{
 						$().toastmessage('showErrorToast', messages[result.msg]);
-					}
+					}			
 		}
 	})
 }
@@ -969,14 +961,14 @@ function validateUpnpForm($formObj)
 				positiveNumber:"Timeout Should be Positive"
 			}
 		}
-	});
+	});	
 }
 
 function addHost()
 {
 	var selectedRow = new Array();
 	selectedRow = fnGetSelected($gridViewDiscoveredHostDataTable)
-	var rLength = selectedRow.length;
+	var rLength = selectedRow.length; 
 	if(rLength==0)
 	{
 		$.prompt(messages["noneSelectedError"],{prefix:'jqismooth'});
@@ -989,20 +981,20 @@ function addHost()
 			var aData = [];
 			var iRow = $gridViewDiscoveredHostDataTable.fnGetPosition(selectedRow[i]);
 			aData = $gridViewDiscoveredHostDataTable.fnGetData(iRow);
-
+			
 			//selected host details
 			selectedHostName = aData[2];
 			selectedHostAlias = aData[2];
 			selectedIpAddress = aData[2];
 			selectedMacAddress = aData[3];
-			selectedDeviceType = String(aData[4]).toLowerCase();
+			selectedDeviceType = "";
 		}
-
+		
 		actionName = "add";
 		if(formStatus == 0)
 		{
 			createForm(actionName);
-			formStatus = 1;
+			formStatus = 1;		
 		}
 		else
 		{
@@ -1014,8 +1006,6 @@ function addHost()
 		$.prompt(messages["multiSelectedError"],{prefix:'jqismooth'});
 	}
 }
-
-// to get the list of odu16 and odu100 master device list(this function call when you add a slave host of device type odu16 or odu100)
 function oduMasterList(deviceTypeId,master_id)
 {
 	$.ajax({
@@ -1033,17 +1023,14 @@ function oduMasterList(deviceTypeId,master_id)
 		}
 	});
 }
-
-
-// logic to display master slave div.
 function showMasterMacDiv()
 {
 	var nodeType = $formSelectList.eq($formSelectListIndex["node_type"]).val();
 	try
 	{
-		if(parseInt(nodeType) == 1 || parseInt(nodeType) == 3)		// nodeType is 1 and 3 means it's a slave device.
+		if(parseInt(nodeType) == 1 || parseInt(nodeType) == 3)
 		{
-			oduMasterList($formSelectList.eq($formSelectListIndex["device_type"]).val(),"")		// fetch odu16 or odu100 master host list
+			oduMasterList($formSelectList.eq($formSelectListIndex["device_type"]).val(),"")
 			$MasterSlaveDiv.show();
 		}
 		else
@@ -1056,237 +1043,99 @@ function showMasterMacDiv()
 		$MasterSlaveDiv.hide();
 	}
 }
-
 function fetchRAMacAddress()
 {
-	var ipAddress = $formInput.eq($formInputIndex["ip_address"]).val();
-	var selectedDeviceType = $formSelectList.eq($formSelectListIndex["device_type"]).val();
-
-	if(ipAddress != "" && ipAddress.match(ipValidate) && selectedDeviceType != "")
+	var ip_address = $formInput.eq($formInputIndex["ip_address"]).val();
+	if($formSelectList.eq($formSelectListIndex["device_type"]).val() == "odu16")
 	{
-
-		if($formSelectList.eq($formSelectListIndex["device_type"]).val() == "odu16")
-		{
-			ipAddress = ipAddress + ":" +$formInput.eq($formInputIndex["http_port"]).val();
-		}
-		else if($formSelectList.eq($formSelectListIndex["device_type"]).val() == "odu100")
-		{
-			//ip_address = ip_address;
-			// do nothing
-		}
-		$("#ra_mac_loading").show();
-		$("a#a_fetch_ra_mac").hide();
-		$.ajax({
-			type:"get",
-			url:"get_odu_ra_mac_and_node_type.py?ip_address=" + ipAddress + "&username=" + $formInput.eq($formInputIndex["http_username"]).val() + "&password=" + $formPassword.eq($formPasswordIndex["http_password"]).val() + "&community=" + $formInput.eq($formInputIndex["read_community"]).val() + "&port=" + $formInput.eq($formInputIndex["get_set_port"]).val() + "&device_type=" + $formSelectList.eq($formSelectListIndex["device_type"]).val(),
-			cache:false,
-			success:function(result){
-				//result = {"node_type_success":1,"ra_mac_success":1,"node_type":"SNMP agent down or device not reachable","ra_mac":"SNMP agent down or device not reachable"}
-				if(result.node_type == undefined || result.ra_mac == undefined)
+		ip_address = ip_address + ":" +$formInput.eq($formInputIndex["http_port"]).val();
+	}
+	else if($formSelectList.eq($formSelectListIndex["device_type"]).val() == "odu100")
+	{
+		//ip_address = ip_address;
+		// do nothing
+	}
+	$("#ra_mac_loading").show();
+	$("a#a_fetch_ra_mac").hide();
+	$.ajax({
+		type:"get",
+		url:"get_odu_ra_mac_and_node_type.py?ip_address=" + ip_address + "&username=" + $formInput.eq($formInputIndex["http_username"]).val() + "&password=" + $formPassword.eq().val($formPasswordIndex["http_password"]) + "&community=" + $formInput.eq($formInputIndex["read_community"]).val() + "&port=" + $formInput.eq($formInputIndex["get_set_port"]).val() + "&device_type=" + $formSelectList.eq($formSelectListIndex["device_type"]).val(),
+		cache:false,
+		success:function(result){
+			//result = {"node_type_success":1,"ra_mac_success":1,"node_type":"SNMP agent down or device not reachable","ra_mac":"SNMP agent down or device not reachable"}
+			if(result.node_type == undefined || result.ra_mac == undefined)
+			{
+				$().toastmessage('showErrorToast', messages["unknownError"]);
+			}
+			else
+			{
+				if(result.node_type_success == 1 && result.ra_mac_success == 1)
 				{
-					$().toastmessage('showErrorToast', messages["unknownError"]);
+					$().toastmessage('showErrorToast', result.node_type);
+				}
+				else if(result.node_type_success == 1)
+				{
+					$().toastmessage('showErrorToast', "Fatching node type: " + result.node_type);
+					$formInput.eq($formInputIndex["ra_mac"]).val(result.ra_mac);
+				}
+				else if(result.ra_mac_success == 1)
+				{
+					$().toastmessage('showErrorToast', "Fatching RA MAC: " + result.ra_mac);
+					$formSelectList.eq($formSelectListIndex["node_type"]).val(result.node_type);
+					$formInput.eq($formInputIndex["ra_mac"]).val("");
 				}
 				else
 				{
-					if(result.node_type_success == 1 && result.ra_mac_success == 1)
-					{
-						$().toastmessage('showErrorToast', result.node_type);
-					}
-					else if(result.node_type_success == 1)
-					{
-						$().toastmessage('showErrorToast', "Fatching node type: " + result.node_type);
-						$formInput.eq($formInputIndex["ra_mac"]).val(result.ra_mac);
-					}
-					else if(result.ra_mac_success == 1)
-					{
-						$().toastmessage('showErrorToast', "Fatching RA MAC: " + result.ra_mac);
-						$formSelectList.eq($formSelectListIndex["node_type"]).val(result.node_type);
-						$formInput.eq($formInputIndex["ra_mac"]).val("");
-					}
-					else
-					{
-						$formSelectList.eq($formSelectListIndex["node_type"]).val(result.node_type);
-						$formInput.eq($formInputIndex["ra_mac"]).val(result.ra_mac);
-					}
+					$formSelectList.eq($formSelectListIndex["node_type"]).val(result.node_type);
+					$formInput.eq($formInputIndex["ra_mac"]).val(result.ra_mac);
 				}
-				showMasterMacDiv();
-				$("#ra_mac_loading").hide();
-				$("a#a_fetch_ra_mac").show();
 			}
-		});
-	}
-	else
-	{
-		$().toastmessage('showWarningToast', "Please enter valid IP address and device type");
-	}
-
-}
-// to fetch master mac address of slave device.
-
-
-
-
-// fetch Radio Acess Mac Address of odu16 and odu100 device.
-function fetchRAMacAddress()
-{
-	var ipAddress = $formInput.eq($formInputIndex["ip_address"]).val();
-	var selectedDeviceType = $formSelectList.eq($formSelectListIndex["device_type"]).val();
-
-	if(ipAddress != "" && ipAddress.match(ipValidate) && selectedDeviceType != "")
-	{
-		if(selectedDeviceType == "odu16")
-		{
-			ipAddress = ipAddress + ":" +$formInput.eq($formInputIndex["http_port"]).val();
+			showMasterMacDiv();
+			$("#ra_mac_loading").hide();
+			$("a#a_fetch_ra_mac").show();
 		}
-		else if(selectedDeviceType == "odu100")
-		{
-			//ipAddress = ipAddress;
-			// do nothing
-		}
-		$("#ra_mac_loading").show();
-		$("a#a_fetch_ra_mac").hide();
-		$.ajax({
-			type:"get",
-			url:"get_odu_ra_mac_and_node_type.py?ip_address=" + ipAddress + "&username=" + $formInput.eq($formInputIndex["http_username"]).val() + "&password=" + $formPassword.eq($formPasswordIndex["http_password"]).val() + "&community=" + $formInput.eq($formInputIndex["read_community"]).val() + "&port=" + $formInput.eq($formInputIndex["get_set_port"]).val() + "&device_type=" + selectedDeviceType,
-			cache:false,
-			success:function(result){
-				//result = {"node_type_success":1,"ra_mac_success":1,"node_type":"SNMP agent down or device not reachable","ra_mac":"SNMP agent down or device not reachable"}
-				if(result.node_type == undefined || result.ra_mac == undefined)
-				{
-					$().toastmessage('showErrorToast', messages["unknownError"]);
-				}
-				else
-				{
-					if(result.node_type_success == 1 && result.ra_mac_success == 1)
-					{
-						$().toastmessage('showErrorToast', result.node_type);
-					}
-					else if(result.node_type_success == 1)
-					{
-						$().toastmessage('showErrorToast', "Fatching node type: " + result.node_type);
-						$formInput.eq($formInputIndex["ra_mac"]).val(result.ra_mac);
-					}
-					else if(result.ra_mac_success == 1)
-					{
-						$().toastmessage('showErrorToast', "Fatching RA MAC: " + result.ra_mac);
-						$formSelectList.eq($formSelectListIndex["node_type"]).val(result.node_type);
-						$formInput.eq($formInputIndex["ra_mac"]).val("");
-					}
-					else
-					{
-						$formSelectList.eq($formSelectListIndex["node_type"]).val(result.node_type);
-						$formInput.eq($formInputIndex["ra_mac"]).val(result.ra_mac);
-					}
-				}
-				showMasterMacDiv();
-				$("#ra_mac_loading").hide();
-				$("a#a_fetch_ra_mac").show();
-			}
-		});
-	}
-	else
-	{
-		$().toastmessage('showWarningToast', "Please enter valid IP address and device type");
-	}
+	});
 }
-// to fetch master mac address of slave device.
 function fetchMasterMacAddress()
 {
-	var ipAddress = $formInput.eq($formInputIndex["ip_address"]).val();
-	var selectedDeviceType = $formSelectList.eq($formSelectListIndex["device_type"]).val();
-
-	if(ipAddress != "" && ipAddress.match(ipValidate) && selectedDeviceType != "")
-	{
-
-		$("#master_mac_loading").show();
-		$("#a_fetch_master_mac").hide();
-		$.ajax({
-			type:"get",
-			url:"get_master_mac_from_slave.py?ip_address=" + ipAddress + ":" + $formInput.eq($formInputIndex["http_port"]).val() + "&username=" + $formInput.eq($formInputIndex["http_username"]).val() + "&password=" + $formPassword.eq($formPasswordIndex["http_password"]).val() + "&community=" + $formInput.eq($formInputIndex["read_community"]).val() + "&port=" + $formInput.eq($formInputIndex["get_set_port"]).val(),
-			cache:false,
-			success:function(result){
-				//result = {"success":1,"result":"SNMP agent down or device not reachable"}
-				if(result.success == 0)
+	$("#master_mac_loading").show();
+	$("#a_fetch_master_mac").hide();
+	$.ajax({
+		type:"get",
+		url:"get_master_mac_from_slave.py?ip_address=" + $formInput.eq($formInputIndex["ip_address"]).val() + ":" + $formInput.eq($formInputIndex["http_port"]).val() + "&username=" + $formInput.eq($formInputIndex["http_username"]).val() + "&password=" + $formPassword.eq($formPasswordIndex["http_password"]).val() + "&community=" + $formInput.eq($formInputIndex["read_community"]).val() + "&port=" + $formInput.eq($formInputIndex["get_set_port"]).val(),
+		cache:false,
+		success:function(result){
+			//result = {"success":1,"result":"SNMP agent down or device not reachable"}
+			if(result.success == 0)
+			{
+				$formSelectList.eq($formSelectListIndex["master_mac"]).val(result.result);
+			}
+			else
+			{
+				if(result.result == undefined)
 				{
-					$formSelectList.eq($formSelectListIndex["master_mac"]).val(result.result);
+					$().toastmessage('showErrorToast', messages["unknownError"]);
 				}
 				else
 				{
-					if(result.result == undefined)
-					{
-						$().toastmessage('showErrorToast', messages["unknownError"]);
-					}
-					else
-					{
-						$().toastmessage('showErrorToast', result.result);
-					}
-					$formSelectList.eq($formSelectListIndex["master_mac"]).val("");
+					$().toastmessage('showErrorToast', result.result);
 				}
-				$("#master_mac_loading").hide();
-				$("#a_fetch_master_mac").show();
+				$formSelectList.eq($formSelectListIndex["master_mac"]).val("");
 			}
-		});
-	}
-	else
-	{
-		$().toastmessage('showWarningToast', "Please enter valid IP address and device type");
-	}
+			$("#master_mac_loading").hide();
+			$("#a_fetch_master_mac").show();
+		}
+	});
 }
-
-// Fetch the MAC Address
-function fetchMacAddress(){
-	var ipAddress = $formInput.eq($formInputIndex["ip_address"]).val();
-	var selectedDeviceType = $formSelectList.eq($formSelectListIndex["device_type"]).val();
-
-	if(ipAddress != "" && ipAddress.match(ipValidate) && selectedDeviceType != "")
-	{
-		$("#mac_loading,#radio_mac_loading").show();
-		$("#a_fetch_mac,#a_fetch_radio_mac").hide();
-
-		$.ajax({
-			type:"get",
-			url:"get_mac_details.py?ip_address=" + ipAddress + "&community=" + $formInput.eq($formInputIndex["read_community"]).val() + "&port=" + $formInput.eq($formInputIndex["get_set_port"]).val() + "&device_type=" + selectedDeviceType,
-			cache:false,
-			success:function(result){
-				// expected result {"result": {"radio_mac_address": "", "mac_address": "F8:52:DF:11:07:49"}, "success": 0}
-				// expected result {'success':1,'result':'Error Message'}
-				if (result['success']==0){
-					$formInput.eq($formInputIndex["mac_address"]).val(result.result["mac_address"]);
-					$formInput.eq($formInputIndex["radio_mac_address"]).val(result.result["radio_mac_address"]);
-				}
-				else{
-					if(result.result == undefined)
-					{
-						$().toastmessage('showErrorToast', messages["unknownError"]);
-					}
-					else
-					{
-						$().toastmessage('showErrorToast', result.result);
-					}
-				}
-				$("#mac_loading,#radio_mac_loading").hide();
-				$("#a_fetch_mac,#a_fetch_radio_mac").show();
-			}
-		});
-	}
-	else
-	{
-		$().toastmessage('showWarningToast', "Please enter valid IP address and device type");
-	}
-}
-
-// to fetch network details of all devices
 function fetchNetworkDetails()
 {
-	var ipAddress = $formInput.eq($formInputIndex["ip_address"]).val();
-	var selectedDeviceType = $formSelectList.eq($formSelectListIndex["device_type"]).val();
-	if(ipAddress != "" && ipAddress.match(ipValidate) && selectedDeviceType != "")
+	if($formSelectList.eq($formSelectListIndex["device_type"]).val() != "")
 	{
 		$("#network_details_loading").show();
 		$("#a_network_details_loading").hide();
 		$.ajax({
 			type:"get",
-			url:"get_network_details.py?ip_address=" + $formInput.eq($formInputIndex["ip_address"]).val() + "&community=" + $formInput.eq($formInputIndex["read_community"]).val() + "&port=" + $formInput.eq($formInputIndex["get_set_port"]).val() + "&device_type=" + selectedDeviceType,
+			url:"get_network_details.py?ip_address=" + $formInput.eq($formInputIndex["ip_address"]).val() + "&community=" + $formInput.eq($formInputIndex["read_community"]).val() + "&port=" + $formInput.eq($formInputIndex["get_set_port"]).val() + "&device_type=" + $formSelectList.eq($formSelectListIndex["device_type"]).val(),
 			cache:false,
 			success:function(result){
 				//result = {"success":1,"result":"SNMP agent down or device not reachable"}
@@ -1297,7 +1146,7 @@ function fetchNetworkDetails()
 					$formInput.eq($formInputIndex["primary_dns"]).val(result.result.primary_dns);
 					$formInput.eq($formInputIndex["secondary_dns"]).val(result.result.secondary_dns);
 					$formSelectList.eq($formSelectListIndex["dns_state"]).val(result.result.dns_state == 0 && "Disabled" || "Enabled");
-					$formInput.eq($formInputIndex["odu100_vlan_tag"]).val(result.result.odu100_vlan_tag != undefined && result.result.odu100_vlan_tag != '0' && result.result.odu100_vlan_tag || "");
+					$formInput.eq($formInputIndex["odu100_vlan_tag"]).val(result.result.odu100_vlan_tag != undefined && result.result.odu100_vlan_tag || "");
 					$formInput.eq($formInputIndex["idu4_vlan_tag"]).val(result.result.idu4_vlan_tag != undefined && result.result.idu4_vlan_tag || "");
 					$formInput.eq($formInputIndex["idu4_tdm_ip"]).val(result.result.idu4_tdm_ip != undefined && result.result.idu4_tdm_ip || "");
 					$formInput.eq($formInputIndex["ccu_dhcp_netmask"]).val(result.result.ccu_dhcp_netmask != undefined && result.result.ccu_dhcp_netmask || "");
@@ -1332,55 +1181,17 @@ function fetchNetworkDetails()
 	}
 	else
 	{
-    	    $().toastmessage('showWarningToast', "Please enter valid IP address and device type");
+		$.prompt(messages["selectDeviceWarnForFetchNetworkDetails"],{prefix:'jqismooth'});
 	}
 }
 
-/*
-function masterMACListChange(masterMAC){
-	alert('check');
-}
-*/
-
-// to bind device type change event (select list).
 function deviceTypeChange(deviceTypeSelectList)
 {
 	deviceTypeSelectList.change(function(){
 		var selectedDeviceType = $(this).val();
-		var ipAddress = $formInput.eq($formInputIndex["ip_address"]).val();
-
-		$("#mac_loading,#radio_mac_loading").hide();
-		$("#a_fetch_mac,#a_fetch_radio_mac").hide();
-
-
-		if(ipAddress.match(ipValidate) && selectedDeviceType != "")
-		{
-
-		}
-		else
-		{
-			if(selectedDeviceType != "")
-			{
-				$().toastmessage('showWarningToast', "Please enter valid IP address, then choose device type");
-				return;
-			}
-			else if(ipAddress.match(ipValidate))
-			{
-				$().toastmessage('showWarningToast', "Please choose device type");
-				return;
-			}
-
-			$().toastmessage('showNoticeToast', "Please enter valid IP address, then choose device type first");
-            return;
-
-		}
-
-
 		// spacial case which is you can remove when you get fetch all devices http and snmp cradentails separately
 		if(actionName == "add")
 		{
-			fetchNetworkDetails(); // add function according to device type
-			//$formInput.eq($formInputIndex["mac_address"]).val("");
 			if(selectedDeviceType == "odu16" || selectedDeviceType == "odu100")
 			{
 				$RaMacDiv.show();
@@ -1412,11 +1223,6 @@ function deviceTypeChange(deviceTypeSelectList)
 				$idu8NetworkDiv.hide();
 				$swt4NetworkDiv.hide();
 				$genericNetworkDiv.hide();
-				fetchMacAddress();
-				$hardwareVersionDiv.hide();
-				$serialNumberDiv.hide();
-				//$RadioMacDiv.show();
-				$RadioMacDiv.hide();
 			}
 			else if(selectedDeviceType == "odu16")
 			{
@@ -1440,9 +1246,6 @@ function deviceTypeChange(deviceTypeSelectList)
 				$idu8NetworkDiv.hide();
 				$swt4NetworkDiv.hide();
 				$genericNetworkDiv.hide();
-				$hardwareVersionDiv.hide();
-				$serialNumberDiv.hide();
-				$RadioMacDiv.hide();
 			}
 			else if(selectedDeviceType == "odu100")
 			{
@@ -1458,8 +1261,6 @@ function deviceTypeChange(deviceTypeSelectList)
 				$formPassword.eq($formPasswordIndex["ssh_password"]).val("public");
 				$formInput.eq($formInputIndex["ssh_port"]).val("22");
 				fetchRAMacAddress();
-				getFirmwareVersion(selectedDeviceType);
-				getHardwareInformation(selectedDeviceType);
 				$ap25NetworkDiv.hide();
 				$ccuNetworkDiv.hide();
 				$odu16NetworkDiv.hide();
@@ -1468,9 +1269,6 @@ function deviceTypeChange(deviceTypeSelectList)
 				$idu8NetworkDiv.hide();
 				$swt4NetworkDiv.hide();
 				$genericNetworkDiv.hide();
-				$hardwareVersionDiv.show();
-				$serialNumberDiv.show();
-				$RadioMacDiv.hide();
 			}
 			else if(selectedDeviceType == "idu4")
 			{
@@ -1493,9 +1291,6 @@ function deviceTypeChange(deviceTypeSelectList)
 				$idu8NetworkDiv.hide();
 				$swt4NetworkDiv.hide();
 				$genericNetworkDiv.hide();
-				$hardwareVersionDiv.hide();
-				$serialNumberDiv.hide();
-				$RadioMacDiv.hide();
 			}
 			else if(selectedDeviceType == "idu8")
 			{
@@ -1518,7 +1313,6 @@ function deviceTypeChange(deviceTypeSelectList)
 				$idu8NetworkDiv.show();
 				$swt4NetworkDiv.hide();
 				$genericNetworkDiv.hide();
-				$RadioMacDiv.hide();
 			}
 			else if(selectedDeviceType == "swt4")
 			{
@@ -1541,9 +1335,6 @@ function deviceTypeChange(deviceTypeSelectList)
 				$idu8NetworkDiv.hide();
 				$swt4NetworkDiv.show();
 				$genericNetworkDiv.hide();
-				$hardwareVersionDiv.hide();
-				$serialNumberDiv.hide();
-				$RadioMacDiv.hide();
 			}
 			else if(selectedDeviceType == "ccu")
 			{
@@ -1566,9 +1357,6 @@ function deviceTypeChange(deviceTypeSelectList)
 				$idu8NetworkDiv.hide();
 				$swt4NetworkDiv.hide();
 				$genericNetworkDiv.hide();
-				$hardwareVersionDiv.hide();
-				$serialNumberDiv.hide();
-				$RadioMacDiv.hide();
 			}
 			else
 			{
@@ -1591,23 +1379,10 @@ function deviceTypeChange(deviceTypeSelectList)
 				$idu8NetworkDiv.hide();
 				$swt4NetworkDiv.hide();
 				$genericNetworkDiv.show();
-				$hardwareVersionDiv.hide();
-				$serialNumberDiv.hide();
-				$RadioMacDiv.hide();
 			}
 		}
 		else
 		{
-			if(selectedDeviceType == "odu16" || selectedDeviceType == "odu100")
-			{
-				$RaMacDiv.show();
-				showMasterMacDiv();
-			}
-			else
-			{
-				$RaMacDiv.hide();
-				$MasterSlaveDiv.hide();
-			}
 			if(selectedDeviceType == "ap25")
 			{
 				$ap25NetworkDiv.show();
@@ -1618,10 +1393,6 @@ function deviceTypeChange(deviceTypeSelectList)
 				$idu8NetworkDiv.hide();
 				$swt4NetworkDiv.hide();
 				$genericNetworkDiv.hide();
-				$hardwareVersionDiv.hide();
-				$serialNumberDiv.hide();
-				//$RadioMacDiv.show();
-				$RadioMacDiv.hide();
 			}
 			else if(selectedDeviceType == "odu16")
 			{
@@ -1633,9 +1404,6 @@ function deviceTypeChange(deviceTypeSelectList)
 				$idu8NetworkDiv.hide();
 				$swt4NetworkDiv.hide();
 				$genericNetworkDiv.hide();
-				$hardwareVersionDiv.hide();
-				$serialNumberDiv.hide();
-				$RadioMacDiv.hide();
 			}
 			else if(selectedDeviceType == "odu100")
 			{
@@ -1647,8 +1415,6 @@ function deviceTypeChange(deviceTypeSelectList)
 				$idu8NetworkDiv.hide();
 				$swt4NetworkDiv.hide();
 				$genericNetworkDiv.hide();
-				$hardwareVersionDiv.show();
-				$serialNumberDiv.show();
 			}
 			else if(selectedDeviceType == "idu4")
 			{
@@ -1660,10 +1426,6 @@ function deviceTypeChange(deviceTypeSelectList)
 				$idu8NetworkDiv.hide();
 				$swt4NetworkDiv.hide();
 				$genericNetworkDiv.hide();
-				$RadioMacDiv.hide();
-				$hardwareVersionDiv.hide();
-				$serialNumberDiv.hide();
-
 			}
 			else if(selectedDeviceType == "idu8")
 			{
@@ -1675,9 +1437,6 @@ function deviceTypeChange(deviceTypeSelectList)
 				$idu8NetworkDiv.show();
 				$swt4NetworkDiv.hide();
 				$genericNetworkDiv.hide();
-				$hardwareVersionDiv.hide();
-				$serialNumberDiv.hide();
-				$RadioMacDiv.hide();
 			}
 			else if(selectedDeviceType == "swt4")
 			{
@@ -1689,9 +1448,6 @@ function deviceTypeChange(deviceTypeSelectList)
 				$idu8NetworkDiv.hide();
 				$swt4NetworkDiv.show();
 				$genericNetworkDiv.hide();
-				$hardwareVersionDiv.hide();
-				$serialNumberDiv.hide();
-				$RadioMacDiv.hide();
 			}
 			else if(selectedDeviceType == "ccu")
 			{
@@ -1703,9 +1459,6 @@ function deviceTypeChange(deviceTypeSelectList)
 				$idu8NetworkDiv.hide();
 				$swt4NetworkDiv.hide();
 				$genericNetworkDiv.hide();
-				$hardwareVersionDiv.hide();
-				$serialNumberDiv.hide();
-				$RadioMacDiv.hide();
 			}
 			else
 			{
@@ -1717,14 +1470,10 @@ function deviceTypeChange(deviceTypeSelectList)
 				$idu8NetworkDiv.hide();
 				$swt4NetworkDiv.hide();
 				$genericNetworkDiv.show();
-				$hardwareVersionDiv.hide();
-				$serialNumberDiv.hide();
-				$RadioMacDiv.hide();
 			}
 		}
 	});
 }
-
 
 function createForm(act,id)
 {
@@ -1737,7 +1486,7 @@ function createForm(act,id)
 			$formDiv.html(result);
 			addFormToolTip();	// to add form tool top
 			cancelForm();		// to bind form cancel button events
-
+			
 			// create jQuery object of forms elements
 			$form = $("form#form_host");
 			$formTitle = $("form#form_host th#form_title");
@@ -1750,7 +1499,7 @@ function createForm(act,id)
 			$formEditButton = $("form#form_host button[id='edit_host']");
 			$RaMacDiv = $("#ra_mac_div,#node_type_div","form#form_host");
 			$MasterSlaveDiv = $("#master_slave_div","form#form_host");
-
+			
 			// device network details div
 			$ap25NetworkDiv = $("div.ap25-only");
 			$ccuNetworkDiv = $("div.ccu-only");
@@ -1760,17 +1509,16 @@ function createForm(act,id)
 			$idu8NetworkDiv = $("div.idu8-only");
 			$swt4NetworkDiv = $("div.swt4-only");
 			$genericNetworkDiv = $("div.generic-only");
-			$hardwareVersionDiv = $("div.hardware");
-			$serialNumberDiv = $("div.serial");
+			
 			submitForm($form);	// to bind form submit request
-
+			
 			if(act == "edit")
 			{
 				editForm(id);		// when action is edit host
 			}
 			else
 			{
-				addForm();		// when action is add host
+				addForm();		// when action is add host 
 			}
 			spinStop($spinLoading,$spinMainLoading);
 			deviceTypeChange($formSelectList.eq($formSelectListIndex["device_type"]));	// bind device type change event
@@ -1778,125 +1526,9 @@ function createForm(act,id)
 			$formSelectList.eq($formSelectListIndex["node_type"]).change(function(){
 				showMasterMacDiv();
 			});
-			getAllFirmwareDict();
 		}
 	});
 }
-
-
-
-function getAllFirmwareDict(){
-	$.ajax({
-		type:"get",
-		url:"get_all_device_firmware_details.py",
-		cache:false,
-		success:function(result){
-			// {"result": {"ap25": ["1.2.12"], "idu4": ["2.0.5"], "odu16": ["7.2.10"], "odu100": ["7.2.20", "7.2.25"], "ccu": []}, "success": 0}
-			if (result.success == 0){
-				firmwareVersion = result.result;
-			}
-			else{
-				$().toastmessage('showErrorToast', result.result);
-			}
-		}
-	});
-}
-
-
-
-
-function getHardwareInformation(deviceType){
-	var ipAddress = $formInput.eq($formInputIndex["ip_address"]).val();
-	var selectedDeviceType = $formSelectList.eq($formSelectListIndex["device_type"]).val();
-
-	if(ipAddress != "" && ipAddress.match(ipValidate) && selectedDeviceType != "")
-	{
-		//$("#firmware_loading").show();
-		//$("a#a_firmware_version").hide();
-		var port = $formInput.eq($formInputIndex["get_set_port"]).val();
-		var community = $formInput.eq($formInputIndex["read_community"]).val()
-			$.ajax({
-				type:"get",
-				url:"get_hardware_detail.py",
-				data:{"ip_address":ipAddress,"device_type":deviceType,"port":port,"community":community},
-				cache:false,
-				success:function(result){
-					// {"result": "7.2.25", "success": 0}
-					if (result['success'] == 1){
-						$().toastmessage('showErrorToast', result['result']);
-					}
-					else{
-						$formInput.eq($formInputIndex["serial_number"]).val(result["serial_number"]);
-						$formInput.eq($formInputIndex["hardware_version"]).val(result["hardware_version"]);
-
-					}
-
-
-				}
-			});
-			//$("#firmware_loading").hide();
-			//$("a#a_firmware_version").show();
-	}
-	else
-	{
-		$().toastmessage('showWarningToast', "Please enter valid IP address and device type");
-	}
-
-}
-
-
-function getFirmwareVersion(deviceType){
-	var ipAddress = $formInput.eq($formInputIndex["ip_address"]).val();
-	var selectedDeviceType = $formSelectList.eq($formSelectListIndex["device_type"]).val();
-
-	if(ipAddress != "" && ipAddress.match(ipValidate) && selectedDeviceType != "")
-	{
-		$("#firmware_loading").show();
-		$("a#a_firmware_version").hide();
-		var port = $formInput.eq($formInputIndex["get_set_port"]).val();
-		var community = $formInput.eq($formInputIndex["read_community"]).val()
-			$.ajax({
-				type:"get",
-				url:"get_firmware_details.py",
-				data:{"ip_address":ipAddress,"device_type":selectedDeviceType,"port":port,"community":community},
-				cache:false,
-				success:function(result){
-					// {"result": "7.2.25", "success": 0}
-					if (result['success'] == 1){
-						$().toastmessage('showErrorToast', result['result']);
-					}
-					firmwareSelectList(result.result,selectedDeviceType);
-
-				},
-				complete:function(){
-				$("#firmware_loading").hide();
-			$("a#a_firmware_version").show();
-				}
-			});
-	}
-	else
-	{
-		$().toastmessage('showWarningToast', "Please enter valid IP address and device type");
-	}
-}
-
-function firmwareSelectList(selectedFirmware,deviceType)
-{
-	if (firmwareVersion[deviceType] != undefined || firmwareVersion[deviceType]){
-		var optionStr = "<option value =\"\"> -- Select Firmware Version --</option>";
-		for (var i = 0,firmLen = firmwareVersion[deviceType].length;i < firmLen ; i ++){
-			if(String(firmwareVersion[deviceType][i])==selectedFirmware)
-				optionStr += "<option value =\""+String(firmwareVersion[deviceType][i])+"\"  selected=\"selected\">"+String(firmwareVersion[deviceType][i])+"</option>";
-			else
-				optionStr += "<option value =\""+String(firmwareVersion[deviceType][i])+"\">"+String(firmwareVersion[deviceType][i])+"</option>";
-		}
-		$formSelectList.eq($formSelectListIndex["firmware_version"]).html(optionStr);
-	}
-}
-
-
-
-
 function addFormToolTip()
 {
 	// add tool tip
@@ -1913,14 +1545,14 @@ function addFormToolTip()
 }
 function addForm()
 {
-
+	
 	$formTitle.html("Add Host");
 	$form.attr("action","add_host.py");
 	//$formInput.val("");
 	//$formTextarea.val("");
 	$formAddButton.css({"display":"inline-block"});
 	$formEditButton.hide();
-	showForm();
+	showForm();		
 	if(!hostDefaultDetails)
 	{
 		loadDefault();
@@ -1929,7 +1561,7 @@ function addForm()
 	{
 		setValues(hostDefaultDetails);
 	}
-
+	
 }
 function loadDefault()
 {
@@ -1966,7 +1598,7 @@ function loadDefault()
 }
 function submitForm($formObj)
 {
-	//valiateForm($formObj);
+	valiateForm($formObj);
 	$formObj.submit(function(){
 		var $formThis = $(this);
 		if($formThis.valid())
@@ -2040,11 +1672,11 @@ function submitForm($formObj)
 							{
 								$.prompt(messages["raMacWarning"],{prefix:'jqismooth'});
 							}
-
+							
 						}
 						catch(err)
 						{
-
+							
 						}
 					}
 					else
@@ -2063,7 +1695,7 @@ function submitForm($formObj)
 					{
 						$.prompt(messages["ap25NetworkDetailsError"],{prefix:'jqismooth'});
 						spinStop($spinLoading,$spinMainLoading);
-						return false
+						return false	
 					}
 				}
 			}
@@ -2104,7 +1736,7 @@ function submitForm($formObj)
 				{
 					$.prompt(messages["ccuDhcpNetmaskError"],{prefix:'jqismooth'});
 					spinStop($spinLoading,$spinMainLoading);
-					return false
+					return false	
 				}
 			}
 			$.ajax({
@@ -2130,7 +1762,7 @@ function submitForm($formObj)
 							else
 							{
 								$gridViewDiscoveredHostFetched = 0;
-							}
+							} 
 						}
 					}
 					else
@@ -2203,7 +1835,7 @@ function valiateForm($formObj)
 			},
 			odu100_vlan_tag:{
 				number: true,
-				min:1,
+				min:0,
 				max:4094
 			},
 			idu4_vlan_tag:{
@@ -2212,10 +1844,10 @@ function valiateForm($formObj)
 				max:4094
 			},
 			idu4_tdm_ip:{
-				ipv4Address:true
+				ipv4Address:true,
 			},
 			ccu_dhcp_netmask:{
-				ipv4Address:true
+				ipv4Address:true,
 			},
 			primary_dns:{
 				ipv4Address:true
@@ -2270,16 +1902,6 @@ function valiateForm($formObj)
 			hardware_version:{
 				alphaNumeric: true
 			},
-			longitude:{
-				number: true,
-				min:0,
-				max:180
-			},
-			latitude:{
-				number: true,
-				min:0,
-				max:180
-			},
 			host_vendor:{
 				required: true
 			},
@@ -2331,7 +1953,7 @@ function valiateForm($formObj)
 			},
 			odu100_vlan_tag:{
 				number: "it should be a number",
-				min:"tag number beetween 1 to 4094, if Management Mode is NORMAL then left this blank",
+				min:"tag number beetween 1 to 4094",
 				max:"tag number beetween 1 to 4094"
 			},
 			idu4_vlan_tag:{
@@ -2340,10 +1962,10 @@ function valiateForm($formObj)
 				max:"tag number beetween 1 to 4094"
 			},
 			idu4_tdm_ip:{
-				ipv4Address:"Invalid IP Address"
+				ipv4Address:"Invalid IP Address",
 			},
 			ccu_dhcp_netmask:{
-				ipv4Address:"Invalid IP Address"
+				ipv4Address:"Invalid IP Address",
 			},
 			primary_dns:{
 				ipv4Address:"Invalid IP Address"
@@ -2401,16 +2023,6 @@ function valiateForm($formObj)
 			host_vendor:{
 				required: "Host Vendor is a required field"
 			},
-			longitude:{
-				number: "it should be a number",
-				min:"tag number beetween -90 to +90",
-				max:"tag number beetween -90 to +90"
-			},
-			latitude:{
-				number: "it should be a number",
-				min:"tag number beetween -90 to +90",
-				max:"tag number beetween -90 to +90"
-			},
 			host_os:{
 				required: "Host OS name is a required field"
 			}
@@ -2447,7 +2059,7 @@ function setValues(details)
 	$formInput.eq($formInputIndex["idu4_vlan_tag"]).val(details["idu4_vlan_tag"]);
 	$formInput.eq($formInputIndex["idu4_tdm_ip"]).val(details["idu4_tdm_ip"]);
 	$formInput.eq($formInputIndex["ccu_dhcp_netmask"]).val(details["ccu_dhcp_netmask"]);
-
+	
 	$formPassword.eq($formPasswordIndex["http_password"]).val(details["http_password"]);
 	$formPassword.eq($formPasswordIndex["ssh_password"]).val(details["ssh_password"]);
 	$formTextarea.eq($formTextareaIndex["host_comment"]).val(details["host_comment"]);
@@ -2457,13 +2069,13 @@ function setValues(details)
 		$formCheckbox.eq($formCheckboxIndex["lock_position"]).attr("checked",true);
 	else
 		$formCheckbox.eq($formCheckboxIndex["lock_position"]).attr("checked",false);
-
+		
 	if(details["idu4_management_mode"] == 1)
 		$formCheckbox.eq($formCheckboxIndex["idu4_management_mode"]).attr("checked",true);
 	else
 		$formCheckbox.eq($formCheckboxIndex["idu4_management_mode"]).attr("checked",false);
-
-	$formSelectList.eq($formSelectListIndex["device_type"]).val(selectedDeviceType);
+		
+	$formSelectList.eq($formSelectListIndex["device_type"]).val(details["device_type"]);
 	$formSelectList.eq($formSelectListIndex["device_type"]).change();
 	$formSelectList.eq($formSelectListIndex["node_type"]).val(details["node_type"]);
 	$formSelectList.eq($formSelectListIndex["odu100_management_mode"]).val(details["odu100_management_mode"]);
@@ -2543,25 +2155,20 @@ function hideForm()
 {
 	$gridViewDiv.show();
 	$formDiv.hide();
-	$("img#add_host").show();
-	$("img#del_host").show();
 	hideAllToolTip();
-
 }
 function showForm()
 {
 	$gridViewDiv.hide();
-	$formDiv.show();
-	$("img#add_host").hide();
-	$("img#del_host").hide();
-}
+	$formDiv.show();	
+} 
 function delHost()
 {
 	actionName = "delConfirm";
 	hideForm();
 	var selectedRow = new Array();
 	selectedRow = fnGetSelected($gridViewDiscoveredHostDataTable)
-	var rLength = selectedRow.length;
+	var rLength = selectedRow.length; 
 	if(rLength==0)
 	{
 		$.prompt(messages["noneSelectedError"],{prefix:'jqismooth'});
@@ -2569,7 +2176,7 @@ function delHost()
 	else
 	{
 		$.prompt(messages[actionName],{ buttons:{Ok:true,Cancel:false}, prefix:'jqismooth',callback:delHostCallback });
-	}
+	}	
 }
 
 function delHostCallback(v,m){
@@ -2589,7 +2196,7 @@ function delHostCallback(v,m){
 			var aData = [];
 			var iRow = $gridViewDiscoveredHostDataTable.fnGetPosition(selectedRow[i]);
 			aData = $gridViewDiscoveredHostDataTable.fnGetData(iRow);
-
+			
 			hostId.push(String(aData[0]));
 			discoveryType.push(aData[1]);
 		}
@@ -2598,6 +2205,14 @@ function delHostCallback(v,m){
 			url:action + "?host_id=" + String(hostId) + "&discovery_type=" + String(discoveryType),
 			cache:false,
 			success:function(result){
+				try
+				{
+					result = eval("(" + result + ")");
+				}
+				catch(err)
+				{
+					result = {success:1,msg:"unknownError"};
+				}
 				if(result.success == 0)
 				{
 					hideForm();
@@ -2613,12 +2228,12 @@ function delHostCallback(v,m){
 						else
 						{
 							$gridViewDiscoveredHostFetched = 0;
-						}
+						} 
 					}
 				}
 				else
 				{
-					$().toastmessage('showErrorToast', messages["unknownError"]);
+					$().toastmessage('showErrorToast', messages[result.msg]);
 				}
 				spinStop($spinLoading,$spinMainLoading);
 			}
@@ -2634,7 +2249,7 @@ function fnGetSelected( oTableLocal )
 {
 	var aReturn = new Array();
 	var aTrs = oTableLocal.fnGetNodes();
-
+	
 	for ( var i=0 ; i<aTrs.length ; i++ )
 	{
 		if ( $(aTrs[i]).hasClass('row_selected') )
