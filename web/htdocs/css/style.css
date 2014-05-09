@@ -1,0 +1,527 @@
+/* =============== nms tree css ================ */
+a {
+   outline: 0;
+}
+.jstree > ul > li {
+    margin-left: 0;
+}
+
+.jstree ul, .jstree li {
+    display: block;
+    list-style-type: none;
+    /*margin: 0;*/
+    padding: 0;
+}
+
+.jstree li {
+    display: block;
+    line-height: 18px;
+    margin-left: 18px;
+    min-height: 18px;
+    white-space: nowrap;
+}
+
+.jstree-default li {
+    background-color: transparent;
+    background-image: url("images/d.png");
+    background-position: -90px 0;
+    background-repeat: repeat-y;
+}
+
+
+
+.jstree-default ins {
+    background-color: transparent;
+    background-image: url("images/d.png");
+    background-repeat: no-repeat;
+}
+
+.jstree ins {
+    display: inline-block;
+    height: 18px;
+    margin: 0;
+    padding: 0;
+    text-decoration: none;
+    width: 18px;
+}
+
+.jstree-default .jstree-open > ins {
+    background-position: -72px 0;
+}
+.jstree-default .jstree-closed > ins {
+    background-position: -54px 0;
+}
+
+
+
+
+
+
+.jstree a {
+    padding: 0 2px;
+}
+.jstree a {
+    color: black;
+    display: inline-block;
+    height: 16px;
+    line-height: 16px;
+    margin: 0;
+    padding: 1px 2px;
+    text-decoration: none;
+    white-space: nowrap;
+}
+a {
+    color: #8B0000;
+    text-decoration: none;
+}
+
+
+
+.jstree-0 li[rel="drive"] > a > .jstree-icon {
+    background-image: url("images/root.png");
+    background-position: 0 0;
+}
+.jstree-0 li[rel="folder"] > a > .jstree-icon {
+    background-image: url("images/folder.png");
+    background-position: 0 0;
+}
+.jstree-0 a > .jstree-icon {
+    background-image: url("images/file.png");
+    background-position: 0 0;
+}
+.jstree a > .jstree-icon {
+    margin-right: 3px;
+}
+
+.jstree a > ins {
+    height: 16px;
+    width: 16px;
+}
+.jstree-default .jstree-clicked {
+    background: none repeat scroll 0 0 #BEEBFF;
+    border: 1px solid #99DEFD;
+    padding: 0 2px 0 1px;
+}
+
+.jstree a {
+    padding: 0 2px;
+}
+
+.jstree a {
+    color: black;
+    display: inline-block;
+    height: 16px;
+    line-height: 16px;
+    margin: 0;
+    padding: 1px 2px;
+    text-decoration: none;
+    white-space: nowrap;
+}
+.jstree-default .jstree-leaf > ins {
+    background-position: -36px 0;
+}
+
+.jstree-default .jstree-closed > ins {
+    background-position: -54px 0;
+}
+
+.jstree-default li.jstree-last {
+    background: none repeat scroll 0 0 transparent;
+}
+.jstree-default .jstree-hovered {
+    background: none repeat scroll 0 0 #E7F4F9;
+    border: 1px solid #D8F0FA;
+    padding: 0 2px 0 1px;
+}
+/* ============= end nms tree css ============== */
+
+/* =============== nms rigth click menu css ================ */
+div.jstree-default-context, div.jstree-default-context li ul {
+    -moz-box-shadow: 1px 1px 2px #999999;
+    background: none repeat scroll 0 0 #F0F0F0;
+    border: 1px solid #979797;
+}
+div.jstree-default-context {
+    background: none repeat scroll 0 0 #EBEBEB;
+    border: 1px solid silver;
+    display: none;
+    margin: 0;
+    min-width: 180px;
+    padding: 0;
+    position: absolute;
+    z-index: 10000;
+}
+div.jstree-default-context {
+    font-family: Verdana;
+    font-size: 10px;
+}
+
+div.jstree-default-context ul, div.jstree-default-context li {
+    display: block;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+div.jstree-default-context ul {
+    min-width: 180px;
+}
+
+div.jstree-default-context li {
+    line-height: 20px;
+    min-height: 20px;
+    padding: 0;
+    position: relative;
+}
+
+div.jstree-default-context ul, div.jstree-default-context li {
+    display: block;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+div.jstree-default-context li ins {
+    float: left;
+    height: 16px;
+    margin-right: 2px;
+    text-decoration: none;
+    width: 16px;
+}
+div.jstree-default-context a {
+    color: black;
+}
+
+div.jstree-default-context li a {
+    display: block;
+    line-height: 17px;
+    margin: 1px 1px 0;
+    padding: 1px 6px;
+    text-decoration: none;
+}
+
+div.jstree-default-context li {
+}
+
+div.jstree-default-context li {
+}
+
+div.jstree-default-context li.vakata-separator {
+    background: none repeat scroll 0 0 white;
+    border-top: 1px solid #E0E0E0;
+    font-size: 1px;
+    height: 1px;
+    line-height: 1px;
+    margin: 0;
+    min-height: 0;
+    overflow: hidden;
+    padding: 0;
+}
+
+div.jstree-default-context li {
+    line-height: 20px;
+    min-height: 20px;
+    padding: 0;
+    position: relative;
+}
+
+div.jstree-default-context ul, div.jstree-default-context li {
+    display: block;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+div.jstree-default-context li ul {
+    margin-left: -4px;
+}
+
+div.jstree-default-context, div.jstree-default-context li ul {
+    -moz-box-shadow: 1px 1px 2px #999999;
+    background: none repeat scroll 0 0 #F0F0F0;
+    border: 1px solid #979797;
+}
+
+div.jstree-default-context li ul {
+    background: none repeat scroll 0 0 #EBEBEB;
+    border: 1px solid gray;
+    display: none;
+    left: 100%;
+    position: absolute;
+    top: -2px;
+}
+
+div.jstree-default-context ul, div.jstree-default-context li {
+    display: block;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+div.jstree-default-context ul {
+    min-width: 180px;
+}
+div.jstree-default-context a:hover, div.jstree-default-context .vakata-hover > a {
+    -moz-border-radius: 2px 2px 2px 2px;
+    background: none repeat scroll 0 0 #E8EFF7;
+    border: 1px solid #AECFF7;
+    color: black;
+    padding: 0 5px;
+}
+div.jstree-default-context a.disable
+{
+	color: #CCCCCC;
+	cursor:default;
+}
+div.jstree-default-context a.disable:hover
+{
+    color: #CCCCCC;
+    -moz-border-radius: 0px;
+    background: none;
+    border: 1px solid #F0F0F0;
+    cursor:default;
+}
+/* ============= end nms rigth click menu css ============== */
+
+/* ====================== Tab ======================= */
+div.tab-yo
+{
+    background: none repeat scroll 0 0 #F4F4F4;
+    border: 1px solid #D1CFCF;
+    margin: 10px 10px 15px;
+    position: relative;
+}
+div.tab-head
+{
+    border-bottom: 3px solid #575555;
+    background: none repeat scroll 0 0 #F4F4F4;
+    height: 33px;
+}
+div.tab-body
+{
+    /*background: url("img/mostActive_bg1.jpg") repeat scroll 0 0 transparent;*/
+    height: auto;
+    left: 0;
+    padding-bottom:10px;
+    top: 46px;
+    width: 100%;
+    z-index: 50;
+}
+a.tab-button
+{
+    color: #D1CFCF;
+    cursor: pointer;
+    display: block;
+    float: left;
+    font-size: 12px;
+    font-weight: 900;
+    height: 100%;
+    line-height: 33px;
+    text-align: center;
+    text-decoration: none;
+    min-width: 50px;
+    border-right: 1px solid #D1CFCF;
+    position: relative;
+    padding-left:5px;
+    padding-right:5px;
+}
+a.tab-active
+{
+    color: #D1CFCF;
+    cursor: pointer;
+    display: block;
+    float: left;
+    font-size: 12px;
+    font-weight: 900;
+    height: 100%;
+    line-height: 33px;
+    text-align: center;
+    text-decoration: none;
+    min-width: 50px;
+    background: none repeat scroll 0 0 #575555;
+    border-right: 1px solid #575555;
+    position: relative;
+    padding-left:5px;
+    padding-right:5px;
+}
+a.tab-disable
+{
+    color: #D1CFCF;
+    cursor: default;
+    display: block;
+    float: left;
+    font-size: 12px;
+    font-weight: 900;
+    height: 100%;
+    line-height: 33px;
+    text-align: center;
+    text-decoration: none;
+    min-width: 50px;
+    background: none repeat scroll 0 0 #DDD;
+    border-right: 1px solid #575555;
+    position: relative;
+    padding-left:5px;
+    padding-right:5px;
+}
+a.tab-button:hover
+{
+    background: none repeat scroll 0 0 #807E7E;
+}
+span.tab-img-button
+{
+    background: url("images/sprite.png") no-repeat scroll -25px -90px transparent;
+    display: block;
+    height: 25px;
+    left: 12px;
+    position: absolute;
+    top: 5px;
+    width: 25px;
+}
+
+span.tab-img-started
+{
+    background: url("images/start.png") no-repeat scroll 0px 0px transparent;
+    display: block;
+    height: 16px;
+    bottom: -3px;
+    position: absolute;
+    right: -2px;
+    width: 16px;
+    z-index: 100;
+}
+
+span.tab-img-stopped
+{
+    background: url("images/stop.png") no-repeat scroll 0px 0px transparent;
+    display: block;
+    height: 16px;
+    bottom: -3px;
+    position: absolute;
+    right: -2px;
+    width: 16px;
+    z-index: 100;
+}
+
+span.tab-img-done
+{
+    background: url("images/done.png") no-repeat scroll 0px 0px transparent;
+    display: block;
+    height: 16px;
+    bottom: -3px;
+    position: absolute;
+    right: -2px;
+    width: 16px;
+    z-index: 100;
+}
+span.tab-img-button:hover
+{
+    background: url("images/sprite.png") no-repeat scroll -25px -115px transparent;
+}
+div.tab-head h2
+{
+    color: #575555;
+    text-shadow: 0 -1px 0 #FFFFFF;
+    display: inline;
+    font-size: 15px;
+    font-style: normal;
+    font-weight: 900;
+    left: 120px;
+    letter-spacing: 0.02em;
+    line-height: 33px;
+    top: 0;
+    word-spacing: 0.15em;
+}
+div.tab-body div.msg-head
+{
+    display:block; 
+    line-height:20px; 
+    margin:5px 10px;
+    vertical-align: middle;
+}
+/* ====================== End Tab ======================= */
+/* ==================== Device Template Hover Menu =================== */
+div.device-hover-menu
+{
+	display:none;
+	background: none repeat scroll 0 0 #333333;
+	border: 1px solid #575555;
+	filter:alpha(opacity=90);
+	opacity: 0.9;
+	-moz-opacity:0.9;
+	position:absolute;
+        z-index:101;
+	max-width:90%;
+	max-height:200px;
+	overflow-x: hidden;
+	overflow-y: auto;
+}
+div.device-hover-menu a
+{
+	background: url("images/dropdown_linkbg.gif") no-repeat scroll 10px center #333333;
+	color:#FFF;
+	font-weight:normal;
+	padding:10px 10px 10px 20px;
+	float:left;
+	min-width:100px;
+	border-top:1px solid #444444;
+	border-bottom:1px solid #252525
+}
+div.device-hover-menu a:hover
+{
+	background: url("images/dropdown_linkbg.gif") no-repeat scroll 10px center #222222;
+}
+/* ==================== End Device Template Hover Menu =================== */
+/* ===========================  calendar pop up ===========================*/
+div.calender-pop-up
+{
+	border:1px solid #AAA;
+	-moz-box-shadow: 0 2px 8px #333333;
+	box-shadow: #333333 0 2px 8px;
+	behavior: url(/PIE.htc); -webkit-box-shadow: #333333 0 2px 8px;
+	-moz-border-radius: 4px;
+	min-height:100px;
+	width:200px;
+	padding:15px;
+	position:absolute;
+	z-index:1000;
+	display:none;
+	background-color:#FFF;
+}
+/* ===========================  calendar pop up ===========================*/
+/* ===========================  for performance bar ===========================*/
+.bar-main
+{
+	width:350px;
+	height:25px;
+	position:relative;
+	background-color:#D0361E;	
+	color:#FFFFFF;
+	font-size:10px;
+	font-weight:bold;
+	-moz-box-shadow: 1px 0px 2px #333333;
+	-moz-border-radius: 4px;
+	/*background:-moz-linear-gradient(0% 75% 90deg, #93322A, #C23123) repeat scroll 0 0 transparent;
+	background:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#c23123), to(#93322A));
+	filter:  progid:DXImageTransform.Microsoft.gradient(startColorStr='#93322A', EndColorStr='#c23123');*/
+}
+.bar-first
+{
+	background-color:#0F8C17;
+	height:100%;
+	float:left;
+	-moz-border-radius: 4px 0 0 4px;
+	/*background:-moz-linear-gradient(0% 75% 90deg, #1B4017, #2B7B24) repeat scroll 0 0 transparent;
+	background:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#2B7B24), to(#1B4017));
+	filter:  progid:DXImageTransform.Microsoft.gradient(startColorStr='#1B4017', EndColorStr='#2B7B24');*/
+}
+.bar-second
+{
+	padding:5px;
+	float:left;
+}
+.var-change
+{
+	font-weight:bold
+}
+/* ===========================  for performance bar ===========================*/
+
+

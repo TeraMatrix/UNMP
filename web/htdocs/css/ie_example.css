@@ -1,0 +1,45 @@
+/*
+ * 
+ * Author		:	Yogesh Kumar
+ * Project		:	UNMP
+ * Version		:	0.1
+ * File Name	:	example.css
+ * Creation Date:	12-September-2011
+ * Modify Date	:	12-September-2011
+ * Purpose		:	Define UNMP Major CSS
+ * Browser		:	Mozila FireFox [3.x or higher] and Chrome [all versions]
+ * 
+ * Copyright (c) 2011 Codescape Consultant Private Limited
+ * 
+ */
+
+/* For IE */
+
+div.cntr
+{
+	position:absolute;
+	top:0px;
+}
+div#container_body
+{
+	height:100%;
+}
+div.form-div-footer
+{
+	position:absolute;
+}
+.img-loader{
+    position:absolute;
+    top:2px;
+    right:5px;
+    bottom:2px;
+}
+input[type=text],input[type=password],input[type=file]
+{
+	vertical-align:middle;
+}
+select
+{
+	vertical-align:middle;
+	
+}

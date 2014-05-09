@@ -1,0 +1,1 @@
+<?xml version="1.0" ?><nmsDB><autoDiscovery><discovery active="0" authKey="" authProtocol="" community="public" complete="100.00" current="150" end="150" hostgroup="" ip="172.22.0" password="" port="161" privKey="" privPassword="" privProtocol="" service="0" snmpUser="" start="1" timeout="10" type="snmp" username="omdadmin" version="2"/></autoDiscovery><discoveredHosts/></nmsDB>

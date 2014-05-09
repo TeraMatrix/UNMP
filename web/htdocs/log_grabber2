@@ -1,0 +1,27 @@
+#! /bin/sh
+# unmp_log_grabber
+echo "         UNMP LOG GRABBER 2 "
+echo
+
+DIRS="/etc/httpd/logs/error_log* /omd/sites/UNMP/var/log/apache/error_log*"
+
+##DIRS="/var/log/snmptt/snmptt.log* /var/log/snmptt/snmpttsystem.log*  /var/log/snmptt/snmpttunknown.log*"
+
+temp_file="march_15_log"
+FILE=$temp_file".tar.gz"
+temp_file_part="$temp_file""_part"
+
+mkdir -p /opt/temp_log/$temp_file
+
+cd /opt/temp_log
+
+tar -czf $FILE $DIRS 
+sleep 1
+split -d -b 20m $FILE $temp_file/$temp_file_part
+rm -rf $FILE
+echo 
+echo "  :: Files created on location > /opt/temp_log/$temp_file"    
+echo "     :: with prefix  $temp_file_part"
+echo "     :: Number of files `ls -1 $temp_file | wc -l`  [each splited 20 MB size]"
+echo
+

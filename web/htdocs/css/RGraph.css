@@ -1,0 +1,13 @@
+#host_details_div{
+    background-color: #FFFFFF;
+    border: 2px solid #AAAAAA;
+    display: block;
+    padding-bottom: 20px;
+    padding-right: 20px;
+    padding-top: 20px;
+    position: absolute;
+    top: 5px;
+    left:5px;
+    z-index: 1000;
+}
+

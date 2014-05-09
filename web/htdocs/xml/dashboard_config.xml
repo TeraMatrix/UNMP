@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<unmp-dashboard>
+<odu16_cdashboard id="odu16_C" refresh_time="10" show_device="5" />
+<odu100_cdashboard id="odu100_C" refresh_time="10" show_device="5" />
+<odu16_dashboard id="odu16_D" refresh_time="5" time_diffrence="50"  />
+<odu100_dashboard id="odu100_D" refresh_time="10" time_diffrence="50" />
+<idu4_dashboard id="idu4_D" refresh_time="5" time_diffrence="50"  />
+<idu4_cdashboard id="idu4_C" refresh_time="10" show_device="5"  />
+<ap_dashboard id="ap_D" refresh_time="5" time_diffrence="50"  />
+<odu_dashboard id="odu_dashboard" refresh_time="10" time_diffrence="180" />
+</unmp-dashboard>

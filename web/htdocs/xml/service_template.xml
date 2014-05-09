@@ -1,0 +1,292 @@
+<?xml version="1.0" ?>
+<hosts>
+	<host name="Shyam Access Point" id="1">
+		<service name="check_ping" id="1">
+			<use>generic-service-perf,generic-service</use>
+			<service_description>PING</service_description>
+			<check_command>check_ping!100.0,20%!500.0,60%</check_command>
+			<max_check_attempts>5</max_check_attempts>
+			<normal_check_interval>5</normal_check_interval>
+			<retry_check_interval>3</retry_check_interval>
+			<notification_interval>30</notification_interval>
+		</service>
+		<service name="check-host-alive" id="2">
+			<use>generic-service-perf,generic-service</use>
+			<service_description>ICMP</service_description>
+			<check_command>check-host-alive</check_command>
+			<max_check_attempts>5</max_check_attempts>
+			<normal_check_interval>5</normal_check_interval>
+			<retry_check_interval>3</retry_check_interval>
+			<notification_interval>30</notification_interval>
+		</service>
+		<service name="check_snmp (Uptime)" id="3">
+			<use>generic-service-perf,generic-service</use>
+			<service_description>Uptime</service_description>
+			<check_command>check_snmp!-C public -o .1.3.6.1.2.1.1.3.0 -t 100000</check_command>
+			<max_check_attempts>5</max_check_attempts>
+			<normal_check_interval>1</normal_check_interval>
+			<retry_check_interval>1</retry_check_interval>
+			<notification_interval>30</notification_interval>
+		</service>
+		<service name="check_snmp (Port 1 Link Status)" id="4">
+			<use>generic-service-perf,generic-service</use>
+			<service_description>Port 1 Link Status</service_description>
+			<check_command>check_snmp!-C public -o .1.3.6.1.2.1.2.2.1.8.1</check_command>
+			<max_check_attempts>5</max_check_attempts>
+			<normal_check_interval>5</normal_check_interval>
+			<retry_check_interval>3</retry_check_interval>
+			<notification_interval>30</notification_interval>
+		</service>
+		<service name="check_local_mrtgtraf (eth0)" id="5">
+			<use>generic-service-perf,generic-service</use>
+			<service_description>Traffic Analysis for eth0 - Bandwidth Usage</service_description>
+			<check_command>check_local_mrtgtraf!/var/www/mrtg/$IPADDRESS$_eth0.log!AVG!1000000,1000000!5000000,5000000!10</check_command>
+			<max_check_attempts>5</max_check_attempts>
+			<normal_check_interval>5</normal_check_interval>
+			<retry_check_interval>3</retry_check_interval>
+			<notification_interval>30</notification_interval>
+		</service>
+		<service name="check_local_mrtgtraf (br0)" id="6">
+			<use>generic-service-perf,generic-service</use>
+			<service_description>Traffic Analysis for br0 - Bandwidth Usage</service_description>
+			<check_command>check_local_mrtgtraf!/var/www/mrtg/$IPADDRESS$_br0.log!AVG!1000000,1000000!5000000,5000000!10</check_command>
+			<max_check_attempts>5</max_check_attempts>
+			<normal_check_interval>5</normal_check_interval>
+			<retry_check_interval>3</retry_check_interval>
+			<notification_interval>30</notification_interval>
+		</service>
+		<service name="check_local_mrtgtraf (wifi0)" id="7">
+			<use>generic-service-perf,generic-service</use>
+			<service_description>Traffic Analysis for wifi0 - Bandwidth Usage</service_description>
+			<check_command>check_local_mrtgtraf!/var/www/mrtg/$IPADDRESS$_wifi0.log!AVG!1000000,1000000!5000000,5000000!10</check_command>
+			<max_check_attempts>5</max_check_attempts>
+			<normal_check_interval>5</normal_check_interval>
+			<retry_check_interval>3</retry_check_interval>
+			<notification_interval>30</notification_interval>
+		</service>
+		<service name="check_local_mrtgtraf (ath0)" id="8">
+			<use>generic-service-perf,generic-service</use>
+			<service_description>Traffic Analysis for ath0 - Bandwidth Usage</service_description>
+			<check_command>check_local_mrtgtraf!/var/www/mrtg/$IPADDRESS$_ath0.log!AVG!1000000,1000000!5000000,5000000!10</check_command>
+			<max_check_attempts>5</max_check_attempts>
+			<normal_check_interval>5</normal_check_interval>
+			<retry_check_interval>3</retry_check_interval>
+			<notification_interval>30</notification_interval>
+		</service>
+	</host>
+	<host name="Shyam Switch" id="2">
+		<service name="check_ping" id="1">
+			<use>generic-service-perf,generic-service</use>
+			<service_description>PING</service_description>
+			<check_command>check_ping!100.0,20%!500.0,60%</check_command>
+			<max_check_attempts>5</max_check_attempts>
+			<normal_check_interval>5</normal_check_interval>
+			<retry_check_interval>3</retry_check_interval>
+			<notification_interval>30</notification_interval>
+		</service>
+		<service name="check-host-alive" id="2">
+			<use>generic-service-perf,generic-service</use>
+			<service_description>ICMP</service_description>
+			<check_command>check-host-alive</check_command>
+			<max_check_attempts>5</max_check_attempts>
+			<normal_check_interval>5</normal_check_interval>
+			<retry_check_interval>3</retry_check_interval>
+			<notification_interval>30</notification_interval>
+		</service>
+		<service name="check_dhcp" id="3">
+			<use>generic-service-perf,generic-service</use>
+			<service_description>DHCP</service_description>
+			<check_command>check_dhcp</check_command>
+			<max_check_attempts>5</max_check_attempts>
+			<normal_check_interval>5</normal_check_interval>
+			<retry_check_interval>3</retry_check_interval>
+			<notification_interval>30</notification_interval>
+		</service>
+		<service name="check_https" id="4">
+			<use>generic-service-perf,generic-service</use>
+			<service_description>HTTPS</service_description>
+			<check_command>check_https</check_command>
+			<max_check_attempts>5</max_check_attempts>
+			<normal_check_interval>5</normal_check_interval>
+			<retry_check_interval>3</retry_check_interval>
+			<notification_interval>30</notification_interval>
+		</service>
+		<service name="check_http" id="5">
+			<use>generic-service-perf,generic-service</use>
+			<service_description>HTTP</service_description>
+			<check_command>check_http</check_command>
+			<max_check_attempts>5</max_check_attempts>
+			<normal_check_interval>5</normal_check_interval>
+			<retry_check_interval>3</retry_check_interval>
+			<notification_interval>30</notification_interval>
+		</service>
+		<service name="check_telnet" id="6">
+			<use>generic-service-perf,generic-service</use>
+			<service_description>Telnet</service_description>
+			<check_command>check_telnet</check_command>
+			<max_check_attempts>5</max_check_attempts>
+			<normal_check_interval>5</normal_check_interval>
+			<retry_check_interval>3</retry_check_interval>
+			<notification_interval>30</notification_interval>
+		</service>
+	</host>
+	<host name="Shyam Router" id="3">
+		<service name="check_ping" id="1">
+			<use>generic-service-perf,generic-service</use>
+			<service_description>PING</service_description>
+			<check_command>check_ping!100.0,20%!500.0,60%</check_command>
+			<max_check_attempts>5</max_check_attempts>
+			<normal_check_interval>5</normal_check_interval>
+			<retry_check_interval>3</retry_check_interval>
+			<notification_interval>30</notification_interval>
+		</service>
+		<service name="check-host-alive" id="2">
+			<use>generic-service-perf,generic-service</use>
+			<service_description>ICMP</service_description>
+			<check_command>check-host-alive</check_command>
+			<max_check_attempts>5</max_check_attempts>
+			<normal_check_interval>5</normal_check_interval>
+			<retry_check_interval>3</retry_check_interval>
+			<notification_interval>30</notification_interval>
+		</service>
+		<service name="check_dhcp" id="3">
+			<use>generic-service-perf,generic-service</use>
+			<service_description>DHCP</service_description>
+			<check_command>check_dhcp</check_command>
+			<max_check_attempts>5</max_check_attempts>
+			<normal_check_interval>5</normal_check_interval>
+			<retry_check_interval>3</retry_check_interval>
+			<notification_interval>30</notification_interval>
+		</service>
+	</host>
+	<host name="Shyam Point to Point" id="4">
+		<service name="check_ping" id="1">
+			<use>generic-service-perf,generic-service</use>
+			<service_description>PING</service_description>
+			<check_command>check_ping!100.0,20%!500.0,60%</check_command>
+			<max_check_attempts>5</max_check_attempts>
+			<normal_check_interval>5</normal_check_interval>
+			<retry_check_interval>3</retry_check_interval>
+			<notification_interval>30</notification_interval>
+		</service>
+		<service name="check-host-alive" id="2">
+			<use>generic-service-perf,generic-service</use>
+			<service_description>ICMP</service_description>
+			<check_command>check-host-alive</check_command>
+			<max_check_attempts>5</max_check_attempts>
+			<normal_check_interval>5</normal_check_interval>
+			<retry_check_interval>3</retry_check_interval>
+			<notification_interval>30</notification_interval>
+		</service>
+		<service name="check_snmp (Uptime)" id="3">
+			<use>generic-service</use>
+			<service_description>Uptime</service_description>
+			<check_command>check_snmp!-C public -o .1.3.6.1.2.1.1.3.0 -t 100000</check_command>
+			<max_check_attempts>5</max_check_attempts>
+			<normal_check_interval>5</normal_check_interval>
+			<retry_check_interval>3</retry_check_interval>
+			<notification_interval>30</notification_interval>
+		</service>
+		<service name="check_snmp (In Packets)" id="4">
+			<use>generic-service-perf,generic-service</use>
+			<service_description>In Packets</service_description>
+			<check_command>check_snmp!-C public -o .1.3.6.1.2.1.11.1.0 -t 100000</check_command>
+			<max_check_attempts>5</max_check_attempts>
+			<normal_check_interval>5</normal_check_interval>
+			<retry_check_interval>3</retry_check_interval>
+			<notification_interval>30</notification_interval>
+		</service>
+		<service name="check_snmp (Out Packets)" id="5">
+			<use>generic-service-perf,generic-service</use>
+			<service_description>Out Packets</service_description>
+			<check_command>check_snmp!-C public -o .1.3.6.1.2.1.11.2.0 -t 100000</check_command>
+			<max_check_attempts>5</max_check_attempts>
+			<normal_check_interval>5</normal_check_interval>
+			<retry_check_interval>3</retry_check_interval>
+			<notification_interval>30</notification_interval>
+		</service>
+		<service name="check_snmp (Network Mask)" id="6">
+			<use>generic-service</use>
+			<service_description>Network Mask</service_description>
+			<check_command>check_snmp!-C public -o .1.3.6.1.4.1.26149.2.2.9.1.4.1 -t 100000</check_command>
+			<max_check_attempts>5</max_check_attempts>
+			<normal_check_interval>5</normal_check_interval>
+			<retry_check_interval>3</retry_check_interval>
+			<notification_interval>30</notification_interval>
+		</service>
+		<service name="check_snmp (Default Gateway)" id="7">
+			<use>generic-service</use>
+			<service_description>Default Gateway</service_description>
+			<check_command>check_snmp!-C public -o .1.3.6.1.4.1.26149.2.2.9.1.5.1 -t 100000</check_command>
+			<max_check_attempts>5</max_check_attempts>
+			<normal_check_interval>5</normal_check_interval>
+			<retry_check_interval>3</retry_check_interval>
+			<notification_interval>30</notification_interval>
+		</service>
+		<service name="check_snmp (Hardware Serial Number)" id="8">
+			<use>generic-service</use>
+			<service_description>Hardware Serial Number</service_description>
+			<check_command>check_snmp!-C public -o .1.3.6.1.4.1.26149.2.2.10.1.3.1 -t 100000</check_command>
+			<max_check_attempts>5</max_check_attempts>
+			<normal_check_interval>5</normal_check_interval>
+			<retry_check_interval>3</retry_check_interval>
+			<notification_interval>30</notification_interval>
+		</service>
+		<service name="check_local_mrtgtraf (eth0)" id="9">
+			<use>generic-service-perf,generic-service</use>
+			<service_description>Traffic Analysis for eth0 - Bandwidth Usage</service_description>
+			<check_command>check_local_mrtgtraf!/var/www/mrtg/$IPADDRESS$_eth0.log!AVG!1000000,1000000!5000000,5000000!10</check_command>
+			<max_check_attempts>5</max_check_attempts>
+			<normal_check_interval>5</normal_check_interval>
+			<retry_check_interval>3</retry_check_interval>
+			<notification_interval>30</notification_interval>
+		</service>
+		<service name="check_local_mrtgtraf (br0)" id="10">
+			<use>generic-service-perf,generic-service</use>
+			<service_description>Traffic Analysis for br0 - Bandwidth Usage</service_description>
+			<check_command>check_local_mrtgtraf!/var/www/mrtg/$IPADDRESS$_br0.log!AVG!1000000,1000000!5000000,5000000!10</check_command>
+			<max_check_attempts>5</max_check_attempts>
+			<normal_check_interval>5</normal_check_interval>
+			<retry_check_interval>3</retry_check_interval>
+			<notification_interval>30</notification_interval>
+		</service>
+		<service name="check_local_mrtgtraf (wifi0)" id="11">
+			<use>generic-service-perf,generic-service</use>
+			<service_description>Traffic Analysis for wifi0 - Bandwidth Usage</service_description>
+			<check_command>check_local_mrtgtraf!/var/www/mrtg/$IPADDRESS$_wifi0.log!AVG!1000000,1000000!5000000,5000000!10</check_command>
+			<max_check_attempts>5</max_check_attempts>
+			<normal_check_interval>5</normal_check_interval>
+			<retry_check_interval>3</retry_check_interval>
+			<notification_interval>30</notification_interval>
+		</service>
+		<service name="check_local_mrtgtraf (ath0)" id="12">
+			<use>generic-service-perf,generic-service</use>
+			<service_description>Traffic Analysis for ath0 - Bandwidth Usage</service_description>
+			<check_command>check_local_mrtgtraf!/var/www/mrtg/$IPADDRESS$_ath0.log!AVG!1000000,1000000!5000000,5000000!10</check_command>
+			<max_check_attempts>5</max_check_attempts>
+			<normal_check_interval>5</normal_check_interval>
+			<retry_check_interval>3</retry_check_interval>
+			<notification_interval>30</notification_interval>
+		</service>
+	</host>
+	<host name="Shyam CPE" id="5">
+		<service name="check_ping" id="1">
+			<use>generic-service-perf,generic-service</use>
+			<service_description>PING</service_description>
+			<check_command>check_ping!100.0,20%!500.0,60%</check_command>
+			<max_check_attempts>5</max_check_attempts>
+			<normal_check_interval>5</normal_check_interval>
+			<retry_check_interval>3</retry_check_interval>
+			<notification_interval>30</notification_interval>
+		</service>
+		<service name="check-host-alive" id="2">
+			<use>generic-service-perf,generic-service</use>
+			<service_description>ICMP</service_description>
+			<check_command>check-host-alive</check_command>
+			<max_check_attempts>5</max_check_attempts>
+			<normal_check_interval>5</normal_check_interval>
+			<retry_check_interval>3</retry_check_interval>
+			<notification_interval>30</notification_interval>
+		</service>
+	</host>
+</hosts>

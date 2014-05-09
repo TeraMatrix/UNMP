@@ -1,0 +1,16 @@
+<shyamDevices>
+	<device id="ODU16" name="ODU-16Mbps" sdmcDiscoveryId="" sdmcDiscoveryValue="" snmpDiscoveryValue="" upnpDiscoveryValue="" applyedServiceTemplate="" hide="true"/>
+	<device id="ODU100" name="ODU-100Mbps" sdmcDiscoveryId="" sdmcDiscoveryValue="" snmpDiscoveryValue="" upnpDiscoveryValue="" applyedServiceTemplate="" hide="true"/>
+	<device id="IDU4" name="IDU-4 Port" sdmcDiscoveryId="" sdmcDiscoveryValue="" snmpDiscoveryValue="" upnpDiscoveryValue="" applyedServiceTemplate="" hide="true"/>
+	<device id="IDU8" name="IDU-8 Port" sdmcDiscoveryId="" sdmcDiscoveryValue="" snmpDiscoveryValue="" upnpDiscoveryValue="" applyedServiceTemplate="" hide="true"/>
+	<device id="SWT24" name="Switch-24 Port" sdmcDiscoveryId="" sdmcDiscoveryValue="" snmpDiscoveryValue="" upnpDiscoveryValue="" applyedServiceTemplate="" hide="true"/>
+	<device id="SWT8" name="Switch-8 Port" sdmcDiscoveryId="" sdmcDiscoveryValue="" snmpDiscoveryValue="" upnpDiscoveryValue="" applyedServiceTemplate="" hide="true"/>
+	<device id="SWT4" name="Switch-4 Port" sdmcDiscoveryId="" sdmcDiscoveryValue="" snmpDiscoveryValue="" upnpDiscoveryValue="" applyedServiceTemplate="" hide="true"/>
+	<device id="epGateway" name="Enterprise Gateway" sdmcDiscoveryId="" sdmcDiscoveryValue="" snmpDiscoveryValue="" upnpDiscoveryValue="" applyedServiceTemplate="" hide="true"/>
+	<device id="hmGateway" name="Home Gateway" sdmcDiscoveryId="" sdmcDiscoveryValue="" snmpDiscoveryValue="" upnpDiscoveryValue="" applyedServiceTemplate="" hide="true"/>
+	<device id="hmGateway22" name="Home Gateway 22dBm" sdmcDiscoveryId="" sdmcDiscoveryValue="" snmpDiscoveryValue="" upnpDiscoveryValue="" applyedServiceTemplate="" hide="true"/>
+	<device id="AP" name="Access Point" sdmcDiscoveryId="1" sdmcDiscoveryValue="AP" snmpDiscoveryValue="" upnpDiscoveryValue="" applyedServiceTemplate="1" hide="false"/>
+	<device id="AP22" name="Access Point 22" sdmcDiscoveryId="2" sdmcDiscoveryValue="AP" snmpDiscoveryValue="" upnpDiscoveryValue="" applyedServiceTemplate="1" hide="true"/>
+	<device id="cpe" name="CPE" sdmcDiscoveryId="" sdmcDiscoveryValue="" snmpDiscoveryValue="" upnpDiscoveryValue="" applyedServiceTemplate="" hide="true"/>
+	<device id="cpe22" name="CPE 22" sdmcDiscoveryId="" sdmcDiscoveryValue="" snmpDiscoveryValue="" upnpDiscoveryValue="" applyedServiceTemplate="" hide="true"/>
+</shyamDevices>

@@ -1,0 +1,14 @@
+<?xml version="1.0" ?><unmp>
+	<mysql driver="mysql" hostname="localhost" password="root" port="3306" schema="nms" username="root"/>
+	<dashboard refresh="5"/>
+	<page refresh="1" start="main.py" title="Network Management System"/>
+	<company name="SHYAM" website="main.py"/>
+	<aboutus version="version 1.7.2.000"/>
+	<googlemap latitude="26.05" longitude="75.05"/>
+	<http password="password" port="" username="admin"/>
+	<snmp getsetport="161" readcomm="public" trapport="162" version="2c" writecomm="private"/>
+	<host priority="normal" state="e"/>
+	<smtp password="patanahi" server="smtp.gmail.com" username="mailsender@codescape.in"/>
+	<hostconfig check_command="check-host-alive" use_template="generic-host"/>
+	<serviceconfig max_check_attempts="1" normal_check_interval="5" retry_check_interval="5" use_template="generic-service"/>
+</unmp>

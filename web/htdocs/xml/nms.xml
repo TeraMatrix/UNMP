@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<nmsDB>
+	<autoDiscovery>
+		<discovery active="1" complete="7.87" current="19" end="100" hostgroup="" ip="192.168.5" service="1" start="12" timeout="2" type="ping" username="omdadmin"/>
+	<discovery active="1" authKey="" authProtocol="" community="public" complete="0" current="12" end="100" hostgroup="" ip="192.168.4" password="" port="161" privKey="" privPassword="" privProtocol="" service="1" snmpUser="" start="12" timeout="12" type="snmp" username="omdadmin" version="1"/><discovery active="0" authKey="" authProtocol="" complete="100.00" current="202" end="202" hostgroup="all" ip="192.168.1" password="" privKey="" privPassword="" privProtocol="" service="1" snmpUser="" start="200" timeout="3" type="snmp" username="omdadmin"/><discovery hostgroup="" username="omdadmin" ip="" start="1" end="100" service="1" timeout="2" active="0" complete="100.00" type="upnp" current="100.00"/></autoDiscovery>
+</nmsDB>

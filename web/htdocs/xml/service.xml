@@ -1,0 +1,484 @@
+<services>
+	<service name="check-host-alive" graph="true">
+		<description>Service to check host alive status.</description>
+		<remark>Some host are not pingable. There is a firewall in front of them preventing that. Although all services from this hosts are running, the host itself is assumed to be down. So you can check host alive status throught this service.
+		</remark>
+	</service>
+	<service name="check_local_disk" graph="true">
+		<description>Service to check local disk free space.</description>
+		<arg id="1">
+			<name>Warning</name>
+			<description>Enter value in percentage for Warning state, example: 20%</description>
+		</arg>
+		<arg id="2">
+			<name>Critical</name>
+			<description>Enter value in percentage for critical state, example: 10%</description>
+		</arg>
+		<arg id="3">
+			<name>Disk Path</name>
+			<description>Enter Disk Path</description>
+		</arg>
+		<remark></remark>
+	</service>
+	<service name="check_local_load" graph="true">
+		<description>Service to check Processor Load</description>
+		<arg id="1">
+			<name>Warning</name>
+			<description>Enter value for Warning state, example: 15,10,5</description>
+		</arg>
+		<arg id="2">
+			<name>Critical</name>
+			<description>Enter value for Critical state, example: 30,25,20</description>
+		</arg>
+		<remark></remark>
+	</service>
+	<service name="check_local_procs" graph="true">
+		<description>Service to check the total number of running processes on local machine</description>
+		<arg id="1">
+			<name>Warning</name>
+			<description>Enter value for Warning state, example: 250</description>
+		</arg>
+		<arg id="2">
+			<name>Critical</name>
+			<description>Enter value for Critical state, example: 400</description>
+		</arg>
+		<remark></remark>
+	</service>
+	<service name="check_local_users" graph="true">
+		<description>Service to check total number of users on local machine</description>
+		<arg id="1">
+			<name>Warning</name>
+			<description>Enter value for Warning state, example: 20</description>
+		</arg>
+		<arg id="2">
+			<name>Critical</name>
+			<description>Enter value for Critical state, example: 50</description>
+		</arg>
+		<remark></remark>
+	</service>
+	<service name="check_local_swap" graph="true">
+		<description>Service to check the swap usage the local machine</description>
+		<arg id="1">
+			<name>Warning</name>
+			<description>Enter value in percentage for Warning state, example: warning if less than 20% of swap is free.</description>
+		</arg>
+		<arg id="2">
+			<name>Critical</name>
+			<description>Enter value in percentage for Critical state, example: critical if less than 10% of swap is free.</description>
+		</arg>
+		<remark></remark>
+	</service>
+	<service name="check_ftp" graph="true">
+		<description>Monitor FTP server</description>
+		<arg id="1">
+			<name>@#$</name>
+			<aoarg id="-p">
+				<name>Port</name>
+				<description>Port Number on that FTP server is running</description>
+			</aoarg>
+			<aoarg id="-">
+				<name>Connection</name>
+				<description>For IPv4 connection write 4 or for IPv6 connection write 6</description>
+			</aoarg>
+			<aoarg id="-e">
+				<name>Expect response</name>
+				<description>String to expect in server response</description>
+			</aoarg>
+			<aoarg id="-w">
+				<name>Warning</name>
+				<description>Response time to result in warning status</description>
+			</aoarg>
+			<aoarg id="-c">
+				<name>Critical</name>
+				<description>Response time to result in critical status</description>
+			</aoarg>
+			<aoarg id="-t">
+				<name>Time Out</name>
+				<description>if the server doesn't respond within t seconds then it will generate an alert.</description>
+			</aoarg>
+		</arg>
+		<remark>
+		</remark>
+	</service>
+	<service name="check_hpjd" graph="true">
+		<description>Service to check the status of the printer</description>
+		<arg id="1">
+			<name>@#$</name>
+			<aoarg id="-C">
+				<name>SNMP Community</name>
+				<description>SNMP Community "public" or "private".</description>
+			</aoarg>
+		</arg>
+		<remark>
+		</remark>
+	</service>
+	<service name="check_snmp" graph="true">
+		<description>Monitor SNMP status information</description>
+		<arg id="1">
+			<name>@#$</name>
+			<aoarg id="-C">
+				<name>SNMP Community</name>
+				<description>SNMP Community "public" or "private".</description>
+			</aoarg>
+			<aoarg id="-o">
+				<name>SNMP OID</name>
+				<description>Object identifier or SNMP variables whose value you wish to query.</description>
+			</aoarg>
+			<aoarg id="-p">
+				<name>SNMP PORT</name>
+				<description>Enter SNMP Port Number</description>
+			</aoarg>
+			<aoarg id="-r">
+				<name>Return Status</name>
+				<description>check_snmp service return OK status if "1" is found in the SNMP result (1 indicates an "up" state on the port) and Critical if it isn't found.</description>
+			</aoarg>
+			<aoarg id="-m">
+				<name>MIB</name>
+				<description>MIB Name that's installed on your system.</description>
+			</aoarg>
+			<aoarg id="-t">
+				<name>Time Out</name>
+				<description>if the server doesn't respond within t seconds then it will generate an alert.</description>
+			</aoarg>
+		</arg>
+		<remark>If switch or router or other dervice supports SNMP, you can monitor a lot of information by using the check_snmp service. If it doesn't, skip this service
+		</remark>
+	</service>
+	<service name="check_http" graph="true">
+		<description>Service to check the HTTP service</description>
+		<arg id="1">
+			<name>@#$</name>
+			<aoarg id="-a">
+				<name>Authorization</name>
+				<description>Username:password on sites with basic authentication, for e.g. admin:password</description>
+			</aoarg>
+			<aoarg id="-p">
+				<name>Port</name>
+				<description>Port Number on that HTTP server is running</description>
+			</aoarg>
+			<aoarg id="-u">
+				<name>URL</name>
+				<description>HTTP gets the response from this URL</description>
+			</aoarg>
+			<aoarg id="-s">
+				<name>Expect response</name>
+				<description>If server response doesn't contain this string then it will generate an alert.</description>
+			</aoarg>
+			<aoarg id="-">
+				<name>Connection</name>
+				<description>For IPv4 connection write 4 or for IPv6 connection write 6</description>
+			</aoarg>
+			<aoarg id="-w">
+				<name>Warning</name>
+				<description>Response time to result in warning status</description>
+			</aoarg>
+			<aoarg id="-c">
+				<name>Critical</name>
+				<description>Response time to result in critical status</description>
+			</aoarg>
+			<aoarg id="-t">
+				<name>Time Out</name>
+				<description>if the server doesn't respond within t seconds then it will generate an alert.</description>
+			</aoarg>
+		</arg>
+		<remark>
+		</remark>
+	</service>
+	<service name="check_ssh" graph="true">
+		<description>Service to check the SSH server</description>
+		<arg id="1">
+			<name>@#$</name>
+			<aoarg id="-p">
+				<name>Port</name>
+				<description>Port Number on that HTTP server is running</description>
+			</aoarg>
+			<aoarg id="-">
+				<name>Connection</name>
+				<description>For IPv4 connection write 4 or for IPv6 connection write 6</description>
+			</aoarg>
+			<aoarg id="-r">
+				<name>Server Version</name>
+				<description>If server version string doesn't match with this string then it will generate an alert.</description>
+			</aoarg>
+			<aoarg id="-t">
+				<name>Time Out</name>
+				<description>if the server doesn't respond within t seconds then it will generate an alert.</description>
+			</aoarg>
+		</arg>
+		<remark>
+		</remark>
+	</service>
+	<service name="check_dhcp" graph="true">
+		<description>Service to check the availability of DHCP server</description>
+		<arg id="1">
+			<name>@#$</name>
+			<aoarg id="-s">
+				<name>IP Address</name>
+				<description>IP Address of DHCP server</description>
+			</aoarg>
+			<aoarg id="-r">
+				<name>Requested IP</name>
+				<description>IP Address that should be offered by at least one DHCP server</description>
+			</aoarg>
+			<aoarg id="-i">
+				<name>Interface</name>
+				<description>Interface to use for listing (i.e. eth0)</description>
+			</aoarg>
+			<aoarg id="-m">
+				<name>Mac Address</name>
+				<description>MAC Address to use in the DHCP request</description>
+			</aoarg>
+			<aoarg id="-t">
+				<name>Time Out</name>
+				<description>if the server doesn't respond within t seconds then it will generate an alert.</description>
+			</aoarg>
+		</arg>
+		<remark>
+		</remark>
+	</service>
+	<service name="check_ping" graph="true">
+		<description>Service to check connection statistics</description>
+		<arg id="1">
+			<name>Warning</name>
+			<description>Enter value for Warning state, example: warning if less than 100.0,20% (RTA,Packet loss in %) then generate an alert.</description>
+		</arg>
+		<arg id="2">
+			<name>Critical</name>
+			<description>Enter value for Critical state, example: critical if less than 500.0,60% (RTA,Packet loss in %) then generate an alert.</description>
+		</arg>
+		<remark></remark>
+	</service>
+	<service name="check_pop" graph="true">
+		<description>Service to check the availability of POP3 server</description>
+		<arg id="1">
+			<name>@#$</name>
+			<aoarg id="-p">
+				<name>Port</name>
+				<description>Port Number on that POP3 server is running</description>
+			</aoarg>
+			<aoarg id="-">
+				<name>Connection</name>
+				<description>For IPv4 connection write 4 or for IPv6 connection write 6</description>
+			</aoarg>
+			<aoarg id="-w">
+				<name>Warning</name>
+				<description>Response time to result in warning status</description>
+			</aoarg>
+			<aoarg id="-c">
+				<name>Critical</name>
+				<description>Response time to result in critical status</description>
+			</aoarg>
+			<aoarg id="-e">
+				<name>Expect response</name>
+				<description>String to expect in server response</description>
+			</aoarg>
+			<aoarg id="-t">
+				<name>Time Out</name>
+				<description>if the server doesn't respond within t seconds then it will generate an alert.</description>
+			</aoarg>
+		</arg>
+		<remark>
+		</remark>
+	</service>
+	<service name="check_imap" graph="true">
+		<description>Service to monitor IMAP service on your email servers</description>
+		<arg id="1">
+			<name>@#$</name>
+			<aoarg id="-p">
+				<name>Port</name>
+				<description>Port Number on that IMAP server is running</description>
+			</aoarg>
+			<aoarg id="-">
+				<name>Connection</name>
+				<description>For IPv4 connection write 4 or for IPv6 connection write 6</description>
+			</aoarg>
+			<aoarg id="-w">
+				<name>Warning</name>
+				<description>Response time to result in warning status</description>
+			</aoarg>
+			<aoarg id="-c">
+				<name>Critical</name>
+				<description>Response time to result in critical status</description>
+			</aoarg>
+			<aoarg id="-e">
+				<name>Expect response</name>
+				<description>String to expect in server response</description>
+			</aoarg>
+			<aoarg id="-t">
+				<name>Time Out</name>
+				<description>if the server doesn't respond within t seconds then it will generate an alert.</description>
+			</aoarg>
+		</arg>
+		<remark>
+		</remark>
+	</service>
+	<service name="check_smtp" graph="true">
+		<description>Service to monitor your email servers</description>
+		<arg id="1">
+			<name>@#$</name>
+			<aoarg id="-p">
+				<name>Port</name>
+				<description>Port Number on that email server is running</description>
+			</aoarg>
+			<aoarg id="-">
+				<name>Connection</name>
+				<description>For IPv4 connection write 4 or for IPv6 connection write 6</description>
+			</aoarg>
+			<aoarg id="-e">
+				<name>Expect response</name>
+				<description>String to expect in server response</description>
+			</aoarg>
+			<aoarg id="-w">
+				<name>Warning</name>
+				<description>Response time to result in warning status</description>
+			</aoarg>
+			<aoarg id="-c">
+				<name>Critical</name>
+				<description>Response time to result in critical status</description>
+			</aoarg>
+			<aoarg id="-t">
+				<name>Time Out</name>
+				<description>if the server doesn't respond within t seconds then it will generate an alert.</description>
+			</aoarg>
+		</arg>
+		<remark>
+		</remark>
+	</service>
+	<service name="check_tcp" graph="true">
+		<description>Monitor TCP server</description>
+		<arg id="1">
+			<name>Port</name>
+			<description>Port Number on that TCP server is running</description>
+		</arg>
+		<arg id="2">
+			<name>@#$</name>
+			<aoarg id="-">
+				<name>Connection</name>
+				<description>For IPv4 connection write 4 or for IPv6 connection write 6</description>
+			</aoarg>
+			<aoarg id="-e">
+				<name>Expect response</name>
+				<description>String to expect in server response</description>
+			</aoarg>
+			<aoarg id="-w">
+				<name>Warning</name>
+				<description>Response time to result in warning status</description>
+			</aoarg>
+			<aoarg id="-c">
+				<name>Critical</name>
+				<description>Response time to result in critical status</description>
+			</aoarg>
+			<aoarg id="-t">
+				<name>Time Out</name>
+				<description>if the server doesn't respond within t seconds then it will generate an alert.</description>
+			</aoarg>
+		</arg>
+		<remark>
+		</remark>
+	</service>
+	<service name="check_udp" graph="true">
+		<description>Monitor UDP server</description>
+		<arg id="1">
+			<name>Port</name>
+			<description>Port Number on that TCP server is running</description>
+		</arg>
+		<arg id="2">
+			<name>@#$</name>
+			<aoarg id="-">
+				<name>Connection</name>
+				<description>For IPv4 connection write 4 or for IPv6 connection write 6</description>
+			</aoarg>
+			<aoarg id="-e">
+				<name>Expect response</name>
+				<description>String to expect in server response</description>
+			</aoarg>
+			<aoarg id="-w">
+				<name>Warning</name>
+				<description>Response time to result in warning status</description>
+			</aoarg>
+			<aoarg id="-c">
+				<name>Critical</name>
+				<description>Response time to result in critical status</description>
+			</aoarg>
+			<aoarg id="-t">
+				<name>Time Out</name>
+				<description>if the server doesn't respond within t seconds then it will generate an alert.</description>
+			</aoarg>
+		</arg>
+		<remark>
+		</remark>
+	</service>
+	<service name="check_nt" graph="true">
+		<description>Service to collect data from the NSClient service running on a Windows NT/2000/XP/2003 server.</description>
+		<arg id="1">
+			<name>Variable</name>
+			<description>Variable to check the value</description>
+		</arg>
+		<arg id="2">
+			<name>@#$</name>
+			<aoarg id="-s">
+				<name>Password</name>
+				<description>if password needed for the request</description>
+			</aoarg>
+			<aoarg id="-w">
+				<name>Warning</name>
+				<description>Response time to result in warning status</description>
+			</aoarg>
+			<aoarg id="-c">
+				<name>Critical</name>
+				<description>Response time to result in critical status</description>
+			</aoarg>
+			<aoarg id="-t">
+				<name>Time Out</name>
+				<description>if the server doesn't respond within t seconds then it will generate an alert.</description>
+			</aoarg>
+		</arg>
+		<remark>
+		</remark>
+	</service>
+	<service name="check_local_mrtgtraf" graph="true">
+		<description>Service to check the incoming/outgoing transfer rates.</description>
+		<arg id="1">
+			<name>File Name</name>
+			<description>File to read log from</description>
+		</arg>
+		<arg id="2">
+			<name>Aggregation</name>
+			<description>Test average or maximum (AVG|MAX)</description>
+		</arg>
+		<arg id="3">
+			<name>Warning</name>
+			<description>Warning threshold pair ([incoming],[outgoing])</description>
+		</arg>
+		<arg id="4">
+			<name>Critical</name>
+			<description>Critical threshold pair ([incoming],[outgoing])</description>
+		</arg>
+		<arg id="5">
+			<name>Expire log</name>
+			<description>Minutes after which log expires</description>
+		</arg>
+		<remark>
+		</remark>
+	</service>
+	<service name="check_https" graph="true">
+		<description>Service to check https service.</description>
+		<remark></remark>
+	</service>
+	<service name="check_telnet" graph="true">
+		<description>Service to check telnet service.</description>
+		<remark></remark>
+	</service>
+	<service name="check_mysql" graph="true">
+		<description>Service to check mysql service.</description>
+		<remark></remark>
+	</service>
+	<service name="check_nrpe" graph="true">
+		<description>Service to check nrpe service.</description>
+		<remark></remark>
+	</service>
+	<service name="check_ds" graph="true">
+		<description>Service to check TCP Discovery.</description>
+		<remark></remark>
+	</service>
+</services>
