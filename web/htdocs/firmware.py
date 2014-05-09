@@ -1,20 +1,10 @@
 #!/usr/bin/python2.6
 
-import config
-import htmllib
-import pprint
-import sidebar
-import views
-import time
-import defaults
-import os
-import cgi
-import subprocess
-import commands
-import MySQLdb
-import datetime
 import os.path
-from xml.dom.minidom import parse, Node
+import os
+
+from xml.dom.minidom import parse
+
 from lib import *
 import nms_config
 
@@ -26,24 +16,24 @@ def update(h):
     html = h
     i = 0
     css_list = []
-    js_list = ["js/firmware.js"]
+    js_list = ["js/unmp/main/firmware.js"]
     header_btn = ""
     html.new_header("Firmware Update", "", header_btn, css_list, js_list)
     html.write(
         "<table class=\"addform\" style=\"border:0px none;\"><colgroup><col width=\"140px\"/><col width=\"auto\"/></colgroup>")
     html.write(
         "<tr><td>Select Devices:</td><td><select name=\"select_devices\" id=\"select_devices\">")
-    if(os.path.isfile(path)):
+    if (os.path.isfile(path)):
         f = parse(path)
         try:
             for node in f.getElementsByTagName('device'):
-                if(i == 0):
+                if (i == 0):
                     html.write(
                         "<option selected=\"true\" value=\"NoDevice\">-- Select Device Type --</option>")
                 i += 1
                 html.write("<option value=\"%s\">%s</option>" % (
                     node.getAttribute('id'), node.getAttribute('name')))
-            if(i == 0):
+            if (i == 0):
                 html.write(
                     "<option selected=\"true\" value=\"\">-- No Device Found --</option>")
         except Exception, e:

@@ -48,7 +48,7 @@ def render_wato_files():
                 if state != "disabled":
                     html.write("<h3>%s</h3>\n" % site["alias"])
                     ajax_url = site["url_prefix"] + \
-                        "check_mk/ajax_wato_files.py"
+                               "check_mk/ajax_wato_files.py"
                     html.javascript(
                         "document.write(get_url_sync('%s'));" % ajax_url)
         else:

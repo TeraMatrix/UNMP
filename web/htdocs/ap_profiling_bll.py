@@ -1,34 +1,33 @@
 #!/usr/bin/python2.6
 
-from unmp_model import *
-from utility import ErrorMessages, Validation, UNMPDeviceType
-from unmp_config import SystemConfig
+from datetime import datetime
+import logging
+import time
+
+import MySQLdb
 from sqlalchemy import and_, or_, desc, asc
-from common_controller import *
 from sqlalchemy.exc import *
 from sqlalchemy.orm.exc import *
-from pysnmp_ap import *
-from py_module import snmp_ping
+
 from common_bll import EventLog, Essential
-from datetime import datetime
+from common_controller import *
+from py_module import snmp_ping
+from pysnmp_ap import *
 from unmp_config import SystemConfig
-import time
-import logging
-import MySQLdb
-from mysql_collection import mysql_connection
-from unmp_config import SystemConfig
-from common_bll import Essential
-# from inventory_controller import get_mac_details
+from unmp_model import *
+from utility import UNMPDeviceType  # , ErrorMessages, Validation
 
 
 debug_start = 0
 time_diff = 0
 time_delay = 0
 
+#@TODO: remove this logging and use logme facility
 logging.basicConfig(filename='/omd/daemon/log/recon_log.log',
                     format='%(levelname)s: %(asctime)s >> %(message)s', level=logging.DEBUG)
 if debug_start > 0:
     logging.info(" lggin start: ")
+
 errorStatus = {0: 'noError',
                1: 'Device Unresponsive',
                2: 'Parameter is out of range',
@@ -94,8 +93,15 @@ essential_obj = Essential()
 
 
 class DeviceParameters(object):
-
+    """
+    Get the device parameters provided the host_id
+    """
     def get_device_parameter(self, host_id):
+        """
+
+        @param host_id:
+        @return:
+        """
         global sqlalche_obj
         try:
             sqlalche_obj.sql_alchemy_db_connection_open()
@@ -113,7 +119,9 @@ class DeviceParameters(object):
 
 
 class APDeviceList(object):
-
+    """
+    Device AP related listing class
+    """
     def ap_device_list(self, ip_address, mac_address, selected_device, i_display_start, i_display_length, s_search, sEcho, sSortDir_0, iSortCol_0, userid=None, html_req={}):
         """
         Author- Anuj Samariya
@@ -122,6 +130,17 @@ class APDeviceList(object):
         mac_address - This is the Mac Address of device e.g aa:bb:cc:dd:ee:ff
         selected_device - This is the selected device types from the drop down menu of devices e.g "odu16"
         return List of Devices in two dimensional list format
+        @param ip_address:
+        @param mac_address:
+        @param selected_device:
+        @param i_display_start:
+        @param i_display_length:
+        @param s_search:
+        @param sEcho:
+        @param sSortDir_0:
+        @param iSortCol_0:
+        @param userid:
+        @param html_req:
         """
         device_dict = {}
         # try block starts
@@ -152,6 +171,13 @@ class APDeviceList(object):
             return output2
 
     def ap_device_list_profiling(self, ip_address, mac_address, selected_device):
+        """
+
+        @param ip_address:
+        @param mac_address:
+        @param selected_device:
+        @return:
+        """
         global sqlalche_obj
         device_list = []
         device_type = selected_device
@@ -173,6 +199,11 @@ class APDeviceList(object):
             sqlalche_obj.sql_alchemy_db_connection_close()
 
     def get_time_ago(self, date1):
+        """
+
+        @param date1:
+        @return:
+        """
         last_check = ""
 
         date1 = datetime.strptime(
@@ -197,6 +228,11 @@ class APDeviceList(object):
         return last_check
 
     def ap_client_list(self):
+        """
+
+
+        @return:
+        """
         global sqlalche_obj
 
         # try block starts
@@ -234,6 +270,15 @@ class APDeviceList(object):
 
     #######################
     def pagination_create_table(self, i_display_start, i_display_length, s_search, sEcho, req_vars):
+        """
+
+        @param i_display_start:
+        @param i_display_length:
+        @param s_search:
+        @param sEcho:
+        @param req_vars:
+        @return:
+        """
         a_columns = ["if(ap_connected_client.state='1','<img alt=\"Yes\" src=\"images/host_status_ap_0.png\" class=\"host_opr n-reconcile\" title=\"Yes\"/>','<img alt=\"No\" src=\"images/host_status_ap_1.png\" class=\"host_opr n-reconcile\" title=\"No\"/>')", "client_name", "UPPER(mac)", "ifnull(client_ip,'-')", "total_tx", "total_rx", "ifnull(hosts_first.host_alias,'-')",
                      "ifnull(ap_client_ap_data.rssi,'-')", "ifnull(ap25_basicVAPconfigTable.vapESSID,'-')", "last_seen_time", "ifnull(hosts_last.host_alias,'-')",
                      "ap_client_details.client_id"
@@ -420,8 +465,15 @@ class APDeviceList(object):
 # obj = APDeviceList()
 # print obj.ap_client_list()
 class APCommitToFlash(object):
+    """AP Commit To Flash class
 
+    """
     def commit_to_flash(self, host_id):
+        """
+
+        @param host_id:
+        @return:
+        """
         global sqlalche_obj, essential_obj, host_status_dic, errorStatus
         result = {}
         oid_dict = {}
@@ -501,6 +553,11 @@ class APCommitToFlash(object):
             essential_obj.host_status(host_id, 0, None, 4)
 
     def commit_to_flash_test(self, host_id):
+        """
+
+        @param host_id:
+        @return:
+        """
         global sqlalche_obj, essential_obj, host_status_dic, errorStatus
         result = {}
         oid_dict = {}
@@ -562,6 +619,11 @@ class APCommitToFlash(object):
 
 
 def rename_tablename(tablename):
+    """
+
+    @param tablename:
+    @return:
+    """
     try:
         ss = ""
         idx = tablename.index("_")
@@ -575,7 +637,9 @@ def rename_tablename(tablename):
 
 
 class Reconciliation(object):
-
+    """
+    AP reconciliation
+    """
 ##    def update_configuration(self,host_id,device_type_id):
 ##        host_param = []
 ##        global errorStatus
@@ -740,6 +804,12 @@ class Reconciliation(object):
 ##            sqlalche_obj.sql_alchemy_db_connection_close()
 
     def time_diff_rec_table(self, table_oid_dic, current_time):
+        """
+
+        @param table_oid_dic:
+        @param current_time:
+        @return:
+        """
         table_dic = {}
         global time_diff
         time_diff = 0
@@ -766,6 +836,15 @@ class Reconciliation(object):
         return table_dic
 
     def update_configuration(self, host_id, device_type, table_prefix, current_time, user_name):
+        """
+
+        @param host_id:
+        @param device_type:
+        @param table_prefix:
+        @param current_time:
+        @param user_name:
+        @return:
+        """
         global essential_obj, sqlalche_obj, host_status_dic, errorStatus
         host_status = 0
         host_data = []
@@ -1057,6 +1136,16 @@ class Reconciliation(object):
 
     ####################### Device Reconciliation with isReconciliation reconc
     def default_configuration_added(self, host_id, device_type_id, table_prefix, current_time, user_name, reconcile_chk=True):
+        """
+
+        @param host_id:
+        @param device_type_id:
+        @param table_prefix:
+        @param current_time:
+        @param user_name:
+        @param reconcile_chk:
+        @return:
+        """
         global sqlalche_obj
         sqlalche_obj.sql_alchemy_db_connection_open()
         new_profile = Odu16ConfigProfiles(
@@ -1255,6 +1344,11 @@ class Reconciliation(object):
             return str(new_profile_id), 0
 
     def reconciliation_status(self):
+        """
+
+
+        @return:
+        """
         global sqlalche_obj
         result = {}
         rec_dir = {}
@@ -1269,6 +1363,11 @@ class Reconciliation(object):
             return result
 
     def reconciliation_chk_status(self, host_id):
+        """
+
+        @param host_id:
+        @return:
+        """
         global sqlalche_obj
         result = {}
         sqlalche_obj.sql_alchemy_db_connection_open()
@@ -1301,6 +1400,11 @@ class Reconciliation(object):
             return result
 
     def reboot(self, host_id):
+        """
+
+        @param host_id:
+        @return:
+        """
         global sqlalche_obj
         result = {}
         i = 0
@@ -1374,8 +1478,16 @@ class Reconciliation(object):
 
 
 class DHCPClientInformation(object):
-
+    """
+    AP DHCP mode and connected clients
+    """
     def ap_dhcp_client_information(self, host_id, calculate):
+        """
+
+        @param host_id:
+        @param calculate:
+        @return:
+        """
         global sqlalche_obj, host_status_dic, essential_obj
         global errorStatus
         result = {}
@@ -1439,8 +1551,16 @@ class DHCPClientInformation(object):
 
 
 class APScan(object):
-
+    """
+    AP device functionality AP scan
+    """
     def ap_scan(self, host_id, calculate):
+        """
+
+        @param host_id:
+        @param calculate:
+        @return:
+        """
         global sqlalche_obj, host_status_dic, essential_obj
         global errorStatus
         result = {}
@@ -1503,8 +1623,16 @@ class APScan(object):
 
 
 class APGetData(object):
-
+    """
+    Get AP device data
+    """
     def ap_get_data(self, class_name, host_id):
+        """
+
+        @param class_name:
+        @param host_id:
+        @return:
+        """
         try:
             global sqlalche_obj
             sqlalche_obj.sql_alchemy_db_connection_open()
@@ -1533,10 +1661,23 @@ class APGetData(object):
 
 
 class APCommonSetValidation(object):
+    """
+    Validation for AP forms
+    """
 
     def common_set_config(self, host_id, device_type_id, dic_result, id=None, index=0, special_case=0):
     # dic_result = {'success':0,'result':{'ru.omcConfTable.omcIpAddress':[1,'Not Done'],'ru.omcConfTable.periodicStatsTimer':[1,'Not Done']}}
     # return dic_result
+        """
+
+        @param host_id:
+        @param device_type_id:
+        @param dic_result:
+        @param id:
+        @param index:
+        @param special_case:
+        @return:
+        """
         try:
             global sqlalche_obj, essential_obj, host_status_dic
             sqlalche_obj.sql_alchemy_db_connection_open()
@@ -1979,6 +2120,16 @@ class APCommonSetValidation(object):
             essential_obj.host_status(host_id, 0, None, 12)
 
     def common_validation(self, host_id, device_type_id, dic_result, id=None, index=0, special_case=0):
+        """
+
+        @param host_id:
+        @param device_type_id:
+        @param dic_result:
+        @param id:
+        @param index:
+        @param special_case:
+        @return:
+        """
         try:
             obj_set = APCommonSetValidation()
             flag = 0
@@ -2050,6 +2201,13 @@ class APCommonSetValidation(object):
             return str(e)
 
     def ap_cancel_form(self, host_id, device_type_id, dic_result):
+        """
+
+        @param host_id:
+        @param device_type_id:
+        @param dic_result:
+        @return:
+        """
         try:
             flag = 0
             global sqlalche_obj
@@ -2086,6 +2244,13 @@ class APCommonSetValidation(object):
             return dic_result
 
     def basic_acl_set(self, host_id, device_type_id, dic_result):
+        """
+
+        @param host_id:
+        @param device_type_id:
+        @param dic_result:
+        @return:
+        """
         try:
             global sqlalche_obj, essential_obj, host_status_dic
             sqlalche_obj.sql_alchemy_db_connection_open()
@@ -2201,6 +2366,15 @@ class APCommonSetValidation(object):
             essential_obj.host_status(host_id, 0, None, 12)
 
     def vap_set(self, host_id, device_type_id, dic_result, selectedvap, vap_id):
+        """
+
+        @param host_id:
+        @param device_type_id:
+        @param dic_result:
+        @param selectedvap:
+        @param vap_id:
+        @return:
+        """
         try:
             global sqlalche_obj, essential_obj, host_status_dic
             sqlalche_obj.sql_alchemy_db_connection_open()
@@ -2347,8 +2521,16 @@ class APCommonSetValidation(object):
 
 
 class SelectVap(object):
-
+    """
+    AP VAP related class
+    """
     def select_vap_vap(self, host_id, device_type):
+        """
+
+        @param host_id:
+        @param device_type:
+        @return:
+        """
         global sqlalche_obj
         sqlalche_obj.sql_alchemy_db_connection_open()
         final_result = []
@@ -2364,6 +2546,12 @@ class SelectVap(object):
         return final_result
 
     def select_vap_change(self, host_id, device_type):
+        """
+
+        @param host_id:
+        @param device_type:
+        @return:
+        """
         global sqlalche_obj
         sqlalche_obj.sql_alchemy_db_connection_open()
         print host_id, device_type
@@ -2460,6 +2648,11 @@ class SelectVap(object):
         return li
 
     def select_mac(self, vap_select_id):
+        """
+
+        @param vap_select_id:
+        @return:
+        """
         global sqlalche_obj
         sqlalche_obj.sql_alchemy_db_connection_open()
         final_result = []
@@ -2472,8 +2665,17 @@ class SelectVap(object):
 
 
 class MacOperations(object):
+    """
+    AP based MAC operations
+    """
 
     def chk_mac_duplicate(self, macaddress, vap_selection_id):
+        """
+
+        @param macaddress:
+        @param vap_selection_id:
+        @return:
+        """
         global sqlalche_obj
         sqlalche_obj.sql_alchemy_db_connection_open()
         success = 0
@@ -2493,6 +2695,15 @@ class MacOperations(object):
             return success
 
     def add_acl(self, host_id, device_type_id, dic_result, vap_selection_id, selected_vap):
+        """
+
+        @param host_id:
+        @param device_type_id:
+        @param dic_result:
+        @param vap_selection_id:
+        @param selected_vap:
+        @return:
+        """
         global sqlalche_obj, essential_obj, host_status_dic
         m = 0
         host_op_state = essential_obj.host_status(host_id, 12)
@@ -2569,6 +2780,15 @@ class MacOperations(object):
             return {"success": 1, "result": "Device is busy, Device " + str(host_status_dic.get(int(host_op_state), "other operation")) + " is in progress. please wait ..."}
 
     def delete_acl(self, host_id, device_type_id, dic_result, selected_vap, vap_selection_id):
+        """
+
+        @param host_id:
+        @param device_type_id:
+        @param dic_result:
+        @param selected_vap:
+        @param vap_selection_id:
+        @return:
+        """
         global sqlalche_obj, essential_obj, host_status_dic
         m = 0
         host_op_state = essential_obj.host_status(host_id, 12)
@@ -2642,6 +2862,14 @@ class MacOperations(object):
             return {"success": 1, "result": "Device is busy, Device " + str(host_status_dic.get(int(host_op_state), "other operation")) + " is in progress. please wait ..."}
 
     def delete_all_mac(self, host_id, device_type_id, selected_vap, vap_selection_id):
+        """
+
+        @param host_id:
+        @param device_type_id:
+        @param selected_vap:
+        @param vap_selection_id:
+        @return:
+        """
         try:
             global sqlalche_obj, essential_obj, host_status_dic, errorStatus
             sqlalche_obj.sql_alchemy_db_connection_open()
@@ -2697,7 +2925,17 @@ class MacOperations(object):
 
 
 class APRadioState(object):
+    """
+    AP radio state list
+    """
     def radio_enable_disable(self, host_id, admin_state, state):
+        """
+
+        @param host_id:
+        @param admin_state:
+        @param state:
+        @return:
+        """
         global sqlalche_obj, essential_obj, host_status_dic
         global errorStatus
         try:
@@ -2742,6 +2980,11 @@ class APRadioState(object):
             return snmp_result
 
     def chk_radio_status(self, host_id):
+        """
+
+        @param host_id:
+        @return:
+        """
         result = {'success': 0, 'result': ""}
         try:
             global sqlalche_obj, essential_obj
@@ -2779,7 +3022,15 @@ class APRadioState(object):
 
 
 class APConnectedClients(object):
+    """
+    AP connected client list
+    """
     def total_connected_clients(self, host_id):
+        """
+
+        @param host_id:
+        @return:
+        """
         try:
             global sqlalche_obj
             sqlalche_obj.sql_alchemy_db_connection_open()
@@ -2806,6 +3057,11 @@ class APConnectedClients(object):
             return result
 
     def client_details(self, client_id):
+        """
+
+        @param client_id:
+        @return:
+        """
         try:
             global sqlalche_obj
             result = {"success": 1, "result": "client deatails not exist"}
@@ -2826,6 +3082,13 @@ class APConnectedClients(object):
             return result
 
     def edit_ap_client_details(self, client_id, client_name, client_ip):
+        """
+
+        @param client_id:
+        @param client_name:
+        @param client_ip:
+        @return:
+        """
         try:
             global sqlalche_obj
             result = {"success": 1, "result":

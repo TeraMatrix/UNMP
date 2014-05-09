@@ -1,4 +1,4 @@
-#host_details_div{
+#host_details_div {
     background-color: #FFFFFF;
     border: 2px solid #AAAAAA;
     display: block;
@@ -7,7 +7,7 @@
     padding-top: 20px;
     position: absolute;
     top: 5px;
-    left:5px;
+    left: 5px;
     z-index: 1000;
 }
 

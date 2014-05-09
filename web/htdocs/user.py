@@ -59,7 +59,7 @@ class User(object):
             return s
         except Exception, e:
             return str(e)
-            
+
     @staticmethod
     def create_user_settings_form(first_name, last_name, designation, company, mobile, address, email_id):
         try:
@@ -106,7 +106,7 @@ class User(object):
                     </div>
                 </form>
                 """ % (first_name, last_name, company,
-                        designation, address, mobile, email_id)
+                       designation, address, mobile, email_id)
             return s
         except Exception, e:
             return str(e)

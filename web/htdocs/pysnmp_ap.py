@@ -9,10 +9,20 @@ from pysnmp.proto.api import v2c
 
 
 def odubulk(oid, ip_address, port, community, max_value=10):
+    """
+
+    @param oid:
+    @param ip_address:
+    @param port:
+    @param community:
+    @param max_value:
+    @return:
+    """
     err_dict = {}
     success = 1
     try:
-        if isinstance(ip_address, str) and isinstance(oid, str) and isinstance(community, str) and isinstance(port, int):
+        if isinstance(ip_address, str) and isinstance(oid, str) and isinstance(community, str) and isinstance(port,
+                                                                                                              int):
             try:
                 make_tuple = lambda x: tuple(int(i) for i in x.split('.'))
                 oid = oid.strip('.')
@@ -20,8 +30,9 @@ def odubulk(oid, ip_address, port, community, max_value=10):
                 first_value = 0
 
                 errorIndication, errorStatus, errorIndex, \
-                    varBindTable = cmdgen.CommandGenerator().bulkCmd(
-                        cmdgen.CommunityData('bulkodu-agent', community), cmdgen.UdpTransportTarget((ip_address, port)), first_value, max_value, make_tuple(oid))
+                varBindTable = cmdgen.CommandGenerator().bulkCmd(
+                    cmdgen.CommunityData('bulkodu-agent', community), cmdgen.UdpTransportTarget((ip_address, port)),
+                    first_value, max_value, make_tuple(oid))
 
                 var_dict = {}
 
@@ -31,7 +42,8 @@ def odubulk(oid, ip_address, port, community, max_value=10):
                 else:
                     if errorStatus:
                         err_dict[int(errorStatus)] = errorStatus.prettyPrint()
-                        print "int(errorIndex),str(errorStatus),int(errorStatus)", int(errorIndex), int(errorStatus), str(errorStatus)
+                        print "int(errorIndex),str(errorStatus),int(errorStatus)", int(errorIndex), int(
+                            errorStatus), str(errorStatus)
                         success = 1
                     else:
                         success = 0
@@ -48,7 +60,7 @@ def odubulk(oid, ip_address, port, community, max_value=10):
                                     pass
                                 else:
                                     return
-                                # print name.prettyPrint()
+                                    # print name.prettyPrint()
                                 oid_values_list = name.prettyPrint(
                                 ).split(oid)[1].strip('.').split('.')
                                 print oid_values_list
@@ -75,8 +87,8 @@ def odubulk(oid, ip_address, port, community, max_value=10):
                                     # oid_values_list.pop(0)
                                     print oid_values_list
                                     for i in oid_values_list:
-                                            li.append(i)
-                                    # print " li ",li
+                                        li.append(i)
+                                        # print " li ",li
                                     li.append(value)
                                     # print " li 2",li
                                     var_dict[count] = li
@@ -86,8 +98,8 @@ def odubulk(oid, ip_address, port, community, max_value=10):
                                     li = var_dict[count]
                                     li.append(value)
                                     var_dict[count] = li
-                                # print li,count
-                                # print "li,count",li,count,var_dict,oid_li
+                                    # print li,count
+                                    # print "li,count",li,count,var_dict,oid_li
 
             except socket.error as sock_err:
                 success = 1
@@ -125,18 +137,29 @@ def odubulk(oid, ip_address, port, community, max_value=10):
 
 
 def bulktable(oid, ip_address, port, community, max_value=5):
+    """
+
+    @param oid:
+    @param ip_address:
+    @param port:
+    @param community:
+    @param max_value:
+    @return:
+    """
     err_dict = {}
     success = 1
     try:
-        if isinstance(ip_address, str) and isinstance(oid, str) and isinstance(community, str) and isinstance(port, int):
+        if isinstance(ip_address, str) and isinstance(oid, str) and isinstance(community, str) and isinstance(port,
+                                                                                                              int):
             try:
                 make_tuple = lambda x: tuple(int(i) for i in x.split('.'))
                 oid = oid.strip('.')
                 # print oid
                 first_value = 0
                 errorIndication, errorStatus, errorIndex, \
-                    varBindTable = cmdgen.CommandGenerator().bulkCmd(
-                        cmdgen.CommunityData('table-agent', community), cmdgen.UdpTransportTarget((ip_address, port)), first_value, max_value, make_tuple(oid))
+                varBindTable = cmdgen.CommandGenerator().bulkCmd(
+                    cmdgen.CommunityData('table-agent', community), cmdgen.UdpTransportTarget((ip_address, port)),
+                    first_value, max_value, make_tuple(oid))
 
                 var_dict = {}
 
@@ -166,7 +189,7 @@ def bulktable(oid, ip_address, port, community, max_value=5):
                                     pass
                                 else:
                                     return
-                                # print name.prettyPrint()
+                                    # print name.prettyPrint()
                                 oid_values_list = name.prettyPrint(
                                 ).split(oid)[1].strip('.').split('.')
                                 # print oid_values_list
@@ -203,7 +226,7 @@ def bulktable(oid, ip_address, port, community, max_value=5):
                                                 oid_values_list.pop(0)
                                     for i in oid_values_list:
                                         li.append(i)
-                                    # print " li ",li
+                                        # print " li ",li
                                     li.append(value)
                                     # print " li 2",li
                                     var_dict[count] = li
@@ -213,8 +236,8 @@ def bulktable(oid, ip_address, port, community, max_value=5):
                                     li = var_dict[count]
                                     li.append(value)
                                     var_dict[count] = li
-                                # print li,count
-                                # print "li,count",li,count,var_dict,oid_li
+                                    # print li,count
+                                    # print "li,count",li,count,var_dict,oid_li
 
             except socket.error as sock_err:
                 success = 1
@@ -251,6 +274,17 @@ def bulktable(oid, ip_address, port, community, max_value=5):
 
 
 def bulkget(ip_address, port, community, oid, first_value, max_value, return_list=[]):
+    """
+
+    @param ip_address:
+    @param port:
+    @param community:
+    @param oid:
+    @param first_value:
+    @param max_value:
+    @param return_list:
+    @return:
+    """
     err_dict = {}
     success = 1
     try:
@@ -259,8 +293,9 @@ def bulkget(ip_address, port, community, oid, first_value, max_value, return_lis
         # oid = oid.strip('.')
 
         errorIndication, errorStatus, errorIndex, \
-            varBindTable = cmdgen.CommandGenerator().bulkCmd(
-                cmdgen.CommunityData('table-agent', community), cmdgen.UdpTransportTarget((ip_address, port)), first_value, max_value, make_tuple(oid))
+        varBindTable = cmdgen.CommandGenerator().bulkCmd(
+            cmdgen.CommunityData('table-agent', community), cmdgen.UdpTransportTarget((ip_address, port)), first_value,
+            max_value, make_tuple(oid))
 
         if errorIndication and len(varBindTable) < 1:
             success = 1
@@ -326,11 +361,20 @@ def bulkget(ip_address, port, community, oid, first_value, max_value, return_lis
 
 
 def table_bulk(oid, ip_address, port, community):
+    """
+
+    @param oid:
+    @param ip_address:
+    @param port:
+    @param community:
+    @return:
+    """
     err_dict = {}
     var_dict = {}
     success = 1
     try:
-        if isinstance(ip_address, str) and isinstance(oid, str) and isinstance(community, str) and isinstance(port, int):
+        if isinstance(ip_address, str) and isinstance(oid, str) and isinstance(community, str) and isinstance(port,
+                                                                                                              int):
             try:
                 oid = oid.strip('.')
                 varBindTable = []
@@ -380,7 +424,7 @@ def table_bulk(oid, ip_address, port, community):
                         # print oid_values_list
                         for i in oid_values_list:
                             li.append(i)
-                        # print " li ",li
+                            # print " li ",li
                         li.append(value)
                         # print " li 2",li
                         var_dict[count] = li
@@ -390,8 +434,8 @@ def table_bulk(oid, ip_address, port, community):
                         li = var_dict[count]
                         li.append(value)
                         var_dict[count] = li
-                    # print li,count
-                    # print "li,count",li,count,var_dict,oid_li
+                        # print li,count
+                        # print "li,count",li,count,var_dict,oid_li
 
             except socket.error as sock_err:
                 success = 1
@@ -427,17 +471,27 @@ def table_bulk(oid, ip_address, port, community):
 
 ###### NEW GENERIC TABLE FUNCTION
 def pysnmp_get_table(oid, ip_address, port, community):
+    """
+
+    @param oid:
+    @param ip_address:
+    @param port:
+    @param community:
+    @return:
+    """
     err_dict = {}
     success = 1
     try:
-        if isinstance(ip_address, str) and isinstance(oid, str) and isinstance(community, str) and isinstance(port, int):
+        if isinstance(ip_address, str) and isinstance(oid, str) and isinstance(community, str) and isinstance(port,
+                                                                                                              int):
             try:
                 make_tuple = lambda x: tuple(int(i) for i in x.split('.'))
                 oid = oid.strip('.')
                 # print oid
                 errorIndication, errorStatus, errorIndex, \
-                    varBindTable = cmdgen.CommandGenerator().nextCmd(
-                        cmdgen.CommunityData('table-agent', community), cmdgen.UdpTransportTarget((ip_address, port)), make_tuple(oid))
+                varBindTable = cmdgen.CommandGenerator().nextCmd(
+                    cmdgen.CommunityData('table-agent', community), cmdgen.UdpTransportTarget((ip_address, port)),
+                    make_tuple(oid))
 
                 var_dict = {}
 
@@ -491,7 +545,7 @@ def pysnmp_get_table(oid, ip_address, port, community):
                                     # print oid_values_list
                                     for i in oid_values_list:
                                         li.append(i)
-                                    # print " li ",li
+                                        # print " li ",li
                                     li.append(value)
                                     # print " li 2",li
                                     var_dict[count] = li
@@ -501,8 +555,8 @@ def pysnmp_get_table(oid, ip_address, port, community):
                                     li = var_dict[count]
                                     li.append(value)
                                     var_dict[count] = li
-                                # print li,count
-                                # print "li,count",li,count,var_dict,oid_li
+                                    # print li,count
+                                    # print "li,count",li,count,var_dict,oid_li
 
             except socket.error as sock_err:
                 success = 1
@@ -536,16 +590,26 @@ def pysnmp_get_table(oid, ip_address, port, community):
 
 
 def pysnmp_get_table_old(oid, ip_address, port, community):
+    """
+
+    @param oid:
+    @param ip_address:
+    @param port:
+    @param community:
+    @return:
+    """
     err_dict = {}
     success = 1
     try:
-        if isinstance(ip_address, str) and isinstance(oid, str) and isinstance(community, str) and isinstance(port, int):
+        if isinstance(ip_address, str) and isinstance(oid, str) and isinstance(community, str) and isinstance(port,
+                                                                                                              int):
             try:
                 make_tuple = lambda x: tuple(int(i) for i in x.split('.'))
 
                 errorIndication, errorStatus, errorIndex, \
-                    varBindTable = cmdgen.CommandGenerator().nextCmd(
-                        cmdgen.CommunityData('table-agent', community), cmdgen.UdpTransportTarget((ip_address, port)), make_tuple(oid))
+                varBindTable = cmdgen.CommandGenerator().nextCmd(
+                    cmdgen.CommunityData('table-agent', community), cmdgen.UdpTransportTarget((ip_address, port)),
+                    make_tuple(oid))
 
                 var_dict = {}
                 if errorIndication and len(varBindTable) < 1:
@@ -639,16 +703,26 @@ def pysnmp_get_table_old(oid, ip_address, port, community):
 
 
 def pysnmp_get_node(oid, ip_address, port, community):
+    """
+
+    @param oid:
+    @param ip_address:
+    @param port:
+    @param community:
+    @return:
+    """
     err_dict = {}
     success = 1
     var_dict = {}
     try:
-        if isinstance(ip_address, str) and isinstance(oid, str) and isinstance(community, str) and isinstance(port, int):
+        if isinstance(ip_address, str) and isinstance(oid, str) and isinstance(community, str) and isinstance(port,
+                                                                                                              int):
             try:
                 make_tuple = lambda x: tuple(int(i) for i in x.split('.'))
 
                 errorIndication, errorStatus, errorIndex, varBindTable = cmdgen.CommandGenerator(
-                ).nextCmd(cmdgen.CommunityData('table-agent', community), cmdgen.UdpTransportTarget((ip_address, port)), make_tuple(oid))
+                ).nextCmd(cmdgen.CommunityData('table-agent', community), cmdgen.UdpTransportTarget((ip_address, port)),
+                          make_tuple(oid))
                 if errorIndication and len(varBindTable) < 1:
                     success = 1
                     err_dict[553] = str(errorIndication)
@@ -738,13 +812,22 @@ def pysnmp_get_node(oid, ip_address, port, community):
 
 
 def single_set(ip_address, port, community, received_list):
+    """
+
+    @param ip_address:
+    @param port:
+    @param community:
+    @param received_list:
+    @return:
+    """
     try:
         make_tuple = lambda x: tuple(int(i) for i in x.split(
             '.'))  # @note: this lambda function used to convert a oid string to oid tuple (in a format required by pysnmp)
         success = 0
         if isinstance(ip_address, str) and isinstance(community, str) and port != None and len(received_list) == 3:
             datatypes_dict = {
-                'Integer32': v2c.Integer32, 'Unsigned32': v2c.Unsigned32, 'OctetString': v2c.OctetString, 'DisplayString': v2c.OctetString, 'Gauge32': v2c.Gauge32,
+                'Integer32': v2c.Integer32, 'Unsigned32': v2c.Unsigned32, 'OctetString': v2c.OctetString,
+                'DisplayString': v2c.OctetString, 'Gauge32': v2c.Gauge32,
                 'IpAddress': v2c.IpAddress, 'Counter32': v2c.Counter32, 'Counter64': v2c.Counter64}
 
             response_dict = {}
@@ -753,7 +836,7 @@ def single_set(ip_address, port, community, received_list):
 
             snmp_args = [cmdgen.CommunityData('single-set', community),
                          cmdgen.UdpTransportTarget((ip_address, int(port))),
-                         ]
+            ]
 
             cmdClass = cmdgen.CommandGenerator().setCmd
 
@@ -823,6 +906,12 @@ def single_set(ip_address, port, community, received_list):
 # 161,'private',['1.3.6.1.4.1.26149.10.2.3.4.1.1.0','Integer32',1])
 
 def vapsetup_ap(ip_address, port=161):
+    """
+
+    @param ip_address:
+    @param port:
+    @return:
+    """
     get_community = 'public'
     set_community = 'private'
     vap_dict = {}
@@ -909,7 +998,7 @@ def vapsetup_ap(ip_address, port=161):
                                     if result2_dict['success'] == 0:
                                         for i in range(1, len(result2_dict['result']) + 1):
                                             list3.append(result2_dict[
-                                                         'result'][i])
+                                                'result'][i])
                                     if flag_acl_mode:
                                         acl_dict = single_set(
                                             ip_address, port, set_community, [aclState_oid, 'Integer32', 0])
@@ -952,19 +1041,29 @@ def vapsetup_ap(ip_address, port=161):
 
 def pysnmp_get(oid, ip_address, port, community):
     # not to pass at the end .1 in oid
+    """
+
+    @param oid:
+    @param ip_address:
+    @param port:
+    @param community:
+    @return:
+    """
     success = 0
     response_dict = {}
     try:
-        if isinstance(ip_address, str) and isinstance(oid, str) and isinstance(community, str) and isinstance(port, int):
+        if isinstance(ip_address, str) and isinstance(oid, str) and isinstance(community, str) and isinstance(port,
+                                                                                                              int):
             try:
                 make_tuple = lambda x: tuple(int(i) for i in x.split('.'))
 
                 errorIndication, errorStatus, errorIndex, varBindTable = cmdgen.CommandGenerator(
-                ).nextCmd(cmdgen.CommunityData('get-agent', community), cmdgen.UdpTransportTarget((ip_address, port)), make_tuple(oid))
+                ).nextCmd(cmdgen.CommunityData('get-agent', community), cmdgen.UdpTransportTarget((ip_address, port)),
+                          make_tuple(oid))
                 if errorIndication:
-                        response_dict[553] = str(errorIndication)
-                        success = 1
-                        return
+                    response_dict[553] = str(errorIndication)
+                    success = 1
+                    return
                 else:
                     if errorStatus > 0 and errorIndex != None:
                         response_dict[int(
@@ -1023,8 +1122,29 @@ def pysnmp_get(oid, ip_address, port, community):
 # 'public')
 
 
-def pysnmp_seter(received_dict={}, ip_address=None, port=None, community=None, admin_state={}, is_recursive=0, response_dict={}, temp_dict={}, error_dict={}, state=0):
+def pysnmp_seter(received_dict={}, ip_address=None, port=None, community=None, admin_state={}, is_recursive=0,
+                 response_dict={}, temp_dict={}, error_dict={}, state=0):
     """
+
+
+
+
+
+
+
+
+
+
+    @param received_dict:
+    @param ip_address:
+    @param port:
+    @param community:
+    @param admin_state:
+    @param is_recursive:
+    @param response_dict:
+    @param temp_dict:
+    @param error_dict:
+    @param state:
     @requires: {'fullName_of_field':(oid_as_string,oid_datatype,oid_value_to_be_set)} , ip address, port, community, if admin_state dependency present then pass admin_state as dictionary         {'admin_state':(oid_str,datatype,value)}
 
     @return: {'success': 0/1, result : {'fullName_of_field':('if successful then 0 if not then 1','error_number_if any otherwise 0')} }
@@ -1062,15 +1182,17 @@ def pysnmp_seter(received_dict={}, ip_address=None, port=None, community=None, a
         aoid_tuple = None
         aoid_str = None
         snmp_args = None
-        datatypes_dict = {'Integer32': v2c.Integer32, 'Integer': v2c.Integer32, 'Unsigned32': v2c.Gauge32, 'OctetString': v2c.OctetString, 'DisplayString': v2c.OctetString, 'Gauge32': v2c.Gauge32, 'Gauge': v2c.Gauge32, 'IpAddress':
-                          v2c.IpAddress, 'Counter32': v2c.Counter32, 'Counter': v2c.Counter32, 'Counter64': v2c.Counter64}
+        datatypes_dict = {'Integer32': v2c.Integer32, 'Integer': v2c.Integer32, 'Unsigned32': v2c.Gauge32,
+                          'OctetString': v2c.OctetString, 'DisplayString': v2c.OctetString, 'Gauge32': v2c.Gauge32,
+                          'Gauge': v2c.Gauge32, 'IpAddress':
+            v2c.IpAddress, 'Counter32': v2c.Counter32, 'Counter': v2c.Counter32, 'Counter64': v2c.Counter64}
         if is_recursive:
             print " **** recursive \n", port
             is_recursive = 0
             snmp_args = [cmdgen.CommunityData('ap-seter', community),
                          cmdgen.UdpTransportTarget(
-                         (ip_address, int(port))),
-                         ]
+                             (ip_address, int(port))),
+            ]
             cmdClass = cmdgen.CommandGenerator().setCmd
 
             if len(admin_state) > 0:
@@ -1123,7 +1245,8 @@ def pysnmp_seter(received_dict={}, ip_address=None, port=None, community=None, a
                             is_recursive = 1
                             # print " ***********
                             # ",error_dict,response_dict,temp_dict
-                            return pysnmp_seter(received_dict, ip_address, port, community, admin_state, is_recursive, response_dict, temp_dict, error_dict, state)
+                            return pysnmp_seter(received_dict, ip_address, port, community, admin_state, is_recursive,
+                                                response_dict, temp_dict, error_dict, state)
 
                     elif errorStatus == 0:
                         for name, val in varBinds:
@@ -1155,8 +1278,8 @@ def pysnmp_seter(received_dict={}, ip_address=None, port=None, community=None, a
                 state_present = 0
                 snmp_args = [cmdgen.CommunityData('ap25-seter', community),
                              cmdgen.UdpTransportTarget(
-                             (ip_address, int(port))),
-                             ]
+                                 (ip_address, int(port))),
+                ]
 
                 cmdClass = cmdgen.CommandGenerator().setCmd
 
@@ -1205,7 +1328,8 @@ def pysnmp_seter(received_dict={}, ip_address=None, port=None, community=None, a
                                 else:
                                     is_recursive = 1
                                     print "errorStatus ", errorStatus, " errorIndex ", errorIndex
-                                    return pysnmp_seter(received_dict, ip_address, port, community, admin_state, is_recursive, response_dict, temp_dict, error_dict)
+                                    return pysnmp_seter(received_dict, ip_address, port, community, admin_state,
+                                                        is_recursive, response_dict, temp_dict, error_dict)
                             return
 
                         elif errorStatus == 0:

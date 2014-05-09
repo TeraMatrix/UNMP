@@ -1,6 +1,6 @@
 #!/usr/bin/python2.6
 
-'''
+"""
 @author: Yogesh Kumar,Rahul Gautam
 @since: 03-Nov-2011
 @version: 0.1
@@ -8,7 +8,7 @@
 @organization: Codescape Consultants Pvt. Ltd.
 @copyright: 2011 Yogesh Kumar for Codescape Consultants Pvt. Ltd.
 @see: http://www.codescape.in
-'''
+"""
 
 # Import modules that contain the function and libraries
 import datetime
@@ -39,6 +39,7 @@ class DB():
     TODO: just use db init and db close functions
     and look for how many cursor objects are open
     """
+
     def __init__(self):
         self.error = None
         self.cursor = None
@@ -51,15 +52,30 @@ class DB():
                 raise Exception("DB connection open() Error")
 
     def empty(self):
+        """
+
+
+        @return:
+        """
         return ()
 
     def ready(self):
+        """
+
+
+        @raise:
+        """
         try:
             self.cursor = self.db.cursor()
         except Exception:
             raise
 
     def execute(self, query):
+        """
+
+        @param query:
+        @return:
+        """
         try:
             row_affected = self.cursor.execute(query)
         except Exception, e:
@@ -70,6 +86,7 @@ class DB():
 
     def execute_dui(self, query):
         """dui: delete, update, insert
+        @param query:
         """
         try:
             row_affected = self.cursor.execute(query)
@@ -81,11 +98,20 @@ class DB():
             return row_affected
 
     def done(self):
+        """
+        the data from the sql is fetched properly
+
+        """
         if self.cursor:
             self.cursor.close()
             self.cursor = None
 
     def close(self):
+        """
+        since data from the SQL has been fetched
+        close the connection object/ close the
+        cursor object
+        """
         if self.cursor:
             self.cursor.close()
             self.cursor = None
@@ -137,20 +163,38 @@ def db_connect():
 
 
 class LocalSystemBll(object):
+    """
+    UNMP system dashboard
+    """
     def harddisk_details(self):
+        """
+
+
+        @return:
+        """
         harddisk = psutil.disk_usage('/')
         total = harddisk.total / (1024.0 * 1024.0 * 1024.0)
         free = harddisk.free / (1024.0 * 1024.0 * 1024.0)
         used = harddisk.used / (1024.0 * 1024.0 * 1024.0)
         unused = total - (free + used)
         return str('%.2f' % total) + "," + str('%.2f' % free) + "," \
-            + str('%.2f' % unused) + "," + str('%.2f' % used)
+               + str('%.2f' % unused) + "," + str('%.2f' % used)
 
     def system_uptime(self):
+        """
+
+
+        @return:
+        """
         return datetime.datetime.fromtimestamp(psutil.BOOT_TIME
-                                               ).strftime('%d-%B-%Y %H:%M:%S')
+        ).strftime('%d-%B-%Y %H:%M:%S')
 
     def ram_details(self):
+        """
+
+
+        @return:
+        """
         ram = psutil.phymem_usage()
         total = ram.total
         usePer = ram.percent
@@ -159,10 +203,20 @@ class LocalSystemBll(object):
         return "%.2f,%.2f" % (used / (1024.0 * 1024.0), free / (1024.0 * 1024.0))
 
     def convert_utc_to_ist(self, timestamp):
+        """
+
+        @param timestamp:
+        @return:
+        """
         offset_ist = 5.5
         return timestamp + ((offset_ist * 60) * 60000)
 
     def processor_details(self, total):
+        """
+
+        @param total:
+        @return:
+        """
         total_ = total
         total_sec = total * 10 + 10
         cpu = rrdtool.fetch('/omd/daemon/rrd/cpu.rrd', 'AVERAGE', '-s',
@@ -183,7 +237,7 @@ class LocalSystemBll(object):
                             data_series[lbl_i]["data"].append(
                                 {"x": self.convert_utc_to_ist(
                                     (timestamp[
-                                        0] + (timestamp[2] * (i))) * 1000),
+                                         0] + (timestamp[2] * (i))) * 1000),
                                  "y": data[i][lbl_i]})
                             if lbl_i == 0:
                                 total -= 1
@@ -192,6 +246,11 @@ class LocalSystemBll(object):
         return data_series
 
     def bandwidth_details(self, total):
+        """
+
+        @param total:
+        @return:
+        """
         total_ = total
         total_sec = total * 10 + 10
         interface = rrdtool.fetch('/omd/daemon/rrd/interface.rrd', 'AVERAGE',
@@ -212,8 +271,8 @@ class LocalSystemBll(object):
                             data_series[lbl_i]["data"].append(
                                 {"x": self.convert_utc_to_ist(
                                     (timestamp[
-                                        0] + (timestamp[2] * (i))) * 1000),
-                                                             "y": data[i][lbl_i] / 1024.0})
+                                         0] + (timestamp[2] * (i))) * 1000),
+                                 "y": data[i][lbl_i] / 1024.0})
                             if lbl_i == 0:
                                 total -= 1
         for i in range(len(data_series)):
@@ -221,7 +280,7 @@ class LocalSystemBll(object):
         return data_series
 
 
-class EventLog(object):
+class EventLog():
     """
     @author: Rahul Gautam
     @since: 01-Dec-2011
@@ -237,7 +296,7 @@ class EventLog(object):
     def db_connect(self):
         """
         Used to connect to the database
-            :: return database object ed in global_db variable
+            :: return database object in global_db variable
         """
         db = None
         try:
@@ -264,6 +323,16 @@ class EventLog(object):
                   time1=None,
                   time2=datetime.datetime.now()):
         """
+
+
+
+
+
+        @param description:
+        @param user_name:
+        @param level:
+        @param time1:
+        @param time2:
         @note: Used to log Event or Action in Database
         """
 
@@ -311,15 +380,31 @@ class EventLog(object):
 
 ## USED FOR CIRCULAR CHECK : RAHUL GAUTAM
 class Node:
+    """
+
+    @param name:
+    """
+
     def __init__(self, name):
         self.name = name
         self.edges = []
 
     def addEdge(self, node):
+        """
+
+        @param node:
+        """
         self.edges.append(node)
 
 
 def dep_resolve(node, resolved, unresolved):
+    """
+
+    @param node:
+    @param resolved:
+    @param unresolved:
+    @raise:
+    """
     unresolved.append(node)
     for edge in node.edges:
         if edge not in resolved:
@@ -369,12 +454,23 @@ class Essential(object):
             print "/*/*/* Database Exception ( db close ) : " + str(e)
 
     def make_list(self, x):
+        """
+
+        @param x:
+        @return:
+        """
         x = map(str, x)
         if x[0] == self.child:
             x[1] = self.parent
         return x
 
     def circular_check(self, child, parent):
+        """
+
+        @param child:
+        @param parent:
+        @return:
+        """
         result_dict = {}
         success = 1
         result_str = ''
@@ -422,6 +518,8 @@ class Essential(object):
 
     def get_hostgroup_ids(self, user_id):
         """
+
+        @param user_id:
         @note: return hostgroup id as a list assigned to user
         """
         hostgroups_list = []
@@ -449,6 +547,10 @@ class Essential(object):
 
     def get_host_id(self, value, what):
         """
+
+
+        @param value:
+        @param what:
         @note: return hostgroup id as a list assigned to user
         """
         host_id = None
@@ -474,6 +576,10 @@ class Essential(object):
 
     def is_host_allow(self, user_id, hostid):
         """
+
+
+        @param user_id:
+        @param hostid:
         @note: Used Validate host and user mapping :: 1 is False
         """
         value = 1
@@ -508,6 +614,14 @@ class Essential(object):
 
     def host_status(self, hostid, status, host_ip=None, prev_status=0):
         """
+
+
+
+
+        @param hostid:
+        @param status:
+        @param host_ip:
+        @param prev_status:
         @host_status(1,0,None,10)
         @note: Used to update host operation status and varify it
         @dict: {0:'No operation', 1:'Firmware download', 2:'Firmware upgrade',
@@ -539,7 +653,7 @@ class Essential(object):
             result = cursor.fetchall()
             if len(result) > 0:
                 if int(result[0][0]) == prev_status or \
-                        int(result[0][0]) == int(status):
+                                int(result[0][0]) == int(status):
 
                     if hostid:
                         up_query = """update host_status set status='%s' \
@@ -568,6 +682,10 @@ class Essential(object):
 
     def get_hoststatus(self, hostid, host_ip=None):
         """
+
+
+        @param hostid:
+        @param host_ip:
         @note: Used to update host operation status and varify it
         """
         value = 0
@@ -611,7 +729,7 @@ class Connection(object):
                  private_key=None,
                  password=None,
                  port=22,
-                 ):
+    ):
         self._sftp_live = False
         self._sftp = None
         if not username:
@@ -651,21 +769,29 @@ class Connection(object):
             self._sftp_live = True
 
     def get(self, remotepath, localpath=None):
-        """Copies a file between the remote host and the local host."""
+        """Copies a file between the remote host and the local host.
+        @param remotepath:
+        @param localpath:
+        """
         if not localpath:
             localpath = os.path.split(remotepath)[1]
         self._sftp_connect()
         self._sftp.get(remotepath, localpath)
 
     def put(self, localpath, remotepath=None):
-        """Copies a file between the local host and the remote host."""
+        """Copies a file between the local host and the remote host.
+        @param localpath:
+        @param remotepath:
+        """
         if not remotepath:
             remotepath = os.path.split(localpath)[1]
         self._sftp_connect()
         self._sftp.put(localpath, remotepath)
 
     def execute(self, command):
-        """Execute the given commands on a remote machine."""
+        """Execute the given commands on a remote machine.
+        @param command:
+        """
         channel = self._transport.open_session()
         channel.exec_command(command)
         output = channel.makefile('rb', -1).readlines()
@@ -675,7 +801,9 @@ class Connection(object):
             return channel.makefile_stderr('rb', -1).readlines()
 
     def run(self, command):
-        """Execute the given commands on a remote machine."""
+        """Execute the given commands on a remote machine.
+        @param command:
+        """
         channel = self._transport.open_session()
         channel.exec_command(command)
 
@@ -685,7 +813,7 @@ class Connection(object):
         if self._sftp_live:
             self._sftp.close()
             self._sftp_live = False
-        # Close the SSH Transport.
+            # Close the SSH Transport.
         if self._tranport_live:
             self._transport.close()
             self._tranport_live = False
@@ -696,7 +824,11 @@ class Connection(object):
 
 
 def agent_start(ip_address, username='root', pwd='public'):
-    """Little test when called directly."""
+    """Little test when called directly.
+    @param ip_address:
+    @param username:
+    @param pwd:
+    """
     # Set these to your own details.
     try:
         myssh = Connection(ip_address, username, None, pwd)

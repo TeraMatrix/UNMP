@@ -1,17 +1,14 @@
-div.link_div
-{
+div.link_div {
 
 }
 
-div.link_div ul
-{
+div.link_div ul {
     height: 24px;
     margin: 0;
     padding: 0 0 0 20px;
 }
 
-div.link_div li
-{
+div.link_div li {
     background: none repeat scroll 0 0 #5D584B;
     border-color: -moz-use-text-color #454440 -moz-use-text-color #7D796F;
     border-style: none solid;

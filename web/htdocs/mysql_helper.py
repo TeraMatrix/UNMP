@@ -51,7 +51,7 @@ class MySQLConnection(object):
     def __init__(self, mysql_credentials):
         self.mysql_credentials = mysql_credentials      # receive tuple as a parameter then assign with instance variable
         self.set_connection(mysql_credentials)
-                            # connect with database using set_connction method
+        # connect with database using set_connction method
 
     def get_connection(self):
         '''
@@ -75,7 +75,7 @@ class MySQLConnection(object):
             *mysql_credentials)      # calling of MySQLdb.connect method to connect with database
 
     connection = property(get_connection, set_connection)
-                          # define connection property
+    # define connection property
 
     def close_connection(self):                         # call this method to close database connection
         '''
@@ -107,7 +107,7 @@ class MySQLConnection(object):
         @note: call this method to reopen the connection
         '''
         self.set_connection(self.mysql_credentials)
-                            # calling of set_connection to recreate object
+        # calling of set_connection to recreate object
 
     def connection_cursor(self):                        # call this method to get database cursor
         '''
@@ -257,8 +257,8 @@ class MySQLHelper(object):
             if sql_parameter != None and len(sql_parameter) > 0:                # check the parameter
                 command_text = command_text % sql_parameter                     # prepare command for execution
             effected_row = cursor.execute(command_text)
-                                          # execute command then get the number
-                                          # of rows effected
+            # execute command then get the number
+            # of rows effected
         elif command_text == CommandType.stored_procedure:                      # check the command type is stored procedure or not
             effected_row = cursor.callproc(
                 command_text, sql_parameter)          # execute stored procedure the get number of row  effected

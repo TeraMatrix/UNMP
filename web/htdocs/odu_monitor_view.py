@@ -10,18 +10,12 @@
 
 ##########################################################################
 
-import config
-import htmllib
-import time
-import cgi
 import MySQLdb
-import sys
 from common_controller import *
 from nms_config import *
 from odu_controller import *
 from datetime import datetime
 from datetime import timedelta
-import time
 from mysql_collection import mysql_connection
 from unmp_dashboard_config import DashboardConfig
 from operator import itemgetter
@@ -30,6 +24,11 @@ from common_bll import Essential
 
 
 def get_dashboard_data():
+    """
+
+
+    @return:
+    """
     devcie_type_attr = ['id', 'refresh_time', 'time_diffrence']
     get_data = DashboardConfig.get_config_attributes(
         'odu16_dashboard', devcie_type_attr)
@@ -61,6 +60,10 @@ class SelfException(Exception):
 
 
 def odu_profiling(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     host_id = html.var("host_id")
@@ -70,8 +73,8 @@ def odu_profiling(h):
     if es.is_host_allow(user_id, host_id) == 0:
         flag = 0
         css_list = ["css/style.css", "css/custom.css", "css/calendrical.css"]
-        javascript_list = ["js/highcharts.js",
-                           "js/oduMonitorDashboard.js", "js/calendrical.js"]
+        javascript_list = ["js/lib/main/highcharts.js",
+                           "js/unmp/main/oduMonitorDashboard.js", "js/lib/main/calendrical.js"]
         html.new_header("UBR Dashboard", "", "", css_list, javascript_list)
         html.write('<div class=\"form-div\">')
 #        host_id = ""
@@ -145,6 +148,11 @@ def odu_profiling(h):
 
 
 def get_device_field(ip_address):
+    """
+
+    @param ip_address:
+    @return: @raise:
+    """
     try:
         mac_address = ''
         db, cursor = mysql_connection()  # create the connection
@@ -176,6 +184,11 @@ def get_device_field(ip_address):
 
 
 def welcome_odu_monitor_page(h):
+    """
+
+    @param h:
+    @raise:
+    """
     global html
     html = h
     host_id = html.var("host_id")
@@ -252,6 +265,17 @@ def welcome_odu_monitor_page(h):
 
 
 def dashboard_table(ip_address, odu_start_date, odu_start_time, odu_end_date, odu_end_time, refresh_time, total_count):
+    """
+
+    @param ip_address:
+    @param odu_start_date:
+    @param odu_start_time:
+    @param odu_end_date:
+    @param odu_end_time:
+    @param refresh_time:
+    @param total_count:
+    @return:
+    """
     dash_str = '\
     <input type=\"hidden\" id=\"refresh_time\" name=\"refresh_time\" value=\"%s\" />\
     <input type=\"hidden\" id=\"ip_address\" name=\"ip_address\" value=\"%s\" />\
@@ -291,6 +315,11 @@ def dashboard_table(ip_address, odu_start_date, odu_start_time, odu_end_date, od
 
 
 def odu_network_interface_table_graph(h):
+    """
+
+    @param h:
+    @raise:
+    """
     global html
     html = h
     syncLostCounter = 0  # deafault value
@@ -368,6 +397,11 @@ def odu_network_interface_table_graph(h):
 
 
 def odu_error_graph(h):
+    """
+
+    @param h:
+    @raise:
+    """
     global html
     html = h
     odu_start_date = html.var('start_date')
@@ -433,6 +467,11 @@ def odu_error_graph(h):
 
 
 def odu_sync_lost_graph(h):
+    """
+
+    @param h:
+    @raise:
+    """
     global html
     html = h
     sync_lost = []
@@ -490,6 +529,11 @@ def odu_sync_lost_graph(h):
 
 
 def odu_signal_strength_graph(h):
+    """
+
+    @param h:
+    @raise:
+    """
     global html
     html = h
     status = 0
@@ -688,6 +732,11 @@ def odu_signal_strength_graph(h):
 
 
 def get_device_list_odu(h):
+    """
+
+    @param h:
+    @raise:
+    """
     global html
     html = h
 
@@ -750,7 +799,9 @@ def get_device_list_odu(h):
 # This function take one request parameter.
 # This function return the device information in table form.
 def odu_device_information(h):
-    ''' This function take one html object as a argument and return the device information in table.'''
+    """ This function take one html object as a argument and return the device information in table.
+    @param h:
+    """
     global html
     html = h
     ip_address = html.var("ip_address")
@@ -964,7 +1015,9 @@ def odu_device_information(h):
 # This function return 5 day graph information for graph display.
 # Data return in json dictionary format.
 def odu_trap_graph(h):
-    ''' This function get ip_address of odu device  form and retuen the 5 day information.'''
+    """ This function get ip_address of odu device  form and retuen the 5 day information.
+    @param h:
+    """
     global html
     html = h
     normal = []
@@ -1067,7 +1120,9 @@ def odu_trap_graph(h):
 # This function return latest information of alarms and trap.
 # This return data in json format.
 def odu_trap_information(h):
-    ''' This finction get  ip_address in varcahr form and return the last 5 alarm from trap from history.'''
+    """ This finction get  ip_address in varcahr form and return the last 5 alarm from trap from history.
+    @param h:
+    """
     global html
     html = h
     image_title_name = {0: "Normal", 1: "Informational", 2: "Normal",
@@ -1188,7 +1243,9 @@ def odu_trap_information(h):
 # this function take one argument and return the dictionary of outage
 # graph information.
 def odu_outage_graph(h):
-    '''this function create the outage graph field and show the outage graph.'''
+    """this function create the outage graph field and show the outage graph.
+    @param h:
+    """
     global html
     html = h
     date_days = []  # this list store the days information with date.
@@ -1400,6 +1457,10 @@ def odu_outage_graph(h):
 
 
 def add_date_time_on_slide(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     try:
@@ -1425,6 +1486,11 @@ def add_date_time_on_slide(h):
 
 
 def odu_device_report(h):
+    """
+
+    @param h:
+    @raise:
+    """
     global html
     html = h
     result1 = ''
@@ -2524,6 +2590,15 @@ def odu_device_report(h):
 
 
 def table_list_creation(result, table_name, first_header, second_header, time):
+    """
+
+    @param result:
+    @param table_name:
+    @param first_header:
+    @param second_header:
+    @param time:
+    @return:
+    """
     output = []
     first_h = [time, first_header, second_header]
     output.append(first_h)
@@ -2536,6 +2611,15 @@ def table_list_creation(result, table_name, first_header, second_header, time):
 
 
 def nw_table_list_creation(result, table_name, first_header, second_header, time):
+    """
+
+    @param result:
+    @param table_name:
+    @param first_header:
+    @param second_header:
+    @param time:
+    @return:
+    """
     output = []
     first_h = [time, first_header, second_header]
     output.append(first_h)
@@ -2548,6 +2632,12 @@ def nw_table_list_creation(result, table_name, first_header, second_header, time
 
 
 def table_list_alarm(result, table_name):
+    """
+
+    @param result:
+    @param table_name:
+    @return:
+    """
     output = []
     first_h = ['Date', 'Normal', 'Informational', 'Minor', 'Major', 'Critical']
     output.append(first_h)
@@ -2560,6 +2650,12 @@ def table_list_alarm(result, table_name):
 
 
 def table_list_trap(result, table_name):
+    """
+
+    @param result:
+    @param table_name:
+    @return:
+    """
     length = 5
     output = []
     first_h = ['Severity', 'Event Id', 'Event State', 'Receive Date']
@@ -2575,6 +2671,12 @@ def table_list_trap(result, table_name):
 
 
 def device_information_function(result, table_name):
+    """
+
+    @param result:
+    @param table_name:
+    @return:
+    """
     last_reboot_resion = {
         0: 'Power cycle', 1: 'Watchdog reset', 2: 'Normal', 3: 'Kernel crash reset',
         4: 'Radio count mismatch reset', 5: 'Unknown-Soft', 6: 'Unknown reset'}
@@ -2607,6 +2709,21 @@ def device_information_function(result, table_name):
 
 
 def signal_table_creation(table_name, time_stamp, peer1=[], peer2=[], peer3=[], peer4=[], peer5=[], peer6=[], peer7=[], peer8=[], status=''):
+    """
+
+    @param table_name:
+    @param time_stamp:
+    @param peer1:
+    @param peer2:
+    @param peer3:
+    @param peer4:
+    @param peer5:
+    @param peer6:
+    @param peer7:
+    @param peer8:
+    @param status:
+    @return:
+    """
     output = []
     if status == 'Master':
         output.append(['Time(HH:MM)', 'peer1', 'peer2', 'peer3',
@@ -2626,6 +2743,13 @@ def signal_table_creation(table_name, time_stamp, peer1=[], peer2=[], peer3=[], 
 
 
 def outage_graph_generation(date_time, down_state, up_state):
+    """
+
+    @param date_time:
+    @param down_state:
+    @param up_state:
+    @return:
+    """
     output = []
     output.append(['Date', 'up_state(%)', 'down_state(%)'])
     i = 0
@@ -2637,6 +2761,14 @@ def outage_graph_generation(date_time, down_state, up_state):
 
 
 def sync_table_list_creation(result, table_name, first_header, time):
+    """
+
+    @param result:
+    @param table_name:
+    @param first_header:
+    @param time:
+    @return:
+    """
     output = []
     first_h = [time, first_header]
     output.append(first_h)
@@ -2652,6 +2784,11 @@ def sync_table_list_creation(result, table_name, first_header, time):
 
 ######################################## ODU device spacific Excel report
 def odu_excel_report_genrating(h):
+    """
+
+    @param h:
+    @raise:
+    """
     global html
     html = h
     result1 = ''
@@ -3559,28 +3696,12 @@ def odu_excel_report_genrating(h):
 
 ##################################### Excel rRporting End ################
 
-
-def page_tip_ubr_monitor_dashboard(h):
-    global html
-    html = h
-    html_view = ""\
-        "<div id=\"help_container\">"\
-        "<h1>UBR Dashboard</h1>"\
-        "<div>This <strong>Dashboard</strong> show all device silver statistics by graph.</div>"\
-        "<br/>"\
-        "<div>On this page you can see network bandwidth graph,signal strength graph,sync lost graph,outage graph , Crc/Phy Error graph ,Latest trap and latest alarm etc.</div>"\
-        "<br/>"\
-        "<div><input class=\"yo-button yo-small\" type=\"button\" style=\"width: 30px;\" value=\"Advaced Graph\" name=\"odu_graph_show\"> This button open a window on self click event and show more information according to data and time.</div>"\
-        "<div><input class=\"yo-button yo-small\" type=\"button\" style=\"width: 30px;\" value=\"Search\" name=\"odu_graph_show\"> Search the devices.</div>"\
-        "<div><button id=\"odu_report_btn\" class=\"yo-button\" style=\"margin-top: 5px;\" type=\"submit\"><span class=\"save\">Report</span></button>Download the PDF report.</div>"\
-        "<br/>"\
-        "<div><button id=\"odu_report_btn\" class=\"yo-button\" style=\"margin-top: 5px;\" type=\"submit\"><span class=\"report\">Report</span></button>Download the Excel report.</div>"\
-        "<br/>\
-	<br/>\
-        <div><strong>Note:</strong>This page show real time information of ubr device and it page refresh on 5 min time interval.\
-	Search button search device by MAC address and IP address and show information by graph.\
-	Graph button display the graph according to time interval show,this time interval also change by user.\
-	report button provide PDF of all display information by graph \
-        </div>"\
-        "</div>"
-    html.write(str(html_view))
+#
+# def page_tip_ubr_monitor_dashboard(h):
+#     global html
+#     html = h
+#     import defaults
+#     f = open(defaults.web_dir + "/htdocs/locale/page_tip_ubr_monitor_dashboard.html", "r")
+#     html_view = f.read()
+#     f.close()
+#     html.write(str(html_view))

@@ -1,5 +1,4 @@
-
-'''
+"""
 @author: Rahul Gautam
 
 @since: 11-Sep-2011
@@ -9,7 +8,7 @@
 @organization: CodeScape Consultants Pvt. Ltd.
 
 @copyright: 2011 Rahul Gautam for CodeScape Consultants Pvt. Ltd.
-'''
+"""
 
 import socket
 # importing pysnmp library
@@ -19,16 +18,26 @@ from pysnmp.proto.api import v2c
 
 
 def pysnmp_get_acltable(oid, ip_address, port, community):
+    """
+
+    @param oid:
+    @param ip_address:
+    @param port:
+    @param community:
+    @return:
+    """
     err_dict = {}
     success = 1
     try:
-        if isinstance(ip_address, str) and isinstance(oid, str) and isinstance(community, str) and isinstance(port, int):
+        if isinstance(ip_address, str) and isinstance(oid, str) and isinstance(community, str) and isinstance(port,
+                                                                                                              int):
             try:
                 make_tuple = lambda x: tuple(int(i) for i in x.split('.'))
 
                 errorIndication, errorStatus, errorIndex, \
-                    varBindTable = cmdgen.CommandGenerator().nextCmd(
-                        cmdgen.CommunityData('table-agent', community), cmdgen.UdpTransportTarget((ip_address, port)), make_tuple(oid))
+                varBindTable = cmdgen.CommandGenerator().nextCmd(
+                    cmdgen.CommunityData('table-agent', community), cmdgen.UdpTransportTarget((ip_address, port)),
+                    make_tuple(oid))
 
                 var_dict = {}
 
@@ -113,16 +122,26 @@ def pysnmp_get_acltable(oid, ip_address, port, community):
 
 
 def pysnmp_peer_reconcile(oid, ip_address, port, community):
+    """
+
+    @param oid:
+    @param ip_address:
+    @param port:
+    @param community:
+    @return:
+    """
     err_dict = {}
     success = 1
     try:
-        if isinstance(ip_address, str) and isinstance(oid, str) and isinstance(community, str) and isinstance(port, int):
+        if isinstance(ip_address, str) and isinstance(oid, str) and isinstance(community, str) and isinstance(port,
+                                                                                                              int):
             try:
                 make_tuple = lambda x: tuple(int(i) for i in x.split('.'))
 
                 errorIndication, errorStatus, errorIndex, \
-                    varBindTable = cmdgen.CommandGenerator().nextCmd(
-                        cmdgen.CommunityData('pysnmp-agent', community), cmdgen.UdpTransportTarget((ip_address, port)), make_tuple(oid))
+                varBindTable = cmdgen.CommandGenerator().nextCmd(
+                    cmdgen.CommunityData('pysnmp-agent', community), cmdgen.UdpTransportTarget((ip_address, port)),
+                    make_tuple(oid))
 
                 var_dict = {}
 
@@ -150,8 +169,8 @@ def pysnmp_peer_reconcile(oid, ip_address, port, community):
                                     li = []
                                     li.append(str(val))
                                     var_dict[oid_no] = li
-                            # print '%s = %s' % (name.prettyPrint(),
-                            # val.prettyPrint())
+                                    # print '%s = %s' % (name.prettyPrint(),
+                                    # val.prettyPrint())
 
             except socket.error as (sock_errno, sock_errstr):
                 success = 1
@@ -192,16 +211,26 @@ def pysnmp_peer_reconcile(oid, ip_address, port, community):
 
 
 def pysnmp_get_table(oid, ip_address, port, community):
+    """
+
+    @param oid:
+    @param ip_address:
+    @param port:
+    @param community:
+    @return:
+    """
     err_dict = {}
     success = 1
     try:
-        if isinstance(ip_address, str) and isinstance(oid, str) and isinstance(community, str) and isinstance(port, int):
+        if isinstance(ip_address, str) and isinstance(oid, str) and isinstance(community, str) and isinstance(port,
+                                                                                                              int):
             try:
                 make_tuple = lambda x: tuple(int(i) for i in x.split('.'))
 
                 errorIndication, errorStatus, errorIndex, \
-                    varBindTable = cmdgen.CommandGenerator().nextCmd(
-                        cmdgen.CommunityData('table-agent', community), cmdgen.UdpTransportTarget((ip_address, port)), make_tuple(oid))
+                varBindTable = cmdgen.CommandGenerator().nextCmd(
+                    cmdgen.CommunityData('table-agent', community), cmdgen.UdpTransportTarget((ip_address, port)),
+                    make_tuple(oid))
 
                 var_dict = {}
 
@@ -241,8 +270,8 @@ def pysnmp_get_table(oid, ip_address, port, community):
                                             val)  # val.prettyPrint() #str(val)
                                     li.append(value)
                                     var_dict[oid_no] = li
-                            # print '%s = %s' % (name.prettyPrint(),
-                            # val.prettyPrint())
+                                    # print '%s = %s' % (name.prettyPrint(),
+                                    # val.prettyPrint())
 
             except socket.error as (sock_errno, sock_errstr):
                 success = 1
@@ -279,16 +308,26 @@ def pysnmp_get_table(oid, ip_address, port, community):
 
 
 def pysnmp_demo_table(oid, ip_address, port, community):
+    """
+
+    @param oid:
+    @param ip_address:
+    @param port:
+    @param community:
+    @return:
+    """
     err_dict = {}
     success = 1
     try:
-        if isinstance(ip_address, str) and isinstance(oid, str) and isinstance(community, str) and isinstance(port, int):
+        if isinstance(ip_address, str) and isinstance(oid, str) and isinstance(community, str) and isinstance(port,
+                                                                                                              int):
             try:
                 make_tuple = lambda x: tuple(int(i) for i in x.split('.'))
 
                 errorIndication, errorStatus, errorIndex, \
-                    varBindTable = cmdgen.CommandGenerator().nextCmd(
-                        cmdgen.CommunityData('table-agent', community), cmdgen.UdpTransportTarget((ip_address, port)), make_tuple(oid))
+                varBindTable = cmdgen.CommandGenerator().nextCmd(
+                    cmdgen.CommunityData('table-agent', community), cmdgen.UdpTransportTarget((ip_address, port)),
+                    make_tuple(oid))
 
                 var_dict = {}
 
@@ -317,8 +356,8 @@ def pysnmp_demo_table(oid, ip_address, port, community):
                                     li = []
                                     li.append(str(val))
                                     var_dict[oid_no] = li
-                            # print '%s = %s' % (name.prettyPrint(),
-                            # val.prettyPrint())
+                                    # print '%s = %s' % (name.prettyPrint(),
+                                    # val.prettyPrint())
 
             except socket.error as (sock_errno, sock_errstr):
                 success = 1
@@ -357,16 +396,26 @@ def pysnmp_demo_table(oid, ip_address, port, community):
 
 
 def pysnmp_acl_reconcile(oid, ip_address, port, community):
+    """
+
+    @param oid:
+    @param ip_address:
+    @param port:
+    @param community:
+    @return:
+    """
     err_dict = {}
     no_acl = 1
     try:
-        if isinstance(ip_address, str) and isinstance(oid, str) and isinstance(community, str) and isinstance(port, int):
+        if isinstance(ip_address, str) and isinstance(oid, str) and isinstance(community, str) and isinstance(port,
+                                                                                                              int):
             try:
                 make_tuple = lambda x: tuple(int(i) for i in x.split('.'))
 
                 errorIndication, errorStatus, errorIndex, \
-                    varBindTable = cmdgen.CommandGenerator().nextCmd(
-                        cmdgen.CommunityData('pysnmp-agent', community), cmdgen.UdpTransportTarget((ip_address, port)), make_tuple(oid))
+                varBindTable = cmdgen.CommandGenerator().nextCmd(
+                    cmdgen.CommunityData('pysnmp-agent', community), cmdgen.UdpTransportTarget((ip_address, port)),
+                    make_tuple(oid))
 
                 row_dict = {}
                 mac_dict = {}
@@ -431,12 +480,20 @@ def pysnmp_acl_reconcile(oid, ip_address, port, community):
         else:
             result_dict['err'] = {102: 'Unknown'}
         return result_dict
+
 # print
 # pysnmp_acl_reconcile('1.3.6.1.4.1.26149.2.2.13.5','172.22.0.102',161,'public')
 
 
 def pysnmp_reconcile(received_dict={}, ip_address=None, port=None, community=None):
+    """
 
+    @param received_dict:
+    @param ip_address:
+    @param port:
+    @param community:
+    @return:
+    """
     try:
         make_pystr = lambda x: ','.join(x.split('.'))
         make_tuple = lambda x: tuple(int(i) for i in x.split('.'))
@@ -484,7 +541,8 @@ def pysnmp_reconcile(received_dict={}, ip_address=None, port=None, community=Non
 
                         for name, val in varBinds:
                             # print ' ok %s = %s '%(name,val.prettyPrint())
-                            if val != '' and val != None and val != ' ' and str(val).find('populated') < 1:   # if needed put that and val != 'No Such Instance currently exists at this OID'
+                            if val != '' and val != None and val != ' ' and str(val).find(
+                                    'populated') < 1:   # if needed put that and val != 'No Such Instance currently exists at this OID'
                                 if isinstance(val, v2c.IpAddress):
                                     response_dict[
                                         temp_dict[name]] = str(val.prettyPrint())
@@ -531,8 +589,21 @@ def pysnmp_reconcile(received_dict={}, ip_address=None, port=None, community=Non
         return final_responce_dict
 
 
-def pysnmp_geter(received_dict={}, ip_address=None, port=None, community=None, prev_str=None, response_dict={}, temp_dict={}, error_dict={}, state=0):
+def pysnmp_geter(received_dict={}, ip_address=None, port=None, community=None, prev_str=None, response_dict={},
+                 temp_dict={}, error_dict={}, state=0):
+    """
 
+    @param received_dict:
+    @param ip_address:
+    @param port:
+    @param community:
+    @param prev_str:
+    @param response_dict:
+    @param temp_dict:
+    @param error_dict:
+    @param state:
+    @return:
+    """
     try:
         make_pystr = lambda x: ','.join(x.split('.'))
         make_tuple = lambda x: tuple(int(i) for i in x.split('.'))
@@ -570,14 +641,16 @@ def pysnmp_geter(received_dict={}, ip_address=None, port=None, community=None, p
 
                         error_dict[varBinds[int(errorIndex) - 1][0]] = -1
 
-                        return pysnmp_geter(received_dict, None, None, None, prev_str, response_dict, temp_dict, error_dict)
+                        return pysnmp_geter(received_dict, None, None, None, prev_str, response_dict, temp_dict,
+                                            error_dict)
 
                     elif errorStatus == 0:
                         print " all  SET or GET  sucessful  >>>>>>>>>"
 
                         for name, val in varBinds:
                             # print ' ok %s = %s '%(name,val.prettyPrint())
-                            if val != '' and val != None and val != ' ' and str(val).find('populated') < 1:   # if needed put that and val != 'No Such Instance currently exists at this OID'
+                            if val != '' and val != None and val != ' ' and str(val).find(
+                                    'populated') < 1:   # if needed put that and val != 'No Such Instance currently exists at this OID'
                                 if isinstance(val, v2c.IpAddress):
                                     response_dict[
                                         temp_dict[name]] = str(val.prettyPrint())
@@ -636,11 +709,13 @@ def pysnmp_geter(received_dict={}, ip_address=None, port=None, community=None, p
                         if errorStatus > 0 and errorIndex != None:
                             state = 0
                             error_dict[varBinds[int(errorIndex) - 1][0]] = -1
-                            return pysnmp_geter(received_dict, None, None, None, prev_str, response_dict, temp_dict, error_dict, state)
+                            return pysnmp_geter(received_dict, None, None, None, prev_str, response_dict, temp_dict,
+                                                error_dict, state)
 
                         elif errorStatus == 0:
                             for name, val in varBinds:
-                                if val != '' and val != None and val != ' ' and str(val).find('populated') < 1:   # if needed put that and val != 'No Such Instance currently exists at this OID'
+                                if val != '' and val != None and val != ' ' and str(val).find(
+                                        'populated') < 1:   # if needed put that and val != 'No Such Instance currently exists at this OID'
                                     if isinstance(val, v2c.IpAddress):
                                         response_dict[temp_dict[
                                             name]] = str(val.prettyPrint())
@@ -691,6 +766,13 @@ def pysnmp_geter(received_dict={}, ip_address=None, port=None, community=None, p
 # print
 # print pysnmp_geter(fd,ip,port,c)
 def snmp_ping(ip_address_str, community, port):
+    """
+
+    @param ip_address_str:
+    @param community:
+    @param port:
+    @return:
+    """
     try:
         errorIndication, errorStatus, errorIndex, varBinds = cmdgen.CommandGenerator().getCmd(
             # SNMP v2
@@ -711,17 +793,27 @@ def snmp_ping(ip_address_str, community, port):
         return 2
     except Exception as e:
         return 3
+
 # print snmp_ping('172.22.0.120','public',161)
 
 
 def pysnmp_get(ip_address, port, community, oid_str):
+    """
+
+    @param ip_address:
+    @param port:
+    @param community:
+    @param oid_str:
+    @return:
+    """
     try:
         if ip_address != None and port != None and community != None and oid_str != None:
             make_pystr = lambda x: ','.join(x.split('.'))
             success = 0
             response_dict = {}
             oid_pystr = make_pystr(oid_str)
-            get_str = "errorIndication, errorStatus, errorIndex, varBinds = cmdgen.CommandGenerator().getCmd(cmdgen.CommunityData('unmp-agent', '%s'),cmdgen.UdpTransportTarget(('%s', %s)),(%s))" % (community, ip_address, port, oid_pystr)
+            get_str = "errorIndication, errorStatus, errorIndex, varBinds = cmdgen.CommandGenerator().getCmd(cmdgen.CommunityData('unmp-agent', '%s'),cmdgen.UdpTransportTarget(('%s', %s)),(%s))" % (
+            community, ip_address, port, oid_pystr)
             try:
                 exec get_str in locals(), globals()
 
@@ -784,6 +876,14 @@ def pysnmp_get(ip_address, port, community, oid_str):
 
 # print pysnmp_get('172.22.0.101', 161 ,'public','1.3.6.1.4.1.26149.10.5.3.0')
 def pysnmp_set1(ip_address, port, community, received_list):
+    """
+
+    @param ip_address:
+    @param port:
+    @param community:
+    @param received_list:
+    @return:
+    """
     try:
         make_tuple = lambda x: tuple(int(i) for i in x.split(
             '.'))  # @note: this lambda function used to convert a oid string to oid tuple (in a format required by pysnmp)
@@ -852,8 +952,35 @@ def pysnmp_set1(ip_address, port, community, received_list):
         return final_responce_dict
 
 
-def pysnmp_setAcl(ip_address, port, community, acl_dict={}, admin_dict={}, macAddr_dict={}, rowStatus_dict={}, prev_str=None, response_dict={}, temp_dict={}, error_dict={}, state=0, row=0):
+def pysnmp_setAcl(ip_address, port, community, acl_dict={}, admin_dict={}, macAddr_dict={}, rowStatus_dict={},
+                  prev_str=None, response_dict={}, temp_dict={}, error_dict={}, state=0, row=0):
     """
+
+
+
+
+
+
+
+
+
+
+
+
+
+    @param ip_address:
+    @param port:
+    @param community:
+    @param acl_dict:
+    @param admin_dict:
+    @param macAddr_dict:
+    @param rowStatus_dict:
+    @param prev_str:
+    @param response_dict:
+    @param temp_dict:
+    @param error_dict:
+    @param state:
+    @param row:
     @requires:  ip address, port, community ,format for all dictionary objects {'fullName_of_field':(oid_as_string,oid_datatype,oid_value_to_be_set)} up to rowStatus_dict
 
     @return: {'success': 0/1, result : {'fullName_of_field':('if successful then 0 if not then 1','error_number_if any otherwise 0')} }
@@ -984,7 +1111,7 @@ def pysnmp_setAcl(ip_address, port, community, acl_dict={}, admin_dict={}, macAd
                             print "    ok ", response_dict
                             # response_dict[admin_name+'1'] = 55
                             response_dict[temp_dict[
-                                varBinds[int(errorIndex) - 1][0]] + '1'] = int(errorStatus)
+                                              varBinds[int(errorIndex) - 1][0]] + '1'] = int(errorStatus)
                             error_dict[varBinds[int(errorIndex) - 1][0]] = 1
                             state = 1
                             # return pysnmp_set(None, None,
@@ -1029,7 +1156,6 @@ def pysnmp_setAcl(ip_address, port, community, acl_dict={}, admin_dict={}, macAd
                         print " all  SET or GET  sucessful  >>>>>>>>>"
                         # response_dict[0] = 'all_field_set_sucessfully'
                         for name, val in varBinds:
-
                             response_dict[temp_dict[name]] = 0
                         return
 
@@ -1066,7 +1192,7 @@ def pysnmp_setAcl(ip_address, port, community, acl_dict={}, admin_dict={}, macAd
                     aoid_tuple = make_tuple(oid_str)
                     temp_dict[aoid_tuple] = admin_name
                     set_str = set_str + \
-                        ",(%s,v2c.%s(%s))" % (aoid_tuple, 'Integer32', '0')
+                              ",(%s,v2c.%s(%s))" % (aoid_tuple, 'Integer32', '0')
 
                     acl_name = acl_dict.keys()[0]
                     # print acl_dict[acl_name]
@@ -1183,7 +1309,8 @@ def pysnmp_setAcl(ip_address, port, community, acl_dict={}, admin_dict={}, macAd
                                             # response_dict, temp_dict,
                                             # error_dict,state,row)
 
-                            if len(error_dict) >= len(acl_dict) + len(admin_dict) + len(macAddr_dict) + len(rowStatus_dict):
+                            if len(error_dict) >= len(acl_dict) + len(admin_dict) + len(macAddr_dict) + len(
+                                    rowStatus_dict):
                                 print " if me aa gaya h pysnmp NOW RETURNING RESULT"
                                 return
                             else:
@@ -1234,8 +1361,29 @@ def pysnmp_setAcl(ip_address, port, community, acl_dict={}, admin_dict={}, macAd
             return final_response_dict
 
 
-def pysnmp_seter(received_dict={}, ip_address=None, port=None, community=None, admin_state={}, prev_str=None, response_dict={}, temp_dict={}, error_dict={}, state=0):
+def pysnmp_seter(received_dict={}, ip_address=None, port=None, community=None, admin_state={}, prev_str=None,
+                 response_dict={}, temp_dict={}, error_dict={}, state=0):
     """
+
+
+
+
+
+
+
+
+
+
+    @param received_dict:
+    @param ip_address:
+    @param port:
+    @param community:
+    @param admin_state:
+    @param prev_str:
+    @param response_dict:
+    @param temp_dict:
+    @param error_dict:
+    @param state:
     @requires: {'fullName_of_field':(oid_as_string,oid_datatype,oid_value_to_be_set)} , ip address, port, community, if admin_state dependency present then pass admin_state as dictionary         {'admin_state':(oid_str)}
 
     @return: {'success': 0/1, result : {'fullName_of_field':('if successful then 0 if not then 1','error_number_if any otherwise 0')} }
@@ -1284,7 +1432,7 @@ def pysnmp_seter(received_dict={}, ip_address=None, port=None, community=None, a
                     oid_str = admin_state.values()[0][0]
                     aoid_tuple = make_tuple(oid_str)
                     set_str = set_str + \
-                        ",(%s,v2c.%s(%s))" % (aoid_tuple, 'Integer32', '0')
+                              ",(%s,v2c.%s(%s))" % (aoid_tuple, 'Integer32', '0')
 
                 for i in received_dict.keys():
                     oid_str, datatype, value = received_dict[i]
@@ -1297,7 +1445,7 @@ def pysnmp_seter(received_dict={}, ip_address=None, port=None, community=None, a
 
                 if state_present == 1 and state == 0:
                     set_str = set_str + \
-                        ",(%s,v2c.%s(%s))" % (aoid_tuple, 'Integer32', '1')
+                              ",(%s,v2c.%s(%s))" % (aoid_tuple, 'Integer32', '1')
                 else:
                     temp_dict[aoid_tuple] = admin_name
 
@@ -1335,7 +1483,8 @@ def pysnmp_seter(received_dict={}, ip_address=None, port=None, community=None, a
                             if len(error_dict) >= len(received_dict):
                                 return
                             else:
-                                return pysnmp_set(received_dict, None, None, None, admin_state, prev_str, response_dict, temp_dict, error_dict, state)
+                                return pysnmp_set(received_dict, None, None, None, admin_state, prev_str, response_dict,
+                                                  temp_dict, error_dict, state)
 
                         elif errorStatus == 0:
                             for name, val in varBinds:
@@ -1368,7 +1517,8 @@ def pysnmp_seter(received_dict={}, ip_address=None, port=None, community=None, a
                 response_dict = {}
                 prev_str = None
                 temp_dict = {}
-                prev_str = "errorIndication, errorStatus, errorIndex, varBinds = cmdgen.CommandGenerator().setCmd(cmdgen.CommunityData('test-agent', '%s'),cmdgen.UdpTransportTarget(('%s', %s))" % (community, ip_address, port)
+                prev_str = "errorIndication, errorStatus, errorIndex, varBinds = cmdgen.CommandGenerator().setCmd(cmdgen.CommunityData('test-agent', '%s'),cmdgen.UdpTransportTarget(('%s', %s))" % (
+                community, ip_address, port)
                 state_present = 0
                 set_str = prev_str
                 error_dict = {}
@@ -1382,17 +1532,17 @@ def pysnmp_seter(received_dict={}, ip_address=None, port=None, community=None, a
                     aoid_tuple = make_tuple(oid_str)
                     temp_dict[aoid_tuple] = admin_name
                     set_str = set_str + \
-                        ",(%s,v2c.%s(%s))" % (aoid_tuple, 'Integer32', '0')
+                              ",(%s,v2c.%s(%s))" % (aoid_tuple, 'Integer32', '0')
 
                 for i in received_dict.keys():
                     oid_str, datatype, value = received_dict[i]
                     oid_tuple = make_tuple(oid_str)
                     temp_dict[oid_tuple] = i
                     set_str = set_str + \
-                        ",(%s,v2c.%s('%s'))" % (oid_tuple, datatype, value)
+                              ",(%s,v2c.%s('%s'))" % (oid_tuple, datatype, value)
                 if state_present == 1:
                     set_str = set_str + \
-                        ",(%s,v2c.%s(%s))" % (aoid_tuple, 'Integer32', '1')
+                              ",(%s,v2c.%s(%s))" % (aoid_tuple, 'Integer32', '1')
                     temp_dict[aoid_tuple] = admin_name + '1'
                 set_str = set_str + ')'
                 print " ###   PYSNMP SET PACKET   #### ", set_str
@@ -1418,7 +1568,8 @@ def pysnmp_seter(received_dict={}, ip_address=None, port=None, community=None, a
                                 response_dict[admin_name + '1'] = 55
                                 state = 1
                                 response_dict = pysnmp_set(
-                                    received_dict, None, None, None, admin_state, prev_str, response_dict, temp_dict, error_dict,
+                                    received_dict, None, None, None, admin_state, prev_str, response_dict, temp_dict,
+                                    error_dict,
                                     state)
 
                             else:
@@ -1478,13 +1629,23 @@ def pysnmp_seter(received_dict={}, ip_address=None, port=None, community=None, a
             final_response_dict['success'] = success
             final_response_dict['result'] = response_dict
             return final_response_dict
-        # sys.exit(1)
+            # sys.exit(1)
 
 
 ##
 
 def pysnmp_set(received_dict={}, ip_address=None, port=None, community=None, admin_state={}):
     """
+
+
+
+
+
+    @param received_dict:
+    @param ip_address:
+    @param port:
+    @param community:
+    @param admin_state:
     @requires: {'fullName_of_field':(oid_as_string,oid_datatype,oid_value_to_be_set)} , ip address, port, community, if admin_state dependency present then pass admin_state as dictionary         {'admin_state':(oid_str)}
 
     @return: {'success': 0/1, result : {'fullName_of_field':('if successful then 0 if not then 1','error_number_if any otherwise 0')} }

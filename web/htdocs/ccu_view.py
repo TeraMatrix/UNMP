@@ -1,25 +1,59 @@
-from utility import UNMPDeviceType
+#! /usr/bin/python2.6
+
 from common_controller import MakeSelectListUsingDictionary
 from idu_profiling_bll import IduGetData
 
 
 class CCUForms(object):
+    """
+    Device CCU related forms
+    """
     @staticmethod
-    def enable_disable_select_list(selected_field, selected_list_state, selected_list_id, is_readonly, select_list_initial_msg):
+    def enable_disable_select_list(selected_field, selected_list_state, selected_list_id, is_readonly,
+                                   select_list_initial_msg):
+        """
 
+        @param selected_field:
+        @param selected_list_state:
+        @param selected_list_id:
+        @param is_readonly:
+        @param select_list_initial_msg:
+        @return:
+        """
         select_list_name_value_dic = {'name': ['Disable',
                                                'Enable'], 'value': [0, 1]}
-        return MakeSelectListUsingDictionary.make_select_list_using_dictionary(select_list_name_value_dic, selected_field, selected_list_state, selected_list_id, is_readonly, select_list_initial_msg)
+        return MakeSelectListUsingDictionary.make_select_list_using_dictionary(select_list_name_value_dic,
+                                                                               selected_field, selected_list_state,
+                                                                               selected_list_id, is_readonly,
+                                                                               select_list_initial_msg)
 
     @staticmethod
-    def high_low_select_list(selected_field, selected_list_state, selected_list_id, is_readonly, select_list_initial_msg):
+    def high_low_select_list(selected_field, selected_list_state, selected_list_id, is_readonly,
+                             select_list_initial_msg):
+        """
 
+        @param selected_field:
+        @param selected_list_state:
+        @param selected_list_id:
+        @param is_readonly:
+        @param select_list_initial_msg:
+        @return:
+        """
         select_list_name_value_dic = {'name': ['Low To High',
                                                'High To Low'], 'value': [1, 2]}
-        return MakeSelectListUsingDictionary.make_select_list_using_dictionary(select_list_name_value_dic, selected_field, selected_list_state, selected_list_id, is_readonly, select_list_initial_msg)
+        return MakeSelectListUsingDictionary.make_select_list_using_dictionary(select_list_name_value_dic,
+                                                                               selected_field, selected_list_state,
+                                                                               selected_list_id, is_readonly,
+                                                                               select_list_initial_msg)
 
     @staticmethod
     def battery_panel_form(host_id, selected_device):
+        """
+
+        @param host_id:
+        @param selected_device:
+        @return:
+        """
         obj_bll = IduGetData()
         battery_panel = obj_bll.common_get_data(
             "CcuBatteryPanelConfigTable", host_id)
@@ -52,18 +86,27 @@ class CCUForms(object):
                 <input type =\"submit\" name =\"ccu_common_submit\" id=\"ccu_ok\" value=\"Ok\" style=\"Display:None\" onClick=\"return commonFormSubmit('battery_panel_form',this)\" class=\"yo-small yo-button\" />\
             </div>\
         </form>\
-        " % ("" if len(battery_panel) == 0 else "" if battery_panel[0].ccuBPCSiteBatteryCapacity == None else battery_panel[0].ccuBPCSiteBatteryCapacity,
-             "" if len(battery_panel) == 0 else "" if battery_panel[
-             0].ccuBPCSiteSolarPanelwP == None else battery_panel[
-             0].ccuBPCSiteSolarPanelwP,
-             "" if len(battery_panel) == 0 else "" if battery_panel[
-             0].ccuBPCSiteSolarPanelCount == None else battery_panel[
-             0].ccuBPCSiteSolarPanelCount,
-             "" if len(battery_panel) == 0 else "" if battery_panel[0].ccuBPCNewBatteryInstallationDate == None else battery_panel[0].ccuBPCNewBatteryInstallationDate)
+        " % (
+        "" if len(battery_panel) == 0 else "" if battery_panel[0].ccuBPCSiteBatteryCapacity == None else battery_panel[
+            0].ccuBPCSiteBatteryCapacity,
+        "" if len(battery_panel) == 0 else "" if battery_panel[
+                                                     0].ccuBPCSiteSolarPanelwP == None else battery_panel[
+            0].ccuBPCSiteSolarPanelwP,
+        "" if len(battery_panel) == 0 else "" if battery_panel[
+                                                     0].ccuBPCSiteSolarPanelCount == None else battery_panel[
+            0].ccuBPCSiteSolarPanelCount,
+        "" if len(battery_panel) == 0 else "" if battery_panel[0].ccuBPCNewBatteryInstallationDate == None else
+        battery_panel[0].ccuBPCNewBatteryInstallationDate)
         return form_str
 
     @staticmethod
     def status_data_form(host_id, selected_device):
+        """
+
+        @param host_id:
+        @param selected_device:
+        @return:
+        """
         obj_bll = IduGetData()
         status_data_data = obj_bll.common_get_data(
             "CcuStatusDataTable", host_id, False)
@@ -123,20 +166,29 @@ class CCUForms(object):
                 <input type =\"submit\" name =\"ccu_common_submit\" id=\"ccu_ok\" value=\"Ok\" style=\"Display:None\" class=\"yo-small yo-button\" />\
             </div>\
         </form>\
-        """ % ("" if len(status_data_data) == 0 else "" if status_data_data[0].ccuSDLastRebootReason == None else obj_bll.common_get_multivalue(device_type,
-                                                                                                                                                "ccuOAM.ccuStatusDataTable.ccuSDLastRebootReason", status_data_data[0].ccuSDLastRebootReason),
-               "" if len(status_data_data) == 0 else "" if status_data_data[0].ccuSDUpTimeSecs == None else obj_bll.convert_time(
-               status_data_data[0].ccuSDUpTimeSecs), "" if len(status_data_data) == 0 else "" if status_data_data[0].ccuSDKwHReading == None else status_data_data[0].ccuSDKwHReading,
+        """ % ("" if len(status_data_data) == 0 else "" if status_data_data[
+                                                                                  0].ccuSDLastRebootReason == None else obj_bll.common_get_multivalue(
+            device_type,
+            "ccuOAM.ccuStatusDataTable.ccuSDLastRebootReason", status_data_data[0].ccuSDLastRebootReason),
+               "" if len(status_data_data) == 0 else "" if status_data_data[
+                                                               0].ccuSDUpTimeSecs == None else obj_bll.convert_time(
+                   status_data_data[0].ccuSDUpTimeSecs),
+               "" if len(status_data_data) == 0 else "" if status_data_data[0].ccuSDKwHReading == None else
+               status_data_data[0].ccuSDKwHReading,
                "" if len(status_data_data) == 0 else "" if status_data_data[0].ccuSDBatteryHealth == None
                else status_data_data[0].ccuSDBatteryHealth,
                "" if len(status_data_data) == 0 else "" if status_data_data[0].ccuSDBatteryState == None
-               else obj_bll.common_get_multivalue(device_type, "ccuOAM.ccuStatusDataTable.ccuSDBatteryState", status_data_data[0].ccuSDBatteryState),
+               else obj_bll.common_get_multivalue(device_type, "ccuOAM.ccuStatusDataTable.ccuSDBatteryState",
+                                                  status_data_data[0].ccuSDBatteryState),
                "" if len(status_data_data) == 0 else "" if status_data_data[0].ccuSDLoadConnectedStatus == None
-               else obj_bll.common_get_multivalue(device_type, "ccuOAM.ccuStatusDataTable.ccuSDLoadConnectedStatus", status_data_data[0].ccuSDLoadConnectedStatus),
+               else obj_bll.common_get_multivalue(device_type, "ccuOAM.ccuStatusDataTable.ccuSDLoadConnectedStatus",
+                                                  status_data_data[0].ccuSDLoadConnectedStatus),
                "" if len(status_data_data) == 0 else "" if status_data_data[0].ccuSDACAvailability == None
-               else obj_bll.common_get_multivalue(device_type, "ccuOAM.ccuStatusDataTable.ccuSDACAvailability", status_data_data[0].ccuSDACAvailability),
+               else obj_bll.common_get_multivalue(device_type, "ccuOAM.ccuStatusDataTable.ccuSDACAvailability",
+                                                  status_data_data[0].ccuSDACAvailability),
                "" if len(status_data_data) == 0 else "" if status_data_data[0].ccuSDExternalChargingStatus == None
-               else obj_bll.common_get_multivalue(device_type, "ccuOAM.ccuStatusDataTable.ccuSDExternalChargingStatus", status_data_data[0].ccuSDExternalChargingStatus),
+               else obj_bll.common_get_multivalue(device_type, "ccuOAM.ccuStatusDataTable.ccuSDExternalChargingStatus",
+                                                  status_data_data[0].ccuSDExternalChargingStatus),
                "" if len(status_data_data) == 0 else "" if status_data_data[0].ccuSDChargeDischargeCycle == None
                else status_data_data[0].ccuSDChargeDischargeCycle)
 
@@ -144,6 +196,12 @@ class CCUForms(object):
 
     @staticmethod
     def aux_io_form(host_id, selected_device):
+        """
+
+        @param host_id:
+        @param selected_device:
+        @return:
+        """
         obj_bll = IduGetData()
         aux_data = obj_bll.common_get_data("CcuAuxIOTable", host_id)
         form_str = "\
@@ -179,36 +237,45 @@ class CCUForms(object):
                 <input type =\"submit\" name =\"ccu_common_submit\" id=\"ccu_ok\" value=\"Ok\" style=\"Display:None\" onClick=\"return commonFormSubmit('aux_form',this)\" class=\"yo-small yo-button\" />\
             </div>\
         </form>\
-        " % (CCUForms.enable_disable_select_list("" if len(aux_data) == 0 else "" if aux_data[0].ccuAIExternalOutput1 == None else aux_data[0].ccuAIExternalOutput1, "enabled", "ccuOAM.ccuAuxIOTable.ccuAIExternalOutput1", False, "External Output 1"),
+        " % (CCUForms.enable_disable_select_list(
+            "" if len(aux_data) == 0 else "" if aux_data[0].ccuAIExternalOutput1 == None else aux_data[
+                0].ccuAIExternalOutput1, "enabled", "ccuOAM.ccuAuxIOTable.ccuAIExternalOutput1", False,
+            "External Output 1"),
              CCUForms.enable_disable_select_list(
-             "" if len(aux_data) == 0 else "" if aux_data[
-             0].ccuAIExternalOutput2 == None else aux_data[
-             0].ccuAIExternalOutput2,
-             "enabled", "ccuOAM.ccuAuxIOTable.ccuAIExternalOutput2", False, "External Output 2"),
+                 "" if len(aux_data) == 0 else "" if aux_data[
+                                                         0].ccuAIExternalOutput2 == None else aux_data[
+                     0].ccuAIExternalOutput2,
+                 "enabled", "ccuOAM.ccuAuxIOTable.ccuAIExternalOutput2", False, "External Output 2"),
              CCUForms.enable_disable_select_list(
-             "" if len(aux_data) == 0 else "" if aux_data[
-             0].ccuAIExternalOutput3 == None else aux_data[
-             0].ccuAIExternalOutput3,
-             "enabled", "ccuOAM.ccuAuxIOTable.ccuAIExternalOutput3", False, "External Output 3"),
+                 "" if len(aux_data) == 0 else "" if aux_data[
+                                                         0].ccuAIExternalOutput3 == None else aux_data[
+                     0].ccuAIExternalOutput3,
+                 "enabled", "ccuOAM.ccuAuxIOTable.ccuAIExternalOutput3", False, "External Output 3"),
              CCUForms.high_low_select_list(
-             "" if len(aux_data) == 0 else "" if aux_data[
-             0].ccuAIExternalInput1AlarmType == None else aux_data[
-             0].ccuAIExternalInput1AlarmType,
-             "enabled", "ccuOAM.ccuAuxIOTable.ccuAIExternalInput1AlarmType", False, "External Input 1 Alarm"),
+                 "" if len(aux_data) == 0 else "" if aux_data[
+                                                         0].ccuAIExternalInput1AlarmType == None else aux_data[
+                     0].ccuAIExternalInput1AlarmType,
+                 "enabled", "ccuOAM.ccuAuxIOTable.ccuAIExternalInput1AlarmType", False, "External Input 1 Alarm"),
              CCUForms.high_low_select_list(
-             "" if len(aux_data) == 0 else "" if aux_data[
-             0].ccuAIExternalInput2AlarmType == None else aux_data[
-             0].ccuAIExternalInput2AlarmType,
-             "enabled", "ccuOAM.ccuAuxIOTable.ccuAIExternalInput2AlarmType", False, "External Input 2 Alarm"),
+                 "" if len(aux_data) == 0 else "" if aux_data[
+                                                         0].ccuAIExternalInput2AlarmType == None else aux_data[
+                     0].ccuAIExternalInput2AlarmType,
+                 "enabled", "ccuOAM.ccuAuxIOTable.ccuAIExternalInput2AlarmType", False, "External Input 2 Alarm"),
              CCUForms.high_low_select_list(
-             "" if len(aux_data) == 0 else "" if aux_data[
-             0].ccuAIExternalInput3AlarmType == None else aux_data[
-             0].ccuAIExternalInput3AlarmType,
-             "enabled", "ccuOAM.ccuAuxIOTable.ccuAIExternalInput3AlarmType", False, "External Input 3 Alarm"))
+                 "" if len(aux_data) == 0 else "" if aux_data[
+                                                         0].ccuAIExternalInput3AlarmType == None else aux_data[
+                     0].ccuAIExternalInput3AlarmType,
+                 "enabled", "ccuOAM.ccuAuxIOTable.ccuAIExternalInput3AlarmType", False, "External Input 3 Alarm"))
         return form_str
 
     @staticmethod
     def alarm_threshold_form(host_id, selected_device):
+        """
+
+        @param host_id:
+        @param selected_device:
+        @return:
+        """
         obj_bll = IduGetData()
         alarm_threshold_data = obj_bll.common_get_data(
             "CcuAlarmAndThresholdTable", host_id)
@@ -247,22 +314,33 @@ class CCUForms(object):
                 <input type =\"submit\" name =\"ccu_common_submit\" id=\"ccu_ok\" value=\"Ok\" style=\"Display:None\" onClick=\"return commonFormSubmit('alarm_threshold_form',this)\" class=\"yo-small yo-button\" />\
             </div>\
         </form>\
-        """ % ("" if len(alarm_threshold_data) == 0 else "" if alarm_threshold_data[0].ccuATHighTemperatureAlarm == None else alarm_threshold_data[0].ccuATHighTemperatureAlarm,
-               "" if len(alarm_threshold_data) == 0 else "" if alarm_threshold_data[
-               0].ccuATPSMRequest == None else alarm_threshold_data[
-               0].ccuATPSMRequest,
-               "" if len(alarm_threshold_data) == 0 else "" if alarm_threshold_data[
-               0].ccuATSMPSMaxCurrentLimit == None else alarm_threshold_data[
-                   0].ccuATSMPSMaxCurrentLimit,
-               "" if len(alarm_threshold_data) == 0 else "" if alarm_threshold_data[
-               0].ccuATPeakLoadCurrent == None else alarm_threshold_data[
-                   0].ccuATPeakLoadCurrent,
-            "" if len(alarm_threshold_data) == 0 else "" if alarm_threshold_data[0].ccuATLowVoltageDisconnectLevel == None else alarm_threshold_data[0].ccuATLowVoltageDisconnectLevel)
+        """ % (
+        "" if len(alarm_threshold_data) == 0 else "" if alarm_threshold_data[0].ccuATHighTemperatureAlarm == None else
+        alarm_threshold_data[0].ccuATHighTemperatureAlarm,
+        "" if len(alarm_threshold_data) == 0 else "" if alarm_threshold_data[
+                                                            0].ccuATPSMRequest == None else alarm_threshold_data[
+            0].ccuATPSMRequest,
+        "" if len(alarm_threshold_data) == 0 else "" if alarm_threshold_data[
+                                                            0].ccuATSMPSMaxCurrentLimit == None else
+        alarm_threshold_data[
+            0].ccuATSMPSMaxCurrentLimit,
+        "" if len(alarm_threshold_data) == 0 else "" if alarm_threshold_data[
+                                                            0].ccuATPeakLoadCurrent == None else alarm_threshold_data[
+            0].ccuATPeakLoadCurrent,
+        "" if len(alarm_threshold_data) == 0 else "" if alarm_threshold_data[
+                                                            0].ccuATLowVoltageDisconnectLevel == None else
+        alarm_threshold_data[0].ccuATLowVoltageDisconnectLevel)
 
         return form_str
 
     @staticmethod
     def unmp_ip_form(host_id, selected_device):
+        """
+
+        @param host_id:
+        @param selected_device:
+        @return:
+        """
         obj_bll = IduGetData()
         site_info_data = obj_bll.common_get_data(
             "CcuSiteInformationTable", host_id)
@@ -280,12 +358,19 @@ class CCUForms(object):
                 <input type =\"submit\" name =\"ccu_common_submit\" id=\"ccu_ok\" value=\"Ok\" style=\"Display:None\" onClick=\"return commonFormSubmit('unmp_ip_form',this)\" class=\"yo-small yo-button\" disabled=\"disabled\" class=\"ui-disabled\"/>\
             </div>\
         </form>\
-        " % ("" if len(site_info_data) == 0 else "" if site_info_data[0].ccuSITSiteName == None else site_info_data[0].ccuSITSiteName)
+        " % ("" if len(site_info_data) == 0 else "" if site_info_data[0].ccuSITSiteName == None else site_info_data[
+            0].ccuSITSiteName)
 
         return form_str
 
     @staticmethod
     def peer_form(host_id, selected_device):
+        """
+
+        @param host_id:
+        @param selected_device:
+        @return:
+        """
         obj_bll = IduGetData()
         peer_data = obj_bll.common_get_data("CcuPeerInformationTable", host_id)
         form_str = "\
@@ -313,18 +398,25 @@ class CCUForms(object):
                 <input type =\"submit\" name =\"ccu_common_submit\" id=\"ccu_ok\" value=\"Ok\" style=\"Display:None\" onClick=\"return commonFormSubmit('peer_form',this)\" class=\"yo-small yo-button\" disabled=\"disabled\" class=\"ui-disabled\"/>\
             </div>\
         </form>\
-        " % ("" if len(peer_data) == 0 else "" if peer_data[0].ccuPIPeer1MACID == None else peer_data[0].ccuPIPeer1MACID,
-           "" if len(peer_data) == 0 else "" if peer_data[
-                     0].ccuPIPeer2MACID == None else peer_data[
-                         0].ccuPIPeer2MACID,
-           "" if len(peer_data) == 0 else "" if peer_data[
-                     0].ccuPIPeer3MACID == None else peer_data[
-                         0].ccuPIPeer3MACID,
-           "" if len(peer_data) == 0 else "" if peer_data[0].ccuPIPeer4MACID == None else peer_data[0].ccuPIPeer4MACID)
+        " % (
+        "" if len(peer_data) == 0 else "" if peer_data[0].ccuPIPeer1MACID == None else peer_data[0].ccuPIPeer1MACID,
+        "" if len(peer_data) == 0 else "" if peer_data[
+                                                 0].ccuPIPeer2MACID == None else peer_data[
+            0].ccuPIPeer2MACID,
+        "" if len(peer_data) == 0 else "" if peer_data[
+                                                 0].ccuPIPeer3MACID == None else peer_data[
+            0].ccuPIPeer3MACID,
+        "" if len(peer_data) == 0 else "" if peer_data[0].ccuPIPeer4MACID == None else peer_data[0].ccuPIPeer4MACID)
         return form_str
 
     @staticmethod
     def control_form(host_id, selected_device):
+        """
+
+        @param host_id:
+        @param selected_device:
+        @return:
+        """
         obj_bll = IduGetData()
         control_data = obj_bll.common_get_data("CcuControlTable", host_id)
         form_str = "\
@@ -345,15 +437,26 @@ class CCUForms(object):
                 <input type =\"submit\" name =\"ccu_common_submit\" id=\"ccu_ok\" value=\"Ok\" style=\"Display:None\" onClick=\"return commonFormSubmit('ccu_control',this)\" class=\"yo-small yo-button\" />\
             </div>\
         </form>\
-        " % ("" if len(control_data) == 0 else "" if control_data[0].ccuCTLoadTurnOff == None else control_data[0].ccuCTLoadTurnOff,
-           CCUForms.enable_disable_select_list("" if len(control_data) == 0 else "" if control_data[0].ccuCTSMPSCharging == None else control_data[0].ccuCTSMPSCharging, "enabled", "ccuOAM.ccuControlTable.ccuCTSMPSCharging", False, "SMPS Charging"))
+        " % ("" if len(control_data) == 0 else "" if control_data[0].ccuCTLoadTurnOff == None else control_data[
+            0].ccuCTLoadTurnOff,
+             CCUForms.enable_disable_select_list(
+                 "" if len(control_data) == 0 else "" if control_data[0].ccuCTSMPSCharging == None else control_data[
+                     0].ccuCTSMPSCharging, "enabled", "ccuOAM.ccuControlTable.ccuCTSMPSCharging", False,
+                 "SMPS Charging"))
         return form_str
 
 
 class CCUProfiling(object):
-
+    """
+    CCU configuration profile
+    """
     @staticmethod
     def ccu_listing():
+        """
+
+
+        @return:
+        """
         table_view = "<div>"
         table_view = "<div>"
         table_view += "<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"display\" id=\"device_data_table\" style=\"text-align:center\">\
@@ -376,6 +479,12 @@ class CCUProfiling(object):
     @staticmethod
     def ccu_profiling_form(host_id, device_type, device_list_parameter):
         """
+
+
+
+        @param host_id:
+        @param device_type:
+        @param device_list_parameter:
         @author : Anuj Samariya
         @param h : html Class Object
         @var html : this is html Class Object defined globally
@@ -390,11 +499,11 @@ class CCUProfiling(object):
         @organisation : Codescape Consultants Pvt. Ltd.
         @copyright : 2011 Anuj Samariya from Codescape Consultants Pvt. Ltd.
         """
-##        if device_list_parameter == "" or device_list_parameter ==[]:
-##            return "No Configuration Profile Exist"
-##        elif device_list_parameter[0].config_profile_id == None or device_list_parameter[0].config_profile_id=="":
-##            return "No Configuration Exist.Please Add Host Again"
-##        else:
+        ##        if device_list_parameter == "" or device_list_parameter ==[]:
+        ##            return "No Configuration Profile Exist"
+        ##        elif device_list_parameter[0].config_profile_id == None or device_list_parameter[0].config_profile_id=="":
+        ##            return "No Configuration Exist.Please Add Host Again"
+        ##        else:
 
         tab_str = "\
         <div class=\"yo-tabs\" id=\"config_tabs\" style=\"display:block\">\
@@ -444,16 +553,24 @@ class CCUProfiling(object):
             </div>\
             <input type=\"hidden\" name=\"host_id\" id=\"host_id\" value=\"%s\"/>\
             <input type=\"hidden\" name=\"device_type_id\" id=\"device_type_id\" value=\"%s\"/>\
-        " % (CCUForms.unmp_ip_form(host_id, device_type), CCUForms.battery_panel_form(host_id, device_type), CCUForms.aux_io_form(host_id, device_type),
-          CCUForms.alarm_threshold_form(host_id, device_type), CCUForms.peer_form(
-              host_id, device_type), CCUForms.control_form(
-                  host_id, device_type),
-          CCUForms.status_data_form(host_id, device_type), host_id, device_type)
+        " % (CCUForms.unmp_ip_form(host_id, device_type), CCUForms.battery_panel_form(host_id, device_type),
+             CCUForms.aux_io_form(host_id, device_type),
+             CCUForms.alarm_threshold_form(host_id, device_type), CCUForms.peer_form(
+            host_id, device_type), CCUForms.control_form(
+            host_id, device_type),
+             CCUForms.status_data_form(host_id, device_type), host_id, device_type)
 
         return tab_str
 
     @staticmethod
     def ccu_div(ip_address, mac_address, host_id):
+        """
+
+        @param ip_address:
+        @param mac_address:
+        @param host_id:
+        @return:
+        """
         profile_str = "\
         <div id=\"ccu_form_div\" class=\"form-div\" style=\"margin-top: 56px;\"></div>\
         <div class=\"form-div-footer\">\
@@ -471,11 +588,19 @@ class CCUProfiling(object):
 
     @staticmethod
     def ccu_profile_call(host_id, device_type, device_list_parameter):
+        """
+
+        @param host_id:
+        @param device_type:
+        @param device_list_parameter:
+        @return:
+        """
         tab_str = ""
         if host_id == "" or host_id == "None":
             tab_str += "There is No Host Exist</div>"
         else:
             if device_type == "ccu":
                 tab_str += CCUProfiling.ccu_profiling_form(
-                    host_id, device_type, device_list_parameter)  # function call , it is used to make a form of selected profiling
+                    host_id, device_type,
+                    device_list_parameter)  # function call , it is used to make a form of selected profiling
         return tab_str

@@ -3,7 +3,6 @@ from datetime import datetime
 
 
 class idu4View(object):
-
     @staticmethod
     def idu4_footer_tab(flag):
         if int(flag) == 0:
@@ -30,7 +29,8 @@ class idu4View(object):
         return html_page
 
     @staticmethod
-    def idu4_table(ip_address, odu_start_date, odu_start_time, odu_end_date, odu_end_time, idu_refresh_time, total_count):
+    def idu4_table(ip_address, odu_start_date, odu_start_time, odu_end_date, odu_end_time, idu_refresh_time,
+                   total_count):
         dash_str = '\
         <input type=\"hidden\" id=\"refresh_time\" name=\"refresh_time\" value=\"%s\" />\
         <input type=\"hidden\" id=\"ip_address\" name=\"ip_address\" value=\"%s\" />\
@@ -75,7 +75,8 @@ class idu4View(object):
             <tr>\
                 <td><div id="dashboard11" class="db-box"></div></td>\
             </tr>\
-        </table>' % (idu_refresh_time, ip_address, total_count, odu_start_date, odu_start_time, odu_end_date, odu_end_time)
+        </table>' % (
+        idu_refresh_time, ip_address, total_count, odu_start_date, odu_start_time, odu_end_date, odu_end_time)
         return dash_str
 
     @staticmethod
@@ -105,37 +106,44 @@ class idu4View(object):
                         <td class="cell-label">\
                             H/W Serial Number\
                         </td>\
-                        <td class="cell-info">' + str('--' if result[0][0] == None or result[0][0] == ""  else result[0][0]) + '</td>\
+                        <td class="cell-info">' + str(
+                '--' if result[0][0] == None or result[0][0] == ""  else result[0][0]) + '</td>\
                         <td class="cell-label">\
                             System MAC\
                         </td>\
-                        <td class="cell-info">' + str('--' if result[0][1] == None or result[0][1] == ""  else result[0][1]) + '</td>\
+                        <td class="cell-info">' + str(
+                '--' if result[0][1] == None or result[0][1] == ""  else result[0][1]) + '</td>\
                         </tr>\
                         <tr>\
                         <td class="cell-label">\
                             TDMOIP Interface MAC\
                         </td>\
-                        <td class="cell-info">' + str('--' if result[0][2] == None or result[0][2] == ""  else result[0][2]) + '</td>\
+                        <td class="cell-info">' + str(
+                '--' if result[0][2] == None or result[0][2] == ""  else result[0][2]) + '</td>\
                         <td class="cell-label">\
                             Active Version\
                         </td>\
-                        <td class="cell-info">' + str('--' if result[0][3] == None or result[0][3] == ""  else result[0][3]) + '</td>\
+                        <td class="cell-info">' + str(
+                '--' if result[0][3] == None or result[0][3] == ""  else result[0][3]) + '</td>\
                         </tr>\
                         <tr>\
                         <td class="cell-label">\
                             Passive Version\
                         </td>\
-                        <td class="cell-info">' + str('--' if result[0][4] == None or result[0][4] == ""  else result[0][4]) + '</td>\
+                        <td class="cell-info">' + str(
+                '--' if result[0][4] == None or result[0][4] == ""  else result[0][4]) + '</td>\
                         <td class="cell-label">\
                             BootLoader Version\
                         </td>\
-                        <td class="cell-info">' + str('--' if result[0][5] == None or result[0][5] == ""  else result[0][5]) + '</td>\
+                        <td class="cell-info">' + str(
+                '--' if result[0][5] == None or result[0][5] == ""  else result[0][5]) + '</td>\
                         </tr>\
                         <tr>\
                         <td class="cell-label">\
                             Temperature(C)\
                         </td>\
-                        <td class="cell-info">' + str('--' if result[0][6] == None or result[0][6] == ""  else result[0][6]) + '</td>\
+                        <td class="cell-info">' + str(
+                '--' if result[0][6] == None or result[0][6] == ""  else result[0][6]) + '</td>\
                         <td class="cell-label">\
                             UpTime\
                         </td>\
@@ -210,7 +218,7 @@ class idu4View(object):
     @staticmethod
     def idu4_event_view(result, table_option, ip_address):
         image_title_name = {0: "Normal", 1: "Informational", 2:
-                            "Normal", 3: "Minor", 4: "Major", 5: "Critical"}
+            "Normal", 3: "Minor", 4: "Major", 5: "Critical"}
         image_dic = {
             0: "images/status-0.png", 1: "images/status-0.png", 2: "images/status-0.png",
             3: "images/minor.png", 4: "images/status-1.png", 5: "images/critical.png"}
@@ -241,7 +249,9 @@ class idu4View(object):
                     history_trap += '<td>%s</td>' % result[i][1]
                     history_trap += '<td>%s</td>' % result[i][2]
                     history_trap += '<td>%s&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp%s</td></tr>' % (
-                        result[i][3], (("<a href=\"status_snmptt.py?trap_status=history&ip_address=" + ip_address + "\">more>></a>" if len(result) > 5 else "")))
+                        result[i][3], ((
+                                       "<a href=\"status_snmptt.py?trap_status=history&ip_address=" + ip_address + "\">more>></a>" if len(
+                                           result) > 5 else "")))
             if len(result) < 1:
                 history_trap += '<tr ><td colspan="4"><b>Alarm does not exists.</b></td></tr>'
 
@@ -271,10 +281,12 @@ class idu4View(object):
                     current_alarm_html += '<td>%s</td>' % result[i][1]
                     current_alarm_html += '<td>%s</td>' % result[i][2]
                     current_alarm_html += '<td>%s&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp%s</td></tr>' % (
-                        result[i][3], (("<a href=\"status_snmptt.py?trap_status=history&ip_address=" + ip_address + "\">more>></a>" if len(result) > 5 else "")))
+                        result[i][3], ((
+                                       "<a href=\"status_snmptt.py?trap_status=history&ip_address=" + ip_address + "\">more>></a>" if len(
+                                           result) > 5 else "")))
             if len(result) < 1:
                 current_alarm_html += '<tr ><td colspan="4"><b>Alarm does not exists.</b></td></tr>'
-            # close database connection and cursor.
+                # close database connection and cursor.
             history_trap = current_alarm_html
             history_trap += "</tbody></table>"
         history_trap_detail = {'success': 0, 'output': history_trap}
@@ -298,19 +310,20 @@ class idu4View(object):
         else:
             for i in range(len(result)):
                 link_status += '<td>%s</td>' % '' if result[i][
-                    0] == '' or result[i][0] == None else result[i][0].strftime('%d-%m-%Y %H:%M')
+                                                         0] == '' or result[i][0] == None else result[i][0].strftime(
+                    '%d-%m-%Y %H:%M')
                 link_status += '<td>%s</td>' % '' if result[i][
-                    1] == '' or result[i][1] == None else result[i][1]
+                                                         1] == '' or result[i][1] == None else result[i][1]
                 link_status += '<td>%s</td>' % '' if result[i][
-                    2] == '' or result[i][2] == None else result[i][2]
+                                                         2] == '' or result[i][2] == None else result[i][2]
                 link_status += '<td>%s</td>' % '' if result[i][
-                    3] == '' or result[i][3] == None else result[i][3]
+                                                         3] == '' or result[i][3] == None else result[i][3]
                 link_status += '<td>%s</td>' % '' if result[i][
-                    4] == '' or result[i][4] == None else result[i][4]
+                                                         4] == '' or result[i][4] == None else result[i][4]
                 link_status += '<td>%s</td>' % '' if result[i][
-                    5] == '' or result[i][5] == None else result[i][5]
+                                                         5] == '' or result[i][5] == None else result[i][5]
                 link_status += '<td>%s</td>' % '' if result[i][
-                    6] == '' or result[i][6] == None else result[i][6]
+                                                         6] == '' or result[i][6] == None else result[i][6]
         link_status += "</tbody></table>"
         link_result = {'success': 0, 'output': link_status}
         return link_result
@@ -321,7 +334,7 @@ class idu4View(object):
         dic_1 = {0: 'bitclear', 1: 'bitset'}
         dic_2 = {1: 'bitclear', 0: 'bitset'}
         adpt_state = {0: 'state Idle', 1: 'State Self Test', 2: 'State Acquistion', 3:
-                      'State Tracking1', 4: 'State Tracking2', 5: 'State Recovered', 6: 'State Not Active'}
+            'State Tracking1', 4: 'State Tracking2', 5: 'State Recovered', 6: 'State Not Active'}
         hold_over = {0: 'In Hold Over Mode', 1: 'In Normal Mode'}
         link_status = '<div style=\"overflow-x:auto;overflow-y:hidden; width:100%; height:100%;\"><table style=\"width:100%\" border="0" cellpadding="0" cellspacing="0" class="yo-table">'
         link_status += '<tbody>\
@@ -344,23 +357,23 @@ class idu4View(object):
                 link_status += '<td>%s</td>' % (
                     '--' if result[i][0] == '' or result[i][0] == None else result[i][0].strftime('%d-%m-%Y %H:%M'))
                 link_status += '<td>%s</td>' % ('--' if result[i][1] == '' or result[i][1]
-                                                == None else state[int(result[i][1])])
+                                                        == None else state[int(result[i][1])])
                 link_status += '<td>%s</td>' % ('--' if result[i][2] == '' or result[i][2]
-                                                == None else dic_1[int(result[i][2])])
+                                                        == None else dic_1[int(result[i][2])])
                 link_status += '<td>%s</td>' % ('--' if result[i][3] == '' or result[i][3]
-                                                == None else dic_1[int(result[i][3])])
+                                                        == None else dic_1[int(result[i][3])])
                 link_status += '<td>%s</td>' % ('--' if result[i][4] == '' or result[i][4]
-                                                == None else dic_1[int(result[i][4])])
+                                                        == None else dic_1[int(result[i][4])])
                 link_status += '<td>%s</td>' % ('--' if result[i][5] == '' or result[i][5]
-                                                == None else dic_1[int(result[i][5])])
+                                                        == None else dic_1[int(result[i][5])])
                 link_status += '<td>%s</td>' % ('--' if result[i][6] == '' or result[i][6]
-                                                == None else dic_2[int(result[i][6])])
+                                                        == None else dic_2[int(result[i][6])])
                 link_status += '<td>%s</td>' % ('--' if result[i][7] == '' or result[i][7]
-                                                == None else dic_2[int(result[i][7])])
+                                                        == None else dic_2[int(result[i][7])])
                 link_status += '<td>%s</td>' % ('--' if result[i][8] == '' or result[i][8]
-                                                == None else adpt_state[int(result[i][8])])
+                                                        == None else adpt_state[int(result[i][8])])
                 link_status += '<td>%s</td>' % ('--' if result[i][9] == '' or result[i][9]
-                                                == None else hold_over[int(result[i][9])])
+                                                        == None else hold_over[int(result[i][9])])
         link_status += "</tbody></table></div>"
         link_result = {'success': 0, 'link_table': link_status}
         return link_result

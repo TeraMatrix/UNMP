@@ -12,10 +12,8 @@
 
 
 # Import modules that contain the function and libraries
-from hostgroup_mgmt_bll import HostgroupMgmtBll
 from hostgroup_mgmt import HostgroupMgmt
-import json
-from json import JSONEncoder
+from hostgroup_mgmt_bll import HostgroupMgmtBll
 
 # calling the view for reporting
 
@@ -35,7 +33,7 @@ def hostgroup_mgmt_view(h):
     html = h
     css_list = ["css/demo_table_jui.css",
                 "css/jquery-ui-1.8.4.custom.css", "css/style12.css", "css/divya.css"]
-    js_list = ["js/jquery.dataTables.min.js", "js/pages/hostgroup_mgmt.js"]
+    js_list = ["js/lib/main/jquery.dataTables.min.js", "js/unmp/main/hostgroup_mgmt.js"]
     # header_btn = HostgroupMgmt.header_buttons()
     html.new_header("MAPPING BETWEEN HOSTGROUP AND USER GROUPS",
                     "hostgroup_mgmt_view.py", "", css_list, js_list)
@@ -91,7 +89,7 @@ def viewGroupDetails(h):
     html.write(str(HostgroupMgmt.viewGroupDetails(res)))
 
 
-def view_page_tip_hostgroup(h):
-    global html
-    html = h
-    html.write(HostgroupMgmt.view_page_tip_hostgroup())
+# def view_page_tip_hostgroup(h):
+#     global html
+#     html = h
+#     html.write(HostgroupMgmt.view_page_tip_hostgroup())

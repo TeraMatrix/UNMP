@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Help: Current Status Dashboard</title>
+    <link href="css/example.css"/>
+
+</head>
+<body>
+<div id="help_container">
+    <h1>Current Status Dashboard</h1>
+
+    <div>This <strong>Dashboard</strong> show all device silver statistics information by graph.</div>
+    <br/>
+    <br/>
+
+    <div class="action-tip">
+        <div class="img-div"><img style="width:16px;height:16px;" src="images/red/round_plus.png"/></div>
+        <div class="txt-div">Show device details.</div>
+    </div>
+    <br/>
+
+    <div class="action-tip">
+        <div class="img-div"><img style="width:16px;height:16px;" src="images/red/round_minus.png"/></div>
+        <div class="txt-div">Hide device details.</div>
+    </div>
+    <br/>
+
+    <div><input class="yo-button yo-small" type="button" style="width: 30px;" value="Historical Status"
+                name="odu_graph_show"> This button open a window on self click and show more information by historical
+        status.
+    </div>
+    <div><input class="yo-button yo-small" type="button" style="width: 30px;" value="Search" name="odu_graph_show">
+        Search the devices.
+    </div>
+    <div><input class="yo-button yo-small" type="button" style="width: 50px;" value="Configuration"
+                name="odu_graph_show"> This is open a window for customize the table according to User.
+    </div>
+    <br/>
+
+    <div>
+        <button id="odu_report_btn" style="margin-top: 5px;" type="submit"><span class="report">Report</span></button>
+        Download the Excel report.
+    </div>
+    <br/>
+
+    <div>
+        <button id="odu_report_btn" style="margin-top: 5px;" type="submit"><span class="report">CSV Report</span>
+        </button>
+        Download the CSV report.
+    </div>
+    <br/>
+    <br/>
+
+    <div><strong>Note:</strong>This page show real time information of device and it page refresh on 10 min time
+        interval.
+        Search button search device by MAC address and IP address and show current status by table.
+    </div>
+</div>
+</body>
+</html>

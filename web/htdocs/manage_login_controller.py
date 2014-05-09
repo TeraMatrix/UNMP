@@ -1,39 +1,15 @@
 #!/usr/bin/python2.6
-
-import config
-import htmllib
-import pprint
-import sidebar
-import views
-import time
-import defaults
-import os
-import cgi
-import xml.dom.minidom
-import subprocess
-import commands
-import MySQLdb
-import datetime
-import urllib2
-import base64
-import socket
-import sys
 from lib import *
 from nms_config import *
 from manage_login_view import ManageLogin
 from manage_login_bll import ManageLoginBll
-import cPickle
-from mod_python import apache, util, Session
-import sys
-import os
-import pprint
 
 
 def get_data(h):
     global html
     html = h
     css_list = ["css/demo_table_jui.css", "css/jquery-ui-1.8.4.custom.css"]
-    js_list = ["js/jquery.dataTables.min.js", "js/pages/manage_login.js"]
+    js_list = ["js/lib/main/jquery.dataTables.min.js", "js/unmp/main/manage_login.js"]
     html.new_header("Manage Login-Session of Users", "manage_login.py",
                     "", css_list, js_list)
     html.write(ManageLogin.create_form())
@@ -80,7 +56,7 @@ def delete_login_data(h):
     html.write(str(result1))
 
 
-def view_page_tip_manage_login(h):
-    global html
-    html = h
-    html.write(ManageLogin.view_page_tip_manage_login())
+# def view_page_tip_manage_login(h):
+#     global html
+#     html = h
+#     html.write(ManageLogin.view_page_tip_manage_login())

@@ -17,21 +17,21 @@
 # map URLs to page rendering functions
 pagehandlers.update({
 
-                    # Access Point 25
+    # Access Point 25
 
-                    # ODU 16 Mbps
+    # ODU 16 Mbps
 
-                    # ODU 100 Mbps
+    # ODU 100 Mbps
 
-                    # IDU 4 Port
+    # IDU 4 Port
 
-                    # IDU 8 Port
+    # IDU 8 Port
 
-                    # Switch 24 Port
+    # Switch 24 Port
 
-                    # Switch 8 Port
+    # Switch 8 Port
 
-                    # Switch 4 Port
+    # Switch 4 Port
 
 
-                    })
+})

@@ -1,54 +1,53 @@
-div.ccpl-combobox-div input
-{
-	float: left;
-	height:21px;
-	margin:0px;
+div.ccpl-combobox-div input {
+    float: left;
+    height: 21px;
+    margin: 0px;
 }
-div.ccpl-combobox-div img
-{
-	float: left;
-	border: 0px;
-	padding: 0px;
-	margin: 0px;
-	cursor: pointer;
+
+div.ccpl-combobox-div img {
+    float: left;
+    border: 0px;
+    padding: 0px;
+    margin: 0px;
+    cursor: pointer;
 }
-div.ccpl-combobox-options-div
-{
-	padding: 0px;
-	border: 1px solidd #A7BAC5;
-	background-color: #FFFFFF;
-	overflow: hidden;
-	z-index: 1005;
-	-moz-box-shadow: 0px 0px 8px rgba(0,0,0,0.3);
-	-khtml-box-shadow: 0px 0px 8px rgba(0,0,0,0.3);
-	-webkit-box-shadow: 0px 0px 8px rgba(0,0,0,0.3);
+
+div.ccpl-combobox-options-div {
+    padding: 0px;
+    border: 1px solidd #A7BAC5;
+    background-color: #FFFFFF;
+    overflow: hidden;
+    z-index: 1005;
+    -moz-box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.3);
+    -khtml-box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.3);
+    -webkit-box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.3);
 }
-div.ccpl-combobox-options-div ul
-{
-	width: 100%;
-	list-style-position: outside;
-	list-style: none;
-	padding: 0px;
-	margin: 0px;
+
+div.ccpl-combobox-options-div ul {
+    width: 100%;
+    list-style-position: outside;
+    list-style: none;
+    padding: 0px;
+    margin: 0px;
 }
-div.ccpl-combobox-options-div ul li
-{
-	margin: 0px;
-	padding: 2px 5px;
-	background-color: #FFFFFF;
-	border: 1px solid #FFFFFF;
-	color: #000000; /*-moz-border-radius: 3px;     -khtml-border-radius: 3px;     -webkit-border-radius: 3px;*/
-	cursor: pointer;
-	display: block;
-	line-height: 16px;
-	font-size: 12px;
-	overflow: hidden;
+
+div.ccpl-combobox-options-div ul li {
+    margin: 0px;
+    padding: 2px 5px;
+    background-color: #FFFFFF;
+    border: 1px solid #FFFFFF;
+    color: #000000; /*-moz-border-radius: 3px;     -khtml-border-radius: 3px;     -webkit-border-radius: 3px;*/
+    cursor: pointer;
+    display: block;
+    line-height: 16px;
+    font-size: 12px;
+    overflow: hidden;
 }
-div.ccpl-combobox-options-div ul li:hover
-{
-	background-color: #E3F4FC;
+
+div.ccpl-combobox-options-div ul li:hover {
+    background-color: #E3F4FC;
 }
-div.ccpl-combobox-options-div ul li.opt_selected
-{
-	background-color: #C8E8F8;
+
+div.ccpl-combobox-options-div ul li.opt_selected {
+    background-color: #C8E8F8;
 }

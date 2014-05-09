@@ -44,7 +44,6 @@ try:
 except NameError:
     from sets import Set as set
 
-
 config.declare_permission_section("action", "Commands on Objects")
 config.declare_permission("action.notifications",
                           "Enable/disable notifications",
@@ -91,6 +90,13 @@ multisite_painter_options = {}
 ##########################################################################
 
 def toggle_button(id, isopen, text, addclasses=[]):
+    """
+
+    @param id:
+    @param isopen:
+    @param text:
+    @param addclasses:
+    """
     if isopen:
         cssclass = "open"
     else:
@@ -103,6 +109,11 @@ def toggle_button(id, isopen, text, addclasses=[]):
 
 def show_filter_form(is_open, filters):
     # Table muss einen anderen Namen, als das Formular
+    """
+
+    @param is_open:
+    @param filters:
+    """
     html.write("<tr class=form id=table_filter %s>\n" % (
         not is_open and 'style="display: none"' or ''))
     html.write("<td>")
@@ -139,6 +150,10 @@ def show_filter_form(is_open, filters):
 
 
 def show_painter_options(painter_options):
+    """
+
+    @param painter_options:
+    """
     html.write('<tr class=form id=painter_options style="display: none">')
     html.write("<td>")
     html.begin_form("painteroptions")
@@ -165,6 +180,12 @@ def show_painter_options(painter_options):
 ##########################################################################
 
 def declare_filter(sort_index, f, comment=None):
+    """
+
+    @param sort_index:
+    @param f:
+    @param comment:
+    """
     multisite_filters[f.name] = f
     f.comment = comment
     f.sort_index = sort_index
@@ -173,6 +194,15 @@ def declare_filter(sort_index, f, comment=None):
 
 
 class Filter:
+    """
+
+    @param name:
+    @param title:
+    @param info:
+    @param htmlvars:
+    @param link_columns:
+    """
+
     def __init__(self, name, title, info, htmlvars, link_columns):
         self.name = name
         self.info = info
@@ -181,19 +211,39 @@ class Filter:
         self.link_columns = link_columns
 
     def display(self):
+        """
+
+
+        @raise:
+        """
         raise MKInternalError("Incomplete implementation of filter %s '%s': missing display()" %
                               (self.name, self.title))
         html.write("FILTER NOT IMPLEMENTED")
 
     def filter(self):
+        """
+
+
+        @raise:
+        """
         raise MKInternalError("Incomplete implementation of filter %s '%s': missing filter()" %
                               (self.name, self.title))
         html.write("FILTER NOT IMPLEMENTED")
 
     def variable_settings(self, row):
+        """
+
+        @param row:
+        @return:
+        """
         return []  # return pairs of htmlvar and name according to dataset in row
 
     def infoprefix(self, infoname):
+        """
+
+        @param infoname:
+        @return:
+        """
         if self.info == infoname:
             return ""
         else:
@@ -201,6 +251,11 @@ class Filter:
 
     # Hidden filters may contribute to the pages headers of the views
     def heading_info(self, infoname):
+        """
+
+        @param infoname:
+        @return:
+        """
         return None
 
 # Load all view plugins
@@ -212,7 +267,7 @@ for fn in fns:
         execfile(plugins_path + "/" + fn)
 if defaults.omd_root:
     local_plugins_path = defaults.omd_root + \
-        "/local/share/check_mk/web/plugins/views"
+                         "/local/share/check_mk/web/plugins/views"
     if local_plugins_path != plugins_path:  # honor ./setup.sh in site
         if os.path.exists(local_plugins_path):
             fns = os.listdir(local_plugins_path)
@@ -233,7 +288,6 @@ for name, view in multisite_builtin_views.items():
 for n, p in multisite_painters.items():
     p["name"] = n
 
-
 max_display_columns = 12
 max_sort_columns = 5
 
@@ -241,6 +295,11 @@ max_sort_columns = 5
 
 
 def load_views():
+    """
+
+
+    @raise:
+    """
     html.multisite_views = {}
 
     # first load builtins. Set username to ''
@@ -287,6 +346,11 @@ def load_views():
 
 
 def available_views():
+    """
+
+
+    @return:
+    """
     user = html.req.user
     views = {}
 
@@ -320,6 +384,10 @@ def available_views():
 
 
 def save_views(us):
+    """
+
+    @param us:
+    """
     userviews = {}
     for (user, name), view in html.multisite_views.items():
         if us == user:
@@ -337,6 +405,12 @@ def save_views(us):
 # ----------------------------------------------------------------------
 # Show list of all views with buttons for editing
 def page_edit_views(h, msg=None):
+    """
+
+    @param h:
+    @param msg:
+    @return: @raise:
+    """
     global html
     html = h
     if not config.may("edit_views"):
@@ -367,11 +441,17 @@ def page_edit_views(h, msg=None):
     html.button("create", "Create new view")
     html.write(" for datasource: ")
     html.sorted_select("datasource", [(
-        k, v["title"]) for k, v in multisite_datasources.items()])
+                                          k, v["title"]) for k, v in multisite_datasources.items()])
 
     keys_sorted = html.multisite_views.keys()
 
     def cmp_viewkey(a, b):
+        """
+
+        @param a:
+        @param b:
+        @return:
+        """
         if a[0] == b[0]:
             if a[1] < b[1]:
                 return -1
@@ -385,6 +465,7 @@ def page_edit_views(h, msg=None):
             return -1
         else:
             return 1
+
     keys_sorted.sort(cmp_viewkey)
     first = True
     for (owner, viewname) in keys_sorted:
@@ -414,9 +495,9 @@ def page_edit_views(h, msg=None):
                 ownertxt = owner
             html.write("<td class=content>%s</td>" % ownertxt)
             html.write("<td class=content>%s</td>" % (view[
-                       "public"] and "yes" or "no"))
+                                                          "public"] and "yes" or "no"))
             html.write("<td class=content>%s</td>" % (view[
-                       "hidden"] and "yes" or "no"))
+                                                          "hidden"] and "yes" or "no"))
             html.write(
                 "<td class=content>%s</td><td class=buttons>\n" % view["datasource"])
             if owner == "":
@@ -439,6 +520,11 @@ def page_edit_views(h, msg=None):
 
 
 def select_view(varname, only_with_hidden=False):
+    """
+
+    @param varname:
+    @param only_with_hidden:
+    """
     choices = [("", "")]
     for name, view in html.available_views.items():
         if not only_with_hidden or len(view["hide_filters"]) > 0:
@@ -456,6 +542,11 @@ def select_view(varname, only_with_hidden=False):
 
 
 def page_edit_view(h):
+    """
+
+    @param h:
+    @return: @raise:
+    """
     global html
     html = h
     if not config.may("edit_views"):
@@ -477,7 +568,7 @@ def page_edit_view(h):
                 newname = viewname + "_clone"
             else:
                 newname = viewname
-            # Name conflict -> try new names
+                # Name conflict -> try new names
             n = 1
             while (html.req.user, newname) in html.multisite_views:
                 n += 1
@@ -577,6 +668,11 @@ function toggle_section(nr, oImg) {
 """)
 
     def section_header(id, title):
+        """
+
+        @param id:
+        @param title:
+        """
         html.write("<tr><td class=legend>")
         html.write("<b class=toggleheader onclick=\"toggle_section('%d', this) \""
                    "title=\"Click to open this section\" "
@@ -586,6 +682,10 @@ function toggle_section(nr, oImg) {
         html.write("<div id=\"ed_%d\" style=\"display: none;\">" % id)
 
     def section_footer():
+        """
+
+
+        """
         html.write("</div></td></tr>\n")
 
     # Properties
@@ -613,7 +713,7 @@ function toggle_section(nr, oImg) {
     allowed_filters = filters_allowed_for_datasource(datasourcename)
     # sort filters according to title
     s = [(filt.sort_index, filt.title, fname, filt) for fname,
-         filt in allowed_filters.items()]
+                                                        filt in allowed_filters.items()]
     s.sort()
     for sortindex, title, fname, filt in s:
         html.write("<tr>")
@@ -643,6 +743,14 @@ function toggle_section(nr, oImg) {
     section_footer()
 
     def sorter_selection(id, title, var_prefix, maxnum, data):
+        """
+
+        @param id:
+        @param title:
+        @param var_prefix:
+        @param maxnum:
+        @param data:
+        """
         allowed = allowed_for_datasource(data, datasourcename)
         section_header(id, title)
         # make sure, at least 3 selection boxes are free for new columns
@@ -660,6 +768,13 @@ function toggle_section(nr, oImg) {
         section_footer()
 
     def column_selection(id, title, var_prefix, data):
+        """
+
+        @param id:
+        @param title:
+        @param var_prefix:
+        @param data:
+        """
         allowed = allowed_for_datasource(data, datasourcename)
         section_header(id, title)
         # make sure, at least 3 selection boxes are free for new columns
@@ -671,7 +786,7 @@ function toggle_section(nr, oImg) {
             view_edit_column(n, var_prefix, maxnum, allowed)
         html.write('</div>')
         html.buttonlink("javascript:add_view_column(%d, '%s', '%s')" % (id,
-                        datasourcename, var_prefix), "Add Column")
+                                                                        datasourcename, var_prefix), "Add Column")
         section_footer()
 
     # [4] Sorting
@@ -689,7 +804,7 @@ function toggle_section(nr, oImg) {
     html.write("<table border=0>")
     html.write("<tr><td>Basic Layout:</td><td>")
     html.sorted_select("layout", [(k, v["title"]) for k,
-                       v in multisite_layouts.items() if not v.get("hide")])
+                                                      v in multisite_layouts.items() if not v.get("hide")])
     html.write("</td></tr>\n")
     html.write("<tr><td>Number of columns:</td><td>")
     html.number_input("num_columns", 1)
@@ -726,8 +841,15 @@ function toggle_section(nr, oImg) {
 
 
 def view_edit_column(n, var_prefix, maxnum, allowed):
+    """
+
+    @param n:
+    @param var_prefix:
+    @param maxnum:
+    @param allowed:
+    """
     collist = [("", "")] + [(name, p["title"]) for name,
-                            p in allowed.items()]
+                                                   p in allowed.items()]
     html.write("<div class=columneditor id=%seditor_%d><table><tr>" % (
         var_prefix, n))
     html.write('<td rowspan=3>')
@@ -760,6 +882,11 @@ def view_edit_column(n, var_prefix, maxnum, allowed):
 
 
 def ajax_get_edit_column(h):
+    """
+
+    @param h:
+    @raise:
+    """
     global html
     html = h
     if not config.may("edit_views"):
@@ -781,6 +908,10 @@ def ajax_get_edit_column(h):
 
 def load_view_into_html_vars(view):
     # view is well formed, not checks neccessary
+    """
+
+    @param view:
+    """
     html.set_var("view_title", view["title"])
     html.set_var("view_topic", view.get("topic", "Other"))
     html.set_var("view_linktitle", view.get("linktitle", view["title"]))
@@ -858,10 +989,16 @@ def load_view_into_html_vars(view):
 
 
 def create_view():
+    """
+
+
+    @return: @raise:
+    """
     name = html.var("view_name").strip()
     if name == "":
         raise MKUserError(
-            "view_name", "Please supply a unique name for the view, this will be used to specify that view in HTTP links.")
+            "view_name",
+            "Please supply a unique name for the view, this will be used to specify that view in HTTP links.")
     if not re.match("^[a-zA-Z0-9_]+$", name):
         raise MKUserError(
             "view_name", "The name of the view may only contain letters, digits and underscores.")
@@ -993,6 +1130,11 @@ def create_view():
 # ---------------------------------------------------------------------
 # Show one view filled with data
 def page_view(h):
+    """
+
+    @param h:
+    @raise:
+    """
     global html
     html = h
 
@@ -1010,6 +1152,13 @@ def page_view(h):
 
 
 def show_view(view, show_heading=False, show_buttons=True, show_footer=True):
+    """
+
+    @param view:
+    @param show_heading:
+    @param show_buttons:
+    @param show_footer:
+    """
     all_display_options = "HTBFCEOZRSIXD"
 
     # Parse display options and
@@ -1073,7 +1222,7 @@ def show_view(view, show_heading=False, show_buttons=True, show_footer=True):
 
     # [4] Sorting
     sorters = [(multisite_sorters[sn], reverse) for sn,
-               reverse in view["sorters"]]
+                                                    reverse in view["sorters"]]
 
     # [5] Grouping
     group_painters = [(multisite_painters[e[0]],) + e[1:]
@@ -1222,7 +1371,7 @@ def show_view(view, show_heading=False, show_buttons=True, show_footer=True):
             try:
                 if 'C' in display_options:
                     html.write("<tr class=form><td class=whiteborder>")
-                # Create URI with all actions variables removed
+                    # Create URI with all actions variables removed
                 backurl = html.makeuri([])
                 has_done_actions = do_actions(
                     datasource["infos"][0], rows, backurl)
@@ -1274,7 +1423,7 @@ def show_view(view, show_heading=False, show_buttons=True, show_footer=True):
     if config.show_livestatus_errors and (html.output_format == "html" or not config.is_multisite()):
         for sitename, info in html.live.deadsites.items():
             html.show_error("<b>%s - Livestatus error</b><br>%s" % (info[
-                            "site"]["alias"], info["exception"]))
+                                                                        "site"]["alias"], info["exception"]))
 
     if show_footer:
         html.bottom_focuscode()
@@ -1286,6 +1435,11 @@ def show_view(view, show_heading=False, show_buttons=True, show_footer=True):
 
 def view_options(viewname):
     # Options are stored per view. Get all options for all views
+    """
+
+    @param viewname:
+    @return:
+    """
     vo = config.load_user_file("viewoptions", {})
     # Now get options for the view in question
     v = vo.get(viewname, {})
@@ -1336,6 +1490,10 @@ def view_options(viewname):
 
 
 def play_alarm_sounds():
+    """
+
+
+    """
     url = config.sound_url
     if not url.endswith("/"):
         url += "/"
@@ -1348,6 +1506,11 @@ def play_alarm_sounds():
 
 
 def get_limit():
+    """
+
+
+    @return:
+    """
     limitvar = html.var("limit", "soft")
     if limitvar == "hard" and config.may("ignore_soft_limit"):
         return config.hard_query_limit
@@ -1358,6 +1521,11 @@ def get_limit():
 
 
 def view_title(view):
+    """
+
+    @param view:
+    @return:
+    """
     extra_titles = []
     datasource = multisite_datasources[view["datasource"]]
     tablename = datasource["table"]
@@ -1372,6 +1540,11 @@ def view_title(view):
 
 
 def view_linktitle(view):
+    """
+
+    @param view:
+    @return:
+    """
     t = view.get("linktitle")
     if not t:
         return view_title(view)
@@ -1382,6 +1555,11 @@ def view_linktitle(view):
 def show_context_links(thisview, active_filters):
     # compute list of html variables used actively by hidden or shown
     # filters.
+    """
+
+    @param thisview:
+    @param active_filters:
+    """
     active_filter_vars = set([])
     for filt in active_filters:
         for var in filt.htmlvars:
@@ -1436,6 +1614,16 @@ def show_context_links(thisview, active_filters):
 # Retrieve data via livestatus, convert into list of dicts,
 # prepare row-function needed for painters
 def query_data(datasource, columns, add_columns, add_headers, only_sites=[], limit=None):
+    """
+
+    @param datasource:
+    @param columns:
+    @param add_columns:
+    @param add_headers:
+    @param only_sites:
+    @param limit:
+    @return:
+    """
     tablename = datasource["table"]
     add_headers += datasource.get("add_headers", "")
     merge_column = datasource.get("merge_by")
@@ -1494,16 +1682,34 @@ def query_data(datasource, columns, add_columns, add_headers, only_sites=[], lim
 # with the tablename. The column with the merge key is required
 # to be the *second* column (right after the site column)
 def merge_data(data, columns):
+    """
+
+    @param data:
+    @param columns:
+    @return:
+    """
     merged = {}
     mergefuncs = [lambda a, b: ""]  # site column is not merged
 
     def worst_service_state(a, b):
+        """
+
+        @param a:
+        @param b:
+        @return:
+        """
         if a == 2 or b == 2:
             return 2
         else:
             return max(a, b)
 
     def worst_host_state(a, b):
+        """
+
+        @param a:
+        @param b:
+        @return:
+        """
         if a == 1 or b == 1:
             return 1
         else:
@@ -1541,6 +1747,12 @@ def merge_data(data, columns):
 # for same objects (e.g. host_name in table services and
 # simply name in table hosts)
 def sort_data(data, sorters):
+    """
+
+    @param data:
+    @param sorters:
+    @return:
+    """
     if len(sorters) == 0:
         return
     elif len(sorters) == 1:
@@ -1550,6 +1762,12 @@ def sort_data(data, sorters):
     sort_cmps = [(s["cmp"], (reverse and -1 or 1)) for s, reverse in sorters]
 
     def multisort(e1, e2):
+        """
+
+        @param e1:
+        @param e2:
+        @return:
+        """
         for func, neg in sort_cmps:
             c = neg * func(e1, e2)
             if c != 0:
@@ -1565,6 +1783,11 @@ def sort_data(data, sorters):
 # Each datasource provides a list of info. The datasource "services"
 # provides "service" and "host", for example.
 def filters_allowed_for_datasource(datasourcename):
+    """
+
+    @param datasourcename:
+    @return:
+    """
     datasource = multisite_datasources[datasourcename]
     infos = datasource["infos"]
     allowed = {}
@@ -1575,14 +1798,30 @@ def filters_allowed_for_datasource(datasourcename):
 
 
 def painters_allowed_for_datasource(datasourcename):
+    """
+
+    @param datasourcename:
+    @return:
+    """
     return allowed_for_datasource(multisite_painters, datasourcename)
 
 
 def sorters_allowed_for_datasource(datasourcename):
+    """
+
+    @param datasourcename:
+    @return:
+    """
     return allowed_for_datasource(multisite_sorters, datasourcename)
 
 
 def list_in_list(a, b):
+    """
+
+    @param a:
+    @param b:
+    @return:
+    """
     for ele in a:
         if ele not in b:
             return False
@@ -1593,6 +1832,12 @@ def list_in_list(a, b):
 
 
 def allowed_for_datasource(collection, datasourcename):
+    """
+
+    @param collection:
+    @param datasourcename:
+    @return:
+    """
     datasource = multisite_datasources[datasourcename]
     infos_available = set(datasource["infos"])
     add_columns = datasource.get("add_columns", [])
@@ -1616,6 +1861,12 @@ def allowed_for_datasource(collection, datasourcename):
 
 
 def show_action_form(is_open, datasource):
+    """
+
+    @param is_open:
+    @param datasource:
+    @return:
+    """
     if not config.may("act"):
         return
 
@@ -1651,6 +1902,10 @@ def show_action_form(is_open, datasource):
 
 
 def show_downtime_actions():
+    """
+
+
+    """
     if config.may("action.downtimes"):
         html.write("<tr><td class=legend>Downtimes</td>\n"
                    "<td class=content>\n"
@@ -1659,6 +1914,10 @@ def show_downtime_actions():
 
 
 def show_comment_actions():
+    """
+    CMK views class
+
+    """
     if config.may("action.addcomment"):
         html.write("<tr><td class=legend>Comments</td>\n"
                    "<td class=content>\n"
@@ -1667,6 +1926,10 @@ def show_comment_actions():
 
 
 def show_host_service_actions(what):
+    """
+
+    @param what:
+    """
     if config.may("action.notifications"):
         html.write("<tr><td class=legend>Notifications</td>\n"
                    "<td class=content>\n"
@@ -1757,6 +2020,12 @@ def show_host_service_actions(what):
 
 
 def nagios_action_command(what, row):
+    """
+
+    @param what:
+    @param row:
+    @return:
+    """
     if what in ["host", "service"]:
         return nagios_host_service_action_command(what, row)
     elif what == "downtime":
@@ -1766,6 +2035,11 @@ def nagios_action_command(what, row):
 
 
 def nagios_downtime_command(row):
+    """
+
+    @param row:
+    @return:
+    """
     id = row.get("downtime_id")
     prefix = "[%d] " % time.time()
     if html.var("_remove_downtimes"):
@@ -1777,6 +2051,11 @@ def nagios_downtime_command(row):
 
 
 def nagios_comment_command(row):
+    """
+
+    @param row:
+    @return:
+    """
     id = row.get("comment_id")
     prefix = "[%d] " % time.time()
     if html.var("_remove_comments"):
@@ -1788,6 +2067,12 @@ def nagios_comment_command(row):
 
 
 def nagios_host_service_action_command(what, dataset):
+    """
+
+    @param what:
+    @param dataset:
+    @return: @raise:
+    """
     host = dataset.get("host_name")
     descr = dataset.get("service_description")
 
@@ -1857,8 +2142,8 @@ def nagios_host_service_action_command(what, dataset):
         sendnot = html.var("_ack_notify") and 1 or 0
         perscomm = html.var("_ack_persistent") and 1 or 0
         command = "ACKNOWLEDGE_" + cmdtag + "_PROBLEM;%s;%d;%d;%d;%s" % \
-            (spec, sticky, sendnot, perscomm, html.req.user) + \
-            (";%s" % comment)
+                  (spec, sticky, sendnot, perscomm, html.req.user) + \
+                  (";%s" % comment)
         title = "<b>acknowledge the problems</b> of"
 
     elif html.var("_add_comment") and config.may("action.addcomment"):
@@ -1866,7 +2151,7 @@ def nagios_host_service_action_command(what, dataset):
         if not comment:
             raise MKUserError("_comment", "You need to supply a comment.")
         command = "ADD_" + cmdtag + "_COMMENT;%s;1;%s" % \
-            (spec, html.req.user) + (";%s" % comment)
+                  (spec, html.req.user) + (";%s" % comment)
         title = "<b>add a comment to</b>"
 
     elif html.var("_remove_ack") and config.may("action.acknowledge"):
@@ -1880,7 +2165,7 @@ def nagios_host_service_action_command(what, dataset):
     elif html.var("_down_today") and config.may("action.downtimes"):
         br = time.localtime(down_from)
         down_to = time.mktime((br.tm_year, br.tm_mon, br.tm_mday,
-                              23, 59, 59, 0, 0, br.tm_isdst)) + 1
+                               23, 59, 59, 0, 0, br.tm_isdst)) + 1
         title = "<b>schedule an immediate downtime until 24:00:00</b> on"
 
     elif html.var("_down_week") and config.may("action.downtimes"):
@@ -1888,7 +2173,7 @@ def nagios_host_service_action_command(what, dataset):
         wday = br.tm_wday
         days_plus = 6 - wday
         down_to = time.mktime((br.tm_year, br.tm_mon, br.tm_mday,
-                              23, 59, 59, 0, 0, br.tm_isdst)) + 1
+                               23, 59, 59, 0, 0, br.tm_isdst)) + 1
         down_to += days_plus * 24 * 3600
         title = "<b>schedule an immediate downtime until sunday night</b> on"
 
@@ -1945,7 +2230,7 @@ def nagios_host_service_action_command(what, dataset):
             duration = 0
         command = (("SCHEDULE_" + cmdtag + "_DOWNTIME;%s;" % spec)
                    + ("%d;%d;%d;0;%d;%s;" % (down_from,
-                      down_to, fixed, duration, html.req.user))
+                                             down_to, fixed, duration, html.req.user))
                    + comment)
 
     nagios_command = ("[%d] " % int(time.time())) + command + "\n"
@@ -1953,6 +2238,13 @@ def nagios_host_service_action_command(what, dataset):
 
 
 def do_actions(what, rows, backurl):
+    """
+
+    @param what:
+    @param rows:
+    @param backurl:
+    @return:
+    """
     if not config.may("act"):
         html.show_error("You are not allowed to perform actions. If you think this is an error, "
                         "please ask your administrator grant you the permission to do so.")
@@ -1985,6 +2277,12 @@ def do_actions(what, rows, backurl):
 
 
 def get_context_link(user, viewname):
+    """
+
+    @param user:
+    @param viewname:
+    @return:
+    """
     if viewname in html.available_views:
         return "view.py?view_name=%s" % viewname
     else:
@@ -1992,6 +2290,10 @@ def get_context_link(user, viewname):
 
 
 def ajax_export(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     load_views()
@@ -2002,6 +2304,13 @@ def ajax_export(h):
 
 
 def page_message_and_forward(h, message, default_url, addhtml=""):
+    """
+
+    @param h:
+    @param message:
+    @param default_url:
+    @param addhtml:
+    """
     global html
     html = h
     url = html.var("back")
@@ -2023,6 +2332,12 @@ def page_message_and_forward(h, message, default_url, addhtml=""):
 
 
 def prepare_paint(p, row):
+    """
+
+    @param p:
+    @param row:
+    @return:
+    """
     painter = p[0]
     linkview = p[1]
     tooltip = len(p) > 2 and p[2] or None
@@ -2044,6 +2359,13 @@ def prepare_paint(p, row):
 
 
 def link_to_view(content, row, linkview):
+    """
+
+    @param content:
+    @param row:
+    @param linkview:
+    @return:
+    """
     if 'I' not in html.display_options:
         return content
 
@@ -2058,19 +2380,31 @@ def link_to_view(content, row, linkview):
             vars.append(("display_options", do))
 
         uri = "view.py?" + htmllib.urlencode_vars([("view_name",
-                                                  linkview)] + vars)
+                                                    linkview)] + vars)
         content = "<a href=\"%s\">%s</a>" % (uri, content)
-#        rel = 'view.py?view_name=hoststatus&site=local&host=erdb-lit&display_options=htbfcoezrsix'
-# content = '<a class=tips rel="%s" href="%s">%s</a>' % (rel, uri,
-# content)
+    #        rel = 'view.py?view_name=hoststatus&site=local&host=erdb-lit&display_options=htbfcoezrsix'
+    # content = '<a class=tips rel="%s" href="%s">%s</a>' % (rel, uri,
+    # content)
     return content
 
 
 def docu_link(topic, text):
+    """
+
+    @param topic:
+    @param text:
+    @return:
+    """
     return '<a href="%s" target="_blank">%s</a>' % (config.doculink_urlformat % topic, text)
 
 
 def paint(p, row):
+    """
+
+    @param p:
+    @param row:
+    @return:
+    """
     tdclass, content = prepare_paint(p, row)
     if tdclass:
         html.write("<td class=\"%s\">%s</td>\n" % (tdclass, content))
@@ -2080,12 +2414,20 @@ def paint(p, row):
 
 
 def paint_header(p):
+    """
+
+    @param p:
+    """
     painter = p[0]
     t = painter.get("short", painter["title"])
     html.write("<th>%s</th>" % t)
 
 
 def register_events(row):
+    """
+
+    @param row:
+    """
     if config.sounds != []:
         host_state = row.get("host_hard_state", row.get("host_state"))
         if host_state != None:
@@ -2095,13 +2437,19 @@ def register_events(row):
             "service_last_hard_state", row.get("service_state"))
         if svc_state != None:
             html.register_event({0: "up", 1: "warning", 2:
-                                "critical", 3: "unknown"}[svc_state])
+                "critical", 3: "unknown"}[svc_state])
 
 # The Group-value of a row is used for deciding wether
 # two rows are in the same group or not
 
 
 def group_value(row, group_painters):
+    """
+
+    @param row:
+    @param group_painters:
+    @return:
+    """
     group = []
     for p in group_painters:
         groupvalfunc = p[0].get("groupby")
@@ -2114,6 +2462,11 @@ def group_value(row, group_painters):
 
 
 def get_painter_option(name):
+    """
+
+    @param name:
+    @return:
+    """
     opt = multisite_painter_options[name]
     if not config.may("painter_options"):
         return opt["default"]

@@ -6,8 +6,6 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import mapper, relationship, backref, clear_mappers, sessionmaker, aliased
 from sqlalchemy.ext.declarative import declarative_base
-# from sqlalchemy import Column, CHAR, TEXT, INT,INTEGER,TINYINT, DATE,
-# VARCHAR, FLOAT, BIGINT, SMALLINT, TIME, TIMESTAMP, ForeignKey
 from sqlalchemy import *
 from sqlalchemy.dialects.mysql import *
 
@@ -21,6 +19,13 @@ Base = declarative_base()
 
 
 class Acknowledge(Base):
+    """
+
+    @param acknowledge_id:
+    @param acknowledge_name:
+    @param is_deleted:
+    @param sequence:
+    """
     __tablename__ = "acknowledge"
     acknowledge_id = Column(VARCHAR(16), primary_key=True)
     acknowledge_name = Column(VARCHAR(32))
@@ -34,10 +39,19 @@ class Acknowledge(Base):
         self.sequence = sequence
 
     def __repr__(self):
-        return "<Acknowledge('%s','%s','%s','%s')>" % (self.acknowledge_id, self.acknowledge_name, self.is_deleted, self.sequence)
+        return "<Acknowledge('%s','%s','%s','%s')>" % (
+        self.acknowledge_id, self.acknowledge_name, self.is_deleted, self.sequence)
 
 
 class Actions(Base):
+    """
+
+    @param action_id:
+    @param action_name:
+    @param action_options:
+    @param is_deleted:
+    @param sequence:
+    """
     __tablename__ = "actions"
     action_id = Column(VARCHAR(64), primary_key=True)
     action_name = Column(VARCHAR(32))
@@ -53,7 +67,8 @@ class Actions(Base):
         self.sequence = sequence
 
     def __repr__(self):
-        return "<Actions('%s','%s','%s','%s','%s')>" % (self.action_id, self.action_name, self.action_options, self.is_deleted, self.sequence)
+        return "<Actions('%s','%s','%s','%s','%s')>" % (
+        self.action_id, self.action_name, self.action_options, self.is_deleted, self.sequence)
 
 
 # class ApScheduling(Base):
@@ -148,6 +163,16 @@ class Actions(Base):
 
 
 class BlackListMacs(Base):
+    """
+
+    @param mac_address:
+    @param description:
+    @param timestamp:
+    @param created_by:
+    @param cteation_time:
+    @param updated_by:
+    @param is_deleted:
+    """
     __tablename__ = "black_list_macs"
     black_list_mac_id = Column(VARCHAR(64), primary_key=True)
     mac_address = Column(VARCHAR(32))
@@ -169,10 +194,18 @@ class BlackListMacs(Base):
         self.is_deleted = is_deleted
 
     def __repr__(self):
-        return "<BlackListMacs('%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.black_list_mac_id, self.mac_address, self.description, self.timestamp, self.created_by, self.cteation_time, self.updated_by, self.is_deleted)
+        return "<BlackListMacs('%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.black_list_mac_id, self.mac_address, self.description, self.timestamp, self.created_by, self.cteation_time,
+        self.updated_by, self.is_deleted)
 
 
 class Cities(Base):
+    """
+
+    @param city_name:
+    @param state_id:
+    @param is_deleted:
+    """
     __tablename__ = "cities"
     city_id = Column(VARCHAR(64), primary_key=True)
     city_name = Column(VARCHAR(64))
@@ -190,6 +223,18 @@ class Cities(Base):
 
 
 class Odu16ConfigProfiles(Base):
+    """
+
+    @param device_type_id:
+    @param profile_name:
+    @param config_profile_type_id:
+    @param parent_id:
+    @param timestamp:
+    @param created_by:
+    @param creation_time:
+    @param updated_by:
+    @param is_deleted:
+    """
     __tablename__ = "config_profiles"
     config_profile_id = Column(INTEGER, primary_key=True)
     device_type_id = Column(
@@ -204,7 +249,8 @@ class Odu16ConfigProfiles(Base):
     updated_by = Column(VARCHAR(64))
     is_deleted = Column(SMALLINT)
 
-    def __init__(self, device_type_id, profile_name, config_profile_type_id, parent_id, timestamp, created_by, creation_time, updated_by, is_deleted):
+    def __init__(self, device_type_id, profile_name, config_profile_type_id, parent_id, timestamp, created_by,
+                 creation_time, updated_by, is_deleted):
         self.config_profile_id = None
         self.device_type_id = device_type_id
         self.profile_name = profile_name
@@ -217,10 +263,17 @@ class Odu16ConfigProfiles(Base):
         self.is_deleted = is_deleted
 
     def __repr__(self):
-        return "<ConfigProfiles('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.config_profile_id, self.device_type_id, self.profile_name, self.config_profile_type_id, self.parent_id, self.timestamp, self.created_by, self.creation_time, self.updated_by, self.is_deleted)
+        return "<ConfigProfiles('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.config_profile_id, self.device_type_id, self.profile_name, self.config_profile_type_id, self.parent_id,
+        self.timestamp, self.created_by, self.creation_time, self.updated_by, self.is_deleted)
 
 
 class ConfigProfileType(Base):
+    """
+
+    @param config_profile_type_id:
+    @param config_profile_type:
+    """
     __tablename__ = "config_profile_type"
     config_profile_type_id = Column(VARCHAR(16), primary_key=True)
     config_profile_type = Column(VARCHAR(64))
@@ -234,6 +287,12 @@ class ConfigProfileType(Base):
 
 
 class Countries(Base):
+    """
+
+    @param country_name:
+    @param country_code:
+    @param is_deleted:
+    """
     __tablename__ = "countries"
     country_id = Column(VARCHAR(64), primary_key=True)
     country_name = Column(VARCHAR(64))
@@ -247,10 +306,20 @@ class Countries(Base):
         self.is_deleted = is_deleted
 
     def __repr__(self):
-        return "<Countries('%s','%s','%s','%s')>" % (self.country_id, self.country_name, self.country_code, self.is_deleted)
+        return "<Countries('%s','%s','%s','%s')>" % (
+        self.country_id, self.country_name, self.country_code, self.is_deleted)
 
 
 class DaemonEvents(Base):
+    """
+
+    @param daemon_name:
+    @param error_no:
+    @param state:
+    @param timestamp:
+    @param short_description:
+    @param is_viewed:
+    """
     __tablename__ = "daemon_events"
     daemon_event_id = Column(INTEGER, primary_key=True)
     daemon_name = Column(VARCHAR(16))
@@ -270,10 +339,17 @@ class DaemonEvents(Base):
         self.is_viewed = is_viewed
 
     def __repr__(self):
-        return "<DaemonEvents('%s','%s','%s','%s','%s','%s','%s')>" % (self.daemon_event_id, self.daemon_name, self.error_no, self.state, self.timestamp, self.short_description, self.is_viewed)
+        return "<DaemonEvents('%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.daemon_event_id, self.daemon_name, self.error_no, self.state, self.timestamp, self.short_description,
+        self.is_viewed)
 
 
 class DaemonTimestamp(Base):
+    """
+
+    @param daemon_name:
+    @param timestamp:
+    """
     __tablename__ = "daemon_timestamp"
     daemon_timestamp_id = Column(INTEGER, primary_key=True)
     daemon_name = Column(VARCHAR(32))
@@ -289,6 +365,23 @@ class DaemonTimestamp(Base):
 
 
 class DeviceType(Base):
+    """
+
+    @param device_name:
+    @param sdm_discovery_id:
+    @param sdm_discovery_value:
+    @param vnl_discovery_value:
+    @param ping_discovery_value:
+    @param snmp_discovery_value:
+    @param upnp_discovery_value:
+    @param icon_name:
+    @param mib_name:
+    @param mib_path:
+    @param table_prefix:
+    @param is_generic:
+    @param is_deleted:
+    @param sequence:
+    """
     __tablename__ = "device_type"
     device_type_id = Column(VARCHAR(16), primary_key=True)
     device_name = Column(VARCHAR(64))
@@ -306,7 +399,9 @@ class DeviceType(Base):
     is_deleted = Column(SMALLINT)
     sequence = Column(SMALLINT)
 
-    def __init__(self, device_name, sdm_discovery_id, sdm_discovery_value, vnl_discovery_value, ping_discovery_value, snmp_discovery_value, upnp_discovery_value, icon_name, mib_name, mib_path, table_prefix, is_generic, is_deleted, sequence):
+    def __init__(self, device_name, sdm_discovery_id, sdm_discovery_value, vnl_discovery_value, ping_discovery_value,
+                 snmp_discovery_value, upnp_discovery_value, icon_name, mib_name, mib_path, table_prefix, is_generic,
+                 is_deleted, sequence):
         self.device_type_id = uuid.uuid1()
         self.device_name = device_name
         self.sdm_discovery_id = sdm_discovery_id
@@ -324,10 +419,22 @@ class DeviceType(Base):
         self.sequence = sequence
 
     def __repr__(self):
-        return "<DeviceType('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.device_type_id, self.device_name, self.sdm_discovery_id, self.sdm_discovery_value, self.vnl_discovery_value, self.ping_discovery_value, self.snmp_discovery_value, self.upnp_discovery_value, self.icon_name, self.mib_name, self.mib_path, self.table_prefix, self.is_generic, self.is_deleted, self.sequence)
+        return "<DeviceType('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.device_type_id, self.device_name, self.sdm_discovery_id, self.sdm_discovery_value,
+        self.vnl_discovery_value, self.ping_discovery_value, self.snmp_discovery_value, self.upnp_discovery_value,
+        self.icon_name, self.mib_name, self.mib_path, self.table_prefix, self.is_generic, self.is_deleted,
+        self.sequence)
 
 
 class DiscoveredHosts(Base):
+    """
+
+    @param discovery_id:
+    @param host_alias:
+    @param ip_address:
+    @param device_type_id:
+    @param mac_address:
+    """
     __tablename__ = "discovered_hosts"
     discovered_host_id = Column(INTEGER, primary_key=True)
     discovery_id = Column(INTEGER, ForeignKey('discovery.discovery_id'))
@@ -346,10 +453,31 @@ class DiscoveredHosts(Base):
         self.mac_address = mac_address
 
     def __repr__(self):
-        return "<DiscoveredHosts('%s','%s','%s','%s','%s','%s')>" % (self.discovered_host_id, self.discovery_id, self.host_alias, self.ip_address, self.device_type_id, self.mac_address)
+        return "<DiscoveredHosts('%s','%s','%s','%s','%s','%s')>" % (
+        self.discovered_host_id, self.discovery_id, self.host_alias, self.ip_address, self.device_type_id,
+        self.mac_address)
 
 
 class Discovery(Base):
+    """
+
+    @param discovery_type_id:
+    @param ip_start_range:
+    @param ip_end_range:
+    @param timeout:
+    @param snmp_community:
+    @param snmp_port:
+    @param snmp_version:
+    @param sdm_device_list:
+    @param scheduling_id:
+    @param service_management:
+    @param done_percent:
+    @param timestamp:
+    @param created_by:
+    @param creation_time:
+    @param updated_by:
+    @param is_deleted:
+    """
     __tablename__ = "discovery"
     discovery_id = Column(INTEGER, primary_key=True)
     discovery_type_id = Column(
@@ -370,7 +498,9 @@ class Discovery(Base):
     updated_by = Column(VARCHAR(64))
     is_deleted = Column(SMALLINT)
 
-    def __init__(self, discovery_type_id, ip_start_range, ip_end_range, timeout, snmp_community, snmp_port, snmp_version, sdm_device_list, scheduling_id, service_management, done_percent, timestamp, created_by, creation_time, updated_by, is_deleted):
+    def __init__(self, discovery_type_id, ip_start_range, ip_end_range, timeout, snmp_community, snmp_port,
+                 snmp_version, sdm_device_list, scheduling_id, service_management, done_percent, timestamp, created_by,
+                 creation_time, updated_by, is_deleted):
         self.discovery_id = None
         self.discovery_type_id = discovery_type_id
         self.ip_start_range = ip_start_range
@@ -390,10 +520,22 @@ class Discovery(Base):
         self.is_deleted = is_deleted
 
     def __repr__(self):
-        return "<Discovery('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.discovery_id, self.discovery_type_id, self.ip_start_range, self.ip_end_range, self.timeout, self.snmp_community, self.snmp_port, self.snmp_version, self.sdm_device_list, self.scheduling_id, self.service_management, self.done_percent, self.timestamp, self.created_by, self.creation_time, self.updated_by, self.is_deleted)
+        return "<Discovery('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.discovery_id, self.discovery_type_id, self.ip_start_range, self.ip_end_range, self.timeout,
+        self.snmp_community, self.snmp_port, self.snmp_version, self.sdm_device_list, self.scheduling_id,
+        self.service_management, self.done_percent, self.timestamp, self.created_by, self.creation_time,
+        self.updated_by, self.is_deleted)
 
 
 class DiscoveryType(Base):
+    """
+
+    @param discovery_type_id:
+    @param discovery_type:
+    @param description:
+    @param is_deleted:
+    @param sequence:
+    """
     __tablename__ = "discovery_type"
     discovery_type_id = Column(VARCHAR(16), primary_key=True)
     discovery_type = Column(VARCHAR(16))
@@ -409,10 +551,17 @@ class DiscoveryType(Base):
         self.sequence = sequence
 
     def __repr__(self):
-        return "<DiscoveryType('%s','%s','%s','%s','%s')>" % (self.discovery_type_id, self.discovery_type, self.description, self.is_deleted, self.sequence)
+        return "<DiscoveryType('%s','%s','%s','%s','%s')>" % (
+        self.discovery_type_id, self.discovery_type, self.description, self.is_deleted, self.sequence)
 
 
 class ErrorDescription(Base):
+    """
+
+    @param error_no:
+    @param error_causes:
+    @param probable_solution:
+    """
     __tablename__ = "error_description"
     error_no = Column(INT, primary_key=True)
     error_causes = Column(TEXT)
@@ -428,6 +577,12 @@ class ErrorDescription(Base):
 
 
 class EventLog(Base):
+    """
+
+    @param event_type_id:
+    @param description:
+    @param timestamp:
+    """
     __tablename__ = "event_log"
     event_logs = Column(INTEGER, primary_key=True)
     event_type_id = Column(VARCHAR(64))
@@ -441,10 +596,16 @@ class EventLog(Base):
         self.timestamp = timestamp
 
     def __repr__(self):
-        return "<EventLog('%s','%s','%s','%s')>" % (self.event_logs, self.event_type_id, self.description, self.timestamp)
+        return "<EventLog('%s','%s','%s','%s')>" % (
+        self.event_logs, self.event_type_id, self.description, self.timestamp)
 
 
 class EventType(Base):
+    """
+
+    @param event_name:
+    @param is_deleted:
+    """
     __tablename__ = "event_type"
     event_type_id = Column(INTEGER, primary_key=True)
     event_name = Column(VARCHAR(64))
@@ -460,6 +621,18 @@ class EventType(Base):
 
 
 class Groups(Base):
+    """
+
+    @param group_name:
+    @param description:
+    @param timestamp:
+    @param created_by:
+    @param creation_time:
+    @param is_deleted:
+    @param updated_by:
+    @param role_id:
+    @param is_default:
+    """
     __tablename__ = "groups"
     group_id = Column(VARCHAR(64), primary_key=True)
     group_name = Column(VARCHAR(64))
@@ -472,7 +645,8 @@ class Groups(Base):
     role_id = Column(VARCHAR(64), ForeignKey('roles.role_id'))
     is_default = Column(SMALLINT)
 
-    def __init__(self, group_name, description, timestamp, created_by, creation_time, is_deleted, updated_by, role_id, is_default):
+    def __init__(self, group_name, description, timestamp, created_by, creation_time, is_deleted, updated_by, role_id,
+                 is_default):
         self.group_id = uuid.uuid1()
         self.group_name = group_name
         self.description = description
@@ -485,10 +659,23 @@ class Groups(Base):
         self.is_default = is_default
 
     def __repr__(self):
-        return "<Groups('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.group_id, self.group_name, self.description, self.timestamp, self.created_by, self.creation_time, self.is_deleted, self.updated_by, self.role_id, self.is_default)
+        return "<Groups('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.group_id, self.group_name, self.description, self.timestamp, self.created_by, self.creation_time,
+        self.is_deleted, self.updated_by, self.role_id, self.is_default)
 
 
 class Hostgroups(Base):
+    """
+
+    @param hostgroup_name:
+    @param hostgroup_alias:
+    @param timestamp:
+    @param created_by:
+    @param creation_time:
+    @param is_deleted:
+    @param updated_by:
+    @param is_default:
+    """
     __tablename__ = "hostgroups"
     hostgroup_id = Column(INTEGER, primary_key=True)
     hostgroup_name = Column(VARCHAR(64))
@@ -500,7 +687,8 @@ class Hostgroups(Base):
     updated_by = Column(VARCHAR(64))
     is_default = Column(SMALLINT)
 
-    def __init__(self, hostgroup_name, hostgroup_alias, timestamp, created_by, creation_time, is_deleted, updated_by, is_default):
+    def __init__(self, hostgroup_name, hostgroup_alias, timestamp, created_by, creation_time, is_deleted, updated_by,
+                 is_default):
         self.hostgroup_id = None
         self.hostgroup_name = hostgroup_name
         self.hostgroup_alias = hostgroup_alias
@@ -512,10 +700,17 @@ class Hostgroups(Base):
         self.is_default = is_default
 
     def __repr__(self):
-        return "<Hostgroups('%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.hostgroup_id, self.hostgroup_name, self.hostgroup_alias, self.timestamp, self.created_by, self.creation_time, self.is_deleted, self.updated_by, self.is_default)
+        return "<Hostgroups('%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.hostgroup_id, self.hostgroup_name, self.hostgroup_alias, self.timestamp, self.created_by,
+        self.creation_time, self.is_deleted, self.updated_by, self.is_default)
 
 
 class HostgroupsGroups(Base):
+    """
+
+    @param hostgroup_id:
+    @param group_id:
+    """
     __tablename__ = "hostgroups_groups"
     hostgroup_group_id = Column(INTEGER, primary_key=True)
     hostgroup_id = Column(VARCHAR(64), ForeignKey('hostgroups.hostgroup_id'))
@@ -531,6 +726,51 @@ class HostgroupsGroups(Base):
 
 
 class Hosts(Base):
+    """
+
+    @param host_name:
+    @param host_alias:
+    @param ip_address:
+    @param mac_address:
+    @param device_type_id:
+    @param netmask:
+    @param gateway:
+    @param primary_dns:
+    @param secondary_dns:
+    @param dns_state:
+    @param config_profile_id:
+    @param timestamp:
+    @param created_by:
+    @param creation_time:
+    @param is_deleted:
+    @param updated_by:
+    @param ne_id:
+    @param site_id:
+    @param host_state_id:
+    @param priority_id:
+    @param host_vendor_id:
+    @param host_os_id:
+    @param host_asset_id:
+    @param http_username:
+    @param http_password:
+    @param http_port:
+    @param snmp_read_community:
+    @param snmp_write_community:
+    @param snmp_port:
+    @param snmp_trap_port:
+    @param snmp_version_id:
+    @param comment:
+    @param nms_id:
+    @param parent_name:
+    @param lock_status:
+    @param is_localhost:
+    @param reconcile_health:
+    @param reconcile_status:
+    @param ssh_username:
+    @param ssh_password:
+    @param ssh_port:
+    @param firmware_mapping_id:
+    """
     __tablename__ = "hosts"
     host_id = Column(INTEGER, primary_key=True)
     host_name = Column(VARCHAR(64))
@@ -579,7 +819,13 @@ class Hosts(Base):
     ssh_port = Column(INTEGER)
     firmware_mapping_id = Column(VARCHAR(16))
 
-    def __init__(self, host_name, host_alias, ip_address, mac_address, device_type_id, netmask, gateway, primary_dns, secondary_dns, dns_state, config_profile_id, timestamp, created_by, creation_time, is_deleted, updated_by, ne_id, site_id, host_state_id, priority_id, host_vendor_id, host_os_id, host_asset_id, http_username, http_password, http_port, snmp_read_community, snmp_write_community, snmp_port, snmp_trap_port, snmp_version_id, comment, nms_id, parent_name, lock_status, is_localhost, reconcile_health=0, reconcile_status=0, ssh_username=None, ssh_password=None, ssh_port=None, firmware_mapping_id=None):
+    def __init__(self, host_name, host_alias, ip_address, mac_address, device_type_id, netmask, gateway, primary_dns,
+                 secondary_dns, dns_state, config_profile_id, timestamp, created_by, creation_time, is_deleted,
+                 updated_by, ne_id, site_id, host_state_id, priority_id, host_vendor_id, host_os_id, host_asset_id,
+                 http_username, http_password, http_port, snmp_read_community, snmp_write_community, snmp_port,
+                 snmp_trap_port, snmp_version_id, comment, nms_id, parent_name, lock_status, is_localhost,
+                 reconcile_health=0, reconcile_status=0, ssh_username=None, ssh_password=None, ssh_port=None,
+                 firmware_mapping_id=None):
         self.host_id = None
         self.host_name = host_name
         self.host_alias = host_alias
@@ -625,10 +871,23 @@ class Hosts(Base):
         self.firmware_mapping_id = firmware_mapping_id
 
     def __repr__(self):
-        return "<Hosts('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.host_id, self.host_name, self.host_alias, self.ip_address, self.mac_address, self.device_type_id, self.netmask, self.gateway, self.primary_dns, self.secondary_dns, self.dns_state, self.config_profile_id, self.timestamp, self.created_by, self.creation_time, self.is_deleted, self.updated_by, self.ne_id, self.site_id, self.host_state_id, self.priority_id, self.host_vendor_id, self.host_os_id, self.host_asset_id, self.http_username, self.http_password, self.http_port, self.snmp_read_community, self.snmp_write_community, self.snmp_port, self.snmp_trap_port, self.snmp_version_id, self.comment, self.nms_id, self.parent_name, self.lock_status, self.is_localhost, self.reconcile_health, self.reconcile_status, self.ssh_username, self.ssh_password, self.ssh_port, self.firmware_mapping_id)
+        return "<Hosts('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.host_id, self.host_name, self.host_alias, self.ip_address, self.mac_address, self.device_type_id,
+        self.netmask, self.gateway, self.primary_dns, self.secondary_dns, self.dns_state, self.config_profile_id,
+        self.timestamp, self.created_by, self.creation_time, self.is_deleted, self.updated_by, self.ne_id, self.site_id,
+        self.host_state_id, self.priority_id, self.host_vendor_id, self.host_os_id, self.host_asset_id,
+        self.http_username, self.http_password, self.http_port, self.snmp_read_community, self.snmp_write_community,
+        self.snmp_port, self.snmp_trap_port, self.snmp_version_id, self.comment, self.nms_id, self.parent_name,
+        self.lock_status, self.is_localhost, self.reconcile_health, self.reconcile_status, self.ssh_username,
+        self.ssh_password, self.ssh_port, self.firmware_mapping_id)
 
 
 class HostsHostgroups(Base):
+    """
+
+    @param host_id:
+    @param hostgroup_id:
+    """
     __tablename__ = "hosts_hostgroups"
     host_hostgroup_id = Column(INTEGER, primary_key=True)
     host_id = Column(INTEGER, ForeignKey('hosts.host_id'))
@@ -644,6 +903,17 @@ class HostsHostgroups(Base):
 
 
 class HostAlertActionMapping(Base):
+    """
+
+    @param host_alert_masking_id:
+    @param acknowlegde_id:
+    @param timestamp:
+    @param created_by:
+    @param creation_time:
+    @param updated_by:
+    @param next_scheduling:
+    @param is_deleted:
+    """
     __tablename__ = "host_alert_action_mapping"
     host_alert_action_mapping_id = Column(INTEGER, primary_key=True)
     host_alert_masking_id = Column(
@@ -656,7 +926,8 @@ class HostAlertActionMapping(Base):
     next_scheduling = Column(TIMESTAMP)
     is_deleted = Column(SMALLINT)
 
-    def __init__(self, host_alert_masking_id, acknowlegde_id, timestamp, created_by, creation_time, updated_by, next_scheduling, is_deleted):
+    def __init__(self, host_alert_masking_id, acknowlegde_id, timestamp, created_by, creation_time, updated_by,
+                 next_scheduling, is_deleted):
         self.host_alert_action_mapping_id = None
         self.host_alert_masking_id = host_alert_masking_id
         self.acknowlegde_id = acknowlegde_id
@@ -668,10 +939,28 @@ class HostAlertActionMapping(Base):
         self.is_deleted = is_deleted
 
     def __repr__(self):
-        return "<HostAlertActionMapping('%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.host_alert_action_mapping_id, self.host_alert_masking_id, self.acknowlegde_id, self.timestamp, self.created_by, self.creation_time, self.updated_by, self.next_scheduling, self.is_deleted)
+        return "<HostAlertActionMapping('%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.host_alert_action_mapping_id, self.host_alert_masking_id, self.acknowlegde_id, self.timestamp,
+        self.created_by, self.creation_time, self.updated_by, self.next_scheduling, self.is_deleted)
 
 
 class HostAlertMasking(Base):
+    """
+
+    @param host_object_id:
+    @param current_status:
+    @param group_id:
+    @param action_id:
+    @param scheduling_minutes:
+    @param is_repeated:
+    @param acknowledge_id:
+    @param description:
+    @param timestamp:
+    @param created_by:
+    @param creation_time:
+    @param updated_by:
+    @param is_deleted:
+    """
     __tablename__ = "host_alert_masking"
     host_alert_masking_id = Column(INTEGER, primary_key=True)
     host_object_id = Column(INT)
@@ -689,7 +978,8 @@ class HostAlertMasking(Base):
     updated_by = Column(VARCHAR(64))
     is_deleted = Column(SMALLINT)
 
-    def __init__(self, host_object_id, current_status, group_id, action_id, scheduling_minutes, is_repeated, acknowledge_id, description, timestamp, created_by, creation_time, updated_by, is_deleted):
+    def __init__(self, host_object_id, current_status, group_id, action_id, scheduling_minutes, is_repeated,
+                 acknowledge_id, description, timestamp, created_by, creation_time, updated_by, is_deleted):
         self.host_alert_masking_id = None
         self.host_object_id = host_object_id
         self.current_status = current_status
@@ -706,10 +996,27 @@ class HostAlertMasking(Base):
         self.is_deleted = is_deleted
 
     def __repr__(self):
-        return "<HostAlertMasking('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.host_alert_masking_id, self.host_object_id, self.current_status, self.group_id, self.action_id, self.scheduling_minutes, self.is_repeated, self.acknowledge_id, self.description, self.timestamp, self.created_by, self.creation_time, self.updated_by, self.is_deleted)
+        return "<HostAlertMasking('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.host_alert_masking_id, self.host_object_id, self.current_status, self.group_id, self.action_id,
+        self.scheduling_minutes, self.is_repeated, self.acknowledge_id, self.description, self.timestamp,
+        self.created_by, self.creation_time, self.updated_by, self.is_deleted)
 
 
 class HostAssets(Base):
+    """
+
+    @param longitude:
+    @param latitude:
+    @param serial_number:
+    @param hardware_version:
+    @param firmware_update_time:
+    @param firmware_status:
+    @param firmware_type:
+    @param firmware_file_name:
+    @param firmware_msg:
+    @param firmware_file_path:
+    @param ra_mac:
+    """
     __tablename__ = "host_assets"
     host_asset_id = Column(INTEGER, primary_key=True)
     longitude = Column(VARCHAR(32))
@@ -719,14 +1026,16 @@ class HostAssets(Base):
     firmware_update_time = Column(TIMESTAMP)
     firmware_status = Column(
         Enum('0', '1', '2', '3', '4', '5', '6', '11', '12', '13',
-                            '14', '15', '16', name='enumhostassets'))
+             '14', '15', '16', name='enumhostassets'))
     firmware_type = Column(VARCHAR(10))
     firmware_file_name = Column(VARCHAR(50))
     firmware_msg = Column(VARCHAR(64))
     firmware_file_path = Column(VARCHAR(50))
     ra_mac = Column(VARCHAR(18))
 
-    def __init__(self, longitude, latitude, serial_number, hardware_version, firmware_update_time="0000-00-00 00:00:00", firmware_status=0, firmware_type=None, firmware_file_name=None, firmware_msg=None, firmware_file_path=None, ra_mac=" "):
+    def __init__(self, longitude, latitude, serial_number, hardware_version, firmware_update_time="0000-00-00 00:00:00",
+                 firmware_status=0, firmware_type=None, firmware_file_name=None, firmware_msg=None,
+                 firmware_file_path=None, ra_mac=" "):
         self.host_asset_id = None
         self.longitude = longitude
         self.latitude = latitude
@@ -741,7 +1050,10 @@ class HostAssets(Base):
         self.ra_mac = ra_mac
 
     def __repr__(self):
-        return "<HostAssets('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.host_asset_id, self.longitude, self.latitude, self.serial_number, self.hardware_version, self.firmware_update_time, self.firmware_status, self.firmware_type, self.firmware_file_name, self.firmware_msg, self.firmware_file_path, self.ra_mac)
+        return "<HostAssets('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.host_asset_id, self.longitude, self.latitude, self.serial_number, self.hardware_version,
+        self.firmware_update_time, self.firmware_status, self.firmware_type, self.firmware_file_name, self.firmware_msg,
+        self.firmware_file_path, self.ra_mac)
 
 # class HostAssets(Base):
 ##	__tablename__= "host_assets"
@@ -770,6 +1082,13 @@ class HostAssets(Base):
 
 
 class HostOs(Base):
+    """
+
+    @param host_os_id:
+    @param os_name:
+    @param is_deleted:
+    @param sequence:
+    """
     __tablename__ = "host_os"
     host_os_id = Column(VARCHAR(16), primary_key=True)
     os_name = Column(VARCHAR(32))
@@ -787,6 +1106,13 @@ class HostOs(Base):
 
 
 class HostStates(Base):
+    """
+
+    @param host_state_id:
+    @param state_name:
+    @param is_deleted:
+    @param sequence:
+    """
     __tablename__ = "host_states"
     host_state_id = Column(VARCHAR(16), primary_key=True)
     state_name = Column(VARCHAR(32))
@@ -800,10 +1126,21 @@ class HostStates(Base):
         self.sequence = sequence
 
     def __repr__(self):
-        return "<HostStates('%s','%s','%s','%s')>" % (self.host_state_id, self.state_name, self.is_deleted, self.sequence)
+        return "<HostStates('%s','%s','%s','%s')>" % (
+        self.host_state_id, self.state_name, self.is_deleted, self.sequence)
 
 
 class HostServices(Base):
+    """
+
+    @param host_id:
+    @param service_description:
+    @param check_command:
+    @param max_check_attempts:
+    @param normal_check_interval:
+    @param retry_check_interval:
+    @param is_deleted:
+    """
     __tablename__ = "host_services"
     host_service_id = Column(INTEGER, primary_key=True)
     host_id = Column(INTEGER, ForeignKey('hosts.host_id'))
@@ -814,7 +1151,8 @@ class HostServices(Base):
     retry_check_interval = Column(INT)
     is_deleted = Column(SMALLINT)
 
-    def __init__(self, host_id, service_description, check_command, max_check_attempts, normal_check_interval, retry_check_interval, is_deleted):
+    def __init__(self, host_id, service_description, check_command, max_check_attempts, normal_check_interval,
+                 retry_check_interval, is_deleted):
         self.host_service_id = None
         self.host_id = host_id
         self.service_description = service_description
@@ -825,10 +1163,22 @@ class HostServices(Base):
         self.is_deleted = is_deleted
 
     def __repr__(self):
-        return "<HostStates('%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.host_service_id, self.host_id, self.service_description, self.check_command, self.max_check_attempts, self.normal_check_interval, self.retry_check_interval, self.is_deleted)
+        return "<HostStates('%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.host_service_id, self.host_id, self.service_description, self.check_command, self.max_check_attempts,
+        self.normal_check_interval, self.retry_check_interval, self.is_deleted)
 
 
 class HostVendor(Base):
+    """
+
+    @param vendor_name:
+    @param description:
+    @param timestamp:
+    @param created_by:
+    @param creation_time:
+    @param updated_by:
+    @param is_deleted:
+    """
     __tablename__ = "host_vendor"
     host_vendor_id = Column(INTEGER, primary_key=True)
     vendor_name = Column(VARCHAR(64))
@@ -850,10 +1200,19 @@ class HostVendor(Base):
         self.is_deleted = is_deleted
 
     def __repr__(self):
-        return "<HostVendor('%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.host_vendor_id, self.vendor_name, self.description, self.timestamp, self.created_by, self.creation_time, self.updated_by, self.is_deleted)
+        return "<HostVendor('%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.host_vendor_id, self.vendor_name, self.description, self.timestamp, self.created_by, self.creation_time,
+        self.updated_by, self.is_deleted)
 
 
 class LocalhostBandwidth(Base):
+    """
+
+    @param interface:
+    @param tx:
+    @param rx:
+    @param timestamp:
+    """
     __tablename__ = "localhost_bandwidth"
     localhost_bandwidth_id = Column(INTEGER, primary_key=True)
     interface = Column(VARCHAR(16))
@@ -869,10 +1228,16 @@ class LocalhostBandwidth(Base):
         self.timestamp = timestamp
 
     def __repr__(self):
-        return "<LocalhostBandwidth('%s','%s','%s','%s','%s')>" % (self.localhost_bandwidth_id, self.interface, self.tx, self.rx, self.timestamp)
+        return "<LocalhostBandwidth('%s','%s','%s','%s','%s')>" % (
+        self.localhost_bandwidth_id, self.interface, self.tx, self.rx, self.timestamp)
 
 
 class LocalhostCpuUsage(Base):
+    """
+
+    @param cpu_usage:
+    @param timestamp:
+    """
     __tablename__ = "localhost_cpu_usage"
     localhost_cpu_usage_id = Column(INTEGER, primary_key=True)
     cpu_usage = Column(FLOAT(32, 4))
@@ -888,6 +1253,14 @@ class LocalhostCpuUsage(Base):
 
 
 class Modules(Base):
+    """
+
+    @param module_name:
+    @param page_link_id:
+    @param is_default:
+    @param is_deleted:
+    @param page_id:
+    """
     __tablename__ = "modules"
     module_id = Column(VARCHAR(64), primary_key=True)
     module_name = Column(VARCHAR(32))
@@ -905,10 +1278,17 @@ class Modules(Base):
         self.page_id = page_id
 
     def __repr__(self):
-        return "<Modules('%s','%s','%s','%s','%s','%s')>" % (self.module_id, self.module_name, self.page_link_id, self.is_default, self.is_deleted, self.page_id)
+        return "<Modules('%s','%s','%s','%s','%s','%s')>" % (
+        self.module_id, self.module_name, self.page_link_id, self.is_default, self.is_deleted, self.page_id)
 
 
 class NmsGraphs(Base):
+    """
+
+    @param device_type_id:
+    @param tablename:
+    @param is_deleted:
+    """
     __tablename__ = "nms_graphs"
     nms_graphs_id = Column(VARCHAR(64), primary_key=True)
     device_type_id = Column(
@@ -923,10 +1303,18 @@ class NmsGraphs(Base):
         self.is_deleted = is_deleted
 
     def __repr__(self):
-        return "<NmsGraphs('%s','%s','%s','%s')>" % (self.nms_graphs_id, self.device_type_id, self.tablename, self.is_deleted)
+        return "<NmsGraphs('%s','%s','%s','%s')>" % (
+        self.nms_graphs_id, self.device_type_id, self.tablename, self.is_deleted)
 
 
 class NmsInstance(Base):
+    """
+
+    @param nms_name:
+    @param longitude:
+    @param latitude:
+    @param timestamp:
+    """
     __tablename__ = "nms_instance"
     nms_id = Column(VARCHAR(64), primary_key=True)
     nms_name = Column(VARCHAR(32))
@@ -942,10 +1330,20 @@ class NmsInstance(Base):
         self.timestamp = timestamp
 
     def __repr__(self):
-        return "<NmsInstance('%s','%s','%s','%s','%s')>" % (self.nms_id, self.nms_name, self.longitude, self.latitude, self.timestamp)
+        return "<NmsInstance('%s','%s','%s','%s','%s')>" % (
+        self.nms_id, self.nms_name, self.longitude, self.latitude, self.timestamp)
 
 
 class Odu1007_2_29_oid_table(Base):
+    """
+
+    @param table_name:
+    @param table_oid:
+    @param varbinds:
+    @param is_recon:
+    @param status:
+    @param timestamp:
+    """
     __tablename__ = "odu100_7_2_29_oid_table"
     table_name = Column(VARCHAR(64), primary_key=True)
     table_oid = Column(VARCHAR(64))
@@ -963,10 +1361,29 @@ class Odu1007_2_29_oid_table(Base):
         self.timestamp = timestamp
 
     def __repr__(self):
-        return "<Odu1007_2_29_oid_table('%s','%s','%s','%s','%s','%s')>" % (self.table_name, self.table_oid, self.varbinds, self.is_recon, self.status, self.timestamp)
+        return "<Odu1007_2_29_oid_table('%s','%s','%s','%s','%s','%s')>" % (
+        self.table_name, self.table_oid, self.varbinds, self.is_recon, self.status, self.timestamp)
 
 
 class Odu1007_2_29_oids(Base):
+    """
+
+    @param oid_id:
+    @param device_type_id:
+    @param oid:
+    @param oid_name:
+    @param oid_type:
+    @param access:
+    @param default_value:
+    @param min_value:
+    @param max_value:
+    @param indexes:
+    @param dependent_id:
+    @param multivalue:
+    @param table_name:
+    @param coloumn_name:
+    @param indexes_name:
+    """
     __tablename__ = "odu100_7_2_29_oids"
     oid_id = Column(INTEGER, primary_key=True)
     device_type_id = Column(
@@ -985,7 +1402,8 @@ class Odu1007_2_29_oids(Base):
     coloumn_name = Column(VARCHAR(128))
     indexes_name = Column(VARCHAR(64))
 
-    def __init__(self, oid_id, device_type_id, oid, oid_name, oid_type, access, default_value, min_value, max_value, indexes, dependent_id, multivalue, table_name, coloumn_name, indexes_name):
+    def __init__(self, oid_id, device_type_id, oid, oid_name, oid_type, access, default_value, min_value, max_value,
+                 indexes, dependent_id, multivalue, table_name, coloumn_name, indexes_name):
         self.oid_id = oid_id
         self.device_type_id = device_type_id
         self.oid = oid
@@ -1003,10 +1421,20 @@ class Odu1007_2_29_oids(Base):
         self.indexes_name = indexes_name
 
     def __repr__(self):
-        return "<Odu1007_2_29_oids('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.oid_id, self.device_type_id, self.oid, self.oid_name, self.oid_type, self.access, self.default_value, self.min_value, self.max_value, self.indexes, self.dependent_id, self.multivalue, self.table_name, self.coloumn_name, self.indexes_name)
+        return "<Odu1007_2_29_oids('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.oid_id, self.device_type_id, self.oid, self.oid_name, self.oid_type, self.access, self.default_value,
+        self.min_value, self.max_value, self.indexes, self.dependent_id, self.multivalue, self.table_name,
+        self.coloumn_name, self.indexes_name)
 
 
 class Odu1007_2_29_oids_multivalues(Base):
+    """
+
+    @param oids_multivalue_id:
+    @param oid_id:
+    @param value:
+    @param name:
+    """
     __tablename__ = "odu100_7_2_29_oids_multivalues"
     oids_multivalue_id = Column(INTEGER, primary_key=True)
     oid_id = Column(INTEGER, ForeignKey('odu100_7_2_29_oids.oid_id'))
@@ -1020,10 +1448,29 @@ class Odu1007_2_29_oids_multivalues(Base):
         self.name = name
 
     def __repr__(self):
-        return "<Odu1007_2_29_oids_multivalues('%s','%s','%s','%s')>" % (self.oids_multivalue_id, self.oid_id, self.value, self.name)
+        return "<Odu1007_2_29_oids_multivalues('%s','%s','%s','%s')>" % (
+        self.oids_multivalue_id, self.oid_id, self.value, self.name)
 
 
 class Odu1007_2_25_oids(Base):
+    """
+
+    @param oid_id:
+    @param device_type_id:
+    @param oid:
+    @param oid_name:
+    @param oid_type:
+    @param access:
+    @param default_value:
+    @param min_value:
+    @param max_value:
+    @param indexes:
+    @param dependent_id:
+    @param multivalue:
+    @param table_name:
+    @param coloumn_name:
+    @param indexes_name:
+    """
     __tablename__ = "odu100_7_2_25_oids"
     oid_id = Column(INTEGER, primary_key=True)
     device_type_id = Column(
@@ -1042,7 +1489,8 @@ class Odu1007_2_25_oids(Base):
     coloumn_name = Column(VARCHAR(128))
     indexes_name = Column(VARCHAR(64))
 
-    def __init__(self, oid_id, device_type_id, oid, oid_name, oid_type, access, default_value, min_value, max_value, indexes, dependent_id, multivalue, table_name, coloumn_name, indexes_name):
+    def __init__(self, oid_id, device_type_id, oid, oid_name, oid_type, access, default_value, min_value, max_value,
+                 indexes, dependent_id, multivalue, table_name, coloumn_name, indexes_name):
         self.oid_id = oid_id
         self.device_type_id = device_type_id
         self.oid = oid
@@ -1060,10 +1508,20 @@ class Odu1007_2_25_oids(Base):
         self.indexes_name = indexes_name
 
     def __repr__(self):
-        return "<Odu1007_2_25_oids('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.oid_id, self.device_type_id, self.oid, self.oid_name, self.oid_type, self.access, self.default_value, self.min_value, self.max_value, self.indexes, self.dependent_id, self.multivalue, self.table_name, self.coloumn_name, self.indexes_name)
+        return "<Odu1007_2_25_oids('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.oid_id, self.device_type_id, self.oid, self.oid_name, self.oid_type, self.access, self.default_value,
+        self.min_value, self.max_value, self.indexes, self.dependent_id, self.multivalue, self.table_name,
+        self.coloumn_name, self.indexes_name)
 
 
 class Odu1007_2_25_oids_multivalues(Base):
+    """
+
+    @param oids_multivalue_id:
+    @param oid_id:
+    @param value:
+    @param name:
+    """
     __tablename__ = "odu100_7_2_25_oids_multivalues"
     oids_multivalue_id = Column(INTEGER, primary_key=True)
     oid_id = Column(VARCHAR(64), ForeignKey('odu100_7_2_25_oids.oid_id'))
@@ -1077,10 +1535,20 @@ class Odu1007_2_25_oids_multivalues(Base):
         self.name = name
 
     def __repr__(self):
-        return "<Odu1007_2_25_oids_multivalues('%s','%s','%s','%s')>" % (self.oids_multivalue_id, self.oid_id, self.value, self.name)
+        return "<Odu1007_2_25_oids_multivalues('%s','%s','%s','%s')>" % (
+        self.oids_multivalue_id, self.oid_id, self.value, self.name)
 
 
 class Odu1007_2_25_oid_table(Base):
+    """
+
+    @param table_name:
+    @param table_oid:
+    @param varbinds:
+    @param is_recon:
+    @param status:
+    @param timestamp:
+    """
     __tablename__ = "odu100_7_2_25_oid_table"
     table_name = Column(VARCHAR(64), primary_key=True)
     table_oid = Column(VARCHAR(64))
@@ -1098,10 +1566,28 @@ class Odu1007_2_25_oid_table(Base):
         self.timestamp = timestamp
 
     def __repr__(self):
-        return "<Odu1007_2_25_oid_table('%s','%s','%s','%s','%s','%s')>" % (self.table_name, self.table_oid, self.varbinds, self.is_recon, self.status, self.timestamp)
+        return "<Odu1007_2_25_oid_table('%s','%s','%s','%s','%s','%s')>" % (
+        self.table_name, self.table_oid, self.varbinds, self.is_recon, self.status, self.timestamp)
 
 
 class Odu1007_2_20_oids(Base):
+    """
+
+    @param device_type_id:
+    @param oid:
+    @param oid_name:
+    @param oid_type:
+    @param access:
+    @param default_value:
+    @param min_value:
+    @param max_value:
+    @param indexes:
+    @param dependent_id:
+    @param multivalue:
+    @param table_name:
+    @param coloumn_name:
+    @param indexes_name:
+    """
     __tablename__ = "odu100_7_2_20_oids"
     oid_id = Column(INTEGER, primary_key=True)
     device_type_id = Column(
@@ -1120,7 +1606,8 @@ class Odu1007_2_20_oids(Base):
     coloumn_name = Column(VARCHAR(128))
     indexes_name = Column(VARCHAR(64))
 
-    def __init__(self, device_type_id, oid, oid_name, oid_type, access, default_value, min_value, max_value, indexes, dependent_id, multivalue, table_name, coloumn_name, indexes_name):
+    def __init__(self, device_type_id, oid, oid_name, oid_type, access, default_value, min_value, max_value, indexes,
+                 dependent_id, multivalue, table_name, coloumn_name, indexes_name):
         self.oid_id = None
         self.device_type_id = device_type_id
         self.oid = oid
@@ -1138,10 +1625,19 @@ class Odu1007_2_20_oids(Base):
         self.indexes_name = indexes_name
 
     def __repr__(self):
-        return "<Odu1007_2_20_oids('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.oid_id, self.device_type_id, self.oid, self.oid_name, self.oid_type, self.access, self.default_value, self.min_value, self.max_value, self.indexes, self.dependent_id, self.multivalue, self.table_name, self.coloumn_name, self.indexes_name)
+        return "<Odu1007_2_20_oids('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.oid_id, self.device_type_id, self.oid, self.oid_name, self.oid_type, self.access, self.default_value,
+        self.min_value, self.max_value, self.indexes, self.dependent_id, self.multivalue, self.table_name,
+        self.coloumn_name, self.indexes_name)
 
 
 class Odu1007_2_20_oids_multivalues(Base):
+    """
+
+    @param oid_id:
+    @param value:
+    @param name:
+    """
     __tablename__ = "odu100_7_2_20_oids_multivalues"
     oids_multivalue_id = Column(INTEGER, primary_key=True)
     oid_id = Column(VARCHAR(64), ForeignKey('odu100_7_2_20_oids.oid_id'))
@@ -1155,10 +1651,18 @@ class Odu1007_2_20_oids_multivalues(Base):
         self.name = name
 
     def __repr__(self):
-        return "<Odu1007_2_20_oids_multivalues('%s','%s','%s','%s')>" % (self.oids_multivalue_id, self.oid_id, self.value, self.name)
+        return "<Odu1007_2_20_oids_multivalues('%s','%s','%s','%s')>" % (
+        self.oids_multivalue_id, self.oid_id, self.value, self.name)
 
 
 class Pages(Base):
+    """
+
+    @param page_name:
+    @param page_link_id:
+    @param is_deleted:
+    @param snapin_id:
+    """
     __tablename__ = "pages"
     page_id = Column(VARCHAR(64), primary_key=True)
     page_name = Column(VARCHAR(64))
@@ -1174,10 +1678,16 @@ class Pages(Base):
         self.snapin_id = snapin_id
 
     def __repr__(self):
-        return "<Pages('%s','%s','%s','%s','%s')>" % (self.page_id, self.page_name, self.page_link_id, self.is_deleted, self.snapin_id)
+        return "<Pages('%s','%s','%s','%s','%s')>" % (
+        self.page_id, self.page_name, self.page_link_id, self.is_deleted, self.snapin_id)
 
 
 class PagesLink(Base):
+    """
+
+    @param page_link:
+    @param is_deleted:
+    """
     __tablename__ = "pages_link"
     pages_link_id = Column(VARCHAR(64), primary_key=True)
     page_link = Column(VARCHAR(256))
@@ -1193,6 +1703,13 @@ class PagesLink(Base):
 
 
 class Priority(Base):
+    """
+
+    @param priority_id:
+    @param priority_name:
+    @param is_deleted:
+    @param sequence:
+    """
     __tablename__ = "priority"
     priority_id = Column(VARCHAR(16), primary_key=True)
     priority_name = Column(VARCHAR(32))
@@ -1206,7 +1723,8 @@ class Priority(Base):
         self.sequence = sequence
 
     def __repr__(self):
-        return "<Priority('%s','%s','%s','%s')>" % (self.priority_id, self.priority_name, self.is_deleted, self.sequence)
+        return "<Priority('%s','%s','%s','%s')>" % (
+        self.priority_id, self.priority_name, self.is_deleted, self.sequence)
 
 
 # class RetryApScheduling(Base):
@@ -1236,6 +1754,17 @@ class Priority(Base):
 
 
 class Roles(Base):
+    """
+
+    @param role_name:
+    @param description:
+    @param parent_id:
+    @param timestamp:
+    @param created_by:
+    @param creation_time:
+    @param is_deleted:
+    @param updated_by:
+    """
     __tablename__ = "roles"
     role_id = Column(VARCHAR(64), primary_key=True)
     role_name = Column(VARCHAR(64))
@@ -1259,10 +1788,17 @@ class Roles(Base):
         self.updated_by = updated_by
 
     def __repr__(self):
-        return "<Roles('%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.role_id, self.role_name, self.description, self.parent_id, self.timestamp, self.created_by, self.creation_time, self.is_deleted, self.updated_by)
+        return "<Roles('%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.role_id, self.role_name, self.description, self.parent_id, self.timestamp, self.created_by,
+        self.creation_time, self.is_deleted, self.updated_by)
 
 
 class RolePagesLink(Base):
+    """
+
+    @param role_id:
+    @param pages_link_id:
+    """
     __tablename__ = "role_pages_link"
     role_pages_link_id = Column(VARCHAR(64), primary_key=True)
     role_id = Column(VARCHAR(64), ForeignKey('roles.role_id'))
@@ -1278,6 +1814,13 @@ class RolePagesLink(Base):
 
 
 class Scheduling(Base):
+    """
+
+    @param scheduling_id:
+    @param scheduling_name:
+    @param is_deleted:
+    @param sequence:
+    """
     __tablename__ = "scheduling"
     scheduling_id = Column(VARCHAR(8), primary_key=True)
     scheduling_name = Column(VARCHAR(16))
@@ -1291,10 +1834,23 @@ class Scheduling(Base):
         self.sequence = sequence
 
     def __repr__(self):
-        return "<Scheduling('%s','%s','%s','%s')>" % (self.scheduling_id, self.scheduling_name, self.is_deleted, self.sequence)
+        return "<Scheduling('%s','%s','%s','%s')>" % (
+        self.scheduling_id, self.scheduling_name, self.is_deleted, self.sequence)
 
 
 class ServiceTemplates(Base):
+    """
+
+    @param device_type_id:
+    @param template_name:
+    @param service_description:
+    @param check_command:
+    @param max_check_attempts:
+    @param normal_check_interval:
+    @param retry_check_interval:
+    @param remark:
+    @param is_deleted:
+    """
     __tablename__ = "service_templates"
     service_template_id = Column(VARCHAR(64), primary_key=True)
     device_type_id = Column(
@@ -1308,7 +1864,8 @@ class ServiceTemplates(Base):
     remark = Column(VARCHAR(128))
     is_deleted = Column(SMALLINT)
 
-    def __init__(self, device_type_id, template_name, service_description, check_command, max_check_attempts, normal_check_interval, retry_check_interval, remark, is_deleted):
+    def __init__(self, device_type_id, template_name, service_description, check_command, max_check_attempts,
+                 normal_check_interval, retry_check_interval, remark, is_deleted):
         self.service_template_id = uuid.uuid1()
         self.device_type_id = device_type_id
         self.template_name = template_name
@@ -1321,10 +1878,23 @@ class ServiceTemplates(Base):
         self.is_deleted = is_deleted
 
     def __repr__(self):
-        return "<ServiceTemplates('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.service_template_id, self.device_type_id, self.template_name, self.service_description, self.check_command, self.max_check_attempts, self.normal_check_interval, self.retry_check_interval, self.remark, self.is_deleted)
+        return "<ServiceTemplates('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.service_template_id, self.device_type_id, self.template_name, self.service_description, self.check_command,
+        self.max_check_attempts, self.normal_check_interval, self.retry_check_interval, self.remark, self.is_deleted)
 
 
 class Sites(Base):
+    """
+
+    @param site_name:
+    @param ip_address:
+    @param description:
+    @param timestamp:
+    @param created_by:
+    @param creation_time:
+    @param is_deleted:
+    @param updated_by:
+    """
     __tablename__ = "sites"
     site_id = Column(INTEGER, primary_key=True)
     site_name = Column(VARCHAR(64))
@@ -1336,7 +1906,8 @@ class Sites(Base):
     is_deleted = Column(SMALLINT)
     updated_by = Column(VARCHAR(64))
 
-    def __init__(self, site_name, ip_address, description, timestamp, created_by, creation_time, is_deleted, updated_by):
+    def __init__(self, site_name, ip_address, description, timestamp, created_by, creation_time, is_deleted,
+                 updated_by):
         self.site_id = None
         self.site_name = site_name
         self.ip_address = ip_address
@@ -1348,10 +1919,20 @@ class Sites(Base):
         self.updated_by = updated_by
 
     def __repr__(self):
-        return "<Sites('%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.site_id, self.site_name, self.ip_address, self.description, self.timestamp, self.created_by, self.creation_time, self.is_deleted, self.updated_by)
+        return "<Sites('%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.site_id, self.site_name, self.ip_address, self.description, self.timestamp, self.created_by,
+        self.creation_time, self.is_deleted, self.updated_by)
 
 
 class Snapins(Base):
+    """
+
+    @param snapin_name:
+    @param author:
+    @param description:
+    @param is_menu:
+    @param is_deleted:
+    """
     __tablename__ = "snapins"
     snapin_id = Column(VARCHAR(64), primary_key=True)
     snapin_name = Column(VARCHAR(64))
@@ -1369,10 +1950,23 @@ class Snapins(Base):
         self.is_deleted = is_deleted
 
     def __repr__(self):
-        return "<Snapins('%s','%s','%s','%s','%s','%s')>" % (self.snapin_id, self.snapin_name, self.author, self.description, self.is_menu, self.is_deleted)
+        return "<Snapins('%s','%s','%s','%s','%s','%s')>" % (
+        self.snapin_id, self.snapin_name, self.author, self.description, self.is_menu, self.is_deleted)
 
 
 class SnmpAdvanceOptions(Base):
+    """
+
+    @param host_id:
+    @param discovery_id:
+    @param snmp_username:
+    @param snmp_password:
+    @param authentication_key:
+    @param authentication_protocol:
+    @param private_password:
+    @param private_key:
+    @param private_protocol:
+    """
     __tablename__ = "snmp_advance_options"
     snmp_advance_option_id = Column(INTEGER, primary_key=True)
     host_id = Column(INTEGER, ForeignKey('hosts.host_id'))
@@ -1385,7 +1979,8 @@ class SnmpAdvanceOptions(Base):
     private_key = Column(VARCHAR(64))
     private_protocol = Column(VARCHAR(64))
 
-    def __init__(self, host_id, discovery_id, snmp_username, snmp_password, authentication_key, authentication_protocol, private_password, private_key, private_protocol):
+    def __init__(self, host_id, discovery_id, snmp_username, snmp_password, authentication_key, authentication_protocol,
+                 private_password, private_key, private_protocol):
         self.snmp_advance_option_id = None
         self.host_id = host_id
         self.discovery_id = discovery_id
@@ -1398,10 +1993,19 @@ class SnmpAdvanceOptions(Base):
         self.private_protocol = private_protocol
 
     def __repr__(self):
-        return "<SnmpAdvanceOptions('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.snmp_advance_option_id, self.host_id, self.discovery_id, self.snmp_username, self.snmp_password, self.authentication_key, self.authentication_protocol, self.private_password, self.private_key, self.private_protocol)
+        return "<SnmpAdvanceOptions('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.snmp_advance_option_id, self.host_id, self.discovery_id, self.snmp_username, self.snmp_password,
+        self.authentication_key, self.authentication_protocol, self.private_password, self.private_key,
+        self.private_protocol)
 
 
 class States(Base):
+    """
+
+    @param state_name:
+    @param country_id:
+    @param is_deleted:
+    """
     __tablename__ = "states"
     state_id = Column(VARCHAR(64), primary_key=True)
     state_name = Column(VARCHAR(64))
@@ -1419,6 +2023,29 @@ class States(Base):
 
 
 class TcpDiscovery(Base):
+    """
+
+    @param sys_omc_register_contact_addr:
+    @param sys_omc_register_contact_person:
+    @param sys_omc_register_contact_mobile:
+    @param sys_omc_register_alternate_contact:
+    @param sys_omc_register_contact_email:
+    @param sys_omc_register_active_card_hwld:
+    @param sys_omc_registerne_site_direction:
+    @param sys_omc_registerne_site_landmark:
+    @param sys_omc_registerne_site_latitude:
+    @param sys_omc_registerne_site_longitude:
+    @param sys_omc_registerne_state:
+    @param sys_omc_registerne_country:
+    @param sys_omc_registerne_city:
+    @param sys_omc_registerne_sitebldg:
+    @param sys_omc_registerne_sitefloor:
+    @param site_mac:
+    @param product_id:
+    @param timestamp:
+    @param ip_address:
+    @param is_set:
+    """
     __tablename__ = "tcp_discovery"
     ne_id = Column(INT, primary_key=True)
     sys_omc_register_contact_addr = Column(VARCHAR(128))
@@ -1442,7 +2069,12 @@ class TcpDiscovery(Base):
     ip_address = Column(VARCHAR(32))
     is_set = Column(SMALLINT)
 
-    def __init__(self, sys_omc_register_contact_addr, sys_omc_register_contact_person, sys_omc_register_contact_mobile, sys_omc_register_alternate_contact, sys_omc_register_contact_email, sys_omc_register_active_card_hwld, sys_omc_registerne_site_direction, sys_omc_registerne_site_landmark, sys_omc_registerne_site_latitude, sys_omc_registerne_site_longitude, sys_omc_registerne_state, sys_omc_registerne_country, sys_omc_registerne_city, sys_omc_registerne_sitebldg, sys_omc_registerne_sitefloor, site_mac, product_id, timestamp, ip_address, is_set):
+    def __init__(self, sys_omc_register_contact_addr, sys_omc_register_contact_person, sys_omc_register_contact_mobile,
+                 sys_omc_register_alternate_contact, sys_omc_register_contact_email, sys_omc_register_active_card_hwld,
+                 sys_omc_registerne_site_direction, sys_omc_registerne_site_landmark, sys_omc_registerne_site_latitude,
+                 sys_omc_registerne_site_longitude, sys_omc_registerne_state, sys_omc_registerne_country,
+                 sys_omc_registerne_city, sys_omc_registerne_sitebldg, sys_omc_registerne_sitefloor, site_mac,
+                 product_id, timestamp, ip_address, is_set):
         self.ne_id = None
         self.sys_omc_register_contact_addr = sys_omc_register_contact_addr
         self.sys_omc_register_contact_person = sys_omc_register_contact_person
@@ -1466,10 +2098,25 @@ class TcpDiscovery(Base):
         self.is_set = is_set
 
     def __repr__(self):
-        return "<TcpDiscovery('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.ne_id, self.sys_omc_register_contact_addr, self.sys_omc_register_contact_person, self.sys_omc_register_contact_mobile, self.sys_omc_register_alternate_contact, self.sys_omc_register_contact_email, self.sys_omc_register_active_card_hwld, self.sys_omc_registerne_site_direction, self.sys_omc_registerne_site_landmark, self.sys_omc_registerne_site_latitude, self.sys_omc_registerne_site_longitude, self.sys_omc_registerne_state, self.sys_omc_registerne_country, self.sys_omc_registerne_city, self.sys_omc_registerne_sitebldg, self.sys_omc_registerne_sitefloor, self.site_mac, self.product_id, self.timestamp, self.ip_address, self.is_set)
+        return "<TcpDiscovery('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.ne_id, self.sys_omc_register_contact_addr, self.sys_omc_register_contact_person,
+        self.sys_omc_register_contact_mobile, self.sys_omc_register_alternate_contact,
+        self.sys_omc_register_contact_email, self.sys_omc_register_active_card_hwld,
+        self.sys_omc_registerne_site_direction, self.sys_omc_registerne_site_landmark,
+        self.sys_omc_registerne_site_latitude, self.sys_omc_registerne_site_longitude, self.sys_omc_registerne_state,
+        self.sys_omc_registerne_country, self.sys_omc_registerne_city, self.sys_omc_registerne_sitebldg,
+        self.sys_omc_registerne_sitefloor, self.site_mac, self.product_id, self.timestamp, self.ip_address, self.is_set)
 
 
 class TcpHealthCheck(Base):
+    """
+
+    @param ne_id:
+    @param health_check:
+    @param ip_address:
+    @param timestamp:
+    @param last_timestamp:
+    """
     __tablename__ = "tcp_health_check"
     tcp_health_check_id = Column(INT, primary_key=True)
     ne_id = Column(INT)
@@ -1487,10 +2134,28 @@ class TcpHealthCheck(Base):
         self.last_timestamp = last_timestamp
 
     def __repr__(self):
-        return "<TcpHealthCheck('%s','%s','%s','%s','%s','%s')>" % (self.tcp_health_check_id, self.ne_id, self.health_check, self.ip_address, self.timestamp, self.last_timestamp)
+        return "<TcpHealthCheck('%s','%s','%s','%s','%s','%s')>" % (
+        self.tcp_health_check_id, self.ne_id, self.health_check, self.ip_address, self.timestamp, self.last_timestamp)
 
 
 class TrapAlarms(Base):
+    """
+
+    @param event_id:
+    @param trap_id:
+    @param agent_id:
+    @param trap_date:
+    @param trap_receive_date:
+    @param serevity:
+    @param trap_event_id:
+    @param trap_event_type:
+    @param manage_obj_id:
+    @param manage_obj_name:
+    @param component_id:
+    @param trap_ip:
+    @param description:
+    @param timestamp:
+    """
     __tablename__ = "trap_alarms"
     trap_alarm_id = Column(INTEGER, primary_key=True)
     event_id = Column(VARCHAR(32))
@@ -1508,7 +2173,8 @@ class TrapAlarms(Base):
     description = Column(VARCHAR(256))
     timestamp = Column(TIMESTAMP)
 
-    def __init__(self, event_id, trap_id, agent_id, trap_date, trap_receive_date, serevity, trap_event_id, trap_event_type, manage_obj_id, manage_obj_name, component_id, trap_ip, description, timestamp):
+    def __init__(self, event_id, trap_id, agent_id, trap_date, trap_receive_date, serevity, trap_event_id,
+                 trap_event_type, manage_obj_id, manage_obj_name, component_id, trap_ip, description, timestamp):
         self.trap_alarm_id = None
         self.event_id = event_id
         self.trap_id = trap_id
@@ -1526,10 +2192,24 @@ class TrapAlarms(Base):
         self.timestamp = timestamp
 
     def __repr__(self):
-        return "<TrapAlarms('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.trap_alarm_id, self.event_id, self.trap_id, self.agent_id, self.trap_date, self.trap_receive_date, self.serevity, self.trap_event_id, self.trap_event_type, self.manage_obj_id, self.manage_obj_name, self.component_id, self.trap_ip, self.description, self.timestamp)
+        return "<TrapAlarms('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.trap_alarm_id, self.event_id, self.trap_id, self.agent_id, self.trap_date, self.trap_receive_date,
+        self.serevity, self.trap_event_id, self.trap_event_type, self.manage_obj_id, self.manage_obj_name,
+        self.component_id, self.trap_ip, self.description, self.timestamp)
 
 
 class TrapAlarmActionMapping(Base):
+    """
+
+    @param trap_alarm_masking_id:
+    @param acknowledge_id:
+    @param timestamp:
+    @param created_by:
+    @param creation_time:
+    @param updated_by:
+    @param next_scheduling:
+    @param is_deleted:
+    """
     __tablename__ = "trap_alarm_action_mapping"
     trap_alarm_action_mapping_id = Column(INTEGER, primary_key=True)
     trap_alarm_masking_id = Column(
@@ -1543,7 +2223,8 @@ class TrapAlarmActionMapping(Base):
     next_scheduling = Column(TIMESTAMP)
     is_deleted = Column(SMALLINT)
 
-    def __init__(self, trap_alarm_masking_id, acknowledge_id, timestamp, created_by, creation_time, updated_by, next_scheduling, is_deleted):
+    def __init__(self, trap_alarm_masking_id, acknowledge_id, timestamp, created_by, creation_time, updated_by,
+                 next_scheduling, is_deleted):
         self.trap_alarm_action_mapping_id = None
         self.trap_alarm_masking_id = trap_alarm_masking_id
         self.acknowledge_id = acknowledge_id
@@ -1555,10 +2236,29 @@ class TrapAlarmActionMapping(Base):
         self.is_deleted = is_deleted
 
     def __repr__(self):
-        return "<TrapAlarmActionMapping('%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.trap_alarm_action_mapping_id, self.trap_alarm_masking_id, self.acknowledge_id, self.timestamp, self.created_by, self.creation_time, self.updated_by, self.next_scheduling, self.is_deleted)
+        return "<TrapAlarmActionMapping('%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.trap_alarm_action_mapping_id, self.trap_alarm_masking_id, self.acknowledge_id, self.timestamp,
+        self.created_by, self.creation_time, self.updated_by, self.next_scheduling, self.is_deleted)
 
 
 class TrapAlarmClear(Base):
+    """
+
+    @param event_id:
+    @param trap_id:
+    @param agent_id:
+    @param trap_date:
+    @param trap_receive_date:
+    @param serevity:
+    @param trap_event_id:
+    @param trap_event_type:
+    @param manage_obj_id:
+    @param manage_obj_name:
+    @param component_id:
+    @param trap_ip:
+    @param description:
+    @param timestamp:
+    """
     __tablename__ = "trap_alarm_clear"
     trap_alarm_clear_id = Column(INTEGER, primary_key=True)
     event_id = Column(VARCHAR(32))
@@ -1576,7 +2276,8 @@ class TrapAlarmClear(Base):
     description = Column(VARCHAR(256))
     timestamp = Column(TIMESTAMP)
 
-    def __init__(self, event_id, trap_id, agent_id, trap_date, trap_receive_date, serevity, trap_event_id, trap_event_type, manage_obj_id, manage_obj_name, component_id, trap_ip, description, timestamp):
+    def __init__(self, event_id, trap_id, agent_id, trap_date, trap_receive_date, serevity, trap_event_id,
+                 trap_event_type, manage_obj_id, manage_obj_name, component_id, trap_ip, description, timestamp):
         self.trap_alarm_clear_id = None
         self.event_id = event_id
         self.trap_id = trap_id
@@ -1594,10 +2295,30 @@ class TrapAlarmClear(Base):
         self.timestamp = timestamp
 
     def __repr__(self):
-        return "<TrapAlarmClear('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.trap_alarm_clear_id, self.event_id, self.trap_id, self.agent_id, self.trap_date, self.trap_receive_date, self.serevity, self.trap_event_id, self.trap_event_type, self.manage_obj_id, self.manage_obj_name, self.component_id, self.trap_ip, self.description, self.timestamp)
+        return "<TrapAlarmClear('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.trap_alarm_clear_id, self.event_id, self.trap_id, self.agent_id, self.trap_date, self.trap_receive_date,
+        self.serevity, self.trap_event_id, self.trap_event_type, self.manage_obj_id, self.manage_obj_name,
+        self.component_id, self.trap_ip, self.description, self.timestamp)
 
 
 class TrapAlarmCurrent(Base):
+    """
+
+    @param event_id:
+    @param trap_id:
+    @param agent_id:
+    @param trap_date:
+    @param trap_receive_date:
+    @param serevity:
+    @param trap_event_id:
+    @param trap_event_type:
+    @param manage_obj_id:
+    @param manage_obj_name:
+    @param component_id:
+    @param trap_ip:
+    @param description:
+    @param timestamp:
+    """
     __tablename__ = "trap_alarm_current"
     trap_alarm_current_id = Column(INTEGER, primary_key=True)
     event_id = Column(VARCHAR(32))
@@ -1615,7 +2336,8 @@ class TrapAlarmCurrent(Base):
     description = Column(VARCHAR(256))
     timestamp = Column(TIMESTAMP)
 
-    def __init__(self, event_id, trap_id, agent_id, trap_date, trap_receive_date, serevity, trap_event_id, trap_event_type, manage_obj_id, manage_obj_name, component_id, trap_ip, description, timestamp):
+    def __init__(self, event_id, trap_id, agent_id, trap_date, trap_receive_date, serevity, trap_event_id,
+                 trap_event_type, manage_obj_id, manage_obj_name, component_id, trap_ip, description, timestamp):
         self.trap_alarm_current_id = None
         self.event_id = event_id
         self.trap_id = trap_id
@@ -1633,10 +2355,18 @@ class TrapAlarmCurrent(Base):
         self.timestamp = timestamp
 
     def __repr__(self):
-        return "<TrapAlarmCurrent('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.trap_alarm_current_id, self.event_id, self.trap_id, self.agent_id, self.trap_date, self.trap_receive_date, self.serevity, self.trap_event_id, self.trap_event_type, self.manage_obj_id, self.manage_obj_name, self.component_id, self.trap_ip, self.description, self.timestamp)
+        return "<TrapAlarmCurrent('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.trap_alarm_current_id, self.event_id, self.trap_id, self.agent_id, self.trap_date, self.trap_receive_date,
+        self.serevity, self.trap_event_id, self.trap_event_type, self.manage_obj_id, self.manage_obj_name,
+        self.component_id, self.trap_ip, self.description, self.timestamp)
 
 
 class TrapAlarmFieldTable(Base):
+    """
+
+    @param field_name:
+    @param field_type:
+    """
     __tablename__ = "trap_alarm_field_table"
     trap_alarm_field = Column(VARCHAR(32), primary_key=True)
     field_name = Column(VARCHAR(32))
@@ -1652,6 +2382,22 @@ class TrapAlarmFieldTable(Base):
 
 
 class TrapAlarmMasking(Base):
+    """
+
+    @param trap_alarm_field:
+    @param trap_alarm_value:
+    @param action_id:
+    @param group_id:
+    @param scheduling_minutes:
+    @param is_repeated:
+    @param description:
+    @param acknowledge_id:
+    @param timestamp:
+    @param created_by:
+    @param creation_time:
+    @param updated_by:
+    @param is_deleted:
+    """
     __tablename__ = "trap_alarm_masking"
     trap_alarm_masking_id = Column(INTEGER, primary_key=True)
     trap_alarm_field = Column(
@@ -1670,7 +2416,8 @@ class TrapAlarmMasking(Base):
     updated_by = Column(VARCHAR(64))
     is_deleted = Column(SMALLINT)
 
-    def __init__(self, trap_alarm_field, trap_alarm_value, action_id, group_id, scheduling_minutes, is_repeated, description, acknowledge_id, timestamp, created_by, creation_time, updated_by, is_deleted):
+    def __init__(self, trap_alarm_field, trap_alarm_value, action_id, group_id, scheduling_minutes, is_repeated,
+                 description, acknowledge_id, timestamp, created_by, creation_time, updated_by, is_deleted):
         self.trap_alarm_masking_id = None
         self.trap_alarm_field = trap_alarm_field
         self.trap_alarm_value = trap_alarm_value
@@ -1687,10 +2434,27 @@ class TrapAlarmMasking(Base):
         self.is_deleted = is_deleted
 
     def __repr__(self):
-        return "<TrapAlarmMasking('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.trap_alarm_masking_id, self.trap_alarm_field, self.trap_alarm_value, self.action_id, self.group_id, self.scheduling_minutes, self.is_repeated, self.description, self.acknowledge_id, self.timestamp, self.created_by, self.creation_time, self.updated_by, self.is_deleted)
+        return "<TrapAlarmMasking('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.trap_alarm_masking_id, self.trap_alarm_field, self.trap_alarm_value, self.action_id, self.group_id,
+        self.scheduling_minutes, self.is_repeated, self.description, self.acknowledge_id, self.timestamp,
+        self.created_by, self.creation_time, self.updated_by, self.is_deleted)
 
 
 class TrapIdMapping(Base):
+    """
+
+    @param trap_event_type:
+    @param trap_event_id:
+    @param is_alarm:
+    @param is_deleted:
+    @param trap_clear_mapping_id:
+    @param trap_clear_mapping_type:
+    @param priority_id:
+    @param timestamp:
+    @param created_by:
+    @param creation_time:
+    @param updated_by:
+    """
     __tablename__ = "trap_id_mapping"
     trap_id_mapping_id = Column(INTEGER, primary_key=True)
     trap_event_type = Column(VARCHAR(32))
@@ -1705,7 +2469,8 @@ class TrapIdMapping(Base):
     creation_time = Column(TIMESTAMP)
     updated_by = Column(VARCHAR(64))
 
-    def __init__(self, trap_event_type, trap_event_id, is_alarm, is_deleted, trap_clear_mapping_id, trap_clear_mapping_type, priority_id, timestamp, created_by, creation_time, updated_by):
+    def __init__(self, trap_event_type, trap_event_id, is_alarm, is_deleted, trap_clear_mapping_id,
+                 trap_clear_mapping_type, priority_id, timestamp, created_by, creation_time, updated_by):
         self.trap_id_mapping_id = None
         self.trap_event_type = trap_event_type
         self.trap_event_id = trap_event_id
@@ -1720,10 +2485,26 @@ class TrapIdMapping(Base):
         self.updated_by = updated_by
 
     def __repr__(self):
-        return "<TrapIdMapping('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.trap_id_mapping_id, self.trap_event_type, self.trap_event_id, self.is_alarm, self.is_deleted, self.trap_clear_mapping_id, self.trap_clear_mapping_type, self.priority_id, self.timestamp, self.created_by, self.creation_time, self.updated_by)
+        return "<TrapIdMapping('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.trap_id_mapping_id, self.trap_event_type, self.trap_event_id, self.is_alarm, self.is_deleted,
+        self.trap_clear_mapping_id, self.trap_clear_mapping_type, self.priority_id, self.timestamp, self.created_by,
+        self.creation_time, self.updated_by)
 
 
 class Users(Base):
+    """
+
+    @param first_name:
+    @param last_name:
+    @param designation:
+    @param company_name:
+    @param mobile_no:
+    @param address:
+    @param city_id:
+    @param state_id:
+    @param country_id:
+    @param email_id:
+    """
     __tablename__ = "users"
     user_id = Column(VARCHAR(64), primary_key=True)
     first_name = Column(VARCHAR(64))
@@ -1737,7 +2518,8 @@ class Users(Base):
     country_id = Column(VARCHAR(64))
     email_id = Column(VARCHAR(128))
 
-    def __init__(self, first_name, last_name, designation, company_name, mobile_no, address, city_id, state_id, country_id, email_id):
+    def __init__(self, first_name, last_name, designation, company_name, mobile_no, address, city_id, state_id,
+                 country_id, email_id):
         self.user_id = uuid.uuid1()
         self.first_name = first_name
         self.last_name = last_name
@@ -1751,10 +2533,17 @@ class Users(Base):
         self.email_id = email_id
 
     def __repr__(self):
-        return "<Users('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.user_id, self.first_name, self.last_name, self.designation, self.company_name, self.mobile_no, self.address, self.city_id, self.state_id, self.country_id, self.email_id)
+        return "<Users('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.user_id, self.first_name, self.last_name, self.designation, self.company_name, self.mobile_no,
+        self.address, self.city_id, self.state_id, self.country_id, self.email_id)
 
 
 class UsersGroups(Base):
+    """
+
+    @param user_id:
+    @param group_id:
+    """
     __tablename__ = "users_groups"
     user_group_id = Column(VARCHAR(64), primary_key=True)
     user_id = Column(VARCHAR(64), ForeignKey('users.user_id'))
@@ -1770,6 +2559,18 @@ class UsersGroups(Base):
 
 
 class UserLogin(Base):
+    """
+
+    @param user_id:
+    @param user_name:
+    @param password:
+    @param timestamp:
+    @param created_by:
+    @param creation_time:
+    @param is_deleted:
+    @param updated_by:
+    @param nms_id:
+    """
     __tablename__ = "user_login"
     user_login_id = Column(VARCHAR(64), primary_key=True)
     user_id = Column(VARCHAR(64), ForeignKey('users.user_id'))
@@ -1782,7 +2583,8 @@ class UserLogin(Base):
     updated_by = Column(VARCHAR(64))
     nms_id = Column(VARCHAR(64), ForeignKey('nms_instance.nms_id'))
 
-    def __init__(self, user_id, user_name, password, timestamp, created_by, creation_time, is_deleted, updated_by, nms_id):
+    def __init__(self, user_id, user_name, password, timestamp, created_by, creation_time, is_deleted, updated_by,
+                 nms_id):
         self.user_login_id = uuid.uuid1()
         self.user_id = user_id
         self.user_name = user_name
@@ -1795,7 +2597,9 @@ class UserLogin(Base):
         self.nms_id = nms_id
 
     def __repr__(self):
-        return "<UserLogin('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.user_login_id, self.user_id, self.user_name, self.password, self.timestamp, self.created_by, self.creation_time, self.is_deleted, self.updated_by, self.nms_id)
+        return "<UserLogin('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.user_login_id, self.user_id, self.user_name, self.password, self.timestamp, self.created_by,
+        self.creation_time, self.is_deleted, self.updated_by, self.nms_id)
 
 
 # Anuj Samariya Model ####################################################
@@ -1815,7 +2619,8 @@ class SetOdu16IPConfigTable(Base):
     ip_default_gateway = Column(VARCHAR(16))
     auto_ip_config = Column(INTEGER)
 
-    def __init__(self, set_odu16_ip_config_table_id, config_profile_id, admin_state, ip_address, ip_network_mask, ip_default_gateway, auto_ip_config):
+    def __init__(self, set_odu16_ip_config_table_id, config_profile_id, admin_state, ip_address, ip_network_mask,
+                 ip_default_gateway, auto_ip_config):
         self.set_odu16_ip_config_table_id = None
         self.config_profile_id = config_profile_id
         self.admin_state = admin_state
@@ -1825,7 +2630,9 @@ class SetOdu16IPConfigTable(Base):
         self.auto_ip_config = auto_ip_config
 
     def __repr__(self):
-        return "<SetOdu16_ip_config_table('%s','%s','%s','%s','%s','%s','%s')>" % (self.set_odu16_ip_config_table_id, self.config_profile_id, self.admin_state, self.ip_address, self.ip_network_mask, self.ip_default_gateway, self.auto_ip_config)
+        return "<SetOdu16_ip_config_table('%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.set_odu16_ip_config_table_id, self.config_profile_id, self.admin_state, self.ip_address,
+        self.ip_network_mask, self.ip_default_gateway, self.auto_ip_config)
 
 # set_odu16_network_interface_config_table Table
 
@@ -1849,7 +2656,8 @@ class SetOdu16NetworkInterfaceConfig(Base):
         self.index = index
 
     def __repr__(self):
-        return "SetOdu16NetworkInterfaceConfigTable<'%s','%s','%s','%s'>" % (self.set_odu16_network_interface_config_entry_id, self.config_profile_id, self.ssid, self.index)
+        return "SetOdu16NetworkInterfaceConfigTable<'%s','%s','%s','%s'>" % (
+        self.set_odu16_network_interface_config_entry_id, self.config_profile_id, self.ssid, self.index)
 
 
 # set_odu16_omc_conf_table Table
@@ -1871,7 +2679,8 @@ class SetOdu16OmcConfTable(Base):
         self.periodic_stats_timer = periodic_stats_timer
 
     def __repr__(self):
-        return "SetOdu16OmcConfTable<'%s','%s','%s','%s'>" % (self.set_odu16_omc_conf_table_id, self.config_profile_id, self.omc_ip_address, self.periodic_stats_timer)
+        return "SetOdu16OmcConfTable<'%s','%s','%s','%s'>" % (
+        self.set_odu16_omc_conf_table_id, self.config_profile_id, self.omc_ip_address, self.periodic_stats_timer)
 
 # set_odu16_peer_config_table Table
 
@@ -1894,7 +2703,8 @@ class SetOdu16PeerConfigTable(Base):
         self.index = index
 
     def __repr__(self):
-        return "SetOdu16PeerConfig<'%s','%s','%s','%s'>" % (self.set_odu16_peer_config_table_id, self.config_profile_id, self.peer_mac_address, self.index)
+        return "SetOdu16PeerConfig<'%s','%s','%s','%s'>" % (
+        self.set_odu16_peer_config_table_id, self.config_profile_id, self.peer_mac_address, self.index)
 
 # set_odu16_ra_acl_config_table Table
 
@@ -1917,7 +2727,8 @@ class SetOdu16RAAclConfigTable(Base):
         self.index = index
 
     def __repr__(self):
-        return "SetOdu16RAAclConfig<'%s','%s','%s','%s'>" % (self.set_odu16_ra_acl_config_table_id, self.config_profile_id, self.mac_address, self.index)
+        return "SetOdu16RAAclConfig<'%s','%s','%s','%s'>" % (
+        self.set_odu16_ra_acl_config_table_id, self.config_profile_id, self.mac_address, self.index)
 
 
 # set_odu16_om_operations_table Table
@@ -1936,7 +2747,8 @@ class SetOdu16OmOperationsTable(Base):
     path_name = Column(VARCHAR(256))
     enable_swam = Column(INTEGER)
 
-    def __init__(self, config_profile_id, om_operation_req, user_name, password, ftp_server_address, path_name, enable_swam):
+    def __init__(self, config_profile_id, om_operation_req, user_name, password, ftp_server_address, path_name,
+                 enable_swam):
         self.set_odu16_om_operations_table_id = None
         self.config_profile_id = config_profile_id
         self.om_operation_req = om_operation_req
@@ -1947,7 +2759,9 @@ class SetOdu16OmOperationsTable(Base):
         self.enable_swam = enable_swam
 
     def __repr__(self):
-        return "SetOdu16OmOperationsTable<'%s','%s','%s','%s','%s','%s','%s','%s'>" % (self.set_odu16_om_operations_table_id, self.config_profile_id, self.om_operation_req, self.user_name, self.password, self.ftp_server_address, self.path_name, self.enable_swam)
+        return "SetOdu16OmOperationsTable<'%s','%s','%s','%s','%s','%s','%s','%s'>" % (
+        self.set_odu16_om_operations_table_id, self.config_profile_id, self.om_operation_req, self.user_name,
+        self.password, self.ftp_server_address, self.path_name, self.enable_swam)
 
 
 # set_odu16_ra_conf_table Table
@@ -1971,7 +2785,8 @@ class SetOdu16RAConfTable(Base):
         self.ssid = ssid
 
     def __repr__(self):
-        return "SetOdu16OmOperationsTable<'%s','%s','%s','%s','%s','%s','%s','%s'>" % (self.set_odu16_ra_conf_table_id, self.config_profile_id, self.raAdminState, self.acl_mode, self.ssid)
+        return "SetOdu16OmOperationsTable<'%s','%s','%s','%s','%s','%s','%s','%s'>" % (
+        self.set_odu16_ra_conf_table_id, self.config_profile_id, self.raAdminState, self.acl_mode, self.ssid)
 
 
 # set_odu16_ra_llc_conf_table
@@ -1989,7 +2804,8 @@ class SetOdu16RALlcConfTable(Base):
     leaky_bucket_timer_val = Column(INTEGER)
     frame_loss_timeout = Column(INTEGER)
 
-    def __init__(self, config_profile_id, llc_arq_enable, arq_win, frame_loss_threshold, leaky_bucket_timer_val, frame_loss_timeout):
+    def __init__(self, config_profile_id, llc_arq_enable, arq_win, frame_loss_threshold, leaky_bucket_timer_val,
+                 frame_loss_timeout):
         self.set_odu16_ra_llc_conf_table_id = None
         self.config_profile_id = config_profile_id
         self.llc_arq_enable = llc_arq_enable
@@ -1999,7 +2815,9 @@ class SetOdu16RALlcConfTable(Base):
         self.frame_loss_timeout = frame_loss_timeout
 
     def __repr__(self):
-        return "SetOdu16RALlcConfTable<'%s','%s','%s','%s','%s','%s','%s'>" % (self.set_odu16_ra_llc_conf_table_id, self.config_profile_id, self.llc_arq_enable, self.arq_win, self.frame_loss_threshold, self.leaky_bucket_timer_val, self.frame_loss_timeout)
+        return "SetOdu16RALlcConfTable<'%s','%s','%s','%s','%s','%s','%s'>" % (
+        self.set_odu16_ra_llc_conf_table_id, self.config_profile_id, self.llc_arq_enable, self.arq_win,
+        self.frame_loss_threshold, self.leaky_bucket_timer_val, self.frame_loss_timeout)
 
 
 # set_odu16_ra_tdd_mac_config Table
@@ -2019,7 +2837,8 @@ class SetOdu16RATddMacConfig(Base):
     max_crc_errors = Column(INTEGER)
     leaky_bucket_timer_value = Column(INTEGER)
 
-    def __init__(self, config_profile_id, rf_channel_frequency, pass_phrase, rfcoding, tx_power, max_crc_errors, leaky_bucket_timer_value):
+    def __init__(self, config_profile_id, rf_channel_frequency, pass_phrase, rfcoding, tx_power, max_crc_errors,
+                 leaky_bucket_timer_value):
         self.set_odu16_ra_tdd_mac_config_table_id = None
         self.config_profile_id = config_profile_id
         self.rf_channel_frequency = rf_channel_frequency
@@ -2030,7 +2849,9 @@ class SetOdu16RATddMacConfig(Base):
         self.leaky_bucket_timer_value = leaky_bucket_timer_value
 
     def __repr__(self):
-        return "SetOdu16RATddMacConfig<'%s','%s','%s','%s','%s','%s','%s','%s','%s'>" % (self.set_odu16_ra_tdd_mac_config_table_id, self.config_profile_id, self.rf_channel_frequency, self.pass_phrase, self.rfcoding, self.tx_power, self.max_crc_errors, self.leaky_bucket_timer_value, self.max_power)
+        return "SetOdu16RATddMacConfig<'%s','%s','%s','%s','%s','%s','%s','%s','%s'>" % (
+        self.set_odu16_ra_tdd_mac_config_table_id, self.config_profile_id, self.rf_channel_frequency, self.pass_phrase,
+        self.rfcoding, self.tx_power, self.max_crc_errors, self.leaky_bucket_timer_value, self.max_power)
 
 
 # set_odu16_ru_conf_table Table
@@ -2056,7 +2877,9 @@ class SetOdu16RUConfTable(Base):
         self.country_code = country_code
 
     def __repr__(self):
-        return "SetOdu16RUConfTable<'%s','%s','%s','%s','%s','%s'>" % (self.set_odu16_ru_conf_table_id, self.config_profile_id, self.adminstate, self.channel_bandwidth, self.sysnch_source, self.country_code)
+        return "SetOdu16RUConfTable<'%s','%s','%s','%s','%s','%s'>" % (
+        self.set_odu16_ru_conf_table_id, self.config_profile_id, self.adminstate, self.channel_bandwidth,
+        self.sysnch_source, self.country_code)
 
 # set_odu16_ru_date_time_table Table
 
@@ -2087,7 +2910,9 @@ class SetOdu16RUDateTimeTable(Base):
         self.sec = sec
 
     def __repr__(self):
-        return "SetOdu16RUConfTable<'%s','%s','%s','%s','%s','%s','%s','%s'>" % (self.set_odu16_ru_date_time_table_id, self.config_profile_id, self.year, self.month, self.day, self.hour, self.min, self.sec)
+        return "SetOdu16RUConfTable<'%s','%s','%s','%s','%s','%s','%s','%s'>" % (
+        self.set_odu16_ru_date_time_table_id, self.config_profile_id, self.year, self.month, self.day, self.hour,
+        self.min, self.sec)
 
 # set_odu16_sync_config_table Table
 
@@ -2109,7 +2934,8 @@ class SetOdu16SyncConfigTable(Base):
     sync_config_time_adjust = Column(INTEGER)
     sync_config_broadcast_enable = Column(SMALLINT)
 
-    def __init__(self, config_profile_id, adminStatus, raster_time, num_slaves, sync_loss_threshold, leaky_bucket_timer, sync_lost_timeout, sync_config_time_adjust):
+    def __init__(self, config_profile_id, adminStatus, raster_time, num_slaves, sync_loss_threshold, leaky_bucket_timer,
+                 sync_lost_timeout, sync_config_time_adjust):
         self.set_odu16_sync_config_table_id = None
         self.config_profile_id = config_profile_id
         self.adminStatus = adminStatus
@@ -2121,7 +2947,10 @@ class SetOdu16SyncConfigTable(Base):
         self.sync_config_time_adjust = sync_config_time_adjust
 
     def __repr__(self):
-        return "SetOdu16SyncConfigTable<'%s','%s','%s','%s','%s','%s','%s','%s','%s','%s'>" % (self.set_odu16_sync_config_table_id, self.config_profile_id, self.adminStatus, self.raster_time, self.num_slaves, self.sync_loss_threshold, self.leaky_bucket_timer, self.sync_lost_timeout, self.sync_config_time_adjust, self.sync_config_broadcast_enable)
+        return "SetOdu16SyncConfigTable<'%s','%s','%s','%s','%s','%s','%s','%s','%s','%s'>" % (
+        self.set_odu16_sync_config_table_id, self.config_profile_id, self.adminStatus, self.raster_time,
+        self.num_slaves, self.sync_loss_threshold, self.leaky_bucket_timer, self.sync_lost_timeout,
+        self.sync_config_time_adjust, self.sync_config_broadcast_enable)
 
 # set_odu16_misc Table
 
@@ -2148,7 +2977,9 @@ class SetOdu16Misc(Base):
         self.snmp_enable_authen_traps = snmp_enable_authen_traps
 
     def __repr__(self):
-        return "SetOdu16Misc<'%s','%s','%s','%s','%s','%s'>" % (self.set_odu16_misc_id, self.config_profile_id, self.sys_contact, self.sys_name, self.sys_location, self.snmp_enable_authen_traps)
+        return "SetOdu16Misc<'%s','%s','%s','%s','%s','%s'>" % (
+        self.set_odu16_misc_id, self.config_profile_id, self.sys_contact, self.sys_name, self.sys_location,
+        self.snmp_enable_authen_traps)
 
 # set_odu16_sys_omc_registration_table  Table
 
@@ -2180,9 +3011,12 @@ class SetOdu16SysOmcRegistrationTable(Base):
     product_id = Column(INT)
 
     def __init__(
-        self, config_profile_id, sys_omc_register_contact_addr, sys_omc_register_contact_person, sys_omc_register_contact_mobile, sys_omc_register_alternate_contact, sys_omc_register_contact_email,
-        sys_omc_register_active_card_hwld, sys_omc_registerne_site_direction, sys_omc_registerne_site_landmark, sys_omc_registerne_site_latitude,
-        sys_omc_registerne_site_longitude, sys_omc_registerne_state, sys_omc_register_country, sys_omc_register_city, sys_omc_register_sitebldg,
+            self, config_profile_id, sys_omc_register_contact_addr, sys_omc_register_contact_person,
+            sys_omc_register_contact_mobile, sys_omc_register_alternate_contact, sys_omc_register_contact_email,
+            sys_omc_register_active_card_hwld, sys_omc_registerne_site_direction, sys_omc_registerne_site_landmark,
+            sys_omc_registerne_site_latitude,
+            sys_omc_registerne_site_longitude, sys_omc_registerne_state, sys_omc_register_country,
+            sys_omc_register_city, sys_omc_register_sitebldg,
             sys_omc_registersitefloor, site_mac, product_id):
         self.set_odu16_sys_omc_registration_table_id = None
         self.config_profile_id = config_profile_id
@@ -2205,23 +3039,34 @@ class SetOdu16SysOmcRegistrationTable(Base):
         self.product_id = product_id
 
     def __repr__(self):
-        return "SetOdu16Misc<'%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s'>" % (self.set_odu16_sys_omc_registration_table_id, self.config_profile_id, self.sys_omc_register_contact_addr, self.sys_omc_register_contact_person, self.sys_omc_register_contact_mobile, self.sys_omc_register_alternate_contact, self.sys_omc_register_contact_email,
-                                                                                                                                 self.sys_omc_register_active_card_hwld,
-                                                                                                                                 self.sys_omc_registerne_site_direction,
-                                                                                                                                 self.sys_omc_registerne_site_landmark,
-                                                                                                                                 self.sys_omc_registerne_site_latitude,
-                                                                                                                                 self.sys_omc_registerne_site_longitude,
-                                                                                                                                 self.sys_omc_registerne_state,
-                                                                                                                                 self.sys_omc_register_country,
-                                                                                                                                 self.sys_omc_register_city,
-                                                                                                                                 self.sys_omc_register_sitebldg,
-                                                                                                                                 self.sys_omc_registersitefloor,
-                                                                                                                                 self.site_mac,
-                                                                                                                                 self.product_id
-                                                                                                                                 )
+        return "SetOdu16Misc<'%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s'>" % (
+        self.set_odu16_sys_omc_registration_table_id, self.config_profile_id, self.sys_omc_register_contact_addr,
+        self.sys_omc_register_contact_person, self.sys_omc_register_contact_mobile,
+        self.sys_omc_register_alternate_contact, self.sys_omc_register_contact_email,
+        self.sys_omc_register_active_card_hwld,
+        self.sys_omc_registerne_site_direction,
+        self.sys_omc_registerne_site_landmark,
+        self.sys_omc_registerne_site_latitude,
+        self.sys_omc_registerne_site_longitude,
+        self.sys_omc_registerne_state,
+        self.sys_omc_register_country,
+        self.sys_omc_register_city,
+        self.sys_omc_register_sitebldg,
+        self.sys_omc_registersitefloor,
+        self.site_mac,
+        self.product_id
+        )
 
 
 class GetOdu16_ru_conf_table(Base):
+    """
+
+    @param host_id:
+    @param op_state:
+    @param object_model_version:
+    @param default_node_type:
+    @param no_radio_interfaces:
+    """
     __tablename__ = "get_odu16_ru_conf_table"
     get_odu16_ru_conf_table_id = Column(INTEGER, primary_key=True)
     host_id = Column(INTEGER, ForeignKey('hosts.host_id'))
@@ -2239,12 +3084,20 @@ class GetOdu16_ru_conf_table(Base):
         self.no_radio_interfaces = no_radio_interfaces
 
     def __repr__(self):
-        return "<GetOdu16_ru_conf_table('%s','%s','%s','%s','%s','%s')>" % (self.get_odu16_ru_conf_table_id, self.host_id, self.op_state, self.object_model_version, self.default_node_type, self.no_radio_interfaces)
+        return "<GetOdu16_ru_conf_table('%s','%s','%s','%s','%s','%s')>" % (
+        self.get_odu16_ru_conf_table_id, self.host_id, self.op_state, self.object_model_version, self.default_node_type,
+        self.no_radio_interfaces)
 
 # Class for get_odu16_ra_status_table
 
 
 class GetOdu16RaStatusTable(Base):
+    """
+
+    @param host_id:
+    @param current_timeslot:
+    @param ra_mac_address:
+    """
     __tablename__ = "get_odu16_ra_status_table"
     get_odu16_ra_status_table_id = Column(INTEGER, primary_key=True)
     host_id = Column(INTEGER, ForeignKey('hosts.host_id'))
@@ -2258,11 +3111,28 @@ class GetOdu16RaStatusTable(Base):
         self.ra_mac_address = ra_mac_address
 
     def __repr__(self):
-        return "<GetOdu16RaStatusTable('%s','%s','%s','%s')>" % (self.get_odu16_ra_status_table_id, self.host_id, self.current_timeslot, self.ra_mac_address)
+        return "<GetOdu16RaStatusTable('%s','%s','%s','%s')>" % (
+        self.get_odu16_ra_status_table_id, self.host_id, self.current_timeslot, self.ra_mac_address)
 
 
 # CREATE enum_index AS Enum ('1','2','3','4','5','6','7','8')
 class GetOdu16PeerNodeStatusTable(Base):
+    """
+
+    @param host_id:
+    @param link_status:
+    @param tunnel_status:
+    @param sig_strength:
+    @param peer_mac_addr:
+    @param ssidentifier:
+    @param peer_node_status_raster_time:
+    @param peer_node_status_num_slaves:
+    @param peer_node_status_timer_adjust:
+    @param peer_node_status_rf_config:
+    @param index:
+    @param timeslot_index:
+    @param timestamp:
+    """
     __tablename__ = "get_odu16_peer_node_status_table"
     get_odu16_peer_node_status_table_id = Column(INTEGER, primary_key=True)
     host_id = Column(VARCHAR(64))
@@ -2282,7 +3152,9 @@ class GetOdu16PeerNodeStatusTable(Base):
         Enum('1', '2', '3', '4', '5', '6', '7', '8', name='enumtimeslot'))
     timestamp = Column(TIMESTAMP)
 
-    def __init__(self, host_id, link_status, tunnel_status, sig_strength, peer_mac_addr, ssidentifier, peer_node_status_raster_time, peer_node_status_num_slaves, peer_node_status_timer_adjust, peer_node_status_rf_config, index, timeslot_index, timestamp):
+    def __init__(self, host_id, link_status, tunnel_status, sig_strength, peer_mac_addr, ssidentifier,
+                 peer_node_status_raster_time, peer_node_status_num_slaves, peer_node_status_timer_adjust,
+                 peer_node_status_rf_config, index, timeslot_index, timestamp):
         self.get_odu16_peer_node_status_table_id = None
         self.host_id = host_id
         self.link_status = link_status
@@ -2299,10 +3171,21 @@ class GetOdu16PeerNodeStatusTable(Base):
         self.timestamp = timestamp
 
     def __repr__(self):
-        return "<GetOdu16PeerNodeStatusTable('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.get_odu16_peer_node_status_table_id, self.host_id, self.link_status, self.tunnel_status, self.sig_strength, self.peer_mac_addr, self.ssidentifier, self.peer_node_status_raster_time, self.peer_node_status_num_slaves, self.peer_node_status_timer_adjust, self.peer_node_status_rf_config, self.index, self.timeslot_index, self.timestamp)
+        return "<GetOdu16PeerNodeStatusTable('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.get_odu16_peer_node_status_table_id, self.host_id, self.link_status, self.tunnel_status, self.sig_strength,
+        self.peer_mac_addr, self.ssidentifier, self.peer_node_status_raster_time, self.peer_node_status_num_slaves,
+        self.peer_node_status_timer_adjust, self.peer_node_status_rf_config, self.index, self.timeslot_index,
+        self.timestamp)
 
 
 class GetOdu16SWStatusTable(Base):
+    """
+
+    @param host_id:
+    @param active_version:
+    @param passive_version:
+    @param bootloader_version:
+    """
     __tablename__ = "get_odu16_sw_status_table"
     get_odu16_sw_status_table_id = Column(INTEGER, primary_key=True)
     host_id = Column(INTEGER, ForeignKey('hosts.host_id'))
@@ -2318,10 +3201,18 @@ class GetOdu16SWStatusTable(Base):
         self.bootloader_version = bootloader_version
 
     def __repr__(self):
-        return "<GetOdu16_sw_status_table('%s','%s','%s','%s','%s')>" % (self.get_odu16_sw_status_table_id, self.host_id, self.active_version, self.passive_version, self.bootloader_version)
+        return "<GetOdu16_sw_status_table('%s','%s','%s','%s','%s')>" % (
+        self.get_odu16_sw_status_table_id, self.host_id, self.active_version, self.passive_version,
+        self.bootloader_version)
 
 
 class GetOdu16HWDescTable(Base):
+    """
+
+    @param host_id:
+    @param hw_version:
+    @param hw_serial_no:
+    """
     __tablename__ = "get_odu16_hw_desc_table"
     get_odu16_hw_desc_table_id = Column(INTEGER, primary_key=True)
     host_id = Column(INTEGER, ForeignKey('hosts.host_id'))
@@ -2335,10 +3226,23 @@ class GetOdu16HWDescTable(Base):
         self.hw_serial_no = hw_serial_no
 
     def __repr__(self):
-        return "<GetOdu16_hw_desc_table('%s','%s','%s','%s')>" % (self.get_odu16_hw_desc_table_id, self.host_id, self.hw_version, self.hw_serial_no)
+        return "<GetOdu16_hw_desc_table('%s','%s','%s','%s')>" % (
+        self.get_odu16_hw_desc_table_id, self.host_id, self.hw_version, self.hw_serial_no)
 
 
 class GetOdu16RAScanListTable(Base):
+    """
+
+    @param host_id:
+    @param ssid:
+    @param signal_strength:
+    @param mac_addr:
+    @param raster_time:
+    @param timeslot:
+    @param max_slaves:
+    @param rf_coding:
+    @param channel_num:
+    """
     __tablename__ = "get_odu16_ra_scan_list_table"
     get_odu16_ra_scan_list_table_id = Column(INTEGER, primary_key=True)
     host_id = Column(INTEGER, ForeignKey('hosts.host_id'))
@@ -2351,7 +3255,8 @@ class GetOdu16RAScanListTable(Base):
     rf_coding = Column(SMALLINT)
     channel_num = Column(INTEGER)
 
-    def __init__(self, host_id, ssid, signal_strength, mac_addr, raster_time, timeslot, max_slaves, rf_coding, channel_num):
+    def __init__(self, host_id, ssid, signal_strength, mac_addr, raster_time, timeslot, max_slaves, rf_coding,
+                 channel_num):
         self.get_odu16_ra_scan_list_table_id = None
         self.host_id = host_id
         self.ssid = ssid
@@ -2364,7 +3269,9 @@ class GetOdu16RAScanListTable(Base):
         self.channel_num = channel_num
 
     def __repr__(self):
-        return "<GetOdu16_ra_scan_list_table('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.get_odu16_ra_scan_list_table_id, self.host_id, self.ssid, self.signal_strength, self.mac_addr, self.raster_time, self.timeslot, self.max_slaves, self.rf_coding, self.channel_num)
+        return "<GetOdu16_ra_scan_list_table('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.get_odu16_ra_scan_list_table_id, self.host_id, self.ssid, self.signal_strength, self.mac_addr,
+        self.raster_time, self.timeslot, self.max_slaves, self.rf_coding, self.channel_num)
 
 ############################## Odu16 ##########################################
 
@@ -2372,6 +3279,16 @@ class GetOdu16RAScanListTable(Base):
 
 
 class Odu100EswATUConfigTable(Base):
+    """
+
+    @param config_profile_id:
+    @param eswATUConfigAtuId:
+    @param eswATUConfigEntryType:
+    @param eswATUConfigPriorityVal:
+    @param eswATUConfigMacAddress:
+    @param eswATUConfigMemberPorts:
+    @param eswATUConfigRowStatus:
+    """
     __tablename__ = "odu100_eswATUConfigTable"
     odu100_eswATUConfigTable_id = Column(INTEGER, primary_key=True)
     config_profile_id = Column(
@@ -2383,7 +3300,8 @@ class Odu100EswATUConfigTable(Base):
     eswATUConfigMemberPorts = Column(INTEGER)
     eswATUConfigRowStatus = Column(INTEGER)
 
-    def __init__(self, config_profile_id, eswATUConfigAtuId, eswATUConfigEntryType, eswATUConfigPriorityVal, eswATUConfigMacAddress, eswATUConfigMemberPorts, eswATUConfigRowStatus):
+    def __init__(self, config_profile_id, eswATUConfigAtuId, eswATUConfigEntryType, eswATUConfigPriorityVal,
+                 eswATUConfigMacAddress, eswATUConfigMemberPorts, eswATUConfigRowStatus):
         self.odu100_eswATUConfigTable_id = None
         self.config_profile_id = config_profile_id
         self.eswATUConfigAtuId = eswATUConfigAtuId
@@ -2394,10 +3312,30 @@ class Odu100EswATUConfigTable(Base):
         self.eswATUConfigRowStatus = eswATUConfigRowStatus
 
     def __repr__(self):
-        return "<Odu100EswATUConfigTable('%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.odu100_eswATUConfigTable_id, self.config_profile_id, self.eswATUConfigAtuId, self.eswATUConfigEntryType, self.eswATUConfigPriorityVal, self.eswATUConfigMacAddress, self.eswATUConfigMemberPorts, self.eswATUConfigRowStatus)
+        return "<Odu100EswATUConfigTable('%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.odu100_eswATUConfigTable_id, self.config_profile_id, self.eswATUConfigAtuId, self.eswATUConfigEntryType,
+        self.eswATUConfigPriorityVal, self.eswATUConfigMacAddress, self.eswATUConfigMemberPorts,
+        self.eswATUConfigRowStatus)
 
 
 class Odu100EswBadFramesTable(Base):
+    """
+
+    @param host_id:
+    @param eswBadFramesPortNum:
+    @param eswBadFramesInUndersizeRx:
+    @param eswBadFramesInFragmentsRx:
+    @param eswBadFramesInOversizeRx:
+    @param eswBadFramesInJabberRx:
+    @param eswBadFramesInFCSErrRx:
+    @param eswBadFramesOutFCSErrTx:
+    @param eswBadFramesDeferredTx:
+    @param eswBadFramesCollisionsTx:
+    @param eswBadFramesLateTx:
+    @param eswBadFramesExcessiveTx:
+    @param eswBadFramesSingleTx:
+    @param eswBadFramesMultipleTx:
+    """
     __tablename__ = "odu100_eswBadFramesTable"
     odu100_eswBadFramesTable_id = Column(INTEGER, primary_key=True)
     host_id = Column(INTEGER, ForeignKey('hosts.host_id'))
@@ -2415,7 +3353,10 @@ class Odu100EswBadFramesTable(Base):
     eswBadFramesSingleTx = Column(INTEGER)
     eswBadFramesMultipleTx = Column(INTEGER)
 
-    def __init__(self, host_id, eswBadFramesPortNum, eswBadFramesInUndersizeRx, eswBadFramesInFragmentsRx, eswBadFramesInOversizeRx, eswBadFramesInJabberRx, eswBadFramesInFCSErrRx, eswBadFramesOutFCSErrTx, eswBadFramesDeferredTx, eswBadFramesCollisionsTx, eswBadFramesLateTx, eswBadFramesExcessiveTx, eswBadFramesSingleTx, eswBadFramesMultipleTx):
+    def __init__(self, host_id, eswBadFramesPortNum, eswBadFramesInUndersizeRx, eswBadFramesInFragmentsRx,
+                 eswBadFramesInOversizeRx, eswBadFramesInJabberRx, eswBadFramesInFCSErrRx, eswBadFramesOutFCSErrTx,
+                 eswBadFramesDeferredTx, eswBadFramesCollisionsTx, eswBadFramesLateTx, eswBadFramesExcessiveTx,
+                 eswBadFramesSingleTx, eswBadFramesMultipleTx):
         self.odu100_eswBadFramesTable_id = None
         self.host_id = host_id
         self.eswBadFramesPortNum = eswBadFramesPortNum
@@ -2433,10 +3374,26 @@ class Odu100EswBadFramesTable(Base):
         self.eswBadFramesMultipleTx = eswBadFramesMultipleTx
 
     def __repr__(self):
-        return "<Odu100EswBadFramesTable('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.odu100_eswBadFramesTable_id, self.host_id, self.eswBadFramesPortNum, self.eswBadFramesInUndersizeRx, self.eswBadFramesInFragmentsRx, self.eswBadFramesInOversizeRx, self.eswBadFramesInJabberRx, self.eswBadFramesInFCSErrRx, self.eswBadFramesOutFCSErrTx, self.eswBadFramesDeferredTx, self.eswBadFramesCollisionsTx, self.eswBadFramesLateTx, self.eswBadFramesExcessiveTx, self.eswBadFramesSingleTx, self.eswBadFramesMultipleTx)
+        return "<Odu100EswBadFramesTable('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.odu100_eswBadFramesTable_id, self.host_id, self.eswBadFramesPortNum, self.eswBadFramesInUndersizeRx,
+        self.eswBadFramesInFragmentsRx, self.eswBadFramesInOversizeRx, self.eswBadFramesInJabberRx,
+        self.eswBadFramesInFCSErrRx, self.eswBadFramesOutFCSErrTx, self.eswBadFramesDeferredTx,
+        self.eswBadFramesCollisionsTx, self.eswBadFramesLateTx, self.eswBadFramesExcessiveTx, self.eswBadFramesSingleTx,
+        self.eswBadFramesMultipleTx)
 
 
 class Odu100EswGoodFramesTable(Base):
+    """
+
+    @param host_id:
+    @param eswGoodFramesPortNum:
+    @param eswGoodFramesInUnicast:
+    @param eswGoodFramesOutUnicast:
+    @param eswGoodFramesInBCast:
+    @param eswGoodFramesOutBCast:
+    @param eswGoodFramesInMCast:
+    @param eswGoodFramesOutMcast:
+    """
     __tablename__ = "odu100_eswGoodFramesTable"
     odu100_eswGoodFramesTable_id = Column(INTEGER, primary_key=True)
     host_id = Column(INTEGER, ForeignKey('hosts.host_id'))
@@ -2448,7 +3405,8 @@ class Odu100EswGoodFramesTable(Base):
     eswGoodFramesInMCast = Column(INTEGER)
     eswGoodFramesOutMcast = Column(INTEGER)
 
-    def __init__(self, host_id, eswGoodFramesPortNum, eswGoodFramesInUnicast, eswGoodFramesOutUnicast, eswGoodFramesInBCast, eswGoodFramesOutBCast, eswGoodFramesInMCast, eswGoodFramesOutMcast):
+    def __init__(self, host_id, eswGoodFramesPortNum, eswGoodFramesInUnicast, eswGoodFramesOutUnicast,
+                 eswGoodFramesInBCast, eswGoodFramesOutBCast, eswGoodFramesInMCast, eswGoodFramesOutMcast):
         self.odu100_eswGoodFramesTable_id = None
         self.host_id = host_id
         self.eswGoodFramesPortNum = eswGoodFramesPortNum
@@ -2460,10 +3418,20 @@ class Odu100EswGoodFramesTable(Base):
         self.eswGoodFramesOutMcast = eswGoodFramesOutMcast
 
     def __repr__(self):
-        return "<Odu100EswGOOdFramesTable('%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.odu100_eswGoodFramesTable_id, self.host_id, self.eswGoodFramesPortNum, self.eswGoodFramesInUnicast, self.eswGoodFramesOutUnicast, self.eswGoodFramesInBCast, self.eswGoodFramesOutBCast, self.eswGoodFramesInMCast, self.eswGoodFramesOutMcast)
+        return "<Odu100EswGOOdFramesTable('%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.odu100_eswGoodFramesTable_id, self.host_id, self.eswGoodFramesPortNum, self.eswGoodFramesInUnicast,
+        self.eswGoodFramesOutUnicast, self.eswGoodFramesInBCast, self.eswGoodFramesOutBCast, self.eswGoodFramesInMCast,
+        self.eswGoodFramesOutMcast)
 
 
 class Odu100EswMirroringPortTable(Base):
+    """
+
+    @param config_profile_id:
+    @param eswMirroringPortIndexId:
+    @param eswMirroringPort:
+    @param eswMirroringPortSecond:
+    """
     __tablename__ = "odu100_eswMirroringPortTable"
     odu100_eswMirroringPortTable_id = Column(INTEGER, primary_key=True)
     config_profile_id = Column(
@@ -2480,10 +3448,19 @@ class Odu100EswMirroringPortTable(Base):
         self.eswMirroringPortSecond = eswMirroringPortSecond
 
     def __repr__(self):
-        return "<Odu100EswMirrOringPOrtTable('%s','%s','%s','%s','%s')>" % (self.odu100_eswMirroringPortTable_id, self.config_profile_id, self.eswMirroringPortIndexId, self.eswMirroringPort, self.eswMirroringPortSecond)
+        return "<Odu100EswMirrOringPOrtTable('%s','%s','%s','%s','%s')>" % (
+        self.odu100_eswMirroringPortTable_id, self.config_profile_id, self.eswMirroringPortIndexId,
+        self.eswMirroringPort, self.eswMirroringPortSecond)
 
 
 class Odu100EswPortAccessListTable(Base):
+    """
+
+    @param config_profile_id:
+    @param eswPortACLPortNum:
+    @param eswPortACLSecIndex:
+    @param eswPortACLMacAddress:
+    """
     __tablename__ = "odu100_eswPortAccessListTable"
     odu100_eswPortAccessListTable_id = Column(INTEGER, primary_key=True)
     config_profile_id = Column(
@@ -2500,10 +3477,19 @@ class Odu100EswPortAccessListTable(Base):
         self.eswPortACLMacAddress = eswPortACLMacAddress
 
     def __repr__(self):
-        return "<Odu100EswPOrtAccessListTable('%s','%s','%s','%s','%s')>" % (self.odu100_eswPortAccessListTable_id, self.config_profile_id, self.eswPortACLPortNum, self.eswPortACLSecIndex, self.eswPortACLMacAddress)
+        return "<Odu100EswPOrtAccessListTable('%s','%s','%s','%s','%s')>" % (
+        self.odu100_eswPortAccessListTable_id, self.config_profile_id, self.eswPortACLPortNum, self.eswPortACLSecIndex,
+        self.eswPortACLMacAddress)
 
 
 class Odu100EswPortBwTable(Base):
+    """
+
+    @param config_profile_id:
+    @param eswPortBwPortNum:
+    @param eswPortBwEgressBw:
+    @param eswPortBwIngressBw:
+    """
     __tablename__ = "odu100_eswPortBwTable"
     odu100_eswPortBwTable_id = Column(INTEGER, primary_key=True)
     config_profile_id = Column(
@@ -2520,10 +3506,24 @@ class Odu100EswPortBwTable(Base):
         self.eswPortBwIngressBw = eswPortBwIngressBw
 
     def __repr__(self):
-        return "<Odu100EswPOrtBwTable('%s','%s','%s','%s','%s')>" % (self.odu100_eswPortBwTable_id, self.config_profile_id, self.eswPortBwPortNum, self.eswPortBwEgressBw, self.eswPortBwIngressBw)
+        return "<Odu100EswPOrtBwTable('%s','%s','%s','%s','%s')>" % (
+        self.odu100_eswPortBwTable_id, self.config_profile_id, self.eswPortBwPortNum, self.eswPortBwEgressBw,
+        self.eswPortBwIngressBw)
 
 
 class Odu100EswPortConfigTable(Base):
+    """
+
+    @param config_profile_id:
+    @param eswPortConfigPortNum:
+    @param eswPortConfigAdminState:
+    @param eswPortConfigLinkMode:
+    @param eswPortConfigPortVid:
+    @param eswPortConfigAuthState:
+    @param eswPortConfigMirrDir:
+    @param eswPortConfigDotqMode:
+    @param eswPortConfigMacFlowControl:
+    """
     __tablename__ = "odu100_eswPortConfigTable"
     odu100_eswPortConfigTable_id = Column(INTEGER, primary_key=True)
     config_profile_id = Column(
@@ -2537,7 +3537,9 @@ class Odu100EswPortConfigTable(Base):
     eswPortConfigDotqMode = Column(INTEGER)
     eswPortConfigMacFlowControl = Column(INTEGER)
 
-    def __init__(self, config_profile_id, eswPortConfigPortNum, eswPortConfigAdminState, eswPortConfigLinkMode, eswPortConfigPortVid, eswPortConfigAuthState, eswPortConfigMirrDir, eswPortConfigDotqMode, eswPortConfigMacFlowControl):
+    def __init__(self, config_profile_id, eswPortConfigPortNum, eswPortConfigAdminState, eswPortConfigLinkMode,
+                 eswPortConfigPortVid, eswPortConfigAuthState, eswPortConfigMirrDir, eswPortConfigDotqMode,
+                 eswPortConfigMacFlowControl):
         self.odu100_eswPortConfigTable_id = None
         self.config_profile_id = config_profile_id
         self.eswPortConfigPortNum = eswPortConfigPortNum
@@ -2550,10 +3552,21 @@ class Odu100EswPortConfigTable(Base):
         self.eswPortConfigMacFlowControl = eswPortConfigMacFlowControl
 
     def __repr__(self):
-        return "<Odu100EswPOrtCOnfigTable('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.odu100_eswPortConfigTable_id, self.config_profile_id, self.eswPortConfigPortNum, self.eswPortConfigAdminState, self.eswPortConfigLinkMode, self.eswPortConfigPortVid, self.eswPortConfigAuthState, self.eswPortConfigMirrDir, self.eswPortConfigDotqMode, self.eswPortConfigMacFlowControl)
+        return "<Odu100EswPOrtCOnfigTable('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.odu100_eswPortConfigTable_id, self.config_profile_id, self.eswPortConfigPortNum,
+        self.eswPortConfigAdminState, self.eswPortConfigLinkMode, self.eswPortConfigPortVid,
+        self.eswPortConfigAuthState, self.eswPortConfigMirrDir, self.eswPortConfigDotqMode,
+        self.eswPortConfigMacFlowControl)
 
 
 class Odu100EswPortQinQTable(Base):
+    """
+
+    @param config_profile_id:
+    @param eswPortQinQPortNum:
+    @param eswPortQinQAuthState:
+    @param eswPortQinQProviderTag:
+    """
     __tablename__ = "odu100_eswPortQinQTable"
     odu100_eswPortQinQTable_id = Column(INTEGER, primary_key=True)
     config_profile_id = Column(
@@ -2570,10 +3583,21 @@ class Odu100EswPortQinQTable(Base):
         self.eswPortQinQProviderTag = eswPortQinQProviderTag
 
     def __repr__(self):
-        return "<Odu100EswPOrtQinQTable('%s','%s','%s','%s','%s')>" % (self.odu100_eswPortQinQTable_id, self.config_profile_id, self.eswPortQinQPortNum, self.eswPortQinQAuthState, self.eswPortQinQProviderTag)
+        return "<Odu100EswPOrtQinQTable('%s','%s','%s','%s','%s')>" % (
+        self.odu100_eswPortQinQTable_id, self.config_profile_id, self.eswPortQinQPortNum, self.eswPortQinQAuthState,
+        self.eswPortQinQProviderTag)
 
 
 class Odu100EswPortStatisticsTable(Base):
+    """
+
+    @param host_id:
+    @param eswPortStatisticsPortNum:
+    @param eswPortStatisticsInDiscards:
+    @param eswPortStatisticsInGoodOctets:
+    @param eswPortStatisticsInBadOctets:
+    @param eswPortStatisticsOutOctets:
+    """
     __tablename__ = "odu100_eswPortStatisticsTable"
     odu100_eswPortStatisticsTable_id = Column(INTEGER, primary_key=True)
     host_id = Column(INTEGER, ForeignKey('hosts.host_id'))
@@ -2583,7 +3607,8 @@ class Odu100EswPortStatisticsTable(Base):
     eswPortStatisticsInBadOctets = Column(INTEGER)
     eswPortStatisticsOutOctets = Column(INTEGER)
 
-    def __init__(self, host_id, eswPortStatisticsPortNum, eswPortStatisticsInDiscards, eswPortStatisticsInGoodOctets, eswPortStatisticsInBadOctets, eswPortStatisticsOutOctets):
+    def __init__(self, host_id, eswPortStatisticsPortNum, eswPortStatisticsInDiscards, eswPortStatisticsInGoodOctets,
+                 eswPortStatisticsInBadOctets, eswPortStatisticsOutOctets):
         self.odu100_eswPortStatisticsTable_id = None
         self.host_id = host_id
         self.eswPortStatisticsPortNum = eswPortStatisticsPortNum
@@ -2593,10 +3618,21 @@ class Odu100EswPortStatisticsTable(Base):
         self.eswPortStatisticsOutOctets = eswPortStatisticsOutOctets
 
     def __repr__(self):
-        return "<Odu100EswPOrtStatisticsTable('%s','%s','%s','%s','%s','%s','%s')>" % (self.odu100_eswPortStatisticsTable_id, self.host_id, self.eswPortStatisticsPortNum, self.eswPortStatisticsInDiscards, self.eswPortStatisticsInGoodOctets, self.eswPortStatisticsInBadOctets, self.eswPortStatisticsOutOctets)
+        return "<Odu100EswPOrtStatisticsTable('%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.odu100_eswPortStatisticsTable_id, self.host_id, self.eswPortStatisticsPortNum,
+        self.eswPortStatisticsInDiscards, self.eswPortStatisticsInGoodOctets, self.eswPortStatisticsInBadOctets,
+        self.eswPortStatisticsOutOctets)
 
 
 class Odu100EswPortStatusTable(Base):
+    """
+
+    @param host_id:
+    @param eswPortStatusPortNum:
+    @param eswPortStatusOpState:
+    @param eswPortStatusLinkSpeed:
+    @param eswPortStatusMacFlowControl:
+    """
     __tablename__ = "odu100_eswPortStatusTable"
     odu100_eswPortStatusTable_id = Column(INTEGER, primary_key=True)
     host_id = Column(INTEGER, ForeignKey('hosts.host_id'))
@@ -2605,7 +3641,8 @@ class Odu100EswPortStatusTable(Base):
     eswPortStatusLinkSpeed = Column(INTEGER)
     eswPortStatusMacFlowControl = Column(INTEGER)
 
-    def __init__(self, host_id, eswPortStatusPortNum, eswPortStatusOpState, eswPortStatusLinkSpeed, eswPortStatusMacFlowControl):
+    def __init__(self, host_id, eswPortStatusPortNum, eswPortStatusOpState, eswPortStatusLinkSpeed,
+                 eswPortStatusMacFlowControl):
         self.odu100_eswPortStatusTable_id = None
         self.host_id = host_id
         self.eswPortStatusPortNum = eswPortStatusPortNum
@@ -2614,10 +3651,22 @@ class Odu100EswPortStatusTable(Base):
         self.eswPortStatusMacFlowControl = eswPortStatusMacFlowControl
 
     def __repr__(self):
-        return "<Odu100EswPOrtStatusTable('%s','%s','%s','%s','%s','%s')>" % (self.odu100_eswPortStatusTable_id, self.host_id, self.eswPortStatusPortNum, self.eswPortStatusOpState, self.eswPortStatusLinkSpeed, self.eswPortStatusMacFlowControl)
+        return "<Odu100EswPOrtStatusTable('%s','%s','%s','%s','%s','%s')>" % (
+        self.odu100_eswPortStatusTable_id, self.host_id, self.eswPortStatusPortNum, self.eswPortStatusOpState,
+        self.eswPortStatusLinkSpeed, self.eswPortStatusMacFlowControl)
 
 
 class Odu100EswVlanConfigTable(Base):
+    """
+
+    @param config_profile_id:
+    @param eswVlanConfigVlanId:
+    @param eswVlanConfigVlanName:
+    @param eswVlanConfigVlanType:
+    @param eswVlanConfigVlanTag:
+    @param eswVlanConfigMemberPorts:
+    @param eswVlanConfigRowStatus:
+    """
     __tablename__ = "odu100_eswVlanConfigTable"
     odu100_eswVlanConfigTable_id = Column(INTEGER, primary_key=True)
     config_profile_id = Column(
@@ -2629,7 +3678,8 @@ class Odu100EswVlanConfigTable(Base):
     eswVlanConfigMemberPorts = Column(INTEGER)
     eswVlanConfigRowStatus = Column(INTEGER)
 
-    def __init__(self, config_profile_id, eswVlanConfigVlanId, eswVlanConfigVlanName, eswVlanConfigVlanType, eswVlanConfigVlanTag, eswVlanConfigMemberPorts, eswVlanConfigRowStatus):
+    def __init__(self, config_profile_id, eswVlanConfigVlanId, eswVlanConfigVlanName, eswVlanConfigVlanType,
+                 eswVlanConfigVlanTag, eswVlanConfigMemberPorts, eswVlanConfigRowStatus):
         self.odu100_eswVlanConfigTable_id = None
         self.config_profile_id = config_profile_id
         self.eswVlanConfigVlanId = eswVlanConfigVlanId
@@ -2640,10 +3690,20 @@ class Odu100EswVlanConfigTable(Base):
         self.eswVlanConfigRowStatus = eswVlanConfigRowStatus
 
     def __repr__(self):
-        return "<Odu100EswVlanCOnfigTable('%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.odu100_eswVlanConfigTable_id, self.config_profile_id, self.eswVlanConfigVlanId, self.eswVlanConfigVlanName, self.eswVlanConfigVlanType, self.eswVlanConfigVlanTag, self.eswVlanConfigMemberPorts, self.eswVlanConfigRowStatus)
+        return "<Odu100EswVlanCOnfigTable('%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.odu100_eswVlanConfigTable_id, self.config_profile_id, self.eswVlanConfigVlanId, self.eswVlanConfigVlanName,
+        self.eswVlanConfigVlanType, self.eswVlanConfigVlanTag, self.eswVlanConfigMemberPorts,
+        self.eswVlanConfigRowStatus)
 
 
 class Odu100HwDescTable(Base):
+    """
+
+    @param host_id:
+    @param hwDescIndex:
+    @param hwVersion:
+    @param hwSerialNo:
+    """
     __tablename__ = "odu100_hwDescTable"
     odu100_hwDescTable_id = Column(INTEGER, primary_key=True)
     host_id = Column(INTEGER, ForeignKey('hosts.host_id'))
@@ -2659,10 +3719,23 @@ class Odu100HwDescTable(Base):
         self.hwSerialNo = hwSerialNo
 
     def __repr__(self):
-        return "<Odu100HwDescTable('%s','%s','%s','%s','%s')>" % (self.odu100_hwDescTable_id, self.host_id, self.hwDescIndex, self.hwVersion, self.hwSerialNo)
+        return "<Odu100HwDescTable('%s','%s','%s','%s','%s')>" % (
+        self.odu100_hwDescTable_id, self.host_id, self.hwDescIndex, self.hwVersion, self.hwSerialNo)
 
 
 class Odu100IpConfigTable(Base):
+    """
+
+    @param config_profile_id:
+    @param ipConfigIndex:
+    @param adminState:
+    @param ipAddress:
+    @param ipNetworkMask:
+    @param ipDefaultGateway:
+    @param autoIpConfig:
+    @param managementMode:
+    @param managementVlanTag:
+    """
     __tablename__ = "odu100_ipConfigTable"
     odu100_ipConfigTable_id = Column(INTEGER, primary_key=True)
     config_profile_id = Column(
@@ -2676,7 +3749,8 @@ class Odu100IpConfigTable(Base):
     managementMode = Column(TINYINT)
     managementVlanTag = Column(INTEGER)
 
-    def __init__(self, config_profile_id, ipConfigIndex, adminState, ipAddress, ipNetworkMask, ipDefaultGateway, autoIpConfig, managementMode=0, managementVlanTag=0):
+    def __init__(self, config_profile_id, ipConfigIndex, adminState, ipAddress, ipNetworkMask, ipDefaultGateway,
+                 autoIpConfig, managementMode=0, managementVlanTag=0):
         self.odu100_ipConfigTable_id = None
         self.config_profile_id = config_profile_id
         self.ipConfigIndex = ipConfigIndex
@@ -2689,10 +3763,25 @@ class Odu100IpConfigTable(Base):
         self.managementVlanTag = managementVlanTag
 
     def __repr__(self):
-        return "<Odu100IpCOnfigTable('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.odu100_ipConfigTable_id, self.config_profile_id, self.ipConfigIndex, self.adminState, self.ipAddress, self.ipNetworkMask, self.ipDefaultGateway, self.autoIpConfig, self.managementMode, self.managementVlanTag)
+        return "<Odu100IpCOnfigTable('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.odu100_ipConfigTable_id, self.config_profile_id, self.ipConfigIndex, self.adminState, self.ipAddress,
+        self.ipNetworkMask, self.ipDefaultGateway, self.autoIpConfig, self.managementMode, self.managementVlanTag)
 
 
 class Odu100NwInterfaceStatisticsTable(Base):
+    """
+
+    @param host_id:
+    @param nwStatsIndex:
+    @param rxPackets:
+    @param txPackets:
+    @param rxBytes:
+    @param txBytes:
+    @param rxErrors:
+    @param txErrors:
+    @param rxDropped:
+    @param txDropped:
+    """
     __tablename__ = "odu100_nwInterfaceStatisticsTable"
     odu100_nwInterfaceStatisticsTable_id = Column(INTEGER, primary_key=True)
     host_id = Column(INTEGER, ForeignKey('hosts.host_id'))
@@ -2706,7 +3795,8 @@ class Odu100NwInterfaceStatisticsTable(Base):
     rxDropped = Column(INTEGER)
     txDropped = Column(INTEGER)
 
-    def __init__(self, host_id, nwStatsIndex, rxPackets, txPackets, rxBytes, txBytes, rxErrors, txErrors, rxDropped, txDropped):
+    def __init__(self, host_id, nwStatsIndex, rxPackets, txPackets, rxBytes, txBytes, rxErrors, txErrors, rxDropped,
+                 txDropped):
         self.odu100_nwInterfaceStatisticsTable_id = None
         self.host_id = host_id
         self.nwStatsIndex = nwStatsIndex
@@ -2720,10 +3810,20 @@ class Odu100NwInterfaceStatisticsTable(Base):
         self.txDropped = txDropped
 
     def __repr__(self):
-        return "<Odu100NwInterfaceStatisticsTable('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.odu100_nwInterfaceStatisticsTable_id, self.host_id, self.nwStatsIndex, self.rxPackets, self.txPackets, self.rxBytes, self.txBytes, self.rxErrors, self.txErrors, self.rxDropped, self.txDropped)
+        return "<Odu100NwInterfaceStatisticsTable('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.odu100_nwInterfaceStatisticsTable_id, self.host_id, self.nwStatsIndex, self.rxPackets, self.txPackets,
+        self.rxBytes, self.txBytes, self.rxErrors, self.txErrors, self.rxDropped, self.txDropped)
 
 
 class Odu100NwInterfaceStatusTable(Base):
+    """
+
+    @param host_id:
+    @param nwStatusIndex:
+    @param nwInterfaceName:
+    @param operationalState:
+    @param macAddress:
+    """
     __tablename__ = "odu100_nwInterfaceStatusTable"
     odu100_nwInterfaceStatusTable_id = Column(INTEGER, primary_key=True)
     host_id = Column(INTEGER, ForeignKey('hosts.host_id'))
@@ -2741,10 +3841,19 @@ class Odu100NwInterfaceStatusTable(Base):
         self.macAddress = macAddress
 
     def __repr__(self):
-        return "<Odu100NwInterfaceStatusTable('%s','%s','%s','%s','%s','%s')>" % (self.odu100_nwInterfaceStatusTable_id, self.host_id, self.nwStatusIndex, self.nwInterfaceName, self.operationalState, self.macAddress)
+        return "<Odu100NwInterfaceStatusTable('%s','%s','%s','%s','%s','%s')>" % (
+        self.odu100_nwInterfaceStatusTable_id, self.host_id, self.nwStatusIndex, self.nwInterfaceName,
+        self.operationalState, self.macAddress)
 
 
 class Odu100OmcConfTable(Base):
+    """
+
+    @param config_profile_id:
+    @param omcConfIndex:
+    @param omcIpAddress:
+    @param periodicStatsTimer:
+    """
     __tablename__ = "odu100_omcConfTable"
     odu100_omcConfTable_id = Column(INTEGER, primary_key=True)
     config_profile_id = Column(
@@ -2761,10 +3870,24 @@ class Odu100OmcConfTable(Base):
         self.periodicStatsTimer = periodicStatsTimer
 
     def __repr__(self):
-        return "<Odu100OmcCOnfTable('%s','%s','%s','%s','%s')>" % (self.odu100_omcConfTable_id, self.config_profile_id, self.omcConfIndex, self.omcIpAddress, self.periodicStatsTimer)
+        return "<Odu100OmcCOnfTable('%s','%s','%s','%s','%s')>" % (
+        self.odu100_omcConfTable_id, self.config_profile_id, self.omcConfIndex, self.omcIpAddress,
+        self.periodicStatsTimer)
 
 
 class Odu100PeerConfigTable(Base):
+    """
+
+    @param config_profile_id:
+    @param raIndex:
+    @param timeslotIndex:
+    @param peerMacAddress:
+    @param guaranteedUplinkBW:
+    @param guaranteedDownlinkBW:
+    @param basicrateMCSIndex:
+    @param maxUplinkBW:
+    @param maxDownlinkBW:
+    """
     __tablename__ = "odu100_peerConfigTable"
     odu100_peerConfigTable_id = Column(INTEGER, primary_key=True)
     config_profile_id = Column(
@@ -2778,7 +3901,8 @@ class Odu100PeerConfigTable(Base):
     maxUplinkBW = Column(INTEGER)
     maxDownlinkBW = Column(INTEGER)
 
-    def __init__(self, config_profile_id, raIndex, timeslotIndex, peerMacAddress, guaranteedUplinkBW, guaranteedDownlinkBW, basicrateMCSIndex, maxUplinkBW, maxDownlinkBW):
+    def __init__(self, config_profile_id, raIndex, timeslotIndex, peerMacAddress, guaranteedUplinkBW,
+                 guaranteedDownlinkBW, basicrateMCSIndex, maxUplinkBW, maxDownlinkBW):
         self.odu100_peerConfigTable_id = None
         self.config_profile_id = config_profile_id
         self.raIndex = raIndex
@@ -2791,10 +3915,42 @@ class Odu100PeerConfigTable(Base):
         self.maxDownlinkBW = maxDownlinkBW
 
     def __repr__(self):
-        return "<Odu100PeerCOnfigTable('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.odu100_peerConfigTable_id, self.config_profile_id, self.raIndex, self.timeslotIndex, self.peerMacAddress, self.guaranteedUplinkBW, self.guaranteedDownlinkBW, self.basicrateMCSIndex, self.maxUplinkBW, self.maxDownlinkBW)
+        return "<Odu100PeerCOnfigTable('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.odu100_peerConfigTable_id, self.config_profile_id, self.raIndex, self.timeslotIndex, self.peerMacAddress,
+        self.guaranteedUplinkBW, self.guaranteedDownlinkBW, self.basicrateMCSIndex, self.maxUplinkBW,
+        self.maxDownlinkBW)
 
 
 class Odu100PeerLinkStatisticsTable(Base):
+    """
+
+    @param host_id:
+    @param raIndex:
+    @param timeslotindex:
+    @param txdroped:
+    @param rxDataSubFrames:
+    @param txDataSubFrames:
+    @param signalstrength1:
+    @param txRetransmissions5:
+    @param txRetransmissions4:
+    @param txRetransmissions3:
+    @param txRetransmissions2:
+    @param txRetransmissions1:
+    @param txRetransmissions0:
+    @param rxRetransmissions5:
+    @param rxRetransmissions4:
+    @param rxRetransmissions3:
+    @param rxRetransmissions2:
+    @param rxRetransmissions1:
+    @param rxRetransmissions0:
+    @param rxBroadcastDataSubFrames:
+    @param rateIncreases:
+    @param rateDecreases:
+    @param emptyRasters:
+    @param rxDroppedTpPkts:
+    @param rxDroppedRadioPkts:
+    @param signalstrength2:
+    """
     __tablename__ = "odu100_peerLinkStatisticsTable"
     odu100_peerLinkStatisticsTable_id = Column(INTEGER, primary_key=True)
     host_id = Column(INTEGER, ForeignKey('hosts.host_id'))
@@ -2824,7 +3980,11 @@ class Odu100PeerLinkStatisticsTable(Base):
     rxDroppedRadioPkts = Column(INTEGER)
     signalstrength2 = Column(INTEGER)
 
-    def __init__(self, host_id, raIndex, timeslotindex, txdroped, rxDataSubFrames, txDataSubFrames, signalstrength1, txRetransmissions5, txRetransmissions4, txRetransmissions3, txRetransmissions2, txRetransmissions1, txRetransmissions0, rxRetransmissions5, rxRetransmissions4, rxRetransmissions3, rxRetransmissions2, rxRetransmissions1, rxRetransmissions0, rxBroadcastDataSubFrames, rateIncreases, rateDecreases, emptyRasters, rxDroppedTpPkts, rxDroppedRadioPkts, signalstrength2):
+    def __init__(self, host_id, raIndex, timeslotindex, txdroped, rxDataSubFrames, txDataSubFrames, signalstrength1,
+                 txRetransmissions5, txRetransmissions4, txRetransmissions3, txRetransmissions2, txRetransmissions1,
+                 txRetransmissions0, rxRetransmissions5, rxRetransmissions4, rxRetransmissions3, rxRetransmissions2,
+                 rxRetransmissions1, rxRetransmissions0, rxBroadcastDataSubFrames, rateIncreases, rateDecreases,
+                 emptyRasters, rxDroppedTpPkts, rxDroppedRadioPkts, signalstrength2):
         self.odu100_peerLinkStatisticsTable_id = None
         self.host_id = host_id
         self.raIndex = raIndex
@@ -2854,10 +4014,29 @@ class Odu100PeerLinkStatisticsTable(Base):
         self.signalstrength2 = signalstrength2
 
     def __repr__(self):
-        return "<Odu100PeerLinkStatisticsTable('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.odu100_peerLinkStatisticsTable_id, self.host_id, self.raIndex, self.timeslotindex, self.txdroped, self.rxDataSubFrames, self.txDataSubFrames, self.signalstrength1, self.txRetransmissions5, self.txRetransmissions4, self.txRetransmissions3, self.txRetransmissions2, self.txRetransmissions1, self.txRetransmissions0, self.rxRetransmissions5, self.rxRetransmissions4, self.rxRetransmissions3, self.rxRetransmissions2, self.rxRetransmissions1, self.rxRetransmissions0, self.rxBroadcastDataSubFrames, self.rateIncreases, self.rateDecreases, self.emptyRasters, self.rxDroppedTpPkts, self.rxDroppedRadioPkts, self.signalstrength2)
+        return "<Odu100PeerLinkStatisticsTable('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.odu100_peerLinkStatisticsTable_id, self.host_id, self.raIndex, self.timeslotindex, self.txdroped,
+        self.rxDataSubFrames, self.txDataSubFrames, self.signalstrength1, self.txRetransmissions5,
+        self.txRetransmissions4, self.txRetransmissions3, self.txRetransmissions2, self.txRetransmissions1,
+        self.txRetransmissions0, self.rxRetransmissions5, self.rxRetransmissions4, self.rxRetransmissions3,
+        self.rxRetransmissions2, self.rxRetransmissions1, self.rxRetransmissions0, self.rxBroadcastDataSubFrames,
+        self.rateIncreases, self.rateDecreases, self.emptyRasters, self.rxDroppedTpPkts, self.rxDroppedRadioPkts,
+        self.signalstrength2)
 
 
 class Odu100PeerRateStatisticsTable(Base):
+    """
+
+    @param host_id:
+    @param raIndex:
+    @param mcsIndex:
+    @param timeSlotindex:
+    @param peerrate:
+    @param per:
+    @param ticks:
+    @param ticksMinimumRateTx:
+    @param ticksWasted:
+    """
     __tablename__ = "odu100_peerRateStatisticsTable"
     odu100_peerRateStatisticsTable_id = Column(INTEGER, primary_key=True)
     host_id = Column(INTEGER, ForeignKey('hosts.host_id'))
@@ -2870,7 +4049,8 @@ class Odu100PeerRateStatisticsTable(Base):
     ticksMinimumRateTx = Column(INTEGER)
     ticksWasted = Column(INTEGER)
 
-    def __init__(self, host_id, raIndex, mcsIndex, timeSlotindex, peerrate, per, ticks, ticksMinimumRateTx, ticksWasted):
+    def __init__(self, host_id, raIndex, mcsIndex, timeSlotindex, peerrate, per, ticks, ticksMinimumRateTx,
+                 ticksWasted):
         self.odu100_peerRateStatisticsTable_id = None
         self.host_id = host_id
         self.raIndex = raIndex
@@ -2883,10 +4063,24 @@ class Odu100PeerRateStatisticsTable(Base):
         self.ticksWasted = ticksWasted
 
     def __repr__(self):
-        return "<Odu100PeerRateStatisticsTable('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.odu100_peerRateStatisticsTable_id, self.host_id, self.raIndex, self.mcsIndex, self.timeSlotindex, self.peerrate, self.per, self.ticks, self.ticksMinimumRateTx, self.ticksWasted)
+        return "<Odu100PeerRateStatisticsTable('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.odu100_peerRateStatisticsTable_id, self.host_id, self.raIndex, self.mcsIndex, self.timeSlotindex,
+        self.peerrate, self.per, self.ticks, self.ticksMinimumRateTx, self.ticksWasted)
 
 
 class Odu100PeerTunnelStatisticsTable(Base):
+    """
+
+    @param host_id:
+    @param raIndex:
+    @param tsIndex:
+    @param rxPacket:
+    @param txPacket:
+    @param rxBundles:
+    @param txBundles:
+    @param rxDroped:
+    @param txDroped:
+    """
     __tablename__ = "odu100_peerTunnelStatisticsTable"
     odu100_peerTunnelStatisticsTable_id = Column(INTEGER, primary_key=True)
     host_id = Column(INTEGER, ForeignKey('hosts.host_id'))
@@ -2912,10 +4106,37 @@ class Odu100PeerTunnelStatisticsTable(Base):
         self.txDroped = txDroped
 
     def __repr__(self):
-        return "<Odu100PeerTunnelStatisticsTable('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.odu100_peerTunnelStatisticsTable_id, self.host_id, self.raIndex, self.tsIndex, self.rxPacket, self.txPacket, self.rxBundles, self.txBundles, self.rxDroped, self.txDroped)
+        return "<Odu100PeerTunnelStatisticsTable('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.odu100_peerTunnelStatisticsTable_id, self.host_id, self.raIndex, self.tsIndex, self.rxPacket,
+        self.txPacket, self.rxBundles, self.txBundles, self.rxDroped, self.txDroped)
 
 
 class Odu100PeerNodeStatusTable(Base):
+    """
+
+    @param host_id:
+    @param raIndex:
+    @param timeSlotIndex:
+    @param linkStatus:
+    @param tunnelStatus:
+    @param sigStrength1:
+    @param peerMacAddr:
+    @param ssIdentifier:
+    @param peerNodeStatusNumSlaves:
+    @param peerNodeStatusrxRate:
+    @param peerNodeStatustxRate:
+    @param allocatedTxBW:
+    @param allocatedRxBW:
+    @param usedTxBW:
+    @param usedRxBW:
+    @param txbasicRate:
+    @param sigStrength2:
+    @param rxbasicRate:
+    @param txLinkQuality:
+    @param peerNodeStatustxTime:
+    @param peerNodeStatusrxTime:
+    @param timestamp:
+    """
     __tablename__ = "odu100_peerNodeStatusTable"
     odu100_peerNodeStatusTable_id = Column(INTEGER, primary_key=True)
     host_id = Column(INTEGER, ForeignKey('hosts.host_id'))
@@ -2941,7 +4162,10 @@ class Odu100PeerNodeStatusTable(Base):
     peerNodeStatusrxTime = Column(INT)
     timestamp = Column(DATETIME)
 
-    def __init__(self, host_id, raIndex, timeSlotIndex, linkStatus, tunnelStatus, sigStrength1, peerMacAddr, ssIdentifier, peerNodeStatusNumSlaves, peerNodeStatusrxRate, peerNodeStatustxRate, allocatedTxBW, allocatedRxBW, usedTxBW, usedRxBW, txbasicRate, sigStrength2, rxbasicRate, txLinkQuality, peerNodeStatustxTime, peerNodeStatusrxTime, timestamp):
+    def __init__(self, host_id, raIndex, timeSlotIndex, linkStatus, tunnelStatus, sigStrength1, peerMacAddr,
+                 ssIdentifier, peerNodeStatusNumSlaves, peerNodeStatusrxRate, peerNodeStatustxRate, allocatedTxBW,
+                 allocatedRxBW, usedTxBW, usedRxBW, txbasicRate, sigStrength2, rxbasicRate, txLinkQuality,
+                 peerNodeStatustxTime, peerNodeStatusrxTime, timestamp):
         self.odu100_peerNodeStatusTable_id = None
         self.host_id = host_id
         self.raIndex = raIndex
@@ -2967,10 +4191,23 @@ class Odu100PeerNodeStatusTable(Base):
         self.timestamp = timestamp
 
     def __repr__(self):
-        return "<Odu100PeerNodeStatusTable('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.odu100_peerNodeStatusTable_id, self.host_id, self.raIndex, self.timeSlotIndex, self.linkStatus, self.tunnelStatus, self.sigStrength1, self.peerMacAddr, self.ssIdentifier, self.peerNodeStatusNumSlaves, self.peerNodeStatusrxRate, self.peerNodeStatustxRate, self.allocatedTxBW, self.allocatedRxBW, self.usedTxBW, self.usedRxBW, self.txbasicRate, self.sigStrength2, self.rxbasicRate, self.txLinkQuality, self.peerNodeStatustxTime, self.peerNodeStatusrxTime, self.timestamp)
+        return "<Odu100PeerNodeStatusTable('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.odu100_peerNodeStatusTable_id, self.host_id, self.raIndex, self.timeSlotIndex, self.linkStatus,
+        self.tunnelStatus, self.sigStrength1, self.peerMacAddr, self.ssIdentifier, self.peerNodeStatusNumSlaves,
+        self.peerNodeStatusrxRate, self.peerNodeStatustxRate, self.allocatedTxBW, self.allocatedRxBW, self.usedTxBW,
+        self.usedRxBW, self.txbasicRate, self.sigStrength2, self.rxbasicRate, self.txLinkQuality,
+        self.peerNodeStatustxTime, self.peerNodeStatusrxTime, self.timestamp)
 
 
 class Odu100RaAclConfigTable(Base):
+    """
+
+    @param config_profile_id:
+    @param raIndex:
+    @param aclIndex:
+    @param macaddress:
+    @param rowSts:
+    """
     __tablename__ = "odu100_raAclConfigTable"
     odu100_raAclConfigTable_id = Column(INTEGER, primary_key=True)
     config_profile_id = Column(
@@ -2989,10 +4226,20 @@ class Odu100RaAclConfigTable(Base):
         self.rowSts = rowSts
 
     def __repr__(self):
-        return "<Odu100RaAclCOnfigTable('%s','%s','%s','%s','%s','%s')>" % (self.odu100_raAclConfigTable_id, self.config_profile_id, self.raIndex, self.aclIndex, self.macaddress, self.rowSts)
+        return "<Odu100RaAclCOnfigTable('%s','%s','%s','%s','%s','%s')>" % (
+        self.odu100_raAclConfigTable_id, self.config_profile_id, self.raIndex, self.aclIndex, self.macaddress,
+        self.rowSts)
 
 
 class Odu100RaChannelListTable(Base):
+    """
+
+    @param host_id:
+    @param raIndex:
+    @param raChanIndex:
+    @param channelNumber:
+    @param frequency:
+    """
     __tablename__ = "odu100_raChannelListTable"
     odu100_raChannelListTable_id = Column(INTEGER, primary_key=True)
     host_id = Column(INTEGER, ForeignKey('hosts.host_id'))
@@ -3010,10 +4257,18 @@ class Odu100RaChannelListTable(Base):
         self.frequency = frequency
 
     def __repr__(self):
-        return "<Odu100RaChannelListTable('%s','%s','%s','%s','%s','%s')>" % (self.odu100_raChannelListTable_id, self.host_id, self.raIndex, self.raChanIndex, self.channelNumber, self.frequency)
+        return "<Odu100RaChannelListTable('%s','%s','%s','%s','%s','%s')>" % (
+        self.odu100_raChannelListTable_id, self.host_id, self.raIndex, self.raChanIndex, self.channelNumber,
+        self.frequency)
 
 
 class FirmwareMapping(Base):
+    """
+
+    @param firmware_mapping_id:
+    @param device_type_id:
+    @param firmware_desc:
+    """
     __tablename__ = "firmware_mapping"
     firmware_mapping_id = Column(VARCHAR(16), primary_key=True)
     device_type_id = Column(
@@ -3030,6 +4285,24 @@ class FirmwareMapping(Base):
 
 
 class Odu100RaConfTable(Base):
+    """
+
+    @param config_profile_id:
+    @param raIndex:
+    @param raAdminState:
+    @param aclMode:
+    @param ssID:
+    @param guaranteedBroadcastBW:
+    @param dba:
+    @param acm:
+    @param acs:
+    @param dfs:
+    @param numSlaves:
+    @param antennaPort:
+    @param linkDistance:
+    @param anc:
+    @param forceMimo:
+    """
     __tablename__ = "odu100_raConfTable"
     odu100_raConfTable_id = Column(INTEGER, primary_key=True)
     config_profile_id = Column(
@@ -3049,7 +4322,8 @@ class Odu100RaConfTable(Base):
     anc = Column(INTEGER)
     forceMimo = Column(INTEGER)
 
-    def __init__(self, config_profile_id, raIndex, raAdminState, aclMode, ssID, guaranteedBroadcastBW, dba, acm, acs, dfs, numSlaves, antennaPort, linkDistance=0, anc=0, forceMimo=0):
+    def __init__(self, config_profile_id, raIndex, raAdminState, aclMode, ssID, guaranteedBroadcastBW, dba, acm, acs,
+                 dfs, numSlaves, antennaPort, linkDistance=0, anc=0, forceMimo=0):
         self.odu100_raConfTable_id = None
         self.config_profile_id = config_profile_id
         self.raIndex = raIndex
@@ -3068,10 +4342,23 @@ class Odu100RaConfTable(Base):
         self.forceMimo = forceMimo
 
     def __repr__(self):
-        return "<Odu100RaConfTable('%s',%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.odu100_raConfTable_id, self.config_profile_id, self.raIndex, self.raAdminState, self.aclMode, self.ssID, self.guaranteedBroadcastBW, self.dba, self.acm, self.acs, self.dfs, self.numSlaves, self.antennaPort, self.linkDistance, self.anc, self.forceMimo)
+        return "<Odu100RaConfTable('%s',%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.odu100_raConfTable_id, self.config_profile_id, self.raIndex, self.raAdminState, self.aclMode, self.ssID,
+        self.guaranteedBroadcastBW, self.dba, self.acm, self.acs, self.dfs, self.numSlaves, self.antennaPort,
+        self.linkDistance, self.anc, self.forceMimo)
 
 
 class Odu100RaLlcConfTable(Base):
+    """
+
+    @param config_profile_id:
+    @param raIndex:
+    @param arqWinLow:
+    @param arqWinHigh:
+    @param frameLossThreshold:
+    @param leakyBucketTimerVal:
+    @param frameLossTimeout:
+    """
     __tablename__ = "odu100_raLlcConfTable"
     odu100_raLlcConfTable_id = Column(INTEGER, primary_key=True)
     config_profile_id = Column(
@@ -3083,7 +4370,8 @@ class Odu100RaLlcConfTable(Base):
     leakyBucketTimerVal = Column(INTEGER)
     frameLossTimeout = Column(INTEGER)
 
-    def __init__(self, config_profile_id, raIndex, arqWinLow, arqWinHigh, frameLossThreshold, leakyBucketTimerVal, frameLossTimeout):
+    def __init__(self, config_profile_id, raIndex, arqWinLow, arqWinHigh, frameLossThreshold, leakyBucketTimerVal,
+                 frameLossTimeout):
         self.odu100_raLlcConfTable_id = None
         self.config_profile_id = config_profile_id
         self.raIndex = raIndex
@@ -3094,10 +4382,20 @@ class Odu100RaLlcConfTable(Base):
         self.frameLossTimeout = frameLossTimeout
 
     def __repr__(self):
-        return "<Odu100RaLlcCOnfTable('%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.odu100_raLlcConfTable_id, self.config_profile_id, self.raIndex, self.arqWinLow, self.arqWinHigh, self.frameLossThreshold, self.leakyBucketTimerVal, self.frameLossTimeout)
+        return "<Odu100RaLlcCOnfTable('%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.odu100_raLlcConfTable_id, self.config_profile_id, self.raIndex, self.arqWinLow, self.arqWinHigh,
+        self.frameLossThreshold, self.leakyBucketTimerVal, self.frameLossTimeout)
 
 
 class Odu100RaPreferredRFChannelTable(Base):
+    """
+
+    @param config_profile_id:
+    @param raIndex:
+    @param preindex:
+    @param preindex1:
+    @param rafrequency:
+    """
     __tablename__ = "odu100_raPreferredRFChannelTable"
     odu100_raPreferredRFChannelTable_id = Column(INTEGER, primary_key=True)
     config_profile_id = Column(
@@ -3116,10 +4414,28 @@ class Odu100RaPreferredRFChannelTable(Base):
         self.rafrequency = rafrequency
 
     def __repr__(self):
-        return "<Odu100RaPreferredRFChannelTable('%s','%s','%s','%s','%s','%s')>" % (self.odu100_raPreferredRFChannelTable_id, self.config_profile_id, self.raIndex, self.preindex, self.preindex1, self.rafrequency)
+        return "<Odu100RaPreferredRFChannelTable('%s','%s','%s','%s','%s','%s')>" % (
+        self.odu100_raPreferredRFChannelTable_id, self.config_profile_id, self.raIndex, self.preindex, self.preindex1,
+        self.rafrequency)
 
 
 class Odu100RaScanListTable(Base):
+    """
+
+    @param host_id:
+    @param raIndex:
+    @param raScanIndex:
+    @param ssid:
+    @param signalStrength:
+    @param macAddr:
+    @param rastertime:
+    @param timeslot:
+    @param maxSlaves:
+    @param channelNum:
+    @param basicRate:
+    @param radfs:
+    @param raacm:
+    """
     __tablename__ = "odu100_raScanListTable"
     odu100_raScanListTable_id = Column(INTEGER, primary_key=True)
     host_id = Column(INTEGER, ForeignKey('hosts.host_id'))
@@ -3136,7 +4452,8 @@ class Odu100RaScanListTable(Base):
     radfs = Column(INTEGER)
     raacm = Column(INTEGER)
 
-    def __init__(self, host_id, raIndex, raScanIndex, ssid, signalStrength, macAddr, rastertime, timeslot, maxSlaves, channelNum, basicRate, radfs, raacm):
+    def __init__(self, host_id, raIndex, raScanIndex, ssid, signalStrength, macAddr, rastertime, timeslot, maxSlaves,
+                 channelNum, basicRate, radfs, raacm):
         self.odu100_raScanListTable_id = None
         self.host_id = host_id
         self.raIndex = raIndex
@@ -3153,10 +4470,28 @@ class Odu100RaScanListTable(Base):
         self.raacm = raacm
 
     def __repr__(self):
-        return "<Odu100RaScanListTable('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.odu100_raScanListTable_id, self.host_id, self.raIndex, self.raScanIndex, self.ssid, self.signalStrength, self.macAddr, self.rastertime, self.timeslot, self.maxSlaves, self.channelNum, self.basicRate, self.radfs, self.raacm)
+        return "<Odu100RaScanListTable('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.odu100_raScanListTable_id, self.host_id, self.raIndex, self.raScanIndex, self.ssid, self.signalStrength,
+        self.macAddr, self.rastertime, self.timeslot, self.maxSlaves, self.channelNum, self.basicRate, self.radfs,
+        self.raacm)
 
 
 class Odu100RaSiteSurveyResultTable(Base):
+    """
+
+    @param host_id:
+    @param raIndex:
+    @param scanIndex:
+    @param scanIndex1:
+    @param rfChannelFrequency:
+    @param numCrcErrors:
+    @param maxRslCrcError:
+    @param numPhyErrors:
+    @param maxRslPhyError:
+    @param maxRslValidFrames:
+    @param channelnumber:
+    @param noiseFloor:
+    """
     __tablename__ = "odu100_raSiteSurveyResultTable"
     odu100_raSiteSurveyResultTable_id = Column(INTEGER, primary_key=True)
     host_id = Column(INTEGER, ForeignKey('hosts.host_id'))
@@ -3172,7 +4507,8 @@ class Odu100RaSiteSurveyResultTable(Base):
     channelnumber = Column(INTEGER)
     noiseFloor = Column(INTEGER)
 
-    def __init__(self, host_id, raIndex, scanIndex, scanIndex1, rfChannelFrequency, numCrcErrors, maxRslCrcError, numPhyErrors, maxRslPhyError, maxRslValidFrames, channelnumber, noiseFloor):
+    def __init__(self, host_id, raIndex, scanIndex, scanIndex1, rfChannelFrequency, numCrcErrors, maxRslCrcError,
+                 numPhyErrors, maxRslPhyError, maxRslValidFrames, channelnumber, noiseFloor):
         self.odu100_raSiteSurveyResultTable_id = None
         self.host_id = host_id
         self.raIndex = raIndex
@@ -3188,10 +4524,26 @@ class Odu100RaSiteSurveyResultTable(Base):
         self.noiseFloor = noiseFloor
 
     def __repr__(self):
-        return "<Odu100RaSiteSurveyResultTable('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.odu100_raSiteSurveyResultTable_id, self.host_id, self.raIndex, self.scanIndex, self.scanIndex1, self.rfChannelFrequency, self.numCrcErrors, self.maxRslCrcError, self.numPhyErrors, self.maxRslPhyError, self.maxRslValidFrames, self.channelnumber, self.noiseFloor)
+        return "<Odu100RaSiteSurveyResultTable('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.odu100_raSiteSurveyResultTable_id, self.host_id, self.raIndex, self.scanIndex, self.scanIndex1,
+        self.rfChannelFrequency, self.numCrcErrors, self.maxRslCrcError, self.numPhyErrors, self.maxRslPhyError,
+        self.maxRslValidFrames, self.channelnumber, self.noiseFloor)
 
 
 class Odu100RaStatusTable(Base):
+    """
+
+    @param host_id:
+    @param raIndex:
+    @param currentTimeSlot:
+    @param raMacAddress:
+    @param raoperationalState:
+    @param unusedTxTimeUL:
+    @param unusedTxTimeDL:
+    @param ancStatus:
+    @param ancHwAvailable:
+    @param timestamp:
+    """
     __tablename__ = "odu100_raStatusTable"
     odu100_raStatusTable_id = Column(INTEGER, primary_key=True)
     host_id = Column(INTEGER, ForeignKey('hosts.host_id'))
@@ -3205,7 +4557,8 @@ class Odu100RaStatusTable(Base):
     ancHwAvailable = Column(ENUM('0', '1'))
     timestamp = Column(DATETIME)
 
-    def __init__(self, host_id, raIndex, currentTimeSlot, raMacAddress, raoperationalState, unusedTxTimeUL, unusedTxTimeDL, ancStatus, ancHwAvailable, timestamp):
+    def __init__(self, host_id, raIndex, currentTimeSlot, raMacAddress, raoperationalState, unusedTxTimeUL,
+                 unusedTxTimeDL, ancStatus, ancHwAvailable, timestamp):
         self.odu100_raStatusTable_id = None
         self.host_id = host_id
         self.raIndex = raIndex
@@ -3219,10 +4572,20 @@ class Odu100RaStatusTable(Base):
         self.timestamp = timestamp
 
     def __repr__(self):
-        return "<Odu100RaStatusTable('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.odu100_raStatusTable_id, self.host_id, self.raIndex, self.currentTimeSlot, self.raMacAddress, self.raoperationalState, self.unusedTxTimeUL, self.unusedTxTimeDL, self.ancStatus, self.ancHwAvailable, self.timestamp)
+        return "<Odu100RaStatusTable('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.odu100_raStatusTable_id, self.host_id, self.raIndex, self.currentTimeSlot, self.raMacAddress,
+        self.raoperationalState, self.unusedTxTimeUL, self.unusedTxTimeDL, self.ancStatus, self.ancHwAvailable,
+        self.timestamp)
 
 
 class Odu100MacFilterTable(Base):
+    """
+
+    @param host_id:
+    @param macFilterIndex:
+    @param filterMacAddress:
+    @param timestamp:
+    """
     __tablename__ = "odu100_macFilterTable"
     odu100_macFilterTable_id = Column(INTEGER, primary_key=True)
     host_id = Column(INTEGER, ForeignKey('hosts.host_id'))
@@ -3238,10 +4601,19 @@ class Odu100MacFilterTable(Base):
         self.timestamp = timestamp
 
     def __repr__(self):
-        return "<Odu100MacFilterTable('%s','%s','%s','%s','%s')>" % (self.odu100_macFilterTable_id, self.host_id, self.macFilterIndex, self.filterMacAddress, self.timestamp)
+        return "<Odu100MacFilterTable('%s','%s','%s','%s','%s')>" % (
+        self.odu100_macFilterTable_id, self.host_id, self.macFilterIndex, self.filterMacAddress, self.timestamp)
 
 
 class Odu100IpFilterTable(Base):
+    """
+
+    @param host_id:
+    @param ipFilterIndex:
+    @param ipFilterIpAddress:
+    @param ipFilterNetworkMask:
+    @param timestamp:
+    """
     __tablename__ = "odu100_ipFilterTable"
     odu100_ipFilterTable_id = Column(INTEGER, primary_key=True)
     host_id = Column(INTEGER, ForeignKey('hosts.host_id'))
@@ -3259,10 +4631,23 @@ class Odu100IpFilterTable(Base):
         self.timestamp = timestamp
 
     def __repr__(self):
-        return "<Odu100IpFilterTable('%s','%s','%s','%s','%s','%s')>" % (self.odu100_ipFilterTable_id, self.host_id, self.ipFilterIndex, self.ipFilterIpAddress, self.ipFilterNetworkMask, self.timestamp)
+        return "<Odu100IpFilterTable('%s','%s','%s','%s','%s','%s')>" % (
+        self.odu100_ipFilterTable_id, self.host_id, self.ipFilterIndex, self.ipFilterIpAddress,
+        self.ipFilterNetworkMask, self.timestamp)
 
 
 class Odu100RaTddMacConfigTable(Base):
+    """
+
+    @param config_profile_id:
+    @param raIndex:
+    @param passPhrase:
+    @param txPower:
+    @param maxPower:
+    @param maxCrcErrors:
+    @param leakyBucketTimerValue:
+    @param encryptionType:
+    """
     __tablename__ = "odu100_raTddMacConfigTable"
     odu100_raTddMacConfigTable_id = Column(INTEGER, primary_key=True)
     config_profile_id = Column(
@@ -3275,7 +4660,8 @@ class Odu100RaTddMacConfigTable(Base):
     leakyBucketTimerValue = Column(INTEGER)
     encryptionType = Column(INTEGER)
 
-    def __init__(self, config_profile_id, raIndex, passPhrase, txPower, maxPower, maxCrcErrors, leakyBucketTimerValue, encryptionType):
+    def __init__(self, config_profile_id, raIndex, passPhrase, txPower, maxPower, maxCrcErrors, leakyBucketTimerValue,
+                 encryptionType):
         self.odu100_raTddMacConfigTable_id = None
         self.config_profile_id = config_profile_id
         self.raIndex = raIndex
@@ -3287,10 +4673,25 @@ class Odu100RaTddMacConfigTable(Base):
         self.encryptionType = encryptionType
 
     def __repr__(self):
-        return "<Odu100RaTddMacCOnfigTable('%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.odu100_raTddMacConfigTable_id, self.config_profile_id, self.raIndex, self.passPhrase, self.txPower, self.maxPower, self.maxCrcErrors, self.leakyBucketTimerValue, self.encryptionType)
+        return "<Odu100RaTddMacCOnfigTable('%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.odu100_raTddMacConfigTable_id, self.config_profile_id, self.raIndex, self.passPhrase, self.txPower,
+        self.maxPower, self.maxCrcErrors, self.leakyBucketTimerValue, self.encryptionType)
 
 
 class Odu100RaTddMacStatisticsTable(Base):
+    """
+
+    @param host_id:
+    @param raIndex:
+    @param rxpackets:
+    @param txpackets:
+    @param rxerrors:
+    @param txerrors:
+    @param rxdropped:
+    @param txdropped:
+    @param rxCrcErrors:
+    @param rxPhyErrors:
+    """
     __tablename__ = "odu100_raTddMacStatisticsTable"
     odu100_raTddMacStatisticsTable_id = Column(INTEGER, primary_key=True)
     host_id = Column(INTEGER, ForeignKey('hosts.host_id'))
@@ -3304,7 +4705,8 @@ class Odu100RaTddMacStatisticsTable(Base):
     rxCrcErrors = Column(INTEGER)
     rxPhyError = Column(INTEGER)
 
-    def __init__(self, host_id, raIndex, rxpackets, txpackets, rxerrors, txerrors, rxdropped, txdropped, rxCrcErrors, rxPhyErrors):
+    def __init__(self, host_id, raIndex, rxpackets, txpackets, rxerrors, txerrors, rxdropped, txdropped, rxCrcErrors,
+                 rxPhyErrors):
         self.odu100_raTddMacStatisticsTable_id = None
         self.host_id = host_id
         self.raIndex = raIndex
@@ -3318,10 +4720,19 @@ class Odu100RaTddMacStatisticsTable(Base):
         self.rxPhyError = rxPhyError
 
     def __repr__(self):
-        return "<Odu100RaTddMacStatisticsTable('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.odu100_raTddMacStatisticsTable_id, self.host_id, self.raIndex, self.rxpackets, self.txpackets, self.rxerrors, self.txerrors, self.rxdropped, self.txdropped, self.rxCrcErrors, self.rxPhyError)
+        return "<Odu100RaTddMacStatisticsTable('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.odu100_raTddMacStatisticsTable_id, self.host_id, self.raIndex, self.rxpackets, self.txpackets,
+        self.rxerrors, self.txerrors, self.rxdropped, self.txdropped, self.rxCrcErrors, self.rxPhyError)
 
 
 class Odu100RaTddMacStatusTable(Base):
+    """
+
+    @param host_id:
+    @param raIndex:
+    @param rfChanFreq:
+    @param timestamp:
+    """
     __tablename__ = "odu100_raTddMacStatusTable"
     odu100_raTddMacStatusTable_id = Column(INTEGER, primary_key=True)
     host_id = Column(INTEGER, ForeignKey('hosts.host_id'))
@@ -3337,10 +4748,21 @@ class Odu100RaTddMacStatusTable(Base):
         self.timestamp = timestamp
 
     def __repr__(self):
-        return "<Odu100RaTddMacStatusTable('%s','%s','%s','%s','%s')>" % (self.odu100_raTddMacStatusTable_id, self.host_id, self.raIndex, self.rfChanFreq, self.timestamp)
+        return "<Odu100RaTddMacStatusTable('%s','%s','%s','%s','%s')>" % (
+        self.odu100_raTddMacStatusTable_id, self.host_id, self.raIndex, self.rfChanFreq, self.timestamp)
 
 
 class Odu100RaValidPhyRatesTable(Base):
+    """
+
+    @param host_id:
+    @param raIndex:
+    @param mcsindex:
+    @param spatialStreams:
+    @param modulationType:
+    @param codingRate:
+    @param rate:
+    """
     __tablename__ = "odu100_raValidPhyRatesTable"
     odu100_raValidPhyRatesTable_id = Column(INTEGER, primary_key=True)
     host_id = Column(INTEGER, ForeignKey('hosts.host_id'))
@@ -3362,10 +4784,28 @@ class Odu100RaValidPhyRatesTable(Base):
         self.rate = rate
 
     def __repr__(self):
-        return "<Odu100RaValidPhyRatesTable('%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.odu100_raValidPhyRatesTable_id, self.host_id, self.raIndex, self.mcsindex, self.spatialStreams, self.modulationType, self.codingRate, self.rate)
+        return "<Odu100RaValidPhyRatesTable('%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.odu100_raValidPhyRatesTable_id, self.host_id, self.raIndex, self.mcsindex, self.spatialStreams,
+        self.modulationType, self.codingRate, self.rate)
 
 
 class Odu100RuConfTable(Base):
+    """
+
+    @param config_profile_id:
+    @param confIndex:
+    @param adminstate:
+    @param defaultNodeType:
+    @param channelBandwidth:
+    @param synchSource:
+    @param countryCode:
+    @param poeState:
+    @param alignmentControl:
+    @param ethFiltering:
+    @param poePort2State:
+    @param poePort4State:
+    @param poePort6State:
+    """
     __tablename__ = "odu100_ruConfTable"
     odu100_ruConfTable_id = Column(INTEGER, primary_key=True)
     config_profile_id = Column(
@@ -3383,7 +4823,9 @@ class Odu100RuConfTable(Base):
     poePort4State = Column(INTEGER)
     poePort6State = Column(INTEGER)
 
-    def __init__(self, config_profile_id, confIndex, adminstate, defaultNodeType, channelBandwidth, synchSource, countryCode, poeState=0, alignmentControl=0, ethFiltering=0, poePort2State=0, poePort4State=0, poePort6State=0):
+    def __init__(self, config_profile_id, confIndex, adminstate, defaultNodeType, channelBandwidth, synchSource,
+                 countryCode, poeState=0, alignmentControl=0, ethFiltering=0, poePort2State=0, poePort4State=0,
+                 poePort6State=0):
         self.odu100_ruConfTable_id = None
         self.config_profile_id = config_profile_id
         self.confIndex = confIndex
@@ -3400,10 +4842,24 @@ class Odu100RuConfTable(Base):
         self.poePort6State = poePort6State
 
     def __repr__(self):
-        return "<Odu100RuConfTable('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s', %s)>" % (self.odu100_ruConfTable_id, self.config_profile_id, self.confIndex, self.adminstate, self.defaultNodeType, self.channelBandwidth, self.synchSource, self.countryCode, self.poeState, self.alignmentControl, self.ethFiltering, self.poePort2State, self.poePort4State, self.poePort6State)
+        return "<Odu100RuConfTable('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s', %s)>" % (
+        self.odu100_ruConfTable_id, self.config_profile_id, self.confIndex, self.adminstate, self.defaultNodeType,
+        self.channelBandwidth, self.synchSource, self.countryCode, self.poeState, self.alignmentControl,
+        self.ethFiltering, self.poePort2State, self.poePort4State, self.poePort6State)
 
 
 class Odu100RuDateTimeTable(Base):
+    """
+
+    @param config_profile_id:
+    @param dateIndex:
+    @param year:
+    @param month:
+    @param day:
+    @param hour:
+    @param min:
+    @param sec:
+    """
     __tablename__ = "odu100_ruDateTimeTable"
     odu100_ruDateTimeTable_id = Column(INTEGER, primary_key=True)
     config_profile_id = Column(
@@ -3428,10 +4884,28 @@ class Odu100RuDateTimeTable(Base):
         self.sec = sec
 
     def __repr__(self):
-        return "<Odu100RuDateTimeTable('%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.odu100_ruDateTimeTable_id, self.config_profile_id, self.dateIndex, self.year, self.month, self.day, self.hour, self.min, self.sec)
+        return "<Odu100RuDateTimeTable('%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.odu100_ruDateTimeTable_id, self.config_profile_id, self.dateIndex, self.year, self.month, self.day,
+        self.hour, self.min, self.sec)
 
 
 class Odu100RuOmOperationsTable(Base):
+    """
+
+    @param config_profile_id:
+    @param omIndex:
+    @param omOperationReq:
+    @param userName:
+    @param password:
+    @param ftpServerAddress:
+    @param pathName:
+    @param omOperationResult:
+    @param omSpecificCause:
+    @param listOfChannels:
+    @param txTime:
+    @param txRate:
+    @param txBW:
+    """
     __tablename__ = "odu100_ruOmOperationsTable"
     odu100_ruOmOperationsTable_id = Column(INTEGER, primary_key=True)
     config_profile_id = Column(
@@ -3449,7 +4923,8 @@ class Odu100RuOmOperationsTable(Base):
     txRate = Column(INTEGER)
     txBW = Column(INTEGER)
 
-    def __init__(self, config_profile_id, omIndex, omOperationReq, userName, password, ftpServerAddress, pathName, omOperationResult, omSpecificCause, listOfChannels, txTime, txRate, txBW):
+    def __init__(self, config_profile_id, omIndex, omOperationReq, userName, password, ftpServerAddress, pathName,
+                 omOperationResult, omSpecificCause, listOfChannels, txTime, txRate, txBW):
         self.odu100_ruOmOperationsTable_id = None
         self.config_profile_id = config_profile_id
         self.omIndex = omIndex
@@ -3466,10 +4941,28 @@ class Odu100RuOmOperationsTable(Base):
         self.txBW = txBW
 
     def __repr__(self):
-        return "<Odu100RuOmOperatiOnsTable('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.odu100_ruOmOperationsTable_id, self.config_profile_id, self.omIndex, self.omOperationReq, self.userName, self.password, self.ftpServerAddress, self.pathName, self.omOperationResult, self.omSpecificCause, self.listOfChannels, self.txTime, self.txRate, self.txBW)
+        return "<Odu100RuOmOperatiOnsTable('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.odu100_ruOmOperationsTable_id, self.config_profile_id, self.omIndex, self.omOperationReq, self.userName,
+        self.password, self.ftpServerAddress, self.pathName, self.omOperationResult, self.omSpecificCause,
+        self.listOfChannels, self.txTime, self.txRate, self.txBW)
 
 
 class Odu100RuStatusTable(Base):
+    """
+
+    @param host_id:
+    @param statusIndex:
+    @param lastRebootReason:
+    @param isConfigCommitedToFlash:
+    @param upTime:
+    @param poeStatus:
+    @param cpuId:
+    @param ruoperationalState:
+    @param nodeBandwidth:
+    @param poePort2Status:
+    @param poePort4Status:
+    @param poePort6Status:
+    """
     __tablename__ = "odu100_ruStatusTable"
     odu100_ruStatusTable_id = Column(INTEGER, primary_key=True)
     host_id = Column(INTEGER, ForeignKey('hosts.host_id'))
@@ -3485,7 +4978,8 @@ class Odu100RuStatusTable(Base):
     poePort4Status = Column(INTEGER)
     poePort6Status = Column(INTEGER)
 
-    def __init__(self, host_id, statusIndex, lastRebootReason, isConfigCommitedToFlash, upTime, poeStatus, cpuId, ruoperationalState, nodeBandwidth, poePort2Status=0, poePort4Status=0, poePort6Status=0):
+    def __init__(self, host_id, statusIndex, lastRebootReason, isConfigCommitedToFlash, upTime, poeStatus, cpuId,
+                 ruoperationalState, nodeBandwidth, poePort2Status=0, poePort4Status=0, poePort6Status=0):
         self.odu100_ruStatusTable_id = None
         self.host_id = host_id
         self.statusIndex = statusIndex
@@ -3501,10 +4995,21 @@ class Odu100RuStatusTable(Base):
         self.poePort6Status = poePort6Status
 
     def __repr__(self):
-        return "<Odu100RuStatusTable('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.odu100_ruStatusTable_id, self.host_id, self.statusIndex, self.lastRebootReason, self.isConfigCommitedToFlash, self.upTime, self.poeStatus, self.cpuId, self.ruoperationalState, self.nodeBandwidth, self.poePort2Status, self.poePort4Status, self.poePort6Status)
+        return "<Odu100RuStatusTable('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.odu100_ruStatusTable_id, self.host_id, self.statusIndex, self.lastRebootReason,
+        self.isConfigCommitedToFlash, self.upTime, self.poeStatus, self.cpuId, self.ruoperationalState,
+        self.nodeBandwidth, self.poePort2Status, self.poePort4Status, self.poePort6Status)
 
 
 class Odu100SwStatusTable(Base):
+    """
+
+    @param host_id:
+    @param swStatusIndex:
+    @param activeVersion:
+    @param passiveVersion:
+    @param bootloaderVersion:
+    """
     __tablename__ = "odu100_swStatusTable"
     odu100_swStatusTable_id = Column(INTEGER, primary_key=True)
     host_id = Column(INTEGER, ForeignKey('hosts.host_id'))
@@ -3522,10 +5027,25 @@ class Odu100SwStatusTable(Base):
         self.bootloaderVersion = bootloaderVersion
 
     def __repr__(self):
-        return "<Odu100SwStatusTable('%s','%s','%s','%s','%s','%s')>" % (self.odu100_swStatusTable_id, self.host_id, self.swStatusIndex, self.activeVersion, self.passiveVersion, self.bootloaderVersion)
+        return "<Odu100SwStatusTable('%s','%s','%s','%s','%s','%s')>" % (
+        self.odu100_swStatusTable_id, self.host_id, self.swStatusIndex, self.activeVersion, self.passiveVersion,
+        self.bootloaderVersion)
 
 
 class Odu100SyncConfigTable(Base):
+    """
+
+    @param config_profile_id:
+    @param syncConfigIndex:
+    @param adminStatus:
+    @param synchState:
+    @param rasterTime:
+    @param syncLossThreshold:
+    @param leakyBucketTimer:
+    @param syncLostTimeout:
+    @param syncConfigTimerAdjust:
+    @param percentageDownlinkTransmitTime:
+    """
     __tablename__ = "odu100_syncConfigTable"
     odu100_syncConfigTable_id = Column(INTEGER, primary_key=True)
     config_profile_id = Column(
@@ -3540,7 +5060,8 @@ class Odu100SyncConfigTable(Base):
     syncConfigTimerAdjust = Column(INTEGER)
     percentageDownlinkTransmitTime = Column(INTEGER)
 
-    def __init__(self, config_profile_id, syncConfigIndex, adminStatus, synchState, rasterTime, syncLossThreshold, leakyBucketTimer, syncLostTimeout, syncConfigTimerAdjust, percentageDownlinkTransmitTime):
+    def __init__(self, config_profile_id, syncConfigIndex, adminStatus, synchState, rasterTime, syncLossThreshold,
+                 leakyBucketTimer, syncLostTimeout, syncConfigTimerAdjust, percentageDownlinkTransmitTime):
         self.odu100_syncConfigTable_id = None
         self.config_profile_id = config_profile_id
         self.syncConfigIndex = syncConfigIndex
@@ -3554,10 +5075,19 @@ class Odu100SyncConfigTable(Base):
         self.percentageDownlinkTransmitTime = percentageDownlinkTransmitTime
 
     def __repr__(self):
-        return "<Odu100SyncCOnfigTable('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.odu100_syncConfigTable_id, self.config_profile_id, self.syncConfigIndex, self.adminStatus, self.synchState, self.rasterTime, self.syncLossThreshold, self.leakyBucketTimer, self.syncLostTimeout, self.syncConfigTimerAdjust, self.percentageDownlinkTransmitTime)
+        return "<Odu100SyncCOnfigTable('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.odu100_syncConfigTable_id, self.config_profile_id, self.syncConfigIndex, self.adminStatus, self.synchState,
+        self.rasterTime, self.syncLossThreshold, self.leakyBucketTimer, self.syncLostTimeout,
+        self.syncConfigTimerAdjust, self.percentageDownlinkTransmitTime)
 
 
 class Odu100SynchStatisticsTable(Base):
+    """
+
+    @param host_id:
+    @param syncConfigIndex:
+    @param syncLostCounter:
+    """
     __tablename__ = "odu100_synchStatisticsTable"
     odu100_synchStatisticsTable_id = Column(INTEGER, primary_key=True)
     host_id = Column(INTEGER, ForeignKey('hosts.host_id'))
@@ -3571,10 +5101,21 @@ class Odu100SynchStatisticsTable(Base):
         self.syncLostCounter = syncLostCounter
 
     def __repr__(self):
-        return "<Odu100SynchStatisticsTable('%s','%s','%s','%s')>" % (self.odu100_synchStatisticsTable_id, self.host_id, self.syncConfigIndex, self.syncLostCounter)
+        return "<Odu100SynchStatisticsTable('%s','%s','%s','%s')>" % (
+        self.odu100_synchStatisticsTable_id, self.host_id, self.syncConfigIndex, self.syncLostCounter)
 
 
 class Odu100SynchStatusTable(Base):
+    """
+
+    @param host_id:
+    @param syncConfigIndex:
+    @param syncoperationalState:
+    @param syncrasterTime:
+    @param timerAdjust:
+    @param syncpercentageDownlinkTransmitTime:
+    @param timestamp:
+    """
     __tablename__ = "odu100_synchStatusTable"
     odu100_synchStatusTable_id = Column(INTEGER, primary_key=True)
     host_id = Column(INTEGER, ForeignKey('hosts.host_id'))
@@ -3585,7 +5126,8 @@ class Odu100SynchStatusTable(Base):
     syncpercentageDownlinkTransmitTime = Column(INTEGER)
     timestamp = Column(DATETIME)
 
-    def __init__(self, host_id, syncConfigIndex, syncoperationalState, syncrasterTime, timerAdjust, syncpercentageDownlinkTransmitTime, timestamp):
+    def __init__(self, host_id, syncConfigIndex, syncoperationalState, syncrasterTime, timerAdjust,
+                 syncpercentageDownlinkTransmitTime, timestamp):
         self.odu100_synchStatusTable_id = None
         self.host_id = host_id
         self.syncConfigIndex = syncConfigIndex
@@ -3596,10 +5138,22 @@ class Odu100SynchStatusTable(Base):
         self.timestamp = timestamp
 
     def __repr__(self):
-        return "<Odu100SynchStatusTable('%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.odu100_synchStatusTable_id, self.host_id, self.syncConfigIndex, self.syncoperationalState, self.syncrasterTime, self.timerAdjust, self.syncpercentageDownlinkTransmitTime, self.timestamp)
+        return "<Odu100SynchStatusTable('%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.odu100_synchStatusTable_id, self.host_id, self.syncConfigIndex, self.syncoperationalState,
+        self.syncrasterTime, self.timerAdjust, self.syncpercentageDownlinkTransmitTime, self.timestamp)
 
 
 class Odu100SysOmcRegistrationTable(Base):
+    """
+
+    @param config_profile_id:
+    @param sysOmcRegistrationIndex:
+    @param sysOmcRegisterContactAddr:
+    @param sysOmcRegisterContactPerson:
+    @param sysOmcRegisterContactMobile:
+    @param sysOmcRegisterAlternateContact:
+    @param sysOmcRegisterContactEmail:
+    """
     __tablename__ = "odu100_sysOmcRegistrationTable"
     odu100_sysOmcRegistrationTable_id = Column(INTEGER, primary_key=True)
     config_profile_id = Column(
@@ -3611,7 +5165,9 @@ class Odu100SysOmcRegistrationTable(Base):
     sysOmcRegisterAlternateContact = Column(VARCHAR(32))
     sysOmcRegisterContactEmail = Column(VARCHAR(32))
 
-    def __init__(self, config_profile_id, sysOmcRegistrationIndex, sysOmcRegisterContactAddr, sysOmcRegisterContactPerson, sysOmcRegisterContactMobile, sysOmcRegisterAlternateContact, sysOmcRegisterContactEmail):
+    def __init__(self, config_profile_id, sysOmcRegistrationIndex, sysOmcRegisterContactAddr,
+                 sysOmcRegisterContactPerson, sysOmcRegisterContactMobile, sysOmcRegisterAlternateContact,
+                 sysOmcRegisterContactEmail):
         self.odu100_sysOmcRegistrationTable_id = None
         self.config_profile_id = config_profile_id
         self.sysOmcRegistrationIndex = sysOmcRegistrationIndex
@@ -3622,12 +5178,24 @@ class Odu100SysOmcRegistrationTable(Base):
         self.sysOmcRegisterContactEmail = sysOmcRegisterContactEmail
 
     def __repr__(self):
-        return "<Odu100SysOmcRegistratiOnTable('%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.odu100_sysOmcRegistrationTable_id, self.config_profile_id, self.sysOmcRegistrationIndex, self.sysOmcRegisterContactAddr, self.sysOmcRegisterContactPerson, self.sysOmcRegisterContactMobile, self.sysOmcRegisterAlternateContact, self.sysOmcRegisterContactEmail)
+        return "<Odu100SysOmcRegistratiOnTable('%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.odu100_sysOmcRegistrationTable_id, self.config_profile_id, self.sysOmcRegistrationIndex,
+        self.sysOmcRegisterContactAddr, self.sysOmcRegisterContactPerson, self.sysOmcRegisterContactMobile,
+        self.sysOmcRegisterAlternateContact, self.sysOmcRegisterContactEmail)
+
 
 tablename = Odu16ConfigProfiles.__table__
 
 
 class IduAclportTable(Base):
+    """
+
+    @param config_profile_id:
+    @param aclportnum:
+    @param aclindex:
+    @param aclmacaddress:
+    @param portrowstatus:
+    """
     __tablename__ = "idu_aclportTable"
     idu_aclportTable_id = Column(INTEGER, primary_key=True)
     config_profile_id = Column(
@@ -3646,10 +5214,18 @@ class IduAclportTable(Base):
         self.portrowstatus = portrowstatus
 
     def __repr__(self):
-        return "<IduAclportTable('%s','%s','%s','%s','%s','%s')>" % (self.idu_aclportTable_id, self.config_profile_id, self.aclportnum, self.aclindex, self.aclmacaddress, self.portrowstatus)
+        return "<IduAclportTable('%s','%s','%s','%s','%s','%s')>" % (
+        self.idu_aclportTable_id, self.config_profile_id, self.aclportnum, self.aclindex, self.aclmacaddress,
+        self.portrowstatus)
 
 
 class IduAlarmOutConfigTable(Base):
+    """
+
+    @param config_profile_id:
+    @param alarmOutPin:
+    @param alarmPinState:
+    """
     __tablename__ = "idu_alarmOutConfigTable"
     idu_alarmOutConfigTable_id = Column(INTEGER, primary_key=True)
     config_profile_id = Column(
@@ -3664,10 +5240,19 @@ class IduAlarmOutConfigTable(Base):
         self.alarmPinState = alarmPinState
 
     def __repr__(self):
-        return "<IduAlarmOutConfigTable('%s','%s','%s','%s')>" % (self.idu_alarmOutConfigTable_id, self.config_profile_id, self.alarmOutPin, self.alarmPinState)
+        return "<IduAlarmOutConfigTable('%s','%s','%s','%s')>" % (
+        self.idu_alarmOutConfigTable_id, self.config_profile_id, self.alarmOutPin, self.alarmPinState)
 
 
 class IduAlarmPortConfigurationTable(Base):
+    """
+
+    @param config_profile_id:
+    @param alarmPin:
+    @param alarmAdminStatus:
+    @param alarmString:
+    @param alarmLevel:
+    """
     __tablename__ = "idu_alarmPortConfigurationTable"
     idu_alarmPortConfigurationTable_id = Column(INTEGER, primary_key=True)
     config_profile_id = Column(
@@ -3686,10 +5271,22 @@ class IduAlarmPortConfigurationTable(Base):
         self.alarmLevel = alarmLevel
 
     def __repr__(self):
-        return "<IduAlarmPortConfigurationTable('%s','%s','%s','%s','%s','%s')>" % (self.idu_alarmPortConfigurationTable_id, self.config_profile_id, self.alarmPin, self.alarmAdminStatus, self.alarmString, self.alarmLevel)
+        return "<IduAlarmPortConfigurationTable('%s','%s','%s','%s','%s','%s')>" % (
+        self.idu_alarmPortConfigurationTable_id, self.config_profile_id, self.alarmPin, self.alarmAdminStatus,
+        self.alarmString, self.alarmLevel)
 
 
 class IduAtuconfigTable(Base):
+    """
+
+    @param config_profile_id:
+    @param atuid:
+    @param atustate:
+    @param entrytype:
+    @param priority:
+    @param macaddress:
+    @param atumemberports:
+    """
     __tablename__ = "idu_atuconfigTable"
     idu_atuconfigTable_id = Column(INTEGER, primary_key=True)
     config_profile_id = Column(
@@ -3712,10 +5309,21 @@ class IduAtuconfigTable(Base):
         self.atumemberports = atumemberports
 
     def __repr__(self):
-        return "<IduAtuconfigTable('%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.idu_atuconfigTable_id, self.config_profile_id, self.atuid, self.atustate, self.entrytype, self.priority, self.macaddress, self.atumemberports)
+        return "<IduAtuconfigTable('%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.idu_atuconfigTable_id, self.config_profile_id, self.atuid, self.atustate, self.entrytype, self.priority,
+        self.macaddress, self.atumemberports)
 
 
 class IduE1PortConfigurationTable(Base):
+    """
+
+    @param config_profile_id:
+    @param portNumber:
+    @param adminState:
+    @param clockSource:
+    @param lineType:
+    @param lineCode:
+    """
     __tablename__ = "idu_e1PortConfigurationTable"
     idu_e1PortConfigurationTable_id = Column(INTEGER, primary_key=True)
     config_profile_id = Column(
@@ -3736,10 +5344,28 @@ class IduE1PortConfigurationTable(Base):
         self.lineCode = lineCode
 
     def __repr__(self):
-        return "<IduE1PortConfigurationTable('%s','%s','%s','%s','%s','%s','%s')>" % (self.idu_e1PortConfigurationTable_id, self.config_profile_id, self.portNumber, self.adminState, self.clockSource, self.lineType, self.lineCode)
+        return "<IduE1PortConfigurationTable('%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.idu_e1PortConfigurationTable_id, self.config_profile_id, self.portNumber, self.adminState,
+        self.clockSource, self.lineType, self.lineCode)
 
 
 class IduE1PortStatusTable(Base):
+    """
+
+    @param host_id:
+    @param portNum:
+    @param opStatus:
+    @param los:
+    @param lof:
+    @param ais:
+    @param rai:
+    @param rxFrameSlip:
+    @param txFrameSlip:
+    @param bpv:
+    @param adptClkState:
+    @param holdOverStatus:
+    @param timestamp:
+    """
     __tablename__ = "idu_e1PortStatusTable"
     idu_e1PortStatusTable_id = Column(INTEGER, primary_key=True)
     host_id = Column(INTEGER, ForeignKey('hosts.host_id'))
@@ -3756,7 +5382,8 @@ class IduE1PortStatusTable(Base):
     holdOverStatus = Column(INTEGER)
     timestamp = Column(TIMESTAMP)
 
-    def __init__(self, host_id, portNum, opStatus, los, lof, ais, rai, rxFrameSlip, txFrameSlip, bpv, adptClkState, holdOverStatus, timestamp):
+    def __init__(self, host_id, portNum, opStatus, los, lof, ais, rai, rxFrameSlip, txFrameSlip, bpv, adptClkState,
+                 holdOverStatus, timestamp):
         self.idu_e1PortStatusTable_id = None
         self.host_id = host_id
         self.portNum = portNum
@@ -3773,10 +5400,18 @@ class IduE1PortStatusTable(Base):
         self.timestamp = timestamp
 
     def __repr__(self):
-        return "<IduE1PortStatusTable('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.idu_e1PortStatusTable_id, self.host_id, self.portNum, self.opStatus, self.los, self.lof, self.ais, self.rai, self.rxFrameSlip, self.txFrameSlip, self.bpv, self.adptClkState, self.holdOverStatus, self.timestamp)
+        return "<IduE1PortStatusTable('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.idu_e1PortStatusTable_id, self.host_id, self.portNum, self.opStatus, self.los, self.lof, self.ais,
+        self.rai, self.rxFrameSlip, self.txFrameSlip, self.bpv, self.adptClkState, self.holdOverStatus, self.timestamp)
 
 
 class IduIduAdminStateTable(Base):
+    """
+
+    @param config_profile_id:
+    @param stateId:
+    @param adminstate:
+    """
     __tablename__ = "idu_iduAdminStateTable"
     idu_iduAdminStateTable_id = Column(INTEGER, primary_key=True)
     config_profile_id = Column(
@@ -3791,10 +5426,26 @@ class IduIduAdminStateTable(Base):
         self.adminstate = adminstate
 
     def __repr__(self):
-        return "<IduIduAdminStateTable('%s','%s','%s','%s')>" % (self.idu_iduAdminStateTable_id, self.config_profile_id, self.stateId, self.adminstate)
+        return "<IduIduAdminStateTable('%s','%s','%s','%s')>" % (
+        self.idu_iduAdminStateTable_id, self.config_profile_id, self.stateId, self.adminstate)
 
 
 class IduIduInfoTable(Base):
+    """
+
+    @param host_id:
+    @param infoIndex:
+    @param hwSerialNumber:
+    @param hwType:
+    @param hwConfigE1:
+    @param hwConfigEth:
+    @param hwConfigAlarm:
+    @param systemterfaceMac:
+    @param tdmoipInterfaceMac:
+    @param currentTemperature:
+    @param sysUptime:
+    @param timestamp:
+    """
     __tablename__ = "idu_iduInfoTable"
     idu_iduInfoTable_id = Column(INTEGER, primary_key=True)
     host_id = Column(INTEGER, ForeignKey('hosts.host_id'))
@@ -3810,7 +5461,8 @@ class IduIduInfoTable(Base):
     sysUptime = Column(INTEGER)
     timestamp = Column(TIMESTAMP)
 
-    def __init__(self, host_id, infoIndex, hwSerialNumber, hwType, hwConfigE1, hwConfigEth, hwConfigAlarm, systemterfaceMac, tdmoipInterfaceMac, currentTemperature, sysUptime, timestamp):
+    def __init__(self, host_id, infoIndex, hwSerialNumber, hwType, hwConfigE1, hwConfigEth, hwConfigAlarm,
+                 systemterfaceMac, tdmoipInterfaceMac, currentTemperature, sysUptime, timestamp):
         self.idu_iduInfoTable_id = None
         self.host_id = host_id
         self.infoIndex = infoIndex
@@ -3826,10 +5478,29 @@ class IduIduInfoTable(Base):
         self.timestamp = timestamp
 
     def __repr__(self):
-        return "<IduIduInfoTable('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.idu_iduInfoTable_id, self.host_id, self.infoIndex, self.hwSerialNumber, self.hwType, self.hwConfigE1, self.hwConfigEth, self.hwConfigAlarm, self.systemterfaceMac, self.tdmoipInterfaceMac, self.currentTemperature, self.sysUptime, self.timestamp)
+        return "<IduIduInfoTable('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.idu_iduInfoTable_id, self.host_id, self.infoIndex, self.hwSerialNumber, self.hwType, self.hwConfigE1,
+        self.hwConfigEth, self.hwConfigAlarm, self.systemterfaceMac, self.tdmoipInterfaceMac, self.currentTemperature,
+        self.sysUptime, self.timestamp)
 
 
 class IduIduNetworkStatisticsTable(Base):
+    """
+
+    @param host_id:
+    @param interfaceName:
+    @param rxPackets:
+    @param txPackets:
+    @param rxBytes:
+    @param txBytes:
+    @param rxErrors:
+    @param txErrors:
+    @param rxDropped:
+    @param txDropped:
+    @param multicasts:
+    @param collisions:
+    @param timestamp:
+    """
     __tablename__ = "idu_iduNetworkStatisticsTable"
     idu_iduNetworkStatisticsTable_id = Column(INTEGER, primary_key=True)
     host_id = Column(INTEGER, ForeignKey('hosts.host_id'))
@@ -3846,7 +5517,8 @@ class IduIduNetworkStatisticsTable(Base):
     collisions = Column(INTEGER)
     timestamp = Column(TIMESTAMP)
 
-    def __init__(self, host_id, interfaceName, rxPackets, txPackets, rxBytes, txBytes, rxErrors, txErrors, rxDropped, txDropped, multicasts, collisions, timestamp):
+    def __init__(self, host_id, interfaceName, rxPackets, txPackets, rxBytes, txBytes, rxErrors, txErrors, rxDropped,
+                 txDropped, multicasts, collisions, timestamp):
         self.idu_iduNetworkStatisticsTable_id = None
         self.host_id = host_id
         self.interfaceName = interfaceName
@@ -3863,10 +5535,25 @@ class IduIduNetworkStatisticsTable(Base):
         self.timestamp = timestamp
 
     def __repr__(self):
-        return "<IduIduNetworkStatisticsTable('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.idu_iduNetworkStatisticsTable_id, self.host_id, self.interfaceName, self.rxPackets, self.txPackets, self.rxBytes, self.txBytes, self.rxErrors, self.txErrors, self.rxDropped, self.txDropped, self.multicasts, self.collisions, self.timestamp)
+        return "<IduIduNetworkStatisticsTable('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.idu_iduNetworkStatisticsTable_id, self.host_id, self.interfaceName, self.rxPackets, self.txPackets,
+        self.rxBytes, self.txBytes, self.rxErrors, self.txErrors, self.rxDropped, self.txDropped, self.multicasts,
+        self.collisions, self.timestamp)
 
 
 class IduIduOmOperationsTable(Base):
+    """
+
+    @param config_profile_id:
+    @param omIndex:
+    @param omOperationReq:
+    @param userName:
+    @param password:
+    @param ftpServerAddress:
+    @param pathName:
+    @param omOperationResult:
+    @param omSpecificCause:
+    """
     __tablename__ = "idu_iduOmOperationsTable"
     idu_iduOmOperationsTable_id = Column(INTEGER, primary_key=True)
     config_profile_id = Column(
@@ -3880,7 +5567,8 @@ class IduIduOmOperationsTable(Base):
     omOperationResult = Column(INTEGER)
     omSpecificCause = Column(INTEGER)
 
-    def __init__(self, config_profile_id, omIndex, omOperationReq, userName, password, ftpServerAddress, pathName, omOperationResult, omSpecificCause):
+    def __init__(self, config_profile_id, omIndex, omOperationReq, userName, password, ftpServerAddress, pathName,
+                 omOperationResult, omSpecificCause):
         self.idu_iduOmOperationsTable_id = None
         self.config_profile_id = config_profile_id
         self.omIndex = omIndex
@@ -3893,10 +5581,27 @@ class IduIduOmOperationsTable(Base):
         self.omSpecificCause = omSpecificCause
 
     def __repr__(self):
-        return "<IduIduOmOperationsTable('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.idu_iduOmOperationsTable_id, self.config_profile_id, self.omIndex, self.omOperationReq, self.userName, self.password, self.ftpServerAddress, self.pathName, self.omOperationResult, self.omSpecificCause)
+        return "<IduIduOmOperationsTable('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.idu_iduOmOperationsTable_id, self.config_profile_id, self.omIndex, self.omOperationReq, self.userName,
+        self.password, self.ftpServerAddress, self.pathName, self.omOperationResult, self.omSpecificCause)
 
 
 class IduLinkConfigurationTable(Base):
+    """
+
+    @param config_profile_id:
+    @param portNumber:
+    @param bundleNumber:
+    @param adminStatus:
+    @param srcBundleID:
+    @param dstBundleID:
+    @param dstIPAddr:
+    @param tsaAssign:
+    @param clockRecovery:
+    @param bundleSize:
+    @param bufferSize:
+    @param rowStatus:
+    """
     __tablename__ = "idu_linkConfigurationTable"
     idu_linkConfigurationTable_id = Column(INTEGER, primary_key=True)
     config_profile_id = Column(
@@ -3913,7 +5618,8 @@ class IduLinkConfigurationTable(Base):
     bufferSize = Column(INTEGER)
     rowStatus = Column(INTEGER)
 
-    def __init__(self, config_profile_id, portNumber, bundleNumber, adminStatus, srcBundleID, dstBundleID, dstIPAddr, tsaAssign, clockRecovery, bundleSize, bufferSize, rowStatus):
+    def __init__(self, config_profile_id, portNumber, bundleNumber, adminStatus, srcBundleID, dstBundleID, dstIPAddr,
+                 tsaAssign, clockRecovery, bundleSize, bufferSize, rowStatus):
         self.idu_linkConfigurationTable_id = None
         self.config_profile_id = config_profile_id
         self.portNumber = portNumber
@@ -3929,10 +5635,25 @@ class IduLinkConfigurationTable(Base):
         self.rowStatus = rowStatus
 
     def __repr__(self):
-        return "<IduLinkConfigurationTable('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.idu_linkConfigurationTable_id, self.config_profile_id, self.portNumber, self.bundleNumber, self.adminStatus, self.srcBundleID, self.dstBundleID, self.dstIPAddr, self.tsaAssign, self.clockRecovery, self.bundleSize, self.bufferSize, self.rowStatus)
+        return "<IduLinkConfigurationTable('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.idu_linkConfigurationTable_id, self.config_profile_id, self.portNumber, self.bundleNumber,
+        self.adminStatus, self.srcBundleID, self.dstBundleID, self.dstIPAddr, self.tsaAssign, self.clockRecovery,
+        self.bundleSize, self.bufferSize, self.rowStatus)
 
 
 class IduLinkStatisticsTable(Base):
+    """
+
+    @param host_id:
+    @param bundlenumber:
+    @param goodFramesToEth:
+    @param goodFramesRx:
+    @param lostPacketsAtRx:
+    @param discardedPackets:
+    @param reorderedPackets:
+    @param underrunEvents:
+    @param timestamp:
+    """
     __tablename__ = "idu_linkStatisticsTable"
     idu_linkStatisticsTable_id = Column(INTEGER, primary_key=True)
     host_id = Column(INTEGER, ForeignKey('hosts.host_id'))
@@ -3945,7 +5666,8 @@ class IduLinkStatisticsTable(Base):
     underrunEvents = Column(INTEGER)
     timestamp = Column(TIMESTAMP)
 
-    def __init__(self, host_id, bundlenumber, goodFramesToEth, goodFramesRx, lostPacketsAtRx, discardedPackets, reorderedPackets, underrunEvents, timestamp):
+    def __init__(self, host_id, bundlenumber, goodFramesToEth, goodFramesRx, lostPacketsAtRx, discardedPackets,
+                 reorderedPackets, underrunEvents, timestamp):
         self.idu_linkStatisticsTable_id = None
         self.host_id = host_id
         self.bundlenumber = bundlenumber
@@ -3958,10 +5680,23 @@ class IduLinkStatisticsTable(Base):
         self.timestamp = timestamp
 
     def __repr__(self):
-        return "<IduLinkStatisticsTable('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.idu_linkStatisticsTable_id, self.host_id, self.bundlenumber, self.goodFramesToEth, self.goodFramesRx, self.lostPacketsAtRx, self.discardedPackets, self.reorderedPackets, self.underrunEvents, self.timestamp)
+        return "<IduLinkStatisticsTable('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.idu_linkStatisticsTable_id, self.host_id, self.bundlenumber, self.goodFramesToEth, self.goodFramesRx,
+        self.lostPacketsAtRx, self.discardedPackets, self.reorderedPackets, self.underrunEvents, self.timestamp)
 
 
 class IduLinkStatusTable(Base):
+    """
+
+    @param host_id:
+    @param bundleNum:
+    @param operationalStatus:
+    @param minJBLevel:
+    @param maxJBLevel:
+    @param underrunOccured:
+    @param overrunOccured:
+    @param timestamp:
+    """
     __tablename__ = "idu_linkStatusTable"
     idu_linkStatusTable_id = Column(INTEGER, primary_key=True)
     host_id = Column(INTEGER, ForeignKey('hosts.host_id'))
@@ -3973,7 +5708,8 @@ class IduLinkStatusTable(Base):
     overrunOccured = Column(INTEGER)
     timestamp = Column(TIMESTAMP)
 
-    def __init__(self, host_id, bundleNum, operationalStatus, minJBLevel, maxJBLevel, underrunOccured, overrunOccured, timestamp):
+    def __init__(self, host_id, bundleNum, operationalStatus, minJBLevel, maxJBLevel, underrunOccured, overrunOccured,
+                 timestamp):
         self.idu_linkStatusTable_id = None
         self.host_id = host_id
         self.bundleNum = bundleNum
@@ -3985,10 +5721,18 @@ class IduLinkStatusTable(Base):
         self.timestamp = timestamp
 
     def __repr__(self):
-        return "<IduLinkStatusTable('%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.idu_linkStatusTable_id, self.host_id, self.bundleNum, self.operationalStatus, self.minJBLevel, self.maxJBLevel, self.underrunOccured, self.overrunOccured, self.timestamp)
+        return "<IduLinkStatusTable('%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.idu_linkStatusTable_id, self.host_id, self.bundleNum, self.operationalStatus, self.minJBLevel,
+        self.maxJBLevel, self.underrunOccured, self.overrunOccured, self.timestamp)
 
 
 class IduMirroringportTable(Base):
+    """
+
+    @param config_profile_id:
+    @param mirroringindexid:
+    @param mirroringport:
+    """
     __tablename__ = "idu_mirroringportTable"
     idu_mirroringportTable_id = Column(INTEGER, primary_key=True)
     config_profile_id = Column(
@@ -4003,10 +5747,20 @@ class IduMirroringportTable(Base):
         self.mirroringport = mirroringport
 
     def __repr__(self):
-        return "<IduMirroringportTable('%s','%s','%s','%s')>" % (self.idu_mirroringportTable_id, self.config_profile_id, self.mirroringindexid, self.mirroringport)
+        return "<IduMirroringportTable('%s','%s','%s','%s')>" % (
+        self.idu_mirroringportTable_id, self.config_profile_id, self.mirroringindexid, self.mirroringport)
 
 
 class IduNetworkConfigurationsTable(Base):
+    """
+
+    @param config_profile_id:
+    @param interface:
+    @param ipaddr:
+    @param netmask:
+    @param gateway:
+    @param autoIpConfig:
+    """
     __tablename__ = "idu_networkConfigurationsTable"
     idu_networkConfigurationsTable_id = Column(INTEGER, primary_key=True)
     config_profile_id = Column(
@@ -4027,10 +5781,30 @@ class IduNetworkConfigurationsTable(Base):
         self.autoIpConfig = autoIpConfig
 
     def __repr__(self):
-        return "<IduNetworkConfigurationsTable('%s','%s','%s','%s','%s','%s','%s')>" % (self.idu_networkConfigurationsTable_id, self.config_profile_id, self.interface, self.ipaddr, self.netmask, self.gateway, self.autoIpConfig)
+        return "<IduNetworkConfigurationsTable('%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.idu_networkConfigurationsTable_id, self.config_profile_id, self.interface, self.ipaddr, self.netmask,
+        self.gateway, self.autoIpConfig)
 
 
 class IduOids(Base):
+    """
+
+    @param oid_id:
+    @param device_type_id:
+    @param oid:
+    @param oid_name:
+    @param oid_type:
+    @param access:
+    @param default_value:
+    @param min_value:
+    @param max_value:
+    @param indexes:
+    @param dependent_id:
+    @param multivalue:
+    @param table_name:
+    @param coloumn_name:
+    @param indexes_name:
+    """
     __tablename__ = "idu_oids"
     oid_id = Column(INTEGER, primary_key=True)
     device_type_id = Column(VARCHAR(16))
@@ -4048,7 +5822,8 @@ class IduOids(Base):
     coloumn_name = Column(VARCHAR(128))
     indexes_name = Column(VARCHAR(64))
 
-    def __init__(self, oid_id, device_type_id, oid, oid_name, oid_type, access, default_value, min_value, max_value, indexes, dependent_id, multivalue, table_name, coloumn_name, indexes_name):
+    def __init__(self, oid_id, device_type_id, oid, oid_name, oid_type, access, default_value, min_value, max_value,
+                 indexes, dependent_id, multivalue, table_name, coloumn_name, indexes_name):
         self.oid_id = None
         self.device_type_id = device_type_id
         self.oid = oid
@@ -4066,10 +5841,20 @@ class IduOids(Base):
         self.indexes_name = indexes_name
 
     def __repr__(self):
-        return "<IduOids('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.oid_id, self.device_type_id, self.oid, self.oid_name, self.oid_type, self.access, self.default_value, self.min_value, self.max_value, self.indexes, self.dependent_id, self.multivalue, self.table_name, self.coloumn_name, self.indexes_name)
+        return "<IduOids('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.oid_id, self.device_type_id, self.oid, self.oid_name, self.oid_type, self.access, self.default_value,
+        self.min_value, self.max_value, self.indexes, self.dependent_id, self.multivalue, self.table_name,
+        self.coloumn_name, self.indexes_name)
 
 
 class IduOids_multivalues(Base):
+    """
+
+    @param oids_multivalue_id:
+    @param oid_id:
+    @param value:
+    @param name:
+    """
     __tablename__ = "idu_oids_multivalues"
     oids_multivalue_id = Column(INTEGER, primary_key=True)
     oid_id = Column(INTEGER)
@@ -4083,10 +5868,18 @@ class IduOids_multivalues(Base):
         self.name = name
 
     def __repr__(self):
-        return "<IduOids_multivalues('%s','%s','%s','%s')>" % (self.oids_multivalue_id, self.oid_id, self.value, self.name)
+        return "<IduOids_multivalues('%s','%s','%s','%s')>" % (
+        self.oids_multivalue_id, self.oid_id, self.value, self.name)
 
 
 class IduOmcConfigurationTable(Base):
+    """
+
+    @param config_profile_id:
+    @param omcIndex:
+    @param omcIpAddress:
+    @param periodicStatsTimer:
+    """
     __tablename__ = "idu_omcConfigurationTable"
     idu_omcConfigurationTable_id = Column(INTEGER, primary_key=True)
     config_profile_id = Column(
@@ -4103,10 +5896,18 @@ class IduOmcConfigurationTable(Base):
         self.periodicStatsTimer = periodicStatsTimer
 
     def __repr__(self):
-        return "<IduOmcConfigurationTable('%s','%s','%s','%s','%s')>" % (self.idu_omcConfigurationTable_id, self.config_profile_id, self.omcIndex, self.omcIpAddress, self.periodicStatsTimer)
+        return "<IduOmcConfigurationTable('%s','%s','%s','%s','%s')>" % (
+        self.idu_omcConfigurationTable_id, self.config_profile_id, self.omcIndex, self.omcIpAddress,
+        self.periodicStatsTimer)
 
 
 class IduPoeConfigurationTable(Base):
+    """
+
+    @param config_profile_id:
+    @param indexId:
+    @param poeAdminStatus:
+    """
     __tablename__ = "idu_poeConfigurationTable"
     idu_poeConfigurationTable_id = Column(INTEGER, primary_key=True)
     config_profile_id = Column(
@@ -4121,10 +5922,18 @@ class IduPoeConfigurationTable(Base):
         self.poeAdminStatus = poeAdminStatus
 
     def __repr__(self):
-        return "<IduPoeConfigurationTable('%s','%s','%s','%s')>" % (self.idu_poeConfigurationTable_id, self.config_profile_id, self.indexId, self.poeAdminStatus)
+        return "<IduPoeConfigurationTable('%s','%s','%s','%s')>" % (
+        self.idu_poeConfigurationTable_id, self.config_profile_id, self.indexId, self.poeAdminStatus)
 
 
 class IduPortBwTable(Base):
+    """
+
+    @param config_profile_id:
+    @param switchportnum:
+    @param egressbwvalue:
+    @param ingressbwvalue:
+    """
     __tablename__ = "idu_portBwTable"
     idu_portBwTable_id = Column(INTEGER, primary_key=True)
     config_profile_id = Column(
@@ -4141,10 +5950,36 @@ class IduPortBwTable(Base):
         self.ingressbwvalue = ingressbwvalue
 
     def __repr__(self):
-        return "<IduPortBwTable('%s','%s','%s','%s','%s')>" % (self.idu_portBwTable_id, self.config_profile_id, self.switchportnum, self.egressbwvalue, self.ingressbwvalue)
+        return "<IduPortBwTable('%s','%s','%s','%s','%s')>" % (
+        self.idu_portBwTable_id, self.config_profile_id, self.switchportnum, self.egressbwvalue, self.ingressbwvalue)
 
 
 class IduPortSecondaryStatisticsTable(Base):
+    """
+
+    @param host_id:
+    @param switchPortNum:
+    @param inUnicast:
+    @param outUnicast:
+    @param inBroadcast:
+    @param outBroadcast:
+    @param inMulticast:
+    @param outMulricast:
+    @param inUndersizeRx:
+    @param inFragmentsRx:
+    @param inOversizeRx:
+    @param inJabberRx:
+    @param inMacRcvErrorRx:
+    @param inFCSErrorRx:
+    @param outFCSErrorTx:
+    @param deferedTx:
+    @param collisionTx:
+    @param lateTx:
+    @param exessiveTx:
+    @param singleTx:
+    @param multipleTx:
+    @param timestamp:
+    """
     __tablename__ = "idu_portSecondaryStatisticsTable"
     idu_portSecondaryStatisticsTable_id = Column(INTEGER, primary_key=True)
     host_id = Column(INTEGER, ForeignKey('hosts.host_id'))
@@ -4170,7 +6005,9 @@ class IduPortSecondaryStatisticsTable(Base):
     multipleTx = Column(INTEGER)
     timestamp = Column(TIMESTAMP)
 
-    def __init__(self, host_id, switchPortNum, inUnicast, outUnicast, inBroadcast, outBroadcast, inMulticast, outMulricast, inUndersizeRx, inFragmentsRx, inOversizeRx, inJabberRx, inMacRcvErrorRx, inFCSErrorRx, outFCSErrorTx, deferedTx, collisionTx, lateTx, exessiveTx, singleTx, multipleTx, timestamp):
+    def __init__(self, host_id, switchPortNum, inUnicast, outUnicast, inBroadcast, outBroadcast, inMulticast,
+                 outMulricast, inUndersizeRx, inFragmentsRx, inOversizeRx, inJabberRx, inMacRcvErrorRx, inFCSErrorRx,
+                 outFCSErrorTx, deferedTx, collisionTx, lateTx, exessiveTx, singleTx, multipleTx, timestamp):
         self.idu_portSecondaryStatisticsTable_id = None
         self.host_id = host_id
         self.switchPortNum = switchPortNum
@@ -4196,10 +6033,22 @@ class IduPortSecondaryStatisticsTable(Base):
         self.timestamp = timestamp
 
     def __repr__(self):
-        return "<IduPortSecondaryStatisticsTable('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.idu_portSecondaryStatisticsTable_id, self.host_id, self.switchPortNum, self.inUnicast, self.outUnicast, self.inBroadcast, self.outBroadcast, self.inMulticast, self.outMulricast, self.inUndersizeRx, self.inFragmentsRx, self.inOversizeRx, self.inJabberRx, self.inMacRcvErrorRx, self.inFCSErrorRx, self.outFCSErrorTx, self.deferedTx, self.collisionTx, self.lateTx, self.exessiveTx, self.singleTx, self.multipleTx, self.timestamp)
+        return "<IduPortSecondaryStatisticsTable('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.idu_portSecondaryStatisticsTable_id, self.host_id, self.switchPortNum, self.inUnicast, self.outUnicast,
+        self.inBroadcast, self.outBroadcast, self.inMulticast, self.outMulricast, self.inUndersizeRx,
+        self.inFragmentsRx, self.inOversizeRx, self.inJabberRx, self.inMacRcvErrorRx, self.inFCSErrorRx,
+        self.outFCSErrorTx, self.deferedTx, self.collisionTx, self.lateTx, self.exessiveTx, self.singleTx,
+        self.multipleTx, self.timestamp)
 
 
 class IduPortqinqTable(Base):
+    """
+
+    @param config_profile_id:
+    @param switchportnumber:
+    @param portqinqstate:
+    @param providertag:
+    """
     __tablename__ = "idu_portqinqTable"
     idu_portqinqTable_id = Column(INTEGER, primary_key=True)
     config_profile_id = Column(
@@ -4216,10 +6065,30 @@ class IduPortqinqTable(Base):
         self.providertag = providertag
 
     def __repr__(self):
-        return "<IduPortqinqTable('%s','%s','%s','%s','%s')>" % (self.idu_portqinqTable_id, self.config_profile_id, self.switchportnumber, self.portqinqstate, self.providertag)
+        return "<IduPortqinqTable('%s','%s','%s','%s','%s')>" % (
+        self.idu_portqinqTable_id, self.config_profile_id, self.switchportnumber, self.portqinqstate, self.providertag)
 
 
 class IduPortstatbadframeTable(Base):
+    """
+
+    @param host_id:
+    @param switchbadframeport:
+    @param inundersizerx:
+    @param infragmnetsrx:
+    @param inoversizerx:
+    @param inmacrcverrorrx:
+    @param injabberrx:
+    @param infcserrorrx:
+    @param outfcserrtx:
+    @param defferedtx:
+    @param collisiontx:
+    @param latetx:
+    @param excessivetx:
+    @param singletx:
+    @param multipletx:
+    @param timestamp:
+    """
     __tablename__ = "idu_portstatbadframeTable"
     idu_portstatbadframeTable_id = Column(INTEGER, primary_key=True)
     host_id = Column(INTEGER, ForeignKey('hosts.host_id'))
@@ -4239,7 +6108,9 @@ class IduPortstatbadframeTable(Base):
     multipletx = Column(INTEGER)
     timestamp = Column(TIMESTAMP)
 
-    def __init__(self, host_id, switchbadframeport, inundersizerx, infragmnetsrx, inoversizerx, inmacrcverrorrx, injabberrx, infcserrorrx, outfcserrtx, defferedtx, collisiontx, latetx, excessivetx, singletx, multipletx, timestamp):
+    def __init__(self, host_id, switchbadframeport, inundersizerx, infragmnetsrx, inoversizerx, inmacrcverrorrx,
+                 injabberrx, infcserrorrx, outfcserrtx, defferedtx, collisiontx, latetx, excessivetx, singletx,
+                 multipletx, timestamp):
         self.idu_portstatbadframeTable_id = None
         self.host_id = host_id
         self.switchbadframeport = switchbadframeport
@@ -4259,10 +6130,26 @@ class IduPortstatbadframeTable(Base):
         self.timestamp = timestamp
 
     def __repr__(self):
-        return "<IduPortstatbadframeTable('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.idu_portstatbadframeTable_id, self.host_id, self.switchbadframeport, self.inundersizerx, self.infragmnetsrx, self.inoversizerx, self.inmacrcverrorrx, self.injabberrx, self.infcserrorrx, self.outfcserrtx, self.defferedtx, self.collisiontx, self.latetx, self.excessivetx, self.singletx, self.multipletx, self.timestamp)
+        return "<IduPortstatbadframeTable('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.idu_portstatbadframeTable_id, self.host_id, self.switchbadframeport, self.inundersizerx,
+        self.infragmnetsrx, self.inoversizerx, self.inmacrcverrorrx, self.injabberrx, self.infcserrorrx,
+        self.outfcserrtx, self.defferedtx, self.collisiontx, self.latetx, self.excessivetx, self.singletx,
+        self.multipletx, self.timestamp)
 
 
 class IduPortstatgoodframeTable(Base):
+    """
+
+    @param host_id:
+    @param softwaregoodframeportnum:
+    @param inunicast:
+    @param outunicast:
+    @param inbroadcast:
+    @param outbroadcast:
+    @param inmulticast:
+    @param outmulticast:
+    @param timestamp:
+    """
     __tablename__ = "idu_portstatgoodframeTable"
     idu_portstatgoodframeTable_id = Column(INTEGER, primary_key=True)
     host_id = Column(INTEGER, ForeignKey('hosts.host_id'))
@@ -4275,7 +6162,8 @@ class IduPortstatgoodframeTable(Base):
     outmulticast = Column(INTEGER)
     timestamp = Column(TIMESTAMP)
 
-    def __init__(self, host_id, softwaregoodframeportnum, inunicast, outunicast, inbroadcast, outbroadcast, inmulticast, outmulticast, timestamp):
+    def __init__(self, host_id, softwaregoodframeportnum, inunicast, outunicast, inbroadcast, outbroadcast, inmulticast,
+                 outmulticast, timestamp):
         self.idu_portstatgoodframeTable_id = None
         self.host_id = host_id
         self.softwaregoodframeportnum = softwaregoodframeportnum
@@ -4288,10 +6176,24 @@ class IduPortstatgoodframeTable(Base):
         self.timestamp = timestamp
 
     def __repr__(self):
-        return "<IduPortstatgoodframeTable('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.idu_portstatgoodframeTable_id, self.host_id, self.softwaregoodframeportnum, self.inunicast, self.outunicast, self.inbroadcast, self.outbroadcast, self.inmulticast, self.outmulticast, self.timestamp)
+        return "<IduPortstatgoodframeTable('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.idu_portstatgoodframeTable_id, self.host_id, self.softwaregoodframeportnum, self.inunicast,
+        self.outunicast, self.inbroadcast, self.outbroadcast, self.inmulticast, self.outmulticast, self.timestamp)
 
 
 class IduPortstatisticsTable(Base):
+    """
+
+    @param host_id:
+    @param softwarestatportnum:
+    @param framerx:
+    @param frametx:
+    @param indiscards:
+    @param ingoodoctets:
+    @param inbadoctet:
+    @param outoctets:
+    @param timestamp:
+    """
     __tablename__ = "idu_portstatisticsTable"
     idu_portstatisticsTable_id = Column(INTEGER, primary_key=True)
     host_id = Column(INTEGER, ForeignKey('hosts.host_id'))
@@ -4304,7 +6206,8 @@ class IduPortstatisticsTable(Base):
     outoctets = Column(INTEGER)
     timestamp = Column(TIMESTAMP)
 
-    def __init__(self, host_id, softwarestatportnum, framerx, frametx, indiscards, ingoodoctets, inbadoctet, outoctets, timestamp):
+    def __init__(self, host_id, softwarestatportnum, framerx, frametx, indiscards, ingoodoctets, inbadoctet, outoctets,
+                 timestamp):
         self.idu_portstatisticsTable_id = None
         self.host_id = host_id
         self.softwarestatportnum = softwarestatportnum
@@ -4317,10 +6220,23 @@ class IduPortstatisticsTable(Base):
         self.timestamp = timestamp
 
     def __repr__(self):
-        return "<IduPortstatisticsTable('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.idu_portstatisticsTable_id, self.host_id, self.softwarestatportnum, self.framerx, self.frametx, self.indiscards, self.ingoodoctets, self.inbadoctet, self.outoctets, self.timestamp)
+        return "<IduPortstatisticsTable('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.idu_portstatisticsTable_id, self.host_id, self.softwarestatportnum, self.framerx, self.frametx,
+        self.indiscards, self.ingoodoctets, self.inbadoctet, self.outoctets, self.timestamp)
 
 
 class IduRtcConfigurationTable(Base):
+    """
+
+    @param config_profile_id:
+    @param rtcIndex:
+    @param year:
+    @param month:
+    @param day:
+    @param hour:
+    @param min:
+    @param sec:
+    """
     __tablename__ = "idu_rtcConfigurationTable"
     idu_rtcConfigurationTable_id = Column(INTEGER, primary_key=True)
     config_profile_id = Column(
@@ -4345,10 +6261,21 @@ class IduRtcConfigurationTable(Base):
         self.sec = sec
 
     def __repr__(self):
-        return "<IduRtcConfigurationTable('%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.idu_rtcConfigurationTable_id, self.config_profile_id, self.rtcIndex, self.year, self.month, self.day, self.hour, self.min, self.sec)
+        return "<IduRtcConfigurationTable('%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.idu_rtcConfigurationTable_id, self.config_profile_id, self.rtcIndex, self.year, self.month, self.day,
+        self.hour, self.min, self.sec)
 
 
 class IduSectorIdentificationTable(Base):
+    """
+
+    @param config_profile_id:
+    @param sectorIndex:
+    @param countryCode:
+    @param operatorCode:
+    @param deploymentCode:
+    @param sectorCode:
+    """
     __tablename__ = "idu_sectorIdentificationTable"
     idu_sectorIdentificationTable_id = Column(INTEGER, primary_key=True)
     config_profile_id = Column(
@@ -4369,10 +6296,24 @@ class IduSectorIdentificationTable(Base):
         self.sectorCode = sectorCode
 
     def __repr__(self):
-        return "<IduSectorIdentificationTable('%s','%s','%s','%s','%s','%s','%s')>" % (self.idu_sectorIdentificationTable_id, self.config_profile_id, self.sectorIndex, self.countryCode, self.operatorCode, self.deploymentCode, self.sectorCode)
+        return "<IduSectorIdentificationTable('%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.idu_sectorIdentificationTable_id, self.config_profile_id, self.sectorIndex, self.countryCode,
+        self.operatorCode, self.deploymentCode, self.sectorCode)
 
 
 class IduSwPrimaryPortStatisticsTable(Base):
+    """
+
+    @param host_id:
+    @param swportnumber:
+    @param framesRx:
+    @param framesTx:
+    @param inDiscard:
+    @param inGoodOctets:
+    @param inBadOctets:
+    @param outOctets:
+    @param timestamp:
+    """
     __tablename__ = "idu_swPrimaryPortStatisticsTable"
     idu_swPrimaryPortStatisticsTable_id = Column(INTEGER, primary_key=True)
     host_id = Column(INTEGER, ForeignKey('hosts.host_id'))
@@ -4385,7 +6326,8 @@ class IduSwPrimaryPortStatisticsTable(Base):
     outOctets = Column(INTEGER)
     timestamp = Column(TIMESTAMP)
 
-    def __init__(self, host_id, swportnumber, framesRx, framesTx, inDiscard, inGoodOctets, inBadOctets, outOctets, timestamp):
+    def __init__(self, host_id, swportnumber, framesRx, framesTx, inDiscard, inGoodOctets, inBadOctets, outOctets,
+                 timestamp):
         self.idu_swPrimaryPortStatisticsTable_id = None
         self.host_id = host_id
         self.swportnumber = swportnumber
@@ -4398,10 +6340,21 @@ class IduSwPrimaryPortStatisticsTable(Base):
         self.timestamp = timestamp
 
     def __repr__(self):
-        return "<IduSwPrimaryPortStatisticsTable('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.idu_swPrimaryPortStatisticsTable_id, self.host_id, self.swportnumber, self.framesRx, self.framesTx, self.inDiscard, self.inGoodOctets, self.inBadOctets, self.outOctets, self.timestamp)
+        return "<IduSwPrimaryPortStatisticsTable('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.idu_swPrimaryPortStatisticsTable_id, self.host_id, self.swportnumber, self.framesRx, self.framesTx,
+        self.inDiscard, self.inGoodOctets, self.inBadOctets, self.outOctets, self.timestamp)
 
 
 class IduSwStatusTable(Base):
+    """
+
+    @param host_id:
+    @param swStatusIndex:
+    @param activeVersion:
+    @param passiveVersion:
+    @param bootloaderVersion:
+    @param timestamp:
+    """
     __tablename__ = "idu_swStatusTable"
     idu_swStatusTable_id = Column(INTEGER, primary_key=True)
     host_id = Column(INTEGER, ForeignKey('hosts.host_id'))
@@ -4421,10 +6374,24 @@ class IduSwStatusTable(Base):
         self.timestamp = timestamp
 
     def __repr__(self):
-        return "<IduSwStatusTable('%s','%s','%s','%s','%s','%s','%s')>" % (self.idu_swStatusTable_id, self.host_id, self.swStatusIndex, self.activeVersion, self.passiveVersion, self.bootloaderVersion, self.timestamp)
+        return "<IduSwStatusTable('%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.idu_swStatusTable_id, self.host_id, self.swStatusIndex, self.activeVersion, self.passiveVersion,
+        self.bootloaderVersion, self.timestamp)
 
 
 class IduSwitchPortconfigTable(Base):
+    """
+
+    @param config_profile_id:
+    @param switchportNum:
+    @param swadminState:
+    @param swlinkMode:
+    @param portvid:
+    @param macauthState:
+    @param mirroringdirection:
+    @param portdotqmode:
+    @param macflowcontrol:
+    """
     __tablename__ = "idu_switchPortconfigTable"
     idu_switchPortconfigTable_id = Column(INTEGER, primary_key=True)
     config_profile_id = Column(
@@ -4438,7 +6405,8 @@ class IduSwitchPortconfigTable(Base):
     portdotqmode = Column(INTEGER)
     macflowcontrol = Column(INTEGER)
 
-    def __init__(self, config_profile_id, switchportNum, swadminState, swlinkMode, portvid, macauthState, mirroringdirection, portdotqmode, macflowcontrol):
+    def __init__(self, config_profile_id, switchportNum, swadminState, swlinkMode, portvid, macauthState,
+                 mirroringdirection, portdotqmode, macflowcontrol):
         self.idu_switchPortconfigTable_id = None
         self.config_profile_id = config_profile_id
         self.switchportNum = switchportNum
@@ -4451,10 +6419,21 @@ class IduSwitchPortconfigTable(Base):
         self.macflowcontrol = macflowcontrol
 
     def __repr__(self):
-        return "<IduSwitchPortconfigTable('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.idu_switchPortconfigTable_id, self.config_profile_id, self.switchportNum, self.swadminState, self.swlinkMode, self.portvid, self.macauthState, self.mirroringdirection, self.portdotqmode, self.macflowcontrol)
+        return "<IduSwitchPortconfigTable('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.idu_switchPortconfigTable_id, self.config_profile_id, self.switchportNum, self.swadminState,
+        self.swlinkMode, self.portvid, self.macauthState, self.mirroringdirection, self.portdotqmode,
+        self.macflowcontrol)
 
 
 class IduSwitchportstatusTable(Base):
+    """
+
+    @param host_id:
+    @param switchstatportnum:
+    @param opstate:
+    @param linkspeed:
+    @param timestamp:
+    """
     __tablename__ = "idu_switchportstatusTable"
     idu_switchportstatusTable_id = Column(INTEGER, primary_key=True)
     host_id = Column(INTEGER, ForeignKey('hosts.host_id'))
@@ -4472,10 +6451,22 @@ class IduSwitchportstatusTable(Base):
         self.timestamp = timestamp
 
     def __repr__(self):
-        return "<IduSwitchportstatusTable('%s','%s','%s','%s','%s','%s')>" % (self.idu_switchportstatusTable_id, self.host_id, self.switchstatportnum, self.opstate, self.linkspeed, self.timestamp)
+        return "<IduSwitchportstatusTable('%s','%s','%s','%s','%s','%s')>" % (
+        self.idu_switchportstatusTable_id, self.host_id, self.switchstatportnum, self.opstate, self.linkspeed,
+        self.timestamp)
 
 
 class IduSysOmcRegistrationTable(Base):
+    """
+
+    @param config_profile_id:
+    @param sysOmcRegistrationIndex:
+    @param sysOmcRegisterContactAddr:
+    @param sysOmcRegisterContactPerson:
+    @param sysOmcRegisterContactMobile:
+    @param sysOmcRegisterAlternateContact:
+    @param sysOmcRegisterContactEmail:
+    """
     __tablename__ = "idu_sysOmcRegistrationTable"
     idu_sysOmcRegistrationTable_id = Column(INTEGER, primary_key=True)
     config_profile_id = Column(
@@ -4487,7 +6478,9 @@ class IduSysOmcRegistrationTable(Base):
     sysOmcRegisterAlternateContact = Column(VARCHAR(32))
     sysOmcRegisterContactEmail = Column(VARCHAR(32))
 
-    def __init__(self, config_profile_id, sysOmcRegistrationIndex, sysOmcRegisterContactAddr, sysOmcRegisterContactPerson, sysOmcRegisterContactMobile, sysOmcRegisterAlternateContact, sysOmcRegisterContactEmail):
+    def __init__(self, config_profile_id, sysOmcRegistrationIndex, sysOmcRegisterContactAddr,
+                 sysOmcRegisterContactPerson, sysOmcRegisterContactMobile, sysOmcRegisterAlternateContact,
+                 sysOmcRegisterContactEmail):
         self.idu_sysOmcRegistrationTable_id = None
         self.config_profile_id = config_profile_id
         self.sysOmcRegistrationIndex = sysOmcRegistrationIndex
@@ -4498,10 +6491,19 @@ class IduSysOmcRegistrationTable(Base):
         self.sysOmcRegisterContactEmail = sysOmcRegisterContactEmail
 
     def __repr__(self):
-        return "<IduSysOmcRegistrationTable('%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.idu_sysOmcRegistrationTable_id, self.config_profile_id, self.sysOmcRegistrationIndex, self.sysOmcRegisterContactAddr, self.sysOmcRegisterContactPerson, self.sysOmcRegisterContactMobile, self.sysOmcRegisterAlternateContact, self.sysOmcRegisterContactEmail)
+        return "<IduSysOmcRegistrationTable('%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.idu_sysOmcRegistrationTable_id, self.config_profile_id, self.sysOmcRegistrationIndex,
+        self.sysOmcRegisterContactAddr, self.sysOmcRegisterContactPerson, self.sysOmcRegisterContactMobile,
+        self.sysOmcRegisterAlternateContact, self.sysOmcRegisterContactEmail)
 
 
 class IduTdmoipNetworkInterfaceConfigurationTable(Base):
+    """
+
+    @param config_profile_id:
+    @param interfaceid:
+    @param ipaddress:
+    """
     __tablename__ = "idu_tdmoipNetworkInterfaceConfigurationTable"
     idu_tdmoipNetworkInterfaceConfigurationTable_id = Column(
         INTEGER, primary_key=True)
@@ -4517,10 +6519,23 @@ class IduTdmoipNetworkInterfaceConfigurationTable(Base):
         self.ipaddress = ipaddress
 
     def __repr__(self):
-        return "<IduTdmoipNetworkInterfaceConfigurationTable('%s','%s','%s','%s')>" % (self.idu_tdmoipNetworkInterfaceConfigurationTable_id, self.config_profile_id, self.interfaceid, self.ipaddress)
+        return "<IduTdmoipNetworkInterfaceConfigurationTable('%s','%s','%s','%s')>" % (
+        self.idu_tdmoipNetworkInterfaceConfigurationTable_id, self.config_profile_id, self.interfaceid, self.ipaddress)
 
 
 class IduTdmoipNetworkInterfaceStatisticsTable(Base):
+    """
+
+    @param host_id:
+    @param indexid:
+    @param bytesTransmitted:
+    @param bytesReceived:
+    @param framesTransmittedOk:
+    @param framesReceivedOk:
+    @param goodClassifiedFramesRx:
+    @param checksumErrorPackets:
+    @param timestamp:
+    """
     __tablename__ = "idu_tdmoipNetworkInterfaceStatisticsTable"
     idu_tdmoipNetworkInterfaceStatisticsTable_id = Column(
         INTEGER, primary_key=True)
@@ -4534,7 +6549,8 @@ class IduTdmoipNetworkInterfaceStatisticsTable(Base):
     checksumErrorPackets = Column(INTEGER)
     timestamp = Column(TIMESTAMP)
 
-    def __init__(self, host_id, indexid, bytesTransmitted, bytesReceived, framesTransmittedOk, framesReceivedOk, goodClassifiedFramesRx, checksumErrorPackets, timestamp):
+    def __init__(self, host_id, indexid, bytesTransmitted, bytesReceived, framesTransmittedOk, framesReceivedOk,
+                 goodClassifiedFramesRx, checksumErrorPackets, timestamp):
         self.idu_tdmoipNetworkInterfaceStatisticsTable_id = None
         self.host_id = host_id
         self.indexid = indexid
@@ -4547,10 +6563,20 @@ class IduTdmoipNetworkInterfaceStatisticsTable(Base):
         self.timestamp = timestamp
 
     def __repr__(self):
-        return "<IduTdmoipNetworkInterfaceStatisticsTable('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.idu_tdmoipNetworkInterfaceStatisticsTable_id, self.host_id, self.indexid, self.bytesTransmitted, self.bytesReceived, self.framesTransmittedOk, self.framesReceivedOk, self.goodClassifiedFramesRx, self.checksumErrorPackets, self.timestamp)
+        return "<IduTdmoipNetworkInterfaceStatisticsTable('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.idu_tdmoipNetworkInterfaceStatisticsTable_id, self.host_id, self.indexid, self.bytesTransmitted,
+        self.bytesReceived, self.framesTransmittedOk, self.framesReceivedOk, self.goodClassifiedFramesRx,
+        self.checksumErrorPackets, self.timestamp)
 
 
 class IduTemperatureSensorConfigurationTable(Base):
+    """
+
+    @param config_profile_id:
+    @param tempIndex:
+    @param tempMax:
+    @param tempMin:
+    """
     __tablename__ = "idu_temperatureSensorConfigurationTable"
     idu_temperatureSensorConfigurationTable_id = Column(
         INTEGER, primary_key=True)
@@ -4568,10 +6594,22 @@ class IduTemperatureSensorConfigurationTable(Base):
         self.tempMin = tempMin
 
     def __repr__(self):
-        return "<IduTemperatureSensorConfigurationTable('%s','%s','%s','%s','%s')>" % (self.idu_temperatureSensorConfigurationTable_id, self.config_profile_id, self.tempIndex, self.tempMax, self.tempMin)
+        return "<IduTemperatureSensorConfigurationTable('%s','%s','%s','%s','%s')>" % (
+        self.idu_temperatureSensorConfigurationTable_id, self.config_profile_id, self.tempIndex, self.tempMax,
+        self.tempMin)
 
 
 class IduVlanconfigTable(Base):
+    """
+
+    @param config_profile_id:
+    @param vlanid:
+    @param vlanname:
+    @param vlantype:
+    @param vlantag:
+    @param memberports:
+    @param vlanrowstatus:
+    """
     __tablename__ = "idu_vlanconfigTable"
     idu_vlanconfigTable_id = Column(INTEGER, primary_key=True)
     config_profile_id = Column(
@@ -4594,10 +6632,18 @@ class IduVlanconfigTable(Base):
         self.vlanrowstatus = vlanrowstatus
 
     def __repr__(self):
-        return "<IduVlanconfigTable('%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.idu_vlanconfigTable_id, self.config_profile_id, self.vlanid, self.vlanname, self.vlantype, self.vlantag, self.memberports, self.vlanrowstatus)
+        return "<IduVlanconfigTable('%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.idu_vlanconfigTable_id, self.config_profile_id, self.vlanid, self.vlanname, self.vlantype, self.vlantag,
+        self.memberports, self.vlanrowstatus)
 
 
 class IduOidTable(Base):
+    """
+
+    @param table_name:
+    @param table_oid:
+    @param varbinds:
+    """
     __tablename__ = "idu_oid_table"
     table_name = Column(VARCHAR(64), primary_key=True)
     table_oid = Column(VARCHAR(64))
@@ -4615,6 +6661,11 @@ class IduOidTable(Base):
 ########################################################### Master Slave L
 # create class for master_slave_linking table
 class MasterSlaveLinking(Base):
+    """
+
+    @param master:
+    @param slave:
+    """
     __tablename__ = 'master_slave_linking'
 
     master_slave_linking_id = Column(Integer, primary_key=True)
@@ -4627,7 +6678,8 @@ class MasterSlaveLinking(Base):
         self.slave = slave
 
     def __repr__(self):
-        return "<MasterSlaveLinking('%s','%s','%s')>" % (self.master_slave_linking_id, self.acltype_vap, self.maclist, self.vap_vap)
+        return "<MasterSlaveLinking('%s','%s','%s')>" % (
+        self.master_slave_linking_id, self.acltype_vap, self.maclist, self.vap_vap)
 
 ##########################################################################################################################################################
 ##
@@ -4637,6 +6689,15 @@ class MasterSlaveLinking(Base):
 
 
 class Ap25AccesspointIPsettings(Base):
+    """
+
+    @param config_profile_id:
+    @param lanIPaddress:
+    @param lanSubnetMask:
+    @param lanGatewayIP:
+    @param lanPrimaryDNS:
+    @param lanSecondaryDNS:
+    """
     __tablename__ = "ap25_accesspointIPsettings"
     ap25_accesspointIPsettings_id = Column(INTEGER, primary_key=True)
     config_profile_id = Column(
@@ -4657,10 +6718,20 @@ class Ap25AccesspointIPsettings(Base):
         self.lanSecondaryDNS = lanSecondaryDNS
 
     def __repr__(self):
-        return "<Ap25AccesspointIPsettings('%s','%s','%s','%s','%s','%s','%s')>" % (self.ap25_accesspointIPsettings_id, self.config_profile_id, self.lanIPaddress, self.lanSubnetMask, self.lanGatewayIP, self.lanPrimaryDNS, self.lanSecondaryDNS)
+        return "<Ap25AccesspointIPsettings('%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.ap25_accesspointIPsettings_id, self.config_profile_id, self.lanIPaddress, self.lanSubnetMask,
+        self.lanGatewayIP, self.lanPrimaryDNS, self.lanSecondaryDNS)
 
 
 class Ap25AclMacTable(Base):
+    """
+
+    @param config_profile_id:
+    @param ap25_aclMacTable_id:
+    @param vapselection_id:
+    @param aclMACsIndex:
+    @param macaddress:
+    """
     __tablename__ = "ap25_aclMacTable"
     ap25_aclMacTable_id = Column(INTEGER, primary_key=True)
     config_profile_id = Column(
@@ -4678,10 +6749,18 @@ class Ap25AclMacTable(Base):
         self.macaddress = macaddress
 
     def __repr__(self):
-        return "<Ap25AclMacTable('%s','%s','%s','%s','%s')>" % (self.ap25_aclMacTable_id, self.config_profile_id, self.vapselection_id, self.aclMACsIndex, self.macaddress)
+        return "<Ap25AclMacTable('%s','%s','%s','%s','%s')>" % (
+        self.ap25_aclMacTable_id, self.config_profile_id, self.vapselection_id, self.aclMACsIndex, self.macaddress)
 
 
 class Ap25AclStatisticsTable(Base):
+    """
+
+    @param config_profile_id:
+    @param aclTotalsINDEX:
+    @param vapNumber:
+    @param totalMACentries:
+    """
     __tablename__ = "ap25_aclStatisticsTable"
     ap25_aclStatisticsTable_id = Column(INTEGER, primary_key=True)
     config_profile_id = Column(
@@ -4698,10 +6777,22 @@ class Ap25AclStatisticsTable(Base):
         self.totalMACentries = totalMACentries
 
     def __repr__(self):
-        return "<Ap25AclStatisticsTable('%s','%s','%s','%s','%s')>" % (self.ap25_aclStatisticsTable_id, self.config_profile_id, self.aclTotalsINDEX, self.vapNumber, self.totalMACentries)
+        return "<Ap25AclStatisticsTable('%s','%s','%s','%s','%s')>" % (
+        self.ap25_aclStatisticsTable_id, self.config_profile_id, self.aclTotalsINDEX, self.vapNumber,
+        self.totalMACentries)
 
 
 class Ap25BasicACLconfigTable(Base):
+    """
+
+    @param config_profile_id:
+    @param vapselection_id:
+    @param aclState:
+    @param aclMode:
+    @param aclAddMAC:
+    @param aclDeleteOneMAC:
+    @param aclDeleteAllMACs:
+    """
     __tablename__ = "ap25_basicACLconfigTable"
     ap25_basicACLconfigTable_id = Column(INTEGER, primary_key=True)
     config_profile_id = Column(
@@ -4714,7 +6805,8 @@ class Ap25BasicACLconfigTable(Base):
     aclDeleteOneMAC = Column(VARCHAR(10))
     aclDeleteAllMACs = Column(VARCHAR(10))
 
-    def __init__(self, config_profile_id, vapselection_id, aclState, aclMode, aclAddMAC='', aclDeleteOneMAC='', aclDeleteAllMACs=0):
+    def __init__(self, config_profile_id, vapselection_id, aclState, aclMode, aclAddMAC='', aclDeleteOneMAC='',
+                 aclDeleteAllMACs=0):
         self.ap25_basicACLconfigTable_id = None
         self.config_profile_id = config_profile_id
         self.vapselection_id = vapselection_id
@@ -4725,11 +6817,17 @@ class Ap25BasicACLconfigTable(Base):
         self.aclDeleteAllMACs = aclDeleteAllMACs
 
     def __repr__(self):
-        return "<Ap25BasicACLsetup('%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.ap25_basicACLconfigTable_id, self.config_profile_id, self.vapselection_id, self.aclState, self.aclMode,
-                                                                                 self.aclAddMAC, self.aclDeleteOneMAC, self.aclDeleteAllMACs)
+        return "<Ap25BasicACLsetup('%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.ap25_basicACLconfigTable_id, self.config_profile_id, self.vapselection_id, self.aclState, self.aclMode,
+        self.aclAddMAC, self.aclDeleteOneMAC, self.aclDeleteAllMACs)
 
 
 class Ap25BasicConfiguration(Base):
+    """
+
+    @param config_profile_id:
+    @param accesspointName:
+    """
     __tablename__ = "ap25_basicConfiguration"
     ap25_basicConfiguration_id = Column(INTEGER, primary_key=True)
     config_profile_id = Column(
@@ -4742,10 +6840,17 @@ class Ap25BasicConfiguration(Base):
         self.accesspointName = accesspointName
 
     def __repr__(self):
-        return "<Ap25BasicConfiguration('%s','%s','%s')>" % (self.ap25_basicConfiguration_id, self.config_profile_id, self.accesspointName)
+        return "<Ap25BasicConfiguration('%s','%s','%s')>" % (
+        self.ap25_basicConfiguration_id, self.config_profile_id, self.accesspointName)
 
 
 class Ap25BasicVAPsecurity(Base):
+    """
+
+    @param config_profile_id:
+    @param vapselection_id:
+    @param vapSecurityMode:
+    """
     __tablename__ = "ap25_basicVAPsecurity"
     ap25_basicVAPsecurity_id = Column(INTEGER, primary_key=True)
     config_profile_id = Column(
@@ -4761,10 +6866,26 @@ class Ap25BasicVAPsecurity(Base):
         self.vapSecurityMode = vapSecurityMode
 
     def __repr__(self):
-        return "<Ap25BasicVAPsecurity('%s','%s','%s','%s')>" % (self.ap25_basicVAPsecurity_id, self.config_profile_id, self.vapselection_id, self.vapSecurityMode)
+        return "<Ap25BasicVAPsecurity('%s','%s','%s','%s')>" % (
+        self.ap25_basicVAPsecurity_id, self.config_profile_id, self.vapselection_id, self.vapSecurityMode)
 
 
 class Ap25BasicVAPconfigTable(Base):
+    """
+
+    @param config_profile_id:
+    @param vapselection_id:
+    @param vapESSID:
+    @param vapHiddenESSIDstate:
+    @param vapRTSthresholdValue:
+    @param vapFragmentationThresholdValue:
+    @param vapBeaconInterval:
+    @param vlanId:
+    @param vlanPriority:
+    @param vapMode:
+    @param vapSecurityMode:
+    @param vapRadioMac:
+    """
     __tablename__ = "ap25_basicVAPconfigTable"
     ap25_basicVAPconfigTable_id = Column(INTEGER, primary_key=True)
     config_profile_id = Column(
@@ -4782,7 +6903,9 @@ class Ap25BasicVAPconfigTable(Base):
     vapSecurityMode = Column(SMALLINT)
     vapRadioMac = Column(VARCHAR(20))
 
-    def __init__(self, config_profile_id, vapselection_id, vapESSID, vapHiddenESSIDstate, vapRTSthresholdValue, vapFragmentationThresholdValue, vapBeaconInterval, vlanId=0, vlanPriority=0, vapMode=0, vapSecurityMode=0, vapRadioMac=""):
+    def __init__(self, config_profile_id, vapselection_id, vapESSID, vapHiddenESSIDstate, vapRTSthresholdValue,
+                 vapFragmentationThresholdValue, vapBeaconInterval, vlanId=0, vlanPriority=0, vapMode=0,
+                 vapSecurityMode=0, vapRadioMac=""):
         self.ap25_basicVAPconfigTable_id = None
         self.config_profile_id = config_profile_id
         self.vapselection_id = vapselection_id
@@ -4798,13 +6921,24 @@ class Ap25BasicVAPconfigTable(Base):
         self.vapRadioMac = vapRadioMac
 
     def __repr__(self):
-        return "<Ap25BasicVAPsetup('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>"\
-            % (
-                self.ap25_basicVAPconfigTable_id, self.config_profile_id, self.vapselection_id, self.vapESSID, self.vapHiddenESSIDstate,
-                self.vapRTSthresholdValue, self.vapFragmentationThresholdValue, self.vapBeaconInterval, self.vlanId, self.vlanPriority, self.vapMode, self.vapSecurityMode, self.vapRadioMac)
+        return "<Ap25BasicVAPsetup('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" \
+               % (
+            self.ap25_basicVAPconfigTable_id, self.config_profile_id, self.vapselection_id, self.vapESSID,
+            self.vapHiddenESSIDstate,
+            self.vapRTSthresholdValue, self.vapFragmentationThresholdValue, self.vapBeaconInterval, self.vlanId,
+            self.vlanPriority, self.vapMode, self.vapSecurityMode, self.vapRadioMac)
 
 
 class Ap25DhcpServer(Base):
+    """
+
+    @param config_profile_id:
+    @param dhcpServerStatus:
+    @param dhcpStartIPaddress:
+    @param dhcpEndIPaddress:
+    @param dhcpSubnetMask:
+    @param dhcpClientLeaseTime:
+    """
     __tablename__ = "ap25_dhcpServer"
     ap25_dhcpServer_id = Column(INTEGER, primary_key=True)
     config_profile_id = Column(
@@ -4815,7 +6949,8 @@ class Ap25DhcpServer(Base):
     dhcpSubnetMask = Column(VARCHAR(16))
     dhcpClientLeaseTime = Column(INTEGER)
 
-    def __init__(self, config_profile_id, dhcpServerStatus, dhcpStartIPaddress, dhcpEndIPaddress, dhcpSubnetMask, dhcpClientLeaseTime):
+    def __init__(self, config_profile_id, dhcpServerStatus, dhcpStartIPaddress, dhcpEndIPaddress, dhcpSubnetMask,
+                 dhcpClientLeaseTime):
         self.ap25_dhcpServer_id = None
         self.config_profile_id = config_profile_id
         self.dhcpServerStatus = dhcpServerStatus
@@ -4825,10 +6960,19 @@ class Ap25DhcpServer(Base):
         self.dhcpClientLeaseTime = dhcpClientLeaseTime
 
     def __repr__(self):
-        return "<Ap25DhcpServer('%s','%s','%s','%s','%s','%s','%s')>" % (self.ap25_dhcpServer_id, self.config_profile_id, self.dhcpServerStatus, self.dhcpStartIPaddress, self.dhcpEndIPaddress, self.dhcpSubnetMask, self.dhcpClientLeaseTime)
+        return "<Ap25DhcpServer('%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.ap25_dhcpServer_id, self.config_profile_id, self.dhcpServerStatus, self.dhcpStartIPaddress,
+        self.dhcpEndIPaddress, self.dhcpSubnetMask, self.dhcpClientLeaseTime)
 
 
 class Ap25DhcpClientsTable(Base):
+    """
+
+    @param host_id:
+    @param dhcpClientsMACaddress:
+    @param dhcpClientsIPaddress:
+    @param dhcpClientsExpiresIn:
+    """
     __tablename__ = "ap25_dhcpClientsTable"
     ap25_dhcpClientsTable_id = Column(INTEGER, primary_key=True)
     host_id = Column(INTEGER, ForeignKey('hosts.host_id'))
@@ -4846,10 +6990,23 @@ class Ap25DhcpClientsTable(Base):
         self.timestamp = None
 
     def __repr__(self):
-        return "<Ap25DhcpClientsTable('%s','%s','%s','%s','%s','%s')>" % (self.ap25_dhcpClientsTable_id, self.host_id, self.dhcpClientsMACaddress, self.dhcpClientsIPaddress, self.dhcpClientsExpiresIn, self.timestamp)
+        return "<Ap25DhcpClientsTable('%s','%s','%s','%s','%s','%s')>" % (
+        self.ap25_dhcpClientsTable_id, self.host_id, self.dhcpClientsMACaddress, self.dhcpClientsIPaddress,
+        self.dhcpClientsExpiresIn, self.timestamp)
 
 
 class Ap25ApScanDataTable(Base):
+    """
+
+    @param host_id:
+    @param macAddress:
+    @param essid:
+    @param frequency:
+    @param quality:
+    @param signalLevel:
+    @param noiseLevel:
+    @param beconIntervel:
+    """
     __tablename__ = "ap25_apScanDataTable"
     ap25_apScanDataTable_id = Column(INTEGER, primary_key=True)
     host_id = Column(INTEGER, ForeignKey('hosts.host_id'))
@@ -4875,10 +7032,17 @@ class Ap25ApScanDataTable(Base):
         self.Timestamp = None
 
     def __repr__(self):
-        return "<Ap25ApScanDataTable('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.ap25_apScanDataTable_id, self.host_id, self.macAddress, self.essid, self.frequency, self.quality, self.signalLevel, self.noiseLevel, self.beconIntervel, self.Timestamp)
+        return "<Ap25ApScanDataTable('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.ap25_apScanDataTable_id, self.host_id, self.macAddress, self.essid, self.frequency, self.quality,
+        self.signalLevel, self.noiseLevel, self.beconIntervel, self.Timestamp)
 
 
 class Ap25RadioSelection(Base):
+    """
+
+    @param config_profile_id:
+    @param radio:
+    """
     __tablename__ = "ap25_radioSelection"
     ap25_radioSelection_id = Column(INTEGER, primary_key=True)
     config_profile_id = Column(
@@ -4891,10 +7055,31 @@ class Ap25RadioSelection(Base):
         self.radio = radio
 
     def __repr__(self):
-        return "<Ap25RadioSelection('%s','%s','%s')>" % (self.ap25_radioSelection_id, self.config_profile_id, self.radio)
+        return "<Ap25RadioSelection('%s','%s','%s')>" % (
+        self.ap25_radioSelection_id, self.config_profile_id, self.radio)
 
 
 class Ap25RadioSetup(Base):
+    """
+
+    @param config_profile_id:
+    @param radioState:
+    @param radioAPmode:
+    @param radioManagementVLANstate:
+    @param radioCountryCode:
+    @param numberOfVAPs:
+    @param radioChannel:
+    @param wifiMode:
+    @param radioTxPower:
+    @param radioGatingIndex:
+    @param radioAggregation:
+    @param radioAggFrames:
+    @param radioAggSize:
+    @param radioAggMinSize:
+    @param radioChannelWidth:
+    @param radioTXChainMask:
+    @param radioRXChainMask:
+    """
     __tablename__ = "ap25_radioSetup"
     ap25_radioSetup_id = Column(INTEGER, primary_key=True)
     config_profile_id = Column(
@@ -4916,7 +7101,9 @@ class Ap25RadioSetup(Base):
     radioTXChainMask = Column(SMALLINT)
     radioRXChainMask = Column(SMALLINT)
 
-    def __init__(self, config_profile_id, radioState, radioAPmode, radioManagementVLANstate, radioCountryCode, numberOfVAPs, radioChannel, wifiMode, radioTxPower, radioGatingIndex, radioAggregation, radioAggFrames, radioAggSize, radioAggMinSize, radioChannelWidth, radioTXChainMask, radioRXChainMask):
+    def __init__(self, config_profile_id, radioState, radioAPmode, radioManagementVLANstate, radioCountryCode,
+                 numberOfVAPs, radioChannel, wifiMode, radioTxPower, radioGatingIndex, radioAggregation, radioAggFrames,
+                 radioAggSize, radioAggMinSize, radioChannelWidth, radioTXChainMask, radioRXChainMask):
         self.ap25_radioSetup_id = None
         self.config_profile_id = config_profile_id
         self.radioState = radioState
@@ -4938,10 +7125,23 @@ class Ap25RadioSetup(Base):
 
     def __repr__(self):
         return "<Ap25RadioSetup('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" \
-            % (self.ap25_radioSetup_id, self.config_profile_id, self.radioState, self.radioAPmode, self.radioManagementVLANstate, self.radioCountryCode, self.numberOfVAPs, self.radioChannel, self.wifiMode, self.radioTxPower, self.radioGatingIndex, self.radioAggregation, self.radioAggFrames, self.radioAggSize, self.radioAggMinSize, self.radioChannelWidth, self.radioTXChainMask, self.radioRXChainMask)
+               % (self.ap25_radioSetup_id, self.config_profile_id, self.radioState, self.radioAPmode,
+                  self.radioManagementVLANstate, self.radioCountryCode, self.numberOfVAPs, self.radioChannel,
+                  self.wifiMode, self.radioTxPower, self.radioGatingIndex, self.radioAggregation, self.radioAggFrames,
+                  self.radioAggSize, self.radioAggMinSize, self.radioChannelWidth, self.radioTXChainMask,
+                  self.radioRXChainMask)
 
 
 class Ap25Services(Base):
+    """
+
+    @param config_profile_id:
+    @param upnpServerStatus:
+    @param systemLogStatus:
+    @param systemLogIP:
+    @param systemLogPort:
+    @param systemTime:
+    """
     __tablename__ = "ap25_services"
     ap25_services_id = Column(INTEGER, primary_key=True)
     config_profile_id = Column(
@@ -4962,10 +7162,22 @@ class Ap25Services(Base):
         self.systemTime = systemTime
 
     def __repr__(self):
-        return "<Ap25Services('%s','%s','%s','%s','%s','%s','%s')>" % (self.ap25_services_id, self.config_profile_id, self.upnpServerStatus, self.systemLogStatus, self.systemLogIP, self.systemLogPort, self.systemTime)
+        return "<Ap25Services('%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.ap25_services_id, self.config_profile_id, self.upnpServerStatus, self.systemLogStatus, self.systemLogIP,
+        self.systemLogPort, self.systemTime)
 
 
 class Ap25StatisticsTable(Base):
+    """
+
+    @param host_id:
+    @param statisticsIndex:
+    @param statisticsInterface:
+    @param statisticsRxPackets:
+    @param statisticsTxPackets:
+    @param statisticsRxError:
+    @param statisticsTxError:
+    """
     __tablename__ = "ap25_statisticsTable"
     ap25_systemInfo_id = Column(INTEGER, primary_key=True)
     host_id = Column(INTEGER, ForeignKey('hosts.host_id'))
@@ -4976,7 +7188,8 @@ class Ap25StatisticsTable(Base):
     statisticsRxError = Column(INTEGER)
     statisticsTxError = Column(INTEGER)
 
-    def __init__(self, host_id, statisticsIndex, statisticsInterface, statisticsRxPackets, statisticsTxPackets, statisticsRxError, statisticsTxError):
+    def __init__(self, host_id, statisticsIndex, statisticsInterface, statisticsRxPackets, statisticsTxPackets,
+                 statisticsRxError, statisticsTxError):
         self.ap25_systemInfo_id = None
         self.host_id = host_id
         self.statisticsIndex = statisticsIndex
@@ -4987,10 +7200,27 @@ class Ap25StatisticsTable(Base):
         self.statisticsTxError = statisticsTxError
 
     def __repr__(self):
-        return "<Ap25StatisticsTable('%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.ap25_systemInfo_id, self.host_id, self.statisticsIndex, self.statisticsInterface, self.statisticsRxPackets, self.statisticsTxPackets, self.statisticsRxError, self.statisticsTxError)
+        return "<Ap25StatisticsTable('%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.ap25_systemInfo_id, self.host_id, self.statisticsIndex, self.statisticsInterface, self.statisticsRxPackets,
+        self.statisticsTxPackets, self.statisticsRxError, self.statisticsTxError)
 
 
 class Ap25VapClientStatisticsTable(Base):
+    """
+
+    @param host_id:
+    @param slNum:
+    @param addressMAC:
+    @param aid:
+    @param chan:
+    @param txRate:
+    @param rxRate:
+    @param rssi:
+    @param idle:
+    @param txSEQ:
+    @param rxSEQ:
+    @param caps:
+    """
     __tablename__ = "ap25_vapClientStatisticsTable"
     ap25_vapClientStatisticsTable_id = Column(INTEGER, primary_key=True)
     host_id = Column(INTEGER, ForeignKey('hosts.host_id'))
@@ -5022,10 +7252,18 @@ class Ap25VapClientStatisticsTable(Base):
         self.caps = caps
 
     def __repr__(self):
-        return "<Ap25VapClientStatisticsTable('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.ap25_vapClientStatisticsTable_id, self.host_id, self.slNum, self.addressMAC, self.aid, self.chan, self.txRate, self.rxRate, self.rssi, self.idle, self.txSEQ, self.rxSEQ, self.caps)
+        return "<Ap25VapClientStatisticsTable('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.ap25_vapClientStatisticsTable_id, self.host_id, self.slNum, self.addressMAC, self.aid, self.chan,
+        self.txRate, self.rxRate, self.rssi, self.idle, self.txSEQ, self.rxSEQ, self.caps)
 
 
 class Ap25VapSelection(Base):
+    """
+
+    @param config_profile_id:
+    @param totalVAPsPresent:
+    @param selectVap:
+    """
     __tablename__ = "ap25_vapSelection"
     ap25_vapSelection_id = Column(INTEGER, primary_key=True)
     config_profile_id = Column(
@@ -5040,10 +7278,22 @@ class Ap25VapSelection(Base):
         self.selectVap = selectVap
 
     def __repr__(self):
-        return "<Ap25VapSelection('%s','%s','%s','%s')>" % (self.ap25_vapSelection_id, self.config_profile_id, self.totalVAPsPresent, self.selectVap)
+        return "<Ap25VapSelection('%s','%s','%s','%s')>" % (
+        self.ap25_vapSelection_id, self.config_profile_id, self.totalVAPsPresent, self.selectVap)
 
 
 class Ap25VapWEPsecurityConfigTable(Base):
+    """
+
+    @param config_profile_id:
+    @param basicVAPconfigIndex:
+    @param vapWEPmode:
+    @param vapWEPprimaryKey:
+    @param vapWEPkey1:
+    @param vapWEPkey2:
+    @param vapWEPkey3:
+    @param vapWEPkey4:
+    """
     __tablename__ = "ap25_vapWEPsecurityConfigTable"
     ap25_vapWEPsecurityConfigTable_id = Column(INTEGER, primary_key=True)
     config_profile_id = Column(
@@ -5056,7 +7306,8 @@ class Ap25VapWEPsecurityConfigTable(Base):
     vapWEPkey3 = Column(VARCHAR(22))
     vapWEPkey4 = Column(VARCHAR(22))
 
-    def __init__(self, config_profile_id, basicVAPconfigIndex, vapWEPmode, vapWEPprimaryKey, vapWEPkey1, vapWEPkey2, vapWEPkey3, vapWEPkey4):
+    def __init__(self, config_profile_id, basicVAPconfigIndex, vapWEPmode, vapWEPprimaryKey, vapWEPkey1, vapWEPkey2,
+                 vapWEPkey3, vapWEPkey4):
         self.ap25_vapWEPsecurityConfigTable_id = None
         self.config_profile_id = config_profile_id
         self.basicVAPconfigIndex = basicVAPconfigIndex
@@ -5068,11 +7319,31 @@ class Ap25VapWEPsecurityConfigTable(Base):
         self.vapWEPkey4 = vapWEPkey4
 
     def __repr__(self):
-        return "<Ap25VapWEPsecuritySetup('%s','%s','%s','%s','%s','%s','%s','%s')>"\
-            % (self.ap25_vapWEPsecurityConfigTable_id, self.config_profile_id, self.vapWEPmode, self.vapWEPprimaryKey, self.vapWEPkey1, self.vapWEPkey2, self.vapWEPkey3, self.vapWEPkey4)
+        return "<Ap25VapWEPsecuritySetup('%s','%s','%s','%s','%s','%s','%s','%s')>" \
+               % (
+        self.ap25_vapWEPsecurityConfigTable_id, self.config_profile_id, self.vapWEPmode, self.vapWEPprimaryKey,
+        self.vapWEPkey1, self.vapWEPkey2, self.vapWEPkey3, self.vapWEPkey4)
 
 
 class Ap25VapWPAsecurityConfigTable(Base):
+    """
+
+    @param config_profile_id:
+    @param vapselection_id:
+    @param vapWPAmode:
+    @param vapWPAcypher:
+    @param vapWPArekeyInterval:
+    @param vapWPAmasterReKey:
+    @param vapWEPrekeyInt:
+    @param vapWPAkeyMode:
+    @param vapWPAconfigPSKPassPhrase:
+    @param vapWPArsnPreAuth:
+    @param vapWPArsnPreAuthInterface:
+    @param vapWPAeapReAuthPeriod:
+    @param vapWPAserverIP:
+    @param vapWPAserverPort:
+    @param vapWPAsharedSecret:
+    """
     __tablename__ = "ap25_vapWPAsecurityConfigTable"
     ap25_vapWPAsecurityConfigTable_id = Column(INTEGER, primary_key=True)
     config_profile_id = Column(
@@ -5093,7 +7364,10 @@ class Ap25VapWPAsecurityConfigTable(Base):
     vapWPAserverPort = Column(INTEGER)
     vapWPAsharedSecret = Column(VARCHAR(32))
 
-    def __init__(self, config_profile_id, vapselection_id, vapWPAmode, vapWPAcypher, vapWPArekeyInterval, vapWPAmasterReKey, vapWEPrekeyInt, vapWPAkeyMode, vapWPAconfigPSKPassPhrase, vapWPArsnPreAuth, vapWPArsnPreAuthInterface, vapWPAeapReAuthPeriod, vapWPAserverIP, vapWPAserverPort, vapWPAsharedSecret):
+    def __init__(self, config_profile_id, vapselection_id, vapWPAmode, vapWPAcypher, vapWPArekeyInterval,
+                 vapWPAmasterReKey, vapWEPrekeyInt, vapWPAkeyMode, vapWPAconfigPSKPassPhrase, vapWPArsnPreAuth,
+                 vapWPArsnPreAuthInterface, vapWPAeapReAuthPeriod, vapWPAserverIP, vapWPAserverPort,
+                 vapWPAsharedSecret):
         self.ap25_vapWPAsecurityConfigTable_id = None
         self.config_profile_id = config_profile_id
         self.vapselection_id = vapselection_id
@@ -5112,10 +7386,21 @@ class Ap25VapWPAsecurityConfigTable(Base):
         self.vapWPAsharedSecret = vapWPAsharedSecret
 
     def __repr__(self):
-        return "<Ap25VapWPAsecuritySetup('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.ap25_vapWPAsecurityConfigTable_id, self.config_profile_id, self.vapselection_id, self.vapWPAmode, self.vapWPAcypher, self.vapWPArekeyInterval, self.vapWPAmasterReKey, self.vapWEPrekeyInt, self.vapWPAkeyMode, self.vapWPAconfigPSKPassPhrase, self.vapWPArsnPreAuth, self.vapWPArsnPreAuthInterface, self.vapWPAeapReAuthPeriod, self.vapWPAserverIP, self.vapWPAserverPort, self.vapWPAsharedSecret)
+        return "<Ap25VapWPAsecuritySetup('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.ap25_vapWPAsecurityConfigTable_id, self.config_profile_id, self.vapselection_id, self.vapWPAmode,
+        self.vapWPAcypher, self.vapWPArekeyInterval, self.vapWPAmasterReKey, self.vapWEPrekeyInt, self.vapWPAkeyMode,
+        self.vapWPAconfigPSKPassPhrase, self.vapWPArsnPreAuth, self.vapWPArsnPreAuthInterface,
+        self.vapWPAeapReAuthPeriod, self.vapWPAserverIP, self.vapWPAserverPort, self.vapWPAsharedSecret)
 
 
 class Ap25Versions(Base):
+    """
+
+    @param host_id:
+    @param hardwareVersion:
+    @param softwareVersion:
+    @param bootLoaderVersion:
+    """
     __tablename__ = "ap25_versions"
     ap25_versions_id = Column(INTEGER, primary_key=True)
     host_id = Column(INTEGER, ForeignKey('hosts.host_id'))
@@ -5131,10 +7416,21 @@ class Ap25Versions(Base):
         self.bootLoaderVersion = bootLoaderVersion
 
     def __repr__(self):
-        return "<Ap25Versions('%s','%s','%s','%s','%s')>" % (self.ap25_versions_id, self.host_id, self.hardwareVersion, self.softwareVersion, self.bootLoaderVersion)
+        return "<Ap25Versions('%s','%s','%s','%s','%s')>" % (
+        self.ap25_versions_id, self.host_id, self.hardwareVersion, self.softwareVersion, self.bootLoaderVersion)
 
 
 class Ap25Oid_table(Base):
+    """
+
+    @param table_name:
+    @param table_oid:
+    @param varbinds:
+    @param is_recon:
+    @param status:
+    @param isNode:
+    @param timestamp:
+    """
     __tablename__ = "ap25_oid_table"
     table_name = Column(VARCHAR(64), primary_key=True)
     table_oid = Column(VARCHAR(64))
@@ -5154,10 +7450,29 @@ class Ap25Oid_table(Base):
         self.timestamp = timestamp
 
     def __repr__(self):
-        return "<Ap25Oid_table('%s','%s','%s','%s','%s','%s','%s')>" % (self.table_name, self.table_oid, self.varbinds, self.is_recon, self.status, self.isNode, self.timestamp)
+        return "<Ap25Oid_table('%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.table_name, self.table_oid, self.varbinds, self.is_recon, self.status, self.isNode, self.timestamp)
 
 
 class Ap25Oids(Base):
+    """
+
+    @param oid_id:
+    @param device_type_id:
+    @param oid:
+    @param oid_name:
+    @param oid_type:
+    @param access:
+    @param default_value:
+    @param min_value:
+    @param max_value:
+    @param indexes:
+    @param dependent_id:
+    @param multivalue:
+    @param table_name:
+    @param coloumn_name:
+    @param indexes_name:
+    """
     __tablename__ = "ap25_oids"
     oid_id = Column(INTEGER, primary_key=True)
     device_type_id = Column(VARCHAR(16))
@@ -5175,7 +7490,8 @@ class Ap25Oids(Base):
     coloumn_name = Column(VARCHAR(128))
     indexes_name = Column(VARCHAR(64))
 
-    def __init__(self, oid_id, device_type_id, oid, oid_name, oid_type, access, default_value, min_value, max_value, indexes, dependent_id, multivalue, table_name, coloumn_name, indexes_name):
+    def __init__(self, oid_id, device_type_id, oid, oid_name, oid_type, access, default_value, min_value, max_value,
+                 indexes, dependent_id, multivalue, table_name, coloumn_name, indexes_name):
         self.oid_id = None
         self.device_type_id = device_type_id
         self.oid = oid
@@ -5193,10 +7509,20 @@ class Ap25Oids(Base):
         self.indexes_name = indexes_name
 
     def __repr__(self):
-        return "<Ap25Oids('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.oid_id, self.device_type_id, self.oid, self.oid_name, self.oid_type, self.access, self.default_value, self.min_value, self.max_value, self.indexes, self.dependent_id, self.multivalue, self.table_name, self.coloumn_name, self.indexes_name)
+        return "<Ap25Oids('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.oid_id, self.device_type_id, self.oid, self.oid_name, self.oid_type, self.access, self.default_value,
+        self.min_value, self.max_value, self.indexes, self.dependent_id, self.multivalue, self.table_name,
+        self.coloumn_name, self.indexes_name)
 
 
 class Ap25OidsMultivalues(Base):
+    """
+
+    @param oids_multivalue_id:
+    @param oid_id:
+    @param value:
+    @param name:
+    """
     __tablename__ = "ap25_oids_multivalues"
     oids_multivalue_id = Column(INTEGER, primary_key=True)
     oid_id = Column(INTEGER)
@@ -5210,10 +7536,29 @@ class Ap25OidsMultivalues(Base):
         self.name = name
 
     def __repr__(self):
-        return "<Ap25Oids_multivalues('%s','%s','%s','%s')>" % (self.oids_multivalue_id, self.oid_id, self.value, self.name)
+        return "<Ap25Oids_multivalues('%s','%s','%s','%s')>" % (
+        self.oids_multivalue_id, self.oid_id, self.value, self.name)
 
 
 class ApClient_ap_data(Base):
+    """
+
+    @param host_id:
+    @param client_id:
+    @param client_mac:
+    @param vap_id:
+    @param slNum:
+    @param aid:
+    @param chan:
+    @param txRate:
+    @param rxRate:
+    @param rssi:
+    @param idle:
+    @param total_tx:
+    @param total_rx:
+    @param caps:
+    @param timestamp:
+    """
     __tablename__ = "ap_client_ap_data"
     ap_client_ap_data_id = Column(INTEGER, primary_key=True)
     host_id = Column(INTEGER, ForeignKey('hosts.host_id'))
@@ -5232,7 +7577,8 @@ class ApClient_ap_data(Base):
     caps = Column(VARCHAR(11))
     timestamp = Column(DATETIME)
 
-    def __init__(self, host_id, client_id, client_mac, vap_id, slNum, aid, chan, txRate, rxRate, rssi, idle, total_tx, total_rx, caps, timestamp):
+    def __init__(self, host_id, client_id, client_mac, vap_id, slNum, aid, chan, txRate, rxRate, rssi, idle, total_tx,
+                 total_rx, caps, timestamp):
         self.ap_client_ap_data_id = None
         self.host_id = host_id
         self.client_id = client_id
@@ -5251,10 +7597,25 @@ class ApClient_ap_data(Base):
         self.timestamp = timestamp
 
     def __repr__(self):
-        return "<ApClient_ap_data('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.ap_client_ap_data_id, self.host_id, self.client_id, self.client_mac, self.vap_id, self.slNum, self.aid, self.chan, self.txRate, self.rxRate, self.rssi, self.idle, self.total_tx, self.total_rx, self.caps, self.timestamp)
+        return "<ApClient_ap_data('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.ap_client_ap_data_id, self.host_id, self.client_id, self.client_mac, self.vap_id, self.slNum, self.aid,
+        self.chan, self.txRate, self.rxRate, self.rssi, self.idle, self.total_tx, self.total_rx, self.caps,
+        self.timestamp)
 
 
 class ApClient_details(Base):
+    """
+
+    @param client_name:
+    @param mac:
+    @param total_tx:
+    @param total_rx:
+    @param first_seen_time:
+    @param first_seen_ap_id:
+    @param last_seen_time:
+    @param last_seen_ap_id:
+    @param client_ip:
+    """
     __tablename__ = "ap_client_details"
     client_id = Column(INTEGER, primary_key=True)
     client_name = Column(VARCHAR(32))
@@ -5267,7 +7628,8 @@ class ApClient_details(Base):
     last_seen_ap_id = Column(INTEGER)
     client_ip = Column(VARCHAR(20))
 
-    def __init__(self, client_name, mac, total_tx, total_rx, first_seen_time, first_seen_ap_id, last_seen_time, last_seen_ap_id, client_ip):
+    def __init__(self, client_name, mac, total_tx, total_rx, first_seen_time, first_seen_ap_id, last_seen_time,
+                 last_seen_ap_id, client_ip):
         self.client_id = None
         self.client_name = client_name
         self.mac = mac
@@ -5281,10 +7643,18 @@ class ApClient_details(Base):
 
     def __repr__(self):
         return "<ApClient_details('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" \
-            % (self.client_id, self.client_name, self.mac, self.total_tx, self.total_rx, self.first_seen_time, self.first_seen_ap_id, self.last_seen_time, self.last_seen_ap_id, self.client_ip)
+               % (self.client_id, self.client_name, self.mac, self.total_tx, self.total_rx, self.first_seen_time,
+                  self.first_seen_ap_id, self.last_seen_time, self.last_seen_ap_id, self.client_ip)
 
 
 class ApConnected_client(Base):
+    """
+
+    @param host_id:
+    @param client_id:
+    @param client_mac:
+    @param state:
+    """
     __tablename__ = "ap_connected_client"
     ap_connected_client_id = Column(INTEGER, primary_key=True)
     host_id = Column(INTEGER, ForeignKey('hosts.host_id'))
@@ -5300,12 +7670,19 @@ class ApConnected_client(Base):
         self.state = state
 
     def __repr__(self):
-        return "<ApConnected_client('%s','%s','%s','%s','%s')>" % (self.ap_connected_client_id, self.host_id, self.client_id, self.client_mac, self.state)
+        return "<ApConnected_client('%s','%s','%s','%s','%s')>" % (
+        self.ap_connected_client_id, self.host_id, self.client_id, self.client_mac, self.state)
 
 
 ###################################### AP MODEL ENDS HERE ################
 
 class FirmwareListTable(Base):
+    """
+
+    @param device_type:
+    @param firmware_file_name:
+    @param firmware_file_path:
+    """
     __tablename__ = "firmware_list_table"
     firmware_list_table_id = Column(INTEGER, primary_key=True)
     device_type = Column(VARCHAR(10))
@@ -5319,12 +7696,19 @@ class FirmwareListTable(Base):
         self.firmware_file_path = firmware_file_path
 
     def __repr__(self):
-        return "<FirmwareList_table('%s','%s','%s','%s')>" % (self.firmware_list_table_id, self.device_type, self.firmware_file_name, self.firmware_file_path)
+        return "<FirmwareList_table('%s','%s','%s','%s')>" % (
+        self.firmware_list_table_id, self.device_type, self.firmware_file_name, self.firmware_file_path)
 
 
 # Rahul Tables For License ###############################################
 
 class LicenseInfo(Base):
+    """
+
+    @param minutes:
+    @param last_check_date:
+    @param is_valid:
+    """
     __tablename__ = "license_info"
     minutes = Column(INT, primary_key=True)
     last_check_date = Column(DATETIME)
@@ -5338,10 +7722,18 @@ class LicenseInfo(Base):
         self.timestamp = None
 
     def __repr__(self):
-        return "<LicenseInfo('%s','%s','%s','%s')>" % (self.minutes, self.last_check_date, self.is_valid, self.timestamp)
+        return "<LicenseInfo('%s','%s','%s','%s')>" % (
+        self.minutes, self.last_check_date, self.is_valid, self.timestamp)
 
 
 class LicenseDetails(Base):
+    """
+
+    @param license_id:
+    @param issued_client:
+    @param issue_date:
+    @param expire_date:
+    """
     __tablename__ = "license_details"
     license_id = Column(VARCHAR(32), primary_key=True)
     issued_client = Column(VARCHAR(32))
@@ -5357,10 +7749,18 @@ class LicenseDetails(Base):
         self.timestamp = None
 
     def __repr__(self):
-        return "<LicenseDetails('%s','%s','%s','%s','%s')>" % (self.license_id, self.issued_client, self.issue_date, self.expire_date, self.timestamp)
+        return "<LicenseDetails('%s','%s','%s','%s','%s')>" % (
+        self.license_id, self.issued_client, self.issue_date, self.expire_date, self.timestamp)
 
 
 class HostStatus(Base):
+    """
+
+    @param host_ip:
+    @param host_id:
+    @param status:
+    @param plugin_status:
+    """
     __tablename__ = "host_status"
     status_id = Column(INTEGER, primary_key=True)
     host_ip = Column(VARCHAR(32))
@@ -5381,10 +7781,20 @@ class HostStatus(Base):
         self.timestamp = None
 
     def __repr__(self):
-        return "<HostStatus('%s','%s','%s','%s','%s')>" % (self.license_id, self.issued_client, self.issue_date, self.expire_date, self.plugin_status, self.timestamp)
+        return "<HostStatus('%s','%s','%s','%s','%s')>" % (
+        self.license_id, self.issued_client, self.issue_date, self.expire_date, self.plugin_status, self.timestamp)
 
 
 class Odu1007_2_20_oid_table(Base):
+    """
+
+    @param table_name:
+    @param table_oid:
+    @param varbinds:
+    @param is_recon:
+    @param status:
+    @param timestamp:
+    """
     __tablename__ = "odu100_7_2_20_oid_table"
     table_name = Column(VARCHAR(64), primary_key=True)
     table_oid = Column(VARCHAR(64))
@@ -5402,12 +7812,22 @@ class Odu1007_2_20_oid_table(Base):
         self.timestamp = timestamp
 
     def __repr__(self):
-        return "<Odu1007_2_20_oid_table('%s','%s','%s','%s','%s','%s')>" % (self.table_name, self.table_oid, self.varbinds, self.is_recon, self.status, self.timestamp)
+        return "<Odu1007_2_20_oid_table('%s','%s','%s','%s','%s','%s')>" % (
+        self.table_name, self.table_oid, self.varbinds, self.is_recon, self.status, self.timestamp)
 
 
 # CCU##########################################################
 
 class CcuInformationTable(Base):
+    """
+
+    @param host_id:
+    @param ccuITIndex:
+    @param ccuITSiteCCUType:
+    @param ccuITCCUId:
+    @param ccuITSerialNumber:
+    @param ccuITHardwareVersion:
+    """
     __tablename__ = "ccu_ccuInformationTable"
     ccu_ccuInformationTable_id = Column(Integer, primary_key=True)
     host_id = Column(INTEGER, ForeignKey('hosts.host_id'))
@@ -5427,10 +7847,24 @@ class CcuInformationTable(Base):
         self.ccuITHardwareVersion = ccuITHardwareVersion
 
     def __repr__(self):
-        return "<CcuInformationTable('%s','%s','%s','%s','%s','%s','%s')>" % (self.ccu_ccuInformationTable_id, self.host_id, self.ccuITIndex, self.ccuITSiteCCUType, self.ccuITCCUId, self.ccuITSerialNumber, self.ccuITHardwareVersion)
+        return "<CcuInformationTable('%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.ccu_ccuInformationTable_id, self.host_id, self.ccuITIndex, self.ccuITSiteCCUType, self.ccuITCCUId,
+        self.ccuITSerialNumber, self.ccuITHardwareVersion)
 
 
 class CcuNetworkConfigurationTable(Base):
+    """
+
+    @param host_id:
+    @param ccuNCIndex:
+    @param ccuNCMACAddress:
+    @param ccuNCCCUIP:
+    @param ccuNCCCUNetMask:
+    @param ccuNCOMCIP:
+    @param ccuNCDHCPAssignedIP:
+    @param ccuNCDHCPNetMask:
+    @param ccuNCDefaultGateway:
+    """
     __tablename__ = "ccu_ccuNetworkConfigurationTable"
     ccu_ccuNetworkConfigurationTable_id = Column(Integer, primary_key=True)
     host_id = Column(INTEGER, ForeignKey('hosts.host_id'))
@@ -5443,7 +7877,8 @@ class CcuNetworkConfigurationTable(Base):
     ccuNCDHCPNetMask = Column(VARCHAR(18))
     ccuNCDefaultGateway = Column(VARCHAR(18))
 
-    def __init__(self, host_id, ccuNCIndex, ccuNCMACAddress, ccuNCCCUIP, ccuNCCCUNetMask, ccuNCOMCIP, ccuNCDHCPAssignedIP, ccuNCDHCPNetMask, ccuNCDefaultGateway):
+    def __init__(self, host_id, ccuNCIndex, ccuNCMACAddress, ccuNCCCUIP, ccuNCCCUNetMask, ccuNCOMCIP,
+                 ccuNCDHCPAssignedIP, ccuNCDHCPNetMask, ccuNCDefaultGateway):
         self.ccu_ccuNetworkConfigurationTable_id = None
         self.host_id = host_id
         self.ccuNCIndex = ccuNCIndex
@@ -5456,10 +7891,29 @@ class CcuNetworkConfigurationTable(Base):
         self.ccuNCDefaultGateway = ccuNCDefaultGateway
 
     def __repr__(self):
-        return "<CcuNetworkConfigurationTable('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.ccu_ccuNetworkConfigurationTable_id, self.host_id, self.ccuNCIndex, self.ccuNCMACAddress, self.ccuNCCCUIP, self.ccuNCCCUNetMask, self.ccuNCOMCIP, self.ccuNCDHCPAssignedIP, self.ccuNCDHCPNetMask, self.ccuNCDefaultGateway)
+        return "<CcuNetworkConfigurationTable('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.ccu_ccuNetworkConfigurationTable_id, self.host_id, self.ccuNCIndex, self.ccuNCMACAddress, self.ccuNCCCUIP,
+        self.ccuNCCCUNetMask, self.ccuNCOMCIP, self.ccuNCDHCPAssignedIP, self.ccuNCDHCPNetMask,
+        self.ccuNCDefaultGateway)
 
 
 class CcuRealTimeStatusTable(Base):
+    """
+
+    @param host_id:
+    @param ccuRTSIndex:
+    @param ccuRTSSystemVoltage:
+    @param ccuRTSSolarCurrent:
+    @param ccuRTSSMPSCurrent:
+    @param ccuRTSBatteryCurrent:
+    @param ccuRTSLoadCurrent:
+    @param ccuRTSBatterySOC:
+    @param ccuRTSInternalTemperature:
+    @param ccuRTSBatteryAmbientTemperature:
+    @param ccuRTSSMPSTemperature:
+    @param ccuRTSACVoltageReading:
+    @param ccuRTSAlarmStatusByte:
+    """
     __tablename__ = "ccu_ccuRealTimeStatusTable"
     ccu_ccuRealTimeStatusTable_id = Column(Integer, primary_key=True)
     host_id = Column(INTEGER, ForeignKey('hosts.host_id'))
@@ -5476,7 +7930,9 @@ class CcuRealTimeStatusTable(Base):
     ccuRTSACVoltageReading = Column(Integer)
     ccuRTSAlarmStatusByte = Column(Integer)
 
-    def __init__(self, host_id, ccuRTSIndex, ccuRTSSystemVoltage, ccuRTSSolarCurrent, ccuRTSSMPSCurrent, ccuRTSBatteryCurrent, ccuRTSLoadCurrent, ccuRTSBatterySOC, ccuRTSInternalTemperature, ccuRTSBatteryAmbientTemperature, ccuRTSSMPSTemperature, ccuRTSACVoltageReading, ccuRTSAlarmStatusByte):
+    def __init__(self, host_id, ccuRTSIndex, ccuRTSSystemVoltage, ccuRTSSolarCurrent, ccuRTSSMPSCurrent,
+                 ccuRTSBatteryCurrent, ccuRTSLoadCurrent, ccuRTSBatterySOC, ccuRTSInternalTemperature,
+                 ccuRTSBatteryAmbientTemperature, ccuRTSSMPSTemperature, ccuRTSACVoltageReading, ccuRTSAlarmStatusByte):
         self.ccu_ccuRealTimeStatusTable_id = None
         self.host_id = host_id
         self.ccuRTSIndex = ccuRTSIndex
@@ -5493,10 +7949,28 @@ class CcuRealTimeStatusTable(Base):
         self.ccuRTSAlarmStatusByte = ccuRTSAlarmStatusByte
 
     def __repr__(self):
-        return "<CcuRealTimeStatusTable('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.ccu_ccuRealTimeStatusTable_id, self.host_id, self.ccuRTSIndex, self.ccuRTSSystemVoltage, self.ccuRTSSolarCurrent, self.ccuRTSSMPSCurrent, self.ccuRTSBatteryCurrent, self.ccuRTSLoadCurrent, self.ccuRTSBatterySOC, self.ccuRTSInternalTemperature, self.ccuRTSBatteryAmbientTemperature, self.ccuRTSSMPSTemperature, self.ccuRTSACVoltageReading, self.ccuRTSAlarmStatusByte)
+        return "<CcuRealTimeStatusTable('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.ccu_ccuRealTimeStatusTable_id, self.host_id, self.ccuRTSIndex, self.ccuRTSSystemVoltage,
+        self.ccuRTSSolarCurrent, self.ccuRTSSMPSCurrent, self.ccuRTSBatteryCurrent, self.ccuRTSLoadCurrent,
+        self.ccuRTSBatterySOC, self.ccuRTSInternalTemperature, self.ccuRTSBatteryAmbientTemperature,
+        self.ccuRTSSMPSTemperature, self.ccuRTSACVoltageReading, self.ccuRTSAlarmStatusByte)
 
 
 class CcuStatusDataTable(Base):
+    """
+
+    @param host_id:
+    @param ccuSDIndex:
+    @param ccuSDLastRebootReason:
+    @param ccuSDUpTimeSecs:
+    @param ccuSDKwHReading:
+    @param ccuSDBatteryHealth:
+    @param ccuSDBatteryState:
+    @param ccuSDLoadConnectedStatus:
+    @param ccuSDACAvailability:
+    @param ccuSDExternalChargingStatus:
+    @param ccuSDChargeDischargeCycle:
+    """
     __tablename__ = "ccu_ccuStatusDataTable"
     ccu_ccuStatusDataTable_id = Column(Integer, primary_key=True)
     host_id = Column(INTEGER, ForeignKey('hosts.host_id'))
@@ -5511,7 +7985,9 @@ class CcuStatusDataTable(Base):
     ccuSDExternalChargingStatus = Column(Integer)
     ccuSDChargeDischargeCycle = Column(Integer)
 
-    def __init__(self, host_id, ccuSDIndex, ccuSDLastRebootReason, ccuSDUpTimeSecs, ccuSDKwHReading, ccuSDBatteryHealth, ccuSDBatteryState, ccuSDLoadConnectedStatus, ccuSDACAvailability, ccuSDExternalChargingStatus, ccuSDChargeDischargeCycle):
+    def __init__(self, host_id, ccuSDIndex, ccuSDLastRebootReason, ccuSDUpTimeSecs, ccuSDKwHReading, ccuSDBatteryHealth,
+                 ccuSDBatteryState, ccuSDLoadConnectedStatus, ccuSDACAvailability, ccuSDExternalChargingStatus,
+                 ccuSDChargeDischargeCycle):
         self.ccu_ccuStatusDataTable_id = None
         self.host_id = host_id
         self.ccuSDIndex = ccuSDIndex
@@ -5526,10 +8002,22 @@ class CcuStatusDataTable(Base):
         self.ccuSDChargeDischargeCycle = ccuSDChargeDischargeCycle
 
     def __repr__(self):
-        return "<CcuStatusDataTable('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.ccu_ccuStatusDataTable_id, self.host_id, self.ccuSDIndex, self.ccuSDLastRebootReason, self.ccuSDUpTimeSecs, self.ccuSDKwHReading, self.ccuSDBatteryHealth, self.ccuSDBatteryState, self.ccuSDLoadConnectedStatus, self.ccuSDACAvailability, self.ccuSDExternalChargingStatus, self.ccuSDChargeDischargeCycle)
+        return "<CcuStatusDataTable('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.ccu_ccuStatusDataTable_id, self.host_id, self.ccuSDIndex, self.ccuSDLastRebootReason, self.ccuSDUpTimeSecs,
+        self.ccuSDKwHReading, self.ccuSDBatteryHealth, self.ccuSDBatteryState, self.ccuSDLoadConnectedStatus,
+        self.ccuSDACAvailability, self.ccuSDExternalChargingStatus, self.ccuSDChargeDischargeCycle)
 
 
 class CcuSoftwareInformationTable(Base):
+    """
+
+    @param host_id:
+    @param ccuSIIndex:
+    @param ccuSIActiveSoftwareVersion:
+    @param ccuSIBackupSoftwareVersion:
+    @param ccuSICommunicationProtocolVersion:
+    @param ccuSIBootLoaderVersion:
+    """
     __tablename__ = "ccu_ccuSoftwareInformationTable"
     ccu_ccuSoftwareInformationTable_id = Column(Integer, primary_key=True)
     host_id = Column(INTEGER, ForeignKey('hosts.host_id'))
@@ -5539,7 +8027,8 @@ class CcuSoftwareInformationTable(Base):
     ccuSICommunicationProtocolVersion = Column(VARCHAR(20))
     ccuSIBootLoaderVersion = Column(VARCHAR(13))
 
-    def __init__(self, host_id, ccuSIIndex, ccuSIActiveSoftwareVersion, ccuSIBackupSoftwareVersion, ccuSICommunicationProtocolVersion, ccuSIBootLoaderVersion):
+    def __init__(self, host_id, ccuSIIndex, ccuSIActiveSoftwareVersion, ccuSIBackupSoftwareVersion,
+                 ccuSICommunicationProtocolVersion, ccuSIBootLoaderVersion):
         self.ccu_ccuSoftwareInformationTable_id = None
         self.host_id = host_id
         self.ccuSIIndex = ccuSIIndex
@@ -5549,10 +8038,22 @@ class CcuSoftwareInformationTable(Base):
         self.ccuSIBootLoaderVersion = ccuSIBootLoaderVersion
 
     def __repr__(self):
-        return "<CcuSoftwareInformationTable('%s','%s','%s','%s','%s','%s','%s')>" % (self.ccu_ccuSoftwareInformationTable_id, self.host_id, self.ccuSIIndex, self.ccuSIActiveSoftwareVersion, self.ccuSIBackupSoftwareVersion, self.ccuSICommunicationProtocolVersion, self.ccuSIBootLoaderVersion)
+        return "<CcuSoftwareInformationTable('%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.ccu_ccuSoftwareInformationTable_id, self.host_id, self.ccuSIIndex, self.ccuSIActiveSoftwareVersion,
+        self.ccuSIBackupSoftwareVersion, self.ccuSICommunicationProtocolVersion, self.ccuSIBootLoaderVersion)
 
 
 class CcuAlarmAndThresholdTable(Base):
+    """
+
+    @param config_profile_id:
+    @param ccuATIndex:
+    @param ccuATHighTemperatureAlarm:
+    @param ccuATPSMRequest:
+    @param ccuATSMPSMaxCurrentLimit:
+    @param ccuATPeakLoadCurrent:
+    @param ccuATLowVoltageDisconnectLevel:
+    """
     __tablename__ = "ccu_ccuAlarmAndThresholdTable"
     ccu_ccuAlarmAndThresholdTable_id = Column(INTEGER, primary_key=True)
     config_profile_id = Column(
@@ -5564,7 +8065,8 @@ class CcuAlarmAndThresholdTable(Base):
     ccuATPeakLoadCurrent = Column(SMALLINT)
     ccuATLowVoltageDisconnectLevel = Column(SMALLINT)
 
-    def __init__(self, config_profile_id, ccuATIndex, ccuATHighTemperatureAlarm, ccuATPSMRequest, ccuATSMPSMaxCurrentLimit, ccuATPeakLoadCurrent, ccuATLowVoltageDisconnectLevel):
+    def __init__(self, config_profile_id, ccuATIndex, ccuATHighTemperatureAlarm, ccuATPSMRequest,
+                 ccuATSMPSMaxCurrentLimit, ccuATPeakLoadCurrent, ccuATLowVoltageDisconnectLevel):
         self.ccu_ccuAlarmAndThresholdTable_id = None
         self.config_profile_id = config_profile_id
         self.ccuATIndex = ccuATIndex
@@ -5575,10 +8077,27 @@ class CcuAlarmAndThresholdTable(Base):
         self.ccuATLowVoltageDisconnectLevel = ccuATLowVoltageDisconnectLevel
 
     def __repr__(self):
-        return "<CcuAlarm_threshold_table('%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.ccu_ccuAlarmAndThresholdTable_id, self.config_profile_id, self.ccuATIndex, self.ccuATHighTemperatureAlarm, self.ccuATPSMRequest, self.ccuATSMPSMaxCurrentLimit, self.ccuATPeakLoadCurrent, self.ccuATLowVoltageDisconnectLevel)
+        return "<CcuAlarm_threshold_table('%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.ccu_ccuAlarmAndThresholdTable_id, self.config_profile_id, self.ccuATIndex, self.ccuATHighTemperatureAlarm,
+        self.ccuATPSMRequest, self.ccuATSMPSMaxCurrentLimit, self.ccuATPeakLoadCurrent,
+        self.ccuATLowVoltageDisconnectLevel)
 
 
 class CcuAuxIOTable(Base):
+    """
+
+    @param config_profile_id:
+    @param ccuAIIndex:
+    @param ccuAIExternalOutput1:
+    @param ccuAIExternalOutput2:
+    @param ccuAIExternalOutput3:
+    @param ccuAIExternalInput1:
+    @param ccuAIExternalInput2:
+    @param ccuAIExternalInput3:
+    @param ccuAIExternalInput1AlarmType:
+    @param ccuAIExternalInput2AlarmType:
+    @param ccuAIExternalInput3AlarmType:
+    """
     __tablename__ = "ccu_ccuAuxIOTable"
     ccu_ccuAuxIOTable_id = Column(INTEGER, primary_key=True)
     config_profile_id = Column(
@@ -5594,7 +8113,9 @@ class CcuAuxIOTable(Base):
     ccuAIExternalInput2AlarmType = Column(TINYINT)
     ccuAIExternalInput3AlarmType = Column(TINYINT)
 
-    def __init__(self, config_profile_id, ccuAIIndex, ccuAIExternalOutput1, ccuAIExternalOutput2, ccuAIExternalOutput3, ccuAIExternalInput1, ccuAIExternalInput2, ccuAIExternalInput3, ccuAIExternalInput1AlarmType, ccuAIExternalInput2AlarmType, ccuAIExternalInput3AlarmType):
+    def __init__(self, config_profile_id, ccuAIIndex, ccuAIExternalOutput1, ccuAIExternalOutput2, ccuAIExternalOutput3,
+                 ccuAIExternalInput1, ccuAIExternalInput2, ccuAIExternalInput3, ccuAIExternalInput1AlarmType,
+                 ccuAIExternalInput2AlarmType, ccuAIExternalInput3AlarmType):
         self.ccu_ccuAuxIOTable_id = None
         self.config_profile_id = config_profile_id
         self.ccuAIIndex = ccuAIIndex
@@ -5610,12 +8131,23 @@ class CcuAuxIOTable(Base):
 
     def __repr__(self):
         return "<CcuAux_io_table('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" \
-            % (
-                self.ccu_ccuAuxIOTable_id, self.config_profile_id, self.ccuAIIndex, self.ccuAIExternalOutput1, self.ccuAIExternalOutput2, self.ccuAIExternalOutput3,
-                self.ccuAIExternalInput1, self.ccuAIExternalInput2, self.ccuAIExternalInput3, self.ccuAIExternalInput1AlarmType, self.ccuAIExternalInput2AlarmType, self.ccuAIExternalInput3AlarmType)
+               % (
+            self.ccu_ccuAuxIOTable_id, self.config_profile_id, self.ccuAIIndex, self.ccuAIExternalOutput1,
+            self.ccuAIExternalOutput2, self.ccuAIExternalOutput3,
+            self.ccuAIExternalInput1, self.ccuAIExternalInput2, self.ccuAIExternalInput3,
+            self.ccuAIExternalInput1AlarmType, self.ccuAIExternalInput2AlarmType, self.ccuAIExternalInput3AlarmType)
 
 
 class CcuBatteryPanelConfigTable(Base):
+    """
+
+    @param config_profile_id:
+    @param ccuBPCIndex:
+    @param ccuBPCSiteBatteryCapacity:
+    @param ccuBPCSiteSolarPanelwP:
+    @param ccuBPCSiteSolarPanelCount:
+    @param ccuBPCNewBatteryInstallationDate:
+    """
     __tablename__ = "ccu_ccuBatteryPanelConfigTable"
     ccu_ccuBatteryPanelConfigTable_id = Column(INTEGER, primary_key=True)
     config_profile_id = Column(
@@ -5626,7 +8158,8 @@ class CcuBatteryPanelConfigTable(Base):
     ccuBPCSiteSolarPanelCount = Column(SMALLINT)
     ccuBPCNewBatteryInstallationDate = Column(VARCHAR(13))
 
-    def __init__(self, config_profile_id, ccuBPCIndex, ccuBPCSiteBatteryCapacity, ccuBPCSiteSolarPanelwP, ccuBPCSiteSolarPanelCount, ccuBPCNewBatteryInstallationDate):
+    def __init__(self, config_profile_id, ccuBPCIndex, ccuBPCSiteBatteryCapacity, ccuBPCSiteSolarPanelwP,
+                 ccuBPCSiteSolarPanelCount, ccuBPCNewBatteryInstallationDate):
         self.ccu_ccuBatteryPanelConfigTable_id = None
         self.config_profile_id = config_profile_id
         self.ccuBPCIndex = ccuBPCIndex
@@ -5636,10 +8169,22 @@ class CcuBatteryPanelConfigTable(Base):
         self.ccuBPCNewBatteryInstallationDate = ccuBPCNewBatteryInstallationDate
 
     def __repr__(self):
-        return "<CcuBattery_panel_config_table('%s','%s','%s','%s','%s','%s','%s')>" % (self.ccu_ccuBatteryPanelConfigTable_id, self.config_profile_id, self.ccuBPCIndex, self.ccuBPCSiteBatteryCapacity, self.ccuBPCSiteSolarPanelwP, self.ccuBPCSiteSolarPanelCount, self.ccuBPCNewBatteryInstallationDate)
+        return "<CcuBattery_panel_config_table('%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.ccu_ccuBatteryPanelConfigTable_id, self.config_profile_id, self.ccuBPCIndex,
+        self.ccuBPCSiteBatteryCapacity, self.ccuBPCSiteSolarPanelwP, self.ccuBPCSiteSolarPanelCount,
+        self.ccuBPCNewBatteryInstallationDate)
 
 
 class CcuControlTable(Base):
+    """
+
+    @param config_profile_id:
+    @param ccuCTIndex:
+    @param ccuCTLoadTurnOff:
+    @param ccuCTSMPSCharging:
+    @param ccuCTRestoreDefault:
+    @param ccuCTCCUReset:
+    """
     __tablename__ = "ccu_ccuControlTable"
     ccu_ccuControlTable_id = Column(INTEGER, primary_key=True)
     config_profile_id = Column(
@@ -5650,7 +8195,8 @@ class CcuControlTable(Base):
     ccuCTRestoreDefault = Column(TINYINT)
     ccuCTCCUReset = Column(TINYINT)
 
-    def __init__(self, config_profile_id, ccuCTIndex, ccuCTLoadTurnOff, ccuCTSMPSCharging, ccuCTRestoreDefault, ccuCTCCUReset):
+    def __init__(self, config_profile_id, ccuCTIndex, ccuCTLoadTurnOff, ccuCTSMPSCharging, ccuCTRestoreDefault,
+                 ccuCTCCUReset):
         self.ccu_ccuControlTable_id = None
         self.config_profile_id = config_profile_id
         self.ccuCTIndex = ccuCTIndex
@@ -5660,10 +8206,21 @@ class CcuControlTable(Base):
         self.ccuCTCCUReset = ccuCTCCUReset
 
     def __repr__(self):
-        return "<CcuControl_table('%s','%s','%s','%s','%s','%s','%s')>" % (self.ccu_ccuControlTable_id, self.config_profile_id, self.ccuCTIndex, self.ccuCTLoadTurnOff, self.ccuCTSMPSCharging, self.ccuCTRestoreDefault, self.ccuCTCCUReset)
+        return "<CcuControl_table('%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.ccu_ccuControlTable_id, self.config_profile_id, self.ccuCTIndex, self.ccuCTLoadTurnOff,
+        self.ccuCTSMPSCharging, self.ccuCTRestoreDefault, self.ccuCTCCUReset)
 
 
 class CcuOidTable(Base):
+    """
+
+    @param table_name:
+    @param table_oid:
+    @param varbinds:
+    @param is_recon:
+    @param status:
+    @param timestamp:
+    """
     __tablename__ = "ccu_oid_table"
     table_name = Column(VARCHAR(64), primary_key=True)
     table_oid = Column(VARCHAR(64))
@@ -5681,10 +8238,29 @@ class CcuOidTable(Base):
         self.timestamp = timestamp
 
     def __repr__(self):
-        return "<CCUOIDTable('%s','%s','%s','%s','%s','%s')>" % (self.table_name, self.table_oid, self.varbinds, self.is_recon, self.status, self.timestamp)
+        return "<CCUOIDTable('%s','%s','%s','%s','%s','%s')>" % (
+        self.table_name, self.table_oid, self.varbinds, self.is_recon, self.status, self.timestamp)
 
 
 class CcuOids(Base):
+    """
+
+    @param oid_id:
+    @param device_type_id:
+    @param oid:
+    @param oid_name:
+    @param oid_type:
+    @param access:
+    @param default_value:
+    @param min_value:
+    @param max_value:
+    @param indexes:
+    @param dependent_id:
+    @param multivalue:
+    @param table_name:
+    @param coloumn_name:
+    @param indexes_name:
+    """
     __tablename__ = "ccu_oids"
     oid_id = Column(INTEGER, primary_key=True)
     device_type_id = Column(VARCHAR(16))
@@ -5702,7 +8278,8 @@ class CcuOids(Base):
     coloumn_name = Column(VARCHAR(128))
     indexes_name = Column(VARCHAR(64))
 
-    def __init__(self, oid_id, device_type_id, oid, oid_name, oid_type, access, default_value, min_value, max_value, indexes, dependent_id, multivalue, table_name, coloumn_name, indexes_name):
+    def __init__(self, oid_id, device_type_id, oid, oid_name, oid_type, access, default_value, min_value, max_value,
+                 indexes, dependent_id, multivalue, table_name, coloumn_name, indexes_name):
         self.oid_id = oid_id
         self.device_type_id = device_type_id
         self.oid = oid
@@ -5720,10 +8297,22 @@ class CcuOids(Base):
         self.indexes_name = indexes_name
 
     def __repr__(self):
-        return "<CcuOids('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (self.oid_id, self.device_type_id, self.oid, self.oid_name, self.oid_type, self.access, self.default_value, self.min_value, self.max_value, self.indexes, self.dependent_id, self.multivalue, self.table_name, self.coloumn_name, self.indexes_name)
+        return "<CcuOids('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.oid_id, self.device_type_id, self.oid, self.oid_name, self.oid_type, self.access, self.default_value,
+        self.min_value, self.max_value, self.indexes, self.dependent_id, self.multivalue, self.table_name,
+        self.coloumn_name, self.indexes_name)
 
 
 class CcuPeerInformationTable(Base):
+    """
+
+    @param config_profile_id:
+    @param ccuPIIndex:
+    @param ccuPIPeer1MACID:
+    @param ccuPIPeer2MACID:
+    @param ccuPIPeer3MACID:
+    @param ccuPIPeer4MACID:
+    """
     __tablename__ = "ccu_ccuPeerInformationTable"
     ccu_ccuPeerInformationTable_id = Column(INTEGER, primary_key=True)
     config_profile_id = Column(
@@ -5734,7 +8323,8 @@ class CcuPeerInformationTable(Base):
     ccuPIPeer3MACID = Column(VARCHAR(20))
     ccuPIPeer4MACID = Column(VARCHAR(20))
 
-    def __init__(self, config_profile_id, ccuPIIndex, ccuPIPeer1MACID, ccuPIPeer2MACID, ccuPIPeer3MACID, ccuPIPeer4MACID):
+    def __init__(self, config_profile_id, ccuPIIndex, ccuPIPeer1MACID, ccuPIPeer2MACID, ccuPIPeer3MACID,
+                 ccuPIPeer4MACID):
         self.ccu_ccuPeerInformationTable_id = None
         self.config_profile_id = config_profile_id
         self.ccuPIIndex = ccuPIIndex
@@ -5744,10 +8334,18 @@ class CcuPeerInformationTable(Base):
         self.ccuPIPeer4MACID = ccuPIPeer4MACID
 
     def __repr__(self):
-        return "<CcuPeer_info_table('%s','%s','%s','%s','%s','%s','%s')>" % (self.ccu_ccuPeerInformationTable_id, self.config_profile_id, self.ccuPIIndex, self.ccuPIPeer1MACID, self.ccuPIPeer2MACID, self.ccuPIPeer3MACID, self.ccuPIPeer4MACID)
+        return "<CcuPeer_info_table('%s','%s','%s','%s','%s','%s','%s')>" % (
+        self.ccu_ccuPeerInformationTable_id, self.config_profile_id, self.ccuPIIndex, self.ccuPIPeer1MACID,
+        self.ccuPIPeer2MACID, self.ccuPIPeer3MACID, self.ccuPIPeer4MACID)
 
 
 class CcuSiteInformationTable(Base):
+    """
+
+    @param config_profile_id:
+    @param ccuSITIndex:
+    @param ccuSITSiteName:
+    """
     __tablename__ = "ccu_ccuSiteInformationTable"
     ccu_ccuSiteInformationTable_id = Column(INTEGER, primary_key=True)
     config_profile_id = Column(
@@ -5762,7 +8360,8 @@ class CcuSiteInformationTable(Base):
         self.ccuSITSiteName = ccuSITSiteName
 
     def __repr__(self):
-        return "<CcuSite_info_table('%s','%s','%s','%s')>" % (self.ccu_ccuSiteInformationTable_id, self.config_profile_id, self.ccuSITIndex, self.ccuSITSiteName)
+        return "<CcuSite_info_table('%s','%s','%s','%s')>" % (
+        self.ccu_ccuSiteInformationTable_id, self.config_profile_id, self.ccuSITIndex, self.ccuSITSiteName)
 
 
 ##########################################################################
@@ -5815,10 +8414,14 @@ mapper(ApClient_details, ApClient_details.__table__)
 mapper(ApConnected_client, ApConnected_client.__table__)
 
 mapper(
-    Ap25VapSelection, Ap25VapSelection.__table__, properties={'ap25_aclMacTable': relationship(Ap25AclMacTable, backref="ap25_vapSelection", cascade="all,delete,delete-orphan"),
-                                                              'ap25_basicVAPsecurity': relationship(Ap25BasicVAPsecurity, backref="ap25_vapSelection", cascade="all,delete,delete-orphan"),
-                                                              'ap25_basicVAPconfigTable': relationship(Ap25BasicVAPconfigTable, backref="ap25_vapSelection", cascade="all,delete,delete-orphan"),
-                                                              'ap25_vapWPAsecurityConfigTable': relationship(Ap25VapWPAsecurityConfigTable, backref="ap25_vapSelection", cascade="all,delete,delete-orphan")})
+    Ap25VapSelection, Ap25VapSelection.__table__, properties={
+    'ap25_aclMacTable': relationship(Ap25AclMacTable, backref="ap25_vapSelection", cascade="all,delete,delete-orphan"),
+    'ap25_basicVAPsecurity': relationship(Ap25BasicVAPsecurity, backref="ap25_vapSelection",
+                                          cascade="all,delete,delete-orphan"),
+    'ap25_basicVAPconfigTable': relationship(Ap25BasicVAPconfigTable, backref="ap25_vapSelection",
+                                             cascade="all,delete,delete-orphan"),
+    'ap25_vapWPAsecurityConfigTable': relationship(Ap25VapWPAsecurityConfigTable, backref="ap25_vapSelection",
+                                                   cascade="all,delete,delete-orphan")})
 
 # AP MAPPING ENDS HERE ###################################################
 mapper(FirmwareListTable, FirmwareListTable.__table__)
@@ -5918,7 +8521,6 @@ mapper(Odu1007_2_29_oid_table, Odu1007_2_29_oid_table.__table__)
 # mapper(Odu1007_2_29_oids,'odu100_7_2_29_oids', primary_key='oid')
 mapper(Odu1007_2_29_oids_multivalues, Odu1007_2_29_oids_multivalues.__table__)
 
-
 mapper(Odu1007_2_25_oids_multivalues, Odu1007_2_25_oids_multivalues.__table__)
 
 mapper(Odu1007_2_25_oid_table, Odu1007_2_25_oid_table.__table__)
@@ -6010,7 +8612,6 @@ mapper(Odu100SynchStatusTable, Odu100SynchStatusTable.__table__)
 
 mapper(Odu100SysOmcRegistrationTable, Odu100SysOmcRegistrationTable.__table__)
 
-
 mapper(GetOdu16PeerNodeStatusTable, GetOdu16PeerNodeStatusTable.__table__)
 
 
@@ -6093,146 +8694,293 @@ mapper(MasterSlaveLinking, master_slave_linking)
 #--------------------Mapping For Host------------------------------------------
 host_table = Hosts.__table__
 mapper(
-    Hosts, host_table, properties={'odu100_eswBadFramesTable': relationship(Odu100EswBadFramesTable, backref="hosts", cascade="all,delete,delete-orphan"),
-                                   'odu100_eswGoodFramesTable': relationship(Odu100EswGoodFramesTable, backref="hosts", cascade="all,delete,delete-orphan"),
-                                   'odu100_eswPortStatisticsTable': relationship(Odu100EswPortStatisticsTable, backref="hosts", cascade="all,delete,delete-orphan"),
-                                   'odu100_eswPortStatusTable': relationship(Odu100EswPortStatusTable, backref="hosts", cascade="all,delete,delete-orphan"),
-      'odu100_hwDescTable': relationship(Odu100HwDescTable, backref="hosts", cascade="all,delete,delete-orphan"),
-'odu100_nwInterfaceStatisticsTable': relationship(Odu100NwInterfaceStatisticsTable, backref="hosts", cascade="all,delete,delete-orphan"),
-'odu100_nwInterfaceStatusTable': relationship(Odu100NwInterfaceStatusTable, backref="hosts", cascade="all,delete,delete-orphan"),
-'odu100_macFilterTable': relationship(Odu100MacFilterTable, backref="hosts", cascade="all,delete,delete-orphan"),
-'odu100_ipFilterTable': relationship(Odu100IpFilterTable, backref="hosts", cascade="all,delete,delete-orphan"),
-'odu100_peerLinkStatisticsTable': relationship(Odu100PeerLinkStatisticsTable, backref="hosts", cascade="all,delete,delete-orphan"),
-'odu100_peerNodeStatusTable': relationship(Odu100PeerNodeStatusTable, backref="hosts", cascade="all,delete,delete-orphan"),
-'odu100_peerRateStatisticsTable': relationship(Odu100PeerRateStatisticsTable, backref="hosts", cascade="all,delete,delete-orphan"),
-'odu100_peerTunnelStatisticsTable': relationship(Odu100PeerTunnelStatisticsTable, backref="hosts", cascade="all,delete,delete-orphan"),
-'odu100_raChannelListTable': relationship(Odu100RaChannelListTable, backref="hosts", cascade="all,delete,delete-orphan"),
-'odu100_raScanListTable': relationship(Odu100RaScanListTable, backref="hosts", cascade="all,delete,delete-orphan"),
-'odu100_raSiteSurveyResultTable': relationship(Odu100RaSiteSurveyResultTable, backref="hosts", cascade="all,delete,delete-orphan"),
-'odu100_raStatusTable': relationship(Odu100RaStatusTable, backref="hosts", cascade="all,delete,delete-orphan"),
-'odu100_raTddMacStatisticsTable': relationship(Odu100RaTddMacStatisticsTable, backref="hosts", cascade="all,delete,delete-orphan"),
-'odu100_raTddMacStatusTable': relationship(Odu100RaTddMacStatusTable, backref="hosts", cascade="all,delete,delete-orphan"),
-'odu100_raValidPhyRatesTable': relationship(Odu100RaValidPhyRatesTable, backref="hosts", cascade="all,delete,delete-orphan"),
-'odu100_ruStatusTable': relationship(Odu100RuStatusTable, backref="hosts", cascade="all,delete,delete-orphan"),
-'odu100_swStatusTable': relationship(Odu100SwStatusTable, backref="hosts", cascade="all,delete,delete-orphan"),
-'odu100_synchStatisticsTable': relationship(Odu100SynchStatisticsTable, backref="hosts", cascade="all,delete,delete-orphan"),
-'odu100_synchStatusTable': relationship(Odu100SynchStatusTable, backref="hosts", cascade="all,delete,delete-orphan"),
-'get_odu16_ru_conf_table': relationship(GetOdu16_ru_conf_table, backref="hosts", cascade="all,delete,delete-orphan"),
-'get_odu16_ra_status_table': relationship(GetOdu16RaStatusTable, backref="hosts", cascade="all,delete,delete-orphan"),
-"get_odu16_sw_status_table": relationship(GetOdu16SWStatusTable, backref="hosts", cascade="all,delete,delete-orphan"),
-"get_odu16_hw_desc_table": relationship(GetOdu16HWDescTable, backref="hosts", cascade="all,delete,delete-orphan"),
-"get_odu16_ra_scan_list_table": relationship(GetOdu16RAScanListTable, backref="hosts", cascade="all,delete,delete-orphan"),
-#'get_odu16_peer_node_status_table':relationship(GetOdu16PeerNodeStatusTable,backref="hosts",cascade="all,delete,delete-orphan"),
-#"retry_ap_scheduling":relationship(RetryApScheduling,backref="hosts",cascade="all,delete,delete-orphan"),
-"snmp_advance_options": relationship(SnmpAdvanceOptions, backref="hosts", cascade="all,delete,delete-orphan"),
-#"ap_scheduling_host_mapping":relationship(ApSchedulingHostMapping,backref="hosts",cascade="all,delete,delete-orphan"),
-"hosts_hostgroups": relationship(HostsHostgroups, backref="hosts", cascade="all,delete,delete-orphan"),
-"host_services": relationship(HostServices, backref="hosts", cascade="all,delete,delete-orphan"),
-"idu_e1PortStatusTable": relationship(IduE1PortStatusTable, backref="hosts", cascade="all,delete,delete-orphan"),
-"idu_iduInfoTable": relationship(IduIduInfoTable, backref="hosts", cascade="all,delete,delete-orphan"),
-"idu_iduNetworkStatisticsTable": relationship(IduIduNetworkStatisticsTable, backref="hosts", cascade="all,delete,delete-orphan"),
-"idu_linkStatisticsTable": relationship(IduLinkStatisticsTable, backref="hosts", cascade="all,delete,delete-orphan"),
-"idu_linkStatusTable": relationship(IduLinkStatusTable, backref="hosts", cascade="all,delete,delete-orphan"),
-"idu_portSecondaryStatisticsTable": relationship(IduPortSecondaryStatisticsTable, backref="hosts", cascade="all,delete,delete-orphan"),
-"idu_portstatbadframeTable": relationship(IduPortstatbadframeTable, backref="hosts", cascade="all,delete,delete-orphan"),
-"idu_portstatgoodframeTable": relationship(IduPortstatgoodframeTable, backref="hosts", cascade="all,delete,delete-orphan"),
-"idu_portstatisticsTable": relationship(IduPortstatisticsTable, backref="hosts", cascade="all,delete,delete-orphan"),
-"idu_swPrimaryPortStatisticsTable": relationship(IduSwPrimaryPortStatisticsTable, backref="hosts", cascade="all,delete,delete-orphan"),
-"idu_swStatusTable": relationship(IduSwStatusTable, backref="hosts", cascade="all,delete,delete-orphan"),
-"idu_switchportstatusTable": relationship(IduSwitchportstatusTable, backref="hosts", cascade="all,delete,delete-orphan"),
-"idu_tdmoipNetworkInterfaceStatisticsTable": relationship(IduTdmoipNetworkInterfaceStatisticsTable, backref="hosts", cascade="all,delete,delete-orphan"),
-'ap25_statisticsTable': relationship(Ap25StatisticsTable, backref="hosts", cascade="all,delete,delete-orphan"),
-'ap25_vapClientStatisticsTable': relationship(Ap25VapClientStatisticsTable, backref="hosts", cascade="all,delete,delete-orphan"),
-'ap25_versions': relationship(Ap25Versions, backref="hosts", cascade="all,delete,delete-orphan"),
-'host_status': relationship(HostStatus, backref="hosts", cascade="all,delete,delete-orphan"),
-'ap_client_ap_data': relationship(ApClient_ap_data, backref="hosts", cascade="all,delete,delete-orphan"),
-'ap_connected_client': relationship(ApConnected_client, backref="hosts", cascade="all,delete,delete-orphan"),
-'ccu_InformationTable': relationship(CcuInformationTable, backref="hosts", cascade="all,delete,delete-orphan"),
-'ccu_NetworkConfigurationTable': relationship(CcuNetworkConfigurationTable, backref="hosts", cascade="all,delete,delete-orphan"),
-'ccu_RealTimeStatusTable': relationship(CcuRealTimeStatusTable, backref="hosts", cascade="all,delete,delete-orphan"),
-'ccu_StatusDataTable': relationship(CcuStatusDataTable, backref="hosts", cascade="all,delete,delete-orphan"),
-'ccu_softwareinformationtable': relationship(CcuSoftwareInformationTable, backref="hosts", cascade="all,delete,delete-orphan"), 'ap25_dhcpClientsTable': relationship(Ap25DhcpClientsTable, backref="hosts", cascade="all,delete,delete-orphan"),
-'ap25_apScanDataTable': relationship(Ap25ApScanDataTable, backref="hosts", cascade="all,delete,delete-orphan")
-})
+    Hosts, host_table, properties={'odu100_eswBadFramesTable': relationship(Odu100EswBadFramesTable, backref="hosts",
+                                                                            cascade="all,delete,delete-orphan"),
+                                   'odu100_eswGoodFramesTable': relationship(Odu100EswGoodFramesTable, backref="hosts",
+                                                                             cascade="all,delete,delete-orphan"),
+                                   'odu100_eswPortStatisticsTable': relationship(Odu100EswPortStatisticsTable,
+                                                                                 backref="hosts",
+                                                                                 cascade="all,delete,delete-orphan"),
+                                   'odu100_eswPortStatusTable': relationship(Odu100EswPortStatusTable, backref="hosts",
+                                                                             cascade="all,delete,delete-orphan"),
+                                   'odu100_hwDescTable': relationship(Odu100HwDescTable, backref="hosts",
+                                                                      cascade="all,delete,delete-orphan"),
+                                   'odu100_nwInterfaceStatisticsTable': relationship(Odu100NwInterfaceStatisticsTable,
+                                                                                     backref="hosts",
+                                                                                     cascade="all,delete,delete-orphan"),
+                                   'odu100_nwInterfaceStatusTable': relationship(Odu100NwInterfaceStatusTable,
+                                                                                 backref="hosts",
+                                                                                 cascade="all,delete,delete-orphan"),
+                                   'odu100_macFilterTable': relationship(Odu100MacFilterTable, backref="hosts",
+                                                                         cascade="all,delete,delete-orphan"),
+                                   'odu100_ipFilterTable': relationship(Odu100IpFilterTable, backref="hosts",
+                                                                        cascade="all,delete,delete-orphan"),
+                                   'odu100_peerLinkStatisticsTable': relationship(Odu100PeerLinkStatisticsTable,
+                                                                                  backref="hosts",
+                                                                                  cascade="all,delete,delete-orphan"),
+                                   'odu100_peerNodeStatusTable': relationship(Odu100PeerNodeStatusTable,
+                                                                              backref="hosts",
+                                                                              cascade="all,delete,delete-orphan"),
+                                   'odu100_peerRateStatisticsTable': relationship(Odu100PeerRateStatisticsTable,
+                                                                                  backref="hosts",
+                                                                                  cascade="all,delete,delete-orphan"),
+                                   'odu100_peerTunnelStatisticsTable': relationship(Odu100PeerTunnelStatisticsTable,
+                                                                                    backref="hosts",
+                                                                                    cascade="all,delete,delete-orphan"),
+                                   'odu100_raChannelListTable': relationship(Odu100RaChannelListTable, backref="hosts",
+                                                                             cascade="all,delete,delete-orphan"),
+                                   'odu100_raScanListTable': relationship(Odu100RaScanListTable, backref="hosts",
+                                                                          cascade="all,delete,delete-orphan"),
+                                   'odu100_raSiteSurveyResultTable': relationship(Odu100RaSiteSurveyResultTable,
+                                                                                  backref="hosts",
+                                                                                  cascade="all,delete,delete-orphan"),
+                                   'odu100_raStatusTable': relationship(Odu100RaStatusTable, backref="hosts",
+                                                                        cascade="all,delete,delete-orphan"),
+                                   'odu100_raTddMacStatisticsTable': relationship(Odu100RaTddMacStatisticsTable,
+                                                                                  backref="hosts",
+                                                                                  cascade="all,delete,delete-orphan"),
+                                   'odu100_raTddMacStatusTable': relationship(Odu100RaTddMacStatusTable,
+                                                                              backref="hosts",
+                                                                              cascade="all,delete,delete-orphan"),
+                                   'odu100_raValidPhyRatesTable': relationship(Odu100RaValidPhyRatesTable,
+                                                                               backref="hosts",
+                                                                               cascade="all,delete,delete-orphan"),
+                                   'odu100_ruStatusTable': relationship(Odu100RuStatusTable, backref="hosts",
+                                                                        cascade="all,delete,delete-orphan"),
+                                   'odu100_swStatusTable': relationship(Odu100SwStatusTable, backref="hosts",
+                                                                        cascade="all,delete,delete-orphan"),
+                                   'odu100_synchStatisticsTable': relationship(Odu100SynchStatisticsTable,
+                                                                               backref="hosts",
+                                                                               cascade="all,delete,delete-orphan"),
+                                   'odu100_synchStatusTable': relationship(Odu100SynchStatusTable, backref="hosts",
+                                                                           cascade="all,delete,delete-orphan"),
+                                   'get_odu16_ru_conf_table': relationship(GetOdu16_ru_conf_table, backref="hosts",
+                                                                           cascade="all,delete,delete-orphan"),
+                                   'get_odu16_ra_status_table': relationship(GetOdu16RaStatusTable, backref="hosts",
+                                                                             cascade="all,delete,delete-orphan"),
+                                   "get_odu16_sw_status_table": relationship(GetOdu16SWStatusTable, backref="hosts",
+                                                                             cascade="all,delete,delete-orphan"),
+                                   "get_odu16_hw_desc_table": relationship(GetOdu16HWDescTable, backref="hosts",
+                                                                           cascade="all,delete,delete-orphan"),
+                                   "get_odu16_ra_scan_list_table": relationship(GetOdu16RAScanListTable,
+                                                                                backref="hosts",
+                                                                                cascade="all,delete,delete-orphan"),
+                                   #'get_odu16_peer_node_status_table':relationship(GetOdu16PeerNodeStatusTable,backref="hosts",cascade="all,delete,delete-orphan"),
+                                   #"retry_ap_scheduling":relationship(RetryApScheduling,backref="hosts",cascade="all,delete,delete-orphan"),
+                                   "snmp_advance_options": relationship(SnmpAdvanceOptions, backref="hosts",
+                                                                        cascade="all,delete,delete-orphan"),
+                                   #"ap_scheduling_host_mapping":relationship(ApSchedulingHostMapping,backref="hosts",cascade="all,delete,delete-orphan"),
+                                   "hosts_hostgroups": relationship(HostsHostgroups, backref="hosts",
+                                                                    cascade="all,delete,delete-orphan"),
+                                   "host_services": relationship(HostServices, backref="hosts",
+                                                                 cascade="all,delete,delete-orphan"),
+                                   "idu_e1PortStatusTable": relationship(IduE1PortStatusTable, backref="hosts",
+                                                                         cascade="all,delete,delete-orphan"),
+                                   "idu_iduInfoTable": relationship(IduIduInfoTable, backref="hosts",
+                                                                    cascade="all,delete,delete-orphan"),
+                                   "idu_iduNetworkStatisticsTable": relationship(IduIduNetworkStatisticsTable,
+                                                                                 backref="hosts",
+                                                                                 cascade="all,delete,delete-orphan"),
+                                   "idu_linkStatisticsTable": relationship(IduLinkStatisticsTable, backref="hosts",
+                                                                           cascade="all,delete,delete-orphan"),
+                                   "idu_linkStatusTable": relationship(IduLinkStatusTable, backref="hosts",
+                                                                       cascade="all,delete,delete-orphan"),
+                                   "idu_portSecondaryStatisticsTable": relationship(IduPortSecondaryStatisticsTable,
+                                                                                    backref="hosts",
+                                                                                    cascade="all,delete,delete-orphan"),
+                                   "idu_portstatbadframeTable": relationship(IduPortstatbadframeTable, backref="hosts",
+                                                                             cascade="all,delete,delete-orphan"),
+                                   "idu_portstatgoodframeTable": relationship(IduPortstatgoodframeTable,
+                                                                              backref="hosts",
+                                                                              cascade="all,delete,delete-orphan"),
+                                   "idu_portstatisticsTable": relationship(IduPortstatisticsTable, backref="hosts",
+                                                                           cascade="all,delete,delete-orphan"),
+                                   "idu_swPrimaryPortStatisticsTable": relationship(IduSwPrimaryPortStatisticsTable,
+                                                                                    backref="hosts",
+                                                                                    cascade="all,delete,delete-orphan"),
+                                   "idu_swStatusTable": relationship(IduSwStatusTable, backref="hosts",
+                                                                     cascade="all,delete,delete-orphan"),
+                                   "idu_switchportstatusTable": relationship(IduSwitchportstatusTable, backref="hosts",
+                                                                             cascade="all,delete,delete-orphan"),
+                                   "idu_tdmoipNetworkInterfaceStatisticsTable": relationship(
+                                       IduTdmoipNetworkInterfaceStatisticsTable, backref="hosts",
+                                       cascade="all,delete,delete-orphan"),
+                                   'ap25_statisticsTable': relationship(Ap25StatisticsTable, backref="hosts",
+                                                                        cascade="all,delete,delete-orphan"),
+                                   'ap25_vapClientStatisticsTable': relationship(Ap25VapClientStatisticsTable,
+                                                                                 backref="hosts",
+                                                                                 cascade="all,delete,delete-orphan"),
+                                   'ap25_versions': relationship(Ap25Versions, backref="hosts",
+                                                                 cascade="all,delete,delete-orphan"),
+                                   'host_status': relationship(HostStatus, backref="hosts",
+                                                               cascade="all,delete,delete-orphan"),
+                                   'ap_client_ap_data': relationship(ApClient_ap_data, backref="hosts",
+                                                                     cascade="all,delete,delete-orphan"),
+                                   'ap_connected_client': relationship(ApConnected_client, backref="hosts",
+                                                                       cascade="all,delete,delete-orphan"),
+                                   'ccu_InformationTable': relationship(CcuInformationTable, backref="hosts",
+                                                                        cascade="all,delete,delete-orphan"),
+                                   'ccu_NetworkConfigurationTable': relationship(CcuNetworkConfigurationTable,
+                                                                                 backref="hosts",
+                                                                                 cascade="all,delete,delete-orphan"),
+                                   'ccu_RealTimeStatusTable': relationship(CcuRealTimeStatusTable, backref="hosts",
+                                                                           cascade="all,delete,delete-orphan"),
+                                   'ccu_StatusDataTable': relationship(CcuStatusDataTable, backref="hosts",
+                                                                       cascade="all,delete,delete-orphan"),
+                                   'ccu_softwareinformationtable': relationship(CcuSoftwareInformationTable,
+                                                                                backref="hosts",
+                                                                                cascade="all,delete,delete-orphan"),
+                                   'ap25_dhcpClientsTable': relationship(Ap25DhcpClientsTable, backref="hosts",
+                                                                         cascade="all,delete,delete-orphan"),
+                                   'ap25_apScanDataTable': relationship(Ap25ApScanDataTable, backref="hosts",
+                                                                        cascade="all,delete,delete-orphan")
+    })
 
 
 ###################################### Mapping for Config Profiles #######
 mapper(
-    Odu16ConfigProfiles, tablename, properties={'set_odu16_ip_config_table': relationship(SetOdu16IPConfigTable, backref="config_profiles", cascade="all,delete,delete-orphan"),
-'set_odu16_network_interface_config': relationship(SetOdu16NetworkInterfaceConfig, backref="config_profiles", cascade="all,delete,delete-orphan"),
-'set_odu16_omc_conf_table': relationship(SetOdu16OmcConfTable, backref="config_profiles", cascade="all,delete,delete-orphan"),
-'set_odu16_peer_config_table': relationship(SetOdu16PeerConfigTable, backref="config_profiles", cascade="all,delete,delete-orphan"),
-'set_odu16_ra_acl_config_table': relationship(SetOdu16RAAclConfigTable, backref="config_profiles", cascade="all,delete,delete-orphan"),
-'set_odu16_om_operations_table': relationship(SetOdu16OmOperationsTable, backref="config_profiles", cascade="all,delete,delete-orphan"),
-'set_odu16_ra_conf_table': relationship(SetOdu16RAConfTable, backref="config_profiles", cascade="all,delete,delete-orphan"),
-'set_odu16_ra_llc_conf_table': relationship(SetOdu16RALlcConfTable, backref="config_profiles", cascade="all,delete,delete-orphan"),
-'set_odu16_ra_tdd_mac_config': relationship(SetOdu16RATddMacConfig, backref="config_profiles", cascade="all,delete,delete-orphan"),
-'set_odu16_ru_conf_table': relationship(SetOdu16RUConfTable, backref="config_profiles", cascade="all,delete,delete-orphan"),
-'set_odu16_ru_date_time_table': relationship(SetOdu16RUDateTimeTable, backref="config_profiles", cascade="all,delete,delete-orphan"),
-'set_odu16_sync_config_table': relationship(SetOdu16SyncConfigTable, backref="config_profiles", cascade="all,delete,delete-orphan"),
-'set_odu16_misc': relationship(SetOdu16Misc, backref="config_profiles", cascade="all,delete,delete-orphan"),
-'set_odu16_sys_omc_registration_table': relationship(SetOdu16SysOmcRegistrationTable, backref="config_profiles", cascade="all,delete,delete-orphan"),
-'odu100_eswATUConfigTable': relationship(Odu100EswATUConfigTable, backref="config_profiles", cascade="all,delete,delete-orphan"),
-'odu100_eswMirroringPortTable': relationship(Odu100EswMirroringPortTable, backref="config_profiles", cascade="all,delete,delete-orphan"),
-'odu100_eswPortAccessListTable': relationship(Odu100EswPortAccessListTable, backref="config_profiles", cascade="all,delete,delete-orphan"),
-'odu100_eswPortBwTable': relationship(Odu100EswPortBwTable, backref="config_profiles", cascade="all,delete,delete-orphan"),
-'odu100_eswPortConfigTable': relationship(Odu100EswPortConfigTable, backref="config_profiles", cascade="all,delete,delete-orphan"),
-'odu100_eswPortQinQTable': relationship(Odu100EswPortQinQTable, backref="config_profiles", cascade="all,delete,delete-orphan"),
-'odu100_eswVlanConfigTable': relationship(Odu100EswVlanConfigTable, backref="config_profiles", cascade="all,delete,delete-orphan"),
-'odu100_ipConfigTable': relationship(Odu100IpConfigTable, backref="config_profiles", cascade="all,delete,delete-orphan"),
-'odu100_omcConfTable': relationship(Odu100OmcConfTable, backref="config_profiles", cascade="all,delete,delete-orphan"),
-'odu100_peerConfigTable': relationship(Odu100PeerConfigTable, backref="config_profiles", cascade="all,delete,delete-orphan"),
-'odu100_raAclConfigTable': relationship(Odu100RaAclConfigTable, backref="config_profiles", cascade="all,delete,delete-orphan"),
-'odu100_raConfTable': relationship(Odu100RaConfTable, backref="config_profiles", cascade="all,delete,delete-orphan"),
-'odu100_raLlcConfTable': relationship(Odu100RaLlcConfTable, backref="config_profiles", cascade="all,delete,delete-orphan"),
-'odu100_raPreferredRFChannelTable': relationship(Odu100RaPreferredRFChannelTable, backref="config_profiles", cascade="all,delete,delete-orphan"),
-'odu100_raTddMacConfigTable': relationship(Odu100RaTddMacConfigTable, backref="config_profiles", cascade="all,delete,delete-orphan"),
-'odu100_ruConfTable': relationship(Odu100RuConfTable, backref="config_profiles", cascade="all,delete,delete-orphan"),
-'odu100_ruDateTimeTable': relationship(Odu100RuDateTimeTable, backref="config_profiles", cascade="all,delete,delete-orphan"),
-'odu100_ruOmOperationsTable': relationship(Odu100RuOmOperationsTable, backref="config_profiles", cascade="all,delete,delete-orphan"),
-'odu100_syncConfigTable': relationship(Odu100SyncConfigTable, backref="config_profiles", cascade="all,delete,delete-orphan"),
-'odu100_sysOmcRegistrationTable': relationship(Odu100SysOmcRegistrationTable, backref="config_profiles", cascade="all,delete,delete-orphan"),
-'idu_aclportTable': relationship(IduAclportTable, backref="config_profiles", cascade="all,delete,delete-orphan"),
-'idu_alarmOutConfigTable': relationship(IduAlarmOutConfigTable, backref="config_profiles", cascade="all,delete,delete-orphan"),
-'idu_alarmPortConfigurationTable': relationship(IduAlarmPortConfigurationTable, backref="config_profiles", cascade="all,delete,delete-orphan"),
-'idu_atuconfigTable': relationship(IduAtuconfigTable, backref="config_profiles", cascade="all,delete,delete-orphan"),
-'idu_e1PortConfigurationTable': relationship(IduE1PortConfigurationTable, backref="config_profiles", cascade="all,delete,delete-orphan"),
-'idu_iduAdminStateTable': relationship(IduIduAdminStateTable, backref="config_profiles", cascade="all,delete,delete-orphan"),
-'idu_iduOmOperationsTable': relationship(IduIduOmOperationsTable, backref="config_profiles", cascade="all,delete,delete-orphan"),
-'idu_linkConfigurationTable': relationship(IduLinkConfigurationTable, backref="config_profiles", cascade="all,delete,delete-orphan"),
-'idu_mirroringportTable': relationship(IduMirroringportTable, backref="config_profiles", cascade="all,delete,delete-orphan"),
-'idu_networkConfigurationsTable': relationship(IduNetworkConfigurationsTable, backref="config_profiles", cascade="all,delete,delete-orphan"),
-'idu_omcConfigurationTable': relationship(IduOmcConfigurationTable, backref="config_profiles", cascade="all,delete,delete-orphan"),
-'idu_poeConfigurationTable': relationship(IduPoeConfigurationTable, backref="config_profiles", cascade="all,delete,delete-orphan"),
-'idu_portBwTable': relationship(IduPortBwTable, backref="config_profiles", cascade="all,delete,delete-orphan"),
-'idu_portqinqTable': relationship(IduPortqinqTable, backref="config_profiles", cascade="all,delete,delete-orphan"),
-'idu_rtcConfigurationTable': relationship(IduRtcConfigurationTable, backref="config_profiles", cascade="all,delete,delete-orphan"),
-'idu_sectorIdentificationTable': relationship(IduSectorIdentificationTable, backref="config_profiles", cascade="all,delete,delete-orphan"),
-'idu_switchPortconfigTable': relationship(IduSwitchPortconfigTable, backref="config_profiles", cascade="all,delete,delete-orphan"),
-'idu_sysOmcRegistrationTable': relationship(IduSysOmcRegistrationTable, backref="config_profiles", cascade="all,delete,delete-orphan"),
-'idu_tdmoipNetworkInterfaceConfigurationTable': relationship(IduTdmoipNetworkInterfaceConfigurationTable, backref="config_profiles", cascade="all,delete,delete-orphan"),
-'idu_temperatureSensorConfigurationTable': relationship(IduTemperatureSensorConfigurationTable, backref="config_profiles", cascade="all,delete,delete-orphan"),
-'idu_vlanconfigTable': relationship(IduVlanconfigTable, backref="config_profiles", cascade="all,delete,delete-orphan"),
-'ap25_accesspointIPsettings': relationship(Ap25AccesspointIPsettings, backref="config_profiles", cascade="all,delete,delete-orphan"),
-'ap25_basicConfiguration': relationship(Ap25BasicConfiguration, backref="config_profiles", cascade="all,delete,delete-orphan"),
-'ap25_dhcpServer': relationship(Ap25DhcpServer, backref="config_profiles", cascade="all,delete,delete-orphan"),
-'ap25_radioSelection': relationship(Ap25RadioSelection, backref="config_profiles", cascade="all,delete,delete-orphan"),
-'ap25_radioSetup': relationship(Ap25RadioSetup, backref="config_profiles", cascade="all,delete,delete-orphan"),
-'ap25_services': relationship(Ap25Services, backref="config_profiles", cascade="all,delete,delete-orphan"),
-'ap25_vapSelection': relationship(Ap25VapSelection, backref="config_profiles", cascade="all,delete,delete-orphan"),
-'ap25_aclMacTable': relationship(Ap25AclMacTable, backref="config_profiles", cascade="all,delete,delete-orphan"),
-'ap25_basicACLconfigTable': relationship(Ap25BasicACLconfigTable, backref="config_profiles", cascade="all,delete,delete-orphan"),
-'ap25_basicVAPsecurity': relationship(Ap25BasicVAPsecurity, backref="config_profiles", cascade="all,delete,delete-orphan"),
-'ap25_basicVAPconfigTable': relationship(Ap25BasicVAPconfigTable, backref="config_profiles", cascade="all,delete,delete-orphan"),
-'ap25_vapWPAsecurityConfigTable': relationship(Ap25VapWPAsecurityConfigTable, backref="config_profiles", cascade="all,delete,delete-orphan"),
-'ap25_vapWEPsecurityConfigTable': relationship(Ap25VapWEPsecurityConfigTable, backref="config_profiles", cascade="all,delete,delete-orphan"),
-'Ap25AclStatisticsTable': relationship(Ap25AclStatisticsTable, backref="config_profiles", cascade="all,delete,delete-orphan"),
-'ccu_alarm_threshold_table': relationship(CcuAlarmAndThresholdTable, backref="config_profiles", cascade="all,delete,delete-orphan"),
-'ccu_aux_io_table': relationship(CcuAuxIOTable, backref="config_profiles", cascade="all,delete,delete-orphan"),
-'ccu_battery_panel_config_table': relationship(CcuBatteryPanelConfigTable, backref="config_profiles", cascade="all,delete,delete-orphan"),
-'ccu_control_table': relationship(CcuControlTable, backref="config_profiles", cascade="all,delete,delete-orphan"),
-'ccu_peer_info_table': relationship(CcuPeerInformationTable, backref="config_profiles", cascade="all,delete,delete-orphan"),
-'ccu_site_info_table': relationship(CcuSiteInformationTable, backref="config_profiles", cascade="all,delete,delete-orphan")})
+    Odu16ConfigProfiles, tablename, properties={
+    'set_odu16_ip_config_table': relationship(SetOdu16IPConfigTable, backref="config_profiles",
+                                              cascade="all,delete,delete-orphan"),
+    'set_odu16_network_interface_config': relationship(SetOdu16NetworkInterfaceConfig, backref="config_profiles",
+                                                       cascade="all,delete,delete-orphan"),
+    'set_odu16_omc_conf_table': relationship(SetOdu16OmcConfTable, backref="config_profiles",
+                                             cascade="all,delete,delete-orphan"),
+    'set_odu16_peer_config_table': relationship(SetOdu16PeerConfigTable, backref="config_profiles",
+                                                cascade="all,delete,delete-orphan"),
+    'set_odu16_ra_acl_config_table': relationship(SetOdu16RAAclConfigTable, backref="config_profiles",
+                                                  cascade="all,delete,delete-orphan"),
+    'set_odu16_om_operations_table': relationship(SetOdu16OmOperationsTable, backref="config_profiles",
+                                                  cascade="all,delete,delete-orphan"),
+    'set_odu16_ra_conf_table': relationship(SetOdu16RAConfTable, backref="config_profiles",
+                                            cascade="all,delete,delete-orphan"),
+    'set_odu16_ra_llc_conf_table': relationship(SetOdu16RALlcConfTable, backref="config_profiles",
+                                                cascade="all,delete,delete-orphan"),
+    'set_odu16_ra_tdd_mac_config': relationship(SetOdu16RATddMacConfig, backref="config_profiles",
+                                                cascade="all,delete,delete-orphan"),
+    'set_odu16_ru_conf_table': relationship(SetOdu16RUConfTable, backref="config_profiles",
+                                            cascade="all,delete,delete-orphan"),
+    'set_odu16_ru_date_time_table': relationship(SetOdu16RUDateTimeTable, backref="config_profiles",
+                                                 cascade="all,delete,delete-orphan"),
+    'set_odu16_sync_config_table': relationship(SetOdu16SyncConfigTable, backref="config_profiles",
+                                                cascade="all,delete,delete-orphan"),
+    'set_odu16_misc': relationship(SetOdu16Misc, backref="config_profiles", cascade="all,delete,delete-orphan"),
+    'set_odu16_sys_omc_registration_table': relationship(SetOdu16SysOmcRegistrationTable, backref="config_profiles",
+                                                         cascade="all,delete,delete-orphan"),
+    'odu100_eswATUConfigTable': relationship(Odu100EswATUConfigTable, backref="config_profiles",
+                                             cascade="all,delete,delete-orphan"),
+    'odu100_eswMirroringPortTable': relationship(Odu100EswMirroringPortTable, backref="config_profiles",
+                                                 cascade="all,delete,delete-orphan"),
+    'odu100_eswPortAccessListTable': relationship(Odu100EswPortAccessListTable, backref="config_profiles",
+                                                  cascade="all,delete,delete-orphan"),
+    'odu100_eswPortBwTable': relationship(Odu100EswPortBwTable, backref="config_profiles",
+                                          cascade="all,delete,delete-orphan"),
+    'odu100_eswPortConfigTable': relationship(Odu100EswPortConfigTable, backref="config_profiles",
+                                              cascade="all,delete,delete-orphan"),
+    'odu100_eswPortQinQTable': relationship(Odu100EswPortQinQTable, backref="config_profiles",
+                                            cascade="all,delete,delete-orphan"),
+    'odu100_eswVlanConfigTable': relationship(Odu100EswVlanConfigTable, backref="config_profiles",
+                                              cascade="all,delete,delete-orphan"),
+    'odu100_ipConfigTable': relationship(Odu100IpConfigTable, backref="config_profiles",
+                                         cascade="all,delete,delete-orphan"),
+    'odu100_omcConfTable': relationship(Odu100OmcConfTable, backref="config_profiles",
+                                        cascade="all,delete,delete-orphan"),
+    'odu100_peerConfigTable': relationship(Odu100PeerConfigTable, backref="config_profiles",
+                                           cascade="all,delete,delete-orphan"),
+    'odu100_raAclConfigTable': relationship(Odu100RaAclConfigTable, backref="config_profiles",
+                                            cascade="all,delete,delete-orphan"),
+    'odu100_raConfTable': relationship(Odu100RaConfTable, backref="config_profiles",
+                                       cascade="all,delete,delete-orphan"),
+    'odu100_raLlcConfTable': relationship(Odu100RaLlcConfTable, backref="config_profiles",
+                                          cascade="all,delete,delete-orphan"),
+    'odu100_raPreferredRFChannelTable': relationship(Odu100RaPreferredRFChannelTable, backref="config_profiles",
+                                                     cascade="all,delete,delete-orphan"),
+    'odu100_raTddMacConfigTable': relationship(Odu100RaTddMacConfigTable, backref="config_profiles",
+                                               cascade="all,delete,delete-orphan"),
+    'odu100_ruConfTable': relationship(Odu100RuConfTable, backref="config_profiles",
+                                       cascade="all,delete,delete-orphan"),
+    'odu100_ruDateTimeTable': relationship(Odu100RuDateTimeTable, backref="config_profiles",
+                                           cascade="all,delete,delete-orphan"),
+    'odu100_ruOmOperationsTable': relationship(Odu100RuOmOperationsTable, backref="config_profiles",
+                                               cascade="all,delete,delete-orphan"),
+    'odu100_syncConfigTable': relationship(Odu100SyncConfigTable, backref="config_profiles",
+                                           cascade="all,delete,delete-orphan"),
+    'odu100_sysOmcRegistrationTable': relationship(Odu100SysOmcRegistrationTable, backref="config_profiles",
+                                                   cascade="all,delete,delete-orphan"),
+    'idu_aclportTable': relationship(IduAclportTable, backref="config_profiles", cascade="all,delete,delete-orphan"),
+    'idu_alarmOutConfigTable': relationship(IduAlarmOutConfigTable, backref="config_profiles",
+                                            cascade="all,delete,delete-orphan"),
+    'idu_alarmPortConfigurationTable': relationship(IduAlarmPortConfigurationTable, backref="config_profiles",
+                                                    cascade="all,delete,delete-orphan"),
+    'idu_atuconfigTable': relationship(IduAtuconfigTable, backref="config_profiles",
+                                       cascade="all,delete,delete-orphan"),
+    'idu_e1PortConfigurationTable': relationship(IduE1PortConfigurationTable, backref="config_profiles",
+                                                 cascade="all,delete,delete-orphan"),
+    'idu_iduAdminStateTable': relationship(IduIduAdminStateTable, backref="config_profiles",
+                                           cascade="all,delete,delete-orphan"),
+    'idu_iduOmOperationsTable': relationship(IduIduOmOperationsTable, backref="config_profiles",
+                                             cascade="all,delete,delete-orphan"),
+    'idu_linkConfigurationTable': relationship(IduLinkConfigurationTable, backref="config_profiles",
+                                               cascade="all,delete,delete-orphan"),
+    'idu_mirroringportTable': relationship(IduMirroringportTable, backref="config_profiles",
+                                           cascade="all,delete,delete-orphan"),
+    'idu_networkConfigurationsTable': relationship(IduNetworkConfigurationsTable, backref="config_profiles",
+                                                   cascade="all,delete,delete-orphan"),
+    'idu_omcConfigurationTable': relationship(IduOmcConfigurationTable, backref="config_profiles",
+                                              cascade="all,delete,delete-orphan"),
+    'idu_poeConfigurationTable': relationship(IduPoeConfigurationTable, backref="config_profiles",
+                                              cascade="all,delete,delete-orphan"),
+    'idu_portBwTable': relationship(IduPortBwTable, backref="config_profiles", cascade="all,delete,delete-orphan"),
+    'idu_portqinqTable': relationship(IduPortqinqTable, backref="config_profiles", cascade="all,delete,delete-orphan"),
+    'idu_rtcConfigurationTable': relationship(IduRtcConfigurationTable, backref="config_profiles",
+                                              cascade="all,delete,delete-orphan"),
+    'idu_sectorIdentificationTable': relationship(IduSectorIdentificationTable, backref="config_profiles",
+                                                  cascade="all,delete,delete-orphan"),
+    'idu_switchPortconfigTable': relationship(IduSwitchPortconfigTable, backref="config_profiles",
+                                              cascade="all,delete,delete-orphan"),
+    'idu_sysOmcRegistrationTable': relationship(IduSysOmcRegistrationTable, backref="config_profiles",
+                                                cascade="all,delete,delete-orphan"),
+    'idu_tdmoipNetworkInterfaceConfigurationTable': relationship(IduTdmoipNetworkInterfaceConfigurationTable,
+                                                                 backref="config_profiles",
+                                                                 cascade="all,delete,delete-orphan"),
+    'idu_temperatureSensorConfigurationTable': relationship(IduTemperatureSensorConfigurationTable,
+                                                            backref="config_profiles",
+                                                            cascade="all,delete,delete-orphan"),
+    'idu_vlanconfigTable': relationship(IduVlanconfigTable, backref="config_profiles",
+                                        cascade="all,delete,delete-orphan"),
+    'ap25_accesspointIPsettings': relationship(Ap25AccesspointIPsettings, backref="config_profiles",
+                                               cascade="all,delete,delete-orphan"),
+    'ap25_basicConfiguration': relationship(Ap25BasicConfiguration, backref="config_profiles",
+                                            cascade="all,delete,delete-orphan"),
+    'ap25_dhcpServer': relationship(Ap25DhcpServer, backref="config_profiles", cascade="all,delete,delete-orphan"),
+    'ap25_radioSelection': relationship(Ap25RadioSelection, backref="config_profiles",
+                                        cascade="all,delete,delete-orphan"),
+    'ap25_radioSetup': relationship(Ap25RadioSetup, backref="config_profiles", cascade="all,delete,delete-orphan"),
+    'ap25_services': relationship(Ap25Services, backref="config_profiles", cascade="all,delete,delete-orphan"),
+    'ap25_vapSelection': relationship(Ap25VapSelection, backref="config_profiles", cascade="all,delete,delete-orphan"),
+    'ap25_aclMacTable': relationship(Ap25AclMacTable, backref="config_profiles", cascade="all,delete,delete-orphan"),
+    'ap25_basicACLconfigTable': relationship(Ap25BasicACLconfigTable, backref="config_profiles",
+                                             cascade="all,delete,delete-orphan"),
+    'ap25_basicVAPsecurity': relationship(Ap25BasicVAPsecurity, backref="config_profiles",
+                                          cascade="all,delete,delete-orphan"),
+    'ap25_basicVAPconfigTable': relationship(Ap25BasicVAPconfigTable, backref="config_profiles",
+                                             cascade="all,delete,delete-orphan"),
+    'ap25_vapWPAsecurityConfigTable': relationship(Ap25VapWPAsecurityConfigTable, backref="config_profiles",
+                                                   cascade="all,delete,delete-orphan"),
+    'ap25_vapWEPsecurityConfigTable': relationship(Ap25VapWEPsecurityConfigTable, backref="config_profiles",
+                                                   cascade="all,delete,delete-orphan"),
+    'Ap25AclStatisticsTable': relationship(Ap25AclStatisticsTable, backref="config_profiles",
+                                           cascade="all,delete,delete-orphan"),
+    'ccu_alarm_threshold_table': relationship(CcuAlarmAndThresholdTable, backref="config_profiles",
+                                              cascade="all,delete,delete-orphan"),
+    'ccu_aux_io_table': relationship(CcuAuxIOTable, backref="config_profiles", cascade="all,delete,delete-orphan"),
+    'ccu_battery_panel_config_table': relationship(CcuBatteryPanelConfigTable, backref="config_profiles",
+                                                   cascade="all,delete,delete-orphan"),
+    'ccu_control_table': relationship(CcuControlTable, backref="config_profiles", cascade="all,delete,delete-orphan"),
+    'ccu_peer_info_table': relationship(CcuPeerInformationTable, backref="config_profiles",
+                                        cascade="all,delete,delete-orphan"),
+    'ccu_site_info_table': relationship(CcuSiteInformationTable, backref="config_profiles",
+                                        cascade="all,delete,delete-orphan")})
 ##'swt4_bandwidth_control':relationship(Swt4BandwidthControl,backref="config_profiles",cascade="all,delete,delete-orphan"),\
 ##'swt4_storm_control':relationship(Swt4StormControl,backref="config_profiles",cascade="all,delete,delete-orphan"),\
 ##'swt4_port_statistics':relationship(Swt4PortStatistics,backref="config_profiles",cascade="all,delete,delete-orphan"),\
@@ -6285,8 +9033,9 @@ mapper(UserLogin, UserLogin.__table__)
 
 # foreign key mapper
 mapper(
-    Hostgroups, Hostgroups.__table__, properties={"hostgroups_groups": relationship(HostgroupsGroups, backref="hostgroups", cascade="all,delete,delete-orphan"),
-"hosts_hostgroups": relationship(HostsHostgroups, backref="hostgroups", cascade="all,delete,delete-orphan")})
+    Hostgroups, Hostgroups.__table__, properties={
+    "hostgroups_groups": relationship(HostgroupsGroups, backref="hostgroups", cascade="all,delete,delete-orphan"),
+    "hosts_hostgroups": relationship(HostsHostgroups, backref="hostgroups", cascade="all,delete,delete-orphan")})
 
 mapper(States, States.__table__, properties={"cities": relationship(
     Cities, backref="states", cascade="all,delete,delete-orphan")})
@@ -6300,41 +9049,48 @@ mapper(Countries, Countries.__table__, properties={"states": relationship(
 mapper(HostServices, HostServices.__table__)
 
 mapper(
-    DeviceType, DeviceType.__table__, properties={"config_profiles": relationship(Odu16ConfigProfiles, backref="device_type", cascade="all,delete,delete-orphan"),
-"discovered_hosts": relationship(DiscoveredHosts, backref="device_type", cascade="all,delete,delete-orphan"),
-"hosts": relationship(Hosts, backref="device_type", cascade="all,delete,delete-orphan"),
-"firmware_mapping": relationship(FirmwareMapping, backref="device_type", cascade="all,delete,delete-orphan"),
-"nms_graphs": relationship(NmsGraphs, backref="device_type", cascade="all,delete,delete-orphan"),
-"odu100_7_2_20_oids": relationship(Odu1007_2_20_oids, backref="device_type", cascade="all,delete,delete-orphan"),
-"odu100_7_2_25_oids": relationship(Odu1007_2_25_oids, backref="device_type", cascade="all,delete,delete-orphan"),
-"odu100_7_2_29_oids": relationship(Odu1007_2_29_oids, backref="device_type", cascade="all,delete,delete-orphan"),
-"service_template": relationship(ServiceTemplates, backref="device_type", cascade="all,delete,delete-orphan")})
+    DeviceType, DeviceType.__table__, properties={
+    "config_profiles": relationship(Odu16ConfigProfiles, backref="device_type", cascade="all,delete,delete-orphan"),
+    "discovered_hosts": relationship(DiscoveredHosts, backref="device_type", cascade="all,delete,delete-orphan"),
+    "hosts": relationship(Hosts, backref="device_type", cascade="all,delete,delete-orphan"),
+    "firmware_mapping": relationship(FirmwareMapping, backref="device_type", cascade="all,delete,delete-orphan"),
+    "nms_graphs": relationship(NmsGraphs, backref="device_type", cascade="all,delete,delete-orphan"),
+    "odu100_7_2_20_oids": relationship(Odu1007_2_20_oids, backref="device_type", cascade="all,delete,delete-orphan"),
+    "odu100_7_2_25_oids": relationship(Odu1007_2_25_oids, backref="device_type", cascade="all,delete,delete-orphan"),
+    "odu100_7_2_29_oids": relationship(Odu1007_2_29_oids, backref="device_type", cascade="all,delete,delete-orphan"),
+    "service_template": relationship(ServiceTemplates, backref="device_type", cascade="all,delete,delete-orphan")})
 
 mapper(
-    Discovery, Discovery.__table__, properties={"discovered_hosts": relationship(DiscoveredHosts, backref="discovery", cascade="all,delete,delete-orphan"),
-"snmp_advance_options": relationship(SnmpAdvanceOptions, backref="discovery", cascade="all,delete,delete-orphan")})
+    Discovery, Discovery.__table__, properties={
+    "discovered_hosts": relationship(DiscoveredHosts, backref="discovery", cascade="all,delete,delete-orphan"),
+    "snmp_advance_options": relationship(SnmpAdvanceOptions, backref="discovery", cascade="all,delete,delete-orphan")})
 
 mapper(
     DiscoveryType, DiscoveryType.__table__, properties={"discovery": relationship(Discovery,
-       backref="discovery_type", cascade="all,delete,delete-orphan")})
+                                                                                  backref="discovery_type",
+                                                                                  cascade="all,delete,delete-orphan")})
 
 # mapper(EventType,EventType.__table__,properties={"event_log":relationship(EventLog,backref="event_type",cascade="all,delete
 # ,delete-orphan")})
 
 mapper(
-    Groups, Groups.__table__, properties={"hostgroups_groups": relationship(HostgroupsGroups, backref="groups", cascade="all,delete,delete-orphan"),
-"host_alert_masking": relationship(HostAlertMasking, backref="groups", cascade="all,delete,delete-orphan"),
-"trap_alarm_masking": relationship(TrapAlarmMasking, backref="groups", cascade="all,delete,delete-orphan"),
-"users_groups": relationship(UsersGroups, backref="groups", cascade="all,delete,delete-orphan")})
+    Groups, Groups.__table__, properties={
+    "hostgroups_groups": relationship(HostgroupsGroups, backref="groups", cascade="all,delete,delete-orphan"),
+    "host_alert_masking": relationship(HostAlertMasking, backref="groups", cascade="all,delete,delete-orphan"),
+    "trap_alarm_masking": relationship(TrapAlarmMasking, backref="groups", cascade="all,delete,delete-orphan"),
+    "users_groups": relationship(UsersGroups, backref="groups", cascade="all,delete,delete-orphan")})
 
 mapper(
-    Acknowledge, Acknowledge.__table__, properties={"host_alert_masking": relationship(HostAlertMasking, backref="acknowledge", cascade="all,delete,delete-orphan"),
-"trap_alarm_action_mapping": relationship(TrapAlarmActionMapping, backref="acknowledge", cascade="all,delete,delete-orphan"),
-"trap_alarm_masking": relationship(TrapAlarmMasking, backref="acknowledge", cascade="all,delete,delete-orphan")})
+    Acknowledge, Acknowledge.__table__, properties={
+    "host_alert_masking": relationship(HostAlertMasking, backref="acknowledge", cascade="all,delete,delete-orphan"),
+    "trap_alarm_action_mapping": relationship(TrapAlarmActionMapping, backref="acknowledge",
+                                              cascade="all,delete,delete-orphan"),
+    "trap_alarm_masking": relationship(TrapAlarmMasking, backref="acknowledge", cascade="all,delete,delete-orphan")})
 
 mapper(
-    Actions, Actions.__table__, properties={"host_alert_masking": relationship(HostAlertMasking, backref="actions", cascade="all,delete,delete-orphan"),
-"trap_alarm_masking": relationship(TrapAlarmMasking, backref="actions", cascade="all,delete,delete-orphan")})
+    Actions, Actions.__table__, properties={
+    "host_alert_masking": relationship(HostAlertMasking, backref="actions", cascade="all,delete,delete-orphan"),
+    "trap_alarm_masking": relationship(TrapAlarmMasking, backref="actions", cascade="all,delete,delete-orphan")})
 
 # mapper(ConfigProfiles,ConfigProfiles.__table__,properties={"hosts":relationship(Hosts,backref="config_profiles",cascade="all,delete
 # ,delete-orphan")})
@@ -6366,8 +9122,9 @@ mapper(HostVendor, HostVendor.__table__, properties={"hosts": relationship(
     Hosts, backref="host_vendor", cascade="all,delete,delete-orphan")})
 
 mapper(
-    NmsInstance, NmsInstance.__table__, properties={"hosts": relationship(Hosts, backref="nms_instance", cascade="all,delete,delete-orphan"),
-"user_login": relationship(UserLogin, backref="nms_instance", cascade="all,delete,delete-orphan")})
+    NmsInstance, NmsInstance.__table__,
+    properties={"hosts": relationship(Hosts, backref="nms_instance", cascade="all,delete,delete-orphan"),
+                "user_login": relationship(UserLogin, backref="nms_instance", cascade="all,delete,delete-orphan")})
 
 mapper(Odu1007_2_20_oids, Odu1007_2_20_oids.__table__, properties={"odu100_7_2_20_oids_multivalues": relationship(
     Odu1007_2_20_oids_multivalues, backref="odu100_7_2_20_oids", cascade="all,delete,delete-orphan")})
@@ -6383,15 +9140,18 @@ mapper(Pages, Pages.__table__, properties={"modules": relationship(
 
 mapper(
     PagesLink, PagesLink.__table__, properties={"role_pages_link": relationship(RolePagesLink,
-       backref="pages_link", cascade="all,delete,delete-orphan")})
+                                                                                backref="pages_link",
+                                                                                cascade="all,delete,delete-orphan")})
 
 mapper(
-    Priority, Priority.__table__, properties={"hosts": relationship(Hosts, backref="priority", cascade="all,delete,delete-orphan"),
-"trap_id_mapping": relationship(TrapIdMapping, backref="priority", cascade="all,delete,delete-orphan")})
+    Priority, Priority.__table__,
+    properties={"hosts": relationship(Hosts, backref="priority", cascade="all,delete,delete-orphan"),
+                "trap_id_mapping": relationship(TrapIdMapping, backref="priority", cascade="all,delete,delete-orphan")})
 
 mapper(
-    Roles, Roles.__table__, properties={"groups": relationship(Groups, backref="roles", cascade="all,delete,delete-orphan"),
-"role_pages_link": relationship(RolePagesLink, backref="roles", cascade="all,delete,delete-orphan")})
+    Roles, Roles.__table__,
+    properties={"groups": relationship(Groups, backref="roles", cascade="all,delete,delete-orphan"),
+                "role_pages_link": relationship(RolePagesLink, backref="roles", cascade="all,delete,delete-orphan")})
 
 mapper(Scheduling, Scheduling.__table__, properties={"discovery": relationship(
     Discovery, backref="scheduling", cascade="all,delete,delete-orphan")})
@@ -6409,8 +9169,9 @@ mapper(TrapAlarmMasking, TrapAlarmMasking.__table__, properties={"trap_alarm_act
     TrapAlarmActionMapping, backref="trap_alarm_masking", cascade="all,delete,delete-orphan")})
 
 mapper(
-    Users, Users.__table__, properties={"users_groups": relationship(UsersGroups, backref="users", cascade="all,delete,delete-orphan"),
-"user_login": relationship(UserLogin, backref="users", cascade="all,delete,delete-orphan")})
+    Users, Users.__table__,
+    properties={"users_groups": relationship(UsersGroups, backref="users", cascade="all,delete,delete-orphan"),
+                "user_login": relationship(UserLogin, backref="users", cascade="all,delete,delete-orphan")})
 
 ###################################### SWITCH MODEL CREATED HERE #########
 

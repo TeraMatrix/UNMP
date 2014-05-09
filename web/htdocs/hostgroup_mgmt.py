@@ -106,19 +106,10 @@ class HostgroupMgmt(object):
         html_str += "</div>"
         return html_str
 
-    @staticmethod
-    def view_page_tip_hostgroup():
-        html_view = ""\
-            "<div id=\"help_container\">"\
-            "<h1>HOSTGROUP MANAGEMENT</h1>"\
-            "<div>This page manages HostGroup and their Mappping with UserGroups.</div>"\
-            "<br/>"\
-            "<div>On this page user can manage mappings between Hostgroup  and Usergroups.</div>"\
-            "<br/>"\
-            "<div><strong>Actions</strong></div>"\
-            "<div class=\"action-tip\"><div class=\"txt-div\"><div class=\"user-header-icon\"><button class=\"yo-button\" type=\"button\"><span class=\"edit\">Manage</span></button>Click to Manage mapping of the respected Hostgroup.  </div></div></div>"\
-            "<div class=\"action-tip\"><div class=\"txt-div\"><div class=\"user-header-icon\"><button class=\"yo-button disabled\" type=\"button\" ><span class=\"add\">Add Group(s)</span></button>Add New User Group to the respected Hostgroup.  </div></div></div>"\
-            "<div class=\"action-tip\"><div class=\"txt-div\"><div class=\"user-header-icon\"><button class=\"yo-button disabled\" type=\"button\"><span class=\"delete\" >Remove Group</span></button>Deletes selected Usergroup from the respected Hostgroup.  </div></div></div>"\
-            "<div class=\"action-tip\"><div class=\"txt-div\"><div class=\"user-header-icon\"><button class=\"yo-button disabled\" type=\"button\"><span class=\"moveto\" >Move Group</span></button>moves Usergroup from the respected Hostgroup to another Hostgroup.  </div></div></div>"\
-            "</div>"
-        return html_view
+        # @staticmethod
+        # def view_page_tip_hostgroup():
+        #     import defaults
+        #     f = open(defaults.web_dir + "/htdocs/locale/view_page_tip_hostgroup.html", "r")
+        #     html_view = f.read()
+        #     f.close()
+        #     return str(html_view)

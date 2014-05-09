@@ -37,9 +37,10 @@ class HostgroupMgmtBll(object):
 
                 query = "select hg.hostgroup_id,hg.hostgroup_name,g.group_name from hostgroups as hg \
 			left join ( select hostgroup_id , group_id from hostgroups_groups) as hgg on hgg.hostgroup_id=hg.hostgroup_id \
-			left join (select group_name , group_id from groups )  as g on g.group_id =hgg.group_id WHERE hgg.hostgroup_id in (%s) order by hg.hostgroup_name " % ','.join(hostgroup_ids_list)
+			left join (select group_name , group_id from groups )  as g on g.group_id =hgg.group_id WHERE hgg.hostgroup_id in (%s) order by hg.hostgroup_name " % ','.join(
+                    hostgroup_ids_list)
                 cursor.execute(query)
-        #       host_tuple=cursor.fetchall()
+                #       host_tuple=cursor.fetchall()
                 tp = cursor.fetchall()
                 di = {}
                 li = []
@@ -60,7 +61,8 @@ class HostgroupMgmtBll(object):
                 for i in range(0, len(lis)):
                     id = lis[i].pop(0)
                     lis[i].append(
-                        '<button class="yo-button" type="button" id="%s" name="%s" ><span class="edit">Manage</span></button>' % (id, lis[i][0]))
+                        '<button class="yo-button" type="button" id="%s" name="%s" ><span class="edit">Manage</span></button>' % (
+                        id, lis[i][0]))
 
             return lis
 
@@ -120,8 +122,10 @@ class HostgroupMgmtBll(object):
                 pid = lis[i].pop(0)
                 lis[i].insert(
                     0, '<div id="ck_box"><input type="checkbox" name="group_check" value="%s" />' % (pid))
-                lis[i].append('<img class=\"img-link\" src=\"images/new/info.png\" title=\"View User Details\" onclick=\"viewGroupDetails(\'%s\');\">' % (pid))
-            # return lis
+                lis[i].append(
+                    '<img class=\"img-link\" src=\"images/new/info.png\" title=\"View User Details\" onclick=\"viewGroupDetails(\'%s\');\">' % (
+                    pid))
+                # return lis
             # if(len(lis)==0):
             #    return []
             if flag_grp == 1:
@@ -152,7 +156,9 @@ class HostgroupMgmtBll(object):
                         '<div id="ck_box"><input type="checkbox" name="group_check" value="%s" />' % (pid))
                     tr.append(i[0])
                     tr.append(" ")
-                    tr.append('<img class=\"img-link\" src=\"images/new/info.png\" title=\"View User Details\" onclick=\"viewGroupDetails(\'%s\');\">' % (pid))
+                    tr.append(
+                        '<img class=\"img-link\" src=\"images/new/info.png\" title=\"View User Details\" onclick=\"viewGroupDetails(\'%s\');\">' % (
+                        pid))
                     lis_group.append(tr)
 
             if (len(lis_group)) == 0:

@@ -82,6 +82,11 @@ conf_dir = defaults.var_dir + "/wato"
 
 
 def page_index(h):
+    """
+
+    @param h:
+    @return:
+    """
     global html
     html = h
 
@@ -155,6 +160,11 @@ def page_index(h):
 # -----------------------------------------------------------------
 
 def mode_index(phase):
+    """
+
+    @param phase:
+    @return:
+    """
     if phase == "title":
         return "Hosts list"
 
@@ -218,6 +228,11 @@ def mode_index(phase):
 
 
 def parse_host_names(line):
+    """
+
+    @param line:
+    @return:
+    """
     newline = ""
     in_hostname = False
     hostname = ""
@@ -235,6 +250,11 @@ def parse_host_names(line):
 
 
 def host_link(hostname):
+    """
+
+    @param hostname:
+    @return:
+    """
     if hostname in g_hosts:
         return '<a href="%s">%s</a>' % (make_link([("mode", "edithost"), ("host", hostname)]), hostname)
     else:
@@ -242,6 +262,13 @@ def host_link(hostname):
 
 
 def render_audit_log(log, what, with_filename=False):
+    """
+
+    @param log:
+    @param what:
+    @param with_filename:
+    @return:
+    """
     htmlcode = '<table class="wato auditlog %s">'
     even = "even"
     for t, filename, user, action, text in log:
@@ -264,6 +291,11 @@ def render_audit_log(log, what, with_filename=False):
 
 
 def mode_changelog(phase):
+    """
+
+    @param phase:
+    @return: @raise:
+    """
     if phase == "title":
         return "Change log"
 
@@ -289,8 +321,8 @@ def mode_changelog(phase):
             message = "<h1>Changes which are not yet activated:</h1>"
             message += render_audit_log(pending, "pending", True)
             message += '<a href="%s" class=button>Activate Changes!</a>' % \
-                html.makeuri([("_action", "activate"), (
-                    "_transid", html.current_transid(html.req.user))])
+                       html.makeuri([("_action", "activate"), (
+                           "_transid", html.current_transid(html.req.user))])
             html.show_warning(message)
         else:
             html.write(
@@ -308,6 +340,12 @@ def mode_changelog(phase):
 
 # Form for host details (new, clone, edit)
 def mode_edithost(phase, new):
+    """
+
+    @param phase:
+    @param new:
+    @return: @raise:
+    """
     hostname = html.var("host")  # may be empty in new/clone mode
 
     clonename = html.var("clone")
@@ -355,7 +393,7 @@ def mode_edithost(phase, new):
                 ip = socket.gethostbyname(hostname)
             except:
                 raise MKUserError("ipaddress", "Hostname <b><tt>%s</tt></b> cannot be resolved into an IP address. "
-                                  "Please check hostname or specify an explicit IP address." % hostname)
+                                               "Please check hostname or specify an explicit IP address." % hostname)
 
         tags = set([])
         for tagno, (tagname, taglist) in enumerate(config.host_tags):
@@ -453,6 +491,12 @@ def mode_edithost(phase, new):
 
 
 def mode_inventory(phase, firsttime):
+    """
+
+    @param phase:
+    @param firsttime:
+    @return: @raise:
+    """
     hostname = html.var("host")
     if hostname not in g_hosts:
         raise MKGeneralException(
@@ -504,6 +548,13 @@ def mode_inventory(phase, firsttime):
 # -----------------------------------------------------------------
 
 def log_entry(hostname, action, message, logfilename):
+    """
+
+    @param hostname:
+    @param action:
+    @param message:
+    @param logfilename:
+    """
     make_nagios_directory(conf_dir)
     log_dir = conf_dir + "/" + g_filename
     make_nagios_directory(log_dir)
@@ -513,21 +564,42 @@ def log_entry(hostname, action, message, logfilename):
 
 
 def log_audit(hostname, what, message):
+    """
+
+    @param hostname:
+    @param what:
+    @param message:
+    """
     log_entry(hostname, what, message, "audit.log")
 
 
 def log_pending(hostname, what, message):
+    """
+
+    @param hostname:
+    @param what:
+    @param message:
+    """
     log_entry(hostname, what, message, "../pending.log")
     log_entry(hostname, what, message, "audit.log")
 
 
 def log_commit_pending():
+    """
+
+
+    """
     pending = conf_dir + "/pending.log"
     if os.path.exists(pending):
         os.remove(pending)
 
 
 def parse_audit_log(what):
+    """
+
+    @param what:
+    @return:
+    """
     if what == "pending":
         path = "%s/%s.log" % (conf_dir, what)
     else:
@@ -548,6 +620,13 @@ def check_mk_automation(command, args=[], indata=""):
     # - When not set try to detect the command for OMD or non OMD installations
     #   - OMD 'own' apache mode or non OMD: check_mk --automation
     #   - OMD 'shared' apache mode: Full path to the binary and the defaults
+    """
+
+    @param command:
+    @param args:
+    @param indata:
+    @return: @raise:
+    """
     sudoline = None
     if defaults.check_mk_automation:
         commandargs = defaults.check_mk_automation.split()
@@ -612,6 +691,10 @@ def check_mk_automation(command, args=[], indata=""):
 
 
 def read_configuration_file():
+    """
+
+
+    """
     global g_hosts
     g_hosts = {}
     path = defaults.check_mk_configdir + "/" + g_filename
@@ -629,7 +712,7 @@ def read_configuration_file():
             parts = h.split('|')
             hostname = parts[0]
             tags = set([tag for tag in parts[1:]
-                       if tag != 'wato' and not tag.endswith('.mk')])
+                        if tag != 'wato' and not tag.endswith('.mk')])
             ipaddress = variables["ipaddresses"].get(hostname)
             aliases = host_extra_conf(
                 hostname, variables["extra_host_conf"]["alias"])
@@ -641,6 +724,10 @@ def read_configuration_file():
 
 
 def write_configuration_file():
+    """
+
+
+    """
     all_hosts = []
     ipaddresses = {}
     aliases = []
@@ -684,6 +771,12 @@ def write_configuration_file():
 
 
 def host_extra_conf(hostname, conflist):
+    """
+
+    @param hostname:
+    @param conflist:
+    @return:
+    """
     for value, hostlist in conflist:
         if hostname in hostlist:
             return [value]
@@ -691,6 +784,11 @@ def host_extra_conf(hostname, conflist):
 
 
 def check_filename():
+    """
+
+
+    @return: @raise:
+    """
     filename = html.var("filename")
     if not filename:
         raise MKGeneralException("You called this page without a filename!")
@@ -717,16 +815,30 @@ def check_filename():
 
 
 def make_link(vars):
+    """
+
+    @param vars:
+    @return:
+    """
     vars = vars + [("filename", g_filename)]
     return html.makeuri_contextless(vars)
 
 
 def make_action_link(vars):
+    """
+
+    @param vars:
+    @return:
+    """
     vars = vars + [("filename", g_filename)]
     return html.makeuri_contextless(vars + [("_transid", html.current_transid(html.req.user))])
 
 
 def changelog_button():
+    """
+
+
+    """
     pending = parse_audit_log("pending")
     buttontext = "ChangeLog"
     if len(pending) > 0:
@@ -739,6 +851,11 @@ def changelog_button():
 
 def show_service_table(hostname, firsttime):
     # Read current check configuration
+    """
+
+    @param hostname:
+    @param firsttime:
+    """
     table = check_mk_automation("try-inventory", [hostname])
     table.sort()
 
@@ -790,8 +907,9 @@ def show_service_table(hostname, firsttime):
                 state = 0  # for tr class
             else:
                 stateclass = "state svcstate state%s" % state
-            html.write("<tr class=\"data %s%d\"><td class=\"%s\">%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>" %
-                       (trclass, state, stateclass, statename, ct, item, descr, output))
+            html.write(
+                "<tr class=\"data %s%d\"><td class=\"%s\">%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>" %
+                (trclass, state, stateclass, statename, ct, item, descr, output))
             if checkbox != None:
                 varname = "_%s_%s" % (ct, item)
                 html.checkbox(varname, checkbox)
@@ -801,6 +919,11 @@ def show_service_table(hostname, firsttime):
 
 
 def delete_host_after_confirm(delname):
+    """
+
+    @param delname:
+    @return:
+    """
     if not html.transaction_valid():
         return None  # Browser reload
 
@@ -820,5 +943,9 @@ def delete_host_after_confirm(delname):
 
 
 def wato_html_head(title):
+    """
+
+    @param title:
+    """
     html.header("Check_MK WATO - " + title)
     html.write("<div class=wato>\n")

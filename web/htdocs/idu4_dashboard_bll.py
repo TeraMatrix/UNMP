@@ -1,11 +1,7 @@
 #!/usr/bin/python2.6
 # import the packeges
-import config
-import htmllib
-import time
-import cgi
 import MySQLdb
-import sys
+
 from common_controller import *
 from nms_config import *
 from odu_controller import *
@@ -29,13 +25,22 @@ class SelfException(Exception):
     @organisation: Code Scape Consultants Pvt. Ltd.
     @copyright: 2011 Code Scape Consultants Pvt. Ltd.
     """
+
     def __init__(self, msg):
         output_dict = {'success': 2, 'output': str(msg)}
         return output_dict
 
 
 class IDUDashboard(object):
+    """
+    IDU device related dashoard class
+    """
     def idu4_dashboard(self, host_id):
+        """
+
+        @param host_id:
+        @return: @raise:
+        """
         try:
             db, cursor = mysql_connection('nms_sample')
             if db == 1:
@@ -50,9 +55,13 @@ class IDUDashboard(object):
                     ip_address = html.var("ip_address")
                     mac_address = html.var("mac_address")
                     selected_device = html.var("selected_device_type")
-                    if cursor.execute("SELECT ip_address from hosts where mac_address = '%s' and device_type_id = '%s'") % (mac_address, selected_device):
+                    if cursor.execute(
+                            "SELECT ip_address from hosts where mac_address = '%s' and device_type_id = '%s'") % (
+                    mac_address, selected_device):
                         result = cursor.fetchall()
-                    elif cursor.execute("SELECT ip_address from hosts where ip_address = '%s' and device_type_id = '%s'") % (ip_address, selected_device):
+                    elif cursor.execute(
+                            "SELECT ip_address from hosts where ip_address = '%s' and device_type_id = '%s'") % (
+                    ip_address, selected_device):
                         result = cursor.fetchall()
                     else:
                         result = ()
@@ -69,29 +78,29 @@ class IDUDashboard(object):
                         ip_address = ip_address[0][0]
                     else:
                         ip_address = ''
-#
-#            if host_id == "" or host_id == None:
-#                ip_address=html.var("ip_address")
-#                mac_address=html.var("mac_address")
-#                selected_device=html.var("selected_device_type")
-#                if cursor.execute("SELECT ip_address from hosts where mac_address = '%s' and device_type_id = '%s'")%(mac_address,selected_device):
-#                    result=cursor.fetchall()
-#                elif cursor.execute("SELECT ip_address from hosts where ip_address = '%s' and device_type_id = '%s'")%(ip_address,selected_device):
-#                    result=cursor.fetchall()
-#                else:
-#                    result=()
-#                if len(result)>0:
-#                    ip_address=result[0][0]
-#                else:
-#                    ip_address=''
-#            else:
-#                sql="SELECT ip_address from hosts where host_id = '%s' "%(host_id)
-#                cursor.execute(sql)
-#                ip_address=cursor.fetchall()
-#                if ip_address is not None and len(ip_address)>0:
-#                    ip_address=ip_address[0][0]
-#                else:
-#                    ip_address=''
+                    #
+                    #            if host_id == "" or host_id == None:
+                    #                ip_address=html.var("ip_address")
+                    #                mac_address=html.var("mac_address")
+                    #                selected_device=html.var("selected_device_type")
+                    #                if cursor.execute("SELECT ip_address from hosts where mac_address = '%s' and device_type_id = '%s'")%(mac_address,selected_device):
+                    #                    result=cursor.fetchall()
+                    #                elif cursor.execute("SELECT ip_address from hosts where ip_address = '%s' and device_type_id = '%s'")%(ip_address,selected_device):
+                    #                    result=cursor.fetchall()
+                    #                else:
+                    #                    result=()
+                    #                if len(result)>0:
+                    #                    ip_address=result[0][0]
+                    #                else:
+                    #                    ip_address=''
+                    #            else:
+                    #                sql="SELECT ip_address from hosts where host_id = '%s' "%(host_id)
+                    #                cursor.execute(sql)
+                    #                ip_address=cursor.fetchall()
+                    #                if ip_address is not None and len(ip_address)>0:
+                    #                    ip_address=ip_address[0][0]
+                    #                else:
+                    #                    ip_address=''
             output_dict = {'success': 0, 'output': '%s' % ip_address}
             return output_dict
             # odu_network_interface_table_graph(h)
@@ -108,6 +117,11 @@ class IDUDashboard(object):
             db.close()
 
     def get_dashboard_data(self):
+        """
+
+
+        @return:
+        """
         devcie_type_attr = ['id', 'refresh_time', 'time_diffrence']
         get_data = DashboardConfig.get_config_attributes(
             'idu4_dashboard', devcie_type_attr)
@@ -119,7 +133,19 @@ class IDUDashboard(object):
                 total_count = get_data[0][2]
         return str(odu_refresh_time), str(total_count)
 
-    def idu4_interface(self, odu_start_date, odu_start_time, odu_end_date, odu_end_time, interface_value, ip_address, limitFlag):
+    def idu4_interface(self, odu_start_date, odu_start_time, odu_end_date, odu_end_time, interface_value, ip_address,
+                       limitFlag):
+        """
+
+        @param odu_start_date:
+        @param odu_start_time:
+        @param odu_end_date:
+        @param odu_end_time:
+        @param interface_value:
+        @param ip_address:
+        @param limitFlag:
+        @return: @raise:
+        """
         rx0 = []
         tx0 = []
         time_stamp0 = []
@@ -135,7 +161,8 @@ class IDUDashboard(object):
                 limit_data = ''
             else:
                 limit_data = ' limit 16'
-            sel_query = "select (idu.rxBytes),(idu.txBytes),idu.timestamp from idu_iduNetworkStatisticsTable as idu INNER JOIN hosts as h  on  idu.host_id = h.host_id  where  h.ip_address='%s' AND  idu.timestamp >= '%s' AND idu.timestamp <='%s' and idu.interfaceName = %s order by idu.timestamp desc" % (ip_address, start_time, end_time, interface_value)
+            sel_query = "select (idu.rxBytes),(idu.txBytes),idu.timestamp from idu_iduNetworkStatisticsTable as idu INNER JOIN hosts as h  on  idu.host_id = h.host_id  where  h.ip_address='%s' AND  idu.timestamp >= '%s' AND idu.timestamp <='%s' and idu.interfaceName = %s order by idu.timestamp desc" % (
+            ip_address, start_time, end_time, interface_value)
             sel_query += limit_data
             cursor.execute(sel_query)
             result = cursor.fetchall()
@@ -160,7 +187,19 @@ class IDUDashboard(object):
         finally:
             db.close()
 
-    def idu4_tdmoip(self, odu_start_date, odu_start_time, odu_end_date, odu_end_time, interface_value, ip_address, limitFlag):
+    def idu4_tdmoip(self, odu_start_date, odu_start_time, odu_end_date, odu_end_time, interface_value, ip_address,
+                    limitFlag):
+        """
+
+        @param odu_start_date:
+        @param odu_start_time:
+        @param odu_end_date:
+        @param odu_end_time:
+        @param interface_value:
+        @param ip_address:
+        @param limitFlag:
+        @return: @raise:
+        """
         transmit = []
         receive = []
         time_stamp = []
@@ -202,7 +241,19 @@ class IDUDashboard(object):
         finally:
             db.close()
 
-    def idu4_link_status(self, odu_start_date, odu_start_time, odu_end_date, odu_end_time, interface_value, ip_address, limitFlag):
+    def idu4_link_status(self, odu_start_date, odu_start_time, odu_end_date, odu_end_time, interface_value, ip_address,
+                         limitFlag):
+        """
+
+        @param odu_start_date:
+        @param odu_start_time:
+        @param odu_end_date:
+        @param odu_end_time:
+        @param interface_value:
+        @param ip_address:
+        @param limitFlag:
+        @return: @raise:
+        """
         transmit = []
         receive = []
         time_stamp = []
@@ -237,7 +288,19 @@ class IDUDashboard(object):
         finally:
             db.close()
 
-    def idu4_linkstatistcis(self, odu_start_date, odu_start_time, odu_end_date, odu_end_time, link_num, ip_address, limitFlag):
+    def idu4_linkstatistcis(self, odu_start_date, odu_start_time, odu_end_date, odu_end_time, link_num, ip_address,
+                            limitFlag):
+        """
+
+        @param odu_start_date:
+        @param odu_start_time:
+        @param odu_end_date:
+        @param odu_end_time:
+        @param link_num:
+        @param ip_address:
+        @param limitFlag:
+        @return: @raise:
+        """
         good_frm_eth0 = []
         good_frm_rx = []
         lost_pct_rx = []
@@ -292,6 +355,11 @@ class IDUDashboard(object):
             db.close()
 
     def idu4_get_link_name(self):
+        """
+
+
+        @return: @raise:
+        """
         link_value = []
         link_name = []
         try:
@@ -320,7 +388,19 @@ class IDUDashboard(object):
         finally:
             db.close()
 
-    def idu4_e1_port_status(self, odu_start_date, odu_start_time, odu_end_date, odu_end_time, port_num, ip_address, limitFlag):
+    def idu4_e1_port_status(self, odu_start_date, odu_start_time, odu_end_date, odu_end_time, port_num, ip_address,
+                            limitFlag):
+        """
+
+        @param odu_start_date:
+        @param odu_start_time:
+        @param odu_end_date:
+        @param odu_end_time:
+        @param port_num:
+        @param ip_address:
+        @param limitFlag:
+        @return: @raise:
+        """
         bpv = []
         time_stamp = []
         try:
@@ -360,6 +440,11 @@ class IDUDashboard(object):
             db.close()
 
     def idu4_device_information(self, ip_address):
+        """
+
+        @param ip_address:
+        @return: @raise:
+        """
         last_reboot_time = ''
         try:
             db, cursor = mysql_connection()
@@ -389,6 +474,11 @@ class IDUDashboard(object):
             db.close()
 
     def idu4_event(self, ip_address):
+        """
+
+        @param ip_address:
+        @return: @raise:
+        """
         normal = []
         inforamtional = []
         minor = []
@@ -400,7 +490,7 @@ class IDUDashboard(object):
             db, cursor = mysql_connection()
             if db == 1 or db == '1':
                 raise SelfException(cursor)
-            # start_time=datetime.strptime(odu_start_date+' '+odu_start_time,"%d/%m/%Y %H:%M")
+                # start_time=datetime.strptime(odu_start_date+' '+odu_start_time,"%d/%m/%Y %H:%M")
             # end_time=datetime.strptime(odu_end_date+'
             # '+odu_end_time,"%d/%m/%Y %H:%M")
             sql = "SELECT count(ta.trap_event_id),date(ta.timestamp) ,ta.serevity FROM trap_alarms as ta  where  date(ta.timestamp)<=current_date() and  date(ta.timestamp)>current_date()-%s AND ta.agent_id='%s'  group by serevity,date(ta.timestamp) order by  timestamp desc" % (
@@ -442,7 +532,8 @@ class IDUDashboard(object):
             major.reverse()
             critical.reverse()
             output_dict = {'success': 0, 'output': {'graph': [normal,
-                                                              inforamtional, minor, major, critical], 'timestamp': time_stamp}}
+                                                              inforamtional, minor, major, critical],
+                                                    'timestamp': time_stamp}}
             return output_dict
         # Exception Handling
         except MySQLdb as e:
@@ -457,11 +548,16 @@ class IDUDashboard(object):
             db.close()
 
     def idu4_outage(self, ip_address):
+        """
+
+        @param ip_address:
+        @return: @raise:
+        """
         date_days = []  # this list store the days information with date.
         up_state = []
-            # Its store the total up state of each day in percentage.
+        # Its store the total up state of each day in percentage.
         down_state = []
-            # Its store the total down state of each day in percentage.
+        # Its store the total down state of each day in percentage.
         output_dict = {}  # its store the actual output for display in graph.
         last_status = ''
         down_flag = 0
@@ -498,7 +594,8 @@ class IDUDashboard(object):
             sel_sql = "SELECT  nagios_hosts.address,nagios_statehistory.state_time,nagios_statehistory.state\
                 FROM nagios_hosts INNER JOIN nagios_statehistory ON nagios_statehistory.object_id = nagios_hosts.host_object_id\
                where nagios_statehistory.state_time between '%s'  and '%s' and nagios_hosts.address='%s'\
-                order by nagios_statehistory.state_time  desc limit 1" % (last_status_current_time, last_status_end_time, ip_address)
+                order by nagios_statehistory.state_time  desc limit 1" % (
+            last_status_current_time, last_status_end_time, ip_address)
             # Execute the query.
             cursor.execute(sel_sql)
             last_state = cursor.fetchall()
@@ -526,21 +623,25 @@ class IDUDashboard(object):
                                             if temp_time is not '':
                                                 if result[j - 1][2] == 0 or result[j - 1][2] == "0":
                                                     total_up_time += abs((
-                                                        row[1] - temp_time).days * 1440 + (row[1] - temp_time).seconds / 60)
+                                                                             row[1] - temp_time).days * 1440 + (
+                                                                         row[1] - temp_time).seconds / 60)
                                                     temp_up_time = row[1]
                                                 else:
                                                     total_down_time += abs((
-                                                        row[1] - temp_time).days * 1440 + (row[1] - temp_time).seconds / 60)
+                                                                               row[1] - temp_time).days * 1440 + (
+                                                                           row[1] - temp_time).seconds / 60)
                                                     temp_down_time = row[1]
                                             up_flag = 1
                                         elif last_status is not '' and up_flag == 0:
                                             up_flag = 1
                                             if last_status == 0:
                                                 total_up_time = abs((row[1] - (temp_date + timedelta(
-                                                    days=-(i + 1)))).days * 1440 + (row[1] - (temp_date + timedelta(days=-(i + 1)))).seconds / 60)
+                                                    days=-(i + 1)))).days * 1440 + (row[1] - (
+                                                temp_date + timedelta(days=-(i + 1)))).seconds / 60)
                                             else:
                                                 total_down_time = abs((row[1] - (temp_date + timedelta(
-                                                    days=-(i + 1)))).days * 1440 + (row[1] - (temp_date + timedelta(days=-(i + 1)))).seconds / 60)
+                                                    days=-(i + 1)))).days * 1440 + (row[1] - (
+                                                temp_date + timedelta(days=-(i + 1)))).seconds / 60)
                                     else:
                                         if result[j - 1][2] == 0 or result[j - 1][2] == "0":
                                             total_up_time += abs(
@@ -557,21 +658,25 @@ class IDUDashboard(object):
                                             if temp_time is not '':
                                                 if result[j - 1][2] == 0 or result[j - 1][2] == "0":
                                                     total_up_time += abs((
-                                                        row[1] - temp_time).days * 1440 + (row[1] - temp_time).seconds / 60)
+                                                                             row[1] - temp_time).days * 1440 + (
+                                                                         row[1] - temp_time).seconds / 60)
                                                     temp_up_time = row[1]
                                                 else:
                                                     total_down_time += abs((
-                                                        row[1] - temp_time).days * 1440 + (row[1] - temp_time).seconds / 60)
+                                                                               row[1] - temp_time).days * 1440 + (
+                                                                           row[1] - temp_time).seconds / 60)
                                                     temp_down_time = row[1]
                                             down_flag = 1
                                         elif last_status is not '' and down_flag == 0:
                                             down_flag = 1
                                             if last_status == 0:
                                                 total_up_time = abs((row[1] - (temp_date + timedelta(
-                                                    days=-(i + 1)))).days * 1440 + (row[1] - (temp_date + timedelta(days=-(i + 1)))).seconds / 60)
+                                                    days=-(i + 1)))).days * 1440 + (row[1] - (
+                                                temp_date + timedelta(days=-(i + 1)))).seconds / 60)
                                             else:
                                                 total_down_time = abs((row[1] - (temp_date + timedelta(
-                                                    days=-(i + 1)))).days * 1440 + (row[1] - (temp_date + timedelta(days=-(i + 1)))).seconds / 60)
+                                                    days=-(i + 1)))).days * 1440 + (row[1] - (
+                                                temp_date + timedelta(days=-(i + 1)))).seconds / 60)
                                     else:
 
                                         if result[j - 1][2] == 0 or result[j - 1][2] == "0":
@@ -589,10 +694,12 @@ class IDUDashboard(object):
                         if flag == 1:
                             if result[j - 1][2] == 0:
                                 total_up_time = abs((result[j - 1][1] - (
-                                    temp_date + timedelta(days=-i))).days * 1440 + (result[j - 1][1] - (temp_date + timedelta(days=-i))).seconds / 60)
+                                    temp_date + timedelta(days=-i))).days * 1440 + (
+                                                    result[j - 1][1] - (temp_date + timedelta(days=-i))).seconds / 60)
                             else:
                                 total_down_time = abs((result[j - 1][1] - (
-                                    temp_date + timedelta(days=-i))).days * 1440 + (result[j - 1][1] - (temp_date + timedelta(days=-i))).seconds / 60)
+                                    temp_date + timedelta(days=-i))).days * 1440 + (
+                                                      result[j - 1][1] - (temp_date + timedelta(days=-i))).seconds / 60)
                         date_days.append((temp_date + timedelta(
                             days=-(i))).strftime("%d %b %Y"))
                         total = total_up_time + total_down_time
@@ -620,10 +727,12 @@ class IDUDashboard(object):
                                 flag = 1
                                 if row[2] == 0:
                                     total_up_time = abs((row[1] - (temp_date + timedelta(
-                                        days=-(i + 1)))).days * 1440 + (row[1] - (temp_date + timedelta(days=-(i + 1)))).seconds / 60)
+                                        days=-(i + 1)))).days * 1440 + (
+                                                        row[1] - (temp_date + timedelta(days=-(i + 1)))).seconds / 60)
                                 else:
                                     total_down_time = abs((row[1] - (temp_date + timedelta(
-                                        days=-(i + 1)))).days * 1440 + (row[1] - (temp_date + timedelta(days=-(i + 1)))).seconds / 60)
+                                        days=-(i + 1)))).days * 1440 + (
+                                                          row[1] - (temp_date + timedelta(days=-(i + 1)))).seconds / 60)
                         date_days.append((temp_date + timedelta(
                             days=-(i))).strftime("%d %b %Y"))
                         total = total_up_time + total_down_time
@@ -635,7 +744,7 @@ class IDUDashboard(object):
                         else:
                             up_state.append(0)
                             down_state.append(0)
-            # reverse the list according to date
+                # reverse the list according to date
             up_state.reverse()
             down_state.reverse()
             date_days.reverse()
@@ -656,6 +765,12 @@ class IDUDashboard(object):
             db.close()
 
     def idu4_alarm_event(self, ip_address, table_option):
+        """
+
+        @param ip_address:
+        @param table_option:
+        @return: @raise:
+        """
         history_trap_detail = {}
         try:
             db, cursor = mysql_connection('nms_sample')
@@ -681,7 +796,19 @@ class IDUDashboard(object):
         finally:
             db.close()
 
-    def idu4_port_statistics(self, odu_start_date, odu_start_time, odu_end_date, odu_end_time, port, ip_address, limitFlag):
+    def idu4_port_statistics(self, odu_start_date, odu_start_time, odu_end_date, odu_end_time, port, ip_address,
+                             limitFlag):
+        """
+
+        @param odu_start_date:
+        @param odu_start_time:
+        @param odu_end_date:
+        @param odu_end_time:
+        @param port:
+        @param ip_address:
+        @param limitFlag:
+        @return: @raise:
+        """
         rx0 = []
         tx0 = []
         time_stamp0 = []
@@ -697,7 +824,8 @@ class IDUDashboard(object):
                 limit_data = ''
             else:
                 limit_data = ' limit 16'
-            sel_query = "select (idu.framerx),(idu.frametx),idu.timestamp from idu_portstatisticsTable as idu INNER JOIN hosts as h  on  idu.host_id = h.host_id  where  h.ip_address='%s' AND  idu.timestamp >= '%s' AND idu.timestamp <='%s' and idu.softwarestatportnum = '%s' order by idu.timestamp desc" % (ip_address, start_time, end_time, port)
+            sel_query = "select (idu.framerx),(idu.frametx),idu.timestamp from idu_portstatisticsTable as idu INNER JOIN hosts as h  on  idu.host_id = h.host_id  where  h.ip_address='%s' AND  idu.timestamp >= '%s' AND idu.timestamp <='%s' and idu.softwarestatportnum = '%s' order by idu.timestamp desc" % (
+            ip_address, start_time, end_time, port)
             sel_query += limit_data
             cursor.execute(sel_query)
             result = cursor.fetchall()
@@ -722,8 +850,21 @@ class IDUDashboard(object):
         finally:
             db.close()
 
-    def idu4_excel_report(self, ip_address, odu_start_date, odu_start_time, odu_end_date, odu_end_time, select_option, limitFlag):
-        if ip_address == '' or ip_address == None or ip_address == 'undefined' or str(ip_address) == 'None':    # if ip_address not received so excel not created
+    def idu4_excel_report(self, ip_address, odu_start_date, odu_start_time, odu_end_date, odu_end_time, select_option,
+                          limitFlag):
+        """
+
+        @param ip_address:
+        @param odu_start_date:
+        @param odu_start_time:
+        @param odu_end_date:
+        @param odu_end_time:
+        @param select_option:
+        @param limitFlag:
+        @return: @raise:
+        """
+        if ip_address == '' or ip_address == None or ip_address == 'undefined' or str(
+                ip_address) == 'None':    # if ip_address not received so excel not created
             raise SelfException(
                 'This UBR devices not exists so excel report can not be generated.')  # Check msg
         try:
@@ -738,7 +879,7 @@ class IDUDashboard(object):
             total_days = ((end_time - start_time).days)
             if total_days < 5:
                 total_days = 5
-            # Import the modules for excel generating.
+                # Import the modules for excel generating.
             import xlwt
             from xlwt import Workbook, easyxf
 
@@ -782,17 +923,18 @@ class IDUDashboard(object):
                 raise SelfException(cursor)
 
             # we get the host inforamtion.
-            sel_query = "SELECT device_type.device_name,hosts.host_alias FROM hosts INNER JOIN device_type ON hosts.device_type_id=device_type.device_type_id WHERE hosts.ip_address='%s'" % (ip_address)
+            sel_query = "SELECT device_type.device_name,hosts.host_alias FROM hosts INNER JOIN device_type ON hosts.device_type_id=device_type.device_type_id WHERE hosts.ip_address='%s'" % (
+            ip_address)
             cursor.execute(sel_query)
             host_result = cursor.fetchall()
             device_type = ''
             device_name = ''
             if len(host_result) > 0:
                 device_type = ('--' if host_result[0][0]
-                               == '' or host_result[0][0] == None else host_result[0][0])
+                                       == '' or host_result[0][0] == None else host_result[0][0])
                 device_name = ('--' if host_result[0][1]
-                               == '' or host_result[0][1] == None else host_result[0][1])
-            # end the host information fucntion
+                                       == '' or host_result[0][1] == None else host_result[0][1])
+                # end the host information fucntion
             # Device Inforamtion Excel Creation start here.
             sql = "SELECT info.hwSerialNumber,info.systemterfaceMac,info.tdmoipInterfaceMac,sw.activeVersion,sw.passiveVersion,sw.bootloaderVersion,info.currentTemperature,info.sysUptime FROM idu_swStatusTable as sw INNER JOIN idu_iduInfoTable as info ON sw.host_id=sw.host_id INNER JOIN hosts ON hosts.host_id=sw.host_id WHERE hosts.ip_address='%s' limit 1" % ip_address
             cursor.execute(sql)
@@ -806,19 +948,26 @@ class IDUDashboard(object):
                     second = device_detail[0][7] % 60
             for value in device_detail:
                 table_output.append(['H/W Serial Number', str('--' if device_detail[0][0]
-                                    == None or device_detail[0][0] == "" else device_detail[0][0])])
+                                                                      == None or device_detail[0][0] == "" else
+                device_detail[0][0])])
                 table_output.append(['System MAC', str('--' if device_detail[0][1]
-                                    == None or device_detail[0][1] == "" else device_detail[0][1])])
+                                                               == None or device_detail[0][1] == "" else
+                device_detail[0][1])])
                 table_output.append(['TDMOIP Interface MAC', str('--' if device_detail[0][2]
-                                    == None or device_detail[0][2] == "" else device_detail[0][2])])
+                                                                         == None or device_detail[0][2] == "" else
+                device_detail[0][2])])
                 table_output.append(['Active Version', str('--' if device_detail[0][3]
-                                    == None or device_detail[0][3] == "" else device_detail[0][3])])
+                                                                   == None or device_detail[0][3] == "" else
+                device_detail[0][3])])
                 table_output.append(['Passive Version', str('--' if device_detail[0][4]
-                                    == None or device_detail[0][4] == "" else device_detail[0][4])])
+                                                                    == None or device_detail[0][4] == "" else
+                device_detail[0][4])])
                 table_output.append(['BootLoader Version ', str('--' if device_detail[0][5]
-                                    == None or device_detail[0][5] == "" else device_detail[0][5])])
+                                                                        == None or device_detail[0][5] == "" else
+                device_detail[0][5])])
                 table_output.append(['Temperature(C)', str('--' if device_detail[0][6]
-                                    == None or device_detail[0][6] == "" else device_detail[0][6])])
+                                                                   == None or device_detail[0][6] == "" else
+                device_detail[0][6])])
                 table_output.append(['UpTime', str(
                     str(hour) + "Hr " + str(minute) + "Min " + str(second) + "Sec")])
             sql = "SELECT trap_receive_date from trap_alarms where trap_event_type = 'NODE_UP' and agent_id='%s' order by timestamp desc limit 1" % ip_address
@@ -842,7 +991,7 @@ class IDUDashboard(object):
             heading_xf = xlwt.easyxf(
                 'font: bold on; align: wrap on, vert centre, horiz center;pattern: pattern solid, fore_colour light_green;')
             headings = ['Element', 'Element Values']
-    # heading=[table_output[0][1],table_output[0][2],table_output[0][3],table_output[0][4],table_output[0][5],table_output[0][6],table_output[0][7]]
+            # heading=[table_output[0][1],table_output[0][2],table_output[0][3],table_output[0][4],table_output[0][5],table_output[0][6],table_output[0][7]]
             xls_sheet.set_panes_frozen(
                 True)  # frozen headings instead of split panes
             xls_sheet.set_horz_split_pos(
@@ -870,22 +1019,25 @@ class IDUDashboard(object):
                         ip_address, start_time, end_time, interface_value)
                     sel_query += limit_data
                 else:
-                    sel_query = "select (idu.rxBytes),(idu.txBytes),idu.timestamp from idu_iduNetworkStatisticsTable as idu INNER JOIN hosts as h  on  idu.host_id = h.host_id  where  h.ip_address='%s' AND  date(idu.timestamp) >= current_date()-%s AND date(idu.timestamp) <=current_date() and idu.interfaceName = %s order by idu.timestamp desc" % (ip_address, total_days, interface_value)
+                    sel_query = "select (idu.rxBytes),(idu.txBytes),idu.timestamp from idu_iduNetworkStatisticsTable as idu INNER JOIN hosts as h  on  idu.host_id = h.host_id  where  h.ip_address='%s' AND  date(idu.timestamp) >= current_date()-%s AND date(idu.timestamp) <=current_date() and idu.interfaceName = %s order by idu.timestamp desc" % (
+                    ip_address, total_days, interface_value)
                 cursor.execute(sel_query)
                 nw_result = cursor.fetchall()
                 network_list = []
                 for i in range(0, len(nw_result) - 1):
                     temp_list = []
                     temp_list = [nw_result[i][2].strftime('%d-%m-%Y %H:%M'), 0 if (int(nw_result[i][1]) - int(
-                        nw_result[i + 1][0])) < 0 else (int(nw_result[i][0]) - int(nw_result[i + 1][0])), 0 if (int(nw_result[i][1]) - int(nw_result[i + 1][1])) < 0 else (int(nw_result[i][1]) - int(nw_result[i + 1][1]))]
+                        nw_result[i + 1][0])) < 0 else (int(nw_result[i][0]) - int(nw_result[i + 1][0])),
+                                 0 if (int(nw_result[i][1]) - int(nw_result[i + 1][1])) < 0 else (
+                                 int(nw_result[i][1]) - int(nw_result[i + 1][1]))]
                     network_list.append(temp_list)
                 network_list = sorted(network_list, key=itemgetter(0))
                 xls_sheet = xls_book.add_sheet('network_bandwidth(%s)' % interface[
-                                               interface_value], cell_overwrite_ok=True)
+                    interface_value], cell_overwrite_ok=True)
                 xls_sheet.row(0).height = 521
                 xls_sheet.row(1).height = 421
                 xls_sheet.write_merge(0, 0, 0, 2, "Network Bandwidth Information (%s)" %
-                                      interface[interface_value], style)
+                                                  interface[interface_value], style)
                 xls_sheet.write(1, 0, device_type, style)
                 xls_sheet.write(1, 1, device_name, style)
                 xls_sheet.write(1, 2, ip_address, style)
@@ -908,9 +1060,9 @@ class IDUDashboard(object):
                         xls_sheet.write(i, j, str(network_list[k][j]), style1)
                         xls_sheet.col(j).width = width
                     i = i + 1
-        # Network bandwith Excel ending here.
+                    # Network bandwith Excel ending here.
 
-        # TDMOIP Network bandwith Excel Starting here.
+                    # TDMOIP Network bandwith Excel Starting here.
             interface = ['eth0']
             for interface_value in range(len(interface)):
                 if int(select_option) == 0:
@@ -922,18 +1074,21 @@ class IDUDashboard(object):
                         ip_address, end_time, start_time, interface_value)
                     sel_query += limit_data
                 else:
-                    sel_query = "select IFNULL((idu.bytesTransmitted),0),IFNULL((idu.bytesReceived),0),idu.timestamp from  idu_tdmoipNetworkInterfaceStatisticsTable as idu INNER JOIN hosts as h  on  idu.host_id = h.host_id  where  h.ip_address='%s' AND  date(idu.timestamp) >= current_date()-%s AND date(idu.timestamp) <=current_date() and idu.indexid = %s order by idu.timestamp desc" % (ip_address, total_days, interface_value)
+                    sel_query = "select IFNULL((idu.bytesTransmitted),0),IFNULL((idu.bytesReceived),0),idu.timestamp from  idu_tdmoipNetworkInterfaceStatisticsTable as idu INNER JOIN hosts as h  on  idu.host_id = h.host_id  where  h.ip_address='%s' AND  date(idu.timestamp) >= current_date()-%s AND date(idu.timestamp) <=current_date() and idu.indexid = %s order by idu.timestamp desc" % (
+                    ip_address, total_days, interface_value)
                 cursor.execute(sel_query)
                 nw_result = cursor.fetchall()
                 network_list = []
                 for i in range(0, len(nw_result) - 1):
                     temp_list = []
                     temp_list = [nw_result[i][2].strftime('%d-%m-%Y %H:%M'), 0 if (int(nw_result[i][1]) - int(
-                        nw_result[i + 1][0])) < 0 else (int(nw_result[i][0]) - int(nw_result[i + 1][0])), 0 if (int(nw_result[i][1]) - int(nw_result[i + 1][1])) < 0 else (int(nw_result[i][1]) - int(nw_result[i + 1][1]))]
+                        nw_result[i + 1][0])) < 0 else (int(nw_result[i][0]) - int(nw_result[i + 1][0])),
+                                 0 if (int(nw_result[i][1]) - int(nw_result[i + 1][1])) < 0 else (
+                                 int(nw_result[i][1]) - int(nw_result[i + 1][1]))]
                     network_list.append(temp_list)
                 network_list = sorted(network_list, key=itemgetter(0))
                 xls_sheet = xls_book.add_sheet('TDMOIP_network_bandwidth(%s)' % interface[
-                                               interface_value], cell_overwrite_ok=True)
+                    interface_value], cell_overwrite_ok=True)
                 xls_sheet.row(0).height = 521
                 xls_sheet.row(1).height = 421
                 xls_sheet.write_merge(
@@ -961,7 +1116,7 @@ class IDUDashboard(object):
                         xls_sheet.col(j).width = width
                     i = i + 1
 
-        # TDMOIP Network bandwith Excel ending here.
+                    # TDMOIP Network bandwith Excel ending here.
 
             # Trap Information Excel starting here.
             normal = []
@@ -1046,11 +1201,12 @@ class IDUDashboard(object):
             # event Information excel start here.
             trap_days = ((end_time - start_time).days)
             if int(select_option) == 0:
-    # sql="SELECT
-    # ta.serevity,ta.trap_event_id,ta.trap_event_type,ta.trap_receive_date
-    # FROM trap_alarm_current as ta WHERE ta.agent_id='%s' AND
-    # date(ta.timestamp)=current_date()  order by ta.timestamp "%(ip_address)
-                sql = "SELECT ta.serevity,ta.trap_event_id,ta.trap_event_type,ta.trap_receive_date FROM trap_alarm_current as ta WHERE ta.agent_id='%s' AND ta.timestamp>='%s' AND ta.timestamp<='%s' order by ta.timestamp " % (ip_address, start_time, end_time)
+            # sql="SELECT
+            # ta.serevity,ta.trap_event_id,ta.trap_event_type,ta.trap_receive_date
+            # FROM trap_alarm_current as ta WHERE ta.agent_id='%s' AND
+            # date(ta.timestamp)=current_date()  order by ta.timestamp "%(ip_address)
+                sql = "SELECT ta.serevity,ta.trap_event_id,ta.trap_event_type,ta.trap_receive_date FROM trap_alarm_current as ta WHERE ta.agent_id='%s' AND ta.timestamp>='%s' AND ta.timestamp<='%s' order by ta.timestamp " % (
+                ip_address, start_time, end_time)
 
             else:
                 sql = "SELECT ta.serevity,ta.trap_event_id,ta.trap_event_type,ta.trap_receive_date FROM trap_alarm_current as ta WHERE ta.agent_id='%s' AND date(ta.timestamp)=current_date() and  date(ta.timestamp)>current_date()-%s order by ta.timestamp " % (
@@ -1098,7 +1254,8 @@ class IDUDashboard(object):
 
             # event Information excel start here.
             if int(select_option) == 0:
-                sql = "SELECT ta.serevity,ta.trap_event_id,ta.trap_event_type,ta.trap_receive_date FROM trap_alarms as ta WHERE ta.agent_id='%s' AND ta.timestamp>='%s' AND  ta.timestamp<='%s' order by ta.timestamp " % (ip_address, start_time, end_time)
+                sql = "SELECT ta.serevity,ta.trap_event_id,ta.trap_event_type,ta.trap_receive_date FROM trap_alarms as ta WHERE ta.agent_id='%s' AND ta.timestamp>='%s' AND  ta.timestamp<='%s' order by ta.timestamp " % (
+                ip_address, start_time, end_time)
             else:
                 sql = "SELECT ta.serevity,ta.trap_event_id,ta.trap_event_type,ta.trap_receive_date FROM trap_alarms as ta WHERE ta.agent_id='%s' AND date(ta.timestamp)<=current_date() and  date(ta.timestamp)>current_date()-%s order by ta.timestamp " % (
                     ip_address, trap_days)
@@ -1147,11 +1304,11 @@ class IDUDashboard(object):
 
             date_days = []  # this list store the days information with date.
             up_state = []
-                # Its store the total up state of each day in percentage.
+            # Its store the total up state of each day in percentage.
             down_state = []
-                # Its store the total down state of each day in percentage.
+            # Its store the total down state of each day in percentage.
             output_dict = {}
-                # its store the actual output for display in graph.\
+            # its store the actual output for display in graph.\
             last_status = ''
             down_flag = 0
             up_flag = 0
@@ -1180,7 +1337,8 @@ class IDUDashboard(object):
             sel_sql = "SELECT  nagios_hosts.address,nagios_statehistory.state_time,nagios_statehistory.state\
                 FROM nagios_hosts INNER JOIN nagios_statehistory ON nagios_statehistory.object_id = nagios_hosts.host_object_id\
                where nagios_statehistory.state_time between '%s'  and '%s' and nagios_hosts.address='%s'\
-                order by nagios_statehistory.state_time  desc limit 1" % (last_status_current_time, last_status_end_time, ip_address)
+                order by nagios_statehistory.state_time  desc limit 1" % (
+            last_status_current_time, last_status_end_time, ip_address)
             # Execute the query.
             cursor.execute(sel_sql)
             last_state = cursor.fetchall()
@@ -1207,21 +1365,25 @@ class IDUDashboard(object):
                                             if temp_time is not '':
                                                 if result[j - 1][2] == 0 or result[j - 1][2] == "0":
                                                     total_up_time += abs((
-                                                        row[1] - temp_time).days * 1440 + (row[1] - temp_time).seconds / 60)
+                                                                             row[1] - temp_time).days * 1440 + (
+                                                                         row[1] - temp_time).seconds / 60)
                                                     temp_up_time = row[1]
                                                 else:
                                                     total_down_time += abs((
-                                                        row[1] - temp_time).days * 1440 + (row[1] - temp_time).seconds / 60)
+                                                                               row[1] - temp_time).days * 1440 + (
+                                                                           row[1] - temp_time).seconds / 60)
                                                     temp_down_time = row[1]
                                             up_flag = 1
                                         elif last_status is not '' and up_flag == 0:
                                             up_flag = 1
                                             if last_status == 0:
                                                 total_up_time = abs((row[1] - (temp_date + timedelta(
-                                                    days=-(i + 1)))).days * 1440 + (row[1] - (temp_date + timedelta(days=-(i + 1)))).seconds / 60)
+                                                    days=-(i + 1)))).days * 1440 + (row[1] - (
+                                                temp_date + timedelta(days=-(i + 1)))).seconds / 60)
                                             else:
                                                 total_down_time = abs((row[1] - (temp_date + timedelta(
-                                                    days=-(i + 1)))).days * 1440 + (row[1] - (temp_date + timedelta(days=-(i + 1)))).seconds / 60)
+                                                    days=-(i + 1)))).days * 1440 + (row[1] - (
+                                                temp_date + timedelta(days=-(i + 1)))).seconds / 60)
                                     else:
                                         if result[j - 1][2] == 0 or result[j - 1][2] == "0":
                                             total_up_time += abs(
@@ -1238,21 +1400,25 @@ class IDUDashboard(object):
                                             if temp_time is not '':
                                                 if result[j - 1][2] == 0 or result[j - 1][2] == "0":
                                                     total_up_time += abs((
-                                                        row[1] - temp_time).days * 1440 + (row[1] - temp_time).seconds / 60)
+                                                                             row[1] - temp_time).days * 1440 + (
+                                                                         row[1] - temp_time).seconds / 60)
                                                     temp_up_time = row[1]
                                                 else:
                                                     total_down_time += abs((
-                                                        row[1] - temp_time).days * 1440 + (row[1] - temp_time).seconds / 60)
+                                                                               row[1] - temp_time).days * 1440 + (
+                                                                           row[1] - temp_time).seconds / 60)
                                                     temp_down_time = row[1]
                                             down_flag = 1
                                         elif last_status is not '' and down_flag == 0:
                                             down_flag = 1
                                             if last_status == 0:
                                                 total_up_time = abs((row[1] - (temp_date + timedelta(
-                                                    days=-(i + 1)))).days * 1440 + (row[1] - (temp_date + timedelta(days=-(i + 1)))).seconds / 60)
+                                                    days=-(i + 1)))).days * 1440 + (row[1] - (
+                                                temp_date + timedelta(days=-(i + 1)))).seconds / 60)
                                             else:
                                                 total_down_time = abs((row[1] - (temp_date + timedelta(
-                                                    days=-(i + 1)))).days * 1440 + (row[1] - (temp_date + timedelta(days=-(i + 1)))).seconds / 60)
+                                                    days=-(i + 1)))).days * 1440 + (row[1] - (
+                                                temp_date + timedelta(days=-(i + 1)))).seconds / 60)
                                     else:
 
                                         if result[j - 1][2] == 0 or result[j - 1][2] == "0":
@@ -1270,10 +1436,12 @@ class IDUDashboard(object):
                         if flag == 1:
                             if result[j - 1][2] == 0:
                                 total_up_time = abs((result[j - 1][1] - (
-                                    temp_date + timedelta(days=-i))).days * 1440 + (result[j - 1][1] - (temp_date + timedelta(days=-i))).seconds / 60)
+                                    temp_date + timedelta(days=-i))).days * 1440 + (
+                                                    result[j - 1][1] - (temp_date + timedelta(days=-i))).seconds / 60)
                             else:
                                 total_down_time = abs((result[j - 1][1] - (
-                                    temp_date + timedelta(days=-i))).days * 1440 + (result[j - 1][1] - (temp_date + timedelta(days=-i))).seconds / 60)
+                                    temp_date + timedelta(days=-i))).days * 1440 + (
+                                                      result[j - 1][1] - (temp_date + timedelta(days=-i))).seconds / 60)
                         date_days.append((temp_date + timedelta(
                             days=-(i))).strftime("%d %b %Y"))
                         total = total_up_time + total_down_time
@@ -1301,10 +1469,12 @@ class IDUDashboard(object):
                                 flag = 1
                                 if row[2] == 0:
                                     total_up_time = abs((row[1] - (temp_date + timedelta(
-                                        days=-(i + 1)))).days * 1440 + (row[1] - (temp_date + timedelta(days=-(i + 1)))).seconds / 60)
+                                        days=-(i + 1)))).days * 1440 + (
+                                                        row[1] - (temp_date + timedelta(days=-(i + 1)))).seconds / 60)
                                 else:
                                     total_down_time = abs((row[1] - (temp_date + timedelta(
-                                        days=-(i + 1)))).days * 1440 + (row[1] - (temp_date + timedelta(days=-(i + 1)))).seconds / 60)
+                                        days=-(i + 1)))).days * 1440 + (
+                                                          row[1] - (temp_date + timedelta(days=-(i + 1)))).seconds / 60)
                         date_days.append((temp_date + timedelta(
                             days=-(i))).strftime("%d %b %Y"))
                         total = total_up_time + total_down_time
@@ -1316,7 +1486,7 @@ class IDUDashboard(object):
                         else:
                             up_state.append(0)
                             down_state.append(0)
-            # close the database and cursor connection.
+                # close the database and cursor connection.
             # reverse the data
             outage_list = []
             k = 0
@@ -1352,7 +1522,7 @@ class IDUDashboard(object):
                     xls_sheet.write(i, j, str(outage_list[k][j]), style1)
                     xls_sheet.col(j).width = width
                 i = i + 1
-            # Outage excel end here.
+                # Outage excel end here.
 
             # excel creatig end for network bandwidth
             xls_book.save(
@@ -1371,8 +1541,21 @@ class IDUDashboard(object):
         finally:
             db.close()
 
-    def idu4_pdf_report(self, ip_address, odu_start_date, odu_start_time, odu_end_date, odu_end_time, select_option, limitFlag):
-        if ip_address == '' or ip_address == None or ip_address == 'undefined' or str(ip_address) == 'None':    # if ip_address not received so excel not created
+    def idu4_pdf_report(self, ip_address, odu_start_date, odu_start_time, odu_end_date, odu_end_time, select_option,
+                        limitFlag):
+        """
+
+        @param ip_address:
+        @param odu_start_date:
+        @param odu_start_time:
+        @param odu_end_date:
+        @param odu_end_time:
+        @param select_option:
+        @param limitFlag:
+        @return: @raise:
+        """
+        if ip_address == '' or ip_address == None or ip_address == 'undefined' or str(
+                ip_address) == 'None':    # if ip_address not received so excel not created
             raise SelfException(
                 'This UBR devices not exists so excel report can not be generated.')  # Check msg
         try:
@@ -1413,7 +1596,7 @@ class IDUDashboard(object):
             MARGIN_SIZE = 14 * mm
             PAGE_SIZE = A4
             nms_instance = __file__.split("/")[3]
-# pdfdoc="/omd/sites/%s/share/check_mk/web/htdocs/download/IDU4_PDF_Report.pdf"%(nms_instance,start_time,end_time)
+            # pdfdoc="/omd/sites/%s/share/check_mk/web/htdocs/download/IDU4_PDF_Report.pdf"%(nms_instance,start_time,end_time)
             pdfdoc = "/omd/sites/%s/share/check_mk/web/htdocs/download/IDU4_PDF_Report.pdf" % (
                 nms_instance)
 
@@ -1456,17 +1639,18 @@ class IDUDashboard(object):
             cursor = db.cursor()
 
             # we get the host inforamtion.
-            sel_query = "SELECT device_type.device_name,hosts.host_alias FROM hosts INNER JOIN device_type ON hosts.device_type_id=device_type.device_type_id WHERE hosts.ip_address='%s'" % (ip_address)
+            sel_query = "SELECT device_type.device_name,hosts.host_alias FROM hosts INNER JOIN device_type ON hosts.device_type_id=device_type.device_type_id WHERE hosts.ip_address='%s'" % (
+            ip_address)
             cursor.execute(sel_query)
             host_result = cursor.fetchall()
             device_type = ''
             device_name = ''
             if len(host_result) > 0:
                 device_type = ('--' if host_result[0][0]
-                               == '' or host_result[0][0] == None else host_result[0][0])
+                                       == '' or host_result[0][0] == None else host_result[0][0])
                 device_name = ('--' if host_result[0][1]
-                               == '' or host_result[0][1] == None else host_result[0][1])
-            # end the host information fucntion
+                                       == '' or host_result[0][1] == None else host_result[0][1])
+                # end the host information fucntion
             # Device Inforamtion Excel Creation start here.
             sql = "SELECT info.hwSerialNumber,info.systemterfaceMac,info.tdmoipInterfaceMac,sw.activeVersion,sw.passiveVersion,sw.bootloaderVersion,info.currentTemperature,info.sysUptime FROM idu_swStatusTable as sw INNER JOIN idu_iduInfoTable as info ON sw.host_id=sw.host_id INNER JOIN hosts ON hosts.host_id=sw.host_id WHERE hosts.ip_address='%s' limit 1" % ip_address
             cursor.execute(sql)
@@ -1478,17 +1662,20 @@ class IDUDashboard(object):
                     minute = (device_detail[0][7] / 60) % 60
                     second = device_detail[0][7] % 60
                     table_output.append(['H/W Serial Number', str('--' if device_detail[0][0]
-                                        == None or device_detail[0][0] == "" else device_detail[0][0])])
+                                                                          == None or device_detail[0][0] == "" else
+                    device_detail[0][0])])
                     table_output.append(['System MAC', str(
                         '--' if device_detail[0][1] == None or device_detail[0][1] == "" else device_detail[0][1])])
                     table_output.append(['TDMOIP Interface MAC', str('--' if device_detail[0][2]
-                                        == None or device_detail[0][2] == "" else device_detail[0][2])])
+                                                                             == None or device_detail[0][2] == "" else
+                    device_detail[0][2])])
                     table_output.append(['Active Version', str(
                         '--' if device_detail[0][3] == None or device_detail[0][3] == "" else device_detail[0][3])])
                     table_output.append(['Passive Version', str(
                         '--' if device_detail[0][4] == None or device_detail[0][4] == "" else device_detail[0][4])])
                     table_output.append(['BootLoader Version ', str('--' if device_detail[0][5]
-                                        == None or device_detail[0][5] == "" else device_detail[0][5])])
+                                                                            == None or device_detail[0][5] == "" else
+                    device_detail[0][5])])
                     table_output.append(['Temperature(C)', str(
                         '--' if device_detail[0][6] == None or device_detail[0][6] == "" else device_detail[0][6])])
                     table_output.append(['UpTime', str(str(
@@ -1517,7 +1704,7 @@ class IDUDashboard(object):
                                        len(
                                            table_output)) - 1), 'Helvetica', 9),
                                    ('ALIGN', (1,
-                                    0), (
+                                              0), (
                                         1, int(
                                             len(table_output)) - 1), 'CENTER'),
                                    ('BACKGROUND',
@@ -1530,13 +1717,13 @@ class IDUDashboard(object):
                     t.setStyle(
                         TableStyle(
                             [(
-                                'BACKGROUND', (1, i), (1, i), (0.95, 0.95, 0.95)),
-                              ('BACKGROUND', (0, i - 1),
+                                 'BACKGROUND', (1, i), (1, i), (0.95, 0.95, 0.95)),
+                             ('BACKGROUND', (0, i - 1),
                               (0, i - 1), (0.98, 0.98, 0.98)),
-                             ]))
+                            ]))
                 else:
                     t.setStyle(TableStyle([('BACKGROUND', (1, i), (1, i), (0.9, 0.9, 0.9))
-                                           ]))
+                    ]))
             t.setStyle(
                 TableStyle([('BACKGROUND', (0, 0), (0, 0), (0.9, 0.9, 0.9))]))
             idu4_report.append(t)
@@ -1556,7 +1743,7 @@ class IDUDashboard(object):
             ########################################### ODU Latest 5 Alams ####
             idu4_report.append(Spacer(31, 31))
             result1 = ''
-                # create the cursor
+            # create the cursor
             cursor = db.cursor()
             trap_days = ((end_time - start_time).days)
             if int(select_option) == 0:
@@ -1583,31 +1770,31 @@ class IDUDashboard(object):
             t = Table(data, [inch, inch, 2.55 * inch, 2.55 * inch])
             t.setStyle(
                 TableStyle([('FONT', (0, 0), (3, 0), 'Helvetica-Bold', 10),
-                      ('FONT', (0, 1), (3,
-                                        int(
-                                        len(
-                                            table_output)) - 1), 'Helvetica', 9),
-                    ('ALIGN', (1,
-                               0), (
-                     3, int(
-                     len(table_output)) - 1), 'CENTER'),
-                    ('BACKGROUND',
-                     (0, 0), (3, 0), (0.9, 0.9, 0.9)),
-                    ('LINEABOVE',
-                     (0, 0), (3, 0), 1.21, (0.35, 0.35, 0.35)),
-                    ('GRID', (0, 0), (8, int(len(table_output)) - 1), 0.31, (0.75, 0.75, 0.75))]))
+                            ('FONT', (0, 1), (3,
+                                              int(
+                                                  len(
+                                                      table_output)) - 1), 'Helvetica', 9),
+                            ('ALIGN', (1,
+                                       0), (
+                                 3, int(
+                                     len(table_output)) - 1), 'CENTER'),
+                            ('BACKGROUND',
+                             (0, 0), (3, 0), (0.9, 0.9, 0.9)),
+                            ('LINEABOVE',
+                             (0, 0), (3, 0), 1.21, (0.35, 0.35, 0.35)),
+                            ('GRID', (0, 0), (8, int(len(table_output)) - 1), 0.31, (0.75, 0.75, 0.75))]))
             for i in range(1, len(table_output)):
                 if i % 2 == 1:
                     t.setStyle(
                         TableStyle(
                             [(
-                                'BACKGROUND', (1, i), (3, i), (0.95, 0.95, 0.95)),
-                              ('BACKGROUND', (0, i - 1),
+                                 'BACKGROUND', (1, i), (3, i), (0.95, 0.95, 0.95)),
+                             ('BACKGROUND', (0, i - 1),
                               (0, i - 1), (0.98, 0.98, 0.98)),
-                             ]))
+                            ]))
                 else:
                     t.setStyle(TableStyle([('BACKGROUND', (1, i), (3, i), (0.9, 0.9, 0.9))
-                                           ]))
+                    ]))
 
             t.setStyle(
                 TableStyle([('BACKGROUND', (0, 0), (0, 0), (0.9, 0.9, 0.9))]))
@@ -1653,31 +1840,31 @@ class IDUDashboard(object):
             t = Table(data, [inch, inch, 2.55 * inch, 2.55 * inch])
             t.setStyle(
                 TableStyle([('FONT', (0, 0), (3, 0), 'Helvetica-Bold', 10),
-                      ('FONT', (0, 1), (3,
-                                        int(
-                                        len(
-                                            table_output)) - 1), 'Helvetica', 9),
-                    ('ALIGN', (1,
-                               0), (
-                     3, int(
-                     len(table_output)) - 1), 'CENTER'),
-                    ('BACKGROUND',
-                     (0, 0), (3, 0), (0.9, 0.9, 0.9)),
-                    ('LINEABOVE',
-                     (0, 0), (3, 0), 1.21, (0.35, 0.35, 0.35)),
-                    ('GRID', (0, 0), (8, int(len(table_output)) - 1), 0.31, (0.75, 0.75, 0.75))]))
+                            ('FONT', (0, 1), (3,
+                                              int(
+                                                  len(
+                                                      table_output)) - 1), 'Helvetica', 9),
+                            ('ALIGN', (1,
+                                       0), (
+                                 3, int(
+                                     len(table_output)) - 1), 'CENTER'),
+                            ('BACKGROUND',
+                             (0, 0), (3, 0), (0.9, 0.9, 0.9)),
+                            ('LINEABOVE',
+                             (0, 0), (3, 0), 1.21, (0.35, 0.35, 0.35)),
+                            ('GRID', (0, 0), (8, int(len(table_output)) - 1), 0.31, (0.75, 0.75, 0.75))]))
             for i in range(1, len(table_output)):
                 if i % 2 == 1:
                     t.setStyle(
                         TableStyle(
                             [(
-                                'BACKGROUND', (1, i), (3, i), (0.95, 0.95, 0.95)),
-                              ('BACKGROUND', (0, i - 1),
+                                 'BACKGROUND', (1, i), (3, i), (0.95, 0.95, 0.95)),
+                             ('BACKGROUND', (0, i - 1),
                               (0, i - 1), (0.98, 0.98, 0.98)),
-                             ]))
+                            ]))
                 else:
                     t.setStyle(TableStyle([('BACKGROUND', (1, i), (3, i), (0.9, 0.9, 0.9))
-                                           ]))
+                    ]))
 
             t.setStyle(
                 TableStyle([('BACKGROUND', (0, 0), (0, 0), (0.9, 0.9, 0.9))]))
@@ -1744,10 +1931,10 @@ class IDUDashboard(object):
             table_output = []
             k = 0
             table_output.append(['DateTime', 'Informational',
-                                'Normal', 'Minor', 'Major', 'Critical'])
+                                 'Normal', 'Minor', 'Major', 'Critical'])
             for time in time_stamp:
                 table_output.append([str(time_stamp[k]), int(inforamtional[k]),
-                                    int(normal[k]), int(minor[k]), int(major[k]), int(critical[k])])
+                                     int(normal[k]), int(minor[k]), int(major[k]), int(critical[k])])
                 k += 1
 
             # close the database and cursor connection.
@@ -1767,35 +1954,35 @@ class IDUDashboard(object):
             idu4_report.append(t)
             data = table_output
             t = Table(data, [1.45 * 1.1 * inch, 1.1 * inch, 1.1 *
-                      inch, 1.1 * inch, 1.1 * inch, 1.1 * inch])
+                                                            inch, 1.1 * inch, 1.1 * inch, 1.1 * inch])
             t.setStyle(
                 TableStyle([('FONT', (0, 0), (5, 0), 'Helvetica-Bold', 10),
-                      ('FONT', (0, 1), (5,
-                                        int(
-                                        len(
-                                            table_output)) - 1), 'Helvetica', 9),
-                    ('ALIGN', (1,
-                               0), (
-                     5, int(
-                     len(table_output)) - 1), 'CENTER'),
-                    ('BACKGROUND',
-                     (0, 0), (5, 0), (0.9, 0.9, 0.9)),
-                    ('LINEABOVE',
-                      (0, 0), (5, 0), 1.21, (0.35, 0.35, 0.35)),
-                                   ('GRID', (0, 0), (8, int(len(table_output)) - 1), 0.31, (0.75, 0.75, 0.75))]))
+                            ('FONT', (0, 1), (5,
+                                              int(
+                                                  len(
+                                                      table_output)) - 1), 'Helvetica', 9),
+                            ('ALIGN', (1,
+                                       0), (
+                                 5, int(
+                                     len(table_output)) - 1), 'CENTER'),
+                            ('BACKGROUND',
+                             (0, 0), (5, 0), (0.9, 0.9, 0.9)),
+                            ('LINEABOVE',
+                             (0, 0), (5, 0), 1.21, (0.35, 0.35, 0.35)),
+                            ('GRID', (0, 0), (8, int(len(table_output)) - 1), 0.31, (0.75, 0.75, 0.75))]))
 
             for i in range(1, len(table_output)):
                 if i % 2 == 1:
                     t.setStyle(
                         TableStyle(
                             [(
-                                'BACKGROUND', (1, i), (5, i), (0.95, 0.95, 0.95)),
-                                           ('BACKGROUND', (0, i - 1),
-                                            (0, i - 1), (0.98, 0.98, 0.98)),
-                                           ]))
+                                 'BACKGROUND', (1, i), (5, i), (0.95, 0.95, 0.95)),
+                             ('BACKGROUND', (0, i - 1),
+                              (0, i - 1), (0.98, 0.98, 0.98)),
+                            ]))
                 else:
                     t.setStyle(TableStyle([('BACKGROUND', (1, i), (5, i), (0.9, 0.9, 0.9))
-                                           ]))
+                    ]))
 
             t.setStyle(
                 TableStyle([('BACKGROUND', (0, 0), (0, 0), (0.9, 0.9, 0.9))]))
@@ -1820,11 +2007,11 @@ class IDUDashboard(object):
 
             date_days = []  # this list store the days information with date.
             up_state = []
-                # Its store the total up state of each day in percentage.
+            # Its store the total up state of each day in percentage.
             down_state = []
-                # Its store the total down state of each day in percentage.
+            # Its store the total down state of each day in percentage.
             output_dict = {}
-                # its store the actual output for display in graph.\
+            # its store the actual output for display in graph.\
             last_status = ''
             down_flag = 0
             up_flag = 0
@@ -1853,7 +2040,8 @@ class IDUDashboard(object):
             sel_sql = "SELECT  nagios_hosts.address,nagios_statehistory.state_time,nagios_statehistory.state\
                 FROM nagios_hosts INNER JOIN nagios_statehistory ON nagios_statehistory.object_id = nagios_hosts.host_object_id\
                where nagios_statehistory.state_time between '%s'  and '%s' and nagios_hosts.address='%s'\
-                order by nagios_statehistory.state_time  desc limit 1" % (last_status_current_time, last_status_end_time, ip_address)
+                order by nagios_statehistory.state_time  desc limit 1" % (
+            last_status_current_time, last_status_end_time, ip_address)
             # Execute the query.
             cursor.execute(sel_sql)
             last_state = cursor.fetchall()
@@ -1880,21 +2068,25 @@ class IDUDashboard(object):
                                             if temp_time is not '':
                                                 if result[j - 1][2] == 0 or result[j - 1][2] == "0":
                                                     total_up_time += abs((
-                                                        row[1] - temp_time).days * 1440 + (row[1] - temp_time).seconds / 60)
+                                                                             row[1] - temp_time).days * 1440 + (
+                                                                         row[1] - temp_time).seconds / 60)
                                                     temp_up_time = row[1]
                                                 else:
                                                     total_down_time += abs((
-                                                        row[1] - temp_time).days * 1440 + (row[1] - temp_time).seconds / 60)
+                                                                               row[1] - temp_time).days * 1440 + (
+                                                                           row[1] - temp_time).seconds / 60)
                                                     temp_down_time = row[1]
                                             up_flag = 1
                                         elif last_status is not '' and up_flag == 0:
                                             up_flag = 1
                                             if last_status == 0:
                                                 total_up_time = abs((row[1] - (temp_date + timedelta(
-                                                    days=-(i + 1)))).days * 1440 + (row[1] - (temp_date + timedelta(days=-(i + 1)))).seconds / 60)
+                                                    days=-(i + 1)))).days * 1440 + (row[1] - (
+                                                temp_date + timedelta(days=-(i + 1)))).seconds / 60)
                                             else:
                                                 total_down_time = abs((row[1] - (temp_date + timedelta(
-                                                    days=-(i + 1)))).days * 1440 + (row[1] - (temp_date + timedelta(days=-(i + 1)))).seconds / 60)
+                                                    days=-(i + 1)))).days * 1440 + (row[1] - (
+                                                temp_date + timedelta(days=-(i + 1)))).seconds / 60)
                                     else:
                                         if result[j - 1][2] == 0 or result[j - 1][2] == "0":
                                             total_up_time += abs(
@@ -1911,21 +2103,25 @@ class IDUDashboard(object):
                                             if temp_time is not '':
                                                 if result[j - 1][2] == 0 or result[j - 1][2] == "0":
                                                     total_up_time += abs((
-                                                        row[1] - temp_time).days * 1440 + (row[1] - temp_time).seconds / 60)
+                                                                             row[1] - temp_time).days * 1440 + (
+                                                                         row[1] - temp_time).seconds / 60)
                                                     temp_up_time = row[1]
                                                 else:
                                                     total_down_time += abs((
-                                                        row[1] - temp_time).days * 1440 + (row[1] - temp_time).seconds / 60)
+                                                                               row[1] - temp_time).days * 1440 + (
+                                                                           row[1] - temp_time).seconds / 60)
                                                     temp_down_time = row[1]
                                             down_flag = 1
                                         elif last_status is not '' and down_flag == 0:
                                             down_flag = 1
                                             if last_status == 0:
                                                 total_up_time = abs((row[1] - (temp_date + timedelta(
-                                                    days=-(i + 1)))).days * 1440 + (row[1] - (temp_date + timedelta(days=-(i + 1)))).seconds / 60)
+                                                    days=-(i + 1)))).days * 1440 + (row[1] - (
+                                                temp_date + timedelta(days=-(i + 1)))).seconds / 60)
                                             else:
                                                 total_down_time = abs((row[1] - (temp_date + timedelta(
-                                                    days=-(i + 1)))).days * 1440 + (row[1] - (temp_date + timedelta(days=-(i + 1)))).seconds / 60)
+                                                    days=-(i + 1)))).days * 1440 + (row[1] - (
+                                                temp_date + timedelta(days=-(i + 1)))).seconds / 60)
                                     else:
 
                                         if result[j - 1][2] == 0 or result[j - 1][2] == "0":
@@ -1943,10 +2139,12 @@ class IDUDashboard(object):
                         if flag == 1:
                             if result[j - 1][2] == 0:
                                 total_up_time = abs((result[j - 1][1] - (
-                                    temp_date + timedelta(days=-i))).days * 1440 + (result[j - 1][1] - (temp_date + timedelta(days=-i))).seconds / 60)
+                                    temp_date + timedelta(days=-i))).days * 1440 + (
+                                                    result[j - 1][1] - (temp_date + timedelta(days=-i))).seconds / 60)
                             else:
                                 total_down_time = abs((result[j - 1][1] - (
-                                    temp_date + timedelta(days=-i))).days * 1440 + (result[j - 1][1] - (temp_date + timedelta(days=-i))).seconds / 60)
+                                    temp_date + timedelta(days=-i))).days * 1440 + (
+                                                      result[j - 1][1] - (temp_date + timedelta(days=-i))).seconds / 60)
                         date_days.append((temp_date + timedelta(
                             days=-(i))).strftime("%d %b %Y"))
                         total = total_up_time + total_down_time
@@ -1974,10 +2172,12 @@ class IDUDashboard(object):
                                 flag = 1
                                 if row[2] == 0:
                                     total_up_time = abs((row[1] - (temp_date + timedelta(
-                                        days=-(i + 1)))).days * 1440 + (row[1] - (temp_date + timedelta(days=-(i + 1)))).seconds / 60)
+                                        days=-(i + 1)))).days * 1440 + (
+                                                        row[1] - (temp_date + timedelta(days=-(i + 1)))).seconds / 60)
                                 else:
                                     total_down_time = abs((row[1] - (temp_date + timedelta(
-                                        days=-(i + 1)))).days * 1440 + (row[1] - (temp_date + timedelta(days=-(i + 1)))).seconds / 60)
+                                        days=-(i + 1)))).days * 1440 + (
+                                                          row[1] - (temp_date + timedelta(days=-(i + 1)))).seconds / 60)
                         date_days.append((temp_date + timedelta(
                             days=-(i))).strftime("%d %b %Y"))
                         total = total_up_time + total_down_time
@@ -2011,32 +2211,32 @@ class IDUDashboard(object):
             t = Table(data, [2.7 * inch, 2.2 * inch, 2.2 * inch])
             t.setStyle(
                 TableStyle([('FONT', (0, 0), (2, 0), 'Helvetica-Bold', 10),
-                                   ('FONT', (0, 1), (2,
-                                    int(
-                                        len(
-                                            table_output)) - 1), 'Helvetica', 9),
-                                   ('ALIGN', (1,
-                                    0), (
-                                        2, int(
-                                            len(table_output)) - 1), 'CENTER'),
-                                   ('BACKGROUND',
-                                    (0, 0), (2, 0), (0.9, 0.9, 0.9)),
-                                   ('LINEABOVE',
-                                    (0, 0), (2, 0), 1.21, (0.35, 0.35, 0.35)),
-                                   ('GRID', (0, 0), (8, int(len(table_output)) - 1), 0.31, (0.75, 0.75, 0.75))]))
+                            ('FONT', (0, 1), (2,
+                                              int(
+                                                  len(
+                                                      table_output)) - 1), 'Helvetica', 9),
+                            ('ALIGN', (1,
+                                       0), (
+                                 2, int(
+                                     len(table_output)) - 1), 'CENTER'),
+                            ('BACKGROUND',
+                             (0, 0), (2, 0), (0.9, 0.9, 0.9)),
+                            ('LINEABOVE',
+                             (0, 0), (2, 0), 1.21, (0.35, 0.35, 0.35)),
+                            ('GRID', (0, 0), (8, int(len(table_output)) - 1), 0.31, (0.75, 0.75, 0.75))]))
 
             for i in range(1, len(table_output)):
                 if i % 2 == 1:
                     t.setStyle(
                         TableStyle(
                             [(
-                                'BACKGROUND', (1, i), (2, i), (0.95, 0.95, 0.95)),
-                                           ('BACKGROUND', (0, i - 1),
-                                            (0, i - 1), (0.98, 0.98, 0.98)),
-                                           ]))
+                                 'BACKGROUND', (1, i), (2, i), (0.95, 0.95, 0.95)),
+                             ('BACKGROUND', (0, i - 1),
+                              (0, i - 1), (0.98, 0.98, 0.98)),
+                            ]))
                 else:
                     t.setStyle(TableStyle([('BACKGROUND', (1, i), (2, i), (0.9, 0.9, 0.9))
-                                           ]))
+                    ]))
 
             t.setStyle(
                 TableStyle([('BACKGROUND', (0, 0), (0, 0), (0.9, 0.9, 0.9))]))
@@ -2079,7 +2279,7 @@ class IDUDashboard(object):
                 cursor.execute(sel_query)
                 result1 = cursor.fetchall()
                 table_output = bll_obj.nw_table_list_creation(
-                    result1, interface, 'Receving(Kbps)', 'Transmitting(Kbps)', 'Time(HH:MM:SS)',)
+                    result1, interface, 'Receving(Kbps)', 'Transmitting(Kbps)', 'Time(HH:MM:SS)', )
                 # close the database and cursor connection.
                 cursor.close()
                 data1 = []
@@ -2094,28 +2294,28 @@ class IDUDashboard(object):
                 t = Table(data, [2.7 * inch, 2.2 * inch, 2.2 * inch])
                 t.setStyle(
                     TableStyle([('FONT', (0, 0), (2, 0), 'Helvetica-Bold', 10),
-                                       ('FONT', (0, 1), (2, int(len(
-                                           table_output)) - 1), 'Helvetica', 9),
-                                       ('ALIGN', (1, 0), (2, int(
-                                           len(table_output)) - 1), 'CENTER'),
-                                       ('BACKGROUND',
-                                        (0, 0), (2, 0), (0.9, 0.9, 0.9)),
-                                       ('LINEABOVE', (0, 0),
-                                        (2, 0), 1.21, (0.35, 0.35, 0.35)),
-                                       ('GRID', (0, 0), (8, int(len(table_output)) - 1), 0.31, (0.75, 0.75, 0.75))]))
+                                ('FONT', (0, 1), (2, int(len(
+                                    table_output)) - 1), 'Helvetica', 9),
+                                ('ALIGN', (1, 0), (2, int(
+                                    len(table_output)) - 1), 'CENTER'),
+                                ('BACKGROUND',
+                                 (0, 0), (2, 0), (0.9, 0.9, 0.9)),
+                                ('LINEABOVE', (0, 0),
+                                 (2, 0), 1.21, (0.35, 0.35, 0.35)),
+                                ('GRID', (0, 0), (8, int(len(table_output)) - 1), 0.31, (0.75, 0.75, 0.75))]))
 
                 for i in range(1, len(table_output)):
                     if i % 2 == 1:
                         t.setStyle(
                             TableStyle(
                                 [(
-                                    'BACKGROUND', (1, i), (2, i), (0.95, 0.95, 0.95)),
-                                               ('BACKGROUND', (0, i - 1), (0,
-                                                i - 1), (0.98, 0.98, 0.98)),
-                                               ]))
+                                     'BACKGROUND', (1, i), (2, i), (0.95, 0.95, 0.95)),
+                                 ('BACKGROUND', (0, i - 1), (0,
+                                                             i - 1), (0.98, 0.98, 0.98)),
+                                ]))
                     else:
                         t.setStyle(TableStyle([('BACKGROUND', (1, i), (2, i), (0.9, 0.9, 0.9))
-                                               ]))
+                        ]))
 
                 t.setStyle(TableStyle(
                     [('BACKGROUND', (0, 0), (0, 0), (0.9, 0.9, 0.9))]))
@@ -2174,28 +2374,28 @@ class IDUDashboard(object):
                 t = Table(data, [2.7 * inch, 2.2 * inch, 2.2 * inch])
                 t.setStyle(
                     TableStyle([('FONT', (0, 0), (2, 0), 'Helvetica-Bold', 10),
-                                       ('FONT', (0, 1), (2, int(len(
-                                           table_output)) - 1), 'Helvetica', 9),
-                                       ('ALIGN', (1, 0), (2, int(
-                                           len(table_output)) - 1), 'CENTER'),
-                                       ('BACKGROUND',
-                                        (0, 0), (2, 0), (0.9, 0.9, 0.9)),
-                                       ('LINEABOVE', (0, 0),
-                                        (2, 0), 1.21, (0.35, 0.35, 0.35)),
-                                       ('GRID', (0, 0), (8, int(len(table_output)) - 1), 0.31, (0.75, 0.75, 0.75))]))
+                                ('FONT', (0, 1), (2, int(len(
+                                    table_output)) - 1), 'Helvetica', 9),
+                                ('ALIGN', (1, 0), (2, int(
+                                    len(table_output)) - 1), 'CENTER'),
+                                ('BACKGROUND',
+                                 (0, 0), (2, 0), (0.9, 0.9, 0.9)),
+                                ('LINEABOVE', (0, 0),
+                                 (2, 0), 1.21, (0.35, 0.35, 0.35)),
+                                ('GRID', (0, 0), (8, int(len(table_output)) - 1), 0.31, (0.75, 0.75, 0.75))]))
 
                 for i in range(1, len(table_output)):
                     if i % 2 == 1:
                         t.setStyle(
                             TableStyle(
                                 [(
-                                    'BACKGROUND', (1, i), (2, i), (0.95, 0.95, 0.95)),
-                                               ('BACKGROUND', (0, i - 1), (0,
-                                                i - 1), (0.98, 0.98, 0.98)),
-                                               ]))
+                                     'BACKGROUND', (1, i), (2, i), (0.95, 0.95, 0.95)),
+                                 ('BACKGROUND', (0, i - 1), (0,
+                                                             i - 1), (0.98, 0.98, 0.98)),
+                                ]))
                     else:
                         t.setStyle(TableStyle([('BACKGROUND', (1, i), (2, i), (0.9, 0.9, 0.9))
-                                               ]))
+                        ]))
 
                 t.setStyle(TableStyle(
                     [('BACKGROUND', (0, 0), (0, 0), (0.9, 0.9, 0.9))]))
@@ -2231,6 +2431,12 @@ class IDUDashboard(object):
             db.close()
 
     def table_list_trap(self, result, table_name):
+        """
+
+        @param result:
+        @param table_name:
+        @return:
+        """
         length = 5
         output = []
         first_h = ['Serevity', 'Event Id', 'Event State', 'Receive Date']
@@ -2240,11 +2446,20 @@ class IDUDashboard(object):
         for i in range(0, length):
             temp_list = []
             temp_list = [result[i][0], result[i][1], result[i][2],
-                datetime.strptime(str(result[i][3]), '%a %b %d %H:%M:%S %Y').strftime('%x')]
+                         datetime.strptime(str(result[i][3]), '%a %b %d %H:%M:%S %Y').strftime('%x')]
             output.append(temp_list)
         return output
 
     def nw_table_list_creation(self, result, table_name, first_header, second_header, time):
+        """
+
+        @param result:
+        @param table_name:
+        @param first_header:
+        @param second_header:
+        @param time:
+        @return:
+        """
         output = []
         first_h = [time, first_header, second_header]
         output.append(first_h)

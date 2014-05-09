@@ -10,23 +10,19 @@
 
 ##########################################################################
 
-import config
-import htmllib
-import time
-import cgi
-import MySQLdb
-import sys
-from common_controller import *
-from nms_config import *
-from odu_controller import *
 from datetime import datetime
 from datetime import timedelta
-import time
-from mysql_collection import mysql_connection
-from unmp_dashboard_config import DashboardConfig
 from operator import itemgetter
-from utility import Validation
+
+import MySQLdb
 from common_bll import Essential
+from common_controller import *
+from mysql_collection import mysql_connection
+from nms_config import *
+from odu_controller import *
+from unmp_dashboard_config import DashboardConfig
+from utility import Validation
+
 
 # Exception class for own created exception.
 
@@ -43,12 +39,18 @@ class SelfException(Exception):
     @organisation: Code Scape Consultants Pvt. Ltd.
     @copyright: 2011 Code Scape Consultants Pvt. Ltd.
     """
+
     def __init__(self, msg):
         output_dict = {'success': 2, 'output': str(msg)}
         html.write(str(output_dict))
 
 
 def get_dashboard_data():
+    """
+
+
+    @return:
+    """
     devcie_type_attr = ['id', 'refresh_time', 'time_diffrence']
     get_data = DashboardConfig.get_config_attributes(
         'odu100_dashboard', devcie_type_attr)
@@ -62,6 +64,10 @@ def get_dashboard_data():
 
 
 def odu_profiling(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     host_id = html.var("host_id")
@@ -72,8 +78,8 @@ def odu_profiling(h):
         flag = 0
         css_list = ["css/style.css", "css/custom.css",
                     "calendrical/calendrical.css"]
-        javascript_list = ["js/highcharts.js",
-                           "js/odu100Dashboard.js", "calendrical/calendrical.js"]
+        javascript_list = ["js/lib/main/highcharts.js",
+                           "js/unmp/main/odu100Dashboard.js", "calendrical/calendrical.js"]
         html.new_header("UBRe Dashboard", "", "", css_list, javascript_list)
         html.write('<div class=\"form-div\">')
         host_id = ""
@@ -100,10 +106,10 @@ def odu_profiling(h):
             output, mac_address = get_device_field(host_id)
             if int(output) == 1:
                 html.write(page_header_search("", "", "UBR,UBRe",
-                           device_type, "enabled", "device_type", extr_button))
+                                              device_type, "enabled", "device_type", extr_button))
             else:
                 html.write(page_header_search(host_id, mac_address,
-                           "UBR,UBRe", device_type, "enabled", "device_type", extr_button))
+                                              "UBR,UBRe", device_type, "enabled", "device_type", extr_button))
         else:
             html.write(
                 page_header_search(
@@ -149,6 +155,11 @@ def odu_profiling(h):
 
 
 def get_device_field(ip_address):
+    """
+
+    @param ip_address:
+    @return: @raise:
+    """
     try:
         mac_address = ''
         db, cursor = mysql_connection()  # create the connection
@@ -171,15 +182,20 @@ def get_device_field(ip_address):
         return 0, mac_address
     except SelfException:
         return 1, str(e[-1])
-        pass
     except Exception as e:
         return 1, str(e[-1])
     finally:
-        if db.open:
+        if db and db.open:
             db.close()
+            cursor.close()
 
 
 def get_device_list_odu100(h):
+    """
+
+    @param h:
+    @raise:
+    """
     global html
     html = h
 
@@ -235,11 +251,26 @@ def get_device_list_odu100(h):
                 html.write(str(ip_address[0][0]))
             else:
                 html.write('0')
+        cursor.close()
+        db.close()
         # odu100_dashboard(h)
+
 #	html.write(str(result))
 
 
-def dashboard_table(ip_address, odu_start_date, odu_start_time, odu_end_date, odu_end_time, odu_refresh_time, total_count):
+def dashboard_table(ip_address, odu_start_date, odu_start_time, odu_end_date, odu_end_time, odu_refresh_time,
+                    total_count):
+    """
+
+    @param ip_address:
+    @param odu_start_date:
+    @param odu_start_time:
+    @param odu_end_date:
+    @param odu_end_time:
+    @param odu_refresh_time:
+    @param total_count:
+    @return:
+    """
     dash_str = '\
     <input type=\"hidden\" id=\"refresh_time\" name=\"refresh_time\" value=\"%s\" />\
     <input type=\"hidden\" id=\"ip_address\" name=\"ip_address\" value=\"%s\" />\
@@ -280,6 +311,11 @@ def dashboard_table(ip_address, odu_start_date, odu_start_time, odu_end_date, od
 
 
 def odu100_dashboard(h):
+    """
+
+    @param h:
+    @raise:
+    """
     global html
     html = h
     host_id = html.var("host_id")
@@ -307,9 +343,12 @@ def odu100_dashboard(h):
                 ip_address = html.var("ip_address")
                 mac_address = html.var("mac_address")
                 selected_device = html.var("selected_device_type")
-                if cursor.execute("SELECT ip_address from hosts where mac_address = '%s' and device_type_id = '%s'") % (mac_address, selected_device):
+                if cursor.execute("SELECT ip_address from hosts where mac_address = '%s' and device_type_id = '%s'") % (
+                mac_address, selected_device):
                     result = cursor.fetchall()
-                elif cursor.execute("SELECT ip_address from hosts where ip_address = '%s' and device_type_id = '%s'") % (ip_address, selected_device):
+                elif cursor.execute(
+                        "SELECT ip_address from hosts where ip_address = '%s' and device_type_id = '%s'") % (
+                ip_address, selected_device):
                     result = cursor.fetchall()
                 else:
                     result = ()
@@ -356,6 +395,11 @@ def odu100_dashboard(h):
 
 
 def odu100_network_interface_table_graph(h):
+    """
+
+    @param h:
+    @raise:
+    """
     global html
     html = h
     rx0 = []
@@ -374,7 +418,7 @@ def odu100_network_interface_table_graph(h):
         db, cursor = mysql_connection('nms_sample')
         if db == 1:
             raise SelfException(cursor)
-        # prepare a cursor object using cursor() method
+            # prepare a cursor object using cursor() method
         # convert the string in datetime
         start_time = datetime.strptime(
             odu_start_date + ' ' + odu_start_time, "%d/%m/%Y %H:%M")
@@ -417,6 +461,11 @@ def odu100_network_interface_table_graph(h):
 
 
 def odu100_error_graph(h):
+    """
+
+    @param h:
+    @raise:
+    """
     global html
     html = h
     odu_start_date = html.var('start_date')
@@ -453,11 +502,11 @@ def odu100_error_graph(h):
         # calling the procedure.
         for i in range(len(result) - 1):
             crc_error.append(0 if (int(result[i][0]) - int(result[i + 1][0])) <
-                             0 else (int(result[i][0]) - int(result[i + 1][0])))
+                                  0 else (int(result[i][0]) - int(result[i + 1][0])))
             phy_error.append(0 if (int(result[i][0]) - int(result[i + 1][1])) <
-                             0 else (int(result[i][0]) - int(result[i + 1][1])))
+                                  0 else (int(result[i][0]) - int(result[i + 1][1])))
             error_time_stamp.append(result[i][2].strftime('%H:%M'))
-        # reverse the value in list
+            # reverse the value in list
         error_time_stamp.reverse()
         crc_error.reverse()
         crc_error.reverse()
@@ -481,6 +530,11 @@ def odu100_error_graph(h):
 
 
 def odu100_sync_lost_graph(h):
+    """
+
+    @param h:
+    @raise:
+    """
     global html
     html = h
     sync_lost = []
@@ -497,7 +551,7 @@ def odu100_sync_lost_graph(h):
         db, cursor = mysql_connection('nms_sample')
         if db == 1:
             raise SelfException(cursor)
-        # convert the string to datetime
+            # convert the string to datetime
         start_time = datetime.strptime(
             odu_start_date + ' ' + odu_start_time, "%d/%m/%Y %H:%M")
         end_time = datetime.strptime(
@@ -516,7 +570,7 @@ def odu100_sync_lost_graph(h):
                 sync_lost.append(0 if (int(result[i][0]) - int(
                     result[i + 1][0])) < 0 else (int(result[i][0]) - int(result[i + 1][0])))
                 sync_time_stamp.append(result[i][1].strftime('%H:%M'))
-        # reverse the list
+            # reverse the list
         sync_time_stamp.reverse()
         sync_lost.reverse()
         output_dict = {'success': 0, 'sync_lost': sync_lost,
@@ -538,6 +592,11 @@ def odu100_sync_lost_graph(h):
 
 
 def odu100_signal_strength_graph(h):
+    """
+
+    @param h:
+    @raise:
+    """
     global html
     html = h
     signal_flag = 1
@@ -777,10 +836,10 @@ def odu100_signal_strength_graph(h):
             signal_json_data += "]"
         else:
             signal_json_data = "[{name:'peer1',data:%s}]" % (signal_interface1)
-        # close the connection
+            # close the connection
         db.close()
         output_dict = {'success': 0, 'time_stamp':
-                       time_stamp_signal1, 'display_signal_strength': signal_json_data}
+            time_stamp_signal1, 'display_signal_strength': signal_json_data}
         html.write(str(output_dict))
 
     # Exception Handling
@@ -803,7 +862,9 @@ def odu100_signal_strength_graph(h):
 
 
 def odu100_trap_graph(h):
-    ''' This function get ip_address of odu device  form and retuen the 5 day information.'''
+    """ This function get ip_address of odu device  form and retuen the 5 day information.
+    @param h:
+    """
     global html
     html = h
     normal = []
@@ -833,12 +894,13 @@ def odu100_trap_graph(h):
             odu_end_date + ' ' + odu_end_time, "%d/%m/%Y %H:%M")
         if start_time > datetime.now():
             start_time = datetime.now()
-        # calculate the total days
+            # calculate the total days
         # total_days=((start_time-end_time).days)  check after the consult to
         # peeyush sir
 
         # call.proc("procedure name",(no_of_day,odu ip_address))
-        sql = "SELECT count(ta.trap_event_id),date(ta.timestamp) ,ta.serevity FROM trap_alarms as ta  where  date(ta.timestamp)<=current_date() and  date(ta.timestamp)>current_date()-%s AND ta.agent_id='%s'  group by serevity,date(ta.timestamp) order by  timestamp desc" % (5, ip_address)
+        sql = "SELECT count(ta.trap_event_id),date(ta.timestamp) ,ta.serevity FROM trap_alarms as ta  where  date(ta.timestamp)<=current_date() and  date(ta.timestamp)>current_date()-%s AND ta.agent_id='%s'  group by serevity,date(ta.timestamp) order by  timestamp desc" % (
+        5, ip_address)
         cursor.execute(sql)
         trap_result = cursor.fetchall()
         if trap_result is not None:
@@ -901,13 +963,15 @@ def odu100_trap_graph(h):
 # this function take one argument and return the dictionary of outage
 # graph information.
 def odu100_outage_graph(h):
-    '''this function create the outage graph field and show the outage graph.'''
+    """this function create the outage graph field and show the outage graph.
+    @param h:
+    """
     global html
     html = h
     date_days = []  # this list store the days information with date.
     up_state = []  # Its store the total up state of each day in percentage.
     down_state = []
-        # Its store the total down state of each day in percentage.
+    # Its store the total down state of each day in percentage.
     output_dict = {}  # its store the actual output for display in graph.
     last_status = ''
     down_flag = 0
@@ -946,7 +1010,8 @@ def odu100_outage_graph(h):
         sel_sql = "SELECT  nagios_hosts.address,nagios_statehistory.state_time,nagios_statehistory.state\
 		    FROM nagios_hosts INNER JOIN nagios_statehistory ON nagios_statehistory.object_id = nagios_hosts.host_object_id\
 		   where nagios_statehistory.state_time between '%s'  and '%s' and nagios_hosts.address='%s'\
-		    order by nagios_statehistory.state_time  desc limit 1" % (last_status_current_time, last_status_end_time, ip_address)
+		    order by nagios_statehistory.state_time  desc limit 1" % (
+        last_status_current_time, last_status_end_time, ip_address)
         # Execute the query.
         cursor.execute(sel_sql)
         last_state = cursor.fetchall()
@@ -974,25 +1039,30 @@ def odu100_outage_graph(h):
                                         if temp_time is not '':
                                             if result[j - 1][2] == 0 or result[j - 1][2] == "0":
                                                 total_up_time += abs((
-                                                    row[1] - temp_time).days * 1440 + (row[1] - temp_time).seconds / 60)
+                                                                         row[1] - temp_time).days * 1440 + (
+                                                                     row[1] - temp_time).seconds / 60)
                                                 temp_up_time = row[1]
                                             else:
                                                 total_down_time += abs(
-                                                    (row[1] - temp_time).days * 1440 + (row[1] - temp_time).seconds / 60)
+                                                    (row[1] - temp_time).days * 1440 + (
+                                                    row[1] - temp_time).seconds / 60)
                                                 temp_down_time = row[1]
                                         up_flag = 1
                                     elif last_status is not '' and up_flag == 0:
                                         up_flag = 1
                                         if last_status == 0:
                                             total_up_time = abs((row[1] - (temp_date + timedelta(
-                                                days=-(i + 1)))).days * 1440 + (row[1] - (temp_date + timedelta(days=-(i + 1)))).seconds / 60)
+                                                days=-(i + 1)))).days * 1440 + (row[1] - (
+                                            temp_date + timedelta(days=-(i + 1)))).seconds / 60)
                                         else:
                                             total_down_time = abs((row[1] - (temp_date + timedelta(
-                                                days=-(i + 1)))).days * 1440 + (row[1] - (temp_date + timedelta(days=-(i + 1)))).seconds / 60)
+                                                days=-(i + 1)))).days * 1440 + (row[1] - (
+                                            temp_date + timedelta(days=-(i + 1)))).seconds / 60)
                                 else:
                                     if result[j - 1][2] == 0 or result[j - 1][2] == "0":
                                         total_up_time += abs((
-                                            row[1] - temp_time).days * 1440 + (row[1] - temp_time).seconds / 60)
+                                                                 row[1] - temp_time).days * 1440 + (
+                                                             row[1] - temp_time).seconds / 60)
                                         temp_up_time = row[1]
                                     else:
                                         total_down_time += abs((row[1] - temp_time).days * 1440 + (
@@ -1005,26 +1075,31 @@ def odu100_outage_graph(h):
                                         if temp_time is not '':
                                             if result[j - 1][2] == 0 or result[j - 1][2] == "0":
                                                 total_up_time += abs((
-                                                    row[1] - temp_time).days * 1440 + (row[1] - temp_time).seconds / 60)
+                                                                         row[1] - temp_time).days * 1440 + (
+                                                                     row[1] - temp_time).seconds / 60)
                                                 temp_up_time = row[1]
                                             else:
                                                 total_down_time += abs(
-                                                    (row[1] - temp_time).days * 1440 + (row[1] - temp_time).seconds / 60)
+                                                    (row[1] - temp_time).days * 1440 + (
+                                                    row[1] - temp_time).seconds / 60)
                                                 temp_down_time = row[1]
                                         down_flag = 1
                                     elif last_status is not '' and down_flag == 0:
                                         down_flag = 1
                                         if last_status == 0:
                                             total_up_time = abs((row[1] - (temp_date + timedelta(
-                                                days=-(i + 1)))).days * 1440 + (row[1] - (temp_date + timedelta(days=-(i + 1)))).seconds / 60)
+                                                days=-(i + 1)))).days * 1440 + (row[1] - (
+                                            temp_date + timedelta(days=-(i + 1)))).seconds / 60)
                                         else:
                                             total_down_time = abs((row[1] - (temp_date + timedelta(
-                                                days=-(i + 1)))).days * 1440 + (row[1] - (temp_date + timedelta(days=-(i + 1)))).seconds / 60)
+                                                days=-(i + 1)))).days * 1440 + (row[1] - (
+                                            temp_date + timedelta(days=-(i + 1)))).seconds / 60)
                                 else:
 
                                     if result[j - 1][2] == 0 or result[j - 1][2] == "0":
                                         total_up_time += abs((
-                                            row[1] - temp_time).days * 1440 + (row[1] - temp_time).seconds / 60)
+                                                                 row[1] - temp_time).days * 1440 + (
+                                                             row[1] - temp_time).seconds / 60)
                                         temp_up_time = row[1]
                                     else:
                                         total_down_time += abs((row[1] - temp_time).days * 1440 + (
@@ -1037,10 +1112,12 @@ def odu100_outage_graph(h):
                     if flag == 1:
                         if result[j - 1][2] == 0:
                             total_up_time = abs((result[j - 1][1] - (temp_date + timedelta(days=-i))).days *
-                                                1440 + (result[j - 1][1] - (temp_date + timedelta(days=-i))).seconds / 60)
+                                                1440 + (
+                            result[j - 1][1] - (temp_date + timedelta(days=-i))).seconds / 60)
                         else:
                             total_down_time = abs((result[j - 1][1] - (
-                                temp_date + timedelta(days=-i))).days * 1440 + (result[j - 1][1] - (temp_date + timedelta(days=-i))).seconds / 60)
+                                temp_date + timedelta(days=-i))).days * 1440 + (
+                                                  result[j - 1][1] - (temp_date + timedelta(days=-i))).seconds / 60)
                     date_days.append(
                         (temp_date + timedelta(days=-(i))).strftime("%d %b %Y"))
                     total = total_up_time + total_down_time
@@ -1068,10 +1145,12 @@ def odu100_outage_graph(h):
                             flag = 1
                             if row[2] == 0:
                                 total_up_time = abs((row[1] - (temp_date + timedelta(
-                                    days=-(i + 1)))).days * 1440 + (row[1] - (temp_date + timedelta(days=-(i + 1)))).seconds / 60)
+                                    days=-(i + 1)))).days * 1440 + (
+                                                    row[1] - (temp_date + timedelta(days=-(i + 1)))).seconds / 60)
                             else:
                                 total_down_time = abs((row[1] - (temp_date + timedelta(
-                                    days=-(i + 1)))).days * 1440 + (row[1] - (temp_date + timedelta(days=-(i + 1)))).seconds / 60)
+                                    days=-(i + 1)))).days * 1440 + (
+                                                      row[1] - (temp_date + timedelta(days=-(i + 1)))).seconds / 60)
                     date_days.append(
                         (temp_date + timedelta(days=-(i))).strftime("%d %b %Y"))
                     total = total_up_time + total_down_time
@@ -1115,13 +1194,15 @@ def odu100_outage_graph(h):
 # This function return latest information of alarms and trap.
 # This return data in json format.
 def odu100_trap_information(h):
-    ''' This finction get  ip_address in varcahr form and return the last 5 alarm from trap from history.'''
+    """ This finction get  ip_address in varcahr form and return the last 5 alarm from trap from history.
+    @param h:
+    """
     global html
     html = h
     image_title_name = {0: "Normal", 1: "Informational", 2: "Normal",
                         3: "Minor", 4: "Major", 5: "Critical"}
     image_dic = {0: "images/status-0.png", 1: "images/status-0.png", 2: "images/status-0.png", 3:
-                 "images/minor.png", 4: "images/status-1.png", 5: "images/critical.png"}
+        "images/minor.png", 4: "images/status-1.png", 5: "images/critical.png"}
     length = 5
     history_trap_detail = {}
     ip_address = html.var("ip_address")
@@ -1154,17 +1235,21 @@ def odu100_trap_information(h):
             for i in range(length):
                 if i < 4:
                     history_trap += '<tr><td class="vertline"><img src=\"%s\" alt=\"%s\" title=\"%s\" class=\"imgbutton\" style=\"width:13px;\"/></td>' % (
-                        image_dic[all_traps[i][0]], image_title_name[all_traps[i][0]], image_title_name[all_traps[i][0]])
+                        image_dic[all_traps[i][0]], image_title_name[all_traps[i][0]],
+                        image_title_name[all_traps[i][0]])
                     history_trap += '<td>%s</td>' % all_traps[i][1]
                     history_trap += '<td>%s</td>' % all_traps[i][2]
                     history_trap += '<td>%s</td></tr>' % all_traps[i][3]
                 else:
                     history_trap += '<tr><td class="vertline"><img src=\"%s\" alt=\"%s\" title=\"%s\" class=\"imgbutton\" style=\"width:13px;\"/></td>' % (
-                        image_dic[all_traps[i][0]], image_title_name[all_traps[i][0]], image_title_name[all_traps[i][0]])
+                        image_dic[all_traps[i][0]], image_title_name[all_traps[i][0]],
+                        image_title_name[all_traps[i][0]])
                     history_trap += '<td>%s</td>' % all_traps[i][1]
                     history_trap += '<td>%s</td>' % all_traps[i][2]
                     history_trap += '<td>%s&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp%s</td></tr>' % (
-                        all_traps[i][3], (("<a href=\"status_snmptt.py?trap_status=history&ip_address=" + ip_address + "\">more>></a>" if len(all_traps) > 5 else "")))
+                        all_traps[i][3], ((
+                                          "<a href=\"status_snmptt.py?trap_status=history&ip_address=" + ip_address + "\">more>></a>" if len(
+                                              all_traps) > 5 else "")))
             cursor.close()
 
             if len(all_traps) < 1:
@@ -1193,18 +1278,22 @@ def odu100_trap_information(h):
             for i in range(length):
                 if i < 4:
                     current_alarm_html += '<tr><td class="vertline"><img src=\"%s\" alt=\"%s\" title=\"%s\" class=\"imgbutton\" style=\"width:13px;\"/></td>' % (
-                        image_dic[current_alarm[i][0]], image_title_name[current_alarm[i][0]], image_title_name[current_alarm[i][0]])
+                        image_dic[current_alarm[i][0]], image_title_name[current_alarm[i][0]],
+                        image_title_name[current_alarm[i][0]])
                     current_alarm_html += '<td>%s</td>' % current_alarm[i][1]
                     current_alarm_html += '<td>%s</td>' % current_alarm[i][2]
                     current_alarm_html += '<td>%s</td></tr>' % current_alarm[
                         i][3]
                 else:
                     current_alarm_html += '<tr><td class="vertline"><img src=\"%s\" alt=\"%s\" title=\"%s\" class=\"imgbutton\" style=\"width:13px;\"/></td>' % (
-                        image_dic[current_alarm[i][0]], image_title_name[current_alarm[i][0]], image_title_name[current_alarm[i][0]])
+                        image_dic[current_alarm[i][0]], image_title_name[current_alarm[i][0]],
+                        image_title_name[current_alarm[i][0]])
                     current_alarm_html += '<td>%s</td>' % current_alarm[i][1]
                     current_alarm_html += '<td>%s</td>' % current_alarm[i][2]
                     current_alarm_html += '<td>%s&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp%s</td></tr>' % (
-                        current_alarm[i][3], (("<a href=\"status_snmptt.py?trap_status=history&ip_address=" + ip_address + "\">more>></a>" if len(current_alarm) > 5 else "")))
+                        current_alarm[i][3], ((
+                                              "<a href=\"status_snmptt.py?trap_status=history&ip_address=" + ip_address + "\">more>></a>" if len(
+                                                  current_alarm) > 5 else "")))
             cursor.close()
 
             if len(current_alarm) < 1:
@@ -1236,7 +1325,9 @@ def odu100_trap_information(h):
 
 
 def odu100_device_information(h):
-    ''' This function take one html object as a argument and return the device information in table.'''
+    """ This function take one html object as a argument and return the device information in table.
+    @param h:
+    """
     global html
     html = h
     ip_address = html.var("ip_address")
@@ -1248,7 +1339,7 @@ def odu100_device_information(h):
         if db == 1:
             raise SelfException(cursor)
         last_reboot_resion = {0: 'Power cycle', 1: 'Watchdog reset', 2: 'Normal', 3:
-                              'Kernel crash reset', 4: 'Radio count mismatch reset', 5: 'Unknown-Soft', 6: 'Unknown reset'}
+            'Kernel crash reset', 4: 'Radio count mismatch reset', 5: 'Unknown-Soft', 6: 'Unknown reset'}
         default_node_type = {0: 'rootRU', 1: 't1TDN', 2: 't2TDN', 3: 't2TEN'}
         operation_state = {0: 'disabled', 1: 'enabled'}
         channel = {0: 'raBW5Mhz', 1: 'raBW10Mhz', 2: 'raBW20Mhz',
@@ -1261,7 +1352,7 @@ def odu100_device_information(h):
         if result is not None:
             if len(result) > 0:
                 host_id = result[0]
-            #----- This Query provide the some device informaion ------#
+                #----- This Query provide the some device informaion ------#
                 sql = "SELECT fm.frequency,ts.peerNodeStatusNumSlaves,sw.activeVersion ,hw.hwVersion,lrb.lastRebootReason,cb.channelBandwidth ,cb.opState ,cb.defaultNodeType,hs.mac_address,hs.ip_address FROM\
                         hosts as hs \
                         LEFT JOIN odu100_raChannelListTable as fm ON fm.host_id = hs.host_id\
@@ -1271,7 +1362,7 @@ def odu100_device_information(h):
                         LEFT JOIN  odu100_ruStatusTable as lrb ON lrb.host_id=hs.host_id\
                         LEFT JOIN odu100_ruConfTable as cb ON cb.config_profile_id = hs.config_profile_id\
                         where hs.host_id='%s' limit 1" % host_id
-                    #--- execute the query ------#
+                #--- execute the query ------#
             cursor.execute(sql)
             result = cursor.fetchone()
             sel_query = "SELECT count(*) FROM  odu100_peerNodeStatusTable WHERE  linkStatus=2 and tunnelStatus=1 and  host_id=='%s' group by timeSlotIndex limit 1" % host_id
@@ -1279,7 +1370,7 @@ def odu100_device_information(h):
             slave = cursor.fetchall()
             if len(slave) > 1:
                 no_of_slave = '--' if slave[0][
-                    0] == None or slave[0][0] == '' else slave[0][0]
+                                          0] == None or slave[0][0] == '' else slave[0][0]
             else:
                 no_of_slave = '--'
 
@@ -1289,16 +1380,19 @@ def odu100_device_information(h):
             #----- store the last reboot time value in variable ----- #
             if cursor.execute(sql):
                 reboot_time = cursor.fetchall()
-                if str(reboot_time).strip() != None or str(reboot_time).strip() != 'undefined' or str(reboot_time).strip() != "":
+                if str(reboot_time).strip() != None or str(reboot_time).strip() != 'undefined' or str(
+                        reboot_time).strip() != "":
                     if len(reboot_time) > 0:
                         last_reboot_time = reboot_time[0][0]
-            #-- Create the table. ---- #
+                #-- Create the table. ---- #
             if result is not None:
                 device_detail = '<table class="tt-table" cellspacing="0" cellpadding="0" width="100%">'
                 device_detail += '<tbody>\
                             <tr>\
                             <th class="cell-title" colspan="4">\
-                                ' + str('--' if result[len(result) - 1] == None or result[len(result) - 1] == ""  else result[len(result) - 1]) + '\
+                                ' + str(
+                    '--' if result[len(result) - 1] == None or result[len(result) - 1] == ""  else result[
+                        len(result) - 1]) + '\
                             </th>\
                             </tr>\
                             <tr>\
@@ -1310,7 +1404,8 @@ def odu100_device_information(h):
                             <td class="cell-label">\
                                 Frequency\
                             </td>\
-                            <td class="cell-info">' + str('--' if result[0] == None or result[0] == ""  else result[0]) + '</td>\
+                            <td class="cell-info">' + str(
+                    '--' if result[0] == None or result[0] == ""  else result[0]) + '</td>\
                             <td class="cell-label">\
                                 Slaves\
                             </td>\
@@ -1320,42 +1415,50 @@ def odu100_device_information(h):
                             <td class="cell-label">\
                                 Active Version\
                             </td>\
-                            <td class="cell-info">' + str('--' if result[2] == None or result[2] == ""  else result[2]) + '</td>\
+                            <td class="cell-info">' + str(
+                    '--' if result[2] == None or result[2] == ""  else result[2]) + '</td>\
                             <td class="cell-label">\
                                 Hardware Version\
                             </td>\
-                            <td class="cell-info">' + str('--' if result[3] == None or result[3] == ""  else result[3]) + '</td>\
+                            <td class="cell-info">' + str(
+                    '--' if result[3] == None or result[3] == ""  else result[3]) + '</td>\
                             </tr>\
                             <tr>\
                             <td class="cell-label">\
                                 Last Reboot Reason\
                             </td>\
-                            <td class="cell-info">' + str('--' if result[4] == None or result[4] == ""  else last_reboot_resion[result[4]]) + '</td>\
+                            <td class="cell-info">' + str(
+                    '--' if result[4] == None or result[4] == ""  else last_reboot_resion[result[4]]) + '</td>\
                             <td class="cell-label">\
                                 Channel\
                             </td>\
-                            <td class="cell-info">' + str('--' if result[5] == None or result[5] == "" else channel[int(str(result[5]))
-                                                                                                                    ]) + '</td>\
+                            <td class="cell-info">' + str(
+                    '--' if result[5] == None or result[5] == "" else channel[int(str(result[5]))
+                    ]) + '</td>\
                             </tr>\
                             <tr>\
                             <td class="cell-label">\
                                 Operation state\
                             </td>\
-                            <td class="cell-info">' + str('--' if result[6] == None or result[6] == ""  else operation_state[result[6]]) + '</td>\
+                            <td class="cell-info">' + str(
+                    '--' if result[6] == None or result[6] == ""  else operation_state[result[6]]) + '</td>\
                             <td class="cell-label">\
                                 Node Type\
                             </td>\
-                            <td class="cell-info">' + str('--' if result[7] == None or result[7] == ""  else default_node_type[result[7]]) + '</td>\
+                            <td class="cell-info">' + str(
+                    '--' if result[7] == None or result[7] == ""  else default_node_type[result[7]]) + '</td>\
                             </tr>\
                             <tr>\
                             <td class="cell-label">\
                                 MAC Address\
                             </td>\
-                            <td class="cell-info">' + str('--' if result[8] == None or result[8] == ""  else result[8]) + '</td>\
+                            <td class="cell-info">' + str(
+                    '--' if result[8] == None or result[8] == ""  else result[8]) + '</td>\
                             <td class="cell-label">\
                                 Last Reboot Time\
                             </td>\
-                            <td class="cell-info">' + str('--' if last_reboot_time == None or last_reboot_time == ""  else last_reboot_time) + '</td>\
+                            <td class="cell-info">' + str(
+                    '--' if last_reboot_time == None or last_reboot_time == ""  else last_reboot_time) + '</td>\
                             </tr>\
                             <tr>\
                             <th class="cell-title" colspan="4">\
@@ -1463,6 +1566,10 @@ def odu100_device_information(h):
 
 
 def add_date_time_on_slide_odu100(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     try:
@@ -1484,11 +1591,17 @@ def add_date_time_on_slide_odu100(h):
         html.write(str(output_dict))
 
 
-###########################################################################################################################
-                                #--- ODU100 REPORT GENERATING START ---#
+    ###########################################################################################################################
+    #--- ODU100 REPORT GENERATING START ---#
+
 ###########################################################################################################################
 # ODU report generator function
 def odu100_device_report(h):
+    """
+
+    @param h:
+    @raise:
+    """
     global html
     html = h
     result1 = ''
@@ -1530,7 +1643,7 @@ def odu100_device_report(h):
             total_days = 3
         elif int(select_option) == 4:
             total_days = 7
-        # create the database connection and check the connection created or
+            # create the database connection and check the connection created or
         # not
         db, cursor = mysql_connection()
         if db == 1:
@@ -1602,7 +1715,7 @@ def odu100_device_report(h):
             slave = cursor.fetchall()
             if len(slave) > 1:
                 no_of_slave = '--' if slave[0][
-                    0] == None or slave[0][0] == '' else slave[0][0]
+                                          0] == None or slave[0][0] == '' else slave[0][0]
             else:
                 no_of_slave = '--'
 
@@ -1615,11 +1728,12 @@ def odu100_device_report(h):
         #----- store the last reboot time value in variable ----- #
         if cursor.execute(sql):
             reboot_time = cursor.fetchall()
-            if str(reboot_time).strip() != None or str(reboot_time).strip() != 'undefined' or str(reboot_time).strip() != "":
+            if str(reboot_time).strip() != None or str(reboot_time).strip() != 'undefined' or str(
+                    reboot_time).strip() != "":
                 if len(reboot_time) > 0:
                     table_output.append(
                         ['Last Reboot Time', str(reboot_time[0][0])])
-        # close the database and cursor connection.
+            # close the database and cursor connection.
         cursor.close()
         data1 = []
         data1.append(['', 'UBRe Device Information', '', ''])
@@ -1627,8 +1741,9 @@ def odu100_device_report(h):
         t.setStyle(
             TableStyle(
                 [(
-                    'BACKGROUND', (1, 0), (1, 0), (0.35, 0.35, 0.35)), ('FONT', (0,
-                                                                                 0), (1, 0), 'Helvetica', 11), ('TEXTCOLOR', (1, 0), (2, 0), colors.white)]))
+                     'BACKGROUND', (1, 0), (1, 0), (0.35, 0.35, 0.35)), ('FONT', (0,
+                                                                                  0), (1, 0), 'Helvetica', 11),
+                 ('TEXTCOLOR', (1, 0), (2, 0), colors.white)]))
         odu100_report.append(t)
 
         data = table_output
@@ -1639,7 +1754,7 @@ def odu100_device_report(h):
                                        len(
                                            table_output)) - 1), 'Helvetica', 9),
                                ('ALIGN', (1,
-                                0), (1, int(len(table_output)) - 1), 'CENTER'),
+                                          0), (1, int(len(table_output)) - 1), 'CENTER'),
                                ('BACKGROUND', (0, 0), (5, 0), (0.9, 0.9, 0.9)),
                                ('LINEABOVE',
                                 (0, 0), (5, 0), 1.21, (0.35, 0.35, 0.35)),
@@ -1650,11 +1765,11 @@ def odu100_device_report(h):
                     TableStyle(
                         [('BACKGROUND', (1, i), (1, i), (0.95, 0.95, 0.95)),
                          ('BACKGROUND', (0, i -
-                          1), (0, i - 1), (0.98, 0.98, 0.98)),
-                         ]))
+                                            1), (0, i - 1), (0.98, 0.98, 0.98)),
+                        ]))
             else:
                 t.setStyle(TableStyle([('BACKGROUND', (1, i), (1, i), (0.9, 0.9, 0.9))
-                                       ]))
+                ]))
 
         t.setStyle(
             TableStyle([('BACKGROUND', (0, 0), (0, 0), (0.9, 0.9, 0.9))]))
@@ -1670,8 +1785,9 @@ def odu100_device_report(h):
         t.setStyle(
             TableStyle(
                 [(
-                    'BACKGROUND', (0, 0), (0, 0), (0.9, 0.9, 0.9)), ('GRID', (0, 0),
-                  (5, 0), 0.31, (0.75, 0.75, 0.75)), ('ALIGN', (0, 0), (0, 0), 'RIGHT')]))
+                     'BACKGROUND', (0, 0), (0, 0), (0.9, 0.9, 0.9)), ('GRID', (0, 0),
+                                                                      (5, 0), 0.31, (0.75, 0.75, 0.75)),
+                 ('ALIGN', (0, 0), (0, 0), 'RIGHT')]))
         odu100_report.append(t)
         #######################################################################
 
@@ -1696,7 +1812,7 @@ def odu100_device_report(h):
         result1 = cursor.fetchall()
         table_output = table_list_creation(
             result1, 'CRC/PHY ERROR', 'Crc Error(error count)',
-            'Phy Error(error count)', 'Time(HH:MM:SS)',)
+            'Phy Error(error count)', 'Time(HH:MM:SS)', )
         # close the database and cursor connection.
         cursor.close()
         data1 = []
@@ -1705,8 +1821,9 @@ def odu100_device_report(h):
         t.setStyle(
             TableStyle(
                 [(
-                    'BACKGROUND', (1, 0), (1, 0), (0.35, 0.35, 0.35)), ('FONT', (0,
-                                                                                 0), (1, 0), 'Helvetica', 11), ('TEXTCOLOR', (1, 0), (2, 0), colors.white)]))
+                     'BACKGROUND', (1, 0), (1, 0), (0.35, 0.35, 0.35)), ('FONT', (0,
+                                                                                  0), (1, 0), 'Helvetica', 11),
+                 ('TEXTCOLOR', (1, 0), (2, 0), colors.white)]))
         odu100_report.append(t)
         data = table_output
         t = Table(data, [2.7 * inch, 2.2 * inch, 2.2 * inch])
@@ -1714,7 +1831,7 @@ def odu100_device_report(h):
                                ('FONT', (0, 1), (2, int(len(
                                    table_output)) - 1), 'Helvetica', 9),
                                ('ALIGN', (1,
-                                0), (2, int(len(table_output)) - 1), 'CENTER'),
+                                          0), (2, int(len(table_output)) - 1), 'CENTER'),
                                ('BACKGROUND', (0, 0), (5, 0), (0.9, 0.9, 0.9)),
                                ('LINEABOVE',
                                 (0, 0), (5, 0), 1.21, (0.35, 0.35, 0.35)),
@@ -1725,11 +1842,11 @@ def odu100_device_report(h):
                     TableStyle(
                         [('BACKGROUND', (1, i), (2, i), (0.95, 0.95, 0.95)),
                          ('BACKGROUND', (0, i -
-                          1), (0, i - 1), (0.98, 0.98, 0.98)),
-                         ]))
+                                            1), (0, i - 1), (0.98, 0.98, 0.98)),
+                        ]))
             else:
                 t.setStyle(TableStyle([('BACKGROUND', (1, i), (2, i), (0.9, 0.9, 0.9))
-                                       ]))
+                ]))
 
         t.setStyle(
             TableStyle([('BACKGROUND', (0, 0), (0, 0), (0.9, 0.9, 0.9))]))
@@ -1745,8 +1862,9 @@ def odu100_device_report(h):
         t.setStyle(
             TableStyle(
                 [(
-                    'BACKGROUND', (0, 0), (0, 0), (0.9, 0.9, 0.9)), ('GRID', (0, 0),
-                  (5, 0), 0.31, (0.75, 0.75, 0.75)), ('ALIGN', (0, 0), (0, 0), 'RIGHT')]))
+                     'BACKGROUND', (0, 0), (0, 0), (0.9, 0.9, 0.9)), ('GRID', (0, 0),
+                                                                      (5, 0), 0.31, (0.75, 0.75, 0.75)),
+                 ('ALIGN', (0, 0), (0, 0), 'RIGHT')]))
         odu100_report.append(t)
         #######################################################################
 
@@ -1766,11 +1884,12 @@ def odu100_device_report(h):
             sel_query += limit_data
 
         else:
-            sel_query = "select IFNULL((odu.syncLostCounter),0),odu.timestamp from  odu100_synchStatisticsTable as odu INNER JOIN hosts as h  on  odu.host_id = h.host_id  where h.ip_address='%s' AND date(odu.timestamp) <=current_date() AND date(odu.timestamp) >= current_date()-%s order by odu.timestamp desc" % (ip_address, total_days)
+            sel_query = "select IFNULL((odu.syncLostCounter),0),odu.timestamp from  odu100_synchStatisticsTable as odu INNER JOIN hosts as h  on  odu.host_id = h.host_id  where h.ip_address='%s' AND date(odu.timestamp) <=current_date() AND date(odu.timestamp) >= current_date()-%s order by odu.timestamp desc" % (
+            ip_address, total_days)
         cursor.execute(sel_query)
         result1 = cursor.fetchall()
         table_output = sync_table_list_creation(
-            result1, 'Sync Lost', 'Sync Lost(error count)', 'Time(HH:MM:SS)',)
+            result1, 'Sync Lost', 'Sync Lost(error count)', 'Time(HH:MM:SS)', )
         # close the database and cursor connection.
         cursor.close()
         data1 = []
@@ -1779,8 +1898,9 @@ def odu100_device_report(h):
         t.setStyle(
             TableStyle(
                 [(
-                    'BACKGROUND', (1, 0), (1, 0), (0.35, 0.35, 0.35)), ('FONT', (0,
-                                                                                 0), (1, 0), 'Helvetica', 11), ('TEXTCOLOR', (1, 0), (2, 0), colors.white)]))
+                     'BACKGROUND', (1, 0), (1, 0), (0.35, 0.35, 0.35)), ('FONT', (0,
+                                                                                  0), (1, 0), 'Helvetica', 11),
+                 ('TEXTCOLOR', (1, 0), (2, 0), colors.white)]))
         odu100_report.append(t)
         data = table_output
         t = Table(data, [3.55 * inch, 3.55 * inch])
@@ -1790,7 +1910,7 @@ def odu100_device_report(h):
                                        len(
                                            table_output)) - 1), 'Helvetica', 9),
                                ('ALIGN', (1,
-                                0), (1, int(len(table_output)) - 1), 'CENTER'),
+                                          0), (1, int(len(table_output)) - 1), 'CENTER'),
                                ('BACKGROUND', (0, 0), (5, 0), (0.9, 0.9, 0.9)),
                                ('LINEABOVE',
                                 (0, 0), (5, 0), 1.21, (0.35, 0.35, 0.35)),
@@ -1801,11 +1921,11 @@ def odu100_device_report(h):
                     TableStyle(
                         [('BACKGROUND', (1, i), (1, i), (0.95, 0.95, 0.95)),
                          ('BACKGROUND', (0, i -
-                          1), (0, i - 1), (0.98, 0.98, 0.98)),
-                         ]))
+                                            1), (0, i - 1), (0.98, 0.98, 0.98)),
+                        ]))
             else:
                 t.setStyle(TableStyle([('BACKGROUND', (1, i), (1, i), (0.9, 0.9, 0.9))
-                                       ]))
+                ]))
 
         t.setStyle(
             TableStyle([('BACKGROUND', (0, 0), (0, 0), (0.9, 0.9, 0.9))]))
@@ -1821,8 +1941,9 @@ def odu100_device_report(h):
         t.setStyle(
             TableStyle(
                 [(
-                    'BACKGROUND', (0, 0), (0, 0), (0.9, 0.9, 0.9)), ('GRID', (0, 0),
-                  (5, 0), 0.31, (0.75, 0.75, 0.75)), ('ALIGN', (0, 0), (0, 0), 'RIGHT')]))
+                     'BACKGROUND', (0, 0), (0, 0), (0.9, 0.9, 0.9)), ('GRID', (0, 0),
+                                                                      (5, 0), 0.31, (0.75, 0.75, 0.75)),
+                 ('ALIGN', (0, 0), (0, 0), 'RIGHT')]))
         odu100_report.append(t)
         #######################################################################
 
@@ -1849,7 +1970,8 @@ def odu100_device_report(h):
         signal_interface16 = []
         time_stamp_signal1 = []
 
-        sel_query = "SELECT default_node_type FROM get_odu16_ru_conf_table as def INNER JOIN hosts ON hosts.host_id=def.host_id WHERE hosts.ip_address='%s'" % (ip_address)
+        sel_query = "SELECT default_node_type FROM get_odu16_ru_conf_table as def INNER JOIN hosts ON hosts.host_id=def.host_id WHERE hosts.ip_address='%s'" % (
+        ip_address)
         cursor.execute(sel_query)
         status_result = cursor.fetchall()
         status = 0
@@ -1867,7 +1989,8 @@ def odu100_device_report(h):
                 limit_data = ' limit 40'
             sel_query += limit_data
         else:
-            sel_query = "select odu.raScanIndex,(IFNULL((odu.signalStrength),0)),odu.timestamp from  odu100_raScanListTable as odu INNER JOIN hosts as h  on  odu.host_id = h.host_id  where h.ip_address='%s' AND date(odu.timestamp) <=current_date() AND date(odu.timestamp) >= current_date()-%s order by odu.timestamp desc" % (ip_address, total_days)
+            sel_query = "select odu.raScanIndex,(IFNULL((odu.signalStrength),0)),odu.timestamp from  odu100_raScanListTable as odu INNER JOIN hosts as h  on  odu.host_id = h.host_id  where h.ip_address='%s' AND date(odu.timestamp) <=current_date() AND date(odu.timestamp) >= current_date()-%s order by odu.timestamp desc" % (
+            ip_address, total_days)
         cursor.execute(sel_query)
         signal_strength = cursor.fetchall()
         count = 0
@@ -2017,41 +2140,43 @@ def odu100_device_report(h):
             odu100_report.append(t)
             table_output = []
             table_output.append(['Time(HH:MM)', 'peer1', 'peer2', 'peer3',
-                                'peer4', 'peer5', 'peer6', 'peer7', 'peer8'])
+                                 'peer4', 'peer5', 'peer6', 'peer7', 'peer8'])
             k = 0
             for time_field in time_stamp_signal1:
                 table_output.append([str(time_field), str(signal_interface1[k]), str(
-                    signal_interface2[k]), str(signal_interface3[k]), str(signal_interface4[k]), str(signal_interface5[k]), str(signal_interface6[k]), str(signal_interface7[k]), str(signal_interface8[k])])
+                    signal_interface2[k]), str(signal_interface3[k]), str(signal_interface4[k]),
+                                     str(signal_interface5[k]), str(signal_interface6[k]), str(signal_interface7[k]),
+                                     str(signal_interface8[k])])
                 k = k + 1
             t = Table(
                 table_output, [1.5 * inch, .7 * inch, .7 * inch, .7 * inch,
                                .7 * inch, .7 * inch, .7 * inch, .7 * inch, .7 * inch])
             t.setStyle(
                 TableStyle([('FONT', (0, 0), (8, 0), 'Helvetica-Bold', 10),
-                      ('FONT', (0, 1), (8,
-                                        int(
-                                        len(
-                                            table_output)) - 1), 'Helvetica', 9),
-                    ('ALIGN', (1,
-                               0), (
-                     8, int(
-                     len(table_output)) - 1), 'CENTER'),
-                    ('BACKGROUND',
-                     (0, 0), (9, 0), (0.9, 0.9, 0.9)),
-                                   ('LINEABOVE',
-                                    (0, 0), (9, 0), 1.21, (0.35, 0.35, 0.35)),
-                                   ('GRID', (0, 0), (8, int(len(table_output)) - 1), 0.31, (0.75, 0.75, 0.75))]))
+                            ('FONT', (0, 1), (8,
+                                              int(
+                                                  len(
+                                                      table_output)) - 1), 'Helvetica', 9),
+                            ('ALIGN', (1,
+                                       0), (
+                                 8, int(
+                                     len(table_output)) - 1), 'CENTER'),
+                            ('BACKGROUND',
+                             (0, 0), (9, 0), (0.9, 0.9, 0.9)),
+                            ('LINEABOVE',
+                             (0, 0), (9, 0), 1.21, (0.35, 0.35, 0.35)),
+                            ('GRID', (0, 0), (8, int(len(table_output)) - 1), 0.31, (0.75, 0.75, 0.75))]))
             for i in range(1, len(table_output)):
                 if i % 2 == 1:
                     t.setStyle(
                         TableStyle(
                             [(
-                                'BACKGROUND', (1, i), (8, i), (0.95, 0.95, 0.95)),
-                                           ('BACKGROUND', (0, i - 1),
-                                            (0, i - 1), (0.98, 0.98, 0.98)),
-                                           ('BACKGROUND', (1, i -
-                                            1), (8, i - 1), (0.9, 0.9, 0.9))
-                                           ]))
+                                 'BACKGROUND', (1, i), (8, i), (0.95, 0.95, 0.95)),
+                             ('BACKGROUND', (0, i - 1),
+                              (0, i - 1), (0.98, 0.98, 0.98)),
+                             ('BACKGROUND', (1, i -
+                                                1), (8, i - 1), (0.9, 0.9, 0.9))
+                            ]))
             odu100_report.append(t)
             data1 = []
             if len(table_output) > 1:
@@ -2076,41 +2201,43 @@ def odu100_device_report(h):
             odu100_report.append(t)
             table_output = []
             table_output.append(['Time(HH:MM)', 'peer9', 'peer10', 'peer11',
-                                'peer12', 'peer13', 'peer14', 'peer15', 'peer16'])
+                                 'peer12', 'peer13', 'peer14', 'peer15', 'peer16'])
             k = 0
             for time_field in time_stamp_signal1:
-                table_output.append([str(time_field), str(signal_interface9[k]), str(signal_interface10[k]), str(signal_interface11[k]), str(signal_interface12[k]), str(signal_interface13[k]
-                                    ), str(signal_interface14[k]), str(signal_interface15[k]), str(signal_interface16[k])])
+                table_output.append(
+                    [str(time_field), str(signal_interface9[k]), str(signal_interface10[k]), str(signal_interface11[k]),
+                     str(signal_interface12[k]), str(signal_interface13[k]
+                    ), str(signal_interface14[k]), str(signal_interface15[k]), str(signal_interface16[k])])
                 k = k + 1
             t = Table(
                 table_output, [1.5 * inch, .7 * inch, .7 * inch, .7 * inch,
-                      .7 * inch, .7 * inch, .7 * inch, .7 * inch, .7 * inch])
+                               .7 * inch, .7 * inch, .7 * inch, .7 * inch, .7 * inch])
             t.setStyle(
                 TableStyle([('FONT', (0, 0), (8, 0), 'Helvetica-Bold', 10),
-                                   ('FONT', (0, 1), (8,
-                                    int(
-                                        len(
-                                            table_output)) - 1), 'Helvetica', 9),
-                                   ('ALIGN', (1,
-                                    0), (
-                                        8, int(
-                                            len(table_output)) - 1), 'CENTER'),
-                                   ('BACKGROUND',
-                                    (0, 0), (9, 0), (0.9, 0.9, 0.9)),
-                                   ('LINEABOVE',
-                                    (0, 0), (9, 0), 1.21, (0.35, 0.35, 0.35)),
-                                   ('GRID', (0, 0), (8, int(len(table_output)) - 1), 0.31, (0.75, 0.75, 0.75))]))
+                            ('FONT', (0, 1), (8,
+                                              int(
+                                                  len(
+                                                      table_output)) - 1), 'Helvetica', 9),
+                            ('ALIGN', (1,
+                                       0), (
+                                 8, int(
+                                     len(table_output)) - 1), 'CENTER'),
+                            ('BACKGROUND',
+                             (0, 0), (9, 0), (0.9, 0.9, 0.9)),
+                            ('LINEABOVE',
+                             (0, 0), (9, 0), 1.21, (0.35, 0.35, 0.35)),
+                            ('GRID', (0, 0), (8, int(len(table_output)) - 1), 0.31, (0.75, 0.75, 0.75))]))
             for i in range(1, len(table_output)):
                 if i % 2 == 1:
                     t.setStyle(
                         TableStyle(
                             [(
-                                'BACKGROUND', (1, i), (8, i), (0.95, 0.95, 0.95)),
-                                           ('BACKGROUND', (0, i - 1),
-                                            (0, i - 1), (0.98, 0.98, 0.98)),
-                                           ('BACKGROUND', (1, i -
-                                            1), (8, i - 1), (0.9, 0.9, 0.9))
-                                           ]))
+                                 'BACKGROUND', (1, i), (8, i), (0.95, 0.95, 0.95)),
+                             ('BACKGROUND', (0, i - 1),
+                              (0, i - 1), (0.98, 0.98, 0.98)),
+                             ('BACKGROUND', (1, i -
+                                                1), (8, i - 1), (0.9, 0.9, 0.9))
+                            ]))
             odu100_report.append(t)
             data1 = []
             if len(table_output) > 1:
@@ -2141,30 +2268,30 @@ def odu100_device_report(h):
             t = Table(table_output, [3.55 * inch, 3.55 * inch])
             t.setStyle(
                 TableStyle([('FONT', (0, 0), (1, 0), 'Helvetica-Bold', 10),
-                                   ('FONT', (0, 1), (1, int(
-                                       len(
-                                           table_output)) - 1), 'Helvetica', 9),
-                                   ('ALIGN', (1,
-                                    0), (
-                                        1, int(
-                                            len(table_output)) - 1), 'CENTER'),
-                                   ('BACKGROUND',
-                                    (0, 0), (5, 0), (0.9, 0.9, 0.9)),
-                                   ('LINEABOVE',
-                                    (0, 0), (5, 0), 1.21, (0.35, 0.35, 0.35)),
-                                   ('GRID', (0, 0), (5, int(len(table_output)) - 1), 0.31, (0.75, 0.75, 0.75))]))
+                            ('FONT', (0, 1), (1, int(
+                                len(
+                                    table_output)) - 1), 'Helvetica', 9),
+                            ('ALIGN', (1,
+                                       0), (
+                                 1, int(
+                                     len(table_output)) - 1), 'CENTER'),
+                            ('BACKGROUND',
+                             (0, 0), (5, 0), (0.9, 0.9, 0.9)),
+                            ('LINEABOVE',
+                             (0, 0), (5, 0), 1.21, (0.35, 0.35, 0.35)),
+                            ('GRID', (0, 0), (5, int(len(table_output)) - 1), 0.31, (0.75, 0.75, 0.75))]))
             for i in range(1, len(table_output)):
                 if i % 2 == 1:
                     t.setStyle(
                         TableStyle(
                             [(
-                                'BACKGROUND', (1, i), (1, i), (0.95, 0.95, 0.95)),
-                                           ('BACKGROUND', (0, i - 1),
-                                            (0, i - 1), (0.98, 0.98, 0.98)),
-                                           ]))
+                                 'BACKGROUND', (1, i), (1, i), (0.95, 0.95, 0.95)),
+                             ('BACKGROUND', (0, i - 1),
+                              (0, i - 1), (0.98, 0.98, 0.98)),
+                            ]))
                 else:
                     t.setStyle(TableStyle([('BACKGROUND', (1, i), (1, i), (0.9, 0.9, 0.9))
-                                           ]))
+                    ]))
 
             t.setStyle(
                 TableStyle([('BACKGROUND', (0, 0), (0, 0), (0.9, 0.9, 0.9))]))
@@ -2194,7 +2321,8 @@ def odu100_device_report(h):
                 ip_address, start_time, end_time)
 
         else:
-            sql = "SELECT ta.serevity,ta.trap_event_id,ta.trap_event_type,ta.trap_receive_date FROM trap_alarm_current as ta WHERE ta.agent_id='%s' AND date(ta.timestamp)=current_date() and  date(ta.timestamp)>current_date()-%s order by ta.timestamp" % (ip_address, trap_days)
+            sql = "SELECT ta.serevity,ta.trap_event_id,ta.trap_event_type,ta.trap_receive_date FROM trap_alarm_current as ta WHERE ta.agent_id='%s' AND date(ta.timestamp)=current_date() and  date(ta.timestamp)>current_date()-%s order by ta.timestamp" % (
+            ip_address, trap_days)
         cursor.execute(sql)
         result1 = cursor.fetchall()
         table_output = table_list_trap(result1, 'Lateat 5 Alarms')
@@ -2206,8 +2334,9 @@ def odu100_device_report(h):
         t.setStyle(
             TableStyle(
                 [(
-                    'BACKGROUND', (1, 0), (1, 0), (0.35, 0.35, 0.35)), ('FONT', (0,
-                   0), (1, 0), 'Helvetica', 11), ('TEXTCOLOR', (1, 0), (2, 0), colors.white)]))
+                     'BACKGROUND', (1, 0), (1, 0), (0.35, 0.35, 0.35)), ('FONT', (0,
+                                                                                  0), (1, 0), 'Helvetica', 11),
+                 ('TEXTCOLOR', (1, 0), (2, 0), colors.white)]))
         odu100_report.append(t)
 
         data = table_output
@@ -2216,7 +2345,7 @@ def odu100_device_report(h):
                                ('FONT', (0, 1), (3, int(len(
                                    table_output)) - 1), 'Helvetica', 9),
                                ('ALIGN', (1,
-                                0), (3, int(len(table_output)) - 1), 'CENTER'),
+                                          0), (3, int(len(table_output)) - 1), 'CENTER'),
                                ('BACKGROUND', (0, 0), (3, 0), (0.9, 0.9, 0.9)),
                                ('LINEABOVE',
                                 (0, 0), (3, 0), 1.21, (0.35, 0.35, 0.35)),
@@ -2226,12 +2355,12 @@ def odu100_device_report(h):
                 t.setStyle(
                     TableStyle(
                         [('BACKGROUND', (1, i), (3, i), (0.95, 0.95, 0.95)),
-                                       ('BACKGROUND', (0, i -
-                                        1), (0, i - 1), (0.98, 0.98, 0.98)),
-                                       ]))
+                         ('BACKGROUND', (0, i -
+                                            1), (0, i - 1), (0.98, 0.98, 0.98)),
+                        ]))
             else:
                 t.setStyle(TableStyle([('BACKGROUND', (1, i), (3, i), (0.9, 0.9, 0.9))
-                                       ]))
+                ]))
 
         t.setStyle(
             TableStyle([('BACKGROUND', (0, 0), (0, 0), (0.9, 0.9, 0.9))]))
@@ -2247,8 +2376,9 @@ def odu100_device_report(h):
         t.setStyle(
             TableStyle(
                 [(
-                    'BACKGROUND', (0, 0), (0, 0), (0.9, 0.9, 0.9)), ('GRID', (0, 0),
-                   (5, 0), 0.31, (0.75, 0.75, 0.75)), ('ALIGN', (0, 0), (0, 0), 'RIGHT')]))
+                     'BACKGROUND', (0, 0), (0, 0), (0.9, 0.9, 0.9)), ('GRID', (0, 0),
+                                                                      (5, 0), 0.31, (0.75, 0.75, 0.75)),
+                 ('ALIGN', (0, 0), (0, 0), 'RIGHT')]))
         odu100_report.append(t)
         #######################################################################
 
@@ -2274,8 +2404,9 @@ def odu100_device_report(h):
         t.setStyle(
             TableStyle(
                 [(
-                    'BACKGROUND', (1, 0), (1, 0), (0.35, 0.35, 0.35)), ('FONT', (0,
-                   0), (1, 0), 'Helvetica', 11), ('TEXTCOLOR', (1, 0), (2, 0), colors.white)]))
+                     'BACKGROUND', (1, 0), (1, 0), (0.35, 0.35, 0.35)), ('FONT', (0,
+                                                                                  0), (1, 0), 'Helvetica', 11),
+                 ('TEXTCOLOR', (1, 0), (2, 0), colors.white)]))
         odu100_report.append(t)
 
         data = table_output
@@ -2284,7 +2415,7 @@ def odu100_device_report(h):
                                ('FONT', (0, 1), (3, int(len(
                                    table_output)) - 1), 'Helvetica', 9),
                                ('ALIGN', (1,
-                                0), (3, int(len(table_output)) - 1), 'CENTER'),
+                                          0), (3, int(len(table_output)) - 1), 'CENTER'),
                                ('BACKGROUND', (0, 0), (3, 0), (0.9, 0.9, 0.9)),
                                ('LINEABOVE',
                                 (0, 0), (3, 0), 1.21, (0.35, 0.35, 0.35)),
@@ -2294,12 +2425,12 @@ def odu100_device_report(h):
                 t.setStyle(
                     TableStyle(
                         [('BACKGROUND', (1, i), (3, i), (0.95, 0.95, 0.95)),
-                                       ('BACKGROUND', (0, i -
-                                        1), (0, i - 1), (0.98, 0.98, 0.98)),
-                                       ]))
+                         ('BACKGROUND', (0, i -
+                                            1), (0, i - 1), (0.98, 0.98, 0.98)),
+                        ]))
             else:
                 t.setStyle(TableStyle([('BACKGROUND', (1, i), (3, i), (0.9, 0.9, 0.9))
-                                       ]))
+                ]))
 
         t.setStyle(
             TableStyle([('BACKGROUND', (0, 0), (0, 0), (0.9, 0.9, 0.9))]))
@@ -2315,8 +2446,9 @@ def odu100_device_report(h):
         t.setStyle(
             TableStyle(
                 [(
-                    'BACKGROUND', (0, 0), (0, 0), (0.9, 0.9, 0.9)), ('GRID', (0, 0),
-                   (5, 0), 0.31, (0.75, 0.75, 0.75)), ('ALIGN', (0, 0), (0, 0), 'RIGHT')]))
+                     'BACKGROUND', (0, 0), (0, 0), (0.9, 0.9, 0.9)), ('GRID', (0, 0),
+                                                                      (5, 0), 0.31, (0.75, 0.75, 0.75)),
+                 ('ALIGN', (0, 0), (0, 0), 'RIGHT')]))
         odu100_report.append(t)
         #######################################################################
 
@@ -2338,18 +2470,19 @@ def odu100_device_report(h):
         t.setStyle(
             TableStyle(
                 [(
-                    'BACKGROUND', (1, 0), (1, 0), (0.35, 0.35, 0.35)), ('FONT', (0,
-                   0), (1, 0), 'Helvetica', 11), ('TEXTCOLOR', (1, 0), (2, 0), colors.white)]))
+                     'BACKGROUND', (1, 0), (1, 0), (0.35, 0.35, 0.35)), ('FONT', (0,
+                                                                                  0), (1, 0), 'Helvetica', 11),
+                 ('TEXTCOLOR', (1, 0), (2, 0), colors.white)]))
         odu100_report.append(t)
 
         data = table_output
         t = Table(data, [1.45 * 1.1 * inch, 1.1 * inch, 1.1 * inch, 1.1 *
-                  inch, 1.1 * inch, 1.1 * inch])
+                                                                    inch, 1.1 * inch, 1.1 * inch])
         t.setStyle(TableStyle([('FONT', (0, 0), (5, 0), 'Helvetica-Bold', 10),
                                ('FONT', (0, 1), (5, int(len(
                                    table_output)) - 1), 'Helvetica', 9),
                                ('ALIGN', (1,
-                                0), (5, int(len(table_output)) - 1), 'CENTER'),
+                                          0), (5, int(len(table_output)) - 1), 'CENTER'),
                                ('BACKGROUND', (0, 0), (5, 0), (0.9, 0.9, 0.9)),
                                ('LINEABOVE',
                                 (0, 0), (5, 0), 1.21, (0.35, 0.35, 0.35)),
@@ -2360,12 +2493,12 @@ def odu100_device_report(h):
                 t.setStyle(
                     TableStyle(
                         [('BACKGROUND', (1, i), (5, i), (0.95, 0.95, 0.95)),
-                                       ('BACKGROUND', (0, i -
-                                        1), (0, i - 1), (0.98, 0.98, 0.98)),
-                                       ]))
+                         ('BACKGROUND', (0, i -
+                                            1), (0, i - 1), (0.98, 0.98, 0.98)),
+                        ]))
             else:
                 t.setStyle(TableStyle([('BACKGROUND', (1, i), (5, i), (0.9, 0.9, 0.9))
-                                       ]))
+                ]))
 
         t.setStyle(
             TableStyle([('BACKGROUND', (0, 0), (0, 0), (0.9, 0.9, 0.9))]))
@@ -2381,8 +2514,9 @@ def odu100_device_report(h):
         t.setStyle(
             TableStyle(
                 [(
-                    'BACKGROUND', (0, 0), (0, 0), (0.9, 0.9, 0.9)), ('GRID', (0, 0),
-                   (5, 0), 0.31, (0.75, 0.75, 0.75)), ('ALIGN', (0, 0), (0, 0), 'RIGHT')]))
+                     'BACKGROUND', (0, 0), (0, 0), (0.9, 0.9, 0.9)), ('GRID', (0, 0),
+                                                                      (5, 0), 0.31, (0.75, 0.75, 0.75)),
+                 ('ALIGN', (0, 0), (0, 0), 'RIGHT')]))
         odu100_report.append(t)
         #######################################################################
 
@@ -2412,7 +2546,7 @@ def odu100_device_report(h):
             result1 = cursor.fetchall()
             table_output = nw_table_list_creation(
                 result1, interface, 'Receving Bytes(Rx)',
-                                                  'Transmitting Bytes(Tx)', 'Time(HH:MM:SS)',)
+                'Transmitting Bytes(Tx)', 'Time(HH:MM:SS)', )
             # close the database and cursor connection.
             cursor.close()
 
@@ -2428,32 +2562,32 @@ def odu100_device_report(h):
             t = Table(data, [2.7 * inch, 2.2 * inch, 2.2 * inch])
             t.setStyle(
                 TableStyle([('FONT', (0, 0), (2, 0), 'Helvetica-Bold', 10),
-                                   ('FONT', (0, 1), (2,
-                                    int(
-                                        len(
-                                            table_output)) - 1), 'Helvetica', 9),
-                                   ('ALIGN', (1,
-                                    0), (
-                                        2, int(
-                                            len(table_output)) - 1), 'CENTER'),
-                                   ('BACKGROUND',
-                                    (0, 0), (2, 0), (0.9, 0.9, 0.9)),
-                                   ('LINEABOVE',
-                                    (0, 0), (2, 0), 1.21, (0.35, 0.35, 0.35)),
-                                   ('GRID', (0, 0), (8, int(len(table_output)) - 1), 0.31, (0.75, 0.75, 0.75))]))
+                            ('FONT', (0, 1), (2,
+                                              int(
+                                                  len(
+                                                      table_output)) - 1), 'Helvetica', 9),
+                            ('ALIGN', (1,
+                                       0), (
+                                 2, int(
+                                     len(table_output)) - 1), 'CENTER'),
+                            ('BACKGROUND',
+                             (0, 0), (2, 0), (0.9, 0.9, 0.9)),
+                            ('LINEABOVE',
+                             (0, 0), (2, 0), 1.21, (0.35, 0.35, 0.35)),
+                            ('GRID', (0, 0), (8, int(len(table_output)) - 1), 0.31, (0.75, 0.75, 0.75))]))
 
             for i in range(1, len(table_output)):
                 if i % 2 == 1:
                     t.setStyle(
                         TableStyle(
                             [(
-                                'BACKGROUND', (1, i), (2, i), (0.95, 0.95, 0.95)),
-                                           ('BACKGROUND', (0, i - 1),
-                                            (0, i - 1), (0.98, 0.98, 0.98)),
-                                           ]))
+                                 'BACKGROUND', (1, i), (2, i), (0.95, 0.95, 0.95)),
+                             ('BACKGROUND', (0, i - 1),
+                              (0, i - 1), (0.98, 0.98, 0.98)),
+                            ]))
                 else:
                     t.setStyle(TableStyle([('BACKGROUND', (1, i), (2, i), (0.9, 0.9, 0.9))
-                                           ]))
+                    ]))
 
             t.setStyle(
                 TableStyle([('BACKGROUND', (0, 0), (0, 0), (0.9, 0.9, 0.9))]))
@@ -2470,7 +2604,7 @@ def odu100_device_report(h):
                 'GRID', (0, 0), (5, 0), 0.31, (0.75, 0.75, 0.75)), ('ALIGN', (0, 0), (0, 0), 'RIGHT')]))
             odu100_report.append(t)
             interface_index += 1
-        #######################################################################
+            #######################################################################
 
         # close the first database connection
         db.close()
@@ -2483,9 +2617,9 @@ def odu100_device_report(h):
             raise SelfException(cursor)
         date_days = []  # this list store the days information with date.
         up_state = []
-            # Its store the total up state of each day in percentage.
+        # Its store the total up state of each day in percentage.
         down_state = []
-            # Its store the total down state of each day in percentage.
+        # Its store the total down state of each day in percentage.
         output_dict = {}  # its store the actual output for display in graph.\
         last_status = ''
         down_flag = 0
@@ -2515,7 +2649,8 @@ def odu100_device_report(h):
         sel_sql = "SELECT  nagios_hosts.address,nagios_statehistory.state_time,nagios_statehistory.state\
 	    FROM nagios_hosts INNER JOIN nagios_statehistory ON nagios_statehistory.object_id = nagios_hosts.host_object_id\
 	   where nagios_statehistory.state_time between '%s'  and '%s' and nagios_hosts.address='%s'\
-	    order by nagios_statehistory.state_time  desc limit 1" % (last_status_current_time, last_status_end_time, ip_address)
+	    order by nagios_statehistory.state_time  desc limit 1" % (
+        last_status_current_time, last_status_end_time, ip_address)
         # Execute the query.
         cursor.execute(sel_sql)
         last_state = cursor.fetchall()
@@ -2542,25 +2677,30 @@ def odu100_device_report(h):
                                         if temp_time is not '':
                                             if result[j - 1][2] == 0 or result[j - 1][2] == "0":
                                                 total_up_time += abs((
-                                                    row[1] - temp_time).days * 1440 + (row[1] - temp_time).seconds / 60)
+                                                                         row[1] - temp_time).days * 1440 + (
+                                                                     row[1] - temp_time).seconds / 60)
                                                 temp_up_time = row[1]
                                             else:
                                                 total_down_time += abs(
-                                                    (row[1] - temp_time).days * 1440 + (row[1] - temp_time).seconds / 60)
+                                                    (row[1] - temp_time).days * 1440 + (
+                                                    row[1] - temp_time).seconds / 60)
                                                 temp_down_time = row[1]
                                         up_flag = 1
                                     elif last_status is not '' and up_flag == 0:
                                         up_flag = 1
                                         if last_status == 0:
                                             total_up_time = abs((row[1] - (temp_date + timedelta(
-                                                days=-(i + 1)))).days * 1440 + (row[1] - (temp_date + timedelta(days=-(i + 1)))).seconds / 60)
+                                                days=-(i + 1)))).days * 1440 + (row[1] - (
+                                            temp_date + timedelta(days=-(i + 1)))).seconds / 60)
                                         else:
                                             total_down_time = abs((row[1] - (temp_date + timedelta(
-                                                days=-(i + 1)))).days * 1440 + (row[1] - (temp_date + timedelta(days=-(i + 1)))).seconds / 60)
+                                                days=-(i + 1)))).days * 1440 + (row[1] - (
+                                            temp_date + timedelta(days=-(i + 1)))).seconds / 60)
                                 else:
                                     if result[j - 1][2] == 0 or result[j - 1][2] == "0":
                                         total_up_time += abs((
-                                            row[1] - temp_time).days * 1440 + (row[1] - temp_time).seconds / 60)
+                                                                 row[1] - temp_time).days * 1440 + (
+                                                             row[1] - temp_time).seconds / 60)
                                         temp_up_time = row[1]
                                     else:
                                         total_down_time += abs((row[1] - temp_time).days * 1440 + (
@@ -2573,26 +2713,31 @@ def odu100_device_report(h):
                                         if temp_time is not '':
                                             if result[j - 1][2] == 0 or result[j - 1][2] == "0":
                                                 total_up_time += abs((
-                                                    row[1] - temp_time).days * 1440 + (row[1] - temp_time).seconds / 60)
+                                                                         row[1] - temp_time).days * 1440 + (
+                                                                     row[1] - temp_time).seconds / 60)
                                                 temp_up_time = row[1]
                                             else:
                                                 total_down_time += abs(
-                                                    (row[1] - temp_time).days * 1440 + (row[1] - temp_time).seconds / 60)
+                                                    (row[1] - temp_time).days * 1440 + (
+                                                    row[1] - temp_time).seconds / 60)
                                                 temp_down_time = row[1]
                                         down_flag = 1
                                     elif last_status is not '' and down_flag == 0:
                                         down_flag = 1
                                         if last_status == 0:
                                             total_up_time = abs((row[1] - (temp_date + timedelta(
-                                                days=-(i + 1)))).days * 1440 + (row[1] - (temp_date + timedelta(days=-(i + 1)))).seconds / 60)
+                                                days=-(i + 1)))).days * 1440 + (row[1] - (
+                                            temp_date + timedelta(days=-(i + 1)))).seconds / 60)
                                         else:
                                             total_down_time = abs((row[1] - (temp_date + timedelta(
-                                                days=-(i + 1)))).days * 1440 + (row[1] - (temp_date + timedelta(days=-(i + 1)))).seconds / 60)
+                                                days=-(i + 1)))).days * 1440 + (row[1] - (
+                                            temp_date + timedelta(days=-(i + 1)))).seconds / 60)
                                 else:
 
                                     if result[j - 1][2] == 0 or result[j - 1][2] == "0":
                                         total_up_time += abs((
-                                            row[1] - temp_time).days * 1440 + (row[1] - temp_time).seconds / 60)
+                                                                 row[1] - temp_time).days * 1440 + (
+                                                             row[1] - temp_time).seconds / 60)
                                         temp_up_time = row[1]
                                     else:
                                         total_down_time += abs((row[1] - temp_time).days * 1440 + (
@@ -2605,10 +2750,12 @@ def odu100_device_report(h):
                     if flag == 1:
                         if result[j - 1][2] == 0:
                             total_up_time = abs((result[j - 1][1] - (temp_date + timedelta(days=-i))).days *
-                                                1440 + (result[j - 1][1] - (temp_date + timedelta(days=-i))).seconds / 60)
+                                                1440 + (
+                            result[j - 1][1] - (temp_date + timedelta(days=-i))).seconds / 60)
                         else:
                             total_down_time = abs((result[j - 1][1] - (
-                                temp_date + timedelta(days=-i))).days * 1440 + (result[j - 1][1] - (temp_date + timedelta(days=-i))).seconds / 60)
+                                temp_date + timedelta(days=-i))).days * 1440 + (
+                                                  result[j - 1][1] - (temp_date + timedelta(days=-i))).seconds / 60)
                     date_days.append(
                         (temp_date + timedelta(days=-(i))).strftime("%d %b %Y"))
                     total = total_up_time + total_down_time
@@ -2636,10 +2783,12 @@ def odu100_device_report(h):
                             flag = 1
                             if row[2] == 0:
                                 total_up_time = abs((row[1] - (temp_date + timedelta(
-                                    days=-(i + 1)))).days * 1440 + (row[1] - (temp_date + timedelta(days=-(i + 1)))).seconds / 60)
+                                    days=-(i + 1)))).days * 1440 + (
+                                                    row[1] - (temp_date + timedelta(days=-(i + 1)))).seconds / 60)
                             else:
                                 total_down_time = abs((row[1] - (temp_date + timedelta(
-                                    days=-(i + 1)))).days * 1440 + (row[1] - (temp_date + timedelta(days=-(i + 1)))).seconds / 60)
+                                    days=-(i + 1)))).days * 1440 + (
+                                                      row[1] - (temp_date + timedelta(days=-(i + 1)))).seconds / 60)
                     date_days.append(
                         (temp_date + timedelta(days=-(i))).strftime("%d %b %Y"))
                     total = total_up_time + total_down_time
@@ -2651,7 +2800,7 @@ def odu100_device_report(h):
                     else:
                         up_state.append(0)
                         down_state.append(0)
-        # close the database and cursor connection.
+            # close the database and cursor connection.
         cursor.close()
         db.close()
         date_days.reverse()
@@ -2664,8 +2813,9 @@ def odu100_device_report(h):
         t.setStyle(
             TableStyle(
                 [(
-                    'BACKGROUND', (1, 0), (1, 0), (0.35, 0.35, 0.35)), ('FONT', (0,
-                   0), (1, 0), 'Helvetica', 11), ('TEXTCOLOR', (1, 0), (2, 0), colors.white)]))
+                     'BACKGROUND', (1, 0), (1, 0), (0.35, 0.35, 0.35)), ('FONT', (0,
+                                                                                  0), (1, 0), 'Helvetica', 11),
+                 ('TEXTCOLOR', (1, 0), (2, 0), colors.white)]))
         odu100_report.append(t)
 
         table_output = outage_graph_generation(date_days, down_state, up_state)
@@ -2675,7 +2825,7 @@ def odu100_device_report(h):
                                ('FONT', (0, 1), (2, int(len(
                                    table_output)) - 1), 'Helvetica', 9),
                                ('ALIGN', (1,
-                                0), (2, int(len(table_output)) - 1), 'CENTER'),
+                                          0), (2, int(len(table_output)) - 1), 'CENTER'),
                                ('BACKGROUND', (0, 0), (2, 0), (0.9, 0.9, 0.9)),
                                ('LINEABOVE',
                                 (0, 0), (2, 0), 1.21, (0.35, 0.35, 0.35)),
@@ -2686,12 +2836,12 @@ def odu100_device_report(h):
                 t.setStyle(
                     TableStyle(
                         [('BACKGROUND', (1, i), (2, i), (0.95, 0.95, 0.95)),
-                                       ('BACKGROUND', (0, i -
-                                        1), (0, i - 1), (0.98, 0.98, 0.98)),
-                                       ]))
+                         ('BACKGROUND', (0, i -
+                                            1), (0, i - 1), (0.98, 0.98, 0.98)),
+                        ]))
             else:
                 t.setStyle(TableStyle([('BACKGROUND', (1, i), (2, i), (0.9, 0.9, 0.9))
-                                       ]))
+                ]))
 
         t.setStyle(
             TableStyle([('BACKGROUND', (0, 0), (0, 0), (0.9, 0.9, 0.9))]))
@@ -2707,8 +2857,9 @@ def odu100_device_report(h):
         t.setStyle(
             TableStyle(
                 [(
-                    'BACKGROUND', (0, 0), (0, 0), (0.9, 0.9, 0.9)), ('GRID', (0, 0),
-                   (5, 0), 0.31, (0.75, 0.75, 0.75)), ('ALIGN', (0, 0), (0, 0), 'RIGHT')]))
+                     'BACKGROUND', (0, 0), (0, 0), (0.9, 0.9, 0.9)), ('GRID', (0, 0),
+                                                                      (5, 0), 0.31, (0.75, 0.75, 0.75)),
+                 ('ALIGN', (0, 0), (0, 0), 'RIGHT')]))
         odu100_report.append(t)
         #######################################################################
 
@@ -2730,6 +2881,15 @@ def odu100_device_report(h):
 
 
 def nw_table_list_creation(result, table_name, first_header, second_header, time):
+    """
+
+    @param result:
+    @param table_name:
+    @param first_header:
+    @param second_header:
+    @param time:
+    @return:
+    """
     output = []
     first_h = [time, first_header, second_header]
     output.append(first_h)
@@ -2745,30 +2905,57 @@ def nw_table_list_creation(result, table_name, first_header, second_header, time
 
 
 def sync_table_list_creation(result, table_name, first_header, time):
+    """
+
+    @param result:
+    @param table_name:
+    @param first_header:
+    @param time:
+    @return:
+    """
     output = []
     first_h = [time, first_header]
     output.append(first_h)
     for i in range(0, len(result) - 1):
         temp_list = []
         temp_list = [result[i][1].strftime('%d-%m-%Y %H:%M'), 0 if (
-            int(result[i][0]) - int(result[i + 1][0])) < 0 else (int(result[i][0]) - int(result[i + 1][0]))]
+                                                                       int(result[i][0]) - int(
+                                                                           result[i + 1][0])) < 0 else (
+        int(result[i][0]) - int(result[i + 1][0]))]
         output.append(temp_list)
     return output
 
 
 def table_list_creation(result, table_name, first_header, second_header, time):
+    """
+
+    @param result:
+    @param table_name:
+    @param first_header:
+    @param second_header:
+    @param time:
+    @return:
+    """
     output = []
     first_h = [time, first_header, second_header]
     output.append(first_h)
     for i in range(0, len(result) - 1):
         temp_list = []
         temp_list = [result[i][2].strftime('%d-%m-%Y %H:%M'), 0 if (int(
-            result[i][0]) - int(result[i + 1][0])) < 0 else (int(result[i][0]) - int(result[i + 1][0])), 0 if (int(result[i][1]) - int(result[i + 1][1])) < 0 else (int(result[i][1]) - int(result[i + 1][1]))]
+            result[i][0]) - int(result[i + 1][0])) < 0 else (int(result[i][0]) - int(result[i + 1][0])),
+                     0 if (int(result[i][1]) - int(result[i + 1][1])) < 0 else (
+                     int(result[i][1]) - int(result[i + 1][1]))]
         output.append(temp_list)
     return output
 
 
 def table_list_alarm(result, table_name):
+    """
+
+    @param result:
+    @param table_name:
+    @return:
+    """
     output = []
     result = sorted(result, key=itemgetter(6))
     first_h = ['Date', 'Normal', 'Informational', 'Minor', 'Major', 'Critical']
@@ -2782,6 +2969,12 @@ def table_list_alarm(result, table_name):
 
 
 def table_list_trap(result, table_name):
+    """
+
+    @param result:
+    @param table_name:
+    @return:
+    """
     length = 5
     output = []
     first_h = ['Severity', 'Event Id', 'Event State', 'Receive Date']
@@ -2798,6 +2991,13 @@ def table_list_trap(result, table_name):
 
 
 def device_information_function(result, table_name, slave):
+    """
+
+    @param result:
+    @param table_name:
+    @param slave:
+    @return:
+    """
     last_reboot_resion = {
         0: 'Power cycle', 1: 'Watchdog reset', 2: 'Normal', 3: 'Kernel crash reset',
         4: 'Radio count mismatch reset', 5: 'Unknown-Soft', 6: 'Unknown reset'}
@@ -2810,26 +3010,33 @@ def device_information_function(result, table_name, slave):
         'Last Reboot Reason', 'Channel', 'Operation state', 'Node Type', 'MAC Address', 'Last Reboot Time']
     output = []
     output.append([device_field[0], str('--' if result[0][0]
-                  == None or result[0][0] == "" else result[0][0])])
+                                                == None or result[0][0] == "" else result[0][0])])
     output.append([device_field[1], str(slave)])
     output.append([device_field[2], str('--' if result[0][2]
-                  == None or result[0][2] == "" else result[0][2])])
+                                                == None or result[0][2] == "" else result[0][2])])
     output.append([device_field[3], str('--' if result[0][3]
-                  == None or result[0][3] == "" else result[0][3])])
+                                                == None or result[0][3] == "" else result[0][3])])
     output.append([device_field[5], str('--' if result[0][4] == None or result[0][4]
-                  == "" else last_reboot_resion[result[0][4]])])
+                                                == "" else last_reboot_resion[result[0][4]])])
     output.append([device_field[6], str('--' if result[0][5]
-                  == None or result[0][5] == "" else channel[result[0][5]])])
+                                                == None or result[0][5] == "" else channel[result[0][5]])])
     output.append([device_field[7], str('--' if result[0][6] == None or result[0][6]
-                  == "" else operation_state[result[0][6]])])
+                                                == "" else operation_state[result[0][6]])])
     output.append([device_field[8], str('--' if result[0][7] == None or result[0][7]
-                  == "" else default_node_type[result[0][7]])])
+                                                == "" else default_node_type[result[0][7]])])
     output.append([device_field[9], str('--' if result[0][8]
-                  == None or result[0][8] == "" else result[0][8])])
+                                                == None or result[0][8] == "" else result[0][8])])
     return output
 
 
 def outage_graph_generation(date_time, down_state, up_state):
+    """
+
+    @param date_time:
+    @param down_state:
+    @param up_state:
+    @return:
+    """
     output = []
     output.append(['Date', 'up_state(%)', 'down_state(%)'])
     i = 0
@@ -2845,6 +3052,11 @@ def outage_graph_generation(date_time, down_state, up_state):
 
 
 def odu100_excel_report_genrating(h):
+    """
+
+    @param h:
+    @raise:
+    """
     global html
     html = h
     result1 = ''
@@ -2855,7 +3067,8 @@ def odu100_excel_report_genrating(h):
     odu_end_time = html.var('end_time')
     select_option = html.var('select_option')
     limitFlag = html.var("limitFlag")
-    if ip_address == '' or ip_address == None or ip_address == 'undefined' or str(ip_address) == 'None':    # if ip_address not received so excel not created
+    if ip_address == '' or ip_address == None or ip_address == 'undefined' or str(
+            ip_address) == 'None':    # if ip_address not received so excel not created
         raise SelfException(
             'This UBR devices not exists so excel report can not be generated.')  # Check msg
     try:
@@ -2871,14 +3084,12 @@ def odu100_excel_report_genrating(h):
 
         # calculating the total days between start and end date.
         total_days = ((end_time - start_time).days)
-        if int(select_option) == 1:
-            total_days = 1
-        elif int(select_option) == 2:
-            total_days = 2
-        elif int(select_option) == 3:
-            total_days = 3
-        elif int(select_option) == 4:
-            total_days = 7
+        if select_option:
+            if int(select_option) == 4:
+                total_days = 7
+            else:
+                total_days = int(select_option)
+
         # create the mysql connection
         db, cursor = mysql_connection()
         if db == 1:
@@ -2886,10 +3097,9 @@ def odu100_excel_report_genrating(h):
 
         # Import the modules for excel generating.
         import xlwt
-        from xlwt import Workbook, easyxf
 
         # create the excel file
-        xls_book = Workbook(encoding='ascii')
+        xls_book = xlwt.Workbook(encoding='ascii')
 
         # Excel reproting Style part
         style = xlwt.XFStyle()
@@ -2932,10 +3142,10 @@ def odu100_excel_report_genrating(h):
         device_name = ''
         if len(host_result) > 0:
             device_type = ('--' if host_result[0][0] == '' or host_result[
-                           0][0] == None else host_result[0][0])
+                0][0] == None else host_result[0][0])
             device_name = ('--' if host_result[0][1] == '' or host_result[
-                           0][1] == None else host_result[0][1])
-        # end the host information fucntion
+                0][1] == None else host_result[0][1])
+            # end the host information fucntion
 
         # Device Inforamtion Excel Creation start here.
         sql = "SELECT host_id FROM hosts WHERE ip_address='%s'" % ip_address
@@ -2961,12 +3171,12 @@ def odu100_excel_report_genrating(h):
             slave = cursor.fetchall()
             if len(slave) > 1:
                 no_of_slave = '--' if slave[0][
-                    0] == None or slave[0][0] == '' else slave[0][0]
+                                          0] == None or slave[0][0] == '' else slave[0][0]
             else:
                 no_of_slave = '--'
             table_output = device_information_function(
                 result1, 'ODU Device Information', no_of_slave)
-        #---- Query for get the last reboot time of particular device ------#
+            #---- Query for get the last reboot time of particular device ------#
         sql = "SELECT trap_receive_date from trap_alarms where trap_event_type = 'NODE_UP' and agent_id='%s' order by timestamp desc limit 1" % ip_address
 
         #----- store the last reboot time value in variable ----- #
@@ -2989,7 +3199,7 @@ def odu100_excel_report_genrating(h):
         heading_xf = xlwt.easyxf(
             'font: bold on; align: wrap on, vert centre, horiz center;pattern: pattern solid, fore_colour light_green;')
         headings = ['Element', 'Element Values']
-# heading=[table_output[0][1],table_output[0][2],table_output[0][3],table_output[0][4],table_output[0][5],table_output[0][6],table_output[0][7]]
+        # heading=[table_output[0][1],table_output[0][2],table_output[0][3],table_output[0][4],table_output[0][5],table_output[0][6],table_output[0][7]]
         xls_sheet.set_panes_frozen(
             True)  # frozen headings instead of split panes
         xls_sheet.set_horz_split_pos(
@@ -3026,7 +3236,9 @@ def odu100_excel_report_genrating(h):
         for i in range(0, len(crc_result) - 1):
             temp_list = []
             temp_list = [crc_result[i][2].strftime('%d-%m-%Y %H:%M'), 0 if (int(crc_result[i][0]) - int(
-                crc_result[i + 1][0])) < 0 else (int(crc_result[i][0]) - int(crc_result[i + 1][0])), 0 if (int(crc_result[i][1]) - int(crc_result[i + 1][1])) < 0 else (int(crc_result[i][1]) - int(crc_result[i + 1][1]))]
+                crc_result[i + 1][0])) < 0 else (int(crc_result[i][0]) - int(crc_result[i + 1][0])),
+                         0 if (int(crc_result[i][1]) - int(crc_result[i + 1][1])) < 0 else (
+                         int(crc_result[i][1]) - int(crc_result[i + 1][1]))]
             crc_list.append(temp_list)
 
         crc_list = sorted(crc_list, key=itemgetter(0))
@@ -3056,7 +3268,7 @@ def odu100_excel_report_genrating(h):
                 xls_sheet.write(i, j, str(crc_list[k][j]), style1)
                 xls_sheet.col(j).width = width
             i = i + 1
-        # CRC PHY Excel ending here.
+            # CRC PHY Excel ending here.
 
         # Sync Lost Excel Creation start here.
         if int(select_option) == 0:
@@ -3070,7 +3282,8 @@ def odu100_excel_report_genrating(h):
             sel_query += limit_data
 
         else:
-            sel_query = "select IFNULL((odu.syncLostCounter),0),odu.timestamp from  odu100_synchStatisticsTable as odu INNER JOIN hosts as h  on  odu.host_id = h.host_id  where h.ip_address='%s' AND date(odu.timestamp) <=current_date() AND date(odu.timestamp) >= current_date()-%s order by odu.timestamp desc" % (ip_address, total_days)
+            sel_query = "select IFNULL((odu.syncLostCounter),0),odu.timestamp from  odu100_synchStatisticsTable as odu INNER JOIN hosts as h  on  odu.host_id = h.host_id  where h.ip_address='%s' AND date(odu.timestamp) <=current_date() AND date(odu.timestamp) >= current_date()-%s order by odu.timestamp desc" % (
+            ip_address, total_days)
         cursor.execute(sel_query)
         sync_result = cursor.fetchall()
 
@@ -3108,7 +3321,7 @@ def odu100_excel_report_genrating(h):
                 xls_sheet.write(i, j, str(sync_list[k][j]), style1)
                 xls_sheet.col(j).width = width
             i = i + 1
-        # Sync List Excel ending here.
+            # Sync List Excel ending here.
 
         # Network bandwith Excel Creation start here.
         network_bandwidth = ['eth0', 'eth1']
@@ -3131,16 +3344,18 @@ def odu100_excel_report_genrating(h):
             for i in range(0, len(nw_result) - 1):
                 temp_list = []
                 temp_list = [nw_result[i][2].strftime('%d-%m-%Y %H:%M'), 0 if (int(nw_result[i][0]) - int(
-                    nw_result[i + 1][0])) < 0 else (int(nw_result[i][0]) - int(nw_result[i + 1][0])), 0 if (int(nw_result[i][1]) - int(nw_result[i + 1][1])) < 0 else (int(nw_result[i][1]) - int(nw_result[i + 1][1]))]
+                    nw_result[i + 1][0])) < 0 else (int(nw_result[i][0]) - int(nw_result[i + 1][0])),
+                             0 if (int(nw_result[i][1]) - int(nw_result[i + 1][1])) < 0 else (
+                             int(nw_result[i][1]) - int(nw_result[i + 1][1]))]
                 network_list.append(temp_list)
 
             network_list = sorted(network_list, key=itemgetter(0))
             xls_sheet = xls_book.add_sheet('network_bandwidth(%s)' % network_bandwidth[
-                                           index - 1], cell_overwrite_ok=True)
+                index - 1], cell_overwrite_ok=True)
             xls_sheet.row(0).height = 521
             xls_sheet.row(1).height = 421
             xls_sheet.write_merge(0, 0, 0, 2, "Network Bandwidth Information (%s)" %
-                                  network_bandwidth[index - 1], style)
+                                              network_bandwidth[index - 1], style)
             xls_sheet.write(1, 0, device_type, style)
             xls_sheet.write(1, 1, device_name, style)
             xls_sheet.write(1, 2, ip_address, style)
@@ -3163,7 +3378,7 @@ def odu100_excel_report_genrating(h):
                     xls_sheet.write(i, j, str(network_list[k][j]), style1)
                     xls_sheet.col(j).width = width
                 i = i + 1
-        # Network bandwith Excel ending here.
+            # Network bandwith Excel ending here.
 
         # Signal Strength Excel creating here.
         signal_flag = 1
@@ -3186,7 +3401,8 @@ def odu100_excel_report_genrating(h):
         signal_interface16 = []
         time_stamp_signal1 = []
 
-        sel_query = "SELECT default_node_type FROM get_odu16_ru_conf_table as def INNER JOIN hosts ON hosts.host_id=def.host_id WHERE hosts.ip_address='%s'" % (ip_address)
+        sel_query = "SELECT default_node_type FROM get_odu16_ru_conf_table as def INNER JOIN hosts ON hosts.host_id=def.host_id WHERE hosts.ip_address='%s'" % (
+        ip_address)
         cursor.execute(sel_query)
         status_result = cursor.fetchall()
         status = 0
@@ -3204,7 +3420,8 @@ def odu100_excel_report_genrating(h):
                 limit_data = ' limit 40'
             sel_query += limit_data
         else:
-            sel_query = "select odu.raScanIndex,(IFNULL((odu.signalStrength),0)),odu.timestamp from  odu100_raScanListTable as odu INNER JOIN hosts as h  on  odu.host_id = h.host_id  where h.ip_address='%s' AND date(odu.timestamp) <=current_date() AND date(odu.timestamp) >= current_date()-%s order by odu.timestamp desc" % (ip_address, total_days)
+            sel_query = "select odu.raScanIndex,(IFNULL((odu.signalStrength),0)),odu.timestamp from  odu100_raScanListTable as odu INNER JOIN hosts as h  on  odu.host_id = h.host_id  where h.ip_address='%s' AND date(odu.timestamp) <=current_date() AND date(odu.timestamp) >= current_date()-%s order by odu.timestamp desc" % (
+            ip_address, total_days)
         cursor.execute(sel_query)
         signal_strength = cursor.fetchall()
         count = 0
@@ -3261,7 +3478,7 @@ def odu100_excel_report_genrating(h):
                     time_stamp_signal1.append(str(
                         (signal_strength[k][2]).strftime('%d-%m-%Y %H:%M')))
                     default_list = [0, 0, 0, 0, 0, 0,
-                        0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+                                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         if len(signal_strength) > 0 and flag == 0:
             if signal_strength[0][1] == 1 or str(signal_strength[0][1]) == '1':
                 signal_interface1.append(0)
@@ -3284,7 +3501,7 @@ def odu100_excel_report_genrating(h):
                     str((signal_strength[0][2]).strftime('%d-%m-%Y %H:%M')))
             else:
                 default_list[int(signal_strength[0][0]) -
-                                 1] = int(signal_strength[0][1])
+                             1] = int(signal_strength[0][1])
                 signal_interface1.append(default_list[0])
                 signal_interface2.append(default_list[1])
                 signal_interface3.append(default_list[2])
@@ -3325,7 +3542,7 @@ def odu100_excel_report_genrating(h):
                     str((signal_strength[k][2]).strftime('%d-%m-%Y %H:%M')))
             else:
                 default_list[int(signal_strength[k][0]) -
-                                 1] = int(signal_strength[k][1])
+                             1] = int(signal_strength[k][1])
                 signal_interface1.append(default_list[0])
                 signal_interface2.append(default_list[1])
                 signal_interface3.append(default_list[2])
@@ -3348,8 +3565,10 @@ def odu100_excel_report_genrating(h):
         k = 0
         if status_name == 'Master':
             for time_field in time_stamp_signal1:
-                signal_list.append([str(time_field), str(signal_interface1[k]), str(signal_interface2[k]), str(signal_interface3[k]), str(signal_interface4[k]), str(signal_interface5[k]
-                                   ), str(signal_interface6[k]), str(signal_interface7[k]), str(signal_interface8[k])])
+                signal_list.append(
+                    [str(time_field), str(signal_interface1[k]), str(signal_interface2[k]), str(signal_interface3[k]),
+                     str(signal_interface4[k]), str(signal_interface5[k]
+                    ), str(signal_interface6[k]), str(signal_interface7[k]), str(signal_interface8[k])])
                 k = k + 1
             signal_list = sorted(signal_list, key=itemgetter(0))
             xls_sheet = xls_book.add_sheet(
@@ -3425,7 +3644,8 @@ def odu100_excel_report_genrating(h):
         critical = []
         time_stamp = []
 
-        sql = "SELECT count(ta.trap_event_id),date(ta.timestamp) ,ta.serevity FROM trap_alarms as ta  where  date(ta.timestamp)<=current_date() and  date(ta.timestamp)>current_date()-%s AND ta.agent_id='%s'  group by serevity,date(ta.timestamp) order by  timestamp desc" % (total_days, ip_address)
+        sql = "SELECT count(ta.trap_event_id),date(ta.timestamp) ,ta.serevity FROM trap_alarms as ta  where  date(ta.timestamp)<=current_date() and  date(ta.timestamp)>current_date()-%s AND ta.agent_id='%s'  group by serevity,date(ta.timestamp) order by  timestamp desc" % (
+        total_days, ip_address)
         cursor.execute(sql)
         trap_result = cursor.fetchall()
         if trap_result is not None:
@@ -3470,7 +3690,7 @@ def odu100_excel_report_genrating(h):
         xls_sheet.row(0).height = 521
         xls_sheet.row(1).height = 421
         xls_sheet.write_merge(0, 0, 0, 5, " %s Days Event Information" %
-                              'Current' if total_days == 0 else total_days, style)
+                                          'Current' if total_days == 0 else total_days, style)
         xls_sheet.write_merge(1, 1, 0, 5, str(device_type) + '       ' + str(
             device_name) + '         ' + str(ip_address), style)
         xls_sheet.write_merge(2, 2, 0, 5, "")
@@ -3478,7 +3698,7 @@ def odu100_excel_report_genrating(h):
         heading_xf = xlwt.easyxf(
             'font: bold on; align: wrap on, vert centre, horiz center;pattern: pattern solid, fore_colour light_green;')
         headings = ['Informational', 'Normal', 'Minor', 'Major',
-            'Critical', 'Time']
+                    'Critical', 'Time']
         xls_sheet.set_panes_frozen(
             True)  # frozen headings instead of split panes
         xls_sheet.set_horz_split_pos(
@@ -3499,10 +3719,10 @@ def odu100_excel_report_genrating(h):
         # event Information excel start here.
         trap_days = ((end_time - start_time).days)
         if int(select_option) == 0:
-# sql="SELECT
-# ta.serevity,ta.trap_event_id,ta.trap_event_type,ta.trap_receive_date
-# FROM trap_alarm_current as ta WHERE ta.agent_id='%s' AND
-# date(ta.timestamp)=current_date()  order by ta.timestamp "%(ip_address)
+            # sql="SELECT
+            # ta.serevity,ta.trap_event_id,ta.trap_event_type,ta.trap_receive_date
+            # FROM trap_alarm_current as ta WHERE ta.agent_id='%s' AND
+            # date(ta.timestamp)=current_date()  order by ta.timestamp "%(ip_address)
             sql = "SELECT ta.serevity,ta.trap_event_id,ta.trap_event_type,ta.trap_receive_date FROM trap_alarm_current as ta WHERE ta.agent_id='%s' AND ta.timestamp>='%s' AND ta.timestamp<='%s' order by ta.timestamp " % (
                 ip_address, start_time, end_time)
 
@@ -3512,14 +3732,14 @@ def odu100_excel_report_genrating(h):
         cursor.execute(sql)
         trap_result = cursor.fetchall()
         severity_list = ['Informational', 'Normal',
-            'Informational', 'Minor', 'Major', 'Critical']
+                         'Informational', 'Minor', 'Major', 'Critical']
 
         xls_sheet = xls_book.add_sheet(
             'alarm_information', cell_overwrite_ok=True)
         xls_sheet.row(0).height = 521
         xls_sheet.row(1).height = 421
         xls_sheet.write_merge(0, 0, 0, 3, "%s Days Alarm Information" %
-                              'Current' if trap_days == 0 else trap_days, style)
+                                          'Current' if trap_days == 0 else trap_days, style)
         xls_sheet.write_merge(1, 1, 0, 3, str(device_type) + '       ' + str(
             device_name) + '         ' + str(ip_address), style)
         xls_sheet.write_merge(2, 2, 0, 3, "")
@@ -3560,14 +3780,14 @@ def odu100_excel_report_genrating(h):
         cursor.execute(sql)
         trap_result = cursor.fetchall()
         severity_list = ['Informational', 'Normal',
-            'Informational', 'Minor', 'Major', 'Critical']
+                         'Informational', 'Minor', 'Major', 'Critical']
 
         xls_sheet = xls_book.add_sheet(
             'event_information', cell_overwrite_ok=True)
         xls_sheet.row(0).height = 521
         xls_sheet.row(1).height = 421
         xls_sheet.write_merge(0, 0, 0, 3, "%s Days Event Information" %
-                              'Current' if trap_days == 0 else trap_days, style)
+                                          'Current' if trap_days == 0 else trap_days, style)
         xls_sheet.write_merge(1, 1, 0, 3, str(device_type) + '       ' + str(
             device_name) + '         ' + str(ip_address), style)
         xls_sheet.write_merge(2, 2, 0, 3, "")
@@ -3601,9 +3821,9 @@ def odu100_excel_report_genrating(h):
         # Outage excel start here.
         date_days = []  # this list store the days information with date.
         up_state = []
-            # Its store the total up state of each day in percentage.
+        # Its store the total up state of each day in percentage.
         down_state = []
-            # Its store the total down state of each day in percentage.
+        # Its store the total down state of each day in percentage.
         output_dict = {}  # its store the actual output for display in graph.\
         last_status = ''
         down_flag = 0
@@ -3633,7 +3853,8 @@ def odu100_excel_report_genrating(h):
         sel_sql = "SELECT  nagios_hosts.address,nagios_statehistory.state_time,nagios_statehistory.state\
 		    FROM nagios_hosts INNER JOIN nagios_statehistory ON nagios_statehistory.object_id = nagios_hosts.host_object_id\
 		   where nagios_statehistory.state_time between '%s'  and '%s' and nagios_hosts.address='%s'\
-		    order by nagios_statehistory.state_time  desc limit 1" % (last_status_current_time, last_status_end_time, ip_address)
+		    order by nagios_statehistory.state_time  desc limit 1" % (
+        last_status_current_time, last_status_end_time, ip_address)
         # Execute the query.
         cursor.execute(sel_sql)
         last_state = cursor.fetchall()
@@ -3660,25 +3881,30 @@ def odu100_excel_report_genrating(h):
                                         if temp_time is not '':
                                             if result[j - 1][2] == 0 or result[j - 1][2] == "0":
                                                 total_up_time += abs((
-                                                    row[1] - temp_time).days * 1440 + (row[1] - temp_time).seconds / 60)
+                                                                         row[1] - temp_time).days * 1440 + (
+                                                                     row[1] - temp_time).seconds / 60)
                                                 temp_up_time = row[1]
                                             else:
                                                 total_down_time += abs(
-                                                    (row[1] - temp_time).days * 1440 + (row[1] - temp_time).seconds / 60)
+                                                    (row[1] - temp_time).days * 1440 + (
+                                                    row[1] - temp_time).seconds / 60)
                                                 temp_down_time = row[1]
                                         up_flag = 1
                                     elif last_status is not '' and up_flag == 0:
                                         up_flag = 1
                                         if last_status == 0:
                                             total_up_time = abs((row[1] - (temp_date + timedelta(
-                                                days=-(i + 1)))).days * 1440 + (row[1] - (temp_date + timedelta(days=-(i + 1)))).seconds / 60)
+                                                days=-(i + 1)))).days * 1440 + (row[1] - (
+                                            temp_date + timedelta(days=-(i + 1)))).seconds / 60)
                                         else:
                                             total_down_time = abs((row[1] - (temp_date + timedelta(
-                                                days=-(i + 1)))).days * 1440 + (row[1] - (temp_date + timedelta(days=-(i + 1)))).seconds / 60)
+                                                days=-(i + 1)))).days * 1440 + (row[1] - (
+                                            temp_date + timedelta(days=-(i + 1)))).seconds / 60)
                                 else:
                                     if result[j - 1][2] == 0 or result[j - 1][2] == "0":
                                         total_up_time += abs((
-                                            row[1] - temp_time).days * 1440 + (row[1] - temp_time).seconds / 60)
+                                                                 row[1] - temp_time).days * 1440 + (
+                                                             row[1] - temp_time).seconds / 60)
                                         temp_up_time = row[1]
                                     else:
                                         total_down_time += abs((row[1] - temp_time).days * 1440 + (
@@ -3691,26 +3917,31 @@ def odu100_excel_report_genrating(h):
                                         if temp_time is not '':
                                             if result[j - 1][2] == 0 or result[j - 1][2] == "0":
                                                 total_up_time += abs((
-                                                    row[1] - temp_time).days * 1440 + (row[1] - temp_time).seconds / 60)
+                                                                         row[1] - temp_time).days * 1440 + (
+                                                                     row[1] - temp_time).seconds / 60)
                                                 temp_up_time = row[1]
                                             else:
                                                 total_down_time += abs(
-                                                    (row[1] - temp_time).days * 1440 + (row[1] - temp_time).seconds / 60)
+                                                    (row[1] - temp_time).days * 1440 + (
+                                                    row[1] - temp_time).seconds / 60)
                                                 temp_down_time = row[1]
                                         down_flag = 1
                                     elif last_status is not '' and down_flag == 0:
                                         down_flag = 1
                                         if last_status == 0:
                                             total_up_time = abs((row[1] - (temp_date + timedelta(
-                                                days=-(i + 1)))).days * 1440 + (row[1] - (temp_date + timedelta(days=-(i + 1)))).seconds / 60)
+                                                days=-(i + 1)))).days * 1440 + (row[1] - (
+                                            temp_date + timedelta(days=-(i + 1)))).seconds / 60)
                                         else:
                                             total_down_time = abs((row[1] - (temp_date + timedelta(
-                                                days=-(i + 1)))).days * 1440 + (row[1] - (temp_date + timedelta(days=-(i + 1)))).seconds / 60)
+                                                days=-(i + 1)))).days * 1440 + (row[1] - (
+                                            temp_date + timedelta(days=-(i + 1)))).seconds / 60)
                                 else:
 
                                     if result[j - 1][2] == 0 or result[j - 1][2] == "0":
                                         total_up_time += abs((
-                                            row[1] - temp_time).days * 1440 + (row[1] - temp_time).seconds / 60)
+                                                                 row[1] - temp_time).days * 1440 + (
+                                                             row[1] - temp_time).seconds / 60)
                                         temp_up_time = row[1]
                                     else:
                                         total_down_time += abs((row[1] - temp_time).days * 1440 + (
@@ -3723,10 +3954,12 @@ def odu100_excel_report_genrating(h):
                     if flag == 1:
                         if result[j - 1][2] == 0:
                             total_up_time = abs((result[j - 1][1] - (temp_date + timedelta(days=-i))).days *
-                                                1440 + (result[j - 1][1] - (temp_date + timedelta(days=-i))).seconds / 60)
+                                                1440 + (
+                            result[j - 1][1] - (temp_date + timedelta(days=-i))).seconds / 60)
                         else:
                             total_down_time = abs((result[j - 1][1] - (
-                                temp_date + timedelta(days=-i))).days * 1440 + (result[j - 1][1] - (temp_date + timedelta(days=-i))).seconds / 60)
+                                temp_date + timedelta(days=-i))).days * 1440 + (
+                                                  result[j - 1][1] - (temp_date + timedelta(days=-i))).seconds / 60)
                     date_days.append(
                         (temp_date + timedelta(days=-(i))).strftime("%d %b %Y"))
                     total = total_up_time + total_down_time
@@ -3754,10 +3987,12 @@ def odu100_excel_report_genrating(h):
                             flag = 1
                             if row[2] == 0:
                                 total_up_time = abs((row[1] - (temp_date + timedelta(
-                                    days=-(i + 1)))).days * 1440 + (row[1] - (temp_date + timedelta(days=-(i + 1)))).seconds / 60)
+                                    days=-(i + 1)))).days * 1440 + (
+                                                    row[1] - (temp_date + timedelta(days=-(i + 1)))).seconds / 60)
                             else:
                                 total_down_time = abs((row[1] - (temp_date + timedelta(
-                                    days=-(i + 1)))).days * 1440 + (row[1] - (temp_date + timedelta(days=-(i + 1)))).seconds / 60)
+                                    days=-(i + 1)))).days * 1440 + (
+                                                      row[1] - (temp_date + timedelta(days=-(i + 1)))).seconds / 60)
                     date_days.append(
                         (temp_date + timedelta(days=-(i))).strftime("%d %b %Y"))
                     total = total_up_time + total_down_time
@@ -3769,7 +4004,7 @@ def odu100_excel_report_genrating(h):
                     else:
                         up_state.append(0)
                         down_state.append(0)
-        # close the database and cursor connection.
+            # close the database and cursor connection.
         # reverse the data
         outage_list = []
         k = 0
@@ -3783,7 +4018,7 @@ def odu100_excel_report_genrating(h):
         xls_sheet.row(0).height = 521
         xls_sheet.row(1).height = 421
         xls_sheet.write_merge(0, 0, 0, 2, "%s Days Outage Information" %
-                              'Current' if total_days == 0 else total_days, style)
+                                          'Current' if total_days == 0 else total_days, style)
         xls_sheet.write_merge(1, 1, 0, 2, str(device_type) + '       ' + str(
             device_name) + '         ' + str(ip_address), style)
         xls_sheet.write_merge(2, 2, 0, 2, "")
@@ -3805,13 +4040,13 @@ def odu100_excel_report_genrating(h):
                 xls_sheet.write(i, j, str(outage_list[k][j]), style1)
                 xls_sheet.col(j).width = width
             i = i + 1
-        # Outage excel end here.
+            # Outage excel end here.
 
         # close the database connection and cursor connection
         cursor.close()
         db.close()
 
-#		if len(crc_result)>0:
+        # if len(crc_result)>0:
         xls_book.save('/omd/sites/%s/share/check_mk/web/htdocs/download/ubre_specific_report.xls' %
                       nms_instance)
         output_dict = {"success": 0, 'output': 'file succesfully downloaded'}
@@ -3835,28 +4070,12 @@ def odu100_excel_report_genrating(h):
 
 
 ############################################  ODU Device Type dashboard cr
-
-def page_tip_ubre_monitor_dashboard(h):
-    global html
-    html = h
-    html_view = ""\
-        "<div id=\"help_container\">"\
-        "<h1>UBR Dashboard</h1>"\
-        "<div>This <strong>Dashboard</strong> show all device silver statistics by graph.</div>"\
-        "<br/>"\
-        "<div>On this page you can see network bandwidth graph,signal strength graph,sync lost graph,outage graph , Crc/Phy Error graph ,Latest trap and latest alarm etc.</div>"\
-        "<br/>"\
-        "<div><input class=\"yo-button yo-small\" type=\"button\" style=\"width: 30px;\" value=\"Advaced Graph\" name=\"odu_graph_show\"> This button open a window on self click event and show more information according to data and time.</div>"\
-        "<div><input class=\"yo-button yo-small\" type=\"button\" style=\"width: 30px;\" value=\"Search\" name=\"odu_graph_show\"> Search the devices.</div>"\
-        "<div><button id=\"odu_report_btn\" class=\"yo-button\" style=\"margin-top: 5px;\" type=\"submit\"><span class=\"save\">Report</span></button>Download the PDF report.</div>"\
-        "<br/>"\
-        "<div><button id=\"odu_report_btn\" class=\"yo-button\" style=\"margin-top: 5px;\" type=\"submit\"><span class=\"report\">Report</span></button>Download the Excel report.</div>"\
-        "<br/>\
-	<br/>\
-        <div><strong>Note:</strong>This page show real time information of ubr device and it page refresh on 5 min time interval.\
-	Search button search device by MAC address and IP address and show information by graph.\
-	Graph button display the graph according to time interval show,this time interval also change by user.\
-	report button provide PDF of all display information by graph \
-        </div>"\
-        "</div>"
-    html.write(str(html_view))
+#
+# def page_tip_ubre_monitor_dashboard(h):
+#     global html
+#     html = h
+#     import defaults
+#     f = open(defaults.web_dir + "/htdocs/locale/page_tip_ubre_monitor_dashboard.html", "r")
+#     html_view = f.read()
+#     f.close()
+#     html.write(str(html_view))

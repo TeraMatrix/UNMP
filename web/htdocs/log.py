@@ -29,6 +29,7 @@ class Log(object):
     def manage_events(group="", user_details=[]):
         from datetime import datetime, timedelta
         import calendar
+
         now = datetime.now()
         month_str = ""
         month_var = now.month
@@ -181,8 +182,8 @@ class Log(object):
         try:
             alarm_dic = {"1": "Informational", "0": "Normal",
                          "2": "Normal", "3": "Minor", "4": "Major", "5": "Crititcal"}
-# device_type_dict={'odu16':'UBR','odu100':'UBRe','idu4':'IDU','ap25':'Access
-# Point'}
+            # device_type_dict={'odu16':'UBR','odu100':'UBRe','idu4':'IDU','ap25':'Access
+            # Point'}
             if device_type_dict == {}:
                 device_type_dict = {'odu16': 'RM18', 'odu100': 'RM',
                                     'idu4': 'IDU', 'ap25': 'Access Point', 'ccu': 'CCU'}
@@ -222,20 +223,10 @@ class Log(object):
         except Exception, e:
             return str(e)
 
-    @staticmethod
-    def view_page_tip_log_user():
-        html_view = ""\
-            "<div id=\"help_container\">"\
-            "<h1>USER LOGS</h1>"\
-            "<div>This page displays user logs activities done by users </div>"\
-            "<br/>"\
-            "<div>On this page user can  view the activities performed by different users </div>"\
-            "<br/>"\
-            "<div>The top panel provided advanced searching options categorized by months, log type or users for Superadmin/Admin role. </div>"\
-            "<br/>"\
-            "<div>User can view and generate CSV or Excel reports of logs. </div>"\
-            "<br/>"\
-            "<div>Superadmin/Admins can view the user trail of different users. </div>"\
-            "<br/>"\
-            "</div>"
-        return html_view
+            # @staticmethod
+            # def view_page_tip_log_user():
+            #     import defaults
+            #     f = open(defaults.web_dir + "/htdocs/locale/view_page_tip_log_user.html", "r")
+            #     html_view = f.read()
+            #     f.close()
+            #     return str(html_view)

@@ -1,28 +1,29 @@
 #!/usr/bin/python2.6
 
-import config
-import htmllib
-import pprint
-import sidebar
-import views
-import time
-import defaults
 import os
-import cgi
-import xml.dom.minidom
 import subprocess
+
 import MySQLdb
-from lib import *
+import xml.dom.minidom
+
 from ap_service import *
+import config
+from lib import *
+
+
 
 ############################################ Network Overview ############
 
 
 def network_overview(h):
+    """
+
+    @param h:
+    """
     global hrml
     html = h
     css_list = ["css/style.css"]
-    js_list = ["js/overview.js"]
+    js_list = ["js/unmp/main/overview.js"]
     html.new_header("Host Inventory", "", "", css_list, js_list)
     html.write("<div class=\"tab-yo\">")
     html.write("<div class=\"tab-head\">")
@@ -102,6 +103,12 @@ def network_overview(h):
 
 
 def list_search(list_, value):
+    """
+
+    @param list_:
+    @param value:
+    @return:
+    """
     i = -1
     try:
         i = list_.index(value)
@@ -111,6 +118,10 @@ def list_search(list_, value):
 
 
 def discoveredHostDetailsForAll(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     site = __file__.split("/")[3]
@@ -142,14 +153,17 @@ def discoveredHostDetailsForAll(h):
             checkboxState = " disabled=\"disabled\" "
 
     discoveredHostsString = "<div><table width=\"60%\" class=\"host-table\"><tbody><tr><th align=\"left\"><input type=\"checkbox\" id=\"allChecked\" name=\"allChecked\" value=\"all\"" + checkboxState + \
-        "/></th><th align=\"left\">Host Name</th><th align=\"left\">Host Alias</th><th align=\"left\">Host Address</th><th align=\"left\">Device Type</th></tr>"
+                            "/></th><th align=\"left\">Host Name</th><th align=\"left\">Host Alias</th><th align=\"left\">Host Address</th><th align=\"left\">Device Type</th></tr>"
     discoveredHosts = dom_sdm.getElementsByTagName("host")
     i = 0
     for host in discoveredHosts:
         if list_search(host_list, host.getAttribute("address")) == -1:
             i += 1
-            discoveredHostsString += "<tr><td><input type=\"checkbox\" class=\"sdm\" id=\"host" + str(i) + "\" name=\"host\" value=\"" + host.getAttribute(
-                "name") + "\" " + checkboxState + "/></td><td>" + host.getAttribute("name") + "</td><td>" + host.getAttribute("alias") + "</td><td>" + host.getAttribute("address") + "</td><td>" + deviceTypeOption(host.getAttribute("type"), i) + "</td></tr>"
+            discoveredHostsString += "<tr><td><input type=\"checkbox\" class=\"sdm\" id=\"host" + str(
+                i) + "\" name=\"host\" value=\"" + host.getAttribute(
+                "name") + "\" " + checkboxState + "/></td><td>" + host.getAttribute(
+                "name") + "</td><td>" + host.getAttribute("alias") + "</td><td>" + host.getAttribute(
+                "address") + "</td><td>" + deviceTypeOption(host.getAttribute("type"), i) + "</td></tr>"
             host_list.append(host.getAttribute("address"))
         else:
             dom_sdm.getElementsByTagName(
@@ -163,8 +177,11 @@ def discoveredHostDetailsForAll(h):
     for host in discoveredHosts:
         if list_search(host_list, host.getAttribute("address")) == -1:
             i += 1
-            discoveredHostsString += "<tr><td><input type=\"checkbox\" class=\"snmp\" id=\"host" + str(i) + "\" name=\"host\" value=\"" + host.getAttribute(
-                "name") + "\" " + checkboxState + "/></td><td>" + host.getAttribute("name") + "</td><td>" + host.getAttribute("alias") + "</td><td>" + host.getAttribute("address") + "</td><td>" + deviceTypeOption(host.getAttribute("type"), i) + "</td></tr>"
+            discoveredHostsString += "<tr><td><input type=\"checkbox\" class=\"snmp\" id=\"host" + str(
+                i) + "\" name=\"host\" value=\"" + host.getAttribute(
+                "name") + "\" " + checkboxState + "/></td><td>" + host.getAttribute(
+                "name") + "</td><td>" + host.getAttribute("alias") + "</td><td>" + host.getAttribute(
+                "address") + "</td><td>" + deviceTypeOption(host.getAttribute("type"), i) + "</td></tr>"
             host_list.append(host.getAttribute("address"))
         else:
             dom_snmp.getElementsByTagName(
@@ -178,8 +195,11 @@ def discoveredHostDetailsForAll(h):
     for host in discoveredHosts:
         if list_search(host_list, host.getAttribute("address")) == -1:
             i += 1
-            discoveredHostsString += "<tr><td><input type=\"checkbox\" class=\"upnp\" id=\"host" + str(i) + "\" name=\"host\" value=\"" + host.getAttribute(
-                "name") + "\" " + checkboxState + "/></td><td>" + host.getAttribute("name") + "</td><td>" + host.getAttribute("alias") + "</td><td>" + host.getAttribute("address") + "</td><td>" + deviceTypeOption(host.getAttribute("type"), i) + "</td></tr>"
+            discoveredHostsString += "<tr><td><input type=\"checkbox\" class=\"upnp\" id=\"host" + str(
+                i) + "\" name=\"host\" value=\"" + host.getAttribute(
+                "name") + "\" " + checkboxState + "/></td><td>" + host.getAttribute(
+                "name") + "</td><td>" + host.getAttribute("alias") + "</td><td>" + host.getAttribute(
+                "address") + "</td><td>" + deviceTypeOption(host.getAttribute("type"), i) + "</td></tr>"
             host_list.append(host.getAttribute("address"))
         else:
             dom_upnp.getElementsByTagName(
@@ -193,8 +213,11 @@ def discoveredHostDetailsForAll(h):
     for host in discoveredHosts:
         if list_search(host_list, host.getAttribute("address")) == -1:
             i += 1
-            discoveredHostsString += "<tr><td><input type=\"checkbox\" class=\"ping\" id=\"host" + str(i) + "\" name=\"host\" value=\"" + host.getAttribute(
-                "name") + "\" " + checkboxState + "/></td><td>" + host.getAttribute("name") + "</td><td>" + host.getAttribute("alias") + "</td><td>" + host.getAttribute("address") + "</td><td>" + deviceTypeOption(host.getAttribute("type"), i) + "</td></tr>"
+            discoveredHostsString += "<tr><td><input type=\"checkbox\" class=\"ping\" id=\"host" + str(
+                i) + "\" name=\"host\" value=\"" + host.getAttribute(
+                "name") + "\" " + checkboxState + "/></td><td>" + host.getAttribute(
+                "name") + "</td><td>" + host.getAttribute("alias") + "</td><td>" + host.getAttribute(
+                "address") + "</td><td>" + deviceTypeOption(host.getAttribute("type"), i) + "</td></tr>"
             host_list.append(host.getAttribute("address"))
         else:
             dom_ping.getElementsByTagName(
@@ -209,11 +232,15 @@ def discoveredHostDetailsForAll(h):
     else:
         discoveredHostsString += "<tr><td colspan=\"5\" align=\"left\" style=\"padding:5px;\"><input type=\"button\" onclick=\"allSubmit();\" id=\"allSubmit\" name=\"allSubmit\" value=\"Submit\"" + checkboxState + "/></td></tr>"
     discoveredHostsString += "<input type=\"hidden\" name=\"totalHost\" value=\"" + \
-        str(i) + "\"/></tbody></table></div>"
+                             str(i) + "\"/></tbody></table></div>"
     html.write(discoveredHostsString)
 
 
 def dicoveredHostDetailsForPing(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     site = __file__.split("/")[3]
@@ -242,6 +269,10 @@ def dicoveredHostDetailsForPing(h):
 
 
 def dicoveredHostDetailsForSnmp(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     site = __file__.split("/")[3]
@@ -270,6 +301,10 @@ def dicoveredHostDetailsForSnmp(h):
 
 
 def dicoveredHostDetailsForUPnP(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     site = __file__.split("/")[3]
@@ -298,6 +333,10 @@ def dicoveredHostDetailsForUPnP(h):
 
 
 def dicoveredHostDetailsForSDMC(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     site = __file__.split("/")[3]
@@ -324,6 +363,10 @@ def dicoveredHostDetailsForSDMC(h):
 
 
 def discoveryDetailsForPing(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     site = __file__.split("/")[3]
@@ -352,9 +395,9 @@ def discoveryDetailsForPing(h):
         discoveryDetailString += "<tr><td>End IP Range <td/><td>" + dis.getAttribute(
             'ip') + "." + dis.getAttribute('end') + "</td></tr>"
         discoveryDetailString += "<tr><td>Timeout<td/><td>" + \
-            dis.getAttribute('timeout') + " sec.</td></tr>"
+                                 dis.getAttribute('timeout') + " sec.</td></tr>"
         discoveryDetailString += "<tr><td>Hostgroups<td/><td>" + \
-            dis.getAttribute('hostgroup') + "</td></tr>"
+                                 dis.getAttribute('hostgroup') + "</td></tr>"
         if int(dis.getAttribute('service')) == 1:
             discoveryDetailString += "<tr><td>Service<td/><td>Create service using port scanning</td></tr>"
         elif int(dis.getAttribute('service')) == 2:
@@ -362,8 +405,8 @@ def discoveryDetailsForPing(h):
         else:
             discoveryDetailString += "<tr><td>Service<td/><td>Do not create service</td></tr>"
         discoveryDetailString += "<tr><td>User <span style=\"font-size:9px;\">(who set the details)</span><td/><td>" + \
-            dis.getAttribute(
-                'username') + "</td></tr>"
+                                 dis.getAttribute(
+                                     'username') + "</td></tr>"
         if int(dis.getAttribute('active')) == 1:
             discoveryDetailString += "<tr><td>Status<td/><td>Active</td></tr>"
         else:
@@ -377,6 +420,10 @@ def discoveryDetailsForPing(h):
 
 
 def discoveryDetailsForSnmp(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     site = __file__.split("/")[3]
@@ -405,15 +452,15 @@ def discoveryDetailsForSnmp(h):
         discoveryDetailString += "<tr><td>End IP Range <td/><td>" + dis.getAttribute(
             'ip') + "." + dis.getAttribute('end') + "</td></tr>"
         discoveryDetailString += "<tr><td>Community<td/><td>" + \
-            dis.getAttribute('community') + "</td></tr>"
+                                 dis.getAttribute('community') + "</td></tr>"
         discoveryDetailString += "<tr><td>Port<td/><td>" + \
-            dis.getAttribute('port') + "</td></tr>"
+                                 dis.getAttribute('port') + "</td></tr>"
         discoveryDetailString += "<tr><td>Version<td/><td>" + \
-            dis.getAttribute('version') + "</td></tr>"
+                                 dis.getAttribute('version') + "</td></tr>"
         discoveryDetailString += "<tr><td>Timeout<td/><td>" + \
-            dis.getAttribute('timeout') + " sec.</td></tr>"
+                                 dis.getAttribute('timeout') + " sec.</td></tr>"
         discoveryDetailString += "<tr><td>Hostgroups<td/><td>" + \
-            dis.getAttribute('hostgroup') + "</td></tr>"
+                                 dis.getAttribute('hostgroup') + "</td></tr>"
         if int(dis.getAttribute('service')) == 1:
             discoveryDetailString += "<tr><td>Service<td/><td>Create service using port scanning</td></tr>"
         elif int(dis.getAttribute('service')) == 2:
@@ -421,8 +468,8 @@ def discoveryDetailsForSnmp(h):
         else:
             discoveryDetailString += "<tr><td>Service<td/><td>Do not create service</td></tr>"
         discoveryDetailString += "<tr><td>User <span style=\"font-size:9px;\">(who set the details)</span><td/><td>" + \
-            dis.getAttribute(
-                'username') + "</td></tr>"
+                                 dis.getAttribute(
+                                     'username') + "</td></tr>"
         if int(dis.getAttribute('active')) == 1:
             discoveryDetailString += "<tr><td>Status<td/><td>Active</td></tr>"
         else:
@@ -436,6 +483,10 @@ def discoveryDetailsForSnmp(h):
 
 
 def discoveryDetailsForUPnP(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     site = __file__.split("/")[3]
@@ -460,9 +511,9 @@ def discoveryDetailsForUPnP(h):
             else:
                 discoveryString += "<div class=\"msg-head\"><span>Discovery 100% done</span></div><input type=\"hidden\" id=\"upnpStatus\" name=\"upnpStatus\" value=\"100\"/>"
         discoveryDetailString += "<tr><td>Timeout<td/><td>" + \
-            dis.getAttribute('timeout') + " sec.</td></tr>"
+                                 dis.getAttribute('timeout') + " sec.</td></tr>"
         discoveryDetailString += "<tr><td>Hostgroups<td/><td>" + \
-            dis.getAttribute('hostgroup') + "</td></tr>"
+                                 dis.getAttribute('hostgroup') + "</td></tr>"
         if int(dis.getAttribute('service')) == 1:
             discoveryDetailString += "<tr><td>Service<td/><td>Create service using port scanning</td></tr>"
         elif int(dis.getAttribute('service')) == 2:
@@ -470,8 +521,8 @@ def discoveryDetailsForUPnP(h):
         else:
             discoveryDetailString += "<tr><td>Service<td/><td>Do not create service</td></tr>"
         discoveryDetailString += "<tr><td>User <span style=\"font-size:9px;\">(who set the details)</span><td/><td>" + \
-            dis.getAttribute(
-                'username') + "</td></tr>"
+                                 dis.getAttribute(
+                                     'username') + "</td></tr>"
         if int(dis.getAttribute('active')) == 1:
             discoveryDetailString += "<tr><td>Status<td/><td>Active</td></tr>"
         else:
@@ -485,6 +536,10 @@ def discoveryDetailsForUPnP(h):
 
 
 def discoveryDetailsForSDMC(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     site = __file__.split("/")[3]
@@ -509,11 +564,11 @@ def discoveryDetailsForSDMC(h):
             else:
                 discoveryString += "<div class=\"msg-head\"><span>Discovery 100% done</span></div><input type=\"hidden\" id=\"sdmcStatus\" name=\"sdmcStatus\" value=\"100\"/>"
         discoveryDetailString += "<tr><td>Timeout<td/><td>" + \
-            dis.getAttribute('timeout') + " sec.</td></tr>"
+                                 dis.getAttribute('timeout') + " sec.</td></tr>"
         discoveryDetailString += "<tr><td>Hostgroups<td/><td>" + \
-            dis.getAttribute('hostgroup') + "</td></tr>"
+                                 dis.getAttribute('hostgroup') + "</td></tr>"
         discoveryDetailString += "<tr><td>Selected Device<td/><td>" + \
-            dis.getAttribute('device') + "</td></tr>"
+                                 dis.getAttribute('device') + "</td></tr>"
         if int(dis.getAttribute('service')) == 1:
             discoveryDetailString += "<tr><td>Service<td/><td>Create service using port scanning</td></tr>"
         elif int(dis.getAttribute('service')) == 2:
@@ -521,8 +576,8 @@ def discoveryDetailsForSDMC(h):
         else:
             discoveryDetailString += "<tr><td>Service<td/><td>Do not create service</td></tr>"
         discoveryDetailString += "<tr><td>User <span style=\"font-size:9px;\">(who set the details)</span><td/><td>" + \
-            dis.getAttribute(
-                'username') + "</td></tr>"
+                                 dis.getAttribute(
+                                     'username') + "</td></tr>"
         if int(dis.getAttribute('active')) == 1:
             discoveryDetailString += "<tr><td>Status<td/><td>Active</td></tr>"
         else:
@@ -536,6 +591,10 @@ def discoveryDetailsForSDMC(h):
 
 
 def startDiscovery(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     discoveryType = html.var("type")
@@ -594,7 +653,7 @@ def startDiscovery(h):
                 timeOut = dis.getAttribute("timeout")
         if discoveryType == "ping":
             args = [ipBase + "." + ipRangeStart, ipBase + "." +
-                    ipRangeEnd, timeOut, discoveryXmlFilePath]
+                                                 ipRangeEnd, timeOut, discoveryXmlFilePath]
             command = [perlFile]
             command.extend(args)
             pipe = subprocess.Popen(
@@ -602,8 +661,9 @@ def startDiscovery(h):
         elif discoveryType == "snmp":
             args = [
                 ipBase + "." + ipRangeStart, ipBase + "." +
-                ipRangeEnd, community, timeOut, version, port,
-                snmpUserName, authKey, snmpPassword, authProtocol, privKey, privPassword, privProtocol, discoveryXmlFilePath]
+                                             ipRangeEnd, community, timeOut, version, port,
+                snmpUserName, authKey, snmpPassword, authProtocol, privKey, privPassword, privProtocol,
+                discoveryXmlFilePath]
             command = [perlFile]
             command.extend(args)
             pipe = subprocess.Popen(
@@ -627,6 +687,10 @@ def startDiscovery(h):
 
 
 def stopStartDiscovery(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     action = html.var("action")
@@ -657,10 +721,15 @@ def stopStartDiscovery(h):
 
 
 def discoveryAndNetworkDetails(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     site = __file__.split("/")[3]
-    html.write("<div class=\"demo jstree jstree-0 jstree-default jstree-focused\" id=\"demo\"><ul><li id=\"node_2\" rel=\"drive\" class=\"jstree-last  jstree-open\"><ins class=\"jstree-icon\">&nbsp;</ins><a href=\"#\" class=\"jstree-clicked\"><ins class=\"jstree-icon\">&nbsp;</ins>NMS</a><ul style=\"\">")
+    html.write(
+        "<div class=\"demo jstree jstree-0 jstree-default jstree-focused\" id=\"demo\"><ul><li id=\"node_2\" rel=\"drive\" class=\"jstree-last  jstree-open\"><ins class=\"jstree-icon\">&nbsp;</ins><a href=\"#\" class=\"jstree-clicked\"><ins class=\"jstree-icon\">&nbsp;</ins>NMS</a><ul style=\"\">")
 
     nmsTree = ""
     html.live.set_prepend_site(True)
@@ -672,10 +741,10 @@ def discoveryAndNetworkDetails(h):
     for site, hostgroup, alias in hostgroups:
         hostgroup_i += 1
         nmsTree += "<li id=\"" + hostgroup + "\" rel=\"folder\" class=\"jstree-open\"><ins class=\"jstree-icon\">&nbsp;</ins><a href=\"#\" class=\"\" style=\"-moz-user-select: none;\"><ins class=\"jstree-icon\">&nbsp;</ins>" + alias + \
-            "</a><ul style=\"\">"
+                   "</a><ul style=\"\">"
         html.live.set_prepend_site(True)
         query = "GET hosts\nColumns: host_name alias\nFilter: host_groups >= " + \
-            hostgroup
+                hostgroup
         hosts = html.live.query(query)
         html.live.set_prepend_site(False)
         hosts.sort()
@@ -690,9 +759,10 @@ def discoveryAndNetworkDetails(h):
             services.sort()
             for service_site, description, state, command in services:
                 service_i = 0
-                nmsTree += "<li id=\"" + host + "_service_" + str(service_i) + "\" rel=\"default\" class=\"jstree-leaf\"><ins class=\"jstree-icon\">&nbsp;</ins><a href=\"#\" class=\"\" style=\"-moz-user-select: none;\"><ins class=\"jstree-icon\">&nbsp;</ins>" + \
-                    description + \
-                    "</a></li>"
+                nmsTree += "<li id=\"" + host + "_service_" + str(
+                    service_i) + "\" rel=\"default\" class=\"jstree-leaf\"><ins class=\"jstree-icon\">&nbsp;</ins><a href=\"#\" class=\"\" style=\"-moz-user-select: none;\"><ins class=\"jstree-icon\">&nbsp;</ins>" + \
+                           description + \
+                           "</a></li>"
             nmsTree += "</ul></li>"
 
         nmsTree += "</ul></li>"
@@ -701,6 +771,10 @@ def discoveryAndNetworkDetails(h):
 
 
 def discoveryStatus(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     status = "0"
@@ -730,6 +804,10 @@ def discoveryStatus(h):
 
 
 def createHostConfiguration(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     site = __file__.split("/")[3]
@@ -790,13 +868,13 @@ def createHostConfiguration(h):
 
             for siteName, hostName in hostQueryResult:
                 countHost += 1
-                if(hostName.strip() == host):
+                if (hostName.strip() == host):
                     checkfile = 0
                     break
                 else:
                     checkfile = 1
 
-            if(checkfile == 1 or countHost == 0):
+            if (checkfile == 1 or countHost == 0):
                 fw = open(hostFile, "a")
                 fw.write("\n#host-" + host)
                 fw.write("\ndefine host {")
@@ -847,6 +925,10 @@ def createHostConfiguration(h):
 
 
 def createSeviceConfiguration(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     site = __file__.split("/")[3]
@@ -890,13 +972,13 @@ def createSeviceConfiguration(h):
             # create service template dom
             shyamDevicesDom = xml.dom.minidom.parseString(
                 "<shyamDevices></shyamDevices>")
-            if(os.path.isfile("/omd/sites/%s/share/check_mk/web/htdocs/xml/shyamdevices.xml" % site)):
+            if (os.path.isfile("/omd/sites/%s/share/check_mk/web/htdocs/xml/shyamdevices.xml" % site)):
                 shyamDevicesDom = xml.dom.minidom.parse(
                     "/omd/sites/%s/share/check_mk/web/htdocs/xml/shyamdevices.xml" % site)
 
             # create service template dom
             templateDom = xml.dom.minidom.parseString("<hosts></hosts>")
-            if(os.path.isfile("/omd/sites/%s/share/check_mk/web/htdocs/xml/service_template.xml" % site)):
+            if (os.path.isfile("/omd/sites/%s/share/check_mk/web/htdocs/xml/service_template.xml" % site)):
                 templateDom = xml.dom.minidom.parse(
                     "/omd/sites/%s/share/check_mk/web/htdocs/xml/service_template.xml" % site)
 
@@ -907,7 +989,7 @@ def createSeviceConfiguration(h):
 
                 html.live.set_prepend_site(True)
                 query = "GET services\nColumns: check_command description\nFilter: host_name = " + \
-                    host
+                        host
                 serviceQueryResult = html.live.query(query)
                 html.live.set_prepend_site(False)
                 serviceQueryResult.sort()
@@ -931,20 +1013,21 @@ def createSeviceConfiguration(h):
                             # check service existence
                             for siteName, command, desc in serviceQueryResult:
                                 countService += 1
-                                if(command == new_check_command or desc == getText(stDom.getElementsByTagName("service_description")[0].childNodes).strip()):
+                                if (command == new_check_command or desc == getText(
+                                        stDom.getElementsByTagName("service_description")[0].childNodes).strip()):
                                     checkfile = 0
                                     break
                                 else:
                                     checkfile = 1
 
-                            if(checkfile == 1 or countService == 0):
+                            if (checkfile == 1 or countService == 0):
                                 serviceConfig += "\n#service-" + \
-                                    host + "-" + new_check_command + "\n"
+                                                 host + "-" + new_check_command + "\n"
                                 serviceConfig += "define service {\n"
                                 serviceConfig += "\tuse\t\t\t" + getText(
                                     stDom.getElementsByTagName("use")[0].childNodes).strip() + "\n"
                                 serviceConfig += "\thost_name\t\t" + \
-                                    host + "\n"
+                                                 host + "\n"
                                 serviceConfig += "\tservice_description\t" + getText(
                                     stDom.getElementsByTagName("service_description")[0].childNodes).strip() + "\n"
                                 serviceConfig += "\tmax_check_attempts\t\t\t" + getText(
@@ -956,10 +1039,10 @@ def createSeviceConfiguration(h):
                                 serviceConfig += "\tnotification_interval\t\t\t" + getText(
                                     stDom.getElementsByTagName("notification_interval")[0].childNodes).strip() + "\n"
                                 serviceConfig += "\tcheck_command\t\t\t" + \
-                                    new_check_command + "\n"
+                                                 new_check_command + "\n"
                                 serviceConfig += "}\n"
                                 serviceConfig += "#endservice-" + \
-                                    host + "-" + new_check_command + "\n"
+                                                 host + "-" + new_check_command + "\n"
                         break
 
                 fsw = open(serviceFile, "a")
@@ -976,6 +1059,11 @@ def createSeviceConfiguration(h):
 
 
 def getText(nodelist):
+    """
+
+    @param nodelist:
+    @return:
+    """
     rc = []
     for node in nodelist:
         if node.nodeType == node.TEXT_NODE:
@@ -986,6 +1074,12 @@ def getText(nodelist):
 
 
 def deviceTypeOption(dtype, dtypeId):
+    """
+
+    @param dtype:
+    @param dtypeId:
+    @return:
+    """
     strDeviceType = "<select name='deviceType' id='deviceType" + str(
         dtypeId) + "'>"
 

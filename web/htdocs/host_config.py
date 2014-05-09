@@ -1,40 +1,35 @@
 #!/usr/bin/python2.6
-
-import config
-import htmllib
-import pprint
-import sidebar
-import views
-import time
-import defaults
-import os
-import xml.dom.minidom
-import subprocess
-import datetime
-import re
-import tarfile
-import MySQLdb
-import urllib2
 import base64
-from lib import *
+import datetime
+import os
+import re
+import subprocess
+import tarfile
+import time
+import urllib2
+
+import MySQLdb
 from mod_python import apache, util
+import xml.dom.minidom
+
+from lib import *
 
 ############################################### Manage Template ##########
 
 
 def manage_configuration_template(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     sitename = __file__.split("/")[3]
     html.new_header("Manage Configuration Profile")
     html.write(
-        "<script type=\"text/javascript\" src=\"js/jquery-1.4.4.min.js\"></script>\n")
+        "<script type=\"text/javascript\" src=\"js/unmp/main/configScripts.js\"></script>\n")
     html.write(
-        "<script type=\"text/javascript\" src=\"js/jquery.validate.min.js\"></script>\n")
-    html.write(
-        "<script type=\"text/javascript\" src=\"js/configScripts.js\"></script>\n")
-    html.write(
-        "<script type=\"text/javascript\" src=\"js/manage_configuration_template.js\"></script>\n")
+        "<script type=\"text/javascript\" src=\"js/unmp/main/manage_configuration_template.js\"></script>\n")
     html.write(
         "<link type=\"text/css\" href=\"css/style.css\" rel=\"stylesheet\"></link>\n")
 
@@ -75,6 +70,10 @@ def manage_configuration_template(h):
 
 
 def view_configuration_template(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     site = __file__.split("/")[3]
@@ -82,7 +81,7 @@ def view_configuration_template(h):
         site)
     dom = xml.dom.minidom.parseString(
         "<configurationTemplate></configurationTemplate>")
-    if(os.path.isfile(configTemplateFile)):
+    if (os.path.isfile(configTemplateFile)):
         dom = xml.dom.minidom.parse(configTemplateFile)
     templateDom = dom.getElementsByTagName("template")
     i = 0
@@ -91,8 +90,10 @@ def view_configuration_template(h):
     tableString += "<tr><th align=\"left\">S.No</th><th align=\"left\">Device Name</th><th align=\"left\">Profile Name</th><th colspan=\"2\"></th></tr>"
     for tDom in templateDom:
         i += 1
-        tableString += "<tr><td>" + str(i) + "</td><td>" + tDom.getAttribute("deviceName") + "</td><td>" + tDom.getAttribute("name") + "</td><td><img onclick=\"editConfigurationProfile('" + tDom.getAttribute("id") + \
-            "')\" class=\"imgbutton\" title=\"Edit Configuration Profile\" alt=\"edit\" src=\"images/edit16.png\"></td><td><img onclick=\"deleteConfigurationProfile('" + tDom.getAttribute(
+        tableString += "<tr><td>" + str(i) + "</td><td>" + tDom.getAttribute(
+            "deviceName") + "</td><td>" + tDom.getAttribute(
+            "name") + "</td><td><img onclick=\"editConfigurationProfile('" + tDom.getAttribute("id") + \
+                       "')\" class=\"imgbutton\" title=\"Edit Configuration Profile\" alt=\"edit\" src=\"images/edit16.png\"></td><td><img onclick=\"deleteConfigurationProfile('" + tDom.getAttribute(
             "id") + "')\" class=\"imgbutton\" title=\"Delete Configuration Profile\" alt=\"delete\" src=\"images/delete16.png\"></td></tr>"
     tableString += "</table>"
     if i == 0:
@@ -103,6 +104,10 @@ def view_configuration_template(h):
 
 
 def addDeviceButtonHover(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     sitename = __file__.split("/")[3]
@@ -110,7 +115,7 @@ def addDeviceButtonHover(h):
     shyamDeviceFile = "/omd/sites/%s/share/check_mk/web/htdocs/xml/shyamdevices.xml" % (
         sitename)
     dom = xml.dom.minidom.parseString("<shyamDevices></shyamDevices>")
-    if(os.path.isfile(shyamDeviceFile)):
+    if (os.path.isfile(shyamDeviceFile)):
         dom = xml.dom.minidom.parse(shyamDeviceFile)
     deviceListXml = dom.getElementsByTagName("device")
     i = 0
@@ -119,7 +124,8 @@ def addDeviceButtonHover(h):
         if dev.getAttribute("hide") == "false":
             i += 1
             deviceListHoverMenu += "<a href=\"#\" id=\"" + dev.getAttribute(
-                "id") + "\" name=\"" + dev.getAttribute("sdmcDiscoveryId") + "\" sdmc=\"" + dev.getAttribute("sdmcDiscoveryValue") + "\">" + dev.getAttribute("name") + "</a>"
+                "id") + "\" name=\"" + dev.getAttribute("sdmcDiscoveryId") + "\" sdmc=\"" + dev.getAttribute(
+                "sdmcDiscoveryValue") + "\">" + dev.getAttribute("name") + "</a>"
 
     if i == 0:
         deviceListHoverMenu += "<div style=\"padding: 10px 20px 10px 20px;color:#FFF;\">No Shyam Device Exist</div></div>"
@@ -130,6 +136,10 @@ def addDeviceButtonHover(h):
 
 
 def add_configuration_template(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     sitename = __file__.split("/")[3]
@@ -143,7 +153,7 @@ def add_configuration_template(h):
         sitename)
     dom = xml.dom.minidom.parseString(
         "<configurationTemplate></configurationTemplate>")
-    if(os.path.isfile(deviceTemplateFile)):
+    if (os.path.isfile(deviceTemplateFile)):
         dom = xml.dom.minidom.parse(deviceTemplateFile)
     defaultTemplateDom = dom.getElementsByTagName("defaultTemplate")
     i = 0
@@ -154,12 +164,12 @@ def add_configuration_template(h):
             templateString += "<table width=\"100%\">"
             templateString += "<colgroup><col width='20%'/><col width='40%'/><col width=\"40%\"></colgroup>"
             templateString += "<tr><td>Device Name</td><td><input type=\"text\" id=\"deviceName\" name=\"deviceName\" value=\"" + deviceName + \
-                "\" readonly=\"readonly\" /></td><td><input type=\"hidden\" id=\"deviceId\" name=\"deviceId\" value=\"" + deviceId + \
-                "\"/><input type=\"hidden\" id=\"templateId\" name=\"templateId\" value=\"0\"/></td></tr>"
+                              "\" readonly=\"readonly\" /></td><td><input type=\"hidden\" id=\"deviceId\" name=\"deviceId\" value=\"" + deviceId + \
+                              "\"/><input type=\"hidden\" id=\"templateId\" name=\"templateId\" value=\"0\"/></td></tr>"
             templateString += "<tr><td>Profile Name</td><td><input type=\"text\" id=\"templateName\" name=\"templateName\" value=\"" + \
-                deviceName + " Profile" + "\"/></td><td></td></tr>"
+                              deviceName + " Profile" + "\"/></td><td></td></tr>"
             templateString += "</table>"
-################################## Tamplate Tabs #########################
+            ################################## Tamplate Tabs #########################
             templateString += "<div class=\"tab-yo\" style=\"margin:10px 0px 15px;\">"
             templateString += "<div class=\"tab-head\">"
             templateString += "<a id=\"networkButton\" href=\"#networkDiv\" class=\"tab-active\" vap=\"0\">Network"
@@ -197,7 +207,7 @@ def add_configuration_template(h):
             templateString += "</div>"
             templateString += "</div>"
             templateString += "<div style=\"padding:10px 20px 10px 0px;\"><input type=\"submit\" value=\"Add Profile\"/> <input type=\"button\" value=\"Cancel\" onclick=\"cancelAddProfile();\" /></div>"
-################################ End Tamplate Tabs #######################
+            ################################ End Tamplate Tabs #######################
             templateString += "</form></div>"
     if i == 0:
         templateString = "<div style=\"display:block;width:100%; text-align:center;margin:10px;\">No Configuration Profile for this device</div>"
@@ -205,6 +215,10 @@ def add_configuration_template(h):
 
 
 def edit_configuration_template(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     sitename = __file__.split("/")[3]
@@ -215,7 +229,7 @@ def edit_configuration_template(h):
         sitename)
     dom = xml.dom.minidom.parseString(
         "<configurationTemplate></configurationTemplate>")
-    if(os.path.isfile(deviceTemplateFile)):
+    if (os.path.isfile(deviceTemplateFile)):
         dom = xml.dom.minidom.parse(deviceTemplateFile)
     templateDom = dom.getElementsByTagName("template")
     templateString = ""
@@ -225,11 +239,13 @@ def edit_configuration_template(h):
             templateString += "<table width=\"100%\">"
             templateString += "<colgroup><col width='20%'/><col width='40%'/><col width=\"40%\"></colgroup>"
             templateString += "<tr><td>Device Name</td><td><input type=\"text\" id=\"deviceName\" name=\"deviceName\" value=\"" + tDom.getAttribute(
-                "deviceName") + "\" readonly=\"readonly\" /></td><td><input type=\"hidden\" id=\"templateId\" name=\"templateId\" value=\"" + tDom.getAttribute("id") + "\"/><input type=\"hidden\" id=\"deviceId\" name=\"deviceId\" value=\"" + tDom.getAttribute("deviceId") + "\"/></td></tr>"
+                "deviceName") + "\" readonly=\"readonly\" /></td><td><input type=\"hidden\" id=\"templateId\" name=\"templateId\" value=\"" + tDom.getAttribute(
+                "id") + "\"/><input type=\"hidden\" id=\"deviceId\" name=\"deviceId\" value=\"" + tDom.getAttribute(
+                "deviceId") + "\"/></td></tr>"
             templateString += "<tr><td>Profile Name</td><td><input type=\"text\" id=\"templateName\" name=\"templateName\" value=\"" + \
-                tDom.getAttribute("name") + "\"/></td><td></td></tr>"
+                              tDom.getAttribute("name") + "\"/></td><td></td></tr>"
             templateString += "</table>"
-################################## Tamplate Tabs #########################
+            ################################## Tamplate Tabs #########################
             templateString += "<div class=\"tab-yo\" style=\"margin:10px 0px 15px;\">"
             templateString += "<div class=\"tab-head\">"
             templateString += "<a id=\"networkButton\" href=\"#networkDiv\" class=\"tab-active\" vap=\"0\">Network"
@@ -267,12 +283,16 @@ def edit_configuration_template(h):
             templateString += "</div>"
             templateString += "</div>"
             templateString += "<div style=\"padding:10px 20px 10px 0px;\"><input type=\"submit\" value=\"Edit Profile\"/> <input type=\"button\" value=\"Cancel\" onclick=\"cancelEditProfile();\" /></div>"
-################################ End Tamplate Tabs #######################
+            ################################ End Tamplate Tabs #######################
             templateString += "</form></div>"
     html.write(templateString)
 
 
 def delete_configuration_template(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     sitename = __file__.split("/")[3]
@@ -283,7 +303,7 @@ def delete_configuration_template(h):
         sitename)
     dom = xml.dom.minidom.parseString(
         "<configurationTemplate></configurationTemplate>")
-    if(os.path.isfile(deviceTemplateFile)):
+    if (os.path.isfile(deviceTemplateFile)):
         dom = xml.dom.minidom.parse(deviceTemplateFile)
     templateDom = dom.getElementsByTagName("template")
     for tDom in templateDom:
@@ -298,6 +318,11 @@ def delete_configuration_template(h):
 
 
 def apNetworkTab(networkDom):
+    """
+
+    @param networkDom:
+    @return:
+    """
     AP_HOSTNAME = networkDom.getAttribute("AP_HOSTNAME")
     AP_NETMASK = networkDom.getAttribute("AP_NETMASK")
     WAN_MODE = networkDom.getAttribute("WAN_MODE")
@@ -340,12 +365,18 @@ def apNetworkTab(networkDom):
 
 
 def apRadioTab(radioDom):
+    """
+
+    @param radioDom:
+    @return:
+    """
     tableString = """
 	<table style=\"padding:20px;width:100%\">
 		<colgroup><col width='20%'/><col width='80%'/></colgroup>
 		<tbody>
 			<tr>
-				<td>Startup Mode<input type="hidden" id="startmode_hd" name="startmode_hd" value=\"""" + radioDom.getAttribute("AP_STARTMODE") + """\" /></td>
+				<td>Startup Mode<input type="hidden" id="startmode_hd" name="startmode_hd" value=\"""" + radioDom.getAttribute(
+        "AP_STARTMODE") + """\" /></td>
 				<td>
 <input type="radio" id="startup_standard" onclick="ToggleMVlan(false)" value="standard" name="AP_STARTMODE"> Standard&nbsp;
 <input type="radio" id="startup_rootap" onclick="ToggleMVlan(false)" value="rootap" name="AP_STARTMODE"> RootAP&nbsp;
@@ -358,7 +389,8 @@ def apRadioTab(radioDom):
 			<tr>
 				<td colspan="2">
 <div style="display: none; border: 2px solid grey; padding-left: 10px;" id="ManageVlan_tr">
-	Management Vlan<input type="hidden" id="mngmtvlan_hd" name="mngmtvlan_hd" value=\"""" + radioDom.getAttribute("MANAGEMENTVLAN") + """\" />
+	Management Vlan<input type="hidden" id="mngmtvlan_hd" name="mngmtvlan_hd" value=\"""" + radioDom.getAttribute(
+        "MANAGEMENTVLAN") + """\" />
 	<span style="padding-left: 30px;">
 		<input type="radio" name="MANAGEMENTVLAN" checked="checked" value="1" onclick="ManageVlanPrompt(true)" id="Enbl_mngmtvlan"/>Enable
 		<input type="radio" name="MANAGEMENTVLAN" value="0" onclick="ManageVlanPrompt(false)" id="Dsbl_mngmtvlan">Disable
@@ -374,7 +406,8 @@ def apRadioTab(radioDom):
 				</td>
 			</tr>
 			<tr>
-				<td>Country <input type="hidden" id="countrycode_hd" name="countrycode_hd" value=\"""" + radioDom.getAttribute("ATH_countrycode") + """\" /></td>
+				<td>Country <input type="hidden" id="countrycode_hd" name="countrycode_hd" value=\"""" + radioDom.getAttribute(
+        "ATH_countrycode") + """\" /></td>
 				<td>
 					<select id="ATH_countrycode" name="ATH_countrycode">
 						<option value="NA">DEFAULT </option>
@@ -496,7 +529,8 @@ def apRadioTab(radioDom):
 			<tr>
 				<td>Number of VAP's</td>
 				<td>
-					<input type="hidden" id="HID_AP_MAX_VAP" name="HID_AP_MAX_VAP" value=\"""" + radioDom.getAttribute("AP_MAX_VAP") + """\"/>
+					<input type="hidden" id="HID_AP_MAX_VAP" name="HID_AP_MAX_VAP" value=\"""" + radioDom.getAttribute(
+        "AP_MAX_VAP") + """\"/>
 					<select id="NoofVaps" name="AP_MAX_VAP" class="text2" disabled="" onchange="selectNoOfVap()">
 						<option value="1">1</option>
 						<option value="2">2</option>
@@ -510,7 +544,8 @@ def apRadioTab(radioDom):
 				</td>
 			</tr>
 			<tr>
-				<td>Channel<input type="hidden" id="HID_AP_Channel" name="HID_AP_Channel" value=\"""" + radioDom.getAttribute("AP_PRIMARY_CH") + """\"/></td>
+				<td>Channel<input type="hidden" id="HID_AP_Channel" name="HID_AP_Channel" value=\"""" + radioDom.getAttribute(
+        "AP_PRIMARY_CH") + """\"/></td>
 				<td>
 					<select id="AP_Channel" name="AP_PRIMARY_CH">
 						<option value="1">Channel-1:2.412GHz</option>
@@ -530,7 +565,8 @@ def apRadioTab(radioDom):
 				</td>
 			</tr>
 			<tr>
-				<td>Mode<input type="hidden" id="HID_AP_CHMODE" name="HID_AP_CHMODE" value=\"""" + radioDom.getAttribute("AP_CHMODE") + """\"/></td>
+				<td>Mode<input type="hidden" id="HID_AP_CHMODE" name="HID_AP_CHMODE" value=\"""" + radioDom.getAttribute(
+        "AP_CHMODE") + """\"/></td>
 				<td>
 					<select id="AP_CHMODE" name="AP_CHMODE" class="text2">
 						<option value="11G">WiFi 11g</option>
@@ -541,7 +577,8 @@ def apRadioTab(radioDom):
 				</td>
 			</tr>
 			<tr>
-				<td>Tx Power<input type="hidden" id="HID_AP_TXPOWER" name="HID_AP_TXPOWER" value=\"""" + radioDom.getAttribute("AP_TXPOWER") + """\"/></td>
+				<td>Tx Power<input type="hidden" id="HID_AP_TXPOWER" name="HID_AP_TXPOWER" value=\"""" + radioDom.getAttribute(
+        "AP_TXPOWER") + """\"/></td>
 				<td>
 					<select id="AP_TXPOWER" name="AP_TXPOWER" class="text2">
 						<option value="">Default</option>
@@ -583,7 +620,8 @@ def apRadioTab(radioDom):
 				   <div id="Distance_auto" style="display: none;">
 					Distance
 					<span style="padding-left: 120px;"></span>
-					<input type="text" class="text2" id="Distance" name="AP_DISTANCE" value=\"""" + radioDom.getAttribute("AP_DISTANCE") + """\" /> &nbsp;&nbsp;
+					<input type="text" class="text2" id="Distance" name="AP_DISTANCE" value=\"""" + radioDom.getAttribute(
+        "AP_DISTANCE") + """\" /> &nbsp;&nbsp;
 				   </div>
 				   <div id="Distance_manual" style="display: none;">
 					Slot Time
@@ -601,14 +639,16 @@ def apRadioTab(radioDom):
 				</td>
 			</tr>
 			<tr>
-				<td>Gating Index<input type="hidden" id="HID_SHORTGI" name="HID_SHORTGI" value=\"""" + radioDom.getAttribute("SHORTGI") + """\"/></td>
+				<td>Gating Index<input type="hidden" id="HID_SHORTGI" name="HID_SHORTGI" value=\"""" + radioDom.getAttribute(
+        "SHORTGI") + """\"/></td>
 				<td>
 					<input type="radio" id="SHORTGI_1" value="1" name="SHORTGI"> Half&nbsp;
 					<input type="radio" id="SHORTGI_0" value="0" name="SHORTGI"> Full&nbsp;
 				</td>
 			</tr>
 			<tr>
-				<td>Aggregation<input type="hidden" id="HID_AMPDUENABLE" name="HID_AMPDUENABLE" value=\"""" + radioDom.getAttribute("AMPDUENABLE") + """\"/></td>
+				<td>Aggregation<input type="hidden" id="HID_AMPDUENABLE" name="HID_AMPDUENABLE" value=\"""" + radioDom.getAttribute(
+        "AMPDUENABLE") + """\"/></td>
 				<td>
 					<input type="radio" onclick="SwapAggregation(true)" id="chk_AMPDU_Enable" value="1" name="AMPDUENABLE"> Enabled&nbsp;
 					<input type="radio" onclick="SwapAggregation(false)" id="chk_AMPDU_Disable" value="0" name="AMPDUENABLE"> Disabled&nbsp;
@@ -633,14 +673,16 @@ def apRadioTab(radioDom):
 				</td>
 			</tr>
 			<tr>
-				<td>Channel Width<input type="hidden" id="HID_CWMMODE" name="HID_CWMMODE" value=\"""" + radioDom.getAttribute("CWMMODE") + """\"/></td>
+				<td>Channel Width<input type="hidden" id="HID_CWMMODE" name="HID_CWMMODE" value=\"""" + radioDom.getAttribute(
+        "CWMMODE") + """\"/></td>
 				<td>
 					<input type="radio" id="CWMMODE_0" value="0" name="CWMMODE"> HT20&nbsp;
 					<input type="radio" id="CWMMODE_1" value="1" name="CWMMODE"> HT20/40&nbsp;
 				</td>
 			</tr>
 			<tr>
-				<td>TX ChainMask<input type="hidden" id="HID_TX_CHAINMASK" name="HID_TX_CHAINMASK" value=\"""" + radioDom.getAttribute("TX_CHAINMASK") + """\"/></td>
+				<td>TX ChainMask<input type="hidden" id="HID_TX_CHAINMASK" name="HID_TX_CHAINMASK" value=\"""" + radioDom.getAttribute(
+        "TX_CHAINMASK") + """\"/></td>
 				<td>
 					<input type="radio" value="1" name="TX_CHAINMASK" id="TX_CHAINMASK_1"> 1 Chain
 					<input type="radio" value="3" name="TX_CHAINMASK" id="TX_CHAINMASK_3"> 2 Chain
@@ -648,13 +690,15 @@ def apRadioTab(radioDom):
 				</td>
 			</tr>
 			<tr>
-				<td>RX ChainMask<input type="hidden" id="HID_RX_CHAINMASK" name="HID_RX_CHAINMASK" value=\"""" + radioDom.getAttribute("RX_CHAINMASK") + """\"/></td>
+				<td>RX ChainMask<input type="hidden" id="HID_RX_CHAINMASK" name="HID_RX_CHAINMASK" value=\"""" + radioDom.getAttribute(
+        "RX_CHAINMASK") + """\"/></td>
 				<td>
 					<input type="radio" value="1" id="RX_CHAINMASK_1" name="RX_CHAINMASK"> 1 Chain
 					<input type="radio" value="3" id="RX_CHAINMASK_3" name="RX_CHAINMASK"> 2 Chain
 					<input type="radio" value="0" id="RX_CHAINMASK_0" name="RX_CHAINMASK"> EEPROM
 
-					<input type="hidden" name="AP_LONGDISTANCE"  value=\"""" + radioDom.getAttribute("AP_LONGDISTANCE") + """\" >
+					<input type="hidden" name="AP_LONGDISTANCE"  value=\"""" + radioDom.getAttribute(
+        "AP_LONGDISTANCE") + """\" >
 					<input type="hidden" name="WLAN_ON_BOOT"  value=\"""" + radioDom.getAttribute("WLAN_ON_BOOT") + """\" >
 					<input type="hidden" name="AP_RADIO_ID"  value=\"""" + radioDom.getAttribute("AP_RADIO_ID") + """\" >
 					<input type="hidden" name="PUREG"  value=\"""" + radioDom.getAttribute("PUREG") + """\" >
@@ -673,6 +717,11 @@ def apRadioTab(radioDom):
 
 
 def apVapTab(vapDom):
+    """
+
+    @param vapDom:
+    @return:
+    """
     tableString = """
 	<table style="padding: 20px 20px 0px 20px; width: 100%;">
 		<colgroup><col width='20%'/><col width='80%'/></colgroup>
@@ -707,8 +756,10 @@ def apVapTab(vapDom):
 				<td>ESSID String</td>
 				<td>
 					<input type="text" value=\"""" + vapDom.getAttribute("AP_SSID") + """\" maxlength="32" name="AP_SSID" id="AP_SSID_1">&nbsp;&nbsp;
-					<span id="hidessid_div_1">Hide Essid <input type="checkbox" onclick="Toggle_ssid('1')" id="HIDE_SSID_1" value=\"""" + vapDom.getAttribute("HIDE_SSID") + """\"></span>
-					<input type="hidden" name="HIDE_SSID" id="hdn_ssid_1" value=\"""" + vapDom.getAttribute("HIDE_SSID") + """\">
+					<span id="hidessid_div_1">Hide Essid <input type="checkbox" onclick="Toggle_ssid('1')" id="HIDE_SSID_1" value=\"""" + vapDom.getAttribute(
+        "HIDE_SSID") + """\"></span>
+					<input type="hidden" name="HIDE_SSID" id="hdn_ssid_1" value=\"""" + vapDom.getAttribute(
+        "HIDE_SSID") + """\">
 				</td>
 			</tr>
 			<tr>
@@ -734,7 +785,8 @@ def apVapTab(vapDom):
 			<tr>
 				<td colspan="2">
 					<div style="display: none;" id="Mac_opt">Root AP Mac Address&nbsp;&nbsp;
-						<input type="text" maxlength="32" name="ROOTAP_MAC" id="ROOTAP_MAC" value=\"""" + vapDom.getAttribute("ROOTAP_MAC") + """\">
+						<input type="text" maxlength="32" name="ROOTAP_MAC" id="ROOTAP_MAC" value=\"""" + vapDom.getAttribute(
+        "ROOTAP_MAC") + """\">
 					</div>
 				</td>
 			</tr>
@@ -789,9 +841,11 @@ def apVapTab(vapDom):
 			<tr>
 				<td>ESSID String</td>
 				<td>
-					<input type="text" maxlength="32" name="AP_SSID_2" id="AP_SSID_2" value=\"""" + vapDom.getAttribute("AP_SSID_2") + """\">&nbsp;&nbsp;
+					<input type="text" maxlength="32" name="AP_SSID_2" id="AP_SSID_2" value=\"""" + vapDom.getAttribute(
+        "AP_SSID_2") + """\">&nbsp;&nbsp;
 					<span id="hidessid_div_2">Hide Essid <input type="checkbox" onclick="Toggle_ssid('2')" id="HIDE_SSID_2"></span>
-					<input type="hidden" name="HIDE_SSID_2" id="hdn_ssid_2" value=\"""" + vapDom.getAttribute("HIDE_SSID_2") + """\">
+					<input type="hidden" name="HIDE_SSID_2" id="hdn_ssid_2" value=\"""" + vapDom.getAttribute(
+        "HIDE_SSID_2") + """\">
 				</td>
 			</tr>
 			<tr>
@@ -857,7 +911,8 @@ def apVapTab(vapDom):
 				<td>
 					<input type="text" value=\"""" + vapDom.getAttribute("AP_SSID_3") + """\" maxlength="32" name="AP_SSID_3" id="AP_SSID_3">&nbsp;&nbsp;
 					Hide Essid <input type="checkbox" onclick="Toggle_ssid('3')" id="HIDE_SSID_3">
-					<input type="hidden" name="HIDE_SSID_3" id="hdn_ssid_3" value=\"""" + vapDom.getAttribute("HIDE_SSID_3") + """\">
+					<input type="hidden" name="HIDE_SSID_3" id="hdn_ssid_3" value=\"""" + vapDom.getAttribute(
+        "HIDE_SSID_3") + """\">
 				</td>
 			</tr>
 			<tr>
@@ -917,7 +972,8 @@ def apVapTab(vapDom):
 				<td>
 					<input type="text" value=\"""" + vapDom.getAttribute("AP_SSID_4") + """\" maxlength="32" name="AP_SSID_4" id="AP_SSID_4">&nbsp;&nbsp;
 					Hide Essid <input type="checkbox" onclick="Toggle_ssid('4')" id="HIDE_SSID_4">
-					<input type="hidden" name="HIDE_SSID_4" id="hdn_ssid_4" value=\"""" + vapDom.getAttribute("HIDE_SSID_4") + """\">
+					<input type="hidden" name="HIDE_SSID_4" id="hdn_ssid_4" value=\"""" + vapDom.getAttribute(
+        "HIDE_SSID_4") + """\">
 				</td>
 			</tr>
 			<tr>
@@ -977,7 +1033,8 @@ def apVapTab(vapDom):
 				<td>
 					<input type="text" value=\"""" + vapDom.getAttribute("AP_SSID_5") + """\" maxlength="32" name="AP_SSID_5" id="AP_SSID_5">&nbsp;&nbsp;
 					Hide Essid <input type="checkbox" onclick="Toggle_ssid('5')" id="HIDE_SSID_5">
-					<input type="hidden" name="HIDE_SSID_5" id="hdn_ssid_5" value=\"""" + vapDom.getAttribute("HIDE_SSID_5") + """\">
+					<input type="hidden" name="HIDE_SSID_5" id="hdn_ssid_5" value=\"""" + vapDom.getAttribute(
+        "HIDE_SSID_5") + """\">
 				</td>
 			</tr>
 			<tr>
@@ -1037,7 +1094,8 @@ def apVapTab(vapDom):
 				<td>
 					<input type="text" value=\"""" + vapDom.getAttribute("AP_SSID_6") + """\" maxlength="32" name="AP_SSID_6" id="AP_SSID_6">&nbsp;&nbsp;
 					Hide Essid <input type="checkbox" onclick="Toggle_ssid('6')" id="HIDE_SSID_6">
-					<input type="hidden" name="HIDE_SSID_6" id="hdn_ssid_6" value=\"""" + vapDom.getAttribute("HIDE_SSID_6") + """\">
+					<input type="hidden" name="HIDE_SSID_6" id="hdn_ssid_6" value=\"""" + vapDom.getAttribute(
+        "HIDE_SSID_6") + """\">
 				</td>
 			</tr>
 			<tr>
@@ -1097,7 +1155,8 @@ def apVapTab(vapDom):
 				<td>
 					<input type="text" value=\"""" + vapDom.getAttribute("AP_SSID_7") + """\" maxlength="32" name="AP_SSID_7" id="AP_SSID_7">&nbsp;&nbsp;
 					Hide Essid <input type="checkbox" onclick="Toggle_ssid('7')" id="HIDE_SSID_7">
-					<input type="hidden" name="HIDE_SSID_7" id="hdn_ssid_7" value=\"""" + vapDom.getAttribute("HIDE_SSID_7") + """\">
+					<input type="hidden" name="HIDE_SSID_7" id="hdn_ssid_7" value=\"""" + vapDom.getAttribute(
+        "HIDE_SSID_7") + """\">
 				</td>
 			</tr>
 			<tr>
@@ -1157,7 +1216,8 @@ def apVapTab(vapDom):
 				<td>
 					<input type="text" value=\"""" + vapDom.getAttribute("AP_SSID_8") + """\" maxlength="32" name="AP_SSID_8" id="AP_SSID_8">&nbsp;&nbsp;
 					Hide Essid <input type="checkbox" onclick="Toggle_ssid('8')" id="HIDE_SSID_8">
-					<input type="hidden" name="HIDE_SSID_8" id="hdn_ssid_8" value=\"""" + vapDom.getAttribute("HIDE_SSID_8") + """\">
+					<input type="hidden" name="HIDE_SSID_8" id="hdn_ssid_8" value=\"""" + vapDom.getAttribute(
+        "HIDE_SSID_8") + """\">
 				</td>
 			</tr>
 			<tr>
@@ -1295,7 +1355,8 @@ def apVapTab(vapDom):
 								<tr>
 									<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WEP Rekey Int:</td>
 									<td>
-	<input type="text" onkeypress="return  numCheck(event)" maxlength="16" name="AP_WEP_REKEY" id="AP_WEP_REKEY_1" value=\"""" + vapDom.getAttribute("AP_WEP_REKEY") + """\">(802.1x mode only)
+	<input type="text" onkeypress="return  numCheck(event)" maxlength="16" name="AP_WEP_REKEY" id="AP_WEP_REKEY_1" value=\"""" + vapDom.getAttribute(
+        "AP_WEP_REKEY") + """\">(802.1x mode only)
 									</td>
 								</tr>
 								<tr>
@@ -1320,26 +1381,31 @@ def apVapTab(vapDom):
 	<input type="radio" id="interface_dis_1" value="0" name="AP_RSN_ENA_PREAUTH">Disable
 	<input type="radio" id="interface_enb_1" value="1" name="AP_RSN_ENA_PREAUTH">Enable
 	&nbsp;&nbsp;Interface:
-	<input type="text" maxlength="16" name="AP_WPA_PREAUTH_IF" id="AP_WPA_PREAUTH_IF_1" value=\"""" + vapDom.getAttribute("AP_WPA_PREAUTH_IF") + """\">
+	<input type="text" maxlength="16" name="AP_WPA_PREAUTH_IF" id="AP_WPA_PREAUTH_IF_1" value=\"""" + vapDom.getAttribute(
+        "AP_WPA_PREAUTH_IF") + """\">
 									</td>
 								</tr>
 								<tr>
 									<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;EAP Reauth Period:</td>
 									<td>
-	<input type="text" onkeypress="return  numCheck(event)" maxlength="16" name="AP_EAP_REAUTH_PER" id="AP_EAP_REAUTH_PER_1" value=\"""" + vapDom.getAttribute("AP_EAP_REAUTH_PER") + """\">Seconds
+	<input type="text" onkeypress="return  numCheck(event)" maxlength="16" name="AP_EAP_REAUTH_PER" id="AP_EAP_REAUTH_PER_1" value=\"""" + vapDom.getAttribute(
+        "AP_EAP_REAUTH_PER") + """\">Seconds
 									</td>
 								</tr>
 								<tr>
 									<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Auth Server IP:</td>
 									<td>
-	<input type="text" onblur="checkIp(1,'AP_AUTH_SERVER_1','IPaddress')" onkeypress="return  IPKeyCheck(event)" maxlength="16" name="AP_AUTH_SERVER" id="AP_AUTH_SERVER_1" value=\"""" + vapDom.getAttribute("AP_AUTH_SERVER") + """\">
-	&nbsp;&nbsp;&nbsp;&nbsp; Port: <input type="text" onkeypress="return  numCheck(event)" maxlength="6" name="AP_AUTH_PORT" id="AP_AUTH_PORT_1" value=\"""" + vapDom.getAttribute("AP_AUTH_PORT") + """\">
+	<input type="text" onblur="checkIp(1,'AP_AUTH_SERVER_1','IPaddress')" onkeypress="return  IPKeyCheck(event)" maxlength="16" name="AP_AUTH_SERVER" id="AP_AUTH_SERVER_1" value=\"""" + vapDom.getAttribute(
+        "AP_AUTH_SERVER") + """\">
+	&nbsp;&nbsp;&nbsp;&nbsp; Port: <input type="text" onkeypress="return  numCheck(event)" maxlength="6" name="AP_AUTH_PORT" id="AP_AUTH_PORT_1" value=\"""" + vapDom.getAttribute(
+        "AP_AUTH_PORT") + """\">
 									</td>
 								</tr>
 								<tr>
 									<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Shared Secret:</td>
 									<td>
-	&nbsp;&nbsp;&nbsp;<input type="password" value="" maxlength="64" name="AP_AUTH_SECRET" id="AP_AUTH_SECRET_1" value=\"""" + vapDom.getAttribute("AP_AUTH_SECRET") + """\">
+	&nbsp;&nbsp;&nbsp;<input type="password" value="" maxlength="64" name="AP_AUTH_SECRET" id="AP_AUTH_SECRET_1" value=\"""" + vapDom.getAttribute(
+        "AP_AUTH_SECRET") + """\">
 									</td>
 								</tr>
 							</tbody>
@@ -1434,7 +1500,8 @@ def apVapTab(vapDom):
 								<tr>
 									<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WEP Rekey Int:</td>
 									<td>
-	<input type="text" onkeypress="return  numCheck(event)" maxlength="16" name="AP_WEP_REKEY_2" id="AP_WEP_REKEY_2" value=\"""" + vapDom.getAttribute("AP_WEP_REKEY_2") + """\">(802.1x mode only)
+	<input type="text" onkeypress="return  numCheck(event)" maxlength="16" name="AP_WEP_REKEY_2" id="AP_WEP_REKEY_2" value=\"""" + vapDom.getAttribute(
+        "AP_WEP_REKEY_2") + """\">(802.1x mode only)
 									</td>
 								</tr>
 								<tr>
@@ -1445,7 +1512,8 @@ def apVapTab(vapDom):
 								<tr>
 									<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PSK KEY</td>
 									<td>
-	<input type="password" onblur="keylen_check('2')" maxlength="64" name="PSK_KEY_2" id="PSK_KEY_2" disabled="" value=\"""" + vapDom.getAttribute("PSK_KEY_2") + """\">
+	<input type="password" onblur="keylen_check('2')" maxlength="64" name="PSK_KEY_2" id="PSK_KEY_2" disabled="" value=\"""" + vapDom.getAttribute(
+        "PSK_KEY_2") + """\">
 									</td>
 								</tr>
 								<tr>
@@ -1459,26 +1527,31 @@ def apVapTab(vapDom):
 	<input type="radio" id="interface_dis_2" value="0" name="AP_RSN_ENA_PREAUTH_2">Disable
 	<input type="radio" id="interface_enb_2" value="1" name="AP_RSN_ENA_PREAUTH_2">Enable
 	&nbsp;&nbsp;Interface:
-	<input type="text" maxlength="16" name="AP_WPA_PREAUTH_IF_2" id="AP_WPA_PREAUTH_IF_2" value=\"""" + vapDom.getAttribute("AP_WPA_PREAUTH_IF_2") + """\">
+	<input type="text" maxlength="16" name="AP_WPA_PREAUTH_IF_2" id="AP_WPA_PREAUTH_IF_2" value=\"""" + vapDom.getAttribute(
+        "AP_WPA_PREAUTH_IF_2") + """\">
 									</td>
 								</tr>
 								<tr>
 									<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;EAP Reauth Period:</td>
 									<td>
-	<input type="text" onkeypress="return  numCheck(event)" maxlength="16" name="AP_EAP_REAUTH_PER_2" id="AP_EAP_REAUTH_PER_2" value=\"""" + vapDom.getAttribute("AP_EAP_REAUTH_PER_2") + """\">Seconds
+	<input type="text" onkeypress="return  numCheck(event)" maxlength="16" name="AP_EAP_REAUTH_PER_2" id="AP_EAP_REAUTH_PER_2" value=\"""" + vapDom.getAttribute(
+        "AP_EAP_REAUTH_PER_2") + """\">Seconds
 									</td>
 								</tr>
 								<tr>
 									<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Auth Server IP:</td>
 									<td>
-	<input type="text" onblur="checkIp(1,'AP_AUTH_SERVER_2','IPaddress')" onkeypress="return  IPKeyCheck(event)" maxlength="16" name="AP_AUTH_SERVER_2" id="AP_AUTH_SERVER_2" value=\"""" + vapDom.getAttribute("AP_AUTH_SERVER_2") + """\">
-	&nbsp;&nbsp;&nbsp;&nbsp; Port: <input type="text" onkeypress="return  numCheck(event)" maxlength="6" name="AP_AUTH_PORT_2" id="AP_AUTH_PORT_2" value=\"""" + vapDom.getAttribute("AP_AUTH_PORT_2") + """\">
+	<input type="text" onblur="checkIp(1,'AP_AUTH_SERVER_2','IPaddress')" onkeypress="return  IPKeyCheck(event)" maxlength="16" name="AP_AUTH_SERVER_2" id="AP_AUTH_SERVER_2" value=\"""" + vapDom.getAttribute(
+        "AP_AUTH_SERVER_2") + """\">
+	&nbsp;&nbsp;&nbsp;&nbsp; Port: <input type="text" onkeypress="return  numCheck(event)" maxlength="6" name="AP_AUTH_PORT_2" id="AP_AUTH_PORT_2" value=\"""" + vapDom.getAttribute(
+        "AP_AUTH_PORT_2") + """\">
 									</td>
 								</tr>
 								<tr>
 									<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Shared Secret:</td>
 									<td>
-	&nbsp;&nbsp;&nbsp;<input type="password" value="" maxlength="64" name="AP_AUTH_SECRET_2" id="AP_AUTH_SECRET_2" value=\"""" + vapDom.getAttribute("AP_AUTH_SECRET_2") + """\">
+	&nbsp;&nbsp;&nbsp;<input type="password" value="" maxlength="64" name="AP_AUTH_SECRET_2" id="AP_AUTH_SECRET_2" value=\"""" + vapDom.getAttribute(
+        "AP_AUTH_SECRET_2") + """\">
 									</td>
 								</tr>
 							</tbody>
@@ -1556,7 +1629,8 @@ def apVapTab(vapDom):
 								<tr>
 									<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WEP Rekey Int:</td>
 									<td>
-	<input type="text" onkeypress="return  numCheck(event)" maxlength="16" name="AP_WEP_REKEY_3" id="AP_WEP_REKEY_3" value=\"""" + vapDom.getAttribute("AP_WEP_REKEY_3") + """\">(802.1x mode only)
+	<input type="text" onkeypress="return  numCheck(event)" maxlength="16" name="AP_WEP_REKEY_3" id="AP_WEP_REKEY_3" value=\"""" + vapDom.getAttribute(
+        "AP_WEP_REKEY_3") + """\">(802.1x mode only)
 									</td>
 								</tr>
 								<tr>
@@ -1567,7 +1641,8 @@ def apVapTab(vapDom):
 								<tr>
 									<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PSK KEY</td>
 									<td>
-	<input type="password" onblur="keylen_check('3')" maxlength="64" name="PSK_KEY_3" id="PSK_KEY_3" disabled="" value=\"""" + vapDom.getAttribute("PSK_KEY_3") + """\">
+	<input type="password" onblur="keylen_check('3')" maxlength="64" name="PSK_KEY_3" id="PSK_KEY_3" disabled="" value=\"""" + vapDom.getAttribute(
+        "PSK_KEY_3") + """\">
 									</td>
 								</tr>
 								<tr>
@@ -1581,26 +1656,31 @@ def apVapTab(vapDom):
 	<input type="radio" id="interface_dis_3" value="0" name="AP_RSN_ENA_PREAUTH_3">Disable
 	<input type="radio" id="interface_enb_3" value="1" name="AP_RSN_ENA_PREAUTH_3">Enable
 	&nbsp;&nbsp;Interface:
-	<input type="text" maxlength="16" name="AP_WPA_PREAUTH_IF_3" id="AP_WPA_PREAUTH_IF_3" value=\"""" + vapDom.getAttribute("AP_WPA_PREAUTH_IF_3") + """\">
+	<input type="text" maxlength="16" name="AP_WPA_PREAUTH_IF_3" id="AP_WPA_PREAUTH_IF_3" value=\"""" + vapDom.getAttribute(
+        "AP_WPA_PREAUTH_IF_3") + """\">
 									</td>
 								</tr>
 								<tr>
 									<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;EAP Reauth Period:</td>
 									<td>
-	<input type="text" onkeypress="return  numCheck(event)" maxlength="16" name="AP_EAP_REAUTH_PER_3" id="AP_EAP_REAUTH_PER_3" value=\"""" + vapDom.getAttribute("AP_EAP_REAUTH_PER_3") + """\">Seconds
+	<input type="text" onkeypress="return  numCheck(event)" maxlength="16" name="AP_EAP_REAUTH_PER_3" id="AP_EAP_REAUTH_PER_3" value=\"""" + vapDom.getAttribute(
+        "AP_EAP_REAUTH_PER_3") + """\">Seconds
 									</td>
 								</tr>
 								<tr>
 									<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Auth Server IP:</td>
 									<td>
-	<input type="text" onblur="checkIp(1,'AP_AUTH_SERVER_3','IPaddress')" onkeypress="return  IPKeyCheck(event)" maxlength="16" name="AP_AUTH_SERVER_3" id="AP_AUTH_SERVER_3" value=\"""" + vapDom.getAttribute("AP_AUTH_SERVER_3") + """\">
-	&nbsp;&nbsp;&nbsp;&nbsp; Port: <input type="text" onkeypress="return  numCheck(event)" maxlength="6" name="AP_AUTH_PORT_3" id="AP_AUTH_PORT_3" value=\"""" + vapDom.getAttribute("AP_AUTH_PORT_3") + """\">
+	<input type="text" onblur="checkIp(1,'AP_AUTH_SERVER_3','IPaddress')" onkeypress="return  IPKeyCheck(event)" maxlength="16" name="AP_AUTH_SERVER_3" id="AP_AUTH_SERVER_3" value=\"""" + vapDom.getAttribute(
+        "AP_AUTH_SERVER_3") + """\">
+	&nbsp;&nbsp;&nbsp;&nbsp; Port: <input type="text" onkeypress="return  numCheck(event)" maxlength="6" name="AP_AUTH_PORT_3" id="AP_AUTH_PORT_3" value=\"""" + vapDom.getAttribute(
+        "AP_AUTH_PORT_3") + """\">
 									</td>
 								</tr>
 								<tr>
 									<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Shared Secret:</td>
 									<td>
-	&nbsp;&nbsp;&nbsp;<input type="password" value="" maxlength="64" name="AP_AUTH_SECRET_3" id="AP_AUTH_SECRET_3" value=\"""" + vapDom.getAttribute("AP_AUTH_SECRET_3") + """\">
+	&nbsp;&nbsp;&nbsp;<input type="password" value="" maxlength="64" name="AP_AUTH_SECRET_3" id="AP_AUTH_SECRET_3" value=\"""" + vapDom.getAttribute(
+        "AP_AUTH_SECRET_3") + """\">
 									</td>
 								</tr>
 							</tbody>
@@ -1678,7 +1758,8 @@ def apVapTab(vapDom):
 								<tr>
 									<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WEP Rekey Int:</td>
 									<td>
-	<input type="text" onkeypress="return  numCheck(event)" maxlength="16" name="AP_WEP_REKEY_4" id="AP_WEP_REKEY_4"  value=\"""" + vapDom.getAttribute("AP_WEP_REKEY_4") + """\">(802.1x mode only)
+	<input type="text" onkeypress="return  numCheck(event)" maxlength="16" name="AP_WEP_REKEY_4" id="AP_WEP_REKEY_4"  value=\"""" + vapDom.getAttribute(
+        "AP_WEP_REKEY_4") + """\">(802.1x mode only)
 									</td>
 								</tr>
 								<tr>
@@ -1689,7 +1770,8 @@ def apVapTab(vapDom):
 								<tr>
 									<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PSK KEY</td>
 									<td>
-	<input type="password" onblur="keylen_check('4')" maxlength="64" name="PSK_KEY_4" id="PSK_KEY_4" disabled=""  value=\"""" + vapDom.getAttribute("PSK_KEY_4") + """\">
+	<input type="password" onblur="keylen_check('4')" maxlength="64" name="PSK_KEY_4" id="PSK_KEY_4" disabled=""  value=\"""" + vapDom.getAttribute(
+        "PSK_KEY_4") + """\">
 									</td>
 								</tr>
 								<tr>
@@ -1703,26 +1785,31 @@ def apVapTab(vapDom):
 	<input type="radio" id="interface_dis_4" value="0" name="AP_RSN_ENA_PREAUTH_4">Disable
 	<input type="radio" id="interface_enb_4" value="1" name="AP_RSN_ENA_PREAUTH_4">Enable
 	&nbsp;&nbsp;Interface:
-	<input type="text" maxlength="16" name="AP_WPA_PREAUTH_IF_4" id="AP_WPA_PREAUTH_IF_4"  value=\"""" + vapDom.getAttribute("AP_WPA_PREAUTH_IF_4") + """\">
+	<input type="text" maxlength="16" name="AP_WPA_PREAUTH_IF_4" id="AP_WPA_PREAUTH_IF_4"  value=\"""" + vapDom.getAttribute(
+        "AP_WPA_PREAUTH_IF_4") + """\">
 									</td>
 								</tr>
 								<tr>
 									<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;EAP Reauth Period:</td>
 									<td>
-	<input type="text" onkeypress="return  numCheck(event)" maxlength="16" name="AP_EAP_REAUTH_PER_4" id="AP_EAP_REAUTH_PER_4"  value=\"""" + vapDom.getAttribute("AP_EAP_REAUTH_PER_4") + """\">Seconds
+	<input type="text" onkeypress="return  numCheck(event)" maxlength="16" name="AP_EAP_REAUTH_PER_4" id="AP_EAP_REAUTH_PER_4"  value=\"""" + vapDom.getAttribute(
+        "AP_EAP_REAUTH_PER_4") + """\">Seconds
 									</td>
 								</tr>
 								<tr>
 									<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Auth Server IP:</td>
 									<td>
-	<input type="text" onblur="checkIp(1,'AP_AUTH_SERVER_4','IPaddress')" onkeypress="return  IPKeyCheck(event)" maxlength="16" name="AP_AUTH_SERVER_4" id="AP_AUTH_SERVER_4"  value=\"""" + vapDom.getAttribute("AP_AUTH_SERVER_4") + """\">
-	&nbsp;&nbsp;&nbsp;&nbsp; Port: <input type="text" onkeypress="return  numCheck(event)" maxlength="6" name="AP_AUTH_PORT_4" id="AP_AUTH_PORT_4"  value=\"""" + vapDom.getAttribute("AP_AUTH_PORT_4") + """\">
+	<input type="text" onblur="checkIp(1,'AP_AUTH_SERVER_4','IPaddress')" onkeypress="return  IPKeyCheck(event)" maxlength="16" name="AP_AUTH_SERVER_4" id="AP_AUTH_SERVER_4"  value=\"""" + vapDom.getAttribute(
+        "AP_AUTH_SERVER_4") + """\">
+	&nbsp;&nbsp;&nbsp;&nbsp; Port: <input type="text" onkeypress="return  numCheck(event)" maxlength="6" name="AP_AUTH_PORT_4" id="AP_AUTH_PORT_4"  value=\"""" + vapDom.getAttribute(
+        "AP_AUTH_PORT_4") + """\">
 									</td>
 								</tr>
 								<tr>
 									<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Shared Secret:</td>
 									<td>
-	&nbsp;&nbsp;&nbsp;<input type="password" value="" maxlength="64" name="AP_AUTH_SECRET_4" id="AP_AUTH_SECRET_4"  value=\"""" + vapDom.getAttribute("AP_AUTH_SECRET_4") + """\">
+	&nbsp;&nbsp;&nbsp;<input type="password" value="" maxlength="64" name="AP_AUTH_SECRET_4" id="AP_AUTH_SECRET_4"  value=\"""" + vapDom.getAttribute(
+        "AP_AUTH_SECRET_4") + """\">
 									</td>
 								</tr>
 							</tbody>
@@ -1800,7 +1887,8 @@ def apVapTab(vapDom):
 								<tr>
 									<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WEP Rekey Int:</td>
 									<td>
-	<input type="text" onkeypress="return  numCheck(event)" maxlength="16" name="AP_WEP_REKEY_5" id="AP_WEP_REKEY_5"  value=\"""" + vapDom.getAttribute("AP_WEP_REKEY_5") + """\">(802.1x mode only)
+	<input type="text" onkeypress="return  numCheck(event)" maxlength="16" name="AP_WEP_REKEY_5" id="AP_WEP_REKEY_5"  value=\"""" + vapDom.getAttribute(
+        "AP_WEP_REKEY_5") + """\">(802.1x mode only)
 									</td>
 								</tr>
 								<tr>
@@ -1811,7 +1899,8 @@ def apVapTab(vapDom):
 								<tr>
 									<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PSK KEY</td>
 									<td>
-	<input type="password" onblur="keylen_check('5')" maxlength="64" name="PSK_KEY_5" id="PSK_KEY_5" disabled=""  value=\"""" + vapDom.getAttribute("PSK_KEY_5") + """\">
+	<input type="password" onblur="keylen_check('5')" maxlength="64" name="PSK_KEY_5" id="PSK_KEY_5" disabled=""  value=\"""" + vapDom.getAttribute(
+        "PSK_KEY_5") + """\">
 									</td>
 								</tr>
 								<tr>
@@ -1825,26 +1914,31 @@ def apVapTab(vapDom):
 	<input type="radio" id="interface_dis_5" value="0" name="AP_RSN_ENA_PREAUTH_5">Disable
 	<input type="radio" id="interface_enb_5" value="1" name="AP_RSN_ENA_PREAUTH_5">Enable
 	&nbsp;&nbsp;Interface:
-	<input type="text" maxlength="16" name="AP_WPA_PREAUTH_IF_5" id="AP_WPA_PREAUTH_IF_5"  value=\"""" + vapDom.getAttribute("AP_WPA_PREAUTH_IF_5") + """\">
+	<input type="text" maxlength="16" name="AP_WPA_PREAUTH_IF_5" id="AP_WPA_PREAUTH_IF_5"  value=\"""" + vapDom.getAttribute(
+        "AP_WPA_PREAUTH_IF_5") + """\">
 									</td>
 								</tr>
 								<tr>
 									<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;EAP Reauth Period:</td>
 									<td>
-	<input type="text" onkeypress="return  numCheck(event)" maxlength="16" name="AP_EAP_REAUTH_PER_5" id="AP_EAP_REAUTH_PER_5"  value=\"""" + vapDom.getAttribute("AP_EAP_REAUTH_PER_5") + """\">Seconds
+	<input type="text" onkeypress="return  numCheck(event)" maxlength="16" name="AP_EAP_REAUTH_PER_5" id="AP_EAP_REAUTH_PER_5"  value=\"""" + vapDom.getAttribute(
+        "AP_EAP_REAUTH_PER_5") + """\">Seconds
 									</td>
 								</tr>
 								<tr>
 									<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Auth Server IP:</td>
 									<td>
-	<input type="text" onblur="checkIp(1,'AP_AUTH_SERVER_5','IPaddress')" onkeypress="return  IPKeyCheck(event)" maxlength="16" name="AP_AUTH_SERVER_5" id="AP_AUTH_SERVER_5"  value=\"""" + vapDom.getAttribute("AP_AUTH_SERVER_5") + """\">
-	&nbsp;&nbsp;&nbsp;&nbsp; Port: <input type="text" onkeypress="return  numCheck(event)" maxlength="6" name="AP_AUTH_PORT_5" id="AP_AUTH_PORT_5"  value=\"""" + vapDom.getAttribute("AP_AUTH_PORT_5") + """\">
+	<input type="text" onblur="checkIp(1,'AP_AUTH_SERVER_5','IPaddress')" onkeypress="return  IPKeyCheck(event)" maxlength="16" name="AP_AUTH_SERVER_5" id="AP_AUTH_SERVER_5"  value=\"""" + vapDom.getAttribute(
+        "AP_AUTH_SERVER_5") + """\">
+	&nbsp;&nbsp;&nbsp;&nbsp; Port: <input type="text" onkeypress="return  numCheck(event)" maxlength="6" name="AP_AUTH_PORT_5" id="AP_AUTH_PORT_5"  value=\"""" + vapDom.getAttribute(
+        "AP_AUTH_PORT_5") + """\">
 									</td>
 								</tr>
 								<tr>
 									<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Shared Secret:</td>
 									<td>
-	&nbsp;&nbsp;&nbsp;<input type="password" value="" maxlength="64" name="AP_AUTH_SECRET_5" id="AP_AUTH_SECRET_5"  value=\"""" + vapDom.getAttribute("AP_AUTH_SECRET_5") + """\">
+	&nbsp;&nbsp;&nbsp;<input type="password" value="" maxlength="64" name="AP_AUTH_SECRET_5" id="AP_AUTH_SECRET_5"  value=\"""" + vapDom.getAttribute(
+        "AP_AUTH_SECRET_5") + """\">
 									</td>
 								</tr>
 							</tbody>
@@ -1922,7 +2016,8 @@ def apVapTab(vapDom):
 								<tr>
 									<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WEP Rekey Int:</td>
 									<td>
-	<input type="text" onkeypress="return  numCheck(event)" maxlength="16" name="AP_WEP_REKEY_6" id="AP_WEP_REKEY_6"  value=\"""" + vapDom.getAttribute("AP_WEP_REKEY_6") + """\">(802.1x mode only)
+	<input type="text" onkeypress="return  numCheck(event)" maxlength="16" name="AP_WEP_REKEY_6" id="AP_WEP_REKEY_6"  value=\"""" + vapDom.getAttribute(
+        "AP_WEP_REKEY_6") + """\">(802.1x mode only)
 									</td>
 								</tr>
 								<tr>
@@ -1933,7 +2028,8 @@ def apVapTab(vapDom):
 								<tr>
 									<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PSK KEY</td>
 									<td>
-	<input type="password" onblur="keylen_check('6')" maxlength="64" name="PSK_KEY_6" id="PSK_KEY_6" disabled=""  value=\"""" + vapDom.getAttribute("PSK_KEY_6") + """\">
+	<input type="password" onblur="keylen_check('6')" maxlength="64" name="PSK_KEY_6" id="PSK_KEY_6" disabled=""  value=\"""" + vapDom.getAttribute(
+        "PSK_KEY_6") + """\">
 									</td>
 								</tr>
 								<tr>
@@ -1947,26 +2043,31 @@ def apVapTab(vapDom):
 	<input type="radio" id="interface_dis_6" value="0" name="AP_RSN_ENA_PREAUTH_6">Disable
 	<input type="radio" id="interface_enb_6" value="1" name="AP_RSN_ENA_PREAUTH_6">Enable
 	&nbsp;&nbsp;Interface:
-	<input type="text" maxlength="16" name="AP_WPA_PREAUTH_IF_6" id="AP_WPA_PREAUTH_IF_6" value=\"""" + vapDom.getAttribute("AP_WPA_PREAUTH_IF_6") + """\">
+	<input type="text" maxlength="16" name="AP_WPA_PREAUTH_IF_6" id="AP_WPA_PREAUTH_IF_6" value=\"""" + vapDom.getAttribute(
+        "AP_WPA_PREAUTH_IF_6") + """\">
 									</td>
 								</tr>
 								<tr>
 									<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;EAP Reauth Period:</td>
 									<td>
-	<input type="text" onkeypress="return  numCheck(event)" maxlength="16" name="AP_EAP_REAUTH_PER_6" id="AP_EAP_REAUTH_PER_6" value=\"""" + vapDom.getAttribute("AP_EAP_REAUTH_PER_6") + """\">Seconds
+	<input type="text" onkeypress="return  numCheck(event)" maxlength="16" name="AP_EAP_REAUTH_PER_6" id="AP_EAP_REAUTH_PER_6" value=\"""" + vapDom.getAttribute(
+        "AP_EAP_REAUTH_PER_6") + """\">Seconds
 									</td>
 								</tr>
 								<tr>
 									<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Auth Server IP:</td>
 									<td>
-	<input type="text" onblur="checkIp(1,'AP_AUTH_SERVER_6','IPaddress')" onkeypress="return  IPKeyCheck(event)" maxlength="16" name="AP_AUTH_SERVER_6" id="AP_AUTH_SERVER_6"  value=\"""" + vapDom.getAttribute("AP_AUTH_SERVER_6") + """\">
-	&nbsp;&nbsp;&nbsp;&nbsp; Port: <input type="text" onkeypress="return  numCheck(event)" maxlength="6" name="AP_AUTH_PORT_6" id="AP_AUTH_PORT_6" value=\"""" + vapDom.getAttribute("AP_AUTH_PORT_6") + """\">
+	<input type="text" onblur="checkIp(1,'AP_AUTH_SERVER_6','IPaddress')" onkeypress="return  IPKeyCheck(event)" maxlength="16" name="AP_AUTH_SERVER_6" id="AP_AUTH_SERVER_6"  value=\"""" + vapDom.getAttribute(
+        "AP_AUTH_SERVER_6") + """\">
+	&nbsp;&nbsp;&nbsp;&nbsp; Port: <input type="text" onkeypress="return  numCheck(event)" maxlength="6" name="AP_AUTH_PORT_6" id="AP_AUTH_PORT_6" value=\"""" + vapDom.getAttribute(
+        "AP_AUTH_PORT_6") + """\">
 									</td>
 								</tr>
 								<tr>
 									<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Shared Secret:</td>
 									<td>
-	&nbsp;&nbsp;&nbsp;<input type="password" value="" maxlength="64" name="AP_AUTH_SECRET_6" id="AP_AUTH_SECRET_6" value=\"""" + vapDom.getAttribute("AP_AUTH_SECRET_6") + """\">
+	&nbsp;&nbsp;&nbsp;<input type="password" value="" maxlength="64" name="AP_AUTH_SECRET_6" id="AP_AUTH_SECRET_6" value=\"""" + vapDom.getAttribute(
+        "AP_AUTH_SECRET_6") + """\">
 									</td>
 								</tr>
 							</tbody>
@@ -2044,7 +2145,8 @@ def apVapTab(vapDom):
 								<tr>
 									<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WEP Rekey Int:</td>
 									<td>
-	<input type="text" onkeypress="return  numCheck(event)" maxlength="16" name="AP_WEP_REKEY_7" id="AP_WEP_REKEY_7" value=\"""" + vapDom.getAttribute("AP_WEP_REKEY_7") + """\">(802.1x mode only)
+	<input type="text" onkeypress="return  numCheck(event)" maxlength="16" name="AP_WEP_REKEY_7" id="AP_WEP_REKEY_7" value=\"""" + vapDom.getAttribute(
+        "AP_WEP_REKEY_7") + """\">(802.1x mode only)
 									</td>
 								</tr>
 								<tr>
@@ -2055,7 +2157,8 @@ def apVapTab(vapDom):
 								<tr>
 									<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PSK KEY</td>
 									<td>
-	<input type="password" onblur="keylen_check('7')" maxlength="64" name="PSK_KEY_7" id="PSK_KEY_7" disabled="" value=\"""" + vapDom.getAttribute("PSK_KEY_7") + """\">
+	<input type="password" onblur="keylen_check('7')" maxlength="64" name="PSK_KEY_7" id="PSK_KEY_7" disabled="" value=\"""" + vapDom.getAttribute(
+        "PSK_KEY_7") + """\">
 									</td>
 								</tr>
 								<tr>
@@ -2069,26 +2172,31 @@ def apVapTab(vapDom):
 	<input type="radio" id="interface_dis_7" value="0" name="AP_RSN_ENA_PREAUTH_7">Disable
 	<input type="radio" id="interface_enb_7" value="1" name="AP_RSN_ENA_PREAUTH_7">Enable
 	&nbsp;&nbsp;Interface:
-	<input type="text" maxlength="16" name="AP_WPA_PREAUTH_IF_7" id="AP_WPA_PREAUTH_IF_7" value=\"""" + vapDom.getAttribute("AP_WPA_PREAUTH_IF_7") + """\">
+	<input type="text" maxlength="16" name="AP_WPA_PREAUTH_IF_7" id="AP_WPA_PREAUTH_IF_7" value=\"""" + vapDom.getAttribute(
+        "AP_WPA_PREAUTH_IF_7") + """\">
 									</td>
 								</tr>
 								<tr>
 									<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;EAP Reauth Period:</td>
 									<td>
-	<input type="text" onkeypress="return  numCheck(event)" maxlength="16" name="AP_EAP_REAUTH_PER_7" id="AP_EAP_REAUTH_PER_7"  value=\"""" + vapDom.getAttribute("AP_EAP_REAUTH_PER_7") + """\">Seconds
+	<input type="text" onkeypress="return  numCheck(event)" maxlength="16" name="AP_EAP_REAUTH_PER_7" id="AP_EAP_REAUTH_PER_7"  value=\"""" + vapDom.getAttribute(
+        "AP_EAP_REAUTH_PER_7") + """\">Seconds
 									</td>
 								</tr>
 								<tr>
 									<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Auth Server IP:</td>
 									<td>
-	<input type="text" onblur="checkIp(1,'AP_AUTH_SERVER_7','IPaddress')" onkeypress="return  IPKeyCheck(event)" maxlength="16" name="AP_AUTH_SERVER_7" id="AP_AUTH_SERVER_7" value=\"""" + vapDom.getAttribute("AP_AUTH_SERVER_7") + """\">
-	&nbsp;&nbsp;&nbsp;&nbsp; Port: <input type="text" onkeypress="return  numCheck(event)" maxlength="6" name="AP_AUTH_PORT_7" id="AP_AUTH_PORT_7" value=\"""" + vapDom.getAttribute("AP_AUTH_PORT_7") + """\">
+	<input type="text" onblur="checkIp(1,'AP_AUTH_SERVER_7','IPaddress')" onkeypress="return  IPKeyCheck(event)" maxlength="16" name="AP_AUTH_SERVER_7" id="AP_AUTH_SERVER_7" value=\"""" + vapDom.getAttribute(
+        "AP_AUTH_SERVER_7") + """\">
+	&nbsp;&nbsp;&nbsp;&nbsp; Port: <input type="text" onkeypress="return  numCheck(event)" maxlength="6" name="AP_AUTH_PORT_7" id="AP_AUTH_PORT_7" value=\"""" + vapDom.getAttribute(
+        "AP_AUTH_PORT_7") + """\">
 									</td>
 								</tr>
 								<tr>
 									<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Shared Secret:</td>
 									<td>
-	&nbsp;&nbsp;&nbsp;<input type="password" value="" maxlength="64" name="AP_AUTH_SECRET_7" id="AP_AUTH_SECRET_7" value=\"""" + vapDom.getAttribute("AP_AUTH_SECRET_7") + """\">
+	&nbsp;&nbsp;&nbsp;<input type="password" value="" maxlength="64" name="AP_AUTH_SECRET_7" id="AP_AUTH_SECRET_7" value=\"""" + vapDom.getAttribute(
+        "AP_AUTH_SECRET_7") + """\">
 									</td>
 								</tr>
 							</tbody>
@@ -2166,7 +2274,8 @@ def apVapTab(vapDom):
 								<tr>
 									<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WEP Rekey Int:</td>
 									<td>
-	<input type="text" onkeypress="return  numCheck(event)" maxlength="16" name="AP_WEP_REKEY_8" id="AP_WEP_REKEY_8" value=\"""" + vapDom.getAttribute("AP_WEP_REKEY_8") + """\">(802.1x mode only)
+	<input type="text" onkeypress="return  numCheck(event)" maxlength="16" name="AP_WEP_REKEY_8" id="AP_WEP_REKEY_8" value=\"""" + vapDom.getAttribute(
+        "AP_WEP_REKEY_8") + """\">(802.1x mode only)
 									</td>
 								</tr>
 								<tr>
@@ -2177,7 +2286,8 @@ def apVapTab(vapDom):
 								<tr>
 									<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PSK KEY</td>
 									<td>
-	<input type="password" onblur="keylen_check('8')" maxlength="64" name="PSK_KEY_8" id="PSK_KEY_8" disabled="" value=\"""" + vapDom.getAttribute("PSK_KEY_8") + """\">
+	<input type="password" onblur="keylen_check('8')" maxlength="64" name="PSK_KEY_8" id="PSK_KEY_8" disabled="" value=\"""" + vapDom.getAttribute(
+        "PSK_KEY_8") + """\">
 									</td>
 								</tr>
 								<tr>
@@ -2191,26 +2301,31 @@ def apVapTab(vapDom):
 	<input type="radio" id="interface_dis_8" value="0" name="AP_RSN_ENA_PREAUTH_8">Disable
 	<input type="radio" id="interface_enb_8" value="1" name="AP_RSN_ENA_PREAUTH_8">Enable
 	&nbsp;&nbsp;Interface:
-	<input type="text" maxlength="16" name="AP_WPA_PREAUTH_IF_8" id="AP_WPA_PREAUTH_IF_8" value=\"""" + vapDom.getAttribute("AP_WPA_PREAUTH_IF_8") + """\">
+	<input type="text" maxlength="16" name="AP_WPA_PREAUTH_IF_8" id="AP_WPA_PREAUTH_IF_8" value=\"""" + vapDom.getAttribute(
+        "AP_WPA_PREAUTH_IF_8") + """\">
 									</td>
 								</tr>
 								<tr>
 									<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;EAP Reauth Period:</td>
 									<td>
-	<input type="text" onkeypress="return  numCheck(event)" maxlength="16" name="AP_EAP_REAUTH_PER_8" id="AP_EAP_REAUTH_PER_8" value=\"""" + vapDom.getAttribute("AP_EAP_REAUTH_PER_8") + """\">Seconds
+	<input type="text" onkeypress="return  numCheck(event)" maxlength="16" name="AP_EAP_REAUTH_PER_8" id="AP_EAP_REAUTH_PER_8" value=\"""" + vapDom.getAttribute(
+        "AP_EAP_REAUTH_PER_8") + """\">Seconds
 									</td>
 								</tr>
 								<tr>
 									<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Auth Server IP:</td>
 									<td>
-	<input type="text" onblur="checkIp(1,'AP_AUTH_SERVER_8','IPaddress')" onkeypress="return  IPKeyCheck(event)" maxlength="16" name="AP_AUTH_SERVER_8" id="AP_AUTH_SERVER_8" value=\"""" + vapDom.getAttribute("AP_AUTH_SERVER_8") + """\">
-	&nbsp;&nbsp;&nbsp;&nbsp; Port: <input type="text" onkeypress="return  numCheck(event)" maxlength="6" name="AP_AUTH_PORT_8" id="AP_AUTH_PORT_8" value=\"""" + vapDom.getAttribute("AP_AUTH_PORT_8") + """\">
+	<input type="text" onblur="checkIp(1,'AP_AUTH_SERVER_8','IPaddress')" onkeypress="return  IPKeyCheck(event)" maxlength="16" name="AP_AUTH_SERVER_8" id="AP_AUTH_SERVER_8" value=\"""" + vapDom.getAttribute(
+        "AP_AUTH_SERVER_8") + """\">
+	&nbsp;&nbsp;&nbsp;&nbsp; Port: <input type="text" onkeypress="return  numCheck(event)" maxlength="6" name="AP_AUTH_PORT_8" id="AP_AUTH_PORT_8" value=\"""" + vapDom.getAttribute(
+        "AP_AUTH_PORT_8") + """\">
 									</td>
 								</tr>
 								<tr>
 									<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Shared Secret:</td>
 									<td>
-	&nbsp;&nbsp;&nbsp;<input type="password" value="" maxlength="64" name="AP_AUTH_SECRET_8" id="AP_AUTH_SECRET_8" value=\"""" + vapDom.getAttribute("AP_AUTH_SECRET_8") + """\">
+	&nbsp;&nbsp;&nbsp;<input type="password" value="" maxlength="64" name="AP_AUTH_SECRET_8" id="AP_AUTH_SECRET_8" value=\"""" + vapDom.getAttribute(
+        "AP_AUTH_SECRET_8") + """\">
 									</td>
 								</tr>
 							</tbody>
@@ -2226,6 +2341,11 @@ def apVapTab(vapDom):
 
 
 def apAclTab(aclDom):
+    """
+
+    @param aclDom:
+    @return:
+    """
     tableString = """
 	<table style="padding:20px 20px 0px 20px; width:100%;">
 		<colgroup><col width='20%'/><col width='80%'/></colgroup>
@@ -2254,18 +2374,21 @@ def apAclTab(aclDom):
 					<colgroup><col width='20%'/><col width='80%'/></colgroup>
 					<tbody>
 						<tr >
-							<td>ACL<input type="hidden" id="acl_vap1_hd" name="acl_vap1_hd" value=\"""" + aclDom.getAttribute("ACL_VAP") + """\" /></td>
+							<td>ACL<input type="hidden" id="acl_vap1_hd" name="acl_vap1_hd" value=\"""" + aclDom.getAttribute(
+        "ACL_VAP") + """\" /></td>
 							<td>
 							    <input type="radio" id="acl_vap1_enabled" onclick="ToggleACL(true,'1')" value="1" name="ACL_VAP">Enable
 							    <input type="radio" id="acl_vap1_disabled" onclick="ToggleACL(false,'1')" value="0" name="ACL_VAP">Disable
 							</td>
 						</tr>
 						<tr id="acl_vap1_tr" style="width:100%;display:none;">
-							<td>MAC Address List<input type="hidden" id="acltype_vap1_hd" name="acltype_vap1_hd" value=\"""" + aclDom.getAttribute("ACLTYPE_VAP") + """\" /></td>
+							<td>MAC Address List<input type="hidden" id="acltype_vap1_hd" name="acltype_vap1_hd" value=\"""" + aclDom.getAttribute(
+        "ACLTYPE_VAP") + """\" /></td>
 							<td>
 								<input type=\"radio\" id=\"acltype_vap1_allow\" name=\"ACLTYPE_VAP\" value=\"1\"> Allow
 								<input type=\"radio\" id=\"acltype_vap1_deny\" name=\"ACLTYPE_VAP\" value=\"0\"> Deny <br/>
-								<textarea id=\"MAC_LIST\" name=\"MAC_LIST\" style=\"width:300px;height:150px;\">""" + getText(aclDom.getElementsByTagName("maclist1")[0].childNodes) + """</textarea><br/><span style=\"color:#555;font-size:9px;\">(Use blankspace or comma or newline as seperator between MACs)</span>
+								<textarea id=\"MAC_LIST\" name=\"MAC_LIST\" style=\"width:300px;height:150px;\">""" + getText(
+        aclDom.getElementsByTagName("maclist1")[0].childNodes) + """</textarea><br/><span style=\"color:#555;font-size:9px;\">(Use blankspace or comma or newline as seperator between MACs)</span>
 							</td>
 						</tr>
 					</tbody>
@@ -2274,18 +2397,21 @@ def apAclTab(aclDom):
 					<colgroup><col width='20%'/><col width='80%'/></colgroup>
 					<tbody>
 						<tr>
-							<td>ACL<input type="hidden" id="acl_vap2_hd" name="acl_vap2_hd" value=\"""" + aclDom.getAttribute("ACL_VAP_2") + """\" /></td>
+							<td>ACL<input type="hidden" id="acl_vap2_hd" name="acl_vap2_hd" value=\"""" + aclDom.getAttribute(
+        "ACL_VAP_2") + """\" /></td>
 							<td>
 							   <input type="radio" id="acl_vap2_enabled" onclick="ToggleACL(true,'2')" value="1" name="ACL_VAP_2">Enable
 							   <input type="radio" id="acl_vap2_disabled" onclick="ToggleACL(false,'2')" value="0" name="ACL_VAP_2">Disable
 							</td>
 						</tr>
 						<tr id="acl_vap2_tr" style="width:100%;display:none;">
-							<td>MAC Address List<input type="hidden" id="acltype_vap2_hd" name="acltype_vap2_hd" value=\"""" + aclDom.getAttribute("ACLTYPE_VAP_2") + """\" /></td>
+							<td>MAC Address List<input type="hidden" id="acltype_vap2_hd" name="acltype_vap2_hd" value=\"""" + aclDom.getAttribute(
+        "ACLTYPE_VAP_2") + """\" /></td>
 							<td>
 								<input type=\"radio\" id=\"acltype_vap2_allow\" name=\"ACLTYPE_VAP_2\" value=\"1\"> Allow
 								<input type=\"radio\" id=\"acltype_vap2_deny\" name=\"ACLTYPE_VAP_2\" value=\"0\"> Deny <br/>
-								<textarea id=\"MAC_LIST_2\" name=\"MAC_LIST_2\" style=\"width:300px;height:150px;\">""" + getText(aclDom.getElementsByTagName("maclist2")[0].childNodes) + """</textarea><br/><span style=\"color:#555;font-size:9px;\">(Use blankspace or comma or newline as seperator between MACs)</span>
+								<textarea id=\"MAC_LIST_2\" name=\"MAC_LIST_2\" style=\"width:300px;height:150px;\">""" + getText(
+        aclDom.getElementsByTagName("maclist2")[0].childNodes) + """</textarea><br/><span style=\"color:#555;font-size:9px;\">(Use blankspace or comma or newline as seperator between MACs)</span>
 							</td>
 						</tr>
 					</tbody>
@@ -2294,18 +2420,21 @@ def apAclTab(aclDom):
 					<colgroup><col width='20%'/><col width='80%'/></colgroup>
 					<tbody>
 						<tr>
-							<td>ACL<input type="hidden" id="acl_vap3_hd" name="acl_vap3_hd" value=\"""" + aclDom.getAttribute("ACL_VAP_3") + """\" /></td>
+							<td>ACL<input type="hidden" id="acl_vap3_hd" name="acl_vap3_hd" value=\"""" + aclDom.getAttribute(
+        "ACL_VAP_3") + """\" /></td>
 							<td>
 							   <input type="radio" id="acl_vap3_enabled" onclick="ToggleACL(true,'3')" value="1" name="ACL_VAP_3">Enable
 							   <input type="radio" id="acl_vap3_disabled" onclick="ToggleACL(false,'3')" value="0" name="ACL_VAP_3">Disable
 							</td>
 						</tr>
 						<tr id="acl_vap3_tr" style="width:100%;display:none;">
-							<td>MAC Address List<input type="hidden" id="acltype_vap3_hd" name="acltype_vap3_hd" value=\"""" + aclDom.getAttribute("ACLTYPE_VAP_3") + """\" /></td>
+							<td>MAC Address List<input type="hidden" id="acltype_vap3_hd" name="acltype_vap3_hd" value=\"""" + aclDom.getAttribute(
+        "ACLTYPE_VAP_3") + """\" /></td>
 							<td>
 								<input type=\"radio\" id=\"acltype_vap3_allow\" name=\"ACLTYPE_VAP_3\" value=\"1\"> Allow
 								<input type=\"radio\" id=\"acltype_vap3_deny\" name=\"ACLTYPE_VAP_3\" value=\"0\"> Deny <br/>
-								<textarea id=\"MAC_LIST_3\" name=\"MAC_LIST_3\" style=\"width:300px;height:150px;\">""" + getText(aclDom.getElementsByTagName("maclist3")[0].childNodes) + """</textarea><br/><span style=\"color:#555;font-size:9px;\">(Use blankspace or comma or newline as seperator between MACs)</span>
+								<textarea id=\"MAC_LIST_3\" name=\"MAC_LIST_3\" style=\"width:300px;height:150px;\">""" + getText(
+        aclDom.getElementsByTagName("maclist3")[0].childNodes) + """</textarea><br/><span style=\"color:#555;font-size:9px;\">(Use blankspace or comma or newline as seperator between MACs)</span>
 							</td>
 						</tr>
 					</tbody>
@@ -2314,18 +2443,21 @@ def apAclTab(aclDom):
 					<colgroup><col width='20%'/><col width='80%'/></colgroup>
 					<tbody>
 						<tr>
-							<td>ACL<input type="hidden" id="acl_vap4_hd" name="acl_vap4_hd" value=\"""" + aclDom.getAttribute("ACL_VAP_4") + """\" /></td>
+							<td>ACL<input type="hidden" id="acl_vap4_hd" name="acl_vap4_hd" value=\"""" + aclDom.getAttribute(
+        "ACL_VAP_4") + """\" /></td>
 							<td>
 							   <input type="radio" id="acl_vap4_enabled" onclick="ToggleACL(true,'4')" value="1" name="ACL_VAP_4">Enable
 							   <input type="radio" id="acl_vap4_disabled" onclick="ToggleACL(false,'4')" value="0" name="ACL_VAP_4">Disable
 							</td>
 						</tr>
 						<tr id="acl_vap4_tr" style="width:100%;display:none;">
-							<td>MAC Address List<input type="hidden" id="acltype_vap4_hd" name="acltype_vap4_hd" value=\"""" + aclDom.getAttribute("ACLTYPE_VAP_4") + """\" /></td>
+							<td>MAC Address List<input type="hidden" id="acltype_vap4_hd" name="acltype_vap4_hd" value=\"""" + aclDom.getAttribute(
+        "ACLTYPE_VAP_4") + """\" /></td>
 							<td>
 								<input type=\"radio\" id=\"acltype_vap4_allow\" name=\"ACLTYPE_VAP_4\" value=\"1\"> Allow
 								<input type=\"radio\" id=\"acltype_vap4_deny\" name=\"ACLTYPE_VAP_4\" value=\"0\"> Deny <br/>
-								<textarea id=\"MAC_LIST_4\" name=\"MAC_LIST_4\" style=\"width:300px;height:150px;\">""" + getText(aclDom.getElementsByTagName("maclist4")[0].childNodes) + """</textarea><br/><span style=\"color:#555;font-size:9px;\">(Use blankspace or comma or newline as seperator between MACs)</span>
+								<textarea id=\"MAC_LIST_4\" name=\"MAC_LIST_4\" style=\"width:300px;height:150px;\">""" + getText(
+        aclDom.getElementsByTagName("maclist4")[0].childNodes) + """</textarea><br/><span style=\"color:#555;font-size:9px;\">(Use blankspace or comma or newline as seperator between MACs)</span>
 							</td>
 						</tr>
 					</tbody>
@@ -2334,18 +2466,21 @@ def apAclTab(aclDom):
 					<colgroup><col width='20%'/><col width='80%'/></colgroup>
 					<tbody>
 						<tr>
-							<td>ACL<input type="hidden" id="acl_vap5_hd" name="acl_vap5_hd" value=\"""" + aclDom.getAttribute("ACL_VAP_5") + """\" /></td>
+							<td>ACL<input type="hidden" id="acl_vap5_hd" name="acl_vap5_hd" value=\"""" + aclDom.getAttribute(
+        "ACL_VAP_5") + """\" /></td>
 							<td>
 							   <input type="radio" id="acl_vap5_enabled" onclick="ToggleACL(true,'5')" value="1" name="ACL_VAP_5">Enable
 							   <input type="radio" id="acl_vap5_disabled" onclick="ToggleACL(false,'5')" value="0" name="ACL_VAP_5">Disable
 							</td>
 						</tr>
 						<tr id="acl_vap5_tr" style="width:100%;display:none;">
-							<td>MAC Address List<input type="hidden" id="acltype_vap5_hd" name="acltype_vap5_hd" value=\"""" + aclDom.getAttribute("ACLTYPE_VAP_5") + """\" /></td>
+							<td>MAC Address List<input type="hidden" id="acltype_vap5_hd" name="acltype_vap5_hd" value=\"""" + aclDom.getAttribute(
+        "ACLTYPE_VAP_5") + """\" /></td>
 							<td>
 								<input type=\"radio\" id=\"acltype_vap5_allow\" name=\"ACLTYPE_VAP_5\" value=\"1\"> Allow
 								<input type=\"radio\" id=\"acltype_vap5_deny\" name=\"ACLTYPE_VAP_5\" value=\"0\"> Deny <br/>
-								<textarea id=\"MAC_LIST_5\" name=\"MAC_LIST_5\" style=\"width:300px;height:150px;\">""" + getText(aclDom.getElementsByTagName("maclist5")[0].childNodes) + """</textarea><br/><span style=\"color:#555;font-size:9px;\">(Use blankspace or comma or newline as seperator between MACs)</span>
+								<textarea id=\"MAC_LIST_5\" name=\"MAC_LIST_5\" style=\"width:300px;height:150px;\">""" + getText(
+        aclDom.getElementsByTagName("maclist5")[0].childNodes) + """</textarea><br/><span style=\"color:#555;font-size:9px;\">(Use blankspace or comma or newline as seperator between MACs)</span>
 							</td>
 						</tr>
 					</tbody>
@@ -2354,18 +2489,21 @@ def apAclTab(aclDom):
 					<colgroup><col width='20%'/><col width='80%'/></colgroup>
 					<tbody>
 						<tr>
-							<td>ACL<input type="hidden" id="acl_vap6_hd" name="acl_vap6_hd" value=\"""" + aclDom.getAttribute("ACL_VAP_6") + """\" /></td>
+							<td>ACL<input type="hidden" id="acl_vap6_hd" name="acl_vap6_hd" value=\"""" + aclDom.getAttribute(
+        "ACL_VAP_6") + """\" /></td>
 							<td>
 							   <input type="radio" id="acl_vap6_enabled" onclick="ToggleACL(true,'6')" value="1" name="ACL_VAP_6">Enable
 							   <input type="radio" id="acl_vap6_disabled" onclick="ToggleACL(false,'6')" value="0" name="ACL_VAP_6">Disable
 							</td>
 						</tr>
 						<tr id="acl_vap6_tr" style="width:100%;display:none;">
-							<td>MAC Address List<input type="hidden" id="acltype_vap6_hd" name="acltype_vap6_hd" value=\"""" + aclDom.getAttribute("ACLTYPE_VAP_6") + """\" /></td>
+							<td>MAC Address List<input type="hidden" id="acltype_vap6_hd" name="acltype_vap6_hd" value=\"""" + aclDom.getAttribute(
+        "ACLTYPE_VAP_6") + """\" /></td>
 							<td>
 								<input type=\"radio\" id=\"acltype_vap6_allow\" name=\"ACLTYPE_VAP_6\" value=\"1\"> Allow
 								<input type=\"radio\" id=\"acltype_vap6_deny\" name=\"ACLTYPE_VAP_6\" value=\"0\"> Deny <br/>
-								<textarea id=\"MAC_LIST_6\" name=\"MAC_LIST_6\" style=\"width:300px;height:150px;\">""" + getText(aclDom.getElementsByTagName("maclist6")[0].childNodes) + """</textarea><br/><span style=\"color:#555;font-size:9px;\">(Use blankspace or comma or newline as seperator between MACs)</span>
+								<textarea id=\"MAC_LIST_6\" name=\"MAC_LIST_6\" style=\"width:300px;height:150px;\">""" + getText(
+        aclDom.getElementsByTagName("maclist6")[0].childNodes) + """</textarea><br/><span style=\"color:#555;font-size:9px;\">(Use blankspace or comma or newline as seperator between MACs)</span>
 							</td>
 						</tr>
 					</tbody>
@@ -2374,18 +2512,21 @@ def apAclTab(aclDom):
 					<colgroup><col width='20%'/><col width='80%'/></colgroup>
 					<tbody>
 						<tr>
-							<td>ACL<input type="hidden" id="acl_vap7_hd" name="acl_vap7_hd" value=\"""" + aclDom.getAttribute("ACL_VAP_7") + """\" /></td>
+							<td>ACL<input type="hidden" id="acl_vap7_hd" name="acl_vap7_hd" value=\"""" + aclDom.getAttribute(
+        "ACL_VAP_7") + """\" /></td>
 							<td>
 							   <input type="radio" id="acl_vap7_enabled" onclick="ToggleACL(true,'7')" value="1" name="ACL_VAP_7">Enable
 							   <input type="radio" id="acl_vap7_disabled" onclick="ToggleACL(false,'7')" value="0" name="ACL_VAP_7">Disable
 							</td>
 						</tr>
 						<tr id="acl_vap7_tr" style="width:100%;display:none;">
-							<td>MAC Address List<input type="hidden" id="acltype_vap7_hd" name="acltype_vap7_hd" value=\"""" + aclDom.getAttribute("ACLTYPE_VAP_7") + """\" /></td>
+							<td>MAC Address List<input type="hidden" id="acltype_vap7_hd" name="acltype_vap7_hd" value=\"""" + aclDom.getAttribute(
+        "ACLTYPE_VAP_7") + """\" /></td>
 							<td>
 								<input type=\"radio\" id=\"acltype_vap7_allow\" name=\"ACLTYPE_VAP_7\" value=\"1\"> Allow
 								<input type=\"radio\" id=\"acltype_vap7_deny\" name=\"ACLTYPE_VAP_7\" value=\"0\"> Deny <br/>
-								<textarea id=\"MAC_LIST_7\" name=\"MAC_LIST_7\" style=\"width:300px;height:150px;\">""" + getText(aclDom.getElementsByTagName("maclist7")[0].childNodes) + """</textarea><br/><span style=\"color:#555;font-size:9px;\">(Use blankspace or comma or newline as seperator between MACs)</span>
+								<textarea id=\"MAC_LIST_7\" name=\"MAC_LIST_7\" style=\"width:300px;height:150px;\">""" + getText(
+        aclDom.getElementsByTagName("maclist7")[0].childNodes) + """</textarea><br/><span style=\"color:#555;font-size:9px;\">(Use blankspace or comma or newline as seperator between MACs)</span>
 							</td>
 						</tr>
 					</tbody>
@@ -2394,18 +2535,21 @@ def apAclTab(aclDom):
 					<colgroup><col width='20%'/><col width='80%'/></colgroup>
 					<tbody>
 						<tr>
-							<td>ACL<input type="hidden" id="acl_vap8_hd" name="acl_vap8_hd" value=\"""" + aclDom.getAttribute("ACL_VAP_8") + """\" /></td>
+							<td>ACL<input type="hidden" id="acl_vap8_hd" name="acl_vap8_hd" value=\"""" + aclDom.getAttribute(
+        "ACL_VAP_8") + """\" /></td>
 							<td>
 							   <input type="radio" id="acl_vap8_enabled" onclick="ToggleACL(true,'8')" value="1" name="ACL_VAP_8">Enable
 							   <input type="radio" id="acl_vap8_disabled" onclick="ToggleACL(false,'8')" value="0" name="ACL_VAP_8">Disable
 							</td>
 						</tr>
 						<tr id="acl_vap8_tr" style="width:100%;display:none;">
-							<td>MAC Address List<input type="hidden" id="acltype_vap8_hd" name="acltype_vap8_hd" value=\"""" + aclDom.getAttribute("ACLTYPE_VAP_8") + """\" /></td>
+							<td>MAC Address List<input type="hidden" id="acltype_vap8_hd" name="acltype_vap8_hd" value=\"""" + aclDom.getAttribute(
+        "ACLTYPE_VAP_8") + """\" /></td>
 							<td>
 								<input type=\"radio\" id=\"acltype_vap8_allow\" name=\"ACLTYPE_VAP_8\" value=\"1\"> Allow
 								<input type=\"radio\" id=\"acltype_vap8_deny\" name=\"ACLTYPE_VAP_8\" value=\"0\"> Deny <br/>
-								<textarea id=\"MAC_LIST_8\" name=\"MAC_LIST_8\" style=\"width:300px;height:150px;\">""" + getText(aclDom.getElementsByTagName("maclist8")[0].childNodes) + """</textarea><br/><span style=\"color:#555;font-size:9px;\">(Use blankspace or comma or newline as seperator between MACs)</span>
+								<textarea id=\"MAC_LIST_8\" name=\"MAC_LIST_8\" style=\"width:300px;height:150px;\">""" + getText(
+        aclDom.getElementsByTagName("maclist8")[0].childNodes) + """</textarea><br/><span style=\"color:#555;font-size:9px;\">(Use blankspace or comma or newline as seperator between MACs)</span>
 							</td>
 						</tr>
 					</tbody>
@@ -2419,11 +2563,17 @@ def apAclTab(aclDom):
 
 
 def apServicesTab(servicesDom):
+    """
+
+    @param servicesDom:
+    @return:
+    """
     tableString = """
 <table style="padding:20px;width:100%;">
 	<colgroup><col width='20%'/><col width='80%'/></colgroup>
 		<tbody>
-			<tr><td colspan="2"><b>UPnP Server</b><input type="hidden" id="upnpHidden" name="upnpHidden" value=\"""" + servicesDom.getAttribute("AP_UPNP") + """\" /></td></tr>
+			<tr><td colspan="2"><b>UPnP Server</b><input type="hidden" id="upnpHidden" name="upnpHidden" value=\"""" + servicesDom.getAttribute(
+        "AP_UPNP") + """\" /></td></tr>
 			<tr>
 				<td>UPnP</td>
 				<td>
@@ -2432,7 +2582,8 @@ def apServicesTab(servicesDom):
 				</td>
 			</tr>
 			<tr><td colspan="2">&nbsp;</td></tr>
-			<tr><td colspan="2"><b>System Log</b><input type="hidden" id="sysLogHidden" name="sysLogHidden" value=\"""" + servicesDom.getAttribute("AP_SYSLOG") + """\" /></td></tr>
+			<tr><td colspan="2"><b>System Log</b><input type="hidden" id="sysLogHidden" name="sysLogHidden" value=\"""" + servicesDom.getAttribute(
+        "AP_SYSLOG") + """\" /></td></tr>
 			<tr>
 				<td>System Log</td>
 				<td>
@@ -2443,18 +2594,21 @@ def apServicesTab(servicesDom):
 			<tr>
 				<td>Logging IP Address</td>
 				<td>
-<input id="syslog_ip" name="AP_SYSLOG_IP" style="width: 150px;" onkeypress="return  IPKeyCheck(event)" onblur="checkIp(1,'syslog_ip','IPAddress')" type="text" value=\"""" + servicesDom.getAttribute("AP_SYSLOG_IP") + """\" >
+<input id="syslog_ip" name="AP_SYSLOG_IP" style="width: 150px;" onkeypress="return  IPKeyCheck(event)" onblur="checkIp(1,'syslog_ip','IPAddress')" type="text" value=\"""" + servicesDom.getAttribute(
+        "AP_SYSLOG_IP") + """\" >
 				</td>
 			</tr>
 			<tr>
 				<td>Logging Port</td>
 				<td>
-<input style="width: 50px;" maxlength="5" id="syslog_port" value="514" name="SYSLOG_PORT" onkeypress="return  numCheck(event)" type="text" value=\"""" + servicesDom.getAttribute("SYSLOG_PORT") + """\" >
+<input style="width: 50px;" maxlength="5" id="syslog_port" value="514" name="SYSLOG_PORT" onkeypress="return  numCheck(event)" type="text" value=\"""" + servicesDom.getAttribute(
+        "SYSLOG_PORT") + """\" >
 				</td>
 			</tr>
 			<tr><td colspan="2">&nbsp;</td></tr>
 			<tr>
-				<td colspan="2"><b>SNMP Server</b><input type="hidden" id="snmpHidden" name="snmpHidden" value=\"""" + servicesDom.getAttribute("SNMP_Enable") + """\" /></td>
+				<td colspan="2"><b>SNMP Server</b><input type="hidden" id="snmpHidden" name="snmpHidden" value=\"""" + servicesDom.getAttribute(
+        "SNMP_Enable") + """\" /></td>
 			</tr>
 			<tr>
 				<td>SNMP</td>
@@ -2465,18 +2619,22 @@ def apServicesTab(servicesDom):
 			</tr>
 			<tr>
 				<td>Read Only Community</td>
-				<td><input id="snmp_comm" name="SNMP_Comm" type="text" value=\"""" + servicesDom.getAttribute("SNMP_Comm") + """\" ></td>
+				<td><input id="snmp_comm" name="SNMP_Comm" type="text" value=\"""" + servicesDom.getAttribute(
+        "SNMP_Comm") + """\" ></td>
 			</tr>
 			<tr>
 				<td>System Location</td>
-				<td><input id="snmp_location" name="SNMP_Location" type="text" value=\"""" + servicesDom.getAttribute("SNMP_Location") + """\" ></td>
+				<td><input id="snmp_location" name="SNMP_Location" type="text" value=\"""" + servicesDom.getAttribute(
+        "SNMP_Location") + """\" ></td>
 			</tr>
 			<tr>
 				<td>System Contact</td>
-				<td><input id="snmp_contact" name="SNMP_Contact" type="text" value=\"""" + servicesDom.getAttribute("SNMP_Contact") + """\" /></td>
+				<td><input id="snmp_contact" name="SNMP_Contact" type="text" value=\"""" + servicesDom.getAttribute(
+        "SNMP_Contact") + """\" /></td>
 			</tr>
 			<tr><td colspan="2">&nbsp;</td></tr>
-			<tr><td colspan="2"><b>DHCP Server Settings</b><input type="hidden" id="dhcpHidden" name="dhcpHidden" value=\"""" + servicesDom.getAttribute("DHCP_SER") + """\" /></td></tr>
+			<tr><td colspan="2"><b>DHCP Server Settings</b><input type="hidden" id="dhcpHidden" name="dhcpHidden" value=\"""" + servicesDom.getAttribute(
+        "DHCP_SER") + """\" /></td></tr>
 				<tr>
 					<td>DHCP Server</td>
 					<td><input type="radio" onclick="dhcpState(true)" value="Enable" id="DHCP_SER_EN" name="DHCP_SER">Enable &nbsp; &nbsp;
@@ -2485,25 +2643,30 @@ def apServicesTab(servicesDom):
 				</tr>
 				<tr>
 					<td>DHCP Start IP</td>
-					<td><input type="text" maxlength="16" name="DHCP_SIP" id="DHCP_SIP" value=\"""" + servicesDom.getAttribute("DHCP_SIP") + """\" onkeypress="return  IPKeyCheck(event)" onblur="checkIp(1,'DHCP_SIP','StartIP')"></td>
+					<td><input type="text" maxlength="16" name="DHCP_SIP" id="DHCP_SIP" value=\"""" + servicesDom.getAttribute(
+        "DHCP_SIP") + """\" onkeypress="return  IPKeyCheck(event)" onblur="checkIp(1,'DHCP_SIP','StartIP')"></td>
 				</tr>
 				<tr>
 					<td>DHCP End IP</td>
-					<td><input type="text" maxlength="16" name="DHCP_EIP" id="DHCP_EIP" value=\"""" + servicesDom.getAttribute("DHCP_EIP") + """\" onkeypress="return  IPKeyCheck(event)" onblur="checkIp(1,'DHCP_EIP','EndIP')"></td>
+					<td><input type="text" maxlength="16" name="DHCP_EIP" id="DHCP_EIP" value=\"""" + servicesDom.getAttribute(
+        "DHCP_EIP") + """\" onkeypress="return  IPKeyCheck(event)" onblur="checkIp(1,'DHCP_EIP','EndIP')"></td>
 				</tr>
 				<tr>
 					<td>Network Mask</td>
-					<td><input type="text" maxlength="16" name="DHCP_NM" id="DHCP_NM" value=\"""" + servicesDom.getAttribute("DHCP_NM") + """\" onkeypress="return  IPKeyCheck(event)" onblur="checkIp(2,'DHCP_NM','NetworkMask')"></td>
+					<td><input type="text" maxlength="16" name="DHCP_NM" id="DHCP_NM" value=\"""" + servicesDom.getAttribute(
+        "DHCP_NM") + """\" onkeypress="return  IPKeyCheck(event)" onblur="checkIp(2,'DHCP_NM','NetworkMask')"></td>
 				</tr>
 				<tr>
 					<td>DHCP Lease Time</td>
-					<td><input type="text" onkeypress="return numCheck(event)" name="DHCP_LEASE" id="DHCP_LEASE" value=\"""" + servicesDom.getAttribute("DHCP_LEASE") + """\" > Minutes</td>
+					<td><input type="text" onkeypress="return numCheck(event)" name="DHCP_LEASE" id="DHCP_LEASE" value=\"""" + servicesDom.getAttribute(
+        "DHCP_LEASE") + """\" > Minutes</td>
 				</tr>
 				<tr><td colspan="2">&nbsp;</td></tr>
 				<tr>
 					<td colspan="2">
 						<div id="timeeditor">
-							Time Zone :<input type="hidden" id="timeZoneHidden" name="timeZoneHidden" value=\"""" + servicesDom.getAttribute("TimeZone") + """\" />
+							Time Zone :<input type="hidden" id="timeZoneHidden" name="timeZoneHidden" value=\"""" + servicesDom.getAttribute(
+        "TimeZone") + """\" />
 							<select name="TimeZone" id="DropDownTimezone">
 							      <option value="HMT-12">(GMT -12:00) Eniwetok, Kwajalein</option>
 							      <option value="SST11">(GMT -11:00) Midway Island, Samoa</option>
@@ -2538,7 +2701,8 @@ def apServicesTab(servicesDom):
 							      <option value="FJT-12">(GMT +12:00) Auckland, Wellington, Fiji, Kamchatka</option>
 							</select>
 							<br><br>
-							Configuration :<input type="hidden" id="ntpHidden" name="ntpHidden" value=\"""" + servicesDom.getAttribute("NTP_Enable") + """\" />
+							Configuration :<input type="hidden" id="ntpHidden" name="ntpHidden" value=\"""" + servicesDom.getAttribute(
+        "NTP_Enable") + """\" />
 							<select onchange="AlterTimeSettings()" name="NTP_Enable" id="NTP_Enable">
 								<option value="Disable">Manual</option>
 								<option value="Enable">Automatic</option>
@@ -2594,6 +2758,10 @@ def apServicesTab(servicesDom):
 
 
 def create_config_tamplate(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     site = __file__.split("/")[3]
@@ -2601,7 +2769,7 @@ def create_config_tamplate(h):
     # create service template dom
     configTemplateDom = xml.dom.minidom.parseString(
         "<configurationTemplate></configurationTemplate>")
-    if(os.path.isfile(configurationTemplateFile)):
+    if (os.path.isfile(configurationTemplateFile)):
         configTemplateDom = xml.dom.minidom.parse(configurationTemplateFile)
 
     # create new tamplate element
@@ -2979,7 +3147,7 @@ def create_config_tamplate(h):
         if html.var("PSK_KEY") is not None:
             if html.var("PSK_KEY").strip() != "":
                 vapDom.setAttribute("PSK_KEY", html.var("PSK_KEY"))
-        # AP_RSN_ENA_PREAUTH
+            # AP_RSN_ENA_PREAUTH
         if html.var("AP_RSN_ENA_PREAUTH") is not None:
             vapDom.setAttribute(
                 "AP_RSN_ENA_PREAUTH", html.var("AP_RSN_ENA_PREAUTH"))
@@ -3131,7 +3299,7 @@ def create_config_tamplate(h):
             if html.var("PSK_KEY_" + str(j)).strip() != "":
                 vapDom.setAttribute(
                     "PSK_KEY_" + str(j), html.var("PSK_KEY_" + str(j)))
-        # AP_RSN_ENA_PREAUTH
+            # AP_RSN_ENA_PREAUTH
         if html.var("AP_RSN_ENA_PREAUTH_" + str(j)) is not None:
             vapDom.setAttribute("AP_RSN_ENA_PREAUTH_" + str(
                 j), html.var("AP_RSN_ENA_PREAUTH_" + str(j)))
@@ -3394,21 +3562,22 @@ def create_config_tamplate(h):
     fwxml.write(configTemplateDom.toxml())
     fwxml.close()
     html.write("0")
+
 ############################################### End Manage Template ######
 
 ############################################### Manage Configuration #####
 
 
 def manage_host_configuration(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     sitename = __file__.split("/")[3]
     html.new_header("Manage Host Configuration")
-    html.write(
-        "<script type=\"text/javascript\" src=\"js/jquery-1.4.4.min.js\"></script>\n")
-    html.write(
-        "<script type=\"text/javascript\" src=\"js/jquery.validate.min.js\"></script>\n")
-    html.write("<script type=\"text/javascript\" src=\"js/manage_host_configuration.js\"></script>\n")
+    html.write("<script type=\"text/javascript\" src=\"js/unmp/main/manage_host_configuration.js\"></script>\n")
     html.write(
         "<link type=\"text/css\" href=\"css/style.css\" rel=\"stylesheet\"></link>\n")
 
@@ -3456,6 +3625,10 @@ def manage_host_configuration(h):
 
 
 def discoverDevices(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     sitename = __file__.split("/")[3]
@@ -3469,17 +3642,17 @@ def discoverDevices(h):
     command.extend(args)
     pipe = subprocess.Popen(command, stdout=subprocess.PIPE).communicate()[0]
 
-#===================================================================================================
-# Output string of sdm utlity
-#     pipe = """
-#	Discovery Time less than or equal to 5 seconds,setting default time 5 seconds
+    #===================================================================================================
+    # Output string of sdm utlity
+    #     pipe = """
+    #	Discovery Time less than or equal to 5 seconds,setting default time 5 seconds
 
-# DeviceType: AP
-# Sl.No, IPAddress, MacAddress, SSID, HostName, FirmwareVersion, BootloaderVersion
-# 0, 192.168.5.31, 00:50:c2:bc:c8:02, VVDN_AP, 11nAP, 1.1.1.0-347, 0.0.4
-# 0, 192.168.5.33, 00:50:c2:bc:c8:03, VVDN_AP, 12nAP, 1.1.1.0-347, 0.0.4
-#"""
-#=========================================================================
+    # DeviceType: AP
+    # Sl.No, IPAddress, MacAddress, SSID, HostName, FirmwareVersion, BootloaderVersion
+    # 0, 192.168.5.31, 00:50:c2:bc:c8:02, VVDN_AP, 11nAP, 1.1.1.0-347, 0.0.4
+    # 0, 192.168.5.33, 00:50:c2:bc:c8:03, VVDN_AP, 12nAP, 1.1.1.0-347, 0.0.4
+    #"""
+    #=========================================================================
     outputStringArray = pipe.split("\n")  # split sdmc output string
     tableString = """
 <table width=\"100%\" class=\"host-table\">
@@ -3544,19 +3717,19 @@ def discoverDevices(h):
                 hostDetails = outputString.split(", ")
                 tableString += "<tr>"
                 tableString += "<td><input type=\"checkbox\" deviceType=\"" + deviceType + \
-                    "\" id=\"" + hostDetails[2] + \
-                    "\" name=\"host\" value=\"" + \
-                    hostDetails[1] + "\"/></td>"
+                               "\" id=\"" + hostDetails[2] + \
+                               "\" name=\"host\" value=\"" + \
+                               hostDetails[1] + "\"/></td>"
                 tableString += "<td><input type=\"text\" readonly=\"readonly\" name=\"address\" value=\"" + \
-                    hostDetails[1] + "\"/></td>"
+                               hostDetails[1] + "\"/></td>"
                 tableString += "<td>" + hostDetails[4] + "</td>"
                 tableString += "<td>" + hostDetails[3] + "</td>"
                 tableString += "<td>" + hostDetails[5] + "</td>"
                 tableString += "<td>" + sdmcString + "</td>"
                 tableString += "<td></td>"  # <input type=\"button\" name=\"ipSet\" value=\"IP set\"/>
                 tableString += "<td><input type=\"button\" deviceType=\"" + deviceType + \
-                    "\" mac=\"" + hostDetails[2] + \
-                    "\" name=\"factoryReset\" value=\"Factory Reset\"/></td>"
+                               "\" mac=\"" + hostDetails[2] + \
+                               "\" name=\"factoryReset\" value=\"Factory Reset\"/></td>"
                 tableString += "</tr>"
 
     if totalHost == 0:
@@ -3570,6 +3743,10 @@ def discoverDevices(h):
 
 
 def addTemplateButtonHover(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     sitename = __file__.split("/")[3]
@@ -3578,7 +3755,7 @@ def addTemplateButtonHover(h):
         sitename)
     dom = xml.dom.minidom.parseString(
         "<configurationTemplate><device/></configurationTemplate>")
-    if(os.path.isfile(configTemplateFile)):
+    if (os.path.isfile(configTemplateFile)):
         dom = xml.dom.minidom.parse(configTemplateFile)
     configTemplateDom = dom.getElementsByTagName("template")
     i = 0
@@ -3596,6 +3773,10 @@ def addTemplateButtonHover(h):
 
 
 def apply_config_template(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     sitename = __file__.split("/")[3]
@@ -3629,7 +3810,7 @@ def apply_config_template(h):
         apcfg = "/omd/sites/%s/share/check_mk/web/htdocs/download/apcfg" % sitename
         configTemplateDom = xml.dom.minidom.parseString(
             "<configurationTemplate></configurationTemplate>")
-        if(os.path.isfile(configurationTemplateFile)):
+        if (os.path.isfile(configurationTemplateFile)):
             configTemplateDom = xml.dom.minidom.parse(
                 configurationTemplateFile)
         templateDom = configTemplateDom.getElementsByTagName("template")
@@ -3639,272 +3820,272 @@ def apply_config_template(h):
                 network = tDom.getElementsByTagName("network")[0]
                 if network.getAttribute("AP_HOSTNAME").strip() != "":
                     configString += "cfg -a AP_HOSTNAME=" + \
-                        network.getAttribute("AP_HOSTNAME") + "\n"
+                                    network.getAttribute("AP_HOSTNAME") + "\n"
 
                 if network.getAttribute("AP_NETMASK").strip() != "":
                     configString += "cfg -a AP_NETMASK=\"" + \
-                        network.getAttribute("AP_NETMASK") + "\"\n"
+                                    network.getAttribute("AP_NETMASK") + "\"\n"
 
                 if network.getAttribute("WAN_MODE").strip() != "":
                     configString += "cfg -a WAN_MODE=" + \
-                        network.getAttribute("WAN_MODE") + "\n"
+                                    network.getAttribute("WAN_MODE") + "\n"
 
                 if network.getAttribute("IPGW").strip() != "":
                     configString += "cfg -a IPGW=\"" + \
-                        network.getAttribute("IPGW") + "\"\n"
+                                    network.getAttribute("IPGW") + "\"\n"
 
                 if network.getAttribute("PRIDNS").strip() != "":
                     configString += "cfg -a PRIDNS=\"" + \
-                        network.getAttribute("PRIDNS") + "\"\n"
+                                    network.getAttribute("PRIDNS") + "\"\n"
 
                 if network.getAttribute("SECDNS").strip() != "":
                     configString += "cfg -a SECDNS=\"" + \
-                        network.getAttribute("SECDNS") + "\"\n"
+                                    network.getAttribute("SECDNS") + "\"\n"
 
                 # radio
                 radio = tDom.getElementsByTagName("radio")[0]
                 if radio.getAttribute("AP_STARTMODE").strip() != "":
                     configString += "cfg -a AP_STARTMODE=" + \
-                        radio.getAttribute("AP_STARTMODE") + "\n"
+                                    radio.getAttribute("AP_STARTMODE") + "\n"
 
                 if radio.getAttribute("MANAGEMENTVLAN").strip() != "":
                     configString += "cfg -a MANAGEMENTVLAN=" + \
-                        radio.getAttribute("MANAGEMENTVLAN") + "\n"
+                                    radio.getAttribute("MANAGEMENTVLAN") + "\n"
 
                 if radio.getAttribute("ATH_countrycode").strip() != "":
                     configString += "cfg -a ATH_countrycode=" + \
-                        radio.getAttribute("ATH_countrycode") + "\n"
+                                    radio.getAttribute("ATH_countrycode") + "\n"
 
                 if radio.getAttribute("AP_MAX_VAP").strip() != "":
                     configString += "cfg -a AP_MAX_VAP=" + \
-                        radio.getAttribute("AP_MAX_VAP") + "\n"
+                                    radio.getAttribute("AP_MAX_VAP") + "\n"
 
                 if radio.getAttribute("AP_PRIMARY_CH").strip() != "":
                     configString += "cfg -a AP_PRIMARY_CH=" + \
-                        radio.getAttribute("AP_PRIMARY_CH") + "\n"
+                                    radio.getAttribute("AP_PRIMARY_CH") + "\n"
 
                 if radio.getAttribute("AP_CHMODE").strip() != "":
                     configString += "cfg -a AP_CHMODE=" + \
-                        radio.getAttribute("AP_CHMODE") + "\n"
+                                    radio.getAttribute("AP_CHMODE") + "\n"
 
                 if radio.getAttribute("AP_TXPOWER").strip() != "":
                     configString += "cfg -a AP_TXPOWER=" + \
-                        radio.getAttribute("AP_TXPOWER") + "\n"
+                                    radio.getAttribute("AP_TXPOWER") + "\n"
 
                 if radio.getAttribute("AP_DISTANCE").strip() != "":
                     configString += "cfg -a AP_DISTANCE=" + \
-                        radio.getAttribute("AP_DISTANCE") + "\n"
+                                    radio.getAttribute("AP_DISTANCE") + "\n"
 
                 if radio.getAttribute("AP_SLOTTIME").strip() != "":
                     configString += "cfg -a AP_SLOTTIME=" + \
-                        radio.getAttribute("AP_SLOTTIME") + "\n"
+                                    radio.getAttribute("AP_SLOTTIME") + "\n"
 
                 if radio.getAttribute("AP_ACKTIMEOUT").strip() != "":
                     configString += "cfg -a AP_ACKTIMEOUT=" + \
-                        radio.getAttribute("AP_ACKTIMEOUT") + "\n"
+                                    radio.getAttribute("AP_ACKTIMEOUT") + "\n"
 
                 if radio.getAttribute("AP_CTSTIMEOUT").strip() != "":
                     configString += "cfg -a AP_CTSTIMEOUT=" + \
-                        radio.getAttribute("AP_CTSTIMEOUT") + "\n"
+                                    radio.getAttribute("AP_CTSTIMEOUT") + "\n"
 
                 if radio.getAttribute("SHORTGI").strip() != "":
                     configString += "cfg -a SHORTGI=" + \
-                        radio.getAttribute("SHORTGI") + "\n"
+                                    radio.getAttribute("SHORTGI") + "\n"
 
                 if radio.getAttribute("AMPDUENABLE").strip() != "":
                     configString += "cfg -a AMPDUENABLE=" + \
-                        radio.getAttribute("AMPDUENABLE") + "\n"
+                                    radio.getAttribute("AMPDUENABLE") + "\n"
 
                 if radio.getAttribute("AMPDUFRAMES").strip() != "":
                     configString += "cfg -a AMPDUFRAMES=" + \
-                        radio.getAttribute("AMPDUFRAMES") + "\n"
+                                    radio.getAttribute("AMPDUFRAMES") + "\n"
 
                 if radio.getAttribute("AMPDULIMIT").strip() != "":
                     configString += "cfg -a AMPDULIMIT=" + \
-                        radio.getAttribute("AMPDULIMIT") + "\n"
+                                    radio.getAttribute("AMPDULIMIT") + "\n"
 
                 if radio.getAttribute("AMPDUMIN").strip() != "":
                     configString += "cfg -a AMPDUMIN=" + \
-                        radio.getAttribute("AMPDUMIN") + "\n"
+                                    radio.getAttribute("AMPDUMIN") + "\n"
 
                 if radio.getAttribute("CWMMODE").strip() != "":
                     configString += "cfg -a CWMMODE=" + \
-                        radio.getAttribute("CWMMODE") + "\n"
+                                    radio.getAttribute("CWMMODE") + "\n"
 
                 if radio.getAttribute("TX_CHAINMASK").strip() != "":
                     configString += "cfg -a TX_CHAINMASK=" + \
-                        radio.getAttribute("TX_CHAINMASK") + "\n"
+                                    radio.getAttribute("TX_CHAINMASK") + "\n"
 
                 if radio.getAttribute("RX_CHAINMASK").strip() != "":
                     configString += "cfg -a RX_CHAINMASK=" + \
-                        radio.getAttribute("RX_CHAINMASK") + "\n"
+                                    radio.getAttribute("RX_CHAINMASK") + "\n"
 
                 if radio.getAttribute("AP_LONGDISTANCE").strip() != "":
                     configString += "cfg -a AP_LONGDISTANCE=" + \
-                        radio.getAttribute("AP_LONGDISTANCE") + "\n"
+                                    radio.getAttribute("AP_LONGDISTANCE") + "\n"
 
                 if radio.getAttribute("WLAN_ON_BOOT").strip() != "":
                     configString += "cfg -a WLAN_ON_BOOT=" + \
-                        radio.getAttribute("WLAN_ON_BOOT") + "\n"
+                                    radio.getAttribute("WLAN_ON_BOOT") + "\n"
 
                 if radio.getAttribute("AP_RADIO_ID").strip() != "":
                     configString += "cfg -a AP_RADIO_ID=" + \
-                        radio.getAttribute("AP_RADIO_ID") + "\n"
+                                    radio.getAttribute("AP_RADIO_ID") + "\n"
 
                 if radio.getAttribute("PUREG").strip() != "":
                     configString += "cfg -a PUREG=" + \
-                        radio.getAttribute("PUREG") + "\n"
+                                    radio.getAttribute("PUREG") + "\n"
 
                 if radio.getAttribute("PUREN").strip() != "":
                     configString += "cfg -a PUREN=" + \
-                        radio.getAttribute("PUREN") + "\n"
+                                    radio.getAttribute("PUREN") + "\n"
 
                 if radio.getAttribute("TXQUEUELEN").strip() != "":
                     configString += "cfg -a TXQUEUELEN=" + \
-                        radio.getAttribute("TXQUEUELEN") + "\n"
+                                    radio.getAttribute("TXQUEUELEN") + "\n"
 
                 if radio.getAttribute("RATECTL").strip() != "":
                     configString += "cfg -a RATECTL=" + \
-                        radio.getAttribute("RATECTL") + "\n"
+                                    radio.getAttribute("RATECTL") + "\n"
 
                 if radio.getAttribute("MANRATE").strip() != "":
                     configString += "cfg -a MANRATE=" + \
-                        radio.getAttribute("MANRATE") + "\n"
+                                    radio.getAttribute("MANRATE") + "\n"
 
                 if radio.getAttribute("MANRETRIES").strip() != "":
                     configString += "cfg -a MANRETRIES=" + \
-                        radio.getAttribute("MANRETRIES") + "\n"
+                                    radio.getAttribute("MANRETRIES") + "\n"
 
                 if radio.getAttribute("AP_BEAC_INT").strip() != "":
                     configString += "cfg -a AP_BEAC_INT=" + \
-                        radio.getAttribute("AP_BEAC_INT") + "\n"
+                                    radio.getAttribute("AP_BEAC_INT") + "\n"
 
                 if radio.getAttribute("APM_Enable").strip() != "":
                     configString += "cfg -a APM_Enable=" + \
-                        radio.getAttribute("APM_Enable") + "\n"
-                # vap
+                                    radio.getAttribute("APM_Enable") + "\n"
+                    # vap
                 vap = tDom.getElementsByTagName("vap")[0]
 
                 if vap.getAttribute("AP_PRIMARY_KEY_0").strip() != "":
                     configString += "cfg -a AP_PRIMARY_KEY_0=" + \
-                        vap.getAttribute("AP_PRIMARY_KEY_0") + "\n"
+                                    vap.getAttribute("AP_PRIMARY_KEY_0") + "\n"
 
                 if vap.getAttribute("AP_WEP_MODE_0").strip() != "":
                     configString += "cfg -a AP_WEP_MODE_0=" + \
-                        vap.getAttribute("AP_WEP_MODE_0") + "\n"
+                                    vap.getAttribute("AP_WEP_MODE_0") + "\n"
 
                 if vap.getAttribute("AP_DYN_VLAN").strip() != "":
                     configString += "cfg -a AP_DYN_VLAN=" + \
-                        vap.getAttribute("AP_DYN_VLAN") + "\n"
+                                    vap.getAttribute("AP_DYN_VLAN") + "\n"
 
                 if vap.getAttribute("WEPKEY_1").strip() != "":
                     configString += "cfg -a WEPKEY_1=" + \
-                        vap.getAttribute("WEPKEY_1") + "\n"
+                                    vap.getAttribute("WEPKEY_1") + "\n"
 
                 if vap.getAttribute("WEPKEY_2").strip() != "":
                     configString += "cfg -a WEPKEY_2=" + \
-                        vap.getAttribute("WEPKEY_2") + "\n"
+                                    vap.getAttribute("WEPKEY_2") + "\n"
 
                 if vap.getAttribute("WEPKEY_3").strip() != "":
                     configString += "cfg -a WEPKEY_3=" + \
-                        vap.getAttribute("WEPKEY_3") + "\n"
+                                    vap.getAttribute("WEPKEY_3") + "\n"
 
                 if vap.getAttribute("WEPKEY_4").strip() != "":
                     configString += "cfg -a WEPKEY_4=" + \
-                        vap.getAttribute("WEPKEY_4") + "\n"
+                                    vap.getAttribute("WEPKEY_4") + "\n"
 
                 if vap.getAttribute("ROOTAP_MAC").strip() != "":
                     configString += "cfg -a ROOTAP_MAC=\"" + \
-                        vap.getAttribute("ROOTAP_MAC") + "\"\n"
+                                    vap.getAttribute("ROOTAP_MAC") + "\"\n"
 
                 # vap 1
                 if vap.getAttribute("AP_SSID").strip() != "":
                     configString += "cfg -a AP_SSID=\"" + \
-                        vap.getAttribute("AP_SSID") + "\"\n"
+                                    vap.getAttribute("AP_SSID") + "\"\n"
 
                 if vap.getAttribute("HIDE_SSID").strip() != "":
                     configString += "cfg -a HIDE_SSID=" + \
-                        vap.getAttribute("HIDE_SSID") + "\n"
+                                    vap.getAttribute("HIDE_SSID") + "\n"
 
                 if vap.getAttribute("AP_VLAN").strip() != "":
                     configString += "cfg -a AP_VLAN=" + \
-                        vap.getAttribute("AP_VLAN") + "\n"
+                                    vap.getAttribute("AP_VLAN") + "\n"
 
                 if vap.getAttribute("VLAN_PRI").strip() != "":
                     configString += "cfg -a VLAN_PRI=" + \
-                        vap.getAttribute("VLAN_PRI") + "\n"
+                                    vap.getAttribute("VLAN_PRI") + "\n"
 
                 if vap.getAttribute("AP_MODE").strip() != "":
                     configString += "cfg -a AP_MODE=" + \
-                        vap.getAttribute("AP_MODE") + "\n"
+                                    vap.getAttribute("AP_MODE") + "\n"
 
                 if vap.getAttribute("AP_SECMODE").strip() != "":
                     configString += "cfg -a AP_SECMODE=" + \
-                        vap.getAttribute("AP_SECMODE") + "\n"
+                                    vap.getAttribute("AP_SECMODE") + "\n"
 
                 if vap.getAttribute("AP_SECFILE").strip() != "":
                     configString += "cfg -a AP_SECFILE=" + \
-                        vap.getAttribute("AP_SECFILE") + "\n"
+                                    vap.getAttribute("AP_SECFILE") + "\n"
 
                 if vap.getAttribute("AP_BEAC_INT").strip() != "":
                     configString += "cfg -a AP_BEAC_INT=" + \
-                        vap.getAttribute("AP_BEAC_INT") + "\n"
+                                    vap.getAttribute("AP_BEAC_INT") + "\n"
 
                 if vap.getAttribute("AP_RTS_THR").strip() != "":
                     configString += "cfg -a AP_RTS_THR=" + \
-                        vap.getAttribute("AP_RTS_THR") + "\n"
+                                    vap.getAttribute("AP_RTS_THR") + "\n"
 
                 if vap.getAttribute("AP_FRAG_THR").strip() != "":
                     configString += "cfg -a AP_FRAG_THR=" + \
-                        vap.getAttribute("AP_FRAG_THR") + "\n"
+                                    vap.getAttribute("AP_FRAG_THR") + "\n"
 
                 if vap.getAttribute("AP_WPA").strip() != "":
                     configString += "cfg -a AP_WPA=" + \
-                        vap.getAttribute("AP_WPA") + "\n"
+                                    vap.getAttribute("AP_WPA") + "\n"
 
                 if vap.getAttribute("AP_CYPHER").strip() != "":
                     configString += "cfg -a AP_CYPHER=" + \
-                        vap.getAttribute("AP_CYPHER") + "\n"
+                                    vap.getAttribute("AP_CYPHER") + "\n"
 
                 if vap.getAttribute("AP_WPA_GROUP_REKEY").strip() != "":
                     configString += "cfg -a AP_WPA_GROUP_REKEY=" + \
-                        vap.getAttribute("AP_WPA_GROUP_REKEY") + "\n"
+                                    vap.getAttribute("AP_WPA_GROUP_REKEY") + "\n"
 
                 if vap.getAttribute("AP_WPA_GMK_REKEY").strip() != "":
                     configString += "cfg -a AP_WPA_GMK_REKEY=" + \
-                        vap.getAttribute("AP_WPA_GMK_REKEY") + "\n"
+                                    vap.getAttribute("AP_WPA_GMK_REKEY") + "\n"
 
                 if vap.getAttribute("AP_WEP_REKEY").strip() != "":
                     configString += "cfg -a AP_WEP_REKEY=" + \
-                        vap.getAttribute("AP_WEP_REKEY") + "\n"
+                                    vap.getAttribute("AP_WEP_REKEY") + "\n"
 
                 if vap.getAttribute("PSK_KEY").strip() != "":
                     configString += "cfg -a PSK_KEY=" + \
-                        vap.getAttribute("PSK_KEY") + "\n"
+                                    vap.getAttribute("PSK_KEY") + "\n"
 
                 if vap.getAttribute("AP_RSN_ENA_PREAUTH").strip() != "":
                     configString += "cfg -a AP_RSN_ENA_PREAUTH=" + \
-                        vap.getAttribute("AP_RSN_ENA_PREAUTH") + "\n"
+                                    vap.getAttribute("AP_RSN_ENA_PREAUTH") + "\n"
 
                 if vap.getAttribute("AP_WPA_PREAUTH_IF").strip() != "":
                     configString += "cfg -a AP_WPA_PREAUTH_IF=" + \
-                        vap.getAttribute("AP_WPA_PREAUTH_IF") + "\n"
+                                    vap.getAttribute("AP_WPA_PREAUTH_IF") + "\n"
 
                 if vap.getAttribute("AP_EAP_REAUTH_PER").strip() != "":
                     configString += "cfg -a AP_EAP_REAUTH_PER=" + \
-                        vap.getAttribute("AP_EAP_REAUTH_PER") + "\n"
+                                    vap.getAttribute("AP_EAP_REAUTH_PER") + "\n"
 
                 if vap.getAttribute("AP_AUTH_SERVER").strip() != "":
                     configString += "cfg -a AP_AUTH_SERVER=" + \
-                        vap.getAttribute("AP_AUTH_SERVER") + "\n"
+                                    vap.getAttribute("AP_AUTH_SERVER") + "\n"
 
                 if vap.getAttribute("AP_AUTH_PORT").strip() != "":
                     configString += "cfg -a AP_AUTH_PORT=" + \
-                        vap.getAttribute("AP_AUTH_PORT") + "\n"
+                                    vap.getAttribute("AP_AUTH_PORT") + "\n"
 
                 if vap.getAttribute("AP_AUTH_SECRET").strip() != "":
                     configString += "cfg -a AP_AUTH_SECRET=" + \
-                        vap.getAttribute("AP_AUTH_SECRET") + "\n"
+                                    vap.getAttribute("AP_AUTH_SECRET") + "\n"
 
                 # vap 2,3,4,5,5,6,7,8
                 for j in range(2, 9):
@@ -3930,23 +4111,23 @@ def apply_config_template(h):
 
                     if vap.getAttribute("AP_SECMODE_" + str(j)).strip() != "":
                         configString += "cfg -a AP_SECMODE_" + \
-                            str(j) + "=" + vap.getAttribute(
-                                "AP_SECMODE_" + str(j)) + "\n"
+                                        str(j) + "=" + vap.getAttribute(
+                            "AP_SECMODE_" + str(j)) + "\n"
 
                     if vap.getAttribute("AP_SECFILE_" + str(j)).strip() != "":
                         configString += "cfg -a AP_SECFILE_" + \
-                            str(j) + "=" + vap.getAttribute(
-                                "AP_SECFILE_" + str(j)) + "\n"
+                                        str(j) + "=" + vap.getAttribute(
+                            "AP_SECFILE_" + str(j)) + "\n"
 
                     if vap.getAttribute("AP_RTS_THR_" + str(j)).strip() != "":
                         configString += "cfg -a AP_RTS_THR_" + \
-                            str(j) + "=" + vap.getAttribute(
-                                "AP_RTS_THR_" + str(j)) + "\n"
+                                        str(j) + "=" + vap.getAttribute(
+                            "AP_RTS_THR_" + str(j)) + "\n"
 
                     if vap.getAttribute("AP_FRAG_THR_" + str(j)).strip() != "":
                         configString += "cfg -a AP_FRAG_THR_" + \
-                            str(j) + "=" + vap.getAttribute(
-                                "AP_FRAG_THR_" + str(j)) + "\n"
+                                        str(j) + "=" + vap.getAttribute(
+                            "AP_FRAG_THR_" + str(j)) + "\n"
 
                     if vap.getAttribute("AP_WPA_" + str(j)).strip() != "":
                         configString += "cfg -a AP_WPA_" + str(
@@ -3958,18 +4139,18 @@ def apply_config_template(h):
 
                     if vap.getAttribute("AP_WPA_GROUP_REKEY_" + str(j)).strip() != "":
                         configString += "cfg -a AP_WPA_GROUP_REKEY_" + \
-                            str(j) + "=" + vap.getAttribute(
-                                "AP_WPA_GROUP_REKEY_" + str(j)) + "\n"
+                                        str(j) + "=" + vap.getAttribute(
+                            "AP_WPA_GROUP_REKEY_" + str(j)) + "\n"
 
                     if vap.getAttribute("AP_WPA_GMK_REKEY_" + str(j)).strip() != "":
                         configString += "cfg -a AP_WPA_GMK_REKEY_" + \
-                            str(j) + "=" + vap.getAttribute(
-                                "AP_WPA_GMK_REKEY_" + str(j)) + "\n"
+                                        str(j) + "=" + vap.getAttribute(
+                            "AP_WPA_GMK_REKEY_" + str(j)) + "\n"
 
                     if vap.getAttribute("AP_WEP_REKEY_" + str(j)).strip() != "":
                         configString += "cfg -a AP_WEP_REKEY_" + \
-                            str(j) + "=" + vap.getAttribute(
-                                "AP_WEP_REKEY_" + str(j)) + "\n"
+                                        str(j) + "=" + vap.getAttribute(
+                            "AP_WEP_REKEY_" + str(j)) + "\n"
 
                     if vap.getAttribute("PSK_KEY_" + str(j)).strip() != "":
                         configString += "cfg -a PSK_KEY_" + str(
@@ -3977,99 +4158,99 @@ def apply_config_template(h):
 
                     if vap.getAttribute("AP_RSN_ENA_PREAUTH_" + str(j)).strip() != "":
                         configString += "cfg -a AP_RSN_ENA_PREAUTH_" + \
-                            str(j) + "=" + vap.getAttribute(
-                                "AP_RSN_ENA_PREAUTH_" + str(j)) + "\n"
+                                        str(j) + "=" + vap.getAttribute(
+                            "AP_RSN_ENA_PREAUTH_" + str(j)) + "\n"
 
                     if vap.getAttribute("AP_WPA_PREAUTH_IF_" + str(j)).strip() != "":
                         configString += "cfg -a AP_WPA_PREAUTH_IF_" + \
-                            str(j) + "=" + vap.getAttribute(
-                                "AP_WPA_PREAUTH_IF_" + str(j)) + "\n"
+                                        str(j) + "=" + vap.getAttribute(
+                            "AP_WPA_PREAUTH_IF_" + str(j)) + "\n"
 
                     if vap.getAttribute("AP_EAP_REAUTH_PER_" + str(j)).strip() != "":
                         configString += "cfg -a AP_EAP_REAUTH_PER_" + \
-                            str(j) + "=" + vap.getAttribute(
-                                "AP_EAP_REAUTH_PER_" + str(j)) + "\n"
+                                        str(j) + "=" + vap.getAttribute(
+                            "AP_EAP_REAUTH_PER_" + str(j)) + "\n"
 
                     if vap.getAttribute("AP_AUTH_SERVER_" + str(j)).strip() != "":
                         configString += "cfg -a AP_AUTH_SERVER_" + \
-                            str(j) + "=" + vap.getAttribute(
-                                "AP_AUTH_SERVER_" + str(j)) + "\n"
+                                        str(j) + "=" + vap.getAttribute(
+                            "AP_AUTH_SERVER_" + str(j)) + "\n"
 
                     if vap.getAttribute("AP_AUTH_PORT_" + str(j)).strip() != "":
                         configString += "cfg -a AP_AUTH_PORT_" + \
-                            str(j) + "=" + vap.getAttribute(
-                                "AP_AUTH_PORT_" + str(j)) + "\n"
+                                        str(j) + "=" + vap.getAttribute(
+                            "AP_AUTH_PORT_" + str(j)) + "\n"
 
                     if vap.getAttribute("AP_AUTH_SECRET_" + str(j)).strip() != "":
                         configString += "cfg -a AP_AUTH_SECRET_" + \
-                            str(j) + "=" + vap.getAttribute(
-                                "AP_AUTH_SECRET_" + str(j)) + "\n"
+                                        str(j) + "=" + vap.getAttribute(
+                            "AP_AUTH_SECRET_" + str(j)) + "\n"
 
                 # acl
                 acl = tDom.getElementsByTagName("acl")[0]
                 if acl.getAttribute("ACL_VAP").strip() != "":
                     configString += "cfg -a ACL_VAP=" + \
-                        acl.getAttribute("ACL_VAP") + "\n"
+                                    acl.getAttribute("ACL_VAP") + "\n"
 
                 if acl.getAttribute("ACLTYPE_VAP").strip() != "":
                     configString += "cfg -a ACLTYPE_VAP=" + \
-                        acl.getAttribute("ACLTYPE_VAP") + "\n"
+                                    acl.getAttribute("ACLTYPE_VAP") + "\n"
 
                 if acl.getAttribute("ACL_VAP_2").strip() != "":
                     configString += "cfg -a ACL_VAP_2=" + \
-                        acl.getAttribute("ACL_VAP_2") + "\n"
+                                    acl.getAttribute("ACL_VAP_2") + "\n"
 
                 if acl.getAttribute("ACLTYPE_VAP_2").strip() != "":
                     configString += "cfg -a ACLTYPE_VAP_2=" + \
-                        acl.getAttribute("ACLTYPE_VAP_2") + "\n"
+                                    acl.getAttribute("ACLTYPE_VAP_2") + "\n"
 
                 if acl.getAttribute("ACL_VAP_3").strip() != "":
                     configString += "cfg -a ACL_VAP_3=" + \
-                        acl.getAttribute("ACL_VAP_3") + "\n"
+                                    acl.getAttribute("ACL_VAP_3") + "\n"
 
                 if acl.getAttribute("ACLTYPE_VAP_3").strip() != "":
                     configString += "cfg -a ACLTYPE_VAP_3=" + \
-                        acl.getAttribute("ACLTYPE_VAP_3") + "\n"
+                                    acl.getAttribute("ACLTYPE_VAP_3") + "\n"
 
                 if acl.getAttribute("ACL_VAP_4").strip() != "":
                     configString += "cfg -a ACL_VAP_4=" + \
-                        acl.getAttribute("ACL_VAP_4") + "\n"
+                                    acl.getAttribute("ACL_VAP_4") + "\n"
 
                 if acl.getAttribute("ACLTYPE_VAP_4").strip() != "":
                     configString += "cfg -a ACLTYPE_VAP_4=" + \
-                        acl.getAttribute("ACLTYPE_VAP_4") + "\n"
+                                    acl.getAttribute("ACLTYPE_VAP_4") + "\n"
 
                 if acl.getAttribute("ACL_VAP_5").strip() != "":
                     configString += "cfg -a ACL_VAP_5=" + \
-                        acl.getAttribute("ACL_VAP_5") + "\n"
+                                    acl.getAttribute("ACL_VAP_5") + "\n"
 
                 if acl.getAttribute("ACLTYPE_VAP_5").strip() != "":
                     configString += "cfg -a ACLTYPE_VAP_5=" + \
-                        acl.getAttribute("ACLTYPE_VAP_5") + "\n"
+                                    acl.getAttribute("ACLTYPE_VAP_5") + "\n"
 
                 if acl.getAttribute("ACL_VAP_6").strip() != "":
                     configString += "cfg -a ACL_VAP_6=" + \
-                        acl.getAttribute("ACL_VAP_6") + "\n"
+                                    acl.getAttribute("ACL_VAP_6") + "\n"
 
                 if acl.getAttribute("ACLTYPE_VAP_6").strip() != "":
                     configString += "cfg -a ACLTYPE_VAP_6=" + \
-                        acl.getAttribute("ACLTYPE_VAP_6") + "\n"
+                                    acl.getAttribute("ACLTYPE_VAP_6") + "\n"
 
                 if acl.getAttribute("ACL_VAP_7").strip() != "":
                     configString += "cfg -a ACL_VAP_7=" + \
-                        acl.getAttribute("ACL_VAP_7") + "\n"
+                                    acl.getAttribute("ACL_VAP_7") + "\n"
 
                 if acl.getAttribute("ACLTYPE_VAP_7").strip() != "":
                     configString += "cfg -a ACLTYPE_VAP_7=" + \
-                        acl.getAttribute("ACLTYPE_VAP_7") + "\n"
+                                    acl.getAttribute("ACLTYPE_VAP_7") + "\n"
 
                 if acl.getAttribute("ACL_VAP_8").strip() != "":
                     configString += "cfg -a ACL_VAP_8=" + \
-                        acl.getAttribute("ACL_VAP_8") + "\n"
+                                    acl.getAttribute("ACL_VAP_8") + "\n"
 
                 if acl.getAttribute("ACLTYPE_VAP_8").strip() != "":
                     configString += "cfg -a ACLTYPE_VAP_8=" + \
-                        acl.getAttribute("ACLTYPE_VAP_8") + "\n"
+                                    acl.getAttribute("ACLTYPE_VAP_8") + "\n"
 
                 aclmac1 = re.split("[,\n ]", getText(
                     acl.getElementsByTagName("maclist1")[0].childNodes))
@@ -4101,67 +4282,67 @@ def apply_config_template(h):
 
                 if services.getAttribute("AP_UPNP").strip() != "":
                     configString += "cfg -a AP_UPNP=" + \
-                        services.getAttribute("AP_UPNP") + "\n"
+                                    services.getAttribute("AP_UPNP") + "\n"
 
                 if services.getAttribute("AP_SYSLOG").strip() != "":
                     configString += "cfg -a AP_SYSLOG=" + \
-                        services.getAttribute("AP_SYSLOG") + "\n"
+                                    services.getAttribute("AP_SYSLOG") + "\n"
 
                 if services.getAttribute("AP_SYSLOG_IP").strip() != "":
                     configString += "cfg -a AP_SYSLOG_IP=\"" + \
-                        services.getAttribute("AP_SYSLOG_IP") + "\"\n"
+                                    services.getAttribute("AP_SYSLOG_IP") + "\"\n"
 
                 if services.getAttribute("SYSLOG_PORT").strip() != "":
                     configString += "cfg -a SYSLOG_PORT=" + \
-                        services.getAttribute("SYSLOG_PORT") + "\n"
+                                    services.getAttribute("SYSLOG_PORT") + "\n"
 
                 if services.getAttribute("SNMP_Enable").strip() != "":
                     configString += "cfg -a SNMP_Enable=" + \
-                        services.getAttribute("SNMP_Enable") + "\n"
+                                    services.getAttribute("SNMP_Enable") + "\n"
 
                 if services.getAttribute("SNMP_Comm").strip() != "":
                     configString += "cfg -a SNMP_Comm=" + \
-                        services.getAttribute("SNMP_Comm") + "\n"
+                                    services.getAttribute("SNMP_Comm") + "\n"
 
                 if services.getAttribute("SNMP_Location").strip() != "":
                     configString += "cfg -a SNMP_Location=\"" + \
-                        services.getAttribute("SNMP_Location") + "\"\n"
+                                    services.getAttribute("SNMP_Location") + "\"\n"
 
                 if services.getAttribute("SNMP_Contact").strip() != "":
                     configString += "cfg -a SNMP_Contact=\"" + \
-                        services.getAttribute("SNMP_Contact") + "\"\n"
+                                    services.getAttribute("SNMP_Contact") + "\"\n"
 
                 if services.getAttribute("DHCP_SER").strip() != "":
                     configString += "cfg -a DHCP_SER=" + \
-                        services.getAttribute("DHCP_SER") + "\n"
+                                    services.getAttribute("DHCP_SER") + "\n"
 
                 if services.getAttribute("DHCP_SIP").strip() != "":
                     configString += "cfg -a DHCP_SIP=\"" + \
-                        services.getAttribute("DHCP_SIP") + "\"\n"
+                                    services.getAttribute("DHCP_SIP") + "\"\n"
 
                 if services.getAttribute("DHCP_EIP").strip() != "":
                     configString += "cfg -a DHCP_EIP=\"" + \
-                        services.getAttribute("DHCP_EIP") + "\"\n"
+                                    services.getAttribute("DHCP_EIP") + "\"\n"
 
                 if services.getAttribute("DHCP_NM").strip() != "":
                     configString += "cfg -a DHCP_NM=\"" + \
-                        services.getAttribute("DHCP_NM") + "\"\n"
+                                    services.getAttribute("DHCP_NM") + "\"\n"
 
                 if services.getAttribute("DHCP_LEASE").strip() != "":
                     configString += "cfg -a DHCP_LEASE=" + \
-                        services.getAttribute("DHCP_LEASE") + "\n"
+                                    services.getAttribute("DHCP_LEASE") + "\n"
 
                 if services.getAttribute("TimeZone").strip() != "":
                     configString += "cfg -a TimeZone=\"" + \
-                        services.getAttribute("TimeZone") + "\"\n"
+                                    services.getAttribute("TimeZone") + "\"\n"
 
                 if services.getAttribute("NTP_Enable").strip() != "":
                     configString += "cfg -a NTP_Enable=" + \
-                        services.getAttribute("NTP_Enable") + "\n"
+                                    services.getAttribute("NTP_Enable") + "\n"
 
                 if services.getAttribute("NTPSERVERIP").strip() != "":
                     configString += "cfg -a NTPSERVERIP=\"" + \
-                        services.getAttribute("NTPSERVERIP") + "\"\n"
+                                    services.getAttribute("NTPSERVERIP") + "\"\n"
                 break
 
         acl1obj = open(acl1File, "w")
@@ -4211,6 +4392,10 @@ def apply_config_template(h):
 
 
 def factory_reset(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     sitename = __file__.split("/")[3]
@@ -4225,6 +4410,10 @@ def factory_reset(h):
 
 
 def set_ip(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     sitename = __file__.split("/")[3]
@@ -4253,6 +4442,11 @@ def set_ip(h):
 
 
 def getText(nodelist):
+    """
+
+    @param nodelist:
+    @return:
+    """
     rc = []
     for node in nodelist:
         if node.nodeType == node.TEXT_NODE:
@@ -4261,6 +4455,11 @@ def getText(nodelist):
 
 
 def image_upload(req):
+    """
+
+    @param req:
+    @return:
+    """
     global html
     html = req
     sitename = __file__.split("/")[3]
@@ -4298,22 +4497,23 @@ def image_upload(req):
         html.write(
             "<script type=\"text/javascript\">alert(\"There is some error, Please try again.\");window.location=\"manage_host_configuration.py\";</script>")
     return apache.OK
+
 ############################################### End Manage Configuration #
 
 ############################################### Update ACL ###############
 
 
 def update_acl(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     sitename = __file__.split("/")[3]
     html.new_header("Update ACL")
     html.write(
-        "<script type=\"text/javascript\" src=\"js/jquery-1.4.4.min.js\"></script>\n")
-    html.write(
-        "<script type=\"text/javascript\" src=\"js/jquery.validate.min.js\"></script>\n")
-    html.write(
-        "<script type=\"text/javascript\" src=\"js/update_acl.js\"></script>\n")
+        "<script type=\"text/javascript\" src=\"js/unmp/main/update_acl.js\"></script>\n")
     html.write(
         "<script type=\"text/javascript\" src=\"facebox/facebox.js\"></script>\n")
     html.write(
@@ -4336,7 +4536,8 @@ def update_acl(h):
         "<form id=\"aclForm\" enctype=\"multipart/form-data\" method=\"post\" action=\"upload_mac_address_file.py\">")
     html.write("<table width=\"100%\">")
     html.write("<colgroup><col width='20%'/><col width='80%'/></colgroup>")
-    html.write("<tr><td>Add a MAC Address</td><td><input type='text' name='mac' id='mac' value='' onkeypress=\"return macCheck(event)\"/> <input type=\"button\" onclick=\"addMacAddress()\" value=\"Add\"/></td></tr>")
+    html.write(
+        "<tr><td>Add a MAC Address</td><td><input type='text' name='mac' id='mac' value='' onkeypress=\"return macCheck(event)\"/> <input type=\"button\" onclick=\"addMacAddress()\" value=\"Add\"/></td></tr>")
     html.write(
         "<tr><td>MAC Address File</td><td><input type='file' name='macFile' id='macFile'/> <input type=\"submit\" value=\"Upload\"/><br/><span style=\"color:#555; font-size:9px;\">(Use blankspace or comma or newline as seperator between MACs)</span></td></tr>")
     html.write("</table>")
@@ -4359,6 +4560,10 @@ def update_acl(h):
 
 
 def list_of_mac_address(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     sitename = __file__.split("/")[3]
@@ -4379,17 +4584,24 @@ def list_of_mac_address(h):
     tableString += "<tr><th align=\"left\"><input type=\"checkbox\" id=\"allMac\" name=\"allMac\"/></th><th align=\"left\">Mac Address</th><th align=\"left\">Delete</th></tr>"
     for mac in macList:
         i += 1
-        tableString += "<tr><td><input type=\"checkbox\" mac=\"" + mac[1] + "\" id=\"macAddressValue" + str(i) + "\" name=\"macAddressValue\"/></td><td style=\"vertical-align:middle;\">" + mac[1] + "</td><td align=\"center\"><img onclick=\"deleteMacAddress('" + mac[
-            1] + "')\" class=\"imgbutton\" title=\"Delete Mac Address\" alt=\"delete\" src=\"images/delete16.png\"></td></tr>"
+        tableString += "<tr><td><input type=\"checkbox\" mac=\"" + mac[1] + "\" id=\"macAddressValue" + str(
+            i) + "\" name=\"macAddressValue\"/></td><td style=\"vertical-align:middle;\">" + mac[
+                           1] + "</td><td align=\"center\"><img onclick=\"deleteMacAddress('" + mac[
+                           1] + "')\" class=\"imgbutton\" title=\"Delete Mac Address\" alt=\"delete\" src=\"images/delete16.png\"></td></tr>"
     if i == 0:
         tableString = "<table class=\"addform\"><tr><td><b> No Mac Address in the List</b></td></tr></table>"
     else:
-        tableString += "<tr><td colspan=\"3\"> &nbsp;</td></tr><tr><td colspan=\"3\"><input type=\"button\" onclick=\"selectApToApply();\" value=\"Select AP's to Apply\"/><input type=\"hidden\" id=\"totalMac\" name=\"totalMac\" value=\"" + str(i) + \
-            "\"/></td></tr></tbody></table></div>"
+        tableString += "<tr><td colspan=\"3\"> &nbsp;</td></tr><tr><td colspan=\"3\"><input type=\"button\" onclick=\"selectApToApply();\" value=\"Select AP's to Apply\"/><input type=\"hidden\" id=\"totalMac\" name=\"totalMac\" value=\"" + str(
+            i) + \
+                       "\"/></td></tr></tbody></table></div>"
     html.write(tableString)
 
 
 def delete_mac_address(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     sitename = __file__.split("/")[3]
@@ -4411,6 +4623,10 @@ def delete_mac_address(h):
 
 
 def add_mac_address(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     sitename = __file__.split("/")[3]
@@ -4444,6 +4660,10 @@ def add_mac_address(h):
 
 
 def upload_mac_address_file(req):
+    """
+
+    @param req:
+    """
     sitename = __file__.split("/")[3]
     # Open database connection
     db = MySQLdb.connect("localhost", "root", "root", "nms")
@@ -4481,6 +4701,11 @@ def upload_mac_address_file(req):
 
 
 def validate_mac_address(mac):
+    """
+
+    @param mac:
+    @return:
+    """
     mac = mac.upper()
     macArray = mac.split(":")
     if mac != "":
@@ -4499,6 +4724,10 @@ def validate_mac_address(mac):
 
 
 def select_ap_to_apply_mac(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     sitename = __file__.split("/")[3]
@@ -4512,19 +4741,19 @@ def select_ap_to_apply_mac(h):
     command.extend(args)
     pipe = subprocess.Popen(command, stdout=subprocess.PIPE).communicate()[0]
 
-#===================================================================================================
-# Output string of sdm utlity
-#     pipe = """
-#	Discovery Time less than or equal to 5 seconds,setting default time 5 seconds
-#
-#
-# DeviceType: AP
-#
-# Sl.No, IPAddress, MacAddress, SSID, HostName, FirmwareVersion, BootloaderVersion
-# 0, 192.168.5.31, 00:50:c2:bc:c8:02, VVDN_AP, 11nAP, 1.1.1.0-347, 0.0.4
-# 0, 192.168.5.33, 00:50:c2:bc:c8:03, VVDN_AP, 12nAP, 1.1.1.0-347, 0.0.4
-#"""
-#=========================================================================
+    #===================================================================================================
+    # Output string of sdm utlity
+    #     pipe = """
+    #	Discovery Time less than or equal to 5 seconds,setting default time 5 seconds
+    #
+    #
+    # DeviceType: AP
+    #
+    # Sl.No, IPAddress, MacAddress, SSID, HostName, FirmwareVersion, BootloaderVersion
+    # 0, 192.168.5.31, 00:50:c2:bc:c8:02, VVDN_AP, 11nAP, 1.1.1.0-347, 0.0.4
+    # 0, 192.168.5.33, 00:50:c2:bc:c8:03, VVDN_AP, 12nAP, 1.1.1.0-347, 0.0.4
+    #"""
+    #=========================================================================
     outputStringArray = pipe.split("\n")  # split sdmc output string
     tableString = """
 <div><table width=\"100%\" class=\"addform\">
@@ -4560,15 +4789,15 @@ def select_ap_to_apply_mac(h):
                 hostDetails = outputString.split(", ")
                 tableString += "<tr>"
                 tableString += "<td><input type=\"checkbox\" id=\"" + hostDetails[2] + \
-                    "\" ip=\"" + hostDetails[1] + \
-                    "\" name=\"host\" value=\"" + \
-                    hostDetails[1] + "\"/></td>"
+                               "\" ip=\"" + hostDetails[1] + \
+                               "\" name=\"host\" value=\"" + \
+                               hostDetails[1] + "\"/></td>"
                 tableString += "<td>" + hostDetails[1] + "</td>"
                 tableString += "<td>" + hostDetails[4] + "</td>"
                 tableString += "<td><input type=\"text\" name=\"hostUsername\" value=\"admin\" ip=\"" + hostDetails[
                     1] + "_user\"/></td>"
                 tableString += "<td><input type=\"password\" name=\"hostPassword\" value=\"password\" ip=\"" + \
-                    hostDetails[1] + "_pass\"/></td>"
+                               hostDetails[1] + "_pass\"/></td>"
                 tableString += "</tr>"
 
     if totalHost == 0:
@@ -4586,6 +4815,10 @@ def select_ap_to_apply_mac(h):
 
 
 def http_request_for_ap(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     sitename = __file__.split("/")[3]

@@ -8,13 +8,15 @@
 @copyright: 2011 Mahipal Choudhary for Codescape Consultants Pvt. Ltd.
 @see: http://www.codescape.in
 '''
-import sys
-import os
-import time
 import atexit
-import subprocess
+import os
 from signal import SIGTERM
+import subprocess
+import sys
+import time
+
 from common_bll import EventLog
+
 
 # dict_port={1:"-",2:"6790",3:"-",4:"-"}
 # dict_id={1:"unmp-alarm",2:"unmp-ds",3:"unmp-nbi-supplier",4:"unmp-local"}
@@ -27,11 +29,11 @@ from common_bll import EventLog
 dict_port = {1: "-", 2: "6790", 3: "-"}
 dict_id = {1: "unmp-alarm", 2: "unmp-ds", 3: "unmp-local", 4: "nagios"}
 dict_name = {1: "Alarm Parser", 2: "Auto Discovery server", 3:
-             "UNMP System Monitor", 4: "Nagios"}
+    "UNMP System Monitor", 4: "Nagios"}
 dict_pid = {1: "/omd/daemon/tmp/unmp-trap.pid", 2: "/omd/daemon/tmp/unmp-ds.pid", 3:
-            "/omd/daemon/tmp/unmp-local.pid", 4: "nagios"}
+    "/omd/daemon/tmp/unmp-local.pid", 4: "nagios"}
 dict_details = {1: "UNMP core process to capture and log Traps, Alarms and Alerts.", 2:
-                "UNMP device discovery server.", 3: "UNMP core process for UNMP System Monitor", 4: "Nagios core process"}
+    "UNMP device discovery server.", 3: "UNMP core process for UNMP System Monitor", 4: "Nagios core process"}
 
 
 def load():
@@ -47,11 +49,12 @@ def load():
 
 def doAction(daemonName, action, username):
     import datetime
+
     time1 = datetime.datetime.now()
     if daemonName == 'nagios':
         return do_action_nagios(action)
     daemonPath = "/omd/sites/UNMP/etc/init.d/" + \
-        daemonName  # daemonName = unmp-ds, unmp-alarm
+                 daemonName  # daemonName = unmp-ds, unmp-alarm
     if not os.path.isfile(daemonPath):
         return 1
     try:
@@ -106,8 +109,8 @@ def doAction(daemonName, action, username):
                 [daemonPath, action], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
             output, _ = proc.communicate()
             code = proc.wait()
-        # return output
-        # return 0
+            # return output
+            # return 0
 
     except ValueError as e:
         el = EventLog()
@@ -115,7 +118,7 @@ def doAction(daemonName, action, username):
         desc = str(e)
         el.log_event(desc, username, 1)
         return 1
-    if(output.find("[Errno 1] Operation not permitted") == -1):
+    if (output.find("[Errno 1] Operation not permitted") == -1):
         el = EventLog()
         actionlog = action
         if action == 'stop':

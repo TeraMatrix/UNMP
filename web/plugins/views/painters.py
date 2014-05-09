@@ -75,7 +75,8 @@
 multisite_painter_options["pnpview"] = {
     "title": "PNP Timerange",
     "default": "1",
-    "values": [("0", "4 Hours"), ("1", "25 Hours"), ("2", "One week"), ("3", "One Month"), ("4", "One Year"), ("", "All")]
+    "values": [("0", "4 Hours"), ("1", "25 Hours"), ("2", "One week"), ("3", "One Month"), ("4", "One Year"),
+               ("", "All")]
 }
 
 multisite_painter_options["ts_format"] = {
@@ -174,7 +175,7 @@ def paint_icons(what, row):  # what is "host" or "service"
     else:
         prefix = "service_"
     custom_vars = dict(zip(row[prefix + "custom_variable_names"], row[
-                       prefix + "custom_variable_values"]))
+        prefix + "custom_variable_values"]))
 
     # Icons configured in Nagios via icon_image
     if row[prefix + "icon_image"]:
@@ -203,8 +204,8 @@ def paint_icons(what, row):  # what is "host" or "service"
         else:
             url = ""
         output += '<a href="%s" onmouseover="displayHoverMenu(event, get_url_sync(\'%s\'))" onmouseout="hoverHide()">' \
-            '<img class=icon src="images/icon_pnp.png"></a>' % (
-                url, pnp_popup_url(row, what))
+                  '<img class=icon src="images/icon_pnp.png"></a>' % (
+                      url, pnp_popup_url(row, what))
 
     if 'X' in html.display_options:
         # action_url (only, if not a PNP-URL and pnp_graph is working!)
@@ -249,7 +250,7 @@ def paint_icons(what, row):  # what is "host" or "service"
     # Notifications disabled
     if not row[prefix + "notifications_enabled"]:
         output += '<img class=icon title="notifications are disabled for this %s" src="images/icon_ndisabled.gif">' % \
-            what
+                  what
 
     # Flapping
     if row[prefix + "is_flapping"]:
@@ -258,17 +259,17 @@ def paint_icons(what, row):  # what is "host" or "service"
     # Setting of active checks modified by user
     if "active_checks_enabled" in row[prefix + "modified_attributes_list"]:
         if row[prefix + "active_checks_enabled"] == 0:
-            output += '<img class=icon title="Active checks have been manually disabled for this %s!" '\
-                'src="images/icon_disabled.gif">' % what
+            output += '<img class=icon title="Active checks have been manually disabled for this %s!" ' \
+                      'src="images/icon_disabled.gif">' % what
         else:
-            output += '<img class=icon title="Active checks have been manually enabled for this %s!" '\
-                'src="images/icon_enabled.gif">' % what
+            output += '<img class=icon title="Active checks have been manually enabled for this %s!" ' \
+                      'src="images/icon_enabled.gif">' % what
 
     # Passive checks disabled manually?
     if "passive_checks_enabled" in row[prefix + "modified_attributes_list"]:
         if row[prefix + "accept_passive_checks"] == 0:
-            output += '<img class=icon title="Passive checks have been manually disabled for this %s!" '\
-                'src="images/icon_npassive.gif">' % what
+            output += '<img class=icon title="Passive checks have been manually disabled for this %s!" ' \
+                      'src="images/icon_npassive.gif">' % what
 
     if not row[prefix + "in_notification_period"]:
         output += '<img class=icon title="Out of notification period" src="images/icon_outofnot.gif">'
@@ -294,9 +295,9 @@ def paint_icons(what, row):  # what is "host" or "service"
         if what == 'service':
             name2 = row['service_description']
         output += '<a href=\"#\" onclick="performAction(this, \'reschedule\', \'%s\', \'%s\', \'%s\', \'%s\');">' \
-            '<img class=icon title="Reschedule an immediate check of this %s" ' \
-            'src="images/icon_reload.gif" /></a>' % (
-                what, row["site"], row["host_name"], name2, what)
+                  '<img class=icon title="Reschedule an immediate check of this %s" ' \
+                  'src="images/icon_reload.gif" /></a>' % (
+                      what, row["site"], row["host_name"], name2, what)
 
     return "icons", output
 
@@ -307,6 +308,7 @@ def iconpainter_columns(what):
     if what == "service":
         cols += icon_service_columns
     return cols
+
 
 multisite_painters["service_icons"] = {
     "title": "Service icons",
@@ -337,7 +339,8 @@ def paint_nagios_link(row):
     else:
         url += "&type=1"
         what = "host"
-    return "singleicon", "<a href=\"%s\"><img title=\"Show this %s in Nagios\" src=\"images/icon_nagios.gif\"></a>" % (url, what)
+    return "singleicon", "<a href=\"%s\"><img title=\"Show this %s in Nagios\" src=\"images/icon_nagios.gif\"></a>" % (
+    url, what)
 
 
 def paint_age(timestamp, has_been_checked, bold_if_younger_than):
@@ -381,6 +384,7 @@ def paint_site_icon(row):
     else:
         return None, ""
 
+
 multisite_painters["sitename_plain"] = {
     "title": "Site id",
     "short": "Site",
@@ -421,6 +425,7 @@ def paint_host_state_short(row):
         state = "p"
         name = "PEND"
     return "state hstate hstate%s" % state, name
+
 
 multisite_painters["service_nagios_link"] = {
     "title": "Icon with link to service in Nagios GUI",
@@ -519,7 +524,6 @@ multisite_painters["svc_last_notification"] = {
     "paint": lambda row: paint_age(row["service_last_notification"], row["service_last_notification"], 0)
 }
 
-
 multisite_painters["svc_check_latency"] = {
     "title": "Service check latency",
     "short": "Latency",
@@ -555,6 +559,7 @@ def paint_nagiosflag(row, field, bold_if_nonzero):
         return "badflag", yesno
     else:
         return "goodflag", yesno
+
 
 multisite_painters["svc_in_downtime"] = {
     "title": "Currently in downtime",
@@ -604,6 +609,7 @@ def paint_service_group_memberlist(row):
         links.append('<a href="%s">%s</a>' % (link, group))
     return "", ", ".join(links)
 
+
 multisite_painters["svc_group_memberlist"] = {
     "title": "Servicegroups the service is member of",
     "short": "Groups",
@@ -623,9 +629,10 @@ def paint_pnpgraph(sitename, host, service="_HOST_"):
         with_link = 'false'
     pnpview = get_painter_option("pnpview")
     return "pnpgraph", "<div id=\"%s\"></div>" \
-           "<script>render_pnp_graphs('%s', '%s', '%s', '%s', '%s', '%s', '%s', %s)</script>" % \
-           (container_id, container_id, sitename, host, service, pnpview,
-            defaults.url_prefix + "check_mk/", pnp_url, with_link)
+                       "<script>render_pnp_graphs('%s', '%s', '%s', '%s', '%s', '%s', '%s', %s)</script>" % \
+                       (container_id, container_id, sitename, host, service, pnpview,
+                        defaults.url_prefix + "check_mk/", pnp_url, with_link)
+
 
 multisite_painters["svc_pnpgraph"] = {
     "title": "PNP service graph",
@@ -661,6 +668,7 @@ def paint_check_manpage(row):
     else:
         return "", "Man-Page: %s not found." % p
 
+
 multisite_painters["check_manpage"] = {
     "title": "Check manual (for Check_MK based checks)",
     "short": "Manual",
@@ -673,6 +681,7 @@ def paint_comments(prefix, row):
     comments = row[prefix + "comments_with_info"]
     text = ", ".join(["<i>%s</i>: %s" % (a, c) for (id, a, c) in comments])
     return "", text
+
 
 multisite_painters["svc_comments"] = {
     "title": "Service Comments",
@@ -691,6 +700,7 @@ multisite_painters["svc_acknowledged"] = {
 
 def notes_matching_pattern_entries(dirs, item):
     from fnmatch import fnmatch
+
     matching = []
     for dir in dirs:
         if os.path.isdir(dir):
@@ -724,18 +734,20 @@ def paint_custom_notes(row):
     def replace_tags(text):
         sitename = row["site"]
         site = html.site_status[sitename]["site"]
-        return text\
-            .replace('$URL_PREFIX$',     site["url_prefix"])\
-            .replace('$SITE$',           sitename)\
-            .replace('$HOSTNAME$',       host)\
-            .replace('$HOSTNAME_LOWER$', host.lower())\
-            .replace('$HOSTNAME_UPPER$', host.upper())\
-            .replace('$HOSTNAME_TITLE$', host[0].upper() + host[1:].lower())\
-            .replace('$HOSTADDRESS$',    row["host_address"])\
+        return text \
+            .replace('$URL_PREFIX$', site["url_prefix"]) \
+            .replace('$SITE$', sitename) \
+            .replace('$HOSTNAME$', host) \
+            .replace('$HOSTNAME_LOWER$', host.lower()) \
+            .replace('$HOSTNAME_UPPER$', host.upper()) \
+            .replace('$HOSTNAME_TITLE$', host[0].upper() + host[1:].lower()) \
+            .replace('$HOSTADDRESS$', row["host_address"]) \
             .replace('$SERVICEDESC$', row.get("service_description", ""))
+
     for f in files:
         contents.append(replace_tags(unicode(file(f).read(), "utf-8").strip()))
     return "", "<hr>".join(contents)
+
 
 multisite_painters["svc_custom_notes"] = {
     "title": "Custom services notes",
@@ -894,6 +906,7 @@ def paint_host_black(row):
     else:
         return None, row["host_name"]
 
+
 multisite_painters["host_black"] = {
     "title": "Hostname, red background if down or unreachable",
     "short": "Host",
@@ -920,7 +933,6 @@ multisite_painters["host_black_nagios"] = {
     "paint": paint_host_black_with_link_to_old_nagios_services,
 }
 
-
 multisite_painters["host_nagios_link"] = {
     "title": "Icon with link to host to Nagios GUI",
     "short": "",
@@ -935,6 +947,7 @@ def paint_host_with_state(row):
     else:
         state = "p"
     return "state hstate hstate%s" % state, row["host_name"]
+
 
 multisite_painters["host_with_state"] = {
     "title": "Hostname colored with state",
@@ -982,6 +995,7 @@ def paint_host_count(id, count):
     else:
         return "count hstate hstatex", "0"
 
+
 multisite_painters["num_services"] = {
     "title": "Number of services",
     "short": "",
@@ -1000,7 +1014,8 @@ multisite_painters["num_problems"] = {
     "title": "Number of problems",
     "short": "Pro.",
     "columns": ["host_num_services", "host_num_services_ok", "host_num_services_pending"],
-    "paint": lambda row: paint_svc_count('s', row["host_num_services"] - row["host_num_services_ok"] - row["host_num_services_pending"]),
+    "paint": lambda row: paint_svc_count('s', row["host_num_services"] - row["host_num_services_ok"] - row[
+        "host_num_services_pending"]),
 }
 
 multisite_painters["num_services_warn"] = {
@@ -1055,6 +1070,7 @@ def paint_service_list(row, columnname):
     h += "</div>"
     return "", h
 
+
 multisite_painters["host_services"] = {
     "title": "Services colored according to state",
     "short": "Services",
@@ -1077,6 +1093,7 @@ def paint_host_list(site, hosts):
             link += "&display_options=%s" % html.var("display_options")
         h += "<a href=\"%s\">%s</a></div>" % (link, host)
     return "", h
+
 
 multisite_painters["host_parents"] = {
     "title": "Host's parents",
@@ -1102,6 +1119,7 @@ def paint_host_group_memberlist(row):
         links.append('<a href="%s">%s</a>' % (link, group))
     return "", ", ".join(links)
 
+
 multisite_painters["host_group_memberlist"] = {
     "title": "Hostgroups the host is member of",
     "short": "Groups",
@@ -1123,6 +1141,7 @@ def paint_host_tags(row):
         if name == "TAGS":
             return "", val
     return "", ""
+
 
 multisite_painters["host_tags"] = {
     "title": "Host Tags (Check_MK)",
@@ -1174,6 +1193,7 @@ def paint_hg_host_list(row):
             css, link, host)
     h += "</div>"
     return "", h
+
 
 multisite_painters["hostgroup_hosts"] = {
     "title": "Hosts colored according to state",
@@ -1328,7 +1348,6 @@ multisite_painters["sg_alias"] = {
     "paint": lambda row: (None, row["servicegroup_alias"])
 }
 
-
 multisite_painters["link_to_pnp_service"] = {
     "title": "(obsolete) Link to PNP4Nagios",
     "short": "PNP",
@@ -1406,6 +1425,7 @@ def paint_comment_entry_type(row):
     if linkview:
         code = link_to_view(code, row, linkview)
     return "icons", code
+
 
 multisite_painters["comment_entry_type"] = {
     "title": "Comment entry type (user/downtime/flapping/ack)",
@@ -1489,6 +1509,7 @@ def paint_downtime_duration(row):
     else:
         return None, "%02d:%02d" % divmod(row["downtime_duration"] / 60, 60)
 
+
 multisite_painters["downtime_duration"] = {
     "title": "Downtime duration (if flexible)",
     "short": "Duration",
@@ -1564,6 +1585,7 @@ def paint_log_icon(row):
     else:
         return "icon", ""
 
+
 multisite_painters["log_icon"] = {
     "title": "Log: event icon",
     "short": "",
@@ -1600,6 +1622,7 @@ def paint_log_state(row):
         return paint_service_state_short({"service_has_been_checked": 1, "service_state": state})
     else:
         return paint_host_state_short({"host_has_been_checked": 1, "host_state": state})
+
 
 multisite_painters["log_state"] = {
     "title": "Log: state of host/service at log time",

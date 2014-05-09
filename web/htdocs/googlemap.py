@@ -16,20 +16,19 @@
 
 
 # import the modules(pakesges)
-import config
-import htmllib
-import MySQLdb
-import time
-from compiler.pycodegen import EXCEPT
-from mysql_collection import mysql_connection
-import uuid
 from datetime import datetime
-from utility import Validation
-from common_bll import EventLog
-from common_bll import Essential
-from specific_dashboard_bll import get_master_slave_value
-from error_message import ErrorMessageClass
 from json import JSONEncoder
+import time
+
+import MySQLdb
+
+from common_bll import Essential
+from common_bll import EventLog
+from error_message import ErrorMessageClass
+from mysql_collection import mysql_connection
+from specific_dashboard_bll import get_master_slave_value
+from utility import Validation
+
 # global variable for store the json format for all host data for
 # particular  NMS.
 json = ""
@@ -53,6 +52,7 @@ class SelfException(Exception):
     @organization: Code Scape Consultants Pvt. Ltd.
     @copyright: 2011 Code Scape Consultants Pvt. Ltd.
     """
+
     def __init__(self, msg):
         output_dictt = {"success": 2, "output": str(msg)}
         html.write(str(output_dictt))
@@ -60,6 +60,16 @@ class SelfException(Exception):
 
 def recursive_function(graph1, start, parent_len, service, temp_len):
     """
+
+
+
+
+
+    @param graph1:
+    @param start:
+    @param parent_len:
+    @param service:
+    @param temp_len:
     @return: this function return all host detail of a particular NMS.
     @rtype: this function return json format
     @requires: this function take four argument,1. graph1 is contain all relation ship of host to parent, 2. parent node(host) name , 3. its contain the only parent child relation ship    	hosts.,  4. its contain the services of all host, 5. it contain the length of host array(Node).
@@ -77,7 +87,8 @@ def recursive_function(graph1, start, parent_len, service, temp_len):
     host_chain2 = host_chain2 + [start]
     for node in graph1[start]:
         json += "{\"type\": \"host\",\"name\":\"%s\",\"id\":\"%s\",\"state\":\"%s\",\"lt\":\"%s\",\"lg\":\"%s\",\"lck\":\"%s\",\"device_type\":\"%s\", \"child\":[" % (
-            service[node][1], service[node][0], service[node][5], service[node][8], service[node][7], service[node][4], service[node][9])
+            service[node][1], service[node][0], service[node][5], service[node][8], service[node][7], service[node][4],
+            service[node][9])
         parent_len -= 1
         if not node in host_chain2:
             recursive_function(
@@ -97,6 +108,8 @@ def recursive_function(graph1, start, parent_len, service, temp_len):
 # Success 1 for Error
 def google_host_graph(h):
     """
+
+    @param h:
     @return: this function return all host detail of a particular NMS in json format to another file(javascript).
     @rtype: this function return dictnoray.
     @requires: this function take one html agrument.
@@ -155,7 +168,8 @@ def google_host_graph(h):
 			LEFT JOIN hosts as host1 ON host1.host_id = hosts.parent_name \
 			INNER JOIN hosts_hostgroups ON hosts_hostgroups.host_id = hosts.host_id\
 			INNER JOIN hostgroups ON hostgroups.hostgroup_id = hosts_hostgroups.hostgroup_id\
-			WHERE hosts.is_deleted=0 and nms_instance.nms_name='%s' AND hostgroups.hostgroup_id IN (%s)" % (nms_name, ','.join(hostgroup_ids_list))
+			WHERE hosts.is_deleted=0 and nms_instance.nms_name='%s' AND hostgroups.hostgroup_id IN (%s)" % (
+            nms_name, ','.join(hostgroup_ids_list))
             cursor.execute(sql)
             # fetch the result.
             results = cursor.fetchall()
@@ -166,7 +180,7 @@ def google_host_graph(h):
         cursor.close()
         db.close()
         if lc_result is not None:
-#		for row in localhost_result:
+        #		for row in localhost_result:
             service_dic[lc_result[0][1]] = [i for i in lc_result[0]]
             json = "[{\"type\":\"host\",\"name\":\"localhost\",\"id\":\"%s\",\"state\":\"%s\",\"lt\":\"%s\",\"lg\":\"%s\",\"lck\":\"f\",\"device_type\":\"%s\", \"child\" : [" % (
                 lc_result[0][0], lc_result[0][5], lc_result[0][8], lc_result[0][7], lc_result[0][9])
@@ -228,6 +242,8 @@ def google_host_graph(h):
 
 def graph(h):
     """
+
+    @param h:
     @return: this function create the page for google map.
     @rtype: this function return the html page for google map display.
     @requires: this function take one html agrument.
@@ -269,12 +285,12 @@ def graph(h):
 	<!--[if IE]>
 	       <link rel="stylesheet" type="text/css" href="css/ie_example.css" />
 	<![endif]-->
-	<script type="text/javascript" src="js/nms.js"></script>
+	<script type="text/javascript" src="js/unmp/main/nms.js"></script>
 	<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
 	<script src="http://code.jquery.com/jquery-latest.js"></script>
-	<script type="text/javascript" src="js/markerclusterer.js"></script> <!-- marker JS -->
-	<script type="text/javascript" src="js/ccpl_map.js"></script>
-	<script type="text/javascript" src="js/sidepanel.js"></script>
+	<script type="text/javascript" src="js/lib/main/markerclusterer.js"></script> <!-- marker JS -->
+	<script type="text/javascript" src="js/unmp/main/ccpl_map.js"></script>
+	<script type="text/javascript" src="js/unmp/main/sidepanel.js"></script>
 
 
 </head>
@@ -360,6 +376,8 @@ def graph(h):
 
 def save_updates(h):
     """
+
+    @param h:
     @return: this function return the updated latitude and longitude of host.
     @rtype: this function return a dictnoray of updated host location.
     @requires: this function take one html agrument.
@@ -405,13 +423,13 @@ def save_updates(h):
             pass
         else:
             session_user = "NotAvailable"
-        # info_str+= ' by  %s '%(session_user)
+            # info_str+= ' by  %s '%(session_user)
         el = EventLog()
         el.log_event(info_str, session_user)
         cursor.close()
         db.close()
         output_dictt = {"success": 0, "output":
-                        "Successfully updated host location."}
+            "Successfully updated host location."}
         html.write(str(output_dictt))
 
     # Exception Handling
@@ -442,6 +460,8 @@ def save_updates(h):
 # Success 1 for Error.
 def show_details(h):
     """
+
+    @param h:
     @return: this function return the host details like ipaddres,MAC address,services etc.
     @rtype: this function return a dictnoray.
     @requires: this function take one html agrument.
@@ -489,7 +509,7 @@ def show_details(h):
         # live query for services
         # Live query using here.
         query_service = "GET services\nColumns: state description  host_last_state_change host_has_been_checked \nFilter: host_address = " + \
-            host_ip
+                        host_ip
         html.live.set_prepend_site(True)
         services = html.live.query(query_service)
         services.sort()
@@ -515,13 +535,15 @@ def show_details(h):
             for row in result:
                 host_detail_data += "<div><table style=\"width:251px;font-size:11px;margin-bottom:10px;\">\
 				<colgroup><col width=\"40%%\"/><col width=\"5%%\"/><col/></colgroup><tr><th align=\"left\" colspan=\"3\">\
-				<u><a href=device_details_example.py?host_id=%s>%s(%s)</a></u></th></tr>" % (' ' if row[5] == " " or row[5] == None else row[5], row[7], '-' if row[1] == "" or row[1] == None else row[1])
+				<u><a href=device_details_example.py?host_id=%s>%s(%s)</a></u></th></tr>" % (
+                ' ' if row[5] == " " or row[5] == None else row[5], row[7],
+                '-' if row[1] == "" or row[1] == None else row[1])
                 # check for redirecting the page by device_type_id
                 if row[6] == 'odu16' or row[6] == 'odu100' or row[6] == 'idu4' or row[6] == 'ap25' or row[6] == 'ccu':
                     redirect_page = 'sp_dashboard_profiling'
                 else:
                     redirect_page = 'localhost_dashboard'
-                # end the checking of code
+                    # end the checking of code
 
                 host_name = '-' if row[0] == "" or row[0] == None else row[0]
 
@@ -541,7 +563,8 @@ def show_details(h):
 				<img src=\"images/new/alert.png\" alt=\"Alarm\" title=\"Alarm\" style=\"width:12px;\"/>\
 				<a href=status_snmptt.py?ip_address=%s- alt=\"Alarms\">Alarms</td>\
 				<td><a href='javascript:enabledDevice(\"%s\");'> <img src=\"images/alert_restart.png\" alt=\"Enabled Device\" \
-				title=\"Enabled Device\" style=\"width:12px;\"/> Enabled Device</a></td></tr></table>" % ('' if row[1] == "" or row[1] == None else row[1], row[1])
+				title=\"Enabled Device\" style=\"width:12px;\"/> Enabled Device</a></td></tr></table>" % (
+                '' if row[1] == "" or row[1] == None else row[1], row[1])
 
                 some_link += "<table style=\"width:251px;font-size:11px;\"><colgroup><col width=\"33%%\"/><col width=\"33%%\"/><col/></colgroup><tr>"
                 if redirect_page == 'localhost_dashboard':
@@ -549,11 +572,13 @@ def show_details(h):
                 else:
                     some_link += "<td style=\"width:30px\"><lable style=\" width:100px; font-size:13px;\">\
 				    <img src=\"images/new/alert.png\" alt=\"Alarm\" title=\"Alarm\" style=\"width:12px;\"/>\
-				    <a href=status_snmptt.py?ip_address=%s- alt=\"Alarms\">Alarms</td>" % ('' if row[1] == "" or row[1] == None else row[1])
+				    <a href=status_snmptt.py?ip_address=%s- alt=\"Alarms\">Alarms</td>" % (
+                    '' if row[1] == "" or row[1] == None else row[1])
                 some_link += "<td style=\"width:30px\"><lable style=\" width:100px; font-size:13px;\">\
 				<img src=\"images/new/graph.png\" alt=\"Alarm\" title=\"Alarm\" style=\"width:12px;\"/>\
 				<a href=%s.py?host_id=%s&device_type=%s&device_list_state=enabled alt=\"Dashboard\">Dashboard</td></tr>\
-				</table>" % (redirect_page, ' ' if row[5] == "" or row[5] == None else row[5], ' ' if row[6] == "" or row[6] == None else row[6])
+				</table>" % (redirect_page, ' ' if row[5] == "" or row[5] == None else row[5],
+                             ' ' if row[6] == "" or row[6] == None else row[6])
 
                 host_detail_data += "<tr><td>Device Type </td><td>:</td><td> %s </td></tr>" % (
                     '-' if row[6] == "" or row[6] == None else device_name_dict[row[6].strip()])
@@ -610,6 +635,12 @@ def show_details(h):
 
 def paint_age(timestamp, has_been_checked, bold_if_younger_than):
     """
+
+
+
+    @param timestamp:
+    @param has_been_checked:
+    @param bold_if_younger_than:
     @return: this function return the host host status age.
     @rtype: this function return type string.
     @requires: this function take three argument 1. timestamp(total up tiem) , 2. this process checked or not(boolean value) , 3. total up time is grether than 10 min or not. .
@@ -644,6 +675,10 @@ def paint_age(timestamp, has_been_checked, bold_if_younger_than):
 # function to create link
 def link(name, href):
     """
+
+
+    @param name:
+    @param href:
     @return: this function return the host hyperlink.
     @rtype: this function return in html format.
     @requires: this function take two argument 1. hyperlink location  , 2. hyprelink name.
@@ -665,6 +700,8 @@ def link(name, href):
 # Success 1 for Error
 def nms_details(h):
     """
+
+    @param h:
     @return: this function return the all NMS information.
     @rtype: this function return a dictnoray.
     @requires: this function take one html agrument.
@@ -706,13 +743,15 @@ def nms_details(h):
                     total_host += 1
                 else:
                     nms_data_json += "{\"type\":\"nms\",\"name\":\"%s\",\"tH\":%s,\"eH\":%s,\"lt\":\"%s\",\"lg\":\"%s\"}%s" % (
-                        nms_name, total_host, enable_host, nms_result[i - 1][2], nms_result[i - 1][1], (',' if i < len(nms_result) else ''))
+                        nms_name, total_host, enable_host, nms_result[i - 1][2], nms_result[i - 1][1],
+                        (',' if i < len(nms_result) else ''))
                     enable_host = 0
                     total_host = 0
                     nms_name = nms_result[i][0]
-#			if total_host == 0 or total_host =='0':
+                #			if total_host == 0 or total_host =='0':
             nms_data_json += "{\"type\":\"nms\",\"name\":\"%s\",\"tH\":%s,\"eH\":%s,\"lt\":\"%s\",\"lg\":\"%s\"}" % (
-                nms_name, total_host, enable_host, nms_result[len(nms_result) - 1][2], nms_result[len(nms_result) - 1][1])
+                nms_name, total_host, enable_host, nms_result[len(nms_result) - 1][2],
+                nms_result[len(nms_result) - 1][1])
         nms_data_json += "]"
 
         output_dictt = {"success": 0, "output": str(nms_data_json)}
@@ -745,6 +784,8 @@ def nms_details(h):
 # Success 1 for Error
 def new_discover_deviec(h):
     """
+
+    @param h:
     @return: this function return the all new discover device.
     @rtype: this function return a dictnoray.
     @requires: this function take one html agrument.
@@ -773,8 +814,11 @@ def new_discover_deviec(h):
         new_host_json = ""  # it store the information in json format.
         new_host_json += "["
         for i in range(len(new_device_result)):
-            new_host_json += "{ \"type\":\"host\",\"name\":\"%s\",\"latitude\":%s,\"longitude\":%s}%s" % (("-" if new_device_result[i][2] == "" or new_device_result[i][2] == None else new_device_result[i][2]), (
-                0 if new_device_result[i][0] == "" or new_device_result[i][0] == None else new_device_result[i][0]), (0 if new_device_result[i][1] == "" or new_device_result[i][1] == None else new_device_result[i][1]), (',' if i < len(new_device_result) - 1 else ''))
+            new_host_json += "{ \"type\":\"host\",\"name\":\"%s\",\"latitude\":%s,\"longitude\":%s}%s" % (
+            ("-" if new_device_result[i][2] == "" or new_device_result[i][2] == None else new_device_result[i][2]), (
+                0 if new_device_result[i][0] == "" or new_device_result[i][0] == None else new_device_result[i][0]),
+            (0 if new_device_result[i][1] == "" or new_device_result[i][1] == None else new_device_result[i][1]),
+            (',' if i < len(new_device_result) - 1 else ''))
         new_host_json += "]"
 
         # new disable devices ip address.
@@ -789,8 +833,11 @@ def new_discover_deviec(h):
         disable_host_json += "["
 
         for i in range(len(new_disable_result)):
-            disable_host_json += "{ \"type\":\"host\",\"name\":\"%s\",\"latitude\":%s,\"longitude\":%s}%s" % (("-" if new_disable_result[i][2] == "" or new_disable_result[i][2] == None else new_disable_result[i][2]), (
-                0 if new_disable_result[i][0] == "" or new_disable_result[i][0] == None else new_disable_result[i][0]), (0 if new_disable_result[i][1] == "" or new_disable_result[i][1] == None else new_disable_result[i][1]), (',' if i < len(new_disable_result) - 1 else ''))
+            disable_host_json += "{ \"type\":\"host\",\"name\":\"%s\",\"latitude\":%s,\"longitude\":%s}%s" % (
+            ("-" if new_disable_result[i][2] == "" or new_disable_result[i][2] == None else new_disable_result[i][2]), (
+                0 if new_disable_result[i][0] == "" or new_disable_result[i][0] == None else new_disable_result[i][0]),
+            (0 if new_disable_result[i][1] == "" or new_disable_result[i][1] == None else new_disable_result[i][1]),
+            (',' if i < len(new_disable_result) - 1 else ''))
         disable_host_json += "]"
 
         output_dictt = "{\"success\":0,\"output\":%s,\"disable_hosts\":%s}" % (
@@ -824,6 +871,8 @@ def new_discover_deviec(h):
 # Success 1 for Error
 def new_host_update(h):
     """
+
+    @param h:
     @return: this function update the new device information.
     @rtype: this function return a dictnoray.
     @requires: this function take one html agrument.
@@ -905,6 +954,8 @@ def new_host_update(h):
 
 def site_show_management(h):
     """
+
+    @param h:
     @return: this function provide the site information for site draw.
     @rtype: this function return a dictnoray.
     @requires: this function take one html agrument.
@@ -930,7 +981,8 @@ def site_show_management(h):
 
         json_format = ""
         json_format = "["
-        sql = "SELECT ho.hostgroup_name,h.ip_address,a.latitude,a.longitude,h.host_state_id  FROM hostgroups as ho LEFT JOIN  hosts_hostgroups as hho on ho.hostgroup_id=hho.hostgroup_id LEFT JOIN hosts as h on hho.host_id=h.host_id LEFT JOIN host_assets as a on h.host_asset_id=a.host_asset_id inner join nms_instance as ns on h.nms_id=ns.nms_id where ns.nms_name='%s' and h.is_deleted=0 order by ho.hostgroup_name " % (nms_name)
+        sql = "SELECT ho.hostgroup_name,h.ip_address,a.latitude,a.longitude,h.host_state_id  FROM hostgroups as ho LEFT JOIN  hosts_hostgroups as hho on ho.hostgroup_id=hho.hostgroup_id LEFT JOIN hosts as h on hho.host_id=h.host_id LEFT JOIN host_assets as a on h.host_asset_id=a.host_asset_id inner join nms_instance as ns on h.nms_id=ns.nms_id where ns.nms_name='%s' and h.is_deleted=0 order by ho.hostgroup_name " % (
+        nms_name)
         cursor.execute(sql)
         site_result = cursor.fetchall()
         if len(site_result) > 0:
@@ -942,17 +994,19 @@ def site_show_management(h):
                         flag = 0
                 if group_name == site_result[i][0]:
                     member_list += "{\"id\":\"%s\",\"latitude\":\"%s\",\"longitude\":\"%s\",\"state\":\"%s\"}%s" % (
-                        site_result[i][1], site_result[i][2], site_result[i][3], site_result[i][4], (',' if flag == 0 else ''))
+                        site_result[i][1], site_result[i][2], site_result[i][3], site_result[i][4],
+                        (',' if flag == 0 else ''))
                 else:
                     json_format += "{\"groupName\":\"" + group_name + "\",\"member\":[" + member_list + \
-                        "]}%s" % (',' if i < len(site_result) else '')
+                                   "]}%s" % (',' if i < len(site_result) else '')
                     group_name = site_result[i][0]
                     member_list = ""
                     member_list += "{\"id\":\"%s\",\"latitude\":\"%s\",\"longitude\":\"%s\",\"state\":\"%s\"}%s" % (
-                        site_result[i][1], site_result[i][2], site_result[i][3], site_result[i][4], (',' if flag == 0 else ''))
+                        site_result[i][1], site_result[i][2], site_result[i][3], site_result[i][4],
+                        (',' if flag == 0 else ''))
 
             json_format += "{\"groupName\":\"" + group_name + \
-                "\",\"member\":[" + member_list + "]}"
+                           "\",\"member\":[" + member_list + "]}"
 
         json_format += "]"
         # close the database and cursor conection.
@@ -984,6 +1038,8 @@ def site_show_management(h):
 
 def host_status_update_information(h):
     """
+
+    @param h:
     @return: this function provide the hosts status .
     @rtype: this function return a dictnoray.
     @requires: this function take one html agrument.
@@ -1014,7 +1070,8 @@ def host_status_update_information(h):
         for index_val, address, state, name in host_result:
 
             # Get the device type ID.
-            sel_query = "SELECT device_type_id,host_state_id FROM hosts WHERE hosts.ip_address='%s' and is_deleted=0" % (address)
+            sel_query = "SELECT device_type_id,host_state_id FROM hosts WHERE hosts.ip_address='%s' and is_deleted=0" % (
+            address)
             cursor.execute(sel_query)
             device_type_result = cursor.fetchall()
             device_type = 'Unknown' if len(
@@ -1102,6 +1159,7 @@ def host_status_update_information(h):
         pass
     except Exception as e:
         import traceback
+
         output_dictt = {"success": 1, "output": str(traceback.format_exc())}
         html.write(str(output_dictt))
         if db.open:
@@ -1115,6 +1173,8 @@ def host_status_update_information(h):
 
 def enabled_device_state(h):
     """
+
+    @param h:
     @return: "".
     @rtype: this function return a dictnoray.
     @requires: this function take one html agrument.
@@ -1139,7 +1199,7 @@ def enabled_device_state(h):
         cursor.execute(update_query)
         db.commit()
         output_dict = {"success": 0, "output":
-                       'Host State successfully updated.'}
+            'Host State successfully updated.'}
         html.req.write(str(JSONEncoder().encode(output_dict)))
 
     # Exception Handling
@@ -1160,19 +1220,11 @@ def enabled_device_state(h):
             db.close()
 
 
-def page_tip_google_map(h):
-    global html
-    html = h
-    html_view = ""
-    html_view = ""\
-        "<div id=\"help_container\">"\
-        "<h1>Google Map</h1>"\
-        "<div>Google Map show all device status and device information .</div>"\
-        "<br/>"\
-        "<br/>"\
-        "<div><strong>Note:</strong>User can view device located and also device status, User can view newly discovered device from left panel,Search for the device and its health and also user can redirect to dashboard graphs,Events details page\
-        </div>"\
-        "<h1>DU</h1> DU denote the device was unreachabled and this means UNMP not be capture the information from device. "\
-        "<h1>TS</h1> DU indicate to how much Time Slot enabled of Master. "\
-        "</div>"
-    html.write(str(html_view))
+# def page_tip_google_map(h):
+#     global html
+#     html = h
+#     import defaults
+#     f = open(defaults.web_dir + "/htdocs/locale/page_tip_google_map.html", "r")
+#     html_view = f.read()
+#     f.close()
+#     html.write(str(html_view))

@@ -65,7 +65,7 @@ def show_host_log_list(host):
     html.new_header("Logfiles of host " + host)
     html.begin_context_buttons()
     html.context_button("Services", "view.py?view_name=host&site=&host=%s" %
-                        htmllib.urlencode(host))
+                                    htmllib.urlencode(host))
     html.end_context_buttons()
 
     logs_shown = False
@@ -94,7 +94,7 @@ def show_host_log_list(host):
             state = worst_log['level']
             state_name = form_level(state)
             html.write("<tr class=%s%d>\n" % (rowno %
-                       2 == 0 and "odd" or "even", state))
+                                              2 == 0 and "odd" or "even", state))
 
             html.write("<td class=\"state%d\">%s</td>\n" % (state, state_name))
             html.write("<td><a href=\"logwatch.py?host=%s&amp;file=%s\">%s</a></td>\n" %
@@ -115,7 +115,7 @@ def show_file(host, filename):
     html.new_header("Logfiles of host %s: %s" % (host, filename))
     html.begin_context_buttons()
     html.context_button("Services", "view.py?view_name=host&site=&host=%s" %
-                        htmllib.urlencode(host))
+                                    htmllib.urlencode(host))
     html.context_button(
         "All logfiles", "logwatch.py?host=%s" % htmllib.urlencode(host))
 
@@ -142,13 +142,13 @@ def show_file(host, filename):
 
     if config.may("act") and may_see(host):
         html.context_button("Acknowledge", "logwatch.py?host=%s&amp;file=%s&amp;ack=1" %
-                            (htmllib.urlencode(host), htmllib.urlencode(html.var('file'))))
+                                           (htmllib.urlencode(host), htmllib.urlencode(html.var('file'))))
 
     html.context_button("Context", 'logwatch.py?host=%s&file=%s&hidecontext=%s">%s</a>' %
-                        (htmllib.urlencode(host),
-                         htmllib.urlencode(html.var('file')),
-                         htmllib.urlencode(hide_context_param),
-                         htmllib.attrencode(hide_context_label)))
+                                   (htmllib.urlencode(host),
+                                    htmllib.urlencode(html.var('file')),
+                                    htmllib.urlencode(hide_context_param),
+                                    htmllib.attrencode(hide_context_label)))
 
     html.end_context_buttons()
 
@@ -157,14 +157,14 @@ def show_file(host, filename):
         html.write('<div class="chunk">\n')
         html.write('<table class="section">\n<tr>\n')
         html.write('<td class="%s">%s</td>\n' % (form_level(log[
-                   'level']), form_level(log['level'])))
+            'level']), form_level(log['level'])))
         html.write(
             '<td class="date">%s</td>\n' % (form_datetime(log['datetime'])))
         html.write('</tr>\n</table>\n')
 
         for line in log['lines']:
             html.write('<p class="%s">%s</p>\n' % (line[
-                       'class'], htmllib.attrencode(line['line'])))
+                                                       'class'], htmllib.attrencode(line['line'])))
 
         html.write('</div>\n')
 
@@ -198,10 +198,10 @@ def do_log_ack(host, filename):
         os.remove(defaults.logwatch_dir + '/' + host + '/' + file)
 
         message = '<b>%s: %s Acknowledged</b><br>' % \
-            (htmllib.attrencode(host), htmllib.attrencode(file_display))
+                  (htmllib.attrencode(host), htmllib.attrencode(file_display))
         message += '<p>The log messages from host &quot;%s&quot; in file' \
-            '&quot;%s&quot; have been acknowledged.</p>' % \
-            (htmllib.attrencode(host), htmllib.attrencode(file_display))
+                   '&quot;%s&quot; have been acknowledged.</p>' % \
+                   (htmllib.attrencode(host), htmllib.attrencode(file_display))
         html.message(message)
     except Exception, e:
         html.show_error('The log file &quot;%s&quot; from host &quot;%s&quot;'
@@ -293,7 +293,7 @@ def parse_file(host, file, hidecontext=False):
                     continue  # ignore this line
 
                 log_lines.append({'level': line_level,
-                                 'class': line_class, 'line': line_display})
+                                  'class': line_class, 'line': line_display})
     except Exception, e:
         # cannot parse logfile: corrupted
         return str(e)

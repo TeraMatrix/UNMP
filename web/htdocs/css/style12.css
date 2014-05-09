@@ -1,69 +1,92 @@
+body {
+    margin: 0;
+    padding: 0;
+    background: #f9f9f9;
+}
 
-body{ margin:0; padding:0; background:#f9f9f9;}
-#demo{width:350px; margin:10px; padding:5px; float:left}
-.detailPanel{
-	width:270px;
-	margin:10px; padding:5px;
-	float:left;
+#demo {
+    width: 350px;
+    margin: 10px;
+    padding: 5px;
+    float: left
 }
-#GroupsList , #HostsList{
-	height:180px;
-	overflow-y:auto;
-	overflow-x:hidden;
-	position: relative;
-	 z-index: 1;
+
+.detailPanel {
+    width: 270px;
+    margin: 10px;
+    padding: 5px;
+    float: left;
+}
+
+#GroupsList, #HostsList {
+    height: 180px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    position: relative;
+    z-index: 1;
 
 }
-#GroupsList li ,#HostsList li{
-	list-style:none;
+
+#GroupsList li, #HostsList li {
+    list-style: none;
 }
-.hideName{
-	display:none !important;
+
+.hideName {
+    display: none !important;
 }
-#GroupsList input[type="checkbox"]{
-	float:none !important;
+
+#GroupsList input[type="checkbox"] {
+    float: none !important;
 }
-.highlight_gp{
-       margin:0 10px;
-       color:#5491BE;
+
+.highlight_gp {
+    margin: 0 10px;
+    color: #5491BE;
 }
-.themeFieldset{ 
-	height:200px; border:1px solid #aaa;
+
+.themeFieldset {
+    height: 200px;
+    border: 1px solid #aaa;
 }
-.themeFieldset .legend{
-     background:repeat-x scroll 50% 50% #E6E6E6;/*url("images/ui-bg_glass_75_e6e6e6_1x400.png") */
+
+.themeFieldset .legend {
+    background: repeat-x scroll 50% 50% #E6E6E6; /*url("images/ui-bg_glass_75_e6e6e6_1x400.png") */
     color: #555;
     text-shadow: 0 1px 1px #FFFFFF;
-    padding:5px 1px 5px 10px;
-	font-weight:bold;
+    padding: 5px 1px 5px 10px;
+    font-weight: bold;
 }
-ul.yo-ul{
-	margin:0;
-	padding:0;	
+
+ul.yo-ul {
+    margin: 0;
+    padding: 0;
 }
-ul.yo-ul li{
-	position:relative;
-	padding:3px 5px;
-	cursor:pointer;
+
+ul.yo-ul li {
+    position: relative;
+    padding: 3px 5px;
+    cursor: pointer;
 }
-ul.yo-ul li:nth-child(even)
-{
-	background:none repeat scroll 0 0 #FFFFFF;
-	border:1px solid #eee;
+
+ul.yo-ul li:nth-child(even) {
+    background: none repeat scroll 0 0 #FFFFFF;
+    border: 1px solid #eee;
 }
-ul.yo-ul li:nth-child(odd)
-{
-	background:none repeat scroll 0 0 #F4F3EE;
-	border:1px solid #eee;
+
+ul.yo-ul li:nth-child(odd) {
+    background: none repeat scroll 0 0 #F4F3EE;
+    border: 1px solid #eee;
 }
-#GroupsList li.Highlight ,#HostsList li.Highlight{
-      background:#E6DAAE;
-      border:1px solid #eee;
+
+#GroupsList li.Highlight, #HostsList li.Highlight {
+    background: #E6DAAE;
+    border: 1px solid #eee;
 }
-.search-input input[type="text"]{
-	float:right;
-	margin:0;
-       padding:0;
-	width:100px !important; 
-	height:15px !important;
+
+.search-input input[type="text"] {
+    float: right;
+    margin: 0;
+    padding: 0;
+    width: 100px !important;
+    height: 15px !important;
 }

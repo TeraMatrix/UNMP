@@ -38,7 +38,7 @@ def page_manage_user(h):
     if not config.may("manage_user"):
         raise MKAuthException("You are not allowed to manage user.")
     css_list = []
-    js_list = ["js/manageuser.js"]
+    js_list = ["js/unmp/main/manageuser.js"]
     html.new_header("Manage User", "", "", css_list, js_list)
     html.write(
         "<div class=\"loading\"><img src='images/loading.gif' alt=''/></div>")
@@ -62,10 +62,11 @@ def user_grid_view(h):
             htmlString += "<tr class=\"even\">"
         else:
             htmlString += "<tr>"
-        htmlString += "<td>" + user + "</td><td>" + config.role_of_user(user) + "</td><td><img src='images/edit16.png' alt='edit' title='Edit User Details' class='imgbutton' onclick='editUser(\"" + user + \
-            "\")'/></td><td><img src='images/delete16.png' alt='delete' title='Delete User' class='imgbutton' onclick='deleteUser(\"" + \
-            user + \
-            "\")'/></td></tr>"
+        htmlString += "<td>" + user + "</td><td>" + config.role_of_user(
+            user) + "</td><td><img src='images/edit16.png' alt='edit' title='Edit User Details' class='imgbutton' onclick='editUser(\"" + user + \
+                      "\")'/></td><td><img src='images/delete16.png' alt='delete' title='Delete User' class='imgbutton' onclick='deleteUser(\"" + \
+                      user + \
+                      "\")'/></td></tr>"
     htmlString += "</table>"
     html.write(htmlString)
 
@@ -76,12 +77,14 @@ def form_for_user(h):
     formdata = ""
     if html.var("action").strip() == "edit":
         formdata += "<form id=\"userForm\" action=\"update_user.py\" method=\"post\"><table class='addform'><colgroup><col width='20%'/><col width='80%'/></colgroup><tr><th colspan='2'>Edit User</th></tr><tr><td>User Name</td><td><input type='text' name='userName' id='userName' class='required' readonly=\"readonly\" value=\"" + html.var(
-            "user") + "\" /></td></tr><tr><td>Password</td><td><input type='password' name='password' id='password' value=''/></td></tr><tr><td>Confirm Password</td><td><input type='password' name='cpassword' id='cpassword' value=''/></td></tr><tr><td>Role</td><td>" + user_roles_select_list(config.role_of_user(html.var("user"))) + "</td></tr><tr><td class='button' colspan='2'><input type='submit' value='Update'/><input type='button' value='Cancel' onclick=\"cancelEditUser()\"/></td></tr></table></form>"
+            "user") + "\" /></td></tr><tr><td>Password</td><td><input type='password' name='password' id='password' value=''/></td></tr><tr><td>Confirm Password</td><td><input type='password' name='cpassword' id='cpassword' value=''/></td></tr><tr><td>Role</td><td>" + user_roles_select_list(
+            config.role_of_user(html.var(
+                "user"))) + "</td></tr><tr><td class='button' colspan='2'><input type='submit' value='Update'/><input type='button' value='Cancel' onclick=\"cancelEditUser()\"/></td></tr></table></form>"
 
     else:
         formdata += "<form id=\"userForm\" action=\"add_user.py\" method=\"post\"><table class='addform'><colgroup><col width='20%'/><col width='80%'/></colgroup><tr><th colspan='2'>Add User</th></tr><tr><td>User Name</td><td><input type='text' name='userName' id='userName' value='' class='required' /></td></tr><tr><td>Password</td><td><input type='password' name='password' id='password' value='' class='required' /></td></tr><tr><td>Confirm Password</td><td><input type='password' name='cpassword' id='cpassword' value='' class='required' /></td></tr><tr><td>Role</td><td>" + \
-            user_roles_select_list(
-                "") + "</td></tr><tr><td class='button' colspan='2'><input type='submit' value='Submit'/><input type='button' value='Reset' onclick=\"resetAddUser()\"/><input type='button' value='Cancel' onclick=\"cancelAddUser()\"/></td></tr></table></form>"
+                    user_roles_select_list(
+                        "") + "</td></tr><tr><td class='button' colspan='2'><input type='submit' value='Submit'/><input type='button' value='Reset' onclick=\"resetAddUser()\"/><input type='button' value='Cancel' onclick=\"cancelAddUser()\"/></td></tr></table></form>"
     html.write(formdata)
 
 
@@ -89,12 +92,12 @@ def page_change_password(h):
     global html
     html = h
     css_list = []
-    js_list = ["js/changepassword.js"]
+    js_list = ["js/unmp/main/changepassword.js"]
     html.new_header("Change Password", "", "", css_list, js_list)
     html.write(
         "<div class=\"loading\"><img src='images/loading.gif' alt=''/></div>")
     formdata = "<form id=\"userForm\" action=\"password_changed.py\" method=\"post\"><table class='addform'><colgroup><col width='20%'/><col width='80%'/></colgroup><tr><th colspan='2'>Change Password</th></tr><tr><td>User Name</td><td><input type='text' name='userName' id='userName' class='required' readonly=\"readonly\" value=\"" + config.user + \
-        "\" /></td></tr><tr><td>New Password</td><td><input type='password' name='password' id='password' value=''/></td></tr><tr><td>Confirm New Password</td><td><input type='password' name='cpassword' id='cpassword' value=''/></td></tr><tr><td class='button' colspan='2'><input type='submit' value='Update'/><input type='button' value='Cancel' onclick=\"javascript:history.go(-1)\"/></td></tr></table></form>"
+               "\" /></td></tr><tr><td>New Password</td><td><input type='password' name='password' id='password' value=''/></td></tr><tr><td>Confirm New Password</td><td><input type='password' name='cpassword' id='cpassword' value=''/></td></tr><tr><td class='button' colspan='2'><input type='submit' value='Update'/><input type='button' value='Cancel' onclick=\"javascript:history.go(-1)\"/></td></tr></table></form>"
     html.write(
         "<div id=\"formDiv\" style=\"display:block;\">" + formdata + "</div>")
     html.new_footer()
@@ -119,10 +122,10 @@ def user_roles_select_list(selectedRole):
     for role in config.get_role_list():
         if selectedRole == role:
             selectString += "<option value=\"" + role + \
-                "\" selected=\"selected\">" + role + "</option>"
+                            "\" selected=\"selected\">" + role + "</option>"
         else:
             selectString += "<option value=\"" + role + "\">" + \
-                role + "</option>"
+                            role + "</option>"
     selectString += "</select>"
     return selectString
 
@@ -181,7 +184,7 @@ def logout(h):
     global html
     html = h
     css_list = []
-    js_list = ["js/logout.js"]
+    js_list = ["js/unmp/main/logout.js"]
     html.new_header("Logout", "", "", css_list, js_list)
     html.write(
         "<div class=\"loading\"><img src='images/loading.gif' alt=''/></div>")

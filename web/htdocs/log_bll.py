@@ -1,6 +1,6 @@
 #!/usr/bin/python2.6
 
-'''
+"""
 @author: Mahipal Choudhary
 @since: 07-Dec-2011
 @version: 0.1
@@ -8,21 +8,46 @@
 @organization: Codescape Consultants Pvt. Ltd.
 @copyright: 2011 Mahipal Choudhary for Codescape Consultants Pvt. Ltd.
 @see: http://www.codescape.in
-'''
+"""
 
 # Import modules that contain the function and libraries
 import MySQLdb
 import xlwt
 import csv
-from xlwt import Workbook, easyxf
 from unmp_config import SystemConfig
 from common_bll import EventLog
 from datetime import datetime
+from common_vars import make_list
 
 
 class Log_bll(object):
+    """
+    User logs related Model class
+    """
 # Required data for given user_id
-    def get_log_data_bll(self, sEcho, iColumns, iDisplayLength, iDisplayStart, sColumns, sSearch, iSortCol_0, sSortDir_0, month, log_type, selected_user, group="", date_start="", date_end="", time_start="", time_end=""):
+    def get_log_data_bll(self, sEcho, iColumns, iDisplayLength, iDisplayStart, sColumns, sSearch, iSortCol_0,
+                         sSortDir_0, month, log_type, selected_user, group="", date_start="", date_end="",
+                         time_start="", time_end=""):
+        """
+
+        @param sEcho:
+        @param iColumns:
+        @param iDisplayLength:
+        @param iDisplayStart:
+        @param sColumns:
+        @param sSearch:
+        @param iSortCol_0:
+        @param sSortDir_0:
+        @param month:
+        @param log_type:
+        @param selected_user:
+        @param group:
+        @param date_start:
+        @param date_end:
+        @param time_start:
+        @param time_end:
+        @return:
+        """
         try:
             db = MySQLdb.connect(*SystemConfig.get_mysql_credentials())
             a_columns = ["timestamp", "time_taken", "username", "description"]
@@ -35,7 +60,7 @@ class Log_bll(object):
             if (iDisplayStart != None and iDisplayLength != '-1'):
                 s_limit = "LIMIT %s, %s" % (MySQLdb.escape_string(
                     iDisplayStart), MySQLdb.escape_string(iDisplayLength))
-            # Ordering
+                # Ordering
             # s_order = "ORDER BY timestamp desc,  "
             s_order = "ORDER BY  "
             if iSortCol_0 != None and iSortCol_0 != -1:
@@ -130,11 +155,9 @@ class Log_bll(object):
             cursor.close()
 
             result_data = []
-            make_list = lambda x: [
-                " - " if i == None or i == '' or i == '0' else str(i) for i in x]
             for row in r_result:
                 result_data.append(make_list(row))
-            # Output
+                # Output
             output = {
                 "sEcho": sEcho,
                 "iTotalRecords": i_total,
@@ -159,14 +182,17 @@ class Log_bll(object):
             db.close()
 
     def get_header_data(self):
+        """
+
+
+        @return:
+        """
         try:
             conn = MySQLdb.connect(*SystemConfig.get_mysql_credentials())
             cursor = conn.cursor()
             query = "Select timestamp, username , description from event_log where level=0 order by timestamp desc limit 5"
             cursor.execute(query)
             log_tuple = cursor.fetchall()
-            make_list = lambda x: [
-                " - " if i == None or i == '' else str(i) for i in x]
             log_list = []
             for row in log_tuple:
                 log_list.append(make_list(row))
@@ -177,14 +203,17 @@ class Log_bll(object):
             conn.close()
 
     def get_device_type_dict(self):
+        """
+
+
+        @return:
+        """
         try:
             conn = MySQLdb.connect(*SystemConfig.get_mysql_credentials())
             cursor = conn.cursor()
             query = "select device_type_id,device_name from device_type;"
             cursor.execute(query)
             log_tuple = cursor.fetchall()
-            make_list = lambda x: [
-                " - " if i == None or i == '' else str(i) for i in x]
             device_type_dict = {}
             for row in log_tuple:
                 # log_list.append(make_list(row))
@@ -196,14 +225,17 @@ class Log_bll(object):
             conn.close()
 
     def get_user_names(self):
+        """
+
+
+        @return:
+        """
         try:
             conn = MySQLdb.connect(*SystemConfig.get_mysql_credentials())
             cursor = conn.cursor()
             query = "Select user_name from user_login"
             cursor.execute(query)
             user_tuple = cursor.fetchall()
-            make_list = lambda x: [
-                " - " if i == None or i == '' else str(i) for i in x]
             user_list = []
             for row in user_tuple:
                 user_list.append(make_list(row))
@@ -214,8 +246,14 @@ class Log_bll(object):
             conn.close()
 
     def clear_old_logs(self):
+        """
+
+
+        @return:
+        """
         try:
             from datetime import timedelta, datetime
+
             conn = MySQLdb.connect(*SystemConfig.get_mysql_credentials())
             cursor = conn.cursor()
             query = "delete from event_log where timestamp <= '%s' " % (
@@ -229,6 +267,11 @@ class Log_bll(object):
             conn.close()
 
     def get_alarm_header_data(self, hostgroup_id_list):
+        """
+
+        @param hostgroup_id_list:
+        @return:
+        """
         try:
             conn = MySQLdb.connect(*SystemConfig.get_mysql_credentials())
             cursor = conn.cursor()
@@ -240,8 +283,6 @@ class Log_bll(object):
 				 order by t.trap_receive_date desc limit 5 " % (','.join(hostgroup_id_list))
             cursor.execute(query)
             log_tuple = cursor.fetchall()
-            make_list = lambda x: [
-                " - " if i == None or i == '' else str(i) for i in x]
             log_list = []
             for row in log_tuple:
                 log_list.append(make_list(row))
@@ -251,7 +292,21 @@ class Log_bll(object):
         finally:
             conn.close()
 
-    def get_log_data_report(self, month, log_type, report_type, username, selected_user, date_start, date_end, time_start, time_end):
+    def get_log_data_report(self, month, log_type, report_type, username, selected_user, date_start, date_end,
+                            time_start, time_end):
+        """
+
+        @param month:
+        @param log_type:
+        @param report_type:
+        @param username:
+        @param selected_user:
+        @param date_start:
+        @param date_end:
+        @param time_start:
+        @param time_end:
+        @return:
+        """
         try:
             time1 = datetime.now()
             nms_instance = __file__.split(
@@ -298,8 +353,6 @@ class Log_bll(object):
                 s_where)
             cursor.execute(query)
             log_tuple = cursor.fetchall()
-            make_list = lambda x: [
-                " - " if i == None or i == '' else str(i) for i in x]
             log_list = []
             for row in log_tuple:
                 log_list.append(make_list(row))
@@ -339,6 +392,11 @@ class Log_bll(object):
             return result_dict
 
     def get_excel_sheet(self, *params):
+        """
+
+        @param params:
+        @return:
+        """
         try:
             i = 4
             flag = 0
@@ -380,7 +438,7 @@ class Log_bll(object):
             alignment.horz = xlwt.Alignment.HORZ_CENTER
             alignment.vert = xlwt.Alignment.VERT_CENTER
             style1.alignment = alignment  # Add Alignment to Style
-            xls_book = Workbook(encoding='ascii')
+            xls_book = xlwt.Workbook(encoding='ascii')
             for par in params:
                 sheet_dict = par
                 i = 4
@@ -457,6 +515,11 @@ class Log_bll(object):
             return result_dict
 
     def get_csv_file(self, *params):
+        """
+
+        @param params:
+        @return:
+        """
         try:
             for par in params:
                 sheet_dict = par
@@ -503,9 +566,9 @@ class Log_bll(object):
             if flag == 0:
                 result_dict = {"success": "1", "result": "data not available"}
                 return result_dict
-            # xls_book.save(path_report+name_report)
+                # xls_book.save(path_report+name_report)
             result_dict = {"success": "0", "result": "report successfully generated", "file":
-                           name_report, "filename": name_report, "path_report": path_report + "/" + name_report}
+                name_report, "filename": name_report, "path_report": path_report + "/" + name_report}
             return result_dict
         except Exception, e:
             result_dict = {"success": "1", "result": str(e)}

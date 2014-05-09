@@ -49,6 +49,8 @@ def perfometer_check_mk(row, check_command, perf_data):
         color = "#f44"
 
     return "%.1fs" % exectime, perfometer_linear(perc, color)
+
+
 perfometers["check-mk"] = perfometer_check_mk
 
 
@@ -62,6 +64,7 @@ def perfometer_check_mk_df(row, check_command, perf_data):
     h += perfometer_td(perc_free, "white")
     h += "</tr></table>"
     return "%d%%" % perc_used, h
+
 
 perfometers["check_mk-df"] = perfometer_check_mk_df
 perfometers["check_mk-vms_df"] = perfometer_check_mk_df
@@ -80,6 +83,7 @@ def perfometer_check_mk_kernel_util(row, check_command, perf_data):
     h += perfometer_td(100.0 - total, "white")
     h += "</tr></table>"
     return "%d%%" % total, h
+
 
 perfometers["check_mk-kernel.util"] = perfometer_check_mk_kernel_util
 perfometers["check_mk-vms_sys.util"] = perfometer_check_mk_kernel_util
@@ -113,6 +117,7 @@ def perfometer_check_mk_mem_used(row, check_command, perf_data):
     h += "</tr></table>"
     return "%d%%" % (100 * (virt_used / ram_total)), h
 
+
 perfometers["check_mk-mem.used"] = perfometer_check_mk_mem_used
 
 
@@ -120,12 +125,14 @@ def perfometer_check_mk_cpu_threads(row, check_command, perf_data):
     color = {0: "#a4f", 1: "#ff2", 2: "#f22", 3: "#fa2"}[row["service_state"]]
     return "%d" % int(perf_data[0][1]), perfometer_logarithmic(perf_data[0][1], 400, 2, color)
 
+
 perfometers["check_mk-cpu.threads"] = perfometer_check_mk_cpu_threads
 
 
 def perfometer_check_mk_kernel(row, check_command, perf_data):
     rate = float(perf_data[0][1])
     return "%.1f/s" % rate, perfometer_logarithmic(rate, 1000, 2, "#da6")
+
 
 perfometers["check_mk-kernel"] = perfometer_check_mk_kernel
 
@@ -164,6 +171,7 @@ def perfometer_check_mk_ntp(row, check_command, perf_data, unit="ms"):
     h += '</tr></table>'
 
     return "%.1f %s" % (offset, unit), h
+
 
 perfometers["check_mk-ntp"] = perfometer_check_mk_ntp
 perfometers["check_mk-ntp.time"] = perfometer_check_mk_ntp
@@ -205,7 +213,7 @@ def performeter_check_mk_if(row, check_command, perf_data):
     h = '<table><tr>'
     for name, perf, color in [
         ("in", perf_data[0], "#0e6"),
-            ("out", perf_data[5], "#2af")]:
+        ("out", perf_data[5], "#2af")]:
         bytes = savefloat(perf[1])
         bw = savefloat(perf[6])
         if bw > 0.0:
@@ -225,6 +233,7 @@ def performeter_check_mk_if(row, check_command, perf_data):
     h += '</tr></table>'
     return " &nbsp; ".join(txt), h
 
+
 perfometers["check_mk-if"] = performeter_check_mk_if
 perfometers["check_mk-if64"] = performeter_check_mk_if
 perfometers["check_mk-hpux_if"] = performeter_check_mk_if
@@ -243,6 +252,7 @@ def performeter_oracle_tablespaces(row, check_command, perf_data):
     h += '</tr></table>'
     return "%.1f%%" % used_perc, h
 
+
 perfometers["check_mk-oracle_tablespaces"] = performeter_oracle_tablespaces
 
 
@@ -255,6 +265,7 @@ def perfometer_oracle_sessions(row, check_command, perf_data):
         unit = "/h"
     value = int(perf_data[0][1])
     return "%d%s" % (value, unit), perfometer_logarithmic(value, 50, 2, color)
+
 
 perfometers["check_mk-oracle_sessions"] = perfometer_oracle_sessions
 perfometers["check_mk-oracle_logswitches"] = perfometer_oracle_sessions

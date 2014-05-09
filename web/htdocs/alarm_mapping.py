@@ -1,13 +1,15 @@
 #!/usr/bin/python2.6
 
 ## import module
+import os.path
+import traceback
+from datetime import datetime
+
 import MySQLdb
 import config
-import sys
-import htmllib
-import os.path
 from mysql_collection import mysql_connection
-import traceback
+from common_vars import make_list
+
 
 global ap25, odu100, idu4, di, device_type_dict, severity_dict, ccu
 
@@ -44,10 +46,10 @@ if os.path.isfile(mapping_file):    # getting values of upper defined global var
 
 
 def write_mask_file(tuple2d):
-    # f = open('/omd/daemon/debug.log','w')
-    # f.write(str(tuple2d))
-    # f.close()
-    # logging.info(str(tuple2d))
+    """
+
+    @param tuple2d:
+    """
     if len(tuple2d) > 0:  # mask_dict = dict(zip(map(lambda x: x[0],tuple2d),map(lambda x: x[1],tuple2d))) other way
         if len(tuple2d[0]) == 7:
             mask_dict = {}
@@ -63,7 +65,7 @@ def write_mask_file(tuple2d):
                 if tp[6] != 'odu16':
                     mask_dict[tp[0]] = tp[1]
                     clear_alarm_dict[tp[1]] = tp[5]
-                        # This is for clear event type dict.
+                    # This is for clear event type dict.
                     if str(tp[2]) != '9':
                         mask_severity_dict[tp[0]] = str(tp[2])
                     if str(tp[3]) != '9':
@@ -116,6 +118,7 @@ class SelfException(Exception):
     @organisation: Code Scape Consultants Pvt. Ltd.
     @copyright: 2011 Code Scape Consultants Pvt. Ltd.
     """
+
     def __init__(self, msg):
         output_dict = {'success': 2, 'output': str(msg)}
         html.write(str(output_dict))
@@ -124,15 +127,20 @@ class SelfException(Exception):
 #---- This is starting page of alarm mapping,it design the page . ----#
 
 def start_page(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     css_list = [
         "css/jquery.multiselect.css", "css/jquery.multiselect.filter.css",
         "css/demo_table_jui.css", "css/jquery-ui-1.8.4.custom.css"]
     js_list = [
-        "js/jquery-ui-1.8.6.custom.min.js", "js/pages/jquery.multiselect.min.js",
-        "js/pages/jquery.multiselect.filter.js", "js/jquery.dataTables.min.js", "js/alarmMapping.js"]
-    header_btn = "<div class=\"header-icon\"><img class=\"n-tip-image\" src=\"images/{0}/round_plus.png\" id=\"add_alarm\" style=\"width: 16px; height: 16px; margin: 6px 20px 6px 10px;\" original-title=\"Add Alarm\"></div>".format(theme)
+        "js/lib/main/jquery-ui-1.8.6.custom.min.js", "js/lib/main/jquery.multiselect.min.js",
+        "js/lib/main/jquery.multiselect.filter.js", "js/lib/main/jquery.dataTables.min.js", "js/unmp/main/alarmMapping.js"]
+    header_btn = "<div class=\"header-icon\"><img class=\"n-tip-image\" src=\"images/{0}/round_plus.png\" id=\"add_alarm\" style=\"width: 16px; height: 16px; margin: 6px 20px 6px 10px;\" original-title=\"Add Alarm\"></div>".format(
+        theme)
     html.new_header(
         "Alarm Masking", "alarm_mapping.py", header_btn, css_list, js_list)
     html_content1 = "<div id=\"alarmTableContainer\">\
@@ -151,6 +159,11 @@ def start_page(h):
 
 
 def alarm_datail_function(h):
+    """
+
+    @param h:
+    @return:
+    """
     global html
 
     html = h
@@ -174,8 +187,6 @@ def alarm_datail_function(h):
             html.write(str(output))
             return
         else:
-            make_list = lambda x: [
-                " - " if i == None or i == '' else str(i) for i in x]
             for detail in result:
                 result_list.append(make_list(detail))
             for row in result_list:
@@ -189,7 +200,7 @@ def alarm_datail_function(h):
                     row[6] = 'True'
                 else:
                     row[6] = 'False'
-                if(row[7] == "1"):
+                if (row[7] == "1"):
                     flag = "falseclick"
                     opac = 0.4
                 else:
@@ -199,9 +210,11 @@ def alarm_datail_function(h):
                 debug = 11
                 actions = ""
                 actions += "<img src=\"images/edit16.png\" alt=\"edit\" style=\"opacity: %s\" \
-                title=\"Edit Alarm\" class=\"imgbutton\" onclick=\"editAlarm(\'%s\',\'%s\')\" />" % (str(opac), row[0], flag)
+                title=\"Edit Alarm\" class=\"imgbutton\" onclick=\"editAlarm(\'%s\',\'%s\')\" />" % (
+                str(opac), row[0], flag)
                 actions += "&nbsp; &nbsp; &nbsp;<img src=\"images/delete16.png\" alt=\"delete\" style=\"opacity: %s\" \
-                title=\"Delete Alarm\" class=\"imgbutton\" onclick=\"checkDeleteAlarm(\'%s\',\'%s\')\" />" % (str(opac), row[0], flag)
+                title=\"Delete Alarm\" class=\"imgbutton\" onclick=\"checkDeleteAlarm(\'%s\',\'%s\')\" />" % (
+                str(opac), row[0], flag)
                 debug = 1
                 row.append(actions)
                 debug = 2
@@ -222,11 +235,14 @@ def alarm_datail_function(h):
 
 #---- This function show the add edit form. ------#
 def add_edit_form_show(h):
+    """
+
+    @param h:
+    @raise:
+    """
     global html
     global di, severity_dict
     html = h
-
-    # alarm_type_event=html.var("alarm_type_event")
 
     option = html.var(
         "option")  # -- its define the add or edit form diplay --#
@@ -311,7 +327,7 @@ def add_edit_form_show(h):
                     </div>\
                 </form></div>"
 
-#-- its select the information from trap_mapping_id for show on the edit form ----#
+        #-- its select the information from trap_mapping_id for show on the edit form ----#
         elif option == "Edit":
 
             sql = "select trap_id_mapping_id, trap_event_type, trap_clear_mapping_type, trap_severity, clear_severity, is_alarm, device_type \
@@ -334,13 +350,6 @@ def add_edit_form_show(h):
                                     title=\"Select Device Type\">\
                                 <option selected=\"selected\" value=\"%s\">%s</option>\
                         " % (result[6], device_type_dict[result[6]])
-
-            # for key in device_type_dict:
-            #    if key == result[6]:
-            #        pass
-            #    else:
-            # html_form += "<option
-            # value=\"%s\">%s</option>"%(key,device_type_dict[key])
 
             html_form += "</select></div>\
                         <div class=\"row-elem\">\
@@ -395,7 +404,8 @@ def add_edit_form_show(h):
                         i, severity_dict[i])
 
             html_form += "</select></div>\
-                        <input type=\"hidden\" name=\"mapping_id\" id=\"mapping_id\" value = \"%s\" />" % (str(result[0]))
+                        <input type=\"hidden\" name=\"mapping_id\" id=\"mapping_id\" value = \"%s\" />" % (
+            str(result[0]))
 
             html_form += "<div class=\"row-elem\">\
                             <label  class=\"lbl lbl-big\" for=\"is_alarm\" align=\"right\">IS Alarm</label >\
@@ -413,7 +423,7 @@ def add_edit_form_show(h):
         cursor.close()
         db.close()
         html.write("{output:{table:'" + str(html_form).replace("\"",
-                   "\\\"") + "'},success:0}")
+                                                               "\\\"") + "'},success:0}")
     # Exception Handling
     except SelfException:
         if db.open:
@@ -434,6 +444,11 @@ def add_edit_form_show(h):
 
 
 def get_trap_lists(h):
+    """
+
+    @param h:
+    @raise:
+    """
     try:
         global html
         html = h
@@ -506,6 +521,11 @@ def get_trap_lists(h):
 
 
 def add_form_entry(h):
+    """
+
+    @param h:
+    @return: @raise:
+    """
     global html
     global di, severity_dict
     html = h
@@ -543,9 +563,9 @@ def add_form_entry(h):
         if len(result) < 1:
             sql = "INSERT INTO trap_id_mapping(trap_event_type, trap_event_id, trap_clear_mapping_type, trap_clear_mapping_id, \
                 trap_severity, clear_severity, is_alarm, device_type, created_by, creation_time) values \
-            ('%s', '%s',  '%s', '%s','%s', '%s', '%s', '%s', '%s', now())\
+            ('%s', '%s',  '%s', '%s','%s', '%s', '%s', '%s', '%s', '%s')\
             " % (event_type, event_id, event_clear_type, clear_event_id, trap_severity, clear_severity,
-                 (0 if is_alarm == None or is_alarm == "" else 1), device_type, cr_by)
+                 (0 if is_alarm is None or is_alarm == "" else 1), device_type, cr_by, datetime.now())
 
             cursor.execute(sql)
             db.commit()
@@ -558,7 +578,7 @@ def add_form_entry(h):
         cursor.execute("select trap_event_id, trap_clear_mapping_id, trap_severity, clear_severity, is_deleted, \
                         trap_clear_mapping_type, device_type from trap_id_mapping where is_alarm = 1")
         tp2d = cursor.fetchall()
-        # logging.info(str(tp2d)+"::::::::::")
+
         if len(tp2d) > 0:
             write_mask_file(tp2d)  # MASK FILE WRITE CODE alarm_mask.rg
         cursor.close()
@@ -616,6 +636,11 @@ def add_form_entry(h):
 
 #--- This function is use for check the edit the existing record in mapping  table ---- #
 def edit_form_entry(h):
+    """
+
+    @param h:
+    @return: @raise:
+    """
     global html
     global di
     html = h
@@ -643,19 +668,16 @@ def edit_form_entry(h):
         return
 
     try:
-#=-- database connection creation  and cursor creation --- #
+    #=-- database connection creation  and cursor creation --- #
         db, cursor = mysql_connection('nms_copy')
         if db == 1:
             raise SelfException(cursor)
         sql = "UPDATE trap_id_mapping SET trap_event_type = '%s' ,trap_event_id = '%s' , trap_severity = '%s', trap_clear_mapping_id = '%s', \
             trap_clear_mapping_type='%s', clear_severity = '%s', updated_by='%s', is_alarm=%s where trap_id_mapping_id = '%s'\
             " % (event_type, event_id, trap_severity, clear_event_id, event_clear_type, clear_severity, up_by,
-                (0 if is_alarm == None or is_alarm == "" else 1), uniqe_id)
+                 (0 if is_alarm == None or is_alarm == "" else 1), uniqe_id)
         cursor.execute(sql)
         db.commit()
-        # cursor.execute("select trap_event_type,trap_clear_mapping_type,
-        # trap_severity, clear_severity, is_deleted from trap_id_mapping where
-        # is_alarm = 1")
         cursor.execute("select trap_event_id, trap_clear_mapping_id, trap_severity, clear_severity, is_deleted, \
             trap_clear_mapping_type, device_type from trap_id_mapping where is_alarm = 1")
         tp2d = cursor.fetchall()
@@ -714,6 +736,11 @@ def edit_form_entry(h):
 #---- This function is used for delete the record from trap_mapping_table . -------#
 
 def delete_alarm_id(h):
+    """
+
+    @param h:
+    @raise:
+    """
     global html
     html = h
     alarm_delete_id = html.var("alarm_delete_id")
@@ -725,9 +752,6 @@ def delete_alarm_id(h):
             alarm_delete_id)
         cursor.execute(sql)
         db.commit()
-        # cursor.execute("select trap_event_type, trap_clear_mapping_type,
-        # trap_severity, clear_severity, is_deleted from trap_id_mapping where
-        # is_alarm = 1")
         cursor.execute("select trap_event_id, trap_clear_mapping_id, trap_severity, clear_severity, is_deleted, \
            trap_clear_mapping_type, device_type from trap_id_mapping where is_alarm = 1")
         tp2d = cursor.fetchall()
@@ -786,30 +810,11 @@ def delete_alarm_id(h):
             db.close()
 
 
-def page_tip_alarm_mapping(h):
-    global html
-    html = h
-    html_view = ""\
-        "<div id=\"help_container\">"\
-        "<h1>Alarm Masking</h1>"\
-        "<div>Alarm Masking page show all the alarms masked with current and clear events of device.<br/>\
-            Current and Clear Event details only works with respect to the Alarm Masking table.<br/>\
-            On this page User can add an event as alarm for a device, \
-            after that these events works like an actual alarm for UNMP System and \
-            will be appear in current and clear event details respectively.<br/>\
-Those alarms you can not edit or delete are real alarms of that device.So UNMP System automatically watch them.<br/>\
-When adding an event as an alarm, user could modify its severity according need. \
-for an example if NODE_DOWN comes with severity 'Normal' and needs to be treated as 'Major', \
-user can define it or if needs to be treated as it is, mark it as default.\
-</div>"\
-        "<br/>"\
-        "<div><strong>Actions</strong></div>"\
-        "<div class=\"action-tip\"><div class=\"img-div img-div2\"><img style=\"width:16px;height:16px;\" src=\"images/edit16.png\"/>\
-            </div><div class=\"txt-div\">Edit Alarm</div></div>"\
-        "<div class=\"action-tip\"><div class=\"img-div img-div2\"><img style=\"width:16px;height:16px;\" src=\"images/delete16.png\"/>\
-            </div><div class=\"txt-div\">Delete Alarm</div></div>"\
-        "<div class=\"action-tip\"><div class=\"img-div\"><img style=\"width:16px;height:16px;\" src=\"images/{0}/round_plus.png\"/>\
-            </div><div class=\"txt-div\">Add Alarm</div></div>"\
-        "<br/>"\
-        "</div>".format(theme)
-    html.write(str(html_view))
+# def page_tip_alarm_mapping(h):
+#     global html
+#     html = h
+#     import defaults
+#     f = open(defaults.web_dir + "/htdocs/locale/page_tip_alarm_mapping.html", "r")
+#     html_view = f.read()
+#     f.close()
+#     html.write(str(html_view))

@@ -13,9 +13,10 @@
 
 class Common(object):
     @staticmethod
-    def make_select_list(value=[], name=[], selected=None, list_id="list", list_name="list", title="Please Choose Value", message=None):
+    def make_select_list(value=[], name=[], selected=None, list_id="list", list_name="list",
+                         title="Please Choose Value", message=None):
         list_options = "%s" % (("<option value=\"\">%s</option>" %
-                               message) if message != None else "")
+                                message) if message != None else "")
 
         value_length = len(value)
         name_length = len(name)
@@ -28,10 +29,11 @@ class Common(object):
                     list_options += "<option value=\"%s\">%s</option>" % (
                         value[i], name[i])
 
-        list_html = ""\
-            "<select id=\"" + str(list_id) + "\" name=\"" + str(list_name) + "\" title=\"" + str(title) + "\">"\
-            "" + str(list_options) + ""\
-            "</select>"
+        list_html = "" \
+                    "<select id=\"" + str(list_id) + "\" name=\"" + str(list_name) + "\" title=\"" + str(title) + "\">" \
+                                                                                                                  "" + str(
+            list_options) + "" \
+                            "</select>"
         return list_html
 
 

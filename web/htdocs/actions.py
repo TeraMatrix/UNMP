@@ -24,9 +24,10 @@
 # to the Free Software Foundation, Inc., 51 Franklin St,  Fifth Floor,
 # Boston, MA 02110-1301 USA.
 
-from lib import *
 import time
+
 import config
+from lib import *
 
 
 def ajax_action(h):
@@ -49,6 +50,7 @@ def ajax_action(h):
 
 def get_time_tick(timetick):
     import datetime
+
     last_check = ""
     if datetime.datetime.now() > datetime.datetime.fromtimestamp(timetick):
         delta = datetime.datetime.now(
@@ -86,6 +88,7 @@ def paint_age(timestamp, has_been_checked, bold_if_younger_than):
     if not has_been_checked:
         return "age", "-"
     import time
+
     age = time.time() - timestamp
     if age >= 48 * 3600 or age < -48 * 3600:
         return time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(timestamp))
@@ -150,7 +153,7 @@ def action_reschedule():
             all_output = row[8]
             all_device_detail = ' (' + str(all_output).replace('\\n', '') + ')'
             html.write("['OK', %d, %d, %r]\n" % (row[0], row[
-                       1], row[2].encode("utf-8")))
+                1], row[2].encode("utf-8")))
             # f=open("/home/cscape/Desktop/acb.txt","a")
             # f.write(str("['OK', %d, %d, %r,'%s','%s','%s','%s','%s','%s']" % (row[0], row[1], row[2].encode("utf-8"),str(row[9]), str(str('0' if row[3]==0 else paint_age(row[3], True, 60 * 10))), str(get_time_tick(row[4])), str(get_time_tick(row[5])), str(row[6]),output+str('' if all_device_detail.strip()=='()' else all_device_detail) )))
             # f.close()
@@ -218,7 +221,11 @@ def action_reschedule_modified():
             # f.write(str("['OK', %d, %d, %r,'%s','%s','%s','%s','%s','%s']" % (row[0], row[1], row[2].encode("utf-8"),str(row[9]), str(str('0' if row[3]==0 else paint_age(row[3], True, 60 * 10))), str(get_time_tick(row[4])), str(get_time_tick(row[5])), str(row[6]),output+str('' if all_device_detail.strip()=='()' else all_device_detail) )))
             # f.close()
             html.write("['OK', %d, %d, %r,'%s','%s','%s','%s','%s','%s']" % (row[0], row[1], row[2].encode(
-                "utf-8"), str(row[9]), str(str('0' if row[3] == 0 else paint_age(row[3], True, 60 * 10))), str(get_time_tick(row[4])), str(get_time_tick(row[5])), str(row[6]), output + str('' if all_device_detail.strip() == '()' else all_device_detail)))
+                "utf-8"), str(row[9]), str(str('0' if row[3] == 0 else paint_age(row[3], True, 60 * 10))),
+                                                                             str(get_time_tick(row[4])),
+                                                                             str(get_time_tick(row[5])), str(row[6]),
+                                                                             output + str(
+                                                                                 '' if all_device_detail.strip() == '()' else all_device_detail)))
 
     except Exception, e:
         html.live.set_only_sites()

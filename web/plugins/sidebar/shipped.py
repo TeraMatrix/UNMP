@@ -98,7 +98,8 @@ def render_views():
             html.write("</ul>")
 
     s = [(view.get("topic", "Other"), view["title"], name) for name,
-         view in html.available_views.items() if not view["hidden"]]
+                                                               view in html.available_views.items() if
+         not view["hidden"]]
     s.sort()
 
     # Enforce a certain order on the topics
@@ -120,7 +121,10 @@ def render_views():
 
 
 def render_new_view():
-    return bulletlink("Host and Service Events", "manage_events.py") + bulletlink("Search Global Logfile", "manage_logs.py") + bulletlink("User logs", "log_user.py")
+    return bulletlink("Host and Service Events", "manage_events.py") + bulletlink("Search Global Logfile",
+                                                                                  "manage_logs.py") + bulletlink(
+        "User logs", "log_user.py")
+
 
 sidebar_snapins["views"] = {
     "title": "Logs",
@@ -155,7 +159,7 @@ def render_groups(what):
         html.write('<ul>')
         for alias_lower, alias, name in groups:
             bulletlink(alias, target + "&%sgroup=%s" % (what,
-                       htmllib.urlencode(name)))
+                                                        htmllib.urlencode(name)))
         html.write('</ul>')
 
 # sidebar_snapins["hostgroups"] = {
@@ -254,6 +258,7 @@ def render_hosts(mode):
     if col < num_columns:
         html.write("</tr>\n")
     html.write("</table>\n")
+
 
 snapin_allhosts_styles = """
   .snapin table.allhosts { width: 100%; }
@@ -354,7 +359,6 @@ def render_tactical_overview():
             if value > 0:
                 href = "view.py?view_name=" + view
                 if unhandled:
-
                     href += "&is_%s_acknowledged=0" % what
                 text = link(str(value), href)
             else:
@@ -413,7 +417,7 @@ def render_performance():
          ("New log messages", 5, "%.2f/s"),
          ("Cached log messages", 6, "%d")]:
         html.write(("<tr><td class=left>%s:</td><td class=right><strong>" + format +
-                   "</strong></td></tr>\n") % (what, sum([row[col] for row in data])))
+                    "</strong></td></tr>\n") % (what, sum([row[col] for row in data])))
     data = html.live.query(
         "GET status\nColumns: external_command_buffer_slots external_command_buffer_max\n")
     size = sum([row[0] for row in data])
@@ -458,6 +462,7 @@ def render_performance():
 
 def render_current_time():
     import time
+
     html.write("<div class=time>%s</div>" % time.strftime("%h %d - %I:%M %p"))
 
 # sidebar_snapins["time"] = {
@@ -519,8 +524,9 @@ def render_master_control():
             onclick = "get_url('%s', updateContents, 'snapin_master_control')" % url
             enabled = colvalue and "enabled" or "disabled"
             html.write(
-                "<tr><td class=left>%s</td><td class=%s><a onclick=\"%s\" href=\"#\">%s</a></td></tr>\n" % (title, enabled,
-                                                                                                            onclick, enabled))
+                "<tr><td class=left>%s</td><td class=%s><a onclick=\"%s\" href=\"#\">%s</a></td></tr>\n" % (
+                title, enabled,
+                onclick, enabled))
     html.write("</table>")
 
 # sidebar_snapins["master_control"] = {
@@ -782,7 +788,7 @@ def render_custom_links():
 
 # Bandwidth Management
 dic_band = {'SWT24': '/cgi-bin/dispatcher.cgi?cmd=4101', 'IDU4': '/cgi-bin/port_bw.cgi', 'ODU16':
-            '/tddmac.shtml', 'ODU100': '/raaccessconfig.shtml', 'IDU8': '/', 'SWT8': '/', 'SWT4': '/'}
+    '/tddmac.shtml', 'ODU100': '/raaccessconfig.shtml', 'IDU8': '/', 'SWT8': '/', 'SWT4': '/'}
 
 
 def render_bandwidth():
@@ -816,7 +822,8 @@ def render_bandwidth():
         cursor = db.cursor()
 
         sql = "SELECT username,password,port,devicetype from nms_devices\
-               WHERE hostname = '%s' AND created_by = '%s' and (devicetype='ODU16' OR devicetype='IDU4' OR devicetype='ODU100' OR devicetype='IDU8' OR devicetype='SWT4' OR devicetype='SWT8' OR devicetype='SWT24')" % (host, config.user)
+               WHERE hostname = '%s' AND created_by = '%s' and (devicetype='ODU16' OR devicetype='IDU4' OR devicetype='ODU100' OR devicetype='IDU8' OR devicetype='SWT4' OR devicetype='SWT8' OR devicetype='SWT24')" % (
+        host, config.user)
         cursor.execute(sql)
         result = cursor.fetchall()
         cursor.close()
@@ -843,9 +850,9 @@ def render_bandwidth():
                 password = row[1]
                 port = row[2]
                 device_type = row[3]
-            if(username != "" and password != ""):
+            if (username != "" and password != ""):
                 address = username + ":" + password + "@" + address
-            if(port.strip() != ""):
+            if (port.strip() != ""):
                 address = address + ":" + port
 
             html.write(link(
@@ -938,9 +945,9 @@ def render_config(mode):
                 password = row[1]
                 port = row[2]
 
-            if(username != "" and password != ""):
+            if (username != "" and password != ""):
                 address = username + ":" + password + "@" + address
-            if(port.strip() != ""):
+            if (port.strip() != ""):
                 address = address + ":" + port
 
             html.write(link(host, target + ("%s" % (address))))
@@ -1087,12 +1094,12 @@ def render_dashboard():
 #}
 ## FirmWare Update
 # def firmware_update():
-    ##  bulletlink("Firmware Update","firmware_update.py")
+##  bulletlink("Firmware Update","firmware_update.py")
 
 # sidebar_snapins["Firmware"] = {
-    ##    "render" : firmware_update,
-    #    "description" : "This Is Used To Update All Shyam Devices",
-        #   "allowed" : [ "admin"],
+##    "render" : firmware_update,
+#    "description" : "This Is Used To Update All Shyam Devices",
+#   "allowed" : [ "admin"],
 #}
 
 ## Performance History
@@ -1135,7 +1142,7 @@ def render_nagvis_map():
 
 # def render_odu():
 #    bulletlink("ODU Dashboard","odu_dashboard.py")
-    # bulletlink("ODU Profiling","odu_profiling.py")
+# bulletlink("ODU Profiling","odu_profiling.py")
 #    bulletlink("ODU Monitoring","odu_monitor_view.py?host_id=67d558f4-c98d-11e0-8121-e0699562882e")
 #    return bulletlink("UBR/UBRe Listing","odu_listing.py?device_type=ODU16,odu100,ODU16S&device_list_state=enabled&selected_device_type=''") + bulletlink("UBR Common Dashboard","odu_dashboard.py") + bulletlink("UBRe Common Dashboard","odu100_common_dashboard.py")
 #    return bulletlink("IDU Listing","idu_listing.py?device_type=idu4,idu8&device_list_state=enabled&selected_device_type=''")
@@ -1163,6 +1170,7 @@ def render_nagvis_map():
 
 def render_alarms():
     return bulletlink("Event Details", "status_snmptt.py") + bulletlink("Alarm Masking", "alarm_mapping.py")
+
 #	bulletlink("Alarm Events","alarm_masking.py")
 
 sidebar_snapins["Alarm"] = {
@@ -1176,7 +1184,10 @@ sidebar_snapins["Alarm"] = {
 
 
 def render_inventory():
-    return bulletlink("Hosts", "manage_host.py") + bulletlink("Hostgroups", "manage_hostgroup.py") + bulletlink("Discovery", "discovery.py") + bulletlink("Services", "manage_service.py")  # + bulletlink("Nagios Hostgroup","nagios_hostgroup.py")
+    return bulletlink("Hosts", "manage_host.py") + bulletlink("Hostgroups", "manage_hostgroup.py") + bulletlink(
+        "Discovery", "discovery.py") + bulletlink("Services",
+                                                  "manage_service.py")  # + bulletlink("Nagios Hostgroup","nagios_hostgroup.py")
+
 #	bulletlink("Alarm Events","alarm_masking.py")
 
 sidebar_snapins["Inventory"] = {
@@ -1191,6 +1202,7 @@ sidebar_snapins["Inventory"] = {
 
 def render_settings():
     return bulletlink("Daemon", "daemons_controller.py") + bulletlink("License", "manage_license.py")
+
 
 sidebar_snapins["Settings"] = {
     "title": "Settings",
@@ -1220,7 +1232,9 @@ sidebar_snapins["Settings"] = {
 
 
 def render_googlemap():
-    return bulletlink("Geographical-Map", "googlemap.py") + bulletlink("Topology Map", "circle_graph.py")  # + bulletlink("Planner","http://rfplanner.codescape.in/v7/NewTransmission/transmission.php")
+    return bulletlink("Geographical-Map", "googlemap.py") + bulletlink("Topology Map",
+                                                                       "circle_graph.py")  # + bulletlink("Planner","http://rfplanner.codescape.in/v7/NewTransmission/transmission.php")
+
 
 sidebar_snapins["NetworkMaps"] = {
     "title": "Network Maps",
@@ -1267,7 +1281,8 @@ sidebar_snapins["NetworkMaps"] = {
 
 ## Inventory Other
 def render_unmp_other():
-    return bulletlink("Manage Vendors", "manage_vendor.py") + bulletlink("Manage Black List Mac", "manage_black_list_mac.py")
+    return bulletlink("Manage Vendors", "manage_vendor.py") + bulletlink("Manage Black List Mac",
+                                                                         "manage_black_list_mac.py")
 
 # sidebar_snapins["inventory_other"]={
 #   "title":"Other",
@@ -1279,7 +1294,9 @@ def render_unmp_other():
 
 ## User Management
 def render_unmp_user_management():
-    return bulletlink("Manage User", "manage_user.py") + bulletlink("Manage Group", "manage_group.py") + bulletlink("Manage Session", "manage_login.py")
+    return bulletlink("Manage User", "manage_user.py") + bulletlink("Manage Group", "manage_group.py") + bulletlink(
+        "Manage Session", "manage_login.py")
+
 
 sidebar_snapins["user_management"] = {
     "title": "User Management",
@@ -1292,9 +1309,20 @@ sidebar_snapins["user_management"] = {
 
 
 def reporting_module():
-    return bulletlink("Report", "main_report.py") + bulletlink("Analyzed Report", "analyzed_report.py") + bulletlink("IDU Report", "main_report_idu4.py?device_type_user_selected_id=idu4&device_type_user_selected_name=IDU") + bulletlink("RM18 Report", "main_report_odu16.py?device_type_user_selected_id=odu16&device_type_user_selected_name=RM18") + bulletlink("RM Report", "main_report_odu100.py?device_type_user_selected_id=odu100&device_type_user_selected_name=RM") + bulletlink("Event", "trapreport.py") + bulletlink("Inventory Report", "inventory_report.py") + bulletlink("Access Point Report", "main_report_ap25.py?device_type_user_selected_id=ap25&device_type_user_selected_name=Access_Point") + bulletlink("Backup & Restore", "history_report.py")
+    return bulletlink("Report", "main_report.py") + bulletlink("Analyzed Report", "analyzed_report.py") + bulletlink(
+        "IDU Report",
+        "main_report_idu4.py?device_type_user_selected_id=idu4&device_type_user_selected_name=IDU") + bulletlink(
+        "RM18 Report",
+        "main_report_odu16.py?device_type_user_selected_id=odu16&device_type_user_selected_name=RM18") + bulletlink(
+        "RM Report",
+        "main_report_odu100.py?device_type_user_selected_id=odu100&device_type_user_selected_name=RM") + bulletlink(
+        "Event", "trapreport.py") + bulletlink("Inventory Report", "inventory_report.py") + bulletlink(
+        "Access Point Report",
+        "main_report_ap25.py?device_type_user_selected_id=ap25&device_type_user_selected_name=Access_Point") + bulletlink(
+        "Backup & Restore", "history_report.py")
 
     #+ bulletlink("Historical Report","history_report.py")
+
 #     bulletlink("Network Outage","manage_network_outage_report.py")
 #     bulletlink("Trap Report","manage_trap_report.py")
 #     bulletlink("Inventory Report","inventory_report.py")
@@ -1323,6 +1351,7 @@ sidebar_snapins["reports"] = {
 ## scheduling
 def scheduling_module():
     return bulletlink("Scheduling", "odu_scheduling.py")
+
 #     bulletlink("Network Outage","manage_network_outage_report.py")
 #     bulletlink("Trap Report","manage_trap_report.py")
 #     bulletlink("Inventory Report","inventory_report.py")
@@ -1339,9 +1368,11 @@ sidebar_snapins["schedule"] = {
 
 
 def render_listing():
-            ##?device_type=odu16,odu100&device_list_state=enabled&selected_device_type=''")?device_type=idu4,idu8&device_list_state=enabled&selected_device_type=''"??device_type=ccu&device_list_state=enabled&selected_device_type=''
+##?device_type=odu16,odu100&device_list_state=enabled&selected_device_type=''")?device_type=idu4,idu8&device_list_state=enabled&selected_device_type=''"??device_type=ccu&device_list_state=enabled&selected_device_type=''
 #        ?'device_type=ap25&device_list_state=enabled&selected_device_type=''
-    return bulletlink("RM18/RM Listing", "odu_listing.py") + bulletlink("IDU Listing", "idu_listing.py") + bulletlink("AP Listing", "ap_listing.py") + bulletlink("CCU Listing", "ccu_listing.py")  # +bulletlink("Dasboard","mou_dashboard_profiling.py?device_type='?_<>'") #+ bulletlink("UBR Common Dashboard","odu_dashboard.py") # bulletlink("UBRe Common Dashboard","odu100_common_dashboard.py")
+    return bulletlink("RM18/RM Listing", "odu_listing.py") + bulletlink("IDU Listing", "idu_listing.py") + bulletlink(
+        "AP Listing", "ap_listing.py") + bulletlink("CCU Listing",
+                                                    "ccu_listing.py")  # +bulletlink("Dasboard","mou_dashboard_profiling.py?device_type='?_<>'") #+ bulletlink("UBR Common Dashboard","odu_dashboard.py") # bulletlink("UBRe Common Dashboard","odu100_common_dashboard.py")
 
 
 sidebar_snapins["Listing"] = {
@@ -1353,7 +1384,7 @@ sidebar_snapins["Listing"] = {
 
 # def render_odu():
 #    bulletlink("ODU Dashboard","odu_dashboard.py")
-    # bulletlink("ODU Profiling","odu_profiling.py")
+# bulletlink("ODU Profiling","odu_profiling.py")
 #    bulletlink("ODU Monitoring","odu_monitor_view.py?host_id=67d558f4-c98d-11e0-8121-e0699562882e")
 #    return bulletlink("UBR/UBRe Listing","odu_listing.py?device_type=ODU16,odu100,ODU16S&device_list_state=enabled&selected_device_type=''") + bulletlink("UBR Common Dashboard","odu_dashboard.py") + bulletlink("UBRe Common Dashboard","odu100_common_dashboard.py")
 #    return bulletlink("IDU Listing","idu_listing.py?device_type=idu4,idu8&device_list_state=enabled&selected_device_type=''")
@@ -1391,7 +1422,7 @@ def host_details():
     try:
         # config.xml file path
         xml_config_file = "/omd/sites/%s/share/check_mk/web/htdocs/xml/config.xml" % sitename
-        if(os.path.isfile(xml_config_file)):
+        if (os.path.isfile(xml_config_file)):
             dom = xml.dom.minidom.parse(
                 xml_config_file)    # create xml dom object for config.xml file
             mysql_dom = dom.getElementsByTagName("mysql")
@@ -1404,7 +1435,7 @@ def host_details():
         db = MySQLdb.connect(
             mysql_host, mysql_user_name, mysql_password, mysql_db_schema)
         cursor = db.cursor()
-    # create the connection
+        # create the connection
         sel_query = "SELECT DISTINCT h.ip_address,h.host_id FROM users_groups AS ug \
 JOIN (SELECT hostgroup_id, group_id FROM hostgroups_groups) AS hg ON ug.group_id = hg.group_id \
 JOIN (SELECT host_id, hostgroup_id FROM hosts_hostgroups) AS hh ON hg.hostgroup_id = hh.hostgroup_id \
@@ -1426,17 +1457,18 @@ WHERE h.is_deleted = 0 AND ug.user_id = '%s' or h.ip_address = 'localhost'" % (u
 
     except Exception, e:
         bulletlink("No host exists : %s" % str(e), "#")
-# sidebar_snapins["Hosts"]={
-#   "title":"Hosts Details",
-#   "description":"It display all host details.",
-#   "render":host_details,
-#   "allowed":["admin","user","guest"],
-#   "refresh" : 30,
-#}
-## IDU Details
+    # sidebar_snapins["Hosts"]={
+    #   "title":"Hosts Details",
+    #   "description":"It display all host details.",
+    #   "render":host_details,
+    #   "allowed":["admin","user","guest"],
+    #   "refresh" : 30,
+    #}
+    ## IDU Details
 
-# def render_idu():
+    # def render_idu():
     # return bulletlink("IDU Listing","idu_listing.py?device_type=idu4,idu8&device_list_state=enabled&selected_device_type=''")
+
 #   bulletlink("IDU4 Common Dashboard","idu4_controller.py")
 
 # sidebar_snapins["IDU"]={

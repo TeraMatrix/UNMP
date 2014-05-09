@@ -15,11 +15,7 @@
 
 
 # import the modules(pakesges)
-import config
-import htmllib
 import MySQLdb
-import time
-from compiler.pycodegen import EXCEPT
 from mysql_collection import mysql_connection
 
 
@@ -36,6 +32,7 @@ class SelfException(Exception):
     @organization: Code Scape Consultants Pvt. Ltd.
     @copyright: 2011 Code Scape Consultants Pvt. Ltd.
     """
+
     def __init__(self, msg):
         output_dictt = {'success': 2, 'output': str(msg)}
         html.write(str(output_dictt))
@@ -58,8 +55,10 @@ def default_data(h):
             "DELETE FROM `config_profiles` WHERE `config_profiles`.`config_profile_id` = 'cd597544-12a2-11e1-acca-207c8f2e8042'")
         cursor.execute("DELETE FROM `host_assets` WHERE `host_asset_id` = '7f7544e8-12a2-11e1-9791-207c8f2e8042'")
         cursor.execute("DELETE FROM `host_assets` WHERE `host_asset_id` = 'cd42cb00-12a2-11e1-acca-207c8f2e8042'")
-        cursor.execute("delete FROM `get_odu16_nw_interface_statistics_table` WHERE host_id='7f7a23fa-12a2-11e1-9791-207c8f2e8042'")
-        cursor.execute("delete FROM `get_odu16_nw_interface_statistics_table` WHERE host_id='cd44d4c2-12a2-11e1-acca-207c8f2e8042'")
+        cursor.execute(
+            "delete FROM `get_odu16_nw_interface_statistics_table` WHERE host_id='7f7a23fa-12a2-11e1-9791-207c8f2e8042'")
+        cursor.execute(
+            "delete FROM `get_odu16_nw_interface_statistics_table` WHERE host_id='cd44d4c2-12a2-11e1-acca-207c8f2e8042'")
         cursor.execute(
             "delete FROM `get_odu16_peer_node_status_table` WHERE host_id='7f7a23fa-12a2-11e1-9791-207c8f2e8042'")
         cursor.execute(
@@ -68,8 +67,10 @@ def default_data(h):
             "delete FROM `get_odu16_ra_tdd_mac_statistics_entry` WHERE host_id='7f7a23fa-12a2-11e1-9791-207c8f2e8042'")
         cursor.execute(
             "delete FROM `get_odu16_ra_tdd_mac_statistics_entry` WHERE host_id='cd44d4c2-12a2-11e1-acca-207c8f2e8042'")
-        cursor.execute("delete FROM  `get_odu16_synch_statistics_table` WHERE host_id='7f7a23fa-12a2-11e1-9791-207c8f2e8042'")
-        cursor.execute("delete FROM  `get_odu16_synch_statistics_table` WHERE host_id='cd44d4c2-12a2-11e1-acca-207c8f2e8042'")
+        cursor.execute(
+            "delete FROM  `get_odu16_synch_statistics_table` WHERE host_id='7f7a23fa-12a2-11e1-9791-207c8f2e8042'")
+        cursor.execute(
+            "delete FROM  `get_odu16_synch_statistics_table` WHERE host_id='cd44d4c2-12a2-11e1-acca-207c8f2e8042'")
         cursor.execute(
             "delete FROM `get_odu16_ru_conf_table` WHERE host_id='7f7a23fa-12a2-11e1-9791-207c8f2e8042'")
         cursor.execute(

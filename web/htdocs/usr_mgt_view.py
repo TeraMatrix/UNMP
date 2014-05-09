@@ -13,10 +13,11 @@ from license_bll import LicenseBll
 import re
 
 def is_valid_passwd(passwd):
-    '''
+    """
     Verifies password consist of 2 Num, 2 alpha, 2 special,
     and minmum 8 characters in length
-    '''
+    @param passwd:
+    """
     regexp = re.compile('((?=(.*\d.*){2,})(?=(.*[a-zA-Z].*){2,})\
 (?=(.*[\\\@\#\$\(\)\{\;\_\&\}\[\]\!\~\,\.\!\*\^\?\/\|\<\:\>\+\=\-\_\%\"\'].*){2,}).{8,20})')
     return bool(regexp.match(passwd))
@@ -27,6 +28,12 @@ space_check = lambda x: 1 if set(" ").intersection(x) else 0
 
 
 def validate_name(nm, type):
+    """
+
+    @param nm:
+    @param type:
+    @return:
+    """
     if space_check(nm) == 0:
         if type == "user":  # user
             result = usr_mgt_bll.check_name(nm, "user")
@@ -40,6 +47,10 @@ def validate_name(nm, type):
 
 
 def add_users_togroup(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     session_user = html.req.session['username']
@@ -102,6 +113,10 @@ def add_users_togroup(h):
 
 
 def del_users_fromgroup(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     session_user = html.req.session['username']
@@ -150,6 +165,10 @@ def del_users_fromgroup(h):
 
 
 def group_info(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     table = usr_mgt_bll.get_group_info(html.var("group_id"))
@@ -174,6 +193,10 @@ def group_info(h):
 
 
 def group_users(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     light_box = html.var("light_box")
@@ -191,12 +214,16 @@ def group_users(h):
 
 
 def user_view(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     css_list = ["css/demo_page.css", "css/demo_table_jui.css",
                 "css/jquery-ui-1.8.4.custom.css"]
-    javascript_list = ["js/jquery.dataTables.min.js",
-                       "js/pages/user_mgt.js", "js/ccpl_utility.js"]
+    javascript_list = ["js/lib/main/jquery.dataTables.min.js",
+                       "js/unmp/main/user_mgt.js"]
 
     add_btn = "<div class=\"header-icon\"><img onclick=\"addUser();\" class=\"n-tip-image\" \
     src=\"images/%s/round_plus.png\" id=\"add_user\" name=\"add_user\" \
@@ -289,6 +316,11 @@ def user_view(h):
 
 
 def add_user(h):
+    """
+
+    @param h:
+    @return:
+    """
     global html
     html = h
     result_json = {}
@@ -296,6 +328,9 @@ def add_user(h):
     flag = 0
     ugroup = html.var('grp_name')
     lb_result = lb.check_license_for_user(ugroup)
+    session_user = html.req.session.get('username')
+    if session_user is None:
+        session_user = "SuperAdmin"    
 #    html.write(str(lb.check_license_for_user(ugroup))+" : "+str(lb.get_allowed_user(ugroup))+str())
     if lb_result == True:
         var_list = ['user_name',
@@ -307,13 +342,17 @@ def add_user(h):
         			'designation',
         			'address',
         			'mobile',
-        			'email_id']
+        			'email_id',
+                    'created_by']
         #v_result = validate(html,var_list)
         var_dict_ul = {}
         var_dict = {}
         var_dict_ug = {}
         name_not = 0
         for i in var_list:
+            if i == 'created_by':
+                var_dict_ul[i] = session_user
+                break
             if i == 'user_name' :
                 if validate_name(html.var(i),"user"):
                     name_not = 1
@@ -372,6 +411,10 @@ def add_user(h):
     html.write(str(result_json))
 
 def add_group(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     var_list = ['group_id', 'group_name', 'description', 'role']
@@ -417,7 +460,26 @@ def add_group(h):
     html.write(str(result_json))
 
 
+def lock_unlock_usr(h):
+    global html
+    html = h
+    username = html.req.session['username']
+    status = html.var('status')
+    user_id = html.var('user_id')
+    result = {'success':1, 'result': 'ERROR'}
+    if status and user_id and status in ['Lock', 'Unlock']:
+        (temp_result, message) = usr_mgt_bll.lock_unlock_usr(user_id, status)
+        if temp_result:
+            result = {'success': 0, 'result': message}
+        else:
+            result = {'success': 1, 'result': message}
+    html.write(str(result))
+
 def edit_user_view(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     username = html.req.session['username']
@@ -432,6 +494,14 @@ def edit_user_view(h):
                 grp_flag = 1
 
         if grp_flag == 0:
+
+            (login_attempts_enable, 
+            max_login_attempts, 
+            lock_duration, 
+            failure_interval,
+            notify_user_onlock,
+            notify_admin_onlock) = \
+                SystemConfig.get_login_attempts_details()
 
             user_detail_dict = usr_mgt_bll.edit_user_view(user_id)
 
@@ -451,7 +521,12 @@ def edit_user_view(h):
                                                 <input type=\"text\" id=\"user_name\" readonly=\"readonly\" name=\"user_name\" \
                                                     title=\"you can't edit User Name\" value=\"%(user_name)s\" />\
                                                 <input type=\"hidden\" id=\"user_id\" name=\"user_id\" value=\"%(user_id)s\" />\
-                                            </div>\
+                        " % user_detail_dict
+                if(login_attempts_enable):
+                    form_str +=                    " <input style=\"margin-left:20px;background-color:%(status_color)s;\" type=\"button\"  id=\"statusButton\" class=\"yo-small yo-button\" \
+                                                    value=%(status)s onclick=\"lock_unlock();\"/>\
+                                                " % user_detail_dict
+                form_str +=                     "</div>\
                                             <div class=\"row-elem\">\
                                                 <label class=\"lbl lbl-big\" for=\"group\">Select Group</label>%(group_list)s\
                                             </div>\
@@ -524,6 +599,10 @@ def edit_user_view(h):
 
 
 def edit_group_view(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
 
@@ -586,6 +665,10 @@ def edit_group_view(h):
 
 
 def edit_group(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     # var_list = ['group_id','description','role']
@@ -635,6 +718,10 @@ def edit_group(h):
 
 
 def check_name(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     name = html.var("name")
@@ -663,10 +750,18 @@ def check_name(h):
 
 def show_user_profile(h):
     # same as edit_ser_view but all fields are disabled now
+    """
+
+    @param h:
+    """
     pass
 
 
 def add_useringp_view(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     gp_id = html.var("gp_id")
@@ -691,6 +786,10 @@ def add_useringp_view(h):
 
 
 def move_usertogp_view(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     gp_id = html.var("gp_id")
@@ -707,6 +806,10 @@ def move_usertogp_view(h):
 
 
 def edit_user(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     lb = LicenseBll()
@@ -775,6 +878,10 @@ def edit_user(h):
 
 
 def change_password(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     var_tuple = ('user_id', 'user_name', 'old_password', 'password')
@@ -802,6 +909,10 @@ def change_password(h):
 
 
 def del_user(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     user_names = html.var("user_names")
@@ -858,6 +969,10 @@ def del_user(h):
 
 
 def del_group(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     group_id = html.var("group_id")
@@ -899,6 +1014,10 @@ def del_group(h):
 
 
 def user_detail_table(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     table = usr_mgt_bll.get_user_details()
@@ -908,11 +1027,15 @@ def user_detail_table(h):
 
 
 def group_user_view(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     css_list = ["css/demo_page.css", "css/demo_table_jui.css",
                 "css/jquery-ui-1.8.4.custom.css"]
-    javascript_list = ["js/pages/group_mgt.js"]
+    javascript_list = ["js/unmp/main/group_mgt.js"]
     add_btn = "<div class=\"header-icon\"><img onclick=\"addGroup();\" class=\"n-tip-image\" \
     src=\"images/%s/round_plus.png\" id=\"add_group\" name=\"add_group\" \
     style=\"width: 16px; height: 16px; margin: 6px 20px 6px 10px;\" original-title=\"Add Group\"></div>" % theme
@@ -1021,6 +1144,10 @@ def group_user_view(h):
 
 
 def group_table(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     group_str = ""
@@ -1039,6 +1166,13 @@ def group_table(h):
 
 
 def groups_select_list(selectedGroup, gp_id="", gp_name=""):
+    """
+
+    @param selectedGroup:
+    @param gp_id:
+    @param gp_name:
+    @return:
+    """
     global html
     sess_gp_name = html.req.session['group']
     selectString = "<select id=\"groups\" name=\"groups\" title=\"Select Group\">\
@@ -1070,6 +1204,12 @@ def groups_select_list(selectedGroup, gp_id="", gp_name=""):
 
 
 def hostgroups_select_list(selectedGroup, gp_id=""):
+    """
+
+    @param selectedGroup:
+    @param gp_id:
+    @return:
+    """
     global html
     sess_grp_name = html.req.session['group']
     hg_ids_list = []
@@ -1104,6 +1244,11 @@ def hostgroups_select_list(selectedGroup, gp_id=""):
 
 
 def roles_select_list(selectedRole):
+    """
+
+    @param selectedRole:
+    @return:
+    """
     selectString = "<select id=\"role\" name=\"role\"  disabled=\"disabled\" onchange=\"this.selectedIndex = 1;\" title=\"Select Role\"><option value=\"\" class='required' >-- Select Role --</option>"
     role_list = usr_mgt_bll.get_role_list()
     # role_list = ['Admin','Operator','Guest']
@@ -1122,11 +1267,15 @@ def roles_select_list(selectedRole):
 
 
 def group_to_hg_view(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     css_list = ["css/demo_page.css", "css/demo_table_jui.css",
                 "css/jquery-ui-1.8.4.custom.css"]
-    javascript_list = ["js/pages/group_mgt.js"]
+    javascript_list = ["js/unmp/main/group_mgt.js"]
     add_btn = "<div class=\"header-icon\"><img onclick=\"addGroup();\" class=\"n-tip-image\" \
     src=\"images/%s/round_plus.png\" id=\"add_group\" name=\"add_group\" \
     style=\"width: 16px; height: 16px; margin: 6px 20px 6px 10px;\" original-title=\"Add Group\"></div>" % theme
@@ -1235,6 +1384,10 @@ def group_to_hg_view(h):
 
 
 def group_hostgroups1(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     light_box = html.var("light_box")
@@ -1254,6 +1407,10 @@ def group_hostgroups1(h):
 
 
 def show_hostgroups(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     light_box = html.var("light_box")
@@ -1283,6 +1440,7 @@ def show_hostgroups(h):
 def add_hgingp_view(h):
     """
         generate view for light box
+    @param h:
     """
     global html
     # Select Group" + groups_select_list("") + "<input type=\"button\" value=\"Show All Hostgroup\" onclick=\"show_all_hg();\" />\
@@ -1308,6 +1466,10 @@ def add_hgingp_view(h):
 
 
 def add_hostgroup_togroup(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     hg_ids = html.var("hg_ids")
@@ -1351,6 +1513,10 @@ def add_hostgroup_togroup(h):
 
 
 def add_group_tohostgroup(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     gp_ids = html.var("gp_ids")
@@ -1394,6 +1560,10 @@ def add_group_tohostgroup(h):
 
 
 def move_group_tohostgroup(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     gp_ids = html.var("gp_ids")
@@ -1455,6 +1625,10 @@ def move_group_tohostgroup(h):
 
 
 def move_hostgroup_togroup(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     hg_ids = html.var("hg_ids")
@@ -1501,6 +1675,10 @@ def move_hostgroup_togroup(h):
 
 
 def move_hgtogp_view(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     gp_id = html.var("gp_id")
@@ -1517,6 +1695,10 @@ def move_hgtogp_view(h):
 
 
 def del_hostgroup_fromgroup(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     result_json = {}
@@ -1546,6 +1728,10 @@ def del_hostgroup_fromgroup(h):
 
 
 def del_group_fromhostgroup(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     result_json = {}
@@ -1591,11 +1777,15 @@ def del_group_fromhostgroup(h):
 
 
 def hostgroup_group_view(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     css_list = ["css/demo_page.css", "css/demo_table_jui.css",
                 "css/jquery-ui-1.8.4.custom.css"]
-    javascript_list = ["js/pages/hostgroup_mgt.js"]
+    javascript_list = ["js/unmp/main/hostgroup_mgt.js"]
     add_btn = "<div class=\"header-icon\"><img onclick=\"addHostGroup();\" class=\"n-tip-image\" \
     src=\"images/%s/round_plus.png\" id=\"add_hostgroup\" name=\"add_hostgroup\" \
     style=\"width: 16px; height: 16px; margin: 6px 20px 6px 10px;\" original-title=\"Add HostGroup\"></div>" % theme
@@ -1674,6 +1864,10 @@ def hostgroup_group_view(h):
 
 
 def hostgroup_table(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     hostgroup_str = ""
@@ -1689,6 +1883,10 @@ def hostgroup_table(h):
 
 
 def hostgroup_info(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     table = usr_mgt_bll.get_hostgroup_info(html.var("hostgroup_id"))
@@ -1714,6 +1912,10 @@ def hostgroup_info(h):
 
 
 def hostgroup_groups(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     light_box = html.var("light_box")
@@ -1782,6 +1984,7 @@ def hostgroup_groups(h):
 def add_gpinhg_view(h):
     """
         generate view for light box
+    @param h:
     """
     global html
     html = h
@@ -1806,6 +2009,10 @@ def add_gpinhg_view(h):
 
 
 def show_groups(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     grp_value = 0
@@ -1838,6 +2045,10 @@ def show_groups(h):
 
 
 def move_gptohg_view(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     hg_id = html.var("hg_id")
@@ -1854,11 +2065,15 @@ def move_gptohg_view(h):
 
 
 def manage_role(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     css_list = ["css/demo_page.css", "css/demo_table_jui.css",
                 "css/jquery-ui-1.8.4.custom.css"]
-    javascript_list = ["js/jquery.dataTables.min.js"]
+    javascript_list = ["js/lib/main/jquery.dataTables.min.js"]
     add_btn = "<div class=\"header-icon\"><img onclick=\"addUser();\" class=\"n-tip-image\" \
     src=\"images/%s/round_plus.png\" id=\"add_user\" name=\"add_user\" \
     style=\"width: 16px; height: 16px; margin: 6px 20px 6px 10px;\" original-title=\"Add User\"></div>" % theme
@@ -1880,11 +2095,15 @@ def manage_role(h):
 
 
 def user_settings(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     css_list = ["css/demo_page.css", "css/demo_table_jui.css",
                 "css/jquery-ui-1.8.4.custom.css"]
-    javascript_list = ["js/jquery.dataTables.min.js"]
+    javascript_list = ["js/lib/main/jquery.dataTables.min.js"]
     add_btn = "<div class=\"header-icon\"><img onclick=\"addUser();\" class=\"n-tip-image\" \
     src=\"images/%s/round_plus.png\" id=\"add_user\" name=\"add_user\" \
     style=\"width: 16px; height: 16px; margin: 6px 20px 6px 10px;\" original-title=\"Add User\"></div>" % theme
@@ -1906,221 +2125,60 @@ def user_settings(h):
         "<p style=\"margin:10px;\"><strong>Role: </strong> Administrator</p>")
     html.new_footer()
 
-
-def page_tip_user_main(h):
-    global html
-    html = h
-    html_view = "\
-        <div id=\"help_container\">\
-            <h1>USER MANAGEMENT</h1>\
-            <div>This page manages Users.</div>\
-            <br/>\
-            <div>On this page you can Add ,Edit or Delete Users.</div>\
-            <br/>\
-            <div><strong>Actions</strong></div>\
-            <div class=\"action-tip\">\
-                <div class=\"img-div\">\
-                   <img style=\"width:16px;height:16px;\" src=\"images/{0}/round_plus.png\"/>\
-                </div>\
-                <div class=\"txt-div\">Add New User </div>\
-            </div>\
-        <div class=\"action-tip\"><div class=\"img-div\">\
-            <img style=\"width:16px;height:16px;\" src=\"images/{0}/doc_edit.png\"/></div><div class=\"txt-div\">Edit User</div>\
-        </div>\
-        <div class=\"action-tip\">\
-            <div class=\"img-div\">\
-                <img style=\"width:16px;height:16px;\" src=\"images/{0}/round_minus.png\"/>\
-            </div>\
-            <div class=\"txt-div\">Delete User</div>\
-        </div>\
-        <br/>\
-        </div>".format(theme)
-    html.write(str(html_view))
-
-def page_tip_change_password(h):
-    global html
-    html = h
-    html_view = """
-        <div id="help_container">
-            <h1>How do I change my password?</h1>
-            <div><h3><strong>To change your password</strong></h3>
-            </div>
-            <div>
-                <ol style="padding: 20px; ">
-                    <li>Enter your old password</li>
-                    <li>Enter a new password. New password must be <strong>different\
-                     than the old one</strong> and should be consist of <strong>two alpha, two numeric, \
-                     two special symbols, with eight length</strong></li>
-                    <li>Confirm your new password</li>
-                    <li>Click <span style="font-weight: 700;">save</span> to submit\
-                    your password changes</li>
-                </ol>
-
-            </div>
-        </div>
-        """
-    html.write(str(html_view))
-
-def page_tip_change_user_setting(h):
-    global html
-    html = h
-    html_view = """
-    <div id="cboxLoadedContent" style="width: 572px; overflow: auto; height: 338px;" xmlns="http://www.w3.org/1999/html"
-     xmlns="http://www.w3.org/1999/html">
-    <div id="help_container">
-        <h1>Changing Personal information</h1>
-        <div><h3><strong>To change the personal information</strong></h3>
-        </div>
-        <div>
-            <ol style="padding: 20px; ">
-                <li>Select <strong>Personal Information</strong> on tab menu</li>
-                <li>Enter your details in the fields provided</li>
-                <li>The omitted fields be left intact</li>
-                <li>Click <span style="font-weight: 700;">save</span> to submit                    your personal information changes</li>
-            </ol>
-
-        </div>
-    </div>
-    <div id="help_container">
-        <h1>Changing the Password</h1>
-        <div><h3><strong>To change the password</strong></h3>
-        </div>
-        <div>
-            <ol style="padding: 20px; ">
-                <li>Select <strong>Change Password</strong> on tab menu</li>
-                <li>Enter the old password</li>
-                <li>Enter a new password. New password must be <strong>different from the old password</strong>
-                    and must follow the requirement of having
-                    <strong>
-                        <ul>
-                            <li> Minimum 2 alpha characters,</li>
-                            <li> Minimum 2 numeric characters,</li>
-                            <li> Minimum 2 special characters</li>
-                            <li> Minimium length of password must be 8 characters </li>
-                        </ul>
-                    </strong>
-                </li>
-                <li>Confirm your new password</li>
-                <li>Click <span style="font-weight: 700;">save</span> to submit                    your password changes</li>
-            </ol>
-
-        </div>
-    </div>
-    """
-    html.write(str(html_view))
-
-
-def page_tip_group_user(h):
-    global html
-    html = h
-    html_view = "\
-        <div id=\"help_container\">\
-        <h1>GROUP MANAGEMENT</h1>\
-        <div>This page manages groups and their users.</div>\
-        <br/>\
-        <div>On this page user can manages Users or Hostgroups releationships</div>\
-        <br/>\
-        <div><strong>Actions</strong></div>\
-        <div class=\"action-tip\"><div class=\"img-div\">\
-        <img style=\"width:16px;height:16px;\" src=\"images/%s/doc_edit.png\"/>\
-        </div>\
-        <div class=\"txt-div\">Edit Group</div></div>\
-        <div><strong>Actions on Group</strong></div>\
-        <div class=\"action-tip\">\
-        <div class=\"txt-div\">\
-        <div class=\"user-header-icon\">\
-        <button class=\"yo-small yo-button\" id=\"add_user_to_group\" type=\"button\">\
-        <span class=\"add\">Add</span></button>Add User From another Group.  \
-        </div>\
-        </div>\
-        </div>\
-        <div class=\"action-tip\">\
-        <div class=\"txt-div\">\
-        <div class=\"user-header-icon\">\
-        <button class=\"yo-small yo-button\" type=\"button\"><span class=\"delete\"  >Delete</span></button>Delete User from Group\
-        </div>\
-        </div>\
-        </div>\
-        <div class=\"action-tip\">\
-        <div class=\"txt-div\">\
-        <div class=\"user-header-icon\">\
-        <button class=\"yo-small yo-button\" id=\"move_hg_to_group\" type=\"button\"><span class=\"moveto\" >Move</span></button>Move User to another Group\
-        </div>\
-        </div>\
-        </div>\
-        <br/>\
-        </div>" % theme
-    html.write(str(html_view))
-
-
-def page_tip_user_group(h):
-    global html
-    html = h
-    html_view = "\
-        <div id=\"help_container\">\
-        <h1>GROUP MANAGEMENT</h1>\
-        <div>This page manage User Groups and their Users </div>\
-        <br/>\
-        <div>On this page you can Edit group. OR Manage Assigning of Users with selected Group</div>\
-        <br/>\
-        <div><strong>Actions</strong></div>\
-        <div class=\"action-tip\">\
-        <div class=\"img-div\"><img style=\"width:16px;height:16px;\" src=\"images/{0}/doc_edit.png\"/>\
-        </div>\
-        <div class=\"txt-div\">Edit Group</div>\
-        </div>\
-        <br/>\
-        <div><strong>Actions on Group</strong></div>\
-        <div class=\"action-tip\">\
-        <div class=\"txt-div\"><div class=\"user-header-icon\">\
-        <button class=\"yo-small yo-button\" id=\"add_user_to_group\" type=\"button\"><span class=\"add\">Add</span></button>\
-        Add User From another Group \
-        </div></div></div>\
-        <div class=\"action-tip\"><div class=\"txt-div\">\
-        <div class=\"user-header-icon\">\
-        <button class=\"yo-small yo-button\" type=\"button\"><span class=\"delete\"  >Delete</span></button>\
-        Delete User from Group : these deleted User will be assigned to Default System Group, </BR> Can be Re-assign by Add operation \
-        </div>\
-        </div>\
-        </div>\
-        <div class=\"action-tip\">\
-        <div class=\"txt-div\"> \
-        <div class=\"user-header-icon\">\
-        <button class=\"yo-small yo-button\" id=\"move_hg_to_group\" type=\"button\"><span class=\"moveto\" >Move</span></button>\
-        Move User to another Group \
-        </div></div></div>\
-        <br/>\
-        </div>".format(theme)
-    html.write(str(html_view))
-
-
-def page_tip_hostgroup_group(h):
-    global html
-    html = h
-    html_view = ""\
-        "<div id=\"help_container\">"\
-        "<h1>HOSTGROUP MANAGEMENT</h1>"\
-        "<div>This page manage HostGroup and their Mappping with Groups.</div>"\
-        "<br/>"\
-        "<div>On this page you can Assign Groups to Hostgroup.</div>"\
-        "<br/>"\
-        "<div><strong>Actions</strong></div>"\
-        "<div class=\"action-tip\">\
-        <div class=\"txt-div\">\
-        <div class=\"user-header-icon\">\
-        <button class=\"yo-small yo-button\" id=\"add_user_to_group\" type=\"button\"><span class=\"add\">Add</span></button>\
-        Assign Groups to Hostgroup.  \</div></div></div>"\
-        "<div class=\"action-tip\">\
-        <div class=\"txt-div\">\
-        <div class=\"user-header-icon\">\
-        <button class=\"yo-small yo-button\" type=\"button\"><span class=\"delete\" >delete</span></button>Remove Group from Hostgroup</div></div></div>"\
-        "<div class=\"action-tip\">\
-        <div class=\"txt-div\"> \
-        <div class=\"user-header-icon\">\
-        <button class=\"yo-small yo-button\" id=\"move_hg_to_group\" type=\"button\"><span class=\"moveto\" >Move</span>\
-        </button>\
-        Move Group to antoher HostGroup\
-        </div></div></div>"\
-        "<br/>"\
-        "</div>"
-    html.write(str(html_view))
+#
+# def page_tip_user_main(h):
+#     global html
+#     html = h
+#     import defaults
+#     f = open(defaults.web_dir + "/htdocs/locale/page_tip_user_main.html", "r")
+#     html_view = f.read()
+#     f.close()
+#     html.write(str(html_view))
+#
+# def page_tip_change_password(h):
+#     global html
+#     html = h
+#     import defaults
+#     f = open(defaults.web_dir + "/htdocs/locale/page_tip_change_password.html", "r")
+#     html_view = f.read()
+#     f.close()
+#     html.write(str(html_view))
+#
+# def page_tip_change_user_setting(h):
+#     global html
+#     html = h
+#     import defaults
+#     f = open(defaults.web_dir + "/htdocs/locale/page_tip_change_user_setting.html", "r")
+#     html_view = f.read()
+#     f.close()
+#     html.write(str(html_view))
+#
+#
+# def page_tip_group_user(h):
+#     global html
+#     html = h
+#     import defaults
+#     f = open(defaults.web_dir + "/htdocs/locale/page_tip_group_user.html", "r")
+#     html_view = f.read()
+#     f.close()
+#     html.write(str(html_view))
+#
+#
+# def page_tip_user_group(h):
+#     global html
+#     html = h
+#     import defaults
+#     f = open(defaults.web_dir + "/htdocs/locale/page_tip_user_group.html", "r")
+#     html_view = f.read()
+#     f.close()
+#     html.write(str(html_view))
+#
+#
+# def page_tip_hostgroup_group(h):
+#     global html
+#     html = h
+#     import defaults
+#     f = open(defaults.web_dir + "/htdocs/locale/page_tip_hostgroup_group.html", "r")
+#     html_view = f.read()
+#     f.close()
+#     html.write(str(html_view))

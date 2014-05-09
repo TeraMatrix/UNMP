@@ -1,24 +1,8 @@
 #!/usr/bin/python2.6
 
 ####################### import the packages ###################################
-import config
-import htmllib
-import pprint
-import sidebar
-import views
-import time
-import defaults
-import os
-import xml.dom.minidom
-import subprocess
-import datetime
-import re
-import tarfile
-import MySQLdb
-import urllib2
-import base64
+
 from lib import *
-from mod_python import apache, util
 from utility import *
 from common_controller import *
 from swt4_controller import *
@@ -63,6 +47,13 @@ def form_box(filter_class, a_class, a_href, a_id, a_text, header_text, data_id):
     header_text - This is the header of form e.g RU Date Time,RU prfile
     data_id - This is the id for filter class.
     this returns the string in html format
+    @param filter_class:
+    @param a_class:
+    @param a_href:
+    @param a_id:
+    @param a_text:
+    @param header_text:
+    @param data_id:
     """
     tab_str = ""
     for yo in range(0, len(a_href)):
@@ -88,6 +79,7 @@ def swt_profiling(h):
     This function is defined the path of forms javascripts and css files and call the odu_profiling_form
     h - is used for request
     prints the forms and display on page
+    @param h:
     """
     global html
     html = h
@@ -106,7 +98,7 @@ def swt_profiling(h):
 
     # Define the page header e.g Odu Profiling
     css_list = ['css/ie7.css', 'css/custom.css']
-    jss_list = ['js/switch.js', 'js/jquery-ui-personalized-1.6rc2.min.js']
+    jss_list = ['js/unmp/main/switch.js', 'js/lib/main/jquery-ui-personalized-1.6rc2.min.js']
     html.new_header("Switch Profiling", "", "", css_list, jss_list)
 
     ip_address = ""
@@ -165,6 +157,8 @@ def swt4_profiling_form(host_id, selected_device):
     h -  is used for request
     host_id - it is come with request and used to find the ip_address,mac_address,device_id of particular device
     it displays the forms on page
+    @param host_id:
+    @param selected_device:
     """
 
 # This makes the filter buttons and a commit to flash button and writes on page
@@ -352,6 +346,8 @@ class SwtFormProfiling(object):
         This function is used to make form of odu100_ip_configuration
         h - request object
         This returns the string in html form
+        @param host_id:
+        @param selected_device:
         """
 
         # This variable is used for storing html form which is in string form
@@ -393,6 +389,12 @@ class SwtFormProfiling(object):
         return str(swt4_ip_config_form)
 
     def swt4_port_settings(self, host_id, selected_device):
+        """
+
+        @param host_id:
+        @param selected_device:
+        @return:
+        """
         swt4_port_list = swt4_get_port_data(host_id)
         swt4_port_data = swt4_port_list["result"]
         swt4_port_str = ""
@@ -471,6 +473,12 @@ class SwtFormProfiling(object):
         return str(swt4_port_str)
 
     def swt4_vlan_settings(self, host_id, selected_device):
+        """
+
+        @param host_id:
+        @param selected_device:
+        @return:
+        """
         swt_vlan_dic = swt4_get_vlan_data(host_id)
         swt_vlan_list = swt_vlan_dic["result"]
         swt_vlan_str = ""
@@ -541,6 +549,12 @@ class SwtFormProfiling(object):
         return(str(swt_vlan_str))
 
     def swt4_bandwidth_control_settings(self, host_id, selected_device):
+        """
+
+        @param host_id:
+        @param selected_device:
+        @return:
+        """
         swt_bandwidth_str = ""
         swt4_bandwidth_data = swt4_get_bandwidth_control(host_id)
         swt4_bandwidth = swt4_bandwidth_data["result"]
@@ -612,6 +626,12 @@ class SwtFormProfiling(object):
         return(str(swt_bandwidth_str))
 
     def swt4_storm_control(self, host_id, selected_device):
+        """
+
+        @param host_id:
+        @param selected_device:
+        @return:
+        """
         swt4_storm_list = swt4_get_storm_control(host_id)
         swt4_storm_data = swt4_storm_list["result"]
         swt4_storm_str = ""
@@ -675,6 +695,12 @@ class SwtFormProfiling(object):
         return(str(swt4_storm_str))
 
     def swt4_port_priority(self, host_id, selected_device):
+        """
+
+        @param host_id:
+        @param selected_device:
+        @return:
+        """
         swt4_port_priority_list = swt4_get_port_priority(host_id)
         swt4_port_priority_data = swt4_port_priority_list["result"]
         swt4_port_priority_str = ""
@@ -741,6 +767,12 @@ class SwtFormProfiling(object):
         return(str(swt4_port_priority_str))
 
     def swt4_dscp_priority(self, host_id, selected_device):
+        """
+
+        @param host_id:
+        @param selected_device:
+        @return:
+        """
         swt4_dscp_priority_list = swt4_get_dscp_priority(host_id)
         swt4_dscp_priority_data = swt4_dscp_priority_list["result"]
         swt4_dscp_priority_str = ""
@@ -800,6 +832,12 @@ class SwtFormProfiling(object):
         return(str(swt4_dscp_priority_str))
 
     def swt4_802_priority(self, host_id, selected_device):
+        """
+
+        @param host_id:
+        @param selected_device:
+        @return:
+        """
         swt4_802_priority_list = swt4_get_801_priority(host_id)
         swt4_802_priority_data = []
         swt4_802_priority_data = swt4_802_priority_list["result"]
@@ -861,6 +899,12 @@ class SwtFormProfiling(object):
         return(str(swt4_802_priority_str))
 
     def swt4_ip_base_priority(self, host_id, selected_device):
+        """
+
+        @param host_id:
+        @param selected_device:
+        @return:
+        """
         swt4_ip_priority_list = swt4_get_ip_base_priority(host_id)
         swt4_ip_priority_data = swt4_ip_priority_list["result"]
         swt4_ip_priority_str = ""
@@ -938,6 +982,12 @@ class SwtFormProfiling(object):
         return(str(swt4_ip_priority_str))
 
     def swt4_queue_priority(self, host_id, selected_device):
+        """
+
+        @param host_id:
+        @param selected_device:
+        @return:
+        """
         swt4_queue_priority_list = swt4_get_queue_prority(host_id)
         swt4_queue_priority_data = swt4_queue_priority_list["result"]
         swt4_queue_priority_str = ""
@@ -992,6 +1042,12 @@ class SwtFormProfiling(object):
         return(str(swt4_queue_priority_str))
 
     def swt4_queue_weight(self, host_id, selected_device):
+        """
+
+        @param host_id:
+        @param selected_device:
+        @return:
+        """
         swt4_queue_weight_list = swt4_get_queue_weight(host_id)
         swt4_queue_weight_data = swt4_queue_weight_list["result"]
         swt4_queue_weight_str = ""
@@ -1046,6 +1102,12 @@ class SwtFormProfiling(object):
         return(str(swt4_queue_weight_str))
 
     def swt4_qos_abstraction(self, host_id, selected_device):
+        """
+
+        @param host_id:
+        @param selected_device:
+        @return:
+        """
         swt4_qos_abstraction_list = swt4_get_qos_abstraction(host_id)
         swt4_qos_abstraction_data = swt4_qos_abstraction_list["result"]
         swt4_qos_abstraction_str = ""
@@ -1100,6 +1162,12 @@ class SwtFormProfiling(object):
         return(str(swt4_qos_abstraction_str))
 
     def swt4_1p_remarking(self, host_id, selected_device):
+        """
+
+        @param host_id:
+        @param selected_device:
+        @return:
+        """
         swt4_1p_remarking_list = swt4_get_1p_remarking(host_id)
         swt4_1p_remarking_data = swt4_1p_remarking_list["result"]
         swt4_1p_remarking_str = ""
@@ -1155,6 +1223,10 @@ class SwtFormProfiling(object):
 
 
 def swt_ip_config_form_action(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     dic_result = {'result': {}, 'success': 0}
@@ -1243,6 +1315,10 @@ def swt_ip_config_form_action(h):
 
 
 def swt4_port_setting_form_action(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     dic_result = {'result': {}, 'success': 0}
@@ -1320,6 +1396,10 @@ def swt4_port_setting_form_action(h):
 
 
 def swt4_vlan_setting_form_action(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     dic_result = {'result': {}, 'success': 0}
@@ -1400,6 +1480,10 @@ def swt4_vlan_setting_form_action(h):
 
 
 def swt_bandwidth_form_action(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     dic_result = {'result': {}, 'success': 0}
@@ -1490,6 +1574,10 @@ def swt_bandwidth_form_action(h):
 
 
 def swt_storm_form_action(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     dic_result = {'result': {}, 'success': 0}
@@ -1554,6 +1642,10 @@ def swt_storm_form_action(h):
 
 
 def swt4_port_priority_action(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     dic_result = {'result': {}, 'success': 0}
@@ -1605,6 +1697,10 @@ def swt4_port_priority_action(h):
 
 
 def swt4_dscp_priority_action(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     dic_result = {'result': {}, 'success': 0}
@@ -1657,6 +1753,10 @@ def swt4_dscp_priority_action(h):
 
 
 def swt4_802_priority_action(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     dic_result = {'result': {}, 'success': 0}
@@ -1709,6 +1809,10 @@ def swt4_802_priority_action(h):
 
 
 def swt4_ip_base_priority_action(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     dic_result = {'result': {}, 'success': 0}
@@ -1801,6 +1905,10 @@ def swt4_ip_base_priority_action(h):
 
 
 def swt4_queue_priority_action(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     dic_result = {'result': {}, 'success': 0}
@@ -1853,6 +1961,10 @@ def swt4_queue_priority_action(h):
 
 
 def swt4_queue_weight_action(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     dic_result = {'result': {}, 'success': 0}
@@ -1905,6 +2017,10 @@ def swt4_queue_weight_action(h):
 
 
 def swt4_qos_abstraction_action(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     dic_result = {'result': {}, 'success': 0}
@@ -1959,6 +2075,10 @@ def swt4_qos_abstraction_action(h):
 
 
 def swt4_1p_remarking_action(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     dic_result = {'result': {}, 'success': 0}
@@ -2013,6 +2133,10 @@ def swt4_1p_remarking_action(h):
 
 
 def update_bandwidth(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     host_id = html.var("host_id")
@@ -2039,6 +2163,10 @@ def update_bandwidth(h):
 
 
 def update_port_settings(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     host_id = html.var("host_id")
@@ -2077,6 +2205,10 @@ def update_port_settings(h):
 
 
 def update_storm(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     host_id = html.var("host_id")
@@ -2111,6 +2243,10 @@ def update_storm(h):
 
 
 def update_vlan(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     host_id = html.var("host_id")
@@ -2139,6 +2275,10 @@ def update_vlan(h):
 
 
 def update_port_priority(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     host_id = html.var("host_id")
@@ -2177,6 +2317,10 @@ def update_port_priority(h):
 
 
 def update_dscp_priority(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     host_id = html.var("host_id")
@@ -2205,6 +2349,10 @@ def update_dscp_priority(h):
 
 
 def update_802_priority(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     host_id = html.var("host_id")
@@ -2233,6 +2381,10 @@ def update_802_priority(h):
 
 
 def update_ip_base_priority(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     host_id = html.var("host_id")
@@ -2267,6 +2419,10 @@ def update_ip_base_priority(h):
 
 
 def update_queue_priority(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     host_id = html.var("host_id")
@@ -2295,6 +2451,10 @@ def update_queue_priority(h):
 
 
 def update_queue_weight(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     host_id = html.var("host_id")
@@ -2323,6 +2483,10 @@ def update_queue_weight(h):
 
 
 def update_qos_abstraction(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     host_id = html.var("host_id")
@@ -2353,6 +2517,10 @@ def update_qos_abstraction(h):
 
 
 def update_1p_remarking(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     host_id = html.var("host_id")
@@ -2383,6 +2551,10 @@ def update_1p_remarking(h):
 
 
 def swt4_commit_flash(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     host_id = html.var("host_id")
@@ -2392,6 +2564,10 @@ def swt4_commit_flash(h):
 
 
 def reboot(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     reboot_str = ""
@@ -2411,6 +2587,10 @@ def reboot(h):
 
 
 def reboot_final(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     host_id = html.var("host_id")
@@ -2426,6 +2606,7 @@ def get_device_list(h):
     ip_address - This is the IP Address of device e.g 192.168.0.1
     mac_address - This is the Mac Address of device e.g aa:bb:cc:dd:ee:ff
     selected_device - This is the selected device types from the drop down menu of devices e.g "odu16"
+    @param h:
     """
     try:
         global html

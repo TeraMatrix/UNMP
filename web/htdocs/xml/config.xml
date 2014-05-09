@@ -15,4 +15,6 @@
 	<snmpdiscovery community="public" ip_base="192.168.1" ip_base_end="40" ip_base_start="20" port="161" service="2" timeout="10" version="2c"/>
 	<upnpdiscovery service="2" timeout="10"/>
 	<password_expiry enable="True" expiry_age="45" warning_time="5" auto_password="False"/>
+	<login_attempts enable="True" max_login_attempts="5" lockout_duration="12" failure_expiration_interval="60" notify_user="True" notify_admin ="True"/>
+	<unmp_mail username="do.not.reply.to.unmp@gmail.com" password="nms@123@"/>
 </unmp>

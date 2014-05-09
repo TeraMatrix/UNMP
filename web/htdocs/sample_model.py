@@ -69,7 +69,9 @@ try:
         is_deleted = Column(SMALLINT)
         sequence = Column(SMALLINT)
 
-        def __init__(self, device_type_id, device_name, sdm_discovery_id, sdm_discovery_value, vnl_discovery_value, ping_discovery_value, snmp_discovery_value, upnp_discovery_value, mib_name, mib_path, is_generic, is_deleted, sequence):
+        def __init__(self, device_type_id, device_name, sdm_discovery_id, sdm_discovery_value, vnl_discovery_value,
+                     ping_discovery_value, snmp_discovery_value, upnp_discovery_value, mib_name, mib_path, is_generic,
+                     is_deleted, sequence):
             self.device_type_id = device_type_id
             self.device_name = device_name
             self.sdm_discovery_id = sdm_discovery_id
@@ -87,8 +89,10 @@ try:
         def __repr__(self):
             return "<DeviceType('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%d','%d','%d')>" \
                    % (
-                       self.device_type_id, self.device_name, self.sdm_discovery_id, self.sdm_discovery_value, self.vnl_discovery_value, self.ping_discovery_value,
-                       self.snmp_discovery_value, self.upnp_discovery_value, self.mib_name, self.mib_path, self.is_generic, self.is_deleted, sequence)
+                self.device_type_id, self.device_name, self.sdm_discovery_id, self.sdm_discovery_value,
+                self.vnl_discovery_value, self.ping_discovery_value,
+                self.snmp_discovery_value, self.upnp_discovery_value, self.mib_name, self.mib_path, self.is_generic,
+                self.is_deleted, sequence)
 
     class Hosts(Base):
         __tablename__ = 'hosts'
@@ -133,11 +137,12 @@ try:
             DeviceType, backref=backref('hosts'), order_by=device_type_id)
 
         def __init__(
-            self, host_name, host_alias, ip_address, mac_address, device_type_id, netmask, gateway, primary_dns,
-            secondary_dns, config_profile_id, created_by, creation_time, is_deleted, updated_by, ne_id, site_id,
-            host_state_id, priority_id, host_vendor_id, host_os_id, host_asset_id, http_username, http_password, http_port,
-                snmp_trap_port, snmp_read_community, snmp_write_community, snmp_port, snmp_version_id, comment, icon_name, software_update_time, nms_id):
-
+                self, host_name, host_alias, ip_address, mac_address, device_type_id, netmask, gateway, primary_dns,
+                secondary_dns, config_profile_id, created_by, creation_time, is_deleted, updated_by, ne_id, site_id,
+                host_state_id, priority_id, host_vendor_id, host_os_id, host_asset_id, http_username, http_password,
+                http_port,
+                snmp_trap_port, snmp_read_community, snmp_write_community, snmp_port, snmp_version_id, comment,
+                icon_name, software_update_time, nms_id):
             self.host_id = uuid.uuid1()
             self.host_name = host_name
             self.host_alias = host_alias
@@ -175,13 +180,17 @@ try:
 
         def __repr__(self):
             return "<Hosts('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s',\
-        '%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')"\
-                   (self.host_id, self.host_name, self.host_alias, self.ip_address, self.mac_address, self.device_type_id, self.netmask,
-                    self.gateway, self.primary_dns, self.secondary_dns, self.config_profile_id,
-                    self.timestamp, self.created_by, self.creation_time, self.is_deleted, self.updated_by,
-                    self.ne_id, self.site_id, self.host_state_id, self.priority_id, self.host_vendor_id, self.host_os_id,
-                    self.host_asset_id, self.http_username, self.http_password, self.http_port, self.snmp_trap_port, self.snmp_read_community,
-                    self.snmp_write_community, self.snmp_port, self.snmp_version_id, self.comment, self.icon_name, self.software_update_time, self.nms_id)
+        '%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')" \
+                    (self.host_id, self.host_name, self.host_alias, self.ip_address, self.mac_address,
+                     self.device_type_id, self.netmask,
+                     self.gateway, self.primary_dns, self.secondary_dns, self.config_profile_id,
+                     self.timestamp, self.created_by, self.creation_time, self.is_deleted, self.updated_by,
+                     self.ne_id, self.site_id, self.host_state_id, self.priority_id, self.host_vendor_id,
+                     self.host_os_id,
+                     self.host_asset_id, self.http_username, self.http_password, self.http_port, self.snmp_trap_port,
+                     self.snmp_read_community,
+                     self.snmp_write_community, self.snmp_port, self.snmp_version_id, self.comment, self.icon_name,
+                     self.software_update_time, self.nms_id)
 
     clear_mappers()
 
@@ -204,8 +213,8 @@ try:
     session.flush()
     session.add(add_device)
     session.commit()
-##    session.delete(add_device)
-##    session.commit()
+    ##    session.delete(add_device)
+    ##    session.commit()
     print device_param_list
 
 except ProgrammingError as e:

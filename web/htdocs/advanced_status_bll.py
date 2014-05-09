@@ -1,23 +1,12 @@
 #!/usr/bin/python2.6
 # import the packeges
-import config
-import htmllib
-import time
-import cgi
 import MySQLdb
-import sys
-from common_controller import *
-from nms_config import *
-from odu_controller import *
-from datetime import datetime
-from datetime import timedelta
+# from common_controller import *
+# from nms_config import *
+# from odu_controller import *
 from mysql_collection import mysql_connection
-from unmp_dashboard_config import DashboardConfig
-from operator import itemgetter
-from utility import Validation
 from error_message import ErrorMessageClass
 from specific_dashboard_bll import SPDashboardBll
-from device_status import DeviceStatus
 from specific_dashboard_bll import get_master_slave_value
 
 
@@ -37,6 +26,7 @@ class SelfException(Exception):
     @organisation: Code Scape Consultants Pvt. Ltd.
     @copyright: 2011 Code Scape Consultants Pvt. Ltd.
     """
+
     def __init__(self, msg):
         pass
 
@@ -44,8 +34,16 @@ class SelfException(Exception):
 
 
 class AdvancedStatusBll(object):
-
+    """
+    Device specific Advanced status Model class
+    """
     def get_host_id(self, ip_address, device_type):
+        """
+
+        @param ip_address:
+        @param device_type:
+        @return: @raise:
+        """
         try:
             host_id = 1  # Default value
             conn, cursor = mysql_connection()
@@ -57,7 +55,7 @@ class AdvancedStatusBll(object):
             host_result = cursor.fetchall()
             if len(host_result) > 0:
                 host_id = host_result[0][0] if host_result[
-                    0][0] != None or host_result[0][0] != "" else ""
+                                                   0][0] != None or host_result[0][0] != "" else ""
             output_dict = {'success': 0, 'host_id': host_id}
             return output_dict
         except MySQLdb as e:
@@ -77,6 +75,12 @@ class AdvancedStatusBll(object):
                 conn.close()
 
     def total_graph_name_display(self, device_type_id, user_id):
+        """
+
+        @param device_type_id:
+        @param user_id:
+        @return: @raise:
+        """
         try:
             db, cursor = mysql_connection()
             if db == 1:
@@ -104,6 +108,14 @@ class AdvancedStatusBll(object):
                 db.close()
 
     def advanced_graph_json(self, graph_id, device_type_id, user_id, ip_address):
+        """
+
+        @param graph_id:
+        @param device_type_id:
+        @param user_id:
+        @param ip_address:
+        @return: @raise:
+        """
         try:
             conn, cursor = mysql_connection()
             if conn == 1:
@@ -141,18 +153,19 @@ class AdvancedStatusBll(object):
                 if master_slave_status['success'] == 0 and int(master_slave_status['status']) > 0:
                     if len(option_tuple) > 0 and (row[0] == 'odu100rssi' or row[0] == 'odu16rssi'):
                         option_list.append({'name': option_tuple[0][0], 'displayName':
-                                           'Master-Link', 'isChecked': option_tuple[0][2]})
+                            'Master-Link', 'isChecked': option_tuple[0][2]})
                     else:
                         for option in option_tuple:
                             option_list.append({'name': option[0],
-                                               'displayName': option[1], 'isChecked': option[2]})
+                                                'displayName': option[1], 'isChecked': option[2]})
                 else:
                     for option in option_tuple:
                         option_list.append({'name': option[0],
-                                           'displayName': option[1], 'isChecked': option[2]})
-#                for option in option_tuple:
-# option_list.append({'name':option[0],'displayName':option[1],'isChecked':option[2]})
-                query2 = "SELECT interface_value,interface_display_name,is_selected FROM  graph_interface_table WHERE graph_name='%s' and user_id='%s'" % (row[0], user_id)
+                                            'displayName': option[1], 'isChecked': option[2]})
+                    #                for option in option_tuple:
+                    # option_list.append({'name':option[0],'displayName':option[1],'isChecked':option[2]})
+                query2 = "SELECT interface_value,interface_display_name,is_selected FROM  graph_interface_table WHERE graph_name='%s' and user_id='%s'" % (
+                row[0], user_id)
                 cursor.execute(query2)
                 interface_tuple = cursor.fetchall()
                 interface_value = []
@@ -168,17 +181,18 @@ class AdvancedStatusBll(object):
                     interface_name.append(interface[1])
                     if int(interface[2]) == 1:
                         check_val = int(interface[0])
-                query3 = "SELECT graph_cal_id,graph_cal_name FROM  graph_calculation_table where user_id='%s' and table_name='%s'" % (user_id, row[0])
+                query3 = "SELECT graph_cal_id,graph_cal_name FROM  graph_calculation_table where user_id='%s' and table_name='%s'" % (
+                user_id, row[0])
                 cursor.execute(query3)
                 cal_tuple = cursor.fetchall()
                 cal_list = []
                 for cal in cal_tuple:
                     if int(cal[0]) == int(row[13]):
                         cal_list.append({'name': str(cal[0]
-                                                     ), 'displayName': cal[1], 'isChecked': int(1)})
+                        ), 'displayName': cal[1], 'isChecked': int(1)})
                     else:
                         cal_list.append({'name': str(cal[0]
-                                                     ), 'displayName': cal[1], 'isChecked': int(0)})
+                        ), 'displayName': cal[1], 'isChecked': int(0)})
 
                 ajax_json = {}
                 query4 = "SELECT url,method,other_data FROM  graph_ajax_call_information where user_id='%s' and graph_id='%s'" % (
@@ -190,30 +204,43 @@ class AdvancedStatusBll(object):
                                  'cache': False, 'data': {'table_name': ajax[2]}}
 
                 total_item_json = {}
-                query5 = "SELECT url,method,other_data FROM  total_count_item where user_id='%s' and graph_id='%s'" % (user_id, row[0])
+                query5 = "SELECT url,method,other_data FROM  total_count_item where user_id='%s' and graph_id='%s'" % (
+                user_id, row[0])
                 cursor.execute(query5)
                 total_count_info = cursor.fetchall()
                 for count_info in total_count_info:
                     total_item_json = {'url': count_info[0], 'method':
-                                       count_info[1], 'cache': False, 'data': {'table_name': count_info[2]}}
+                        count_info[1], 'cache': False, 'data': {'table_name': count_info[2]}}
 
                 # This field is also come form database
                 showType = True if int(row[14]) == 1 else False
                 showFields = True if int(row[15]) == 1 else False
                 showCalType = True if int(row[16]) == 1 else False
                 showTabOption = True if int(row[17]) == 1 else False
-                graph_dict = {'name': row[0], 'displayName': row[1], 'fields': option_list, 'calType': cal_list, 'ajax': ajax_json, 'tabList': {'value': interface_value, 'name': interface_name, 'selected': check_val}, 'type': graph_type, 'otherOption': {'showOption': True if int(row[6]) == 1 else False, 'showRefreshButton': True if int(row[7]) == 1 else False, 'showNextPreButton': True if int(row[8]) == 1 else False, 'width': row[11], 'height': str(
-                    row[12]) + "px", 'showType': showType, 'showFields': showFields, 'showCalType': showCalType, 'showTabOption': showTabOption, 'autoRefresh': row[18]}, 'startFrom': row[9], 'itemLimit': row[10], 'totalItemAjax': total_item_json}
+                graph_dict = {'name': row[0], 'displayName': row[1], 'fields': option_list, 'calType': cal_list,
+                              'ajax': ajax_json,
+                              'tabList': {'value': interface_value, 'name': interface_name, 'selected': check_val},
+                              'type': graph_type, 'otherOption': {'showOption': True if int(row[6]) == 1 else False,
+                                                                  'showRefreshButton': True if int(
+                                                                      row[7]) == 1 else False,
+                                                                  'showNextPreButton': True if int(
+                                                                      row[8]) == 1 else False, 'width': row[11],
+                                                                  'height': str(
+                                                                      row[12]) + "px", 'showType': showType,
+                                                                  'showFields': showFields, 'showCalType': showCalType,
+                                                                  'showTabOption': showTabOption,
+                                                                  'autoRefresh': row[18]}, 'startFrom': row[9],
+                              'itemLimit': row[10], 'totalItemAjax': total_item_json}
 
                 # this is check the master or slave for sync lsot graph showing or not.
-#                if master_slave_status['success']==0 and int(master_slave_status['status'])==0:
-#                    if ajax_json['data']['table_name'].split(',')[0]=='odu100_synchStatisticsTable' or ajax_json['data']['table_name'].split(',')[0]=='get_odu16_peer_node_status_table':
-#                        pass
-#                    else:
-#                        graph_json.append(graph_dict)
-#
-#		else:
-#		    graph_json.append(graph_dict)
+                #                if master_slave_status['success']==0 and int(master_slave_status['status'])==0:
+                #                    if ajax_json['data']['table_name'].split(',')[0]=='odu100_synchStatisticsTable' or ajax_json['data']['table_name'].split(',')[0]=='get_odu16_peer_node_status_table':
+                #                        pass
+                #                    else:
+                #                        graph_json.append(graph_dict)
+                #
+                #		else:
+                #		    graph_json.append(graph_dict)
                 graph_json.append(graph_dict)
 
             output_dic = {'success': 0, 'graphs': graph_json}
@@ -235,6 +262,16 @@ class AdvancedStatusBll(object):
                 conn.close()
 
     def advanced_graph_data(self, user_id, ip_address, start_date, end_date, graph_id, device_type_id):
+        """
+
+        @param user_id:
+        @param ip_address:
+        @param start_date:
+        @param end_date:
+        @param graph_id:
+        @param device_type_id:
+        @return: @raise:
+        """
         data_list = []
         time_list = []
         output_dic = {}
@@ -248,13 +285,14 @@ class AdvancedStatusBll(object):
         result = ()
         table_name_dict = {
             'odu100NWstatus': 'odu100_nwInterfaceStatusTable', 'odu100syncstatus': 'odu100_synchStatusTable',
-            'odu100Rastatus': 'odu100_raStatusTable', 'idu4e1portstatus': 'idu_e1PortStatusTable', 'idu4linkstatustable': 'idu_linkStatusTable'}
+            'odu100Rastatus': 'odu100_raStatusTable', 'idu4e1portstatus': 'idu_e1PortStatusTable',
+            'idu4linkstatustable': 'idu_linkStatusTable'}
         default_value = 'Device Unreachable'
         try:
             conn, cursor = mysql_connection()
             if conn == 1:
                 raise SelfException(cursor)
-            # get the data from graph field table .
+                # get the data from graph field table .
             get_coloum = "SELECT graph_field_value,graph_field_display_name,tool_tip_title FROM graph_field_table WHERE graph_name='%s' AND user_id='%s'" % (
                 graph_id, user_id)
             cursor.execute(get_coloum)
@@ -275,9 +313,9 @@ class AdvancedStatusBll(object):
             graph_sub_title = ''  # default value
             if len(graph_name_result) > 0:
                 graph_title = '' if graph_name_result[0][
-                    0] == None or graph_name_result[0][0] == '' else graph_name_result[0][0]
+                                        0] == None or graph_name_result[0][0] == '' else graph_name_result[0][0]
                 graph_sub_title = '' if graph_name_result[0][
-                    1] == None or graph_name_result[0][1] == '' else graph_name_result[0][1]
+                                            1] == None or graph_name_result[0][1] == '' else graph_name_result[0][1]
 
             if graph_id.strip() == 'idu4e1portstatus':
                 sel_query = "select  idu.portNum, \
@@ -303,7 +341,8 @@ class AdvancedStatusBll(object):
 			)) \
 		       as adptClkState, \
 		     (if(idu.holdOverStatus=0,'In Normal Mode',if(idu.holdOverStatus=1111111,idu.holdOverStatus,'In Hold Over Mode'))) as holdOverStatus,idu.timestamp \
-		 from  idu_e1PortStatusTable as idu INNER JOIN hosts ON hosts.host_id=idu.host_id  where hosts.ip_address='%s' and idu.timestamp >='%s' and idu.timestamp <='%s' and hosts.is_deleted=0  order by idu.timestamp desc,idu.portNum asc" % (ip_address, start_date, end_date)
+		 from  idu_e1PortStatusTable as idu INNER JOIN hosts ON hosts.host_id=idu.host_id  where hosts.ip_address='%s' and idu.timestamp >='%s' and idu.timestamp <='%s' and hosts.is_deleted=0  order by idu.timestamp desc,idu.portNum asc" % (
+                ip_address, start_date, end_date)
                 cursor.execute(sel_query)
                 result = cursor.fetchall()
                 given = ['portNum', 'opStatus', 'los', 'lof', 'ais', 'rai',
@@ -325,7 +364,8 @@ class AdvancedStatusBll(object):
 			maxJBLevel,\
 			(if(idu.underrunOccured=0,'Bit Clear',if(idu.underrunOccured=1111111,idu.underrunOccured,'Bit Set'))) as underrunOccured,\
 			(if(idu.overrunOccured=0,'Bit Clear',if(idu.overrunOccured=1111111,idu.overrunOccured,'Bit Set'))) as overrunOccured ,idu.timestamp\
-		 from   idu_linkStatusTable as idu INNER JOIN hosts ON hosts.host_id=idu.host_id where hosts.ip_address='%s' and idu.timestamp >='%s' and idu.timestamp <='%s' and hosts.is_deleted=0 order by idu.timestamp desc,idu.bundleNum asc " % (ip_address, start_date, end_date)
+		 from   idu_linkStatusTable as idu INNER JOIN hosts ON hosts.host_id=idu.host_id where hosts.ip_address='%s' and idu.timestamp >='%s' and idu.timestamp <='%s' and hosts.is_deleted=0 order by idu.timestamp desc,idu.bundleNum asc " % (
+                ip_address, start_date, end_date)
                 cursor.execute(sel_query)
                 result = cursor.fetchall()
                 given = ['bundleNum', 'portNum', 'operationalStatus',
@@ -346,7 +386,8 @@ class AdvancedStatusBll(object):
 			odu.raMacAddress,\
 			(if(odu.raoperationalState=0,'Disable',if(odu.raoperationalState=1111111,odu.raoperationalState,'Enable'))) as raoperationalState,\
 			odu.unusedTxTimeUL,odu.unusedTxTimeDL,odu.timestamp\
-			from   odu100_raStatusTable as odu INNER JOIN hosts ON hosts.host_id=odu.host_id where hosts.ip_address='%s' and odu.timestamp >='%s' and odu.timestamp <='%s' and hosts.is_deleted=0 order by odu.timestamp desc " % (ip_address, start_date, end_date)
+			from   odu100_raStatusTable as odu INNER JOIN hosts ON hosts.host_id=odu.host_id where hosts.ip_address='%s' and odu.timestamp >='%s' and odu.timestamp <='%s' and hosts.is_deleted=0 order by odu.timestamp desc " % (
+                ip_address, start_date, end_date)
                 cursor.execute(sel_query)
                 result = cursor.fetchall()
                 given = ['currentTimeSlot', 'raMacAddress',
@@ -362,7 +403,8 @@ class AdvancedStatusBll(object):
                 sel_query = "select (if(odu.syncoperationalState=0,'Disable',if(odu.syncoperationalState=1111111,odu.syncoperationalState,'Enable'))) as syncoperationalState,\
 			odu.syncrasterTime,\
 			odu.timerAdjust,odu.syncpercentageDownlinkTransmitTime,odu.timestamp\
-			from   odu100_synchStatusTable as odu INNER JOIN hosts ON hosts.host_id=odu.host_id where hosts.ip_address='%s' and odu.timestamp >='%s' and odu.timestamp <='%s' and hosts.is_deleted=0 order by odu.timestamp desc" % (ip_address, start_date, end_date)
+			from   odu100_synchStatusTable as odu INNER JOIN hosts ON hosts.host_id=odu.host_id where hosts.ip_address='%s' and odu.timestamp >='%s' and odu.timestamp <='%s' and hosts.is_deleted=0 order by odu.timestamp desc" % (
+                ip_address, start_date, end_date)
                 cursor.execute(sel_query)
                 result = cursor.fetchall()
                 given = ['syncoperationalState', 'syncrasterTime',
@@ -379,7 +421,8 @@ class AdvancedStatusBll(object):
 			odu.nwInterfaceName,\
 			(if(odu.operationalState=0,'Disable',if(odu.operationalState=1111111,odu.operationalState,'Enable'))) as operationalState,\
 			odu.macAddress,odu.timestamp\
-			from    odu100_nwInterfaceStatusTable as odu INNER JOIN hosts ON hosts.host_id=odu.host_id where hosts.ip_address='%s' and odu.timestamp >='%s' and odu.timestamp <='%s' and hosts.is_deleted=0 order by odu.timestamp desc,odu.nwInterfaceName asc " % (ip_address, start_date, end_date)
+			from    odu100_nwInterfaceStatusTable as odu INNER JOIN hosts ON hosts.host_id=odu.host_id where hosts.ip_address='%s' and odu.timestamp >='%s' and odu.timestamp <='%s' and hosts.is_deleted=0 order by odu.timestamp desc,odu.nwInterfaceName asc " % (
+                ip_address, start_date, end_date)
                 cursor.execute(sel_query)
                 result = cursor.fetchall()
                 given = ['nwStatusIndex', 'nwInterfaceName',
@@ -423,11 +466,25 @@ class AdvancedStatusBll(object):
             if conn.open:
                 conn.close()
 
-    def advaeced_excel_report(self, report_type, device_type_id, user_id, ip_address, start_date, end_date, graph_id, select_option):
+    def advaeced_excel_report(self, report_type, device_type_id, user_id, ip_address, start_date, end_date, graph_id,
+                              select_option):
+        """
+
+        @param report_type:
+        @param device_type_id:
+        @param user_id:
+        @param ip_address:
+        @param start_date:
+        @param end_date:
+        @param graph_id:
+        @param select_option:
+        @return: @raise:
+        """
         try:
             import csv
             import xlwt
             from xlwt import Workbook, easyxf
+
             xls_book = Workbook(encoding='ascii')
             nms_instance = __file__.split(
                 "/")[3]       # it gives instance name of nagios system
@@ -468,7 +525,7 @@ class AdvancedStatusBll(object):
                 raise SelfException(cursor)
 
             device_name_list = {'ap25': 'AP25', 'odu16':
-                                'RM18', 'odu100': 'RM', 'idu4': 'IDU'}
+                'RM18', 'odu100': 'RM', 'idu4': 'IDU'}
             login_user_name = ''
             sel_query = "SELECT host_alias FROM hosts WHERE ip_address='%s' and hosts.is_deleted=0" % (
                 ip_address)
@@ -484,7 +541,7 @@ class AdvancedStatusBll(object):
                 graph_id, user_id, device_type_id)
             cursor.execute(sel_query)
             graph_name_result = cursor.fetchall()
-# graph_name_dict=dict((field[0],field[2]) for field in graph_name_result)
+            # graph_name_dict=dict((field[0],field[2]) for field in graph_name_result)
             graph_name = [field[1] for field in graph_name_result]
             headings = []
             merge_result = []
@@ -506,15 +563,21 @@ class AdvancedStatusBll(object):
             device_name = ''
             if len(host_result) > 0:
                 device_type = ('--' if host_result[0][0]
-                               == '' or host_result[0][0] == None else host_result[0][0])
+                                       == '' or host_result[0][0] == None else host_result[0][0])
                 device_name = ('--' if host_result[0][1]
-                               == '' or host_result[0][1] == None else host_result[0][1])
+                                       == '' or host_result[0][1] == None else host_result[0][1])
 
             idu4_port = {'0': '(odu)', '1': '(eth0)', '2':
-                         '(eth1)', '3': '(cpu)', '4': '(maxima)'}
+                '(eth1)', '3': '(cpu)', '4': '(maxima)'}
             #,'idu_portstatisticsTable':idu4_port'idu_portstatisticsTable':idu4_port
-            interface_list = {'get_odu16_nw_interface_statistics_table': {'1': '(eth0)', '2': '(br0)', '3': '(eth1)'}, 'odu100_nwInterfaceStatisticsTable': {'1': '(eth0)', '2': '(eth1)'}, 'ap25_statisticsTable': {'0': '(eth0)', '1': '(br0)', '2': '(ath0)', '3': '(ath1)', '4': '(ath2)', '5': '(ath3)', '6': '(ath4)', '7': '(ath5)', '8': '(ath6)'},
-                              'idu_e1PortStatusTable': {'1': '(port1)', '2': '(port2)', '3': '(port3)', '4': '(port4)'}, 'idu_portstatisticsTable': idu4_port, 'idu_swPrimaryPortStatisticsTable': idu4_port, 'idu_portSecondaryStatisticsTable': idu4_port}
+            interface_list = {'get_odu16_nw_interface_statistics_table': {'1': '(eth0)', '2': '(br0)', '3': '(eth1)'},
+                              'odu100_nwInterfaceStatisticsTable': {'1': '(eth0)', '2': '(eth1)'},
+                              'ap25_statisticsTable': {'0': '(eth0)', '1': '(br0)', '2': '(ath0)', '3': '(ath1)',
+                                                       '4': '(ath2)', '5': '(ath3)', '6': '(ath4)', '7': '(ath5)',
+                                                       '8': '(ath6)'},
+                              'idu_e1PortStatusTable': {'1': '(port1)', '2': '(port2)', '3': '(port3)', '4': '(port4)'},
+                              'idu_portstatisticsTable': idu4_port, 'idu_swPrimaryPortStatisticsTable': idu4_port,
+                              'idu_portSecondaryStatisticsTable': idu4_port}
 
             if report_type == 'excelReport':
                 save_file_name = str(device_name_list[device_type_id]) + '_' + str(
@@ -567,7 +630,7 @@ class AdvancedStatusBll(object):
                     writer.writerow(row1)
                 ofile.close()
             output_dict = {'success': 0, 'output': 'Report Generated Successfully.', 'file_name':
-                           str(save_file_name), 'path': path}
+                str(save_file_name), 'path': path}
             return output_dict
         except MySQLdb as e:
             output_dict = {'success': 1, 'error_msg': 'Error No : 102 ' + str(
@@ -594,6 +657,16 @@ class AdvancedStatusBll(object):
                 conn.close()
 
     def ap_data_table(self, user_id, ip_address, start_date, end_date, graph_id, device_type):
+        """
+
+        @param user_id:
+        @param ip_address:
+        @param start_date:
+        @param end_date:
+        @param graph_id:
+        @param device_type:
+        @return: @raise:
+        """
         try:
             datatable_column_list = []
             merge_result = []
@@ -637,6 +710,13 @@ class AdvancedStatusBll(object):
 
 
 def manage_list(req, given, result):
+    """
+
+    @param req:
+    @param given:
+    @param result:
+    @return:
+    """
     outdata = []
     inpt = result
     for i in inpt:
@@ -644,7 +724,7 @@ def manage_list(req, given, result):
         for k in req:
             li.append("0")
         for j in given:
-            if(req.count(j) >= 1):
+            if (req.count(j) >= 1):
                 loc = given.index(j)
                 wloc = req.index(j)
                 temp = i[loc]
@@ -655,6 +735,11 @@ def manage_list(req, given, result):
 
 
 def merge_list(arg):
+    """
+
+    @param arg:
+    @return:
+    """
     total = len(arg)
     flag = True
     d2 = []

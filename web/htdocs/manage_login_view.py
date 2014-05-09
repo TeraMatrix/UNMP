@@ -8,9 +8,6 @@
 """
 
 
-from datetime import datetime, timedelta
-
-
 class ManageLogin(object):
     @staticmethod
     def create_form():
@@ -35,16 +32,10 @@ class ManageLogin(object):
         except Exception, e:
             return str(e)
 
-    @staticmethod
-    def view_page_tip_manage_login():
-        html_view = ""\
-            "<div id=\"help_container\">"\
-            "<h1>MANAGE LOGIN-SESSION </h1>"\
-            "<div>This page manages login-session of Users</div>"\
-            "<br/>"\
-            "<div>On this page user can end sessions with Inferior Roles.</div>"\
-            "<br/>"\
-            "<div><strong>Actions</strong></div>"\
-            "<div class=\"action-tip\"><div class=\"txt-div\"><div class=\"user-header-icon\"><button class=\"destroy-button\" disabled=\"disabled\"  >Destroy</button>\
-	Destroy the Session of the user.  </div></div></div>"
-        return html_view
+            # @staticmethod
+            # def view_page_tip_manage_login():
+            #     import defaults
+            #     f = open(defaults.web_dir + "/htdocs/locale/view_page_tip_manage_login.html", "r")
+            #     html_view = f.read()
+            #     f.close()
+            #     return str(html_view)

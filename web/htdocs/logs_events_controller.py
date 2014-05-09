@@ -12,11 +12,12 @@
 
 
 # Import modules that contain the function and libraries
+#from datetime import datetime
+from json import JSONEncoder
+from time import time
+
 from logs_events import LogsEvents
 from logs_events_bll import LogsEventsBll
-from time import time
-from json import JSONEncoder
-from datetime import datetime
 
 service_status_list = ["Ok", "Warning", "Critical", "Unknown"]
 
@@ -27,7 +28,7 @@ def manage_logs(h):
     global html
     html = h
     css_list = ["css/demo_table_jui.css", "css/jquery-ui-1.8.4.custom.css"]
-    js_list = ["js/jquery.dataTables.min.js", "js/pages/device_logs.js"]
+    js_list = ["js/lib/main/jquery.dataTables.min.js", "js/unmp/main/device_logs.js"]
     snapin_list = []
     header_btn = LogsEvents().header_buttons()
     html.new_header("Global Logs", "manage_logs.py", header_btn,
@@ -80,7 +81,8 @@ def search_logs(h):
     hosts_dict = LogsEventsBll().get_hosts_dict()
     for i in range(len(query_events_data)):
         # if str(query_events_data[i][3]) != "":
-        query_events_data[i][1] = "<span style=\"display:none;\">%s</span><img src=\"images/new/status-%s.png\" alt=\"%s\"/>" % (
+        query_events_data[i][
+            1] = "<span style=\"display:none;\">%s</span><img src=\"images/new/status-%s.png\" alt=\"%s\"/>" % (
             query_events_data[i][1], query_events_data[i][1], service_status_list[query_events_data[i][1]])
         query_events_data[i][2] = "<span style=\"display:none;\">%s</span>%s" % LogsEventsBll(
         ).convert_time(query_events_data[i][2])
@@ -94,6 +96,7 @@ def search_logs(h):
             final_data.append(query_events_data[i])
     html.req.content_type = 'application/json'
     html.write(JSONEncoder().encode(final_data))
+
 # End-Logs
 
 # Events
@@ -114,7 +117,7 @@ def manage_events(h):
     logtime = html.var("logtime") and html.var("logtime") or "since"
 
     css_list = ["css/demo_table_jui.css", "css/jquery-ui-1.8.4.custom.css"]
-    js_list = ["js/jquery.dataTables.min.js", "js/pages/device_events.js"]
+    js_list = ["js/lib/main/jquery.dataTables.min.js", "js/unmp/main/device_events.js"]
     snapin_list = []
     header_btn = LogsEvents().header_buttons()
     html.new_header("Hosts and Service Events", "manage_events.py",
@@ -160,7 +163,8 @@ def search_events(h):
     logtime_sec += logtime_days * 86400
     time_stamp -= logtime_sec
 
-    query_events = "GET log\nColumns: state log_time host_name service_description log_state_type log_plugin_output\nFilter: host_name ~~ %s\nFilter: service_description ~~ %s\nFilter: log_plugin_output ~~ %s\nFilter: log_time %s %s\nFilter: class = 1" % ("", service, log_plugin_output, logtime_, time_stamp)
+    query_events = "GET log\nColumns: state log_time host_name service_description log_state_type log_plugin_output\nFilter: host_name ~~ %s\nFilter: service_description ~~ %s\nFilter: log_plugin_output ~~ %s\nFilter: log_time %s %s\nFilter: class = 1" % (
+    "", service, log_plugin_output, logtime_, time_stamp)
     html.live.set_prepend_site(True)
     query_events_data = html.live.query(query_events)
     # query_events_data.sort()
@@ -169,7 +173,8 @@ def search_events(h):
     hosts_dict = LogsEventsBll().get_hosts_dict()
     for i in range(len(query_events_data)):
         # if str(query_events_data[i][3]) != "":
-        query_events_data[i][1] = "<span style=\"display:none;\">%s</span><img src=\"images/new/status-%s.png\" alt=\"%s\"/>" % (
+        query_events_data[i][
+            1] = "<span style=\"display:none;\">%s</span><img src=\"images/new/status-%s.png\" alt=\"%s\"/>" % (
             query_events_data[i][1], query_events_data[i][1], service_status_list[query_events_data[i][1]])
         query_events_data[i][2] = "<span style=\"display:none;\">%s</span>%s" % LogsEventsBll(
         ).convert_time(query_events_data[i][2])

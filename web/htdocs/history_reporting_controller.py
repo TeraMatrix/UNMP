@@ -13,10 +13,9 @@
 # Import modules that contain the function and libraries
 from history_reporting_bll import HistoryReportBll
 from history_reporting import Report
-import json
 from json import JSONEncoder
-from datetime import datetime, timedelta
 from common_bll import Essential
+
 user_report_dict = None
 
 
@@ -65,8 +64,8 @@ def history_report(h):
         "css/demo_table_jui.css", "css/calendrical.css", "css/fcbkcomplete.css", "css/style12.css",
         "css/jquery.multiselect.css", "css/jquery.multiselect.filter.css", "css/jquery-ui-1.8.4.custom.css"]
     js_list = [
-        "js/calendrical.js", "js/jquery-ui-1.8.6.custom.min.js", "js/pages/jquery.multiselect.min.js",
-        "js/pages/jquery.multiselect.filter.js", "js/jquery.dataTables.min.js", "js/pages/history_reporting2.js"]
+        "js/lib/main/calendrical.js", "js/lib/main/jquery-ui-1.8.6.custom.min.js", "js/lib/main/jquery.multiselect.min.js",
+        "js/lib/main/jquery.multiselect.filter.js", "js/lib/main/jquery.dataTables.min.js", "js/unmp/main/history_reporting2.js"]
     html.new_header(
         "Backup & Restore", "history_report.py", "", css_list, js_list)
     r = HistoryReportBll()
@@ -98,8 +97,8 @@ def main_report(h):
         "css/demo_table_jui.css", "css/calendrical.css", "css/fcbkcomplete.css", "css/style12.css",
         "css/jquery.multiselect.css", "css/jquery.multiselect.filter.css", "css/jquery-ui-1.8.4.custom.css"]
     js_list = [
-        "js/calendrical.js", "js/jquery-ui-1.8.6.custom.min.js", "js/pages/jquery.multiselect.min.js",
-        "js/pages/jquery.multiselect.filter.js", "js/jquery.dataTables.min.js", "js/pages/history_reporting.js"]
+        "js/lib/main/calendrical.js", "js/lib/main/jquery-ui-1.8.6.custom.min.js", "js/lib/main/jquery.multiselect.min.js",
+        "js/lib/main/jquery.multiselect.filter.js", "js/lib/main/jquery.dataTables.min.js", "js/unmp/main/history_reporting.js"]
     html.new_header(
         "Backup & Restore", "history_report.py", "", css_list, js_list)
     device_type_user_selected_id = None
@@ -107,15 +106,15 @@ def main_report(h):
     user_id = html.req.session["user_id"]
     es = Essential()
     hostgroup_id_list = es.get_hostgroup_ids(user_id)
-    if(hostgroup_id_list == []):
+    if (hostgroup_id_list == []):
         html.write(Report.list_form([], [], device_type_user_selected_id,
-                   device_type_user_selected_name))
+                                            device_type_user_selected_name))
     else:
         result = r.get_hostgroup_device(
             user_id, hostgroup_id_list, db_historical)
         if (result["success"] == 0):
             html.write(Report.list_form(result["result"], result["host_data"],
-                       device_type_user_selected_id, device_type_user_selected_name, month_var))
+                                        device_type_user_selected_id, device_type_user_selected_name, month_var))
         else:
             pass
     html.new_footer()
@@ -211,7 +210,7 @@ def history_reporting_get_excel(h):
     # db_historical=html.req.session["db_historical"]
     db_historical = user_id.replace("-", "_") + "_db"
     user_report_dict = {}
-#    no_of_devices=str(html.var("no_of_devices"))
+    #    no_of_devices=str(html.var("no_of_devices"))
     date_start = str(html.var("start_date"))
     date_end = str(html.var("end_date"))
     time_start = str(html.var("start_time"))
@@ -243,18 +242,20 @@ def history_reporting_get_excel(h):
     new_user_report_dict["end_time"] = time_end
     ####
     result = r.history_reporting_get_excel(
-        date_start, date_end, time_start, time_end, all_host, report_type, column_value, device_type, hostgroup, view_type,
-        i_display_start, i_display_length, s_search, sEcho, sSortDir_0, iSortCol_0, new_user_report_dict, db_historical, username)
+        date_start, date_end, time_start, time_end, all_host, report_type, column_value, device_type, hostgroup,
+        view_type,
+        i_display_start, i_display_length, s_search, sEcho, sSortDir_0, iSortCol_0, new_user_report_dict, db_historical,
+        username)
     html.write(JSONEncoder().encode(result))
 
 
-def view_page_tip_history_reporting(h):
-    global html
-    html = h
-    html.write(Report.page_tip_history_reporting())
-
-
-def view_page_tip_main_history_reporting(h):
-    global html
-    html = h
-    html.write(Report.page_tip_main_history_reporting())
+# def view_page_tip_history_reporting(h):
+#     global html
+#     html = h
+#     html.write(Report.page_tip_history_reporting())
+#
+#
+# def view_page_tip_main_history_reporting(h):
+#     global html
+#     html = h
+#     html.write(Report.page_tip_main_history_reporting())

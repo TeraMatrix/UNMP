@@ -17,10 +17,10 @@
 
 
 ## import module
-import MySQLdb
-import htmllib
 from datetime import datetime
 from datetime import timedelta
+
+import MySQLdb
 from mysql_collection import mysql_connection
 
 # Exception class for own exception handling.
@@ -38,6 +38,7 @@ class SelfException(Exception):
     @organisation: Code Scape Consultants Pvt. Ltd.
     @copyright: 2011 Code Scape Consultants Pvt. Ltd.
     """
+
     def __init__(self, msg):
         output_dict = {'success': 2, 'output': str(msg)}
         html.write(str(output_dict))
@@ -45,6 +46,8 @@ class SelfException(Exception):
 
 def start_page(h):
     """
+
+    @param h:
     @return: this function display the html page for trap information.
     @rtype: return type html page.
     @requires: Its take html object as a argument.
@@ -61,8 +64,8 @@ def start_page(h):
     css_list = ["css/custom.css", "css/demo_table_jui.css",
                 "css/jquery-ui-1.8.4.custom.css", "facebox/facebox.css", "css/calendrical.css"]
     js_list = [
-        "facebox/facebox.js", "js/eventDetails.js", "js/ccpl_utility.js",
-        "js/jquery.dataTables.min.js", "js/calendrical.js"]
+        "facebox/facebox.js", "js/unmp/main/eventDetails.js"
+        "js/lib/main/jquery.dataTables.min.js", "js/lib/main/calendrical.js"]
     h.new_header("Events Details", "", "", css_list, js_list)
     ip_address = html.var("ip_address")
     now = datetime.now()
@@ -98,7 +101,8 @@ def start_page(h):
     html.write("</td>")
 
     html.write("<td>")
-    html.write("<input type=\"radio\" value=\"3\" name=\"option\" id=\"option3\" class=\"table_option\" width=\"12px\" />")
+    html.write(
+        "<input type=\"radio\" value=\"3\" name=\"option\" id=\"option3\" class=\"table_option\" width=\"12px\" />")
     html.write("</td>")
 
     html.write("<td>")
@@ -106,7 +110,8 @@ def start_page(h):
     html.write("</td>")
 
     html.write("<td>")
-    html.write("<input class=\"yo-button yo-small\" type=\"button\" value=\"Advanced Search\" id=\"btn_filter\" name=\"btn_filter\" style=\"margin:10px 20px 10px 200px;\"/>")
+    html.write(
+        "<input class=\"yo-button yo-small\" type=\"button\" value=\"Advanced Search\" id=\"btn_filter\" name=\"btn_filter\" style=\"margin:10px 20px 10px 200px;\"/>")
     html.write("</td>")
 
     html.write("<td style=\"vertical-align:middle;\">")
@@ -120,14 +125,16 @@ def start_page(h):
     html.write("<td>")
     html.write(
         "<div class=\"trap_select_option_div\" style=\" width:100px;\" id=\"normal_div\">")
-    html.write("<img src=\"images/gr.png\"  name=\"select_option_div\" alt=\"Normal\" title=\"Normal\" style=\"width:12px\" class=\"imgbutton\"/><span class=\"inactive-linkclass\" style=\"line-height:20px; padding:0px 12px;cursor:pointer;cursor:hand; \" >Normal</span>")
+    html.write(
+        "<img src=\"images/gr.png\"  name=\"select_option_div\" alt=\"Normal\" title=\"Normal\" style=\"width:12px\" class=\"imgbutton\"/><span class=\"inactive-linkclass\" style=\"line-height:20px; padding:0px 12px;cursor:pointer;cursor:hand; \" >Normal</span>")
     html.write("</div>")
     html.write("</td>")
 
     html.write("<td>")
     html.write(
         "<div class=\"trap_select_option_div\" style=\" width:100px;\" id=\"minor_div\">")
-    html.write("<img src=\"images/yel.png\" alt=\"Minor\" name=\"select_option_div\" title=\"Minor\" class=\"imgbutton\" style=\"width:12px\" /><span class=\"inactive-linkclass\" style=\"line-height:20px; padding:0px 12px;cursor:pointer;cursor:hand; \">Minor</span>")
+    html.write(
+        "<img src=\"images/yel.png\" alt=\"Minor\" name=\"select_option_div\" title=\"Minor\" class=\"imgbutton\" style=\"width:12px\" /><span class=\"inactive-linkclass\" style=\"line-height:20px; padding:0px 12px;cursor:pointer;cursor:hand; \">Minor</span>")
     html.write("</div>")
     html.write("</td>")
 
@@ -234,7 +241,9 @@ def start_page(h):
 		        <div class=\"row-elem\">\
 			    <input type=\"submit\" name=\"submit\" class=\"yo-small yo-button\" id=\"submit_html\" value=\"submit\" />\
 			    <input type=\"button\" class=\"yo-small yo-button\"  id=\"btn_hide\" name=\"btn_hide\" value=\"Hide Search\" />\
-			</div></div></form>' % (trap_status, ("" if ip_address == "" or ip_address == None else ip_address.replace("-", "")), odu_start_date, odu_start_time, odu_end_date, odu_end_time)
+			</div></div></form>' % (
+    trap_status, ("" if ip_address == "" or ip_address == None else ip_address.replace("-", "")), odu_start_date,
+    odu_start_time, odu_end_date, odu_end_time)
     html.write(str(html_form))
     html.write("<div id=\"trap_data_table\">\
 	<table cellspacing=\"0\" cellpadding=\"0\" border=\"0\" id=\"trap_detail\" class=\"display\">\
@@ -245,6 +254,8 @@ def start_page(h):
 
 def trap_filter_function(h):
     """
+
+    @param h:
     @return: this function return the filter result of trap information.
     @rtype: dictinoary.
     @requires: Its required a html object that provide the trap_information page information.
@@ -259,7 +270,7 @@ def trap_filter_function(h):
     global html
     html = h
     image_dic = {0: "images/gr.png", 1: "images/lb.png", 2: "images/gr.png", 3:
-                 "images/yel.png", 4: "images/or.png", 5: "images/red.png"}
+        "images/yel.png", 4: "images/or.png", 5: "images/red.png"}
     image_title_name = {0: "Normal", 1: "Informational", 2: "Normal",
                         3: "Minor", 4: "Major", 5: "Critical"}
     option = html.var(
@@ -324,13 +335,13 @@ def trap_filter_function(h):
         sql += " component_id like '%" + camponent_id + "%'"
         sql_i += 1
 
-    if option == "1": 					# 1 Stand for Current Alarm Details
+    if option == "1":                     # 1 Stand for Current Alarm Details
         table_name = "trap_alarm_current"
         primary_key_id = "trap_alarm_current_id"
-    if option == "2":						# 2 Stand for Clear Alarm Details
+    if option == "2":                        # 2 Stand for Clear Alarm Details
         table_name = "trap_alarm_clear"
         primary_key_id = "trap_alarm_clear_id"
-    if option == "3":					# 3 Stand for All alarm details
+    if option == "3":                    # 3 Stand for All alarm details
         table_name = "trap_alarms"
         primary_key_id = "trap_alarm_id"
 
@@ -367,18 +378,18 @@ def trap_filter_function(h):
 
     if agent_id == "" or agent_id == None:
         sql = "SELECT ta." + primary_key_id + ",ta.event_id,ta.agent_id,ta.trap_receive_date,ta.serevity,ta.trap_event_id,ta.trap_event_type,hosts.device_type_id,hosts.host_alias From " + \
-            table_name + \
-            " as ta INNER JOIN hosts ON ta.agent_id=hosts.ip_address WHERE " + \
-            sql
+              table_name + \
+              " as ta INNER JOIN hosts ON ta.agent_id=hosts.ip_address WHERE " + \
+              sql
     else:
         if "-" in agent_id:
             sql = "SELECT ta." + primary_key_id + ",ta.event_id,ta.agent_id,ta.trap_receive_date,ta.serevity,ta.trap_event_id,ta.trap_event_type,hosts.device_type_id,hosts.host_alias From " + table_name + \
-                " as ta INNER JOIN hosts ON ta.agent_id=hosts.ip_address WHERE agent_id='" + \
-                agent_id.replace("-", "") + "' and " + sql
+                  " as ta INNER JOIN hosts ON ta.agent_id=hosts.ip_address WHERE agent_id='" + \
+                  agent_id.replace("-", "") + "' and " + sql
         else:
             sql = "SELECT " + primary_key_id + ",ta.event_id,ta.agent_id,ta.trap_receive_date,ta.serevity,ta.trap_event_id,ta.trap_event_type,hosts.device_type_id,hosts.host_alias From " + table_name + \
-                " as ta INNER JOIN hosts ON ta.agent_id=hosts.ip_address WHERE agent_id like  '" + \
-                agent_id + "%' and " + sql
+                  " as ta INNER JOIN hosts ON ta.agent_id=hosts.ip_address WHERE agent_id like  '" + \
+                  agent_id + "%' and " + sql
 
     if time_interval is not None and last_time is not None:
         sql += " and ta.timestamp < '%s' and ta.timestamp >= '%s'" % (
@@ -401,7 +412,8 @@ def trap_filter_function(h):
                 for row in result:
                     i += 1
                     img = '<label style="display:none;">%s</label><img src="%s" alt="%s" title="%s" class="imgbutton" style="width:12px" onclick="alarmDetail(\'%s\')"/>' % (
-                        row[4], image_dic[int(row[4])], image_title_name[int(row[4])], image_title_name[int(row[4])], row[0])
+                        row[4], image_dic[int(row[4])], image_title_name[int(row[4])], image_title_name[int(row[4])],
+                        row[0])
                     datetime_object = datetime.strptime(
                         row[3], '%a %b %d %H:%M:%S %Y')
                     data_table.append([img, datetime_object.strftime("%d %B %Y"), datetime_object.strftime(
@@ -459,6 +471,8 @@ def trap_filter_function(h):
 
 def trap_detail_information(h):
     """
+
+    @param h:
     @return: this function provide the information in detail of particular trap.
     @rtype: dictinoary.
     @requires: Its required a html object that provide the trap_information page information.
@@ -644,27 +658,12 @@ def trap_detail_information(h):
             cursor.close()
             db.close()
 
-
-def page_tip_event_details(h):
-    global html
-    html = h
-    html_view = ""\
-        "<div id=\"help_container\">"\
-        "<h1>Events Details</h1>"\
-        "<div><strong>Events Details</strong> shows all event information for all devices.</div>"\
-        "<br/>"\
-        "<div>On this page user can view event information for current,clear and history.</div>"\
-        "<br/>"\
-        "<div><strong>Actions</strong></div>"\
-        "<div><input class=\"table_option\" type=\"radio\" width=\"12px\" checked=\"checked\"\> This option button show the current,clear,history information on click of option button.</div>"\
-        "<div class=\"action-tip\"><div class=\"img-div img-div2\"><img style=\"width:16px;height:16px;\" src=\"images/red.png\"/></div><div class=\"txt-div\">Critical / Major events</div></div>"\
-        "<div class=\"action-tip\"><div class=\"img-div img-div2\"><img style=\"width:16px;height:16px;\" src=\"images/yel.png\"/></div><div class=\"txt-div\">Minor events</div></div>"\
-        "<div class=\"action-tip\"><div class=\"img-div img-div2\"><img style=\"width:16px;height:16px;\" src=\"images/lb.png\"/></div><div class=\"txt-div\">Informationl / Normal events</div></div>"\
-        "<div><input  class=\"yo-button yo-small\" type=\"button\" value=\"Advanced Search\"\> This button open advanced search window.</div>"\
-        "<div><input  class=\"yo-button yo-small\" type=\"button\" value=\"Hide Search\"\> This button hide advanced search window.</div>"\
-        "<div><input  class=\"yo-button yo-small\" type=\"button\" value=\"submit\"\> This button search the event information according to your searching requirement.</div>"\
-        "<br/>"\
-        "<div><strong>Note:</strong>This Events Details page show all events information for all devices, and also provides advanced filtering of Events.\
-        </div>"\
-        "</div>"
-    html.write(str(html_view))
+#
+# def page_tip_event_details(h):
+#     global html
+#     html = h
+#     import defaults
+#     f = open(defaults.web_dir + "/htdocs/locale/page_tip_event_details.html", "r")
+#     html_view = f.read()
+#     f.close()
+#     html.write(str(html_view))

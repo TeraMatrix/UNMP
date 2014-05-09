@@ -1,19 +1,9 @@
 #!/usr/bin/python2.6
 
-import config
-import htmllib
-import pprint
-import sidebar
-import views
-import time
-import defaults
-import os
-import cgi
-import xml.dom.minidom
-import subprocess
 import commands
-import MySQLdb
 import datetime
+
+import MySQLdb
 from lib import *
 from nms_config import *
 
@@ -21,17 +11,17 @@ from nms_config import *
 
 
 def nms_dashboard(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     html.new_header("Dashboard")
     html.write(
-        "<script type=\"text/javascript\" src=\"js/jquery-1.4.4.min.js\"></script>\n")
+        "<script type=\"text/javascript\" src=\"js/lib/main/highcharts.js\"></script>\n")
     html.write(
-        "<script type=\"text/javascript\" src=\"js/highcharts.js\"></script>\n")
-    html.write(
-        "<script type=\"text/javascript\" src=\"js/jquery.validate.min.js\"></script>\n")
-    html.write(
-        "<script type=\"text/javascript\" src=\"js/dashboard.js\"></script>\n")
+        "<script type=\"text/javascript\" src=\"js/unmp/main/dashboard.js\"></script>\n")
     html.write(
         "<link type=\"text/css\" href=\"css/style.css\" rel=\"stylesheet\"></link>\n")
     html.write(
@@ -42,7 +32,8 @@ def nms_dashboard(h):
         "<table style=\"margin-bottom: 0px;\" class=\"addform\" id=\"apGraphHead\"><colgroup><col width=\"auto\"><col width=\"1%\"><col width=\"5%\"></colgroup><tbody><tr><th>Access Point Bandwidth</th><th>")
     html.write(
         "<img class=\"imgbuttondisable\" src=\"images/previous.png\" alt=\"previous\" title=\"Previous Access Points\" onclick=\"accessPointGraphs('previous');\" style=\"float:right;width:16px;\" id=\"previousAP\"/></th><th>")
-    html.write("<img class=\"imgbuttondisable\" src=\"images/next.png\" alt=\"next\" title=\"Next Access Points\" onclick=\"accessPointGraphs('next');\" style=\"float:right;width:16px;\" id=\"nextAP\"/>")
+    html.write(
+        "<img class=\"imgbuttondisable\" src=\"images/next.png\" alt=\"next\" title=\"Next Access Points\" onclick=\"accessPointGraphs('next');\" style=\"float:right;width:16px;\" id=\"nextAP\"/>")
     html.write("</tr></tbody></table>")
     html.write(
         "<div style=\"width:95%;height:250px;float:left;\" id=\"apGraph\"></div>")
@@ -60,10 +51,10 @@ def nms_dashboard(h):
         "<table style=\"margin-bottom: 0px;\" class=\"addform\"><tr><th>System Details</th></tr></table>")
     html.write("<div style=\"width:45%;float:left;margin-left:1%;\">")
     html.write("<div class=\"tab-yo\" style=\"margin:0 10px 15px;\">")
-#     html.write("<div class=\"tab-head\">")
-#     html.write("<h2>System Details")
-#     html.write("</h2>")
-#     html.write("</div>")
+    #     html.write("<div class=\"tab-head\">")
+    #     html.write("<h2>System Details")
+    #     html.write("</h2>")
+    #     html.write("</div>")
     html.write("<div class=\"tab-body\">")
     html.write(
         "<table style=\"width:100%;margin-top:10px;\" cellpadding=\"2\">")
@@ -73,12 +64,16 @@ def nms_dashboard(h):
         "<tr><td style=\"padding:5px 10px;font-weight:bold;\">Uptime</td><td id=\"upTimeDetails\">")
     system_uptime(h)
     html.write("</td><td></td></tr>")
-    html.write("<tr><td style=\"padding:5px 10px;font-weight:bold;\">Memory</td><td id=\"hdDetails\"></td><td><a href=\"javascript:harddiskDetailsClick();\"><img src=\"images/pie-chart-icon.png\" alt=\"Graph\" title=\"Graph\"/></a></td></tr>")
+    html.write(
+        "<tr><td style=\"padding:5px 10px;font-weight:bold;\">Memory</td><td id=\"hdDetails\"></td><td><a href=\"javascript:harddiskDetailsClick();\"><img src=\"images/pie-chart-icon.png\" alt=\"Graph\" title=\"Graph\"/></a></td></tr>")
     html.write(
         "<tr><td style=\"padding:5px 10px;font-weight:bold;\">RAM</td><td id=\"rmDetails\"></td><td><a href=\"javascript:ramDetailsClick();\"><img src=\"images/pie-chart-icon.png\" alt=\"Graph\" title=\"Graph\"/></a></td></tr>")
-    html.write("<tr><td style=\"padding:5px 10px;font-weight:bold;\">Processor</td><td id=\"proDetails\"></td><td><a href=\"javascript:proDetails();\"><img src=\"images/pie-chart-icon.png\" alt=\"Graph\" title=\"Graph\"/></a></td></tr>")
-    html.write("<tr><td style=\"padding:5px 10px;font-weight:bold;\">Bandwidth</td><td id=\"interface1Details\"></td><td><a href=\"javascript:bandDetails(1);\"><img src=\"images/pie-chart-icon.png\" alt=\"Graph\"/ title=\"Graph\"></a></td></tr>")
-    html.write("<tr style=\"display:none;\" id=\"interface2\"><td></td><td id=\"interface2Details\"></td><td><a href=\"javascript:bandDetails(2);\"><img src=\"images/pie-chart-icon.png\" alt=\"Graph\" title=\"Graph\"/></a></td></tr>")
+    html.write(
+        "<tr><td style=\"padding:5px 10px;font-weight:bold;\">Processor</td><td id=\"proDetails\"></td><td><a href=\"javascript:proDetails();\"><img src=\"images/pie-chart-icon.png\" alt=\"Graph\" title=\"Graph\"/></a></td></tr>")
+    html.write(
+        "<tr><td style=\"padding:5px 10px;font-weight:bold;\">Bandwidth</td><td id=\"interface1Details\"></td><td><a href=\"javascript:bandDetails(1);\"><img src=\"images/pie-chart-icon.png\" alt=\"Graph\"/ title=\"Graph\"></a></td></tr>")
+    html.write(
+        "<tr style=\"display:none;\" id=\"interface2\"><td></td><td id=\"interface2Details\"></td><td><a href=\"javascript:bandDetails(2);\"><img src=\"images/pie-chart-icon.png\" alt=\"Graph\" title=\"Graph\"/></a></td></tr>")
     html.write("</table>")
     html.write("</div>")
     html.write("</div>")
@@ -91,6 +86,10 @@ def nms_dashboard(h):
 
 
 def harddisk_details(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     details = commands.getoutput("df /").split("\n")
@@ -108,6 +107,10 @@ def harddisk_details(h):
 
 
 def system_uptime(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     details = commands.getoutput("uptime")
@@ -125,6 +128,10 @@ def system_uptime(h):
 
 
 def ram_details(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     usedMemory = 0
@@ -145,6 +152,10 @@ def ram_details(h):
 
 
 def processor_details(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     now = datetime.datetime.now()
@@ -183,6 +194,10 @@ def processor_details(h):
 
 
 def processor_last_details(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     # Open database connection
@@ -217,6 +232,10 @@ def processor_last_details(h):
 
 
 def bandwidth_last_details(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     # Open database connection
@@ -251,6 +270,10 @@ def bandwidth_last_details(h):
 
 
 def bandwidth_details(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     interface = html.var("inter")
@@ -290,6 +313,10 @@ def bandwidth_details(h):
 
 
 def get_number_of_aps(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     totalAccessPoint = 0
@@ -310,6 +337,10 @@ def get_number_of_aps(h):
 
 
 def ap_graph(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     start = html.var("start")
@@ -362,6 +393,10 @@ def ap_graph(h):
 
 
 def ap_user_graph(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     start = html.var("start")
@@ -381,7 +416,8 @@ def ap_user_graph(h):
     # prepare SQL query to get total number of access points in this system
     sql = "SELECT nms_devices.id,nms_devices.ipaddress,count(nms_devices_connected_user.mac) \
             FROM nms_devices_connected_user RIGHT JOIN nms_devices on nms_devices.id = nms_devices_connected_user.deviceid \
-            AND timestamp BETWEEN '%s' and '%s' WHERE devicetype = '%s' group by nms_devices.id LIMIT %s,%s;" % (end_time, start_time, device_type, start, limit)
+            AND timestamp BETWEEN '%s' and '%s' WHERE devicetype = '%s' group by nms_devices.id LIMIT %s,%s;" % (
+    end_time, start_time, device_type, start, limit)
     cursor.execute(sql)
     result = cursor.fetchall()
     name = ""
@@ -406,17 +442,17 @@ def ap_user_graph(h):
 
 
 def ap_dashboard(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     html.new_header("AP Dashboard")
     html.write(
-        "<script type=\"text/javascript\" src=\"js/jquery-1.4.4.min.js\"></script>\n")
+        "<script type=\"text/javascript\" src=\"js/lib/main/highcharts.js\"></script>\n")
     html.write(
-        "<script type=\"text/javascript\" src=\"js/highcharts.js\"></script>\n")
-    html.write(
-        "<script type=\"text/javascript\" src=\"js/jquery.validate.min.js\"></script>\n")
-    html.write(
-        "<script type=\"text/javascript\" src=\"js/ap_dashboard.js\"></script>\n")
+        "<script type=\"text/javascript\" src=\"js/unmp/main/ap_dashboard.js\"></script>\n")
     html.write(
         "<link type=\"text/css\" href=\"css/style.css\" rel=\"stylesheet\"></link>\n")
     # create tabs for manage configuration
@@ -435,7 +471,8 @@ def ap_dashboard(h):
     html.write(
         "<table class=\"addform teth0\" style=\"display:none;\"><tr><td class=\"button\"><div style=\"width:98%;height:180px;\" id=\"eth0\"></div></td></tr></table>")
     # html.write("")
-    html.write("<table class=\"addform tbr0\" style=\"display:none;\"><tr><td class=\"button\"><div style=\"width:98%;height:180px;\" id=\"br0\"></div></td></tr></table>")
+    html.write(
+        "<table class=\"addform tbr0\" style=\"display:none;\"><tr><td class=\"button\"><div style=\"width:98%;height:180px;\" id=\"br0\"></div></td></tr></table>")
     html.write(
         "<table class=\"addform tath0\" style=\"display:none;\"><tr><td class=\"button\"><div style=\"width:98%;height:180px;\" id=\"ath0\"></div></td></tr></table>")
     html.write(
@@ -465,6 +502,10 @@ def ap_dashboard(h):
 
 
 def ap_interfaces(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     apIp = html.var("apIp")
@@ -479,7 +520,8 @@ def ap_interfaces(h):
     cursor = db.cursor()
 
     # get Interfaces Name
-    sql = "select interface from nms_devices_bandwidth inner join nms_devices on nms_devices_bandwidth.deviceid = nms_devices.id where nms_devices.ipaddress = '%s' group by interface" % (apIp)
+    sql = "select interface from nms_devices_bandwidth inner join nms_devices on nms_devices_bandwidth.deviceid = nms_devices.id where nms_devices.ipaddress = '%s' group by interface" % (
+    apIp)
     cursor.execute(sql)
     interfaceList = cursor.fetchall()
     cursor.close()
@@ -509,6 +551,10 @@ def ap_interfaces(h):
 
 
 def get_uptime_connected_client(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     ip_address = html.var("ap_ip")
@@ -522,7 +568,10 @@ def get_uptime_connected_client(h):
     cursor = db.cursor()
 
     # create query to get uptime
-    sql = "select uptime from nms_devices_uptime inner join nms_devices on nms_devices.id = nms_devices_uptime.deviceid where nms_devices.ipaddress = '%s'" % (
+    sql = "SELECT uptime \
+            from nms_devices_uptime \
+            inner join nms_devices on nms_devices.id = nms_devices_uptime.deviceid \
+            where nms_devices.ipaddress = '%s'" % (
         ip_address)
     cursor.execute(sql)
     result = cursor.fetchall()
@@ -533,15 +582,23 @@ def get_uptime_connected_client(h):
     # prepare a cursor object using cursor() method
     cursor = db.cursor()
 
+    now_time = datetime.datetime.now()
     # create query to get currently connected clients
-    sql = "select count(mac) from nms_devices_connected_user inner join nms_devices on nms_devices.id = nms_devices_connected_user.deviceid where nms_devices.ipaddress = '%s' AND timestamp BETWEEN now()-INTERVAL %s MINUTE AND now();" % (
-        ip_address, refresh_time)
+    sql = "SELECT count(mac) from nms_devices_connected_user \
+            inner join nms_devices on nms_devices.id = nms_devices_connected_user.deviceid \
+            where nms_devices.ipaddress = '%s' \
+            AND timestamp BETWEEN '%s'-INTERVAL %s MINUTE AND '%s';" % (
+        ip_address, now_time, refresh_time, now_time)
     cursor.execute(sql)
     clients = cursor.fetchone()[0]
     html.write("{uptime:\"%s\",clients:\"%s\"}" % (uptime, clients))
 
 
 def access_point_details_table(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     start = 0
@@ -589,8 +646,8 @@ def access_point_details_table(h):
     if count_i > 0:
         interfaces += "}"
     jsonString = "{apId:[" + apId + "],ap:[" + ap + "],upTime:[" + upTime + \
-        "],connectedUser:[" + connectedUser + "],interfaces:[" + \
-        interfaces + "]}"
+                 "],connectedUser:[" + connectedUser + "],interfaces:[" + \
+                 interfaces + "]}"
     html.write(jsonString)
 
 ############################################ End AP Dashboard ############
@@ -599,19 +656,19 @@ def access_point_details_table(h):
 
 
 def ap_clients_dashboard(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     html.new_header("AP Clients Dashboard")
     html.write(
-        "<script type=\"text/javascript\" src=\"js/jquery-1.4.4.min.js\"></script>\n")
+        "<script type=\"text/javascript\" src=\"js/lib/main/highcharts.js\"></script>\n")
     html.write(
-        "<script type=\"text/javascript\" src=\"js/highcharts.js\"></script>\n")
+        "<script type=\"text/javascript\" src=\"js/unmp/main/grid.js\"></script>\n")
     html.write(
-        "<script type=\"text/javascript\" src=\"js/grid.js\"></script>\n")
-    html.write(
-        "<script type=\"text/javascript\" src=\"js/jquery.validate.min.js\"></script>\n")
-    html.write(
-        "<script type=\"text/javascript\" src=\"js/ap_clients_dashboard.js\"></script>\n")
+        "<script type=\"text/javascript\" src=\"js/unmp/main/ap_clients_dashboard.js\"></script>\n")
     html.write(
         "<link type=\"text/css\" href=\"css/style.css\" rel=\"stylesheet\"></link>\n")
     # create tabs for manage configuration
@@ -633,7 +690,9 @@ def ap_clients_dashboard(h):
     sql = "SELECT COUNT(*) from nms_devices WHERE devicetype = 'AP'"
 
     cursor.execute(sql)
-    html.write("<div id=\"ap_details\" style=\"float:right;font-size:10px;color:#555;font-weight:bold;padding:10px 20px;\">Total Access Points: %s</div>" % cursor.fetchone()[0])
+    html.write(
+        "<div id=\"ap_details\" style=\"float:right;font-size:10px;color:#555;font-weight:bold;padding:10px 20px;\">Total Access Points: %s</div>" %
+        cursor.fetchone()[0])
     html.write("</div>")
 
     # graph division
@@ -650,6 +709,10 @@ def ap_clients_dashboard(h):
 
 
 def ap_connected_user(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     # Open database connection
@@ -659,21 +722,27 @@ def ap_connected_user(h):
     cursor = db.cursor()
 
     # prepare SQL query to get total access points in this system
-    sql = "select a.id,a.ipaddress, b.mac,b.timestamp,b.create_timestamp, b.vap, IF(b.timestamp>(now()-INTERVAL 1 MINUTE),0,1) from nms_devices a inner join nms_devices_connected_user as b on a.id = b.deviceid"
+    sql = "SELECT a.id,a.ipaddress, b.mac,b.timestamp,b.create_timestamp, b.vap, \
+                    IF(b.timestamp>('%s'-INTERVAL 1 MINUTE),0,1) \
+            from nms_devices as a \
+            inner join nms_devices_connected_user as b \
+            on a.id = b.deviceid" % (datetime.datetime.now())
     cursor.execute(sql)
     result = cursor.fetchall()
     i = 0
     html.write("<table class=\"addform\">")
     html.write(
         "<colgroup><col width='3%'/><col width='7%'/><col width='30%'/><col width='30%'/><col width='20%'/><col width='10%'/></colgroup>")
-    html.write("<tr><th>S.No</th><th>Status</th><th>Client Mac</th><th>Recent Access Point</th><th>Last seen</th><th>Interface</th></tr>")
+    html.write(
+        "<tr><th>S.No</th><th>Status</th><th>Client Mac</th><th>Recent Access Point</th><th>Last seen</th><th>Interface</th></tr>")
     for row in result:
         status = "<img width=\"10px\" alt=\"1\" src=\"images/status-2.png\">"
         if int(row[6]) == 0:
             status = "<img width=\"10px\" alt=\"0\" src=\"images/status-0.png\">"
         html.write(
             "<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>ath%s</td></tr>" % ((i + 1), status,
-                                                                                                row[2], row[1], row[3], (int(row[5]) - 1)))
+                                                                                                row[2], row[1], row[3],
+                                                                                                (int(row[5]) - 1)))
         i += 1
     if i == 0:
         html.write("<tr><td colspan='6'> No Client Exist</td></tr>")
@@ -681,6 +750,10 @@ def ap_connected_user(h):
 
 
 def get_overall_bandwidth(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     now = datetime.datetime.now()
@@ -716,29 +789,33 @@ def get_overall_bandwidth(h):
 
 ##### new check_mk dashboard ######
 def dashlet_hoststats():
+    """
+
+
+    """
     table = [
         (_("Up"), "#0b3",
-            "searchhost&is_host_scheduled_downtime_depth=0&hst0=on",
-            "Stats: state = 0\n"
-            "Stats: scheduled_downtime_depth = 0\n"
-            "StatsAnd: 2\n"),
+         "searchhost&is_host_scheduled_downtime_depth=0&hst0=on",
+         "Stats: state = 0\n"
+         "Stats: scheduled_downtime_depth = 0\n"
+         "StatsAnd: 2\n"),
 
         (_("Down"), "#f00",
-            "searchhost&is_host_scheduled_downtime_depth=0&hst1=on",
-            "Stats: state = 1\n"
-            "Stats: scheduled_downtime_depth = 0\n"
-            "StatsAnd: 2\n"),
+         "searchhost&is_host_scheduled_downtime_depth=0&hst1=on",
+         "Stats: state = 1\n"
+         "Stats: scheduled_downtime_depth = 0\n"
+         "StatsAnd: 2\n"),
 
         (_("Unreachable"), "#f80",
-            "searchhost&is_host_scheduled_downtime_depth=0&hst2=on",
-            "Stats: state = 2\n"
-            "Stats: scheduled_downtime_depth = 0\n"
-            "StatsAnd: 2\n"),
+         "searchhost&is_host_scheduled_downtime_depth=0&hst2=on",
+         "Stats: state = 2\n"
+         "Stats: scheduled_downtime_depth = 0\n"
+         "StatsAnd: 2\n"),
 
         (_("In Downtime"), "#0af",
-            "searchhost&search=1&is_host_scheduled_downtime_depth=1",
-            "Stats: scheduled_downtime_depth > 0\n"
-         )
+         "searchhost&search=1&is_host_scheduled_downtime_depth=1",
+         "Stats: scheduled_downtime_depth > 0\n"
+        )
     ]
     filter = "Filter: custom_variable_names < _REALNAME\n"
 
@@ -746,55 +823,59 @@ def dashlet_hoststats():
 
 
 def dashlet_servicestats():
+    """
+
+
+    """
     table = [
         (_("OK"), "#0b3",
-            "searchsvc&hst0=on&st0=on&is_in_downtime=0",
-            "Stats: state = 0\n"
-            "Stats: scheduled_downtime_depth = 0\n"
-            "Stats: host_scheduled_downtime_depth = 0\n"
-            "Stats: host_state = 0\n"
-            "Stats: host_has_been_checked = 1\n"
-            "StatsAnd: 5\n"),
+         "searchsvc&hst0=on&st0=on&is_in_downtime=0",
+         "Stats: state = 0\n"
+         "Stats: scheduled_downtime_depth = 0\n"
+         "Stats: host_scheduled_downtime_depth = 0\n"
+         "Stats: host_state = 0\n"
+         "Stats: host_has_been_checked = 1\n"
+         "StatsAnd: 5\n"),
 
         (_("In Downtime"), "#0af",
-            "searchsvc&is_in_downtime=1",
-            "Stats: scheduled_downtime_depth > 0\n"
-            "Stats: host_scheduled_downtime_depth > 0\n"
-            "StatsOr: 2\n"),
+         "searchsvc&is_in_downtime=1",
+         "Stats: scheduled_downtime_depth > 0\n"
+         "Stats: host_scheduled_downtime_depth > 0\n"
+         "StatsOr: 2\n"),
 
         (_("On Down host"), "#048",
-            "searchsvc&hst1=on&hst2=on&hstp=on&is_in_downtime=0",
-            "Stats: scheduled_downtime_depth = 0\n"
-            "Stats: host_scheduled_downtime_depth = 0\n"
-            "Stats: host_state != 0\n"
-            "StatsAnd: 3\n"),
+         "searchsvc&hst1=on&hst2=on&hstp=on&is_in_downtime=0",
+         "Stats: scheduled_downtime_depth = 0\n"
+         "Stats: host_scheduled_downtime_depth = 0\n"
+         "Stats: host_state != 0\n"
+         "StatsAnd: 3\n"),
 
         (_("Warning"), "#ff0",
-            "searchsvc&hst0=on&st1=on&is_in_downtime=0",
-            "Stats: state = 1\n"
-            "Stats: scheduled_downtime_depth = 0\n"
-            "Stats: host_scheduled_downtime_depth = 0\n"
-            "Stats: host_state = 0\n"
-            "Stats: host_has_been_checked = 1\n"
-            "StatsAnd: 5\n"),
+         "searchsvc&hst0=on&st1=on&is_in_downtime=0",
+         "Stats: state = 1\n"
+         "Stats: scheduled_downtime_depth = 0\n"
+         "Stats: host_scheduled_downtime_depth = 0\n"
+         "Stats: host_state = 0\n"
+         "Stats: host_has_been_checked = 1\n"
+         "StatsAnd: 5\n"),
 
         (_("Unknown"), "#f80",
-            "searchsvc&hst0=on&st3=on&is_in_downtime=0",
-            "Stats: state = 3\n"
-            "Stats: scheduled_downtime_depth = 0\n"
-            "Stats: host_scheduled_downtime_depth = 0\n"
-            "Stats: host_state = 0\n"
-            "Stats: host_has_been_checked = 1\n"
-            "StatsAnd: 5\n"),
+         "searchsvc&hst0=on&st3=on&is_in_downtime=0",
+         "Stats: state = 3\n"
+         "Stats: scheduled_downtime_depth = 0\n"
+         "Stats: host_scheduled_downtime_depth = 0\n"
+         "Stats: host_state = 0\n"
+         "Stats: host_has_been_checked = 1\n"
+         "StatsAnd: 5\n"),
 
         (_("Critical"), "#f00",
-            "searchsvc&hst0=on&st2=on&is_in_downtime=0",
-            "Stats: state = 2\n"
-            "Stats: scheduled_downtime_depth = 0\n"
-            "Stats: host_scheduled_downtime_depth = 0\n"
-            "Stats: host_state = 0\n"
-            "Stats: host_has_been_checked = 1\n"
-            "StatsAnd: 5\n"),
+         "searchsvc&hst0=on&st2=on&is_in_downtime=0",
+         "Stats: state = 2\n"
+         "Stats: scheduled_downtime_depth = 0\n"
+         "Stats: host_scheduled_downtime_depth = 0\n"
+         "Stats: host_state = 0\n"
+         "Stats: host_has_been_checked = 1\n"
+         "StatsAnd: 5\n"),
     ]
     filter = "Filter: host_custom_variable_names < _REALNAME\n"
 
@@ -802,6 +883,13 @@ def dashlet_servicestats():
 
 
 def render_statistics(pie_id, what, table, filter):
+    """
+
+    @param pie_id:
+    @param what:
+    @param table:
+    @param filter:
+    """
     html.write("<div class=stats>")
     pie_diameter = 130
     pie_left_aspect = 0.5
@@ -824,7 +912,7 @@ def render_statistics(pie_id, what, table, filter):
     total = sum([x[1] for x in pies])
 
     html.write('<canvas class=pie width=%d height=%d id="%s_stats" style="float: left"></canvas>' %
-              (pie_diameter, pie_diameter, pie_id))
+               (pie_diameter, pie_diameter, pie_id))
     html.write('<img src="images/globe.png" class="globe">')
 
     html.write('<table class="hoststats%s" style="float:left">' % (
@@ -859,7 +947,7 @@ def render_statistics(pie_id, what, table, filter):
         # of the radius.
         separator = 0.02                                    # 3% of radius
         remaining_separatorspace = num_nonzero * \
-            separator  # space for separators
+                                   separator  # space for separators
         remaining_radius = 1 - remaining_separatorspace     # remaining space
         remaining_part = 1.0  # keep track of remaining part, 1.0 = 100%
 
@@ -872,7 +960,7 @@ def render_statistics(pie_id, what, table, filter):
                 # compute radius of this sphere *including all inner spheres!* The first
                 # sphere always gets a radius of 1.0, of course.
                 radius = remaining_separatorspace + \
-                    remaining_radius * (remaining_part ** (1 / 3.0))
+                         remaining_radius * (remaining_part ** (1 / 3.0))
                 pie_parts.append('chart_pie("%s", %f, %f, %r);' % (
                     pie_id, pie_right_aspect, radius, color))
                 pie_parts.append('chart_pie("%s", -%f, %f, %r);' % (
@@ -909,4 +997,4 @@ function chart_pie(pie_id, x_scale, radius, color) {
 if (has_canvas_support()) {
     %(p)s
 }
-""" % { "x" : pie_diameter / 2, "y": pie_diameter / 2, "d" : pie_diameter, 'p': '\n'.join(pie_parts) })
+""" % {"x": pie_diameter / 2, "y": pie_diameter / 2, "d": pie_diameter, 'p': '\n'.join(pie_parts)})

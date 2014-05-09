@@ -149,10 +149,11 @@ class Report(object):
 		</select></div>\
 		<div class="row-elem">\
 		<label class=\"lbl lbl-big\" style="width:100px;">Hostgroup:</label>\
-		<select name="multiselect_hostgroup" id="multiselect_hostgroup" class="multiselect" multiple="multiple" title="Click to select an option">' % (str(host_data), str(result), device_type_user_selected_id, device_type_user_selected_name, month_str)
+		<select name="multiselect_hostgroup" id="multiselect_hostgroup" class="multiselect" multiple="multiple" title="Click to select an option">' % (
+        str(host_data), str(result), device_type_user_selected_id, device_type_user_selected_name, month_str)
         dict_hg = {}
         for i in result:
-            if(str(i[0]) in dict_hg):
+            if (str(i[0]) in dict_hg):
                 pass
             else:
                 html_view += '<option value="%s">%s</option>' % (
@@ -214,25 +215,26 @@ class Report(object):
     def get_columns(selected_columns, non_selected_columns):
         liList = ""
         plusList = ""
-        if(non_selected_columns != [""]):
+        if (non_selected_columns != [""]):
             for row in non_selected_columns:
                 plusList += "<li>" + row + "<img src=\"images/add16.png\" class=\"plus plus\" alt=\"+\" title=\"Add\" id=\"" + \
-                    row + "\" name=\"" + row + "\"/></li>"
+                            row + "\" name=\"" + row + "\"/></li>"
         minusList = ""
         for row in selected_columns:
             minusList += "<li>" + row + "<img src=\"images/minus16.png\" class=\"minus minus\" alt=\"-\" title=\"Remove\" id=\"" + row + "\" name=\"" + \
-                row + "\"/></li>"
+                         row + "\"/></li>"
         selectList = ""
         selectList += "<div class=\"multiSelectList\" id=\"multiSelectList\" style=\"margin-left:120px;margin-top:-10px;\">"
         selectList += "<input type=\"hidden\" id=\"hd\" name=\"hd\" value=\"%s\"/>" % (
             ",".join(selected_columns))
         selectList += "<input type=\"hidden\" id=\"hdTemp\" name=\"hdTemp\" />"
         selectList += "<div class=\"selected\">"
-        selectList += "<div class=\"shead\"><span id=\"count\">%s</span><span> Select Columns</span><a href=\"#\" id=\"rm\">Remove all</a>" % (len(selected_columns))
+        selectList += "<div class=\"shead\"><span id=\"count\">%s</span><span> Select Columns</span><a href=\"#\" id=\"rm\">Remove all</a>" % (
+        len(selected_columns))
         selectList += "</div>"
         selectList += "<ul>" + minusList
         selectList += "</ul></div>"
-#        selectList += "</div>"
+        #        selectList += "</div>"
         selectList += "<div class=\"nonSelected\">"
         selectList += "<div class=\"shead\"><a href=\"#\" id=\"add\">Add all</a>"
         selectList += "</div>"
@@ -241,57 +243,20 @@ class Report(object):
         selectList += "</div>"
         selectList += "</div>"
         return selectList
-
-    @staticmethod
-    def page_tip_history_reporting():
-        html_view = ""\
-            "<div id=\"help_container\">"\
-            "<h1>Backup & Restore</h1>"\
-            "<div>Here you can create backup , restore old backup or clean data of a particular month from system.</div>"\
-            "<br/>"\
-            "<div><strong>Backup Data:</strong> The system will create a backup of the data of selected month.</div>"\
-            "<br/>"\
-            "<div><strong>Restore Data:</strong> The system will restore a backup of the data of selected month. Reports of the selected month will be available after the data is restored .</div>"\
-            "<br/>"\
-            "<div><strong>Clean Data:</strong> This will clean the data of the selected month from the system. Please note that this method is irreversible. </div>"\
-            "<br/>"\
-            "<div><strong>Actions</strong></div>"\
-            "<div class=\"action-tip\"><div class=\"txt-div\"><button type=\"button\" class=\"yo-small yo-button\">view last restored data</span></button>Click here to view the restored data.</div></div>"\
-            "<div class=\"action-tip\"><div class=\"txt-div\"><button type=\"button\" class=\"yo-small yo-button\">clear last restored data</span></button>Click here to clear the restored data.</div></div>"\
-            "<br/>"\
-            "</div>"
-        return html_view
-
-    @staticmethod
-    def page_tip_main_history_reporting():
-        html_view = ""\
-            "<div id=\"help_container\">"\
-            "<h1>Backup & Restore</h1>"\
-            "<div><strong></strong> This page generates report for different hostgroups,device types and different hosts.</div>"\
-            "<br/>"\
-            "<div>On this page you can view report for different date and time periods alongwith different hostgroups,device types and different hosts .</div>"\
-            "<br/>"\
-            "<div>Delta stands for the change in the consecutive values of fields .</div>"\
-            "<br/>"\
-            "<div><b>Hostgroup</b>: This drop down selects hostgroups for the report.</div>"\
-            "<br/>"\
-            "<div><b>Device Type</b>: This drop down selects device type for the report.</div>"\
-            "<br/>"\
-            "<div><b>Report Type</b>:This drop down selects report type for the selected device type.</div>"\
-            "<br/>"\
-            "<div><b>Host Name</b>:This drop down selects Hosts for the selected device type . You can also search hosts here.</div>"\
-            "<br/>"\
-            "<div><b>Date-Time Range</b>:Here you select the date-time range for the report to be generated.</div>"\
-            "<br/>"\
-            "<div><strong>Actions</strong></div>"\
-            "<div class=\"action-tip\"><div class=\"txt-div\"><button type=\"submit\" class=\"yo-small yo-button\"><span class=\"ok\">View</span></button> Click here to submit the data.</div></div>"\
-            "<div class=\"action-tip\"><div class=\"txt-div\"><button type=\"button\" class=\"yo-small yo-button\"><span class=\"report\">Excel Report</span></button>Click here to download the report in Excel format.</div></div>"\
-            "<div class=\"action-tip\"><div class=\"txt-div\"><button type=\"button\" class=\"yo-small yo-button\"><span class=\"report\">CSV Report</span></button>Click here to download the report in CSV format.</div></div>"\
-            "<div class=\"action-tip\"><div class=\"txt-div\"><button class=\"yo-button disabled\"type=\"button\" disabled=\"disabled\" style=\"width:90px;\">\
-        		More Options >>:</button>:Click and select the headings for which report will be generated.</div></div>"\
-            "<br/>"\
-            "<div><strong>Note:</strong> You can't choose dates greater than current date and start date should be less than end date.</div>"\
-            "<br/>"\
-            "</div>"
-        return html_view
-        return html_view
+        #
+        # @staticmethod
+        # def page_tip_history_reporting():
+        #     import defaults
+        #     f = open(defaults.web_dir + "/htdocs/locale/page_tip_history_reporting.html", "r")
+        #     html_view = f.read()
+        #     f.close()
+        #     return str(html_view)
+        #
+        # @staticmethod
+        # def page_tip_main_history_reporting():
+        #     import defaults
+        #     f = open(defaults.web_dir + "/htdocs/locale/page_tip_main_history_reporting.html", "r")
+        #     html_view = f.read()
+        #     f.close()
+        #     return str(html_view)
+        #

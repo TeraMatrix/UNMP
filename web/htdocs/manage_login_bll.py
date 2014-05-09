@@ -61,23 +61,28 @@ class ManageLoginBll(object):
                 temp_list = make_list(row)
                 if temp_list[4] == "1":
                     temp_list[4] = "Yes"
-                    if(res2[0][0] == "SuperAdmin"):
+                    if (res2[0][0] == "SuperAdmin"):
                         if (temp_list[2] == "SuperAdmin"):
                             # temp_list.pop()
                             temp_list.append(
-                                '<button class=\"destroy-button\" disabled="disabled" id="del_user_%s" >Destroy</button>' % (temp_list[0]))
+                                '<button class=\"destroy-button\" disabled="disabled" id="del_user_%s" >Destroy</button>' % (
+                                temp_list[0]))
                         else:
                             # temp_list.pop()
                             temp_list.append(
-                                '<button class=\"destroy-button\" id="del_user_%s" onclick="delUser(\'%s\');">Destroy</button>' % (temp_list[0], temp_list[0]))
+                                '<button class=\"destroy-button\" id="del_user_%s" onclick="delUser(\'%s\');">Destroy</button>' % (
+                                temp_list[0], temp_list[0]))
                     else:
-                        if(temp_list[2] == "Admin" or temp_list[2] == "SuperAdmin"):
+                        if (temp_list[2] == "Admin" or temp_list[2] == "SuperAdmin"):
                             # temp_list.pop()
-                            temp_list.append('<button class=\"destroy-button\" disabled="disabled"  id="del_user_%s" >Destroy</button>' % (temp_list[0]))
+                            temp_list.append(
+                                '<button class=\"destroy-button\" disabled="disabled"  id="del_user_%s" >Destroy</button>' % (
+                                temp_list[0]))
                         else:
                             if username.lower() == temp_list[0].lower():
                                 temp_list.append(
-                                    '<button class=\"destroy-button\" disabled="disabled"  id="del_user_%s" >Destroy</button>' % (temp_list[0]))
+                                    '<button class=\"destroy-button\" disabled="disabled"  id="del_user_%s" >Destroy</button>' % (
+                                    temp_list[0]))
                             else:
                             # temp_list.pop()
                             # temp_list.append('<img original-title="Delete
@@ -87,13 +92,15 @@ class ManageLoginBll(object):
                             # -tip-image" onclick="delUser(\'%s\');">'
                             # %(temp_list[0],temp_list[0]))
                                 temp_list.append(
-                                    '<button class=\"destroy-button\" id="del_user_%s" onclick="delUser(\'%s\');">Destroy</button>' % (temp_list[0], temp_list[0]))
+                                    '<button class=\"destroy-button\" id="del_user_%s" onclick="delUser(\'%s\');">Destroy</button>' % (
+                                    temp_list[0], temp_list[0]))
 
                 else:
                     temp_list[4] = "No"
                     # temp_list.pop() # on location 4 groupname is stored
                     temp_list.append(
-                        '<button class=\"destroy-button\" disabled="disabled"  id="del_user_%s" >Destroy</button>' % (temp_list[0]))
+                        '<button class=\"destroy-button\" disabled="disabled"  id="del_user_%s" >Destroy</button>' % (
+                        temp_list[0]))
                 log_list.append(temp_list)
             return log_list
         except Exception, e:
@@ -144,7 +151,8 @@ class ManageLoginBll(object):
             conn = MySQLdb.connect(*SystemConfig.get_mysql_credentials())
             cursor = conn.cursor()
             query = "select group_name from users_groups join (select group_name , group_id from groups ) as groups on groups.group_id=users_groups.group_id join \
- 		   (select user_name,user_id from user_login ) as ul on ul.user_id=users_groups.user_id and ul.user_name='%s'" % (user_name)
+ 		   (select user_name,user_id from user_login ) as ul on ul.user_id=users_groups.user_id and ul.user_name='%s'" % (
+            user_name)
             cursor.execute(query)
             result = cursor.fetchall()
             return result

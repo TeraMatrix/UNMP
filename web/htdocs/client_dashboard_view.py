@@ -1,6 +1,4 @@
 #!/usr/bin/python2.6
-from datetime import datetime
-import time
 
 
 class ClientDashboardView(object):
@@ -37,7 +35,7 @@ class ClientDashboardView(object):
             html_page = '</div>'
         return html_page
 
-#         <td style="text-align:left"><button type=\"submit\" id=\"sp_pdf_report\" class=\"yo-button\" style=\"margin-top:5px;\" onclick="spPDFReportGeneration();"><span class=\"save\">PDF</span></button></td>\
+    #         <td style="text-align:left"><button type=\"submit\" id=\"sp_pdf_report\" class=\"yo-button\" style=\"margin-top:5px;\" onclick="spPDFReportGeneration();"><span class=\"save\">PDF</span></button></td>\
 
     @staticmethod
     def sp_table(mac_address, sp_refresh_time, total_count, path, host_id):
@@ -105,27 +103,32 @@ class ClientDashboardView(object):
                             <td class="cell-label">\
                                 AP Alias\
                             </td>\
-                            <td class="cell-info">' + str('--' if result[0] == None or result[0] == ""  else result[0]) + '</td>\
+                            <td class="cell-info">' + str(
+                '--' if result[0] == None or result[0] == ""  else result[0]) + '</td>\
                             <td class="cell-label">\
                                 Client Alias\
                             </td>\
-                            <td class="cell-info">' + str('--' if result[1] == None or result[1] == ""  else result[1]) + '</td>\
+                            <td class="cell-info">' + str(
+                '--' if result[1] == None or result[1] == ""  else result[1]) + '</td>\
                             </tr>\
                             <tr>\
                             <td class="cell-label">\
                                 MAC Address\
                             </td>\
-                            <td class="cell-info">' + str('--' if result[2] == None or result[2] == ""  else result[2]) + '</td>\
+                            <td class="cell-info">' + str(
+                '--' if result[2] == None or result[2] == ""  else result[2]) + '</td>\
                             <td class="cell-label">\
                                 RSSI\
                             </td>\
-                            <td class="cell-info">' + str('--' if result[3] == None or result[3] == ""  else result[3]) + '</td>\
+                            <td class="cell-info">' + str(
+                '--' if result[3] == None or result[3] == ""  else result[3]) + '</td>\
                             </tr>\
                             <tr>\
                             <td class="cell-label">\
                                 VAP\
                             </td>\
-                            <td class="cell-info">' + str('--' if result[4] == None or result[4] == ""  else result[4]) + '</td>\
+                            <td class="cell-info">' + str(
+                '--' if result[4] == None or result[4] == ""  else result[4]) + '</td>\
                             <td class="cell-label">\
                                 Total Tx(Mbps)\
                             </td>\
@@ -135,7 +138,8 @@ class ClientDashboardView(object):
                             <td class="cell-label">\
                                 Total Rx(Mbps)\
                             </td>\
-                            <td class="cell-info">' + str('--' if result[6] == None or result[6] == ""  else result[6]) + '</td>\
+                            <td class="cell-info">' + str(
+                '--' if result[6] == None or result[6] == ""  else result[6]) + '</td>\
                             </tr>\
                         <tbody></table>'
         else:
@@ -234,16 +238,19 @@ class ClientDashboardView(object):
     def sp_get_graph(selected_columns, non_selected_columns):
         liList = ""
         plusList = ""
-        if(len(non_selected_columns) > 0):
+        if (len(non_selected_columns) > 0):
             for row in non_selected_columns:
-                plusList += "<li>" + row[0] + "<img src=\"images/add16.png\" class=\"plus plus\" alt=\"+\" title=\"Add\" id=\"" + \
-                    row[1] + "\" name=\"" + row[0] + "\"/></li>"
+                plusList += "<li>" + row[
+                    0] + "<img src=\"images/add16.png\" class=\"plus plus\" alt=\"+\" title=\"Add\" id=\"" + \
+                            row[1] + "\" name=\"" + row[0] + "\"/></li>"
         minusList = ""
         sel_col_list = []
         for row in selected_columns:
             sel_col_list.append(row[1])
-            minusList += "<li>" + row[0] + "<img src=\"images/minus16.png\" class=\"minus minus\" alt=\"-\" title=\"Remove\" id=\"" + row[1] + "\" name=\"" + row[
-                0] + "\"/></li>"
+            minusList += "<li>" + row[
+                0] + "<img src=\"images/minus16.png\" class=\"minus minus\" alt=\"-\" title=\"Remove\" id=\"" + row[
+                             1] + "\" name=\"" + row[
+                             0] + "\"/></li>"
         selectList = ""
         selectList += "<div class=\"multiSelectList\" id=\"multiSelectList\" style=\"margin-left:120px;margin-top:-10px;\">"
         selectList += "<input type=\"hidden\" id=\"sp\" name=\"sp\" value=\"%s\"/>" % (
@@ -255,7 +262,7 @@ class ClientDashboardView(object):
         selectList += "</div>"
         selectList += "<ul>" + minusList
         selectList += "</ul></div>"
-#        selectList += "</div>"
+        #        selectList += "</div>"
         selectList += "<div class=\"nonSelected\">"
         selectList += "<div class=\"shead\"><a href=\"#\" id=\"add\">Add all</a>"
         selectList += "</div>"

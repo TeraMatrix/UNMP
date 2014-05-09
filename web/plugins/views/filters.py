@@ -84,7 +84,7 @@ declare_filter(
     "Search field allowing regular expression and partial matches")
 
 declare_filter(202, FilterText("output", "Service check output",
-               "service", "service_plugin_output", "service_output", "~~"))
+                               "service", "service_plugin_output", "service_output", "~~"))
 
 
 # Helper that retrieves the list of host/service/contactgroups via Livestatus
@@ -103,7 +103,7 @@ class FilterGroupCombo(Filter):
         htmlvars = [self.prefix + what + "group"]
         if not enforce:
             htmlvars.append("neg_" + htmlvars[0])
-        Filter.__init__(self, self.prefix + what + "group",  # name,     e.g. "hostgroup"
+        Filter.__init__(self, self.prefix + what + "group", # name,     e.g. "hostgroup"
                         what[0].upper() + what[1:] +
                         "group",
                         # title,    e.g. "Hostgroup"
@@ -134,7 +134,7 @@ class FilterGroupCombo(Filter):
         if not current_value:
             if not self.enforce:
                 return ""
-            # Take first group with the name we search
+                # Take first group with the name we search
             current_value = html.live.query_value(
                 "GET %sgroups\nColumns: name\nLimit: 1\n" % self.what, None)
 
@@ -201,6 +201,7 @@ class FilterQueryDropdown(Filter):
         else:
             return ""
 
+
 declare_filter(
     110, FilterQueryDropdown(
         "host_check_command", "Host check command", "host",
@@ -223,8 +224,9 @@ class FilterServiceState(Filter):
         else:
             defval = "on"
         for var, text in [(
-            self.prefix + "st0", "OK"), (self.prefix + "st1", "WARN"),
-                (self.prefix + "st2", "CRIT"), (self.prefix + "st3", "UNKNOWN"), (self.prefix + "stp", "PENDING")]:
+                                  self.prefix + "st0", "OK"), (self.prefix + "st1", "WARN"),
+                          (self.prefix + "st2", "CRIT"), (self.prefix + "st3", "UNKNOWN"),
+                          (self.prefix + "stp", "PENDING")]:
             html.checkbox(var, defval)
             html.write(" %s " % text)
 
@@ -249,6 +251,7 @@ class FilterServiceState(Filter):
             return "Limit: 0\n"  # not allowed state
         else:
             return "".join(headers) + ("Or: %d\n" % len(headers))
+
 
 declare_filter(
     215, FilterServiceState("svcstate", "Service states", ""))
@@ -287,6 +290,7 @@ class FilterHostState(Filter):
             return "Limit: 0\n"  # not allowed state
         else:
             return "".join(headers) + ("Or: %d\n" % len(headers))
+
 
 declare_filter(115, FilterHostState())
 
@@ -341,6 +345,7 @@ class FilterNagiosExpression(FilterTristate):
     def filter_code(self, infoname, positive):
         return positive and self.pos or self.neg
 
+
 declare_filter(
     120, FilterNagiosExpression("host", "summary_host", "Is summary host",
                                 "Filter: host_custom_variable_names >= _REALNAME\n",
@@ -351,17 +356,17 @@ declare_filter(250, FilterNagiosFlag(
 declare_filter(
     251, FilterNagiosExpression(
         "service", "has_performance_data", "Has performance data",
-                                           "Filter: service_perf_data != \n",
-                                           "Filter: service_perf_data = \n"))
+        "Filter: service_perf_data != \n",
+        "Filter: service_perf_data = \n"))
 
 declare_filter(130, FilterNagiosFlag(
     "host", "host_in_notification_period", "Host in notif. period"))
 declare_filter(131, FilterNagiosFlag("host", "host_acknowledged",
-               "Host problem has been acknowledged"))
+                                     "Host problem has been acknowledged"))
 declare_filter(132, FilterNagiosFlag("host", "host_active_checks_enabled",
-               "Host active checks enabled"))
+                                     "Host active checks enabled"))
 declare_filter(133, FilterNagiosFlag("host", "host_notifications_enabled",
-               "Host notifications enabled"))
+                                     "Host notifications enabled"))
 declare_filter(230, FilterNagiosFlag(
     "service", "service_acknowledged", "Problem acknowledged"))
 declare_filter(231, FilterNagiosFlag(
@@ -412,6 +417,7 @@ class FilterSite(Filter):
     def variable_settings(self, row):
         return [("site", row["site"])]
 
+
 declare_filter(500, FilterSite("site", True),
                "Selection of site is enforced, use this filter for joining")
 declare_filter(
@@ -433,7 +439,7 @@ class FilterTime(Filter):
         self.ranges = [(1, "sec"), (60, "min"), (3600, "hours"), (
             86400, "days")]
         Filter.__init__(self, name, title, info, [name] + [name +
-                        "_" + n for (s, n) in self.ranges], [column])
+                                                           "_" + n for (s, n) in self.ranges], [column])
 
     def display(self):
         for s, n in self.ranges:
@@ -483,8 +489,9 @@ class FilterTime(Filter):
     def heading_info(self, infoname):
         return "since the last couple of seconds"
 
+
 declare_filter(250, FilterTime("service", "svc_last_state_change",
-               "Last service state change", "service_last_state_change"))
+                               "Last service state change", "service_last_state_change"))
 declare_filter(251, FilterTime(
     "service", "svc_last_check", "Last service check", "service_last_check"))
 
@@ -554,6 +561,7 @@ class FilterLogClass(Filter):
         else:
             return "".join(headers) + ("Or: %d\n" % len(headers))
 
+
 declare_filter(255, FilterLogClass())
 declare_filter(202, FilterText("log_plugin_output", "Log: plugin output",
-               "log", "log_plugin_output", "log_plugin_output", "~~"))
+                               "log", "log_plugin_output", "log_plugin_output", "~~"))

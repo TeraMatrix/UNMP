@@ -19,7 +19,6 @@
 # from mod_python import apache,util
 from datetime import datetime
 from json import JSONEncoder
-import traceback
 
 from common_bll import Essential
 from common_controller import page_header_search, logme, get_select_list, object_model_di
@@ -48,12 +47,14 @@ host_status_dic = {0: 'No operation',
                    14: 'Status capturing',
                    15: 'Refreshing Site Survey',
                    16: 'Refreshing RA Channel List'
-                   }
+}
 # Device is busy, Device <> is in progress. please wait ...
 
 
 def odu_dashboard(h):
     """
+
+    @param h:
     @requires:
     @return:
     @rtype:
@@ -71,7 +72,9 @@ def odu_dashboard(h):
     html.new_header("UBR Dashboard")
     html.new_footer()
 
+# from profilestats import profile
 
+# @profile
 def odu_listing(h):
     """
     @requires : odu_controller,utility,from common_controller import page_header_search function
@@ -106,12 +109,12 @@ def odu_listing(h):
     css_list = ["css/demo_table_jui.css",
                 "css/jquery-ui-1.8.4.custom.css",
                 'css/ccpl_jquery_combobox.css'
-                ]
-    javascript_list = ["js/jquery.dataTables.min.js",
-                       'js/ccpl_jquery_autocomplete.js',
-                       "js/odu_listing.js"
+    ]
+    javascript_list = ["js/lib/main/jquery.dataTables.min.js",
+                       'js/unmp/main/ccpl_jquery_autocomplete.js',
+                       "js/unmp/main/odu_listing.js"
                        #"static/gateone.js"
-                       ]
+    ]
 
     # This we import the javascript
     ip_address = ""
@@ -148,7 +151,7 @@ def odu_listing(h):
                    "user_management",
                    "schedule",
                    "Listing"
-                   ]
+    ]
     # Here we print the heading of page
     html.new_header("RM18/RM Listing",
                     "odu_listing.py",
@@ -156,7 +159,7 @@ def odu_listing(h):
                     css_list,
                     javascript_list,
                     snapin_list
-                    )
+    )
 
     # Here we call the function pageheadersearch of common_controller \
     # which return the string in html format and we write it on page through html.write
@@ -168,7 +171,7 @@ def odu_listing(h):
                                       selected_device_type,
                                       "enabled",
                                       "device_type")
-                   ))
+    ))
 
     # Here we make a div to show the result in datatable
     table_view = "<div>\
@@ -204,155 +207,64 @@ def odu_listing(h):
     html.new_footer()
 
 
-def page_tip_odu_listing(h):
-    """
-    @param h : html Class Object
-    @var html : this is html Class Object defined globally
-    @since : 12 December 2011
-    @version :0.0
-    @date : 12 December 2011
-    @note : This function is used for diplaying the help of odu Listing page.\
-            Every link help.Every button Help.What output display.\
-            Every Image description.
-    @organisation : Codescape Consultants Pvt. Ltd.
-    @copyright : 2011 Anuj Samariya from Codescape Consultants Pvt. Ltd.
-    """
-    global html
-    html = h
-    html_view = "\
-        <div id=\"help_container\">\
-        <h1>RM/RM18 Listing</h1>\
-        <div>\
-            <strong>RM18/RM Listing</strong>\
-             has shown all RM18/RM Type Devices.On This Page You Can see Various Options\
-        </div>\
-        <br/>\
-        <div>\
-            On this page you can Edit Configuration, Update Firmware,\
-            See Graph and Events for Monitoring of Devices and \
-            also make Reconciliation of Devices.\
-        </div>\
-        <br/>\
-        <div><strong>Actions</strong></div>\
-        <div class=\"action-tip\">\
-            <div class=\"img-div img-div2\">\
-                <img style=\"width:16px;height:16px;\" src=\"images/new/edit.png\"/>\
-            </div>\
-            <div class=\"txt-div\">Edit Configuration</div>\
-            </div>\
-        <div class=\"action-tip\">\
-            <div class=\"img-div img-div2\">\
-            <img style=\"width:16px;height:16px;\" src=\"images/new/graph.png\"/>\
-            </div>\
-            <div class=\"txt-div\">Device Monitoring</div>\
-        </div>\
-        <div class=\"action-tip\">\
-            <div class=\"img-div img-div2\">\
-                <img style=\"width:16px;height:16px;\" src=\"images/new/alert.png\"/>\
-            </div>\
-            <div class=\"txt-div\">Device Events</div>\
-        </div>\
-        <div class=\"action-tip\">\
-            <div class=\"img-div img-div2\">\
-                <img style=\"width:16px;height:16px;\" src=\"images/new/update.png\"/>\
-            </div>\
-            <div class=\"txt-div\">Firmware Upgrade</div>\
-        </div>\
-        <div class=\"action-tip\">\
-            <div class=\"img-div img-div2\">\
-                <img style=\"width:16px;height:16px;\" src=\"images/new/r-green.png\"/>\
-            </div>\
-            <div class=\"txt-div\">Reconciliation done 100%</div>\
-        </div>\
-        <div class=\"action-tip\">\
-            <div class=\"img-div img-div2\">\
-                <img style=\"width:16px;height:16px;\" src=\"images/new/r-black.png\"/>\
-            </div>\
-            <div class=\"txt-div\">Reconciliation done in between 36% and less than 90%</div>\
-        </div>\
-        <div class=\"action-tip\">\
-            <div class=\"img-div img-div2\">\
-                <img style=\"width:16px;height:16px;\" src=\"images/new/r-red.png\"/>\
-            </div>\
-            <div class=\"txt-div\">Reconciliation done in between 0% and 35%</div>\
-        </div>\
-        <br/>\
-        <div>\
-            <strong>Note:</strong>\
-            After Reconciliation The Reconciliation Image changes according to \
-            Reconciliation Percentage</br>\
-            The Reconiliation Images turns Red \
-            when Reconciliation done Between 0 to 35%. </br>\
-            The Reconiliation Images turns Black \
-            when Reconciliation done Between 0 to less than 90%. </br>\
-            The Reconiliation Images turns Green \
-            when Reconciliation Percentage Greater Than and Equal To 90%. </br>\
-        </div>\
-    </div>"
-    html.write(str(html_view))
+# def page_tip_odu_listing(h):
+#     """
+#     @param h : html Class Object
+#     @var html : this is html Class Object defined globally
+#     @since : 12 December 2011
+#     @version :0.0
+#     @date : 12 December 2011
+#     @note : This function is used for diplaying the help of odu Listing page.\
+#             Every link help.Every button Help.What output display.\
+#             Every Image description.
+#     @organisation : Codescape Consultants Pvt. Ltd.
+#     @copyright : 2011 Anuj Samariya from Codescape Consultants Pvt. Ltd.
+#     """
+#     global html
+#     html = h
+#     import defaults
+#     f = open(defaults.web_dir + "/htdocs/locale/page_tip_odu_listing.html", "r")
+#     html_view = f.read()
+#     f.close()
+#     html.write(str(html_view))
 
 
-def page_tip_odu_profiling(h):
-    """
-    @param h : html Class Object
-    @var html : this is html Class Object defined globally
-    @var html_view : this is used to store the html content which is write on page
-    @since : 12 December 2011
-    @version :0.0
-    @date : 12 December 2011
-    @note : This function is used for diplaying the help of odu Profiling page.
-            Every link help.Every Tab Help.What output display.Every Image description.
-            How Forms works.
-    @organisation : Codescape Consultants Pvt. Ltd.
-    @copyright : 2011 Anuj Samariya from Codescape Consultants Pvt. Ltd.
-    """
-    global html
-    html = h
-    html_view = ""\
-        "<div id=\"help_container\">"\
-        "<h1>RM/RM18 Profiling</h1>"\
-        "<div><strong>RM18/RM</strong> Profiling of (Device). You can edit the profiling of individual device.</div>"\
-        "<br/>"\
-        "<div><strong><u>Serach Profile</u></strong>At the top there is Ip Address,MAC Address,and Device Type.By All Of that you can select an individual profile.If more than one device is come in search result then you can move to UBR Listing page</div>"\
-        "<br/>"\
-        "<div><strong><u>Radio Unit</u></strong> On this tab you can manage the channel bandwidth and country code.</div>"\
-        "<br/>"\
-        "<div><strong><u>UNMP</u></strong> On this tab you can manage the UNMP IP Address and Periodic Stats Timer.</div>"\
-        "<br/>"\
-        "<div><strong><u>UNMP Resgistration</u></strong> On this tab You can manage the address,contact person,mobile,alternate contact and email</div>"\
-        "<br/>"\
-        "<div><strong><u>Synchronization</u></strong> On this tab You can manage the Raster Time,Number of slaves,SyncLossThreshold,LeakyBucketTimer,SyncLossTimeOut,SyncTimerAdjust</div>"\
-        "<br/>"\
-        "<div><strong><u>ACL</u></strong> On this tab you can manage ACL Mode and MAC Addresses</div>"\
-        "<br/>"\
-        "<div><strong><u>Radio Frequency</u></strong> On this tab you can manage RF Frequency,RF Coding,MAC tx Power,Max Crc Errors,Leaky Bucket timer</div>"\
-        "<br/>"\
-        "<div><strong><u>Peer MAC</u></strong> On this tab we can manage the Number of slaves and Mac Addresses.</div>"\
-        "<br/>"\
-        "<div><strong><u>Commit To Flash</u></strong> This is a button on the bottom of Page.It save all your page data on device permanently</div>"\
-        "<br/>"\
-        "<div><strong><u>Reboot</u></strong> This is a button on the bottom of Page.It Reboots the devive.When you press reboot there is a loading spin on you page and it stops spinning when deviceis reachable again after reboot.If device is not reachable after 100 sec then loading  automatically hides and show you the message</div>"\
-        "<br/>"\
-        "<div><strong><u>Reconciliation</u></strong> This is a button on the bottom of Page.It save all device data on data storage and show on your page</div>"\
-        "<br/>"\
-        "<div><strong><u>Site Survey Result</u></strong> This is a button on the bottom of Page.It gives a pop up after runs successfully.It takes time to run.</div>"\
-        "<br/>"\
-        "<div><strong><u>BW Calculator</u></strong> This is a button on the bottom of Page.It gives a pop up after click on button.In this pop window there is TX Rate,TX Time and TX BW.TX Rate,TX Time are entered by you and bandwidth is calculated according to that</div>"\
-        "<br/>"\
-        "<div><strong><u>Form Working Description</u></strong> After Click On Save Button Of form.All The values given in form are going to set on the device.If All Values are set then \
-    there is a <img src=\"images/done.png\"/> image is display after every Field.And OK button is display instead of save.After click on ok.the form is display with updated values.\
-    If values are not set then the <img src=\"images/alert_restart.png\"/> image is display after fields which are not set.if No one field are set then it display after Every field on form .\
-    By clicking on retry image after fields ,the value of that field is again going to retry.When retry image is displayed then there are two buttons are also\
-    displayed Retry and Cancel button.When Click on retry button all fields are again going to set in which retry image is diplayed.On click on cancel button \
-    the form is displayed with the updated values which are set and the retry values are discarded and the old values are displayed in that fileds\
-    </div>"\
-        "<br/>"\
-        "</div>"
-    html.write(str(html_view))
+# def page_tip_odu_profiling(h):
+#     """
+#     @param h : html Class Object
+#     @var html : this is html Class Object defined globally
+#     @var html_view : this is used to store the html content which is write on page
+#     @since : 12 December 2011
+#     @version :0.0
+#     @date : 12 December 2011
+#     @note : This function is used for diplaying the help of odu Profiling page.
+#             Every link help.Every Tab Help.What output display.Every Image description.
+#             How Forms works.
+#     @organisation : Codescape Consultants Pvt. Ltd.
+#     @copyright : 2011 Anuj Samariya from Codescape Consultants Pvt. Ltd.
+#     """
+#     global html
+#     html = h
+#     import defaults
+#     f = open(defaults.web_dir + "/htdocs/locale/page_tip_odu_profiling.html", "r")
+#     html_view = f.read()
+#     f.close()
+#     html.write(str(html_view))
 
 
 def form_box(filter_class, a_class, a_href, a_id, a_text, header_text, data_id, width_size='375px'):
+    """
 
+    @param filter_class:
+    @param a_class:
+    @param a_href:
+    @param a_id:
+    @param a_text:
+    @param header_text:
+    @param data_id:
+    @param width_size:
+    @return:
+    """
     tab_str = ""
     for yo in range(0, len(a_href)):
         tab_str += "<a class=\"tab-profile %s\" href=\"%s\" id=\"%s\">%s<span class=\"\"></span></a>" % (
@@ -362,7 +274,8 @@ def form_box(filter_class, a_class, a_href, a_id, a_text, header_text, data_id, 
                     %s\
                     <h3>%s</h3>\
                 </div>\
-                <div class=\"widget-content\" style=\"width:%s\">" % (filter_class, data_id, tab_str, header_text, width_size)
+                <div class=\"widget-content\" style=\"width:%s\">" % (
+    filter_class, data_id, tab_str, header_text, width_size)
     return str_form
 
 
@@ -402,12 +315,12 @@ def odu_profiling(h):
     css_list = ['css/demo_table_jui.css',
                 'css/jquery-ui-1.8.4.custom.css',
                 'css/ccpl_jquery_combobox.css'
-                ]
-    jss_list = ['js/jquery.dataTables.min.js',
-                'js/ccpl_jquery_autocomplete.js',
-                'js/odu_controller.js',
-                'js/jquery-ui-personalized-1.6rc2.min.js'
-                ]
+    ]
+    jss_list = ['js/lib/main/jquery.dataTables.min.js',
+                'js/unmp/main/ccpl_jquery_autocomplete.js',
+                'js/unmp/main/odu_controller.js',
+                'js/lib/main/jquery-ui-personalized-1.6rc2.min.js'
+    ]
 
     # Variable declaration#########################
     # Declare the host id as an empty string
@@ -457,7 +370,7 @@ def odu_profiling(h):
                                       None,
                                       "enabled",
                                       "device_type")
-                   )
+        )
     else:
         snapin_list = ["reports",
                        "views",
@@ -468,15 +381,15 @@ def odu_profiling(h):
                        "user_management",
                        "schedule",
                        "Listing"
-                       ]
+        ]
         html.new_header("%s %s Configuration" % (
             "RM18" if device_type == "odu16" else "RM",
             device_list_param[0][0]),
-            "odu_listing.py",
-            "",
-            css_list,
-            jss_list,
-            snapin_list
+                        "odu_listing.py",
+                        "",
+                        css_list,
+                        jss_list,
+                        snapin_list
         )
 
         html.write(page_header_search(device_list_param[0][0],
@@ -485,7 +398,7 @@ def odu_profiling(h):
                                       device_type,
                                       device_list_state,
                                       "device_type")
-                   )
+        )
 
     # if host_id is None or empty then returns that no profiling exist
     # else the forms of that selected profiling diplays on page
@@ -824,7 +737,7 @@ def odu_profiling(h):
                     name=\"device_type\" \
                     id=\"device_type\" \
                     value=%s>" % (device_type)
-                   )
+        )
         # odu100_profiling_form(h)# function call , it is used to make a form
         # of selected profiling
 
@@ -833,6 +746,8 @@ def odu_profiling(h):
 
 def odu_profiling_form(h, host_id):
     """
+
+    @param host_id:
     @author : Anuj Samariya
     @param h : html Class Object
     @var html : this is html Class Object defined globally
@@ -932,6 +847,10 @@ def odu_profiling_form(h, host_id):
 
 def odu100_profiling_form(host_id, selected_device):
     """
+
+
+    @param host_id:
+    @param selected_device:
     @author : Anuj Samariya
     @param h : html Class Object
     @var html : this is html Class Object defined globally
@@ -1004,20 +923,20 @@ def odu100_profiling_form(host_id, selected_device):
         </div>\
         " % ("style=\"display:none;\"" if firmware_version == '7.2.20' else "",
              odu_configuration_object.odu100_ru_configuration(
-                host_id, selected_device),
+                 host_id, selected_device),
              odu_configuration_object.odu100_omc_configuration(
-                host_id, selected_device),
+                 host_id, selected_device),
              odu_configuration_object.llc_config(host_id, selected_device),
              odu_configuration_object.odu100_sync_configuration(
-                host_id, selected_device),
+                 host_id, selected_device),
              odu_configuration_object.odu100_acl_configuration(
-                host_id, selected_device),
+                 host_id, selected_device),
              odu_configuration_object.odu100_ra_configuration(
-                host_id, selected_device),
+                 host_id, selected_device),
              odu_configuration_object.odu100_peer_configuration(
-                host_id, selected_device),
+                 host_id, selected_device),
              odu_configuration_object.odu100_channel_configuration(
-                host_id, selected_device, 0),
+                 host_id, selected_device, 0),
              "" if firmware_version == '7.2.20' else odu_configuration_object.odu100_packet_filter(
                  host_id, selected_device),
              device_list_param[0][0],
@@ -1046,14 +965,14 @@ def RU_Configuration(h, host_id):
     """
     global html
     html = h
-############### Values get from the database by calling the function ru_config_table_get(host_id) ##################################
+    ############### Values get from the database by calling the function ru_config_table_get(host_id) ##################################
     # ru_config_get Values------------------------------------------------------
     # This is the odu_controller function.
     # It returns the ruconfiguration form parameters and  onfig profile id
     ru_config_get, ru_config_odu16_profile_id = ru_config_table_get(host_id)
     #--------------------------------------------------------------------------
 
-# this is string in which form is define
+    # this is string in which form is define
     str_form = "\
     <form action=\"ru_configuration.py\" method=\"get\" id=\"ru_configuration_form\">\
         <div class=\"row-elem\">\
@@ -1138,13 +1057,13 @@ def RU_Cancel_Configuration(h, host_id):
     """
     global html
     html = h
-############### Values get from the database by calling the function ru_config_table_get(host_id) ##################################
+    ############### Values get from the database by calling the function ru_config_table_get(host_id) ##################################
     # ru_config_get Values----------------------------------------------------
     ru_config_get, ru_config_odu16_profile_id = ru_config_table_get(
         host_id)  # This is the odu_controller function.It returns the ruconfiguration form parameters and  onfig profile id
     #--------------------------------------------------------------------------
 
-# this is string in which form is define
+    # this is string in which form is define
     str_form = "\
     <form action=\"ru_configuration.py\" method=\"get\" id=\"ru_configuration_form\">\
         <div class=\"row-elem\">\
@@ -1192,140 +1111,6 @@ def RU_Cancel_Configuration(h, host_id):
     html.write(str(str_form))
 
 
-### Author - Anuj Samariya
-### This function is displaying form of RU Date Time
-### h -  is used for request
-### host_id - it is come with request and used to find the ip_address,mac_address,device_id of particular device
-### it displays the forms on page
-# def RU_Date_Time(h,host_id):
-##    """
-##    @author : Anuj Samariya
-##    @param h : html Class Object
-##    @param host_id : in this the host id is stored for access of particular host
-##    @var html : this is html Class Object defined globally
-##    @var str_form : this is used to store the html form string
-##    @var ru_date_time : this is used to store the ru date time configuration form details as a list
-##    @var ru_config_profile_id : this is used to store the configuration id for odu16 device
-##    @tab_str : this is used to store the form string
-##    @since : 20 August 2011
-##    @version :0.0
-##    @date : 20 Augugst 2011
-##    @note : this function is used to make the Radio Unit Date Time configuration forms of odu16 device
-##    @organisation : Codescape Consultants Pvt. Ltd.
-##    @copyright : 2011 Anuj Samariya from Codescape Consultants Pvt. Ltd.
-##    @return : retrun the form string in html
-##    @rtype : string
-##    """
-##    global html
-##    html=h
-##    str_form=""
-##    ############### Values get from the database by calling the function ru_date_time_table_get(host_id) ##################################
-##    #host_id = html.var("host_id")
-##    # RU Date Time Configuration ---------------------------------------------------
-##    ru_date_time=[]
-##    ru_date_time,ru_config_profile_id=ru_date_time_table_get(host_id)#This is the odu_controller function.It returns the ru date time form parameters and  onfig profile id
-##    #--------------------------------------------------------------------------
-##    str_form+="<form action=\"ru_date_time_table.py\" method=\"get\" id=\"odu_ru_date_time_form\">\
-##                    <div class=\"row-elem\">\
-##                        <label class=\"lbl lbl-big\">Year:</label>\
-##                        <input type=\"text\" name=\"RU.RUDateTimeTable.Year\" id=\"RU.RUDateTimeTable.Year\" fact=\".1.3.6.1.4.1.26149.2.2.2.1.2.1\" val=\"Integer\" field=\"year\" value=\"%s\" tablename=\"SetOdu16RUDateTimeTable\"/>\
-##                        <input type=\"hidden\" id=\"host_id\" name=\"host_id\" value=\"%s\"/>\
-##                    </div>\
-##                    <div class=\"row-elem\">\
-##                        <label class=\"lbl lbl-big\">Month:</label>\
-##                        <input type=\"text\" name=\"RU.RUDateTimeTable.Month\" id=\"RU.RUDateTimeTable.Month\" fact=\".1.3.6.1.4.1.26149.2.2.2.1.3.1\" val=\"Integer\" field=\"month\" value=\"%s\" tablename=\"SetOdu16RUDateTimeTable\"/>\
-##                    </div>\
-##                    <div class=\"row-elem\">\
-##                        <label class=\"lbl lbl-big\">Day:</label>\
-##                        <input type=\"text\" name=\"RU.RUDateTimeTable.Day\" id=\"RU.RUDateTimeTable.Day\" fact=\".1.3.6.1.4.1.26149.2.2.2.1.4.1\" val=\"Integer\" field=\"day\" value=\"%s\" tablename=\"SetOdu16RUDateTimeTable\"/>\
-##                    </div>\
-##                    <div class=\"row-elem\">\
-##                        <label class=\"lbl lbl-big\">Hour:</label>\
-##                        <input type=\"text\" name=\"RU.RUDateTimeTable.Hour\" id=\"RU.RUDateTimeTable.Hour\" fact=\"1.3.6.1.4.1.26149.2.2.2.1.5.1\"/ val=\"Integer\" field=\"hour\" value=\"%s\" tablename=\"SetOdu16RUDateTimeTable\"/>\
-##                    </div>\
-##                    <div class=\"row-elem\">\
-##                        <label class=\"lbl lbl-big\">Minute:</label>\
-##                        <input type=\"text\" name=\"RU.RUDateTimeTable.Minutes\" id=\"RU.RUDateTimeTable.Minutes\" fact=\"1.3.6.1.4.1.26149.2.2.2.1.6.1\" val=\"Integer\" field=\"min\" value=\"%s\" tablename=\"SetOdu16RUDateTimeTable\"/>\
-##                    </div>\
-##                    <div class=\"row-elem\">\
-##                        <label class=\"lbl lbl-big\">Second:</label>\
-##                        <input type=\"text\" name=\"RU.RUDateTimeTable.Seconds\" id=\"RU.RUDateTimeTable.Seconds\" fact=\"1.3.6.1.4.1.26149.2.2.2.1.7.1\" val=\"Integer\" field=\"sec\" value=\"%s\" tablename=\"SetOdu16RUDateTimeTable\"/>\
-##                    </div>\
-##                    <div class=\"row-elem\">\
-##                        <input type=\"submit\" value=\"Save\" class=\"yo-small yo-button\"/>\
-##                    </div>\
-##                </form>" %("" if ru_date_time[0][0]==None else ru_date_time[0][0],"" if host_id==None else host_id,\
-##           "" if ru_date_time[0][1]==None else ru_date_time[0][1],"" if ru_date_time[0][2]==None else ru_date_time[0][2],"" if ru_date_time[0][3]==None else ru_date_time[0][3],\
-##            "" if ru_date_time[0][4]==None else ru_date_time[0][4],"" if ru_date_time[0][5]==None else ru_date_time[0][5])
-##    return str_form
-##
-##
-### Author - Anuj Samariya
-### This function is displaying form of RU Date Time
-### h -  is used for request
-### host_id - it is come with request and used to find the ip_address,mac_address,device_id of particular device
-### it displays the forms on page
-# def RU_Cancel_Date_Time(h,host_id):
-##    """
-##    @author : Anuj Samariya
-##    @param h : html Class Object
-##    @param host_id : in this the host id is stored for access of particular host
-##    @var html : this is html Class Object defined globally
-##    @var str_form : this is used to store the html form string
-##    @var ru_date_time : this is used to store the ru date time configuration form details as a list
-##    @var ru_config_profile_id : this is used to store the configuration id for odu16 device
-##    @tab_str : this is used to store the form string
-##    @since : 20 August 2011
-##    @version :0.0
-##    @date : 20 Augugst 2011
-##    @note : this function is used to make the Radio Unit Date Time configuration forms of odu16 device on cancel button and write on page
-##    @organisation : Codescape Consultants Pvt. Ltd.
-##    @copyright : 2011 Anuj Samariya from Codescape Consultants Pvt. Ltd.
-##    @return : retrun the form string in html
-##    @rtype : string
-##    """
-##    global html
-##    html=h
-##    str_form=""
-##    ############### Values get from the database by calling the function ru_date_time_table_get(host_id) ##################################
-##    #host_id = html.var("host_id")
-##    # RU Date Time Configuration ---------------------------------------------------
-##    ru_date_time=[]
-##    ru_date_time,ru_config_profile_id=ru_date_time_table_get(host_id)#This is the odu_controller function.It returns the ru date time form parameters and  onfig profile id
-##    #--------------------------------------------------------------------------
-##    str_form+="<form action=\"ru_date_time_table.py\" method=\"get\" id=\"odu_ru_date_time_form\">\
-##                    <div class=\"row-elem\">\
-##                        <label class=\"lbl lbl-big\">Year:</label>\
-##                        <input type=\"text\" name=\"RU.RUDateTimeTable.Year\" id=\"RU.RUDateTimeTable.Year\" fact=\".1.3.6.1.4.1.26149.2.2.2.1.2.1\" val=\"Integer\" field=\"year\" value=\"%s\" tablename=\"SetOdu16RUDateTimeTable\"/>\
-##                        <input type=\"hidden\" id=\"host_id\" name=\"host_id\" value=\"%s\"/>\
-##                    </div>\
-##                    <div class=\"row-elem\">\
-##                        <label class=\"lbl lbl-big\">Month:</label>\
-##                        <input type=\"text\" name=\"RU.RUDateTimeTable.Month\" id=\"RU.RUDateTimeTable.Month\" fact=\".1.3.6.1.4.1.26149.2.2.2.1.3.1\" val=\"Integer\" field=\"month\" value=\"%s\" tablename=\"SetOdu16RUDateTimeTable\"/>\
-##                    </div>\
-##                    <div class=\"row-elem\">\
-##                        <label class=\"lbl lbl-big\">Day:</label>\
-##                        <input type=\"text\" name=\"RU.RUDateTimeTable.Day\" id=\"RU.RUDateTimeTable.Day\" fact=\".1.3.6.1.4.1.26149.2.2.2.1.4.1\" val=\"Integer\" field=\"day\" value=\"%s\" tablename=\"SetOdu16RUDateTimeTable\"/>\
-##                    </div>\
-##                    <div class=\"row-elem\">\
-##                        <label class=\"lbl lbl-big\">Hour:</label>\
-##                        <input type=\"text\" name=\"RU.RUDateTimeTable.Hour\" id=\"RU.RUDateTimeTable.Hour\" fact=\"1.3.6.1.4.1.26149.2.2.2.1.5.1\"/ val=\"Integer\" field=\"hour\" value=\"%s\" tablename=\"SetOdu16RUDateTimeTable\"/>\
-##                    </div>\
-##                    <div class=\"row-elem\">\
-##                        <label class=\"lbl lbl-big\">Minute:</label>\
-##                        <input type=\"text\" name=\"RU.RUDateTimeTable.Minutes\" id=\"RU.RUDateTimeTable.Minutes\" fact=\"1.3.6.1.4.1.26149.2.2.2.1.6.1\" val=\"Integer\" field=\"min\" value=\"%s\" tablename=\"SetOdu16RUDateTimeTable\"/>\
-##                    </div>\
-##                    <div class=\"row-elem\">\
-##                        <label class=\"lbl lbl-big\">Second:</label>\
-##                        <input type=\"text\" name=\"RU.RUDateTimeTable.Seconds\" id=\"RU.RUDateTimeTable.Seconds\" fact=\"1.3.6.1.4.1.26149.2.2.2.1.7.1\" val=\"Integer\" field=\"sec\" value=\"%s\" tablename=\"SetOdu16RUDateTimeTable\"/>\
-##                    </div>\
-##                    <div class=\"row-elem\">\
-##                        <input type=\"submit\" value=\"Save\" class=\"yo-small yo-button\"/>\
-##                    </div>\
-##                </form>" %("" if ru_date_time[0][0]==None else ru_date_time[0][0],"" if host_id==None else host_id,\
-##           "" if ru_date_time[0][1]==None else ru_date_time[0][1],"" if ru_date_time[0][2]==None else ru_date_time[0][2],"" if ru_date_time[0][3]==None else ru_date_time[0][3],\
-##            "" if ru_date_time[0][4]==None else ru_date_time[0][4],"" if ru_date_time[0][5]==None else ru_date_time[0][5])
-##    html.write(str(str_form))
 def Omc_Config(h, host_id):
     """
     @author : Anuj Samariya
@@ -1347,12 +1132,12 @@ def Omc_Config(h, host_id):
     global html
     html = h
     # host_id = html.var("host_id")
-############### Values get from the database by calling the function omc_conf_table_get(host_id) ##################################
-# omc get values-------------------------------------------------------------
+    ############### Values get from the database by calling the function omc_conf_table_get(host_id) ##################################
+    # omc get values-------------------------------------------------------------
     omc_config = []
     omc_config, omc_profile_id = omc_conf_table_get(
         host_id)  # This is the odu_controller function.It returns the omcconfiguration form parameters and  onfig profile id
-#--------------------------------------------------------------------------
+    #--------------------------------------------------------------------------
     str_form = "\
     <form action=\"omc_config_detail.py\" method=\"get\" id=\"omc_configuration_form\">\
         <div class=\"row-elem\">\
@@ -1414,10 +1199,10 @@ def omc_config_form(h, host_id):
     html = h
     # host_id = html.var("host_id")
 
-# omc get values-------------------------------------------------------------
+    # omc get values-------------------------------------------------------------
     omc_config = []
     omc_config, omc_profile_id = omc_conf_table_get(host_id)
-#--------------------------------------------------------------------------
+    #--------------------------------------------------------------------------
     str_form = "\
     <form action=\"omc_config_detail.py\" method=\"get\" id=\"omc_configuration_form\">\
         <div class=\"row-elem\">\
@@ -1454,6 +1239,7 @@ def omc_config_form(h, host_id):
          "" if host_id is None else host_id,
          "" if omc_config[0].periodic_stats_timer is None else omc_config[0].periodic_stats_timer)
     html.write(str(str_form))
+
 ##------------------------------------------------------------------------
 
 
@@ -1463,6 +1249,10 @@ from config_report import get_configuration_details
 
 
 def configuration_report_download(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     host_id = html.var("host_id")
@@ -1495,7 +1285,7 @@ def SysOmc_Registration_Configuration(h, host_id):
     global html
     html = h
     # host_id = html.var("host_id")
-############### Values get from the database by calling the function sys_omc_registration_table_get(host_id) ##################################
+    ############### Values get from the database by calling the function sys_omc_registration_table_get(host_id) ##################################
     # sys_omc_registration_table----------------------------------------------
     sys_omc_registration_table = []
 
@@ -1572,15 +1362,19 @@ def SysOmc_Registration_Configuration(h, host_id):
                 \
         </div>\
     </form>\
-    " % ("" if sys_omc_registration_table[0].sys_omc_register_contact_addr is None else sys_omc_registration_table[0].sys_omc_register_contact_addr,
+    " % ("" if sys_omc_registration_table[0].sys_omc_register_contact_addr is None else sys_omc_registration_table[
+        0].sys_omc_register_contact_addr,
          "" if host_id is None else host_id,
          "" if sys_omc_registration_table[
-             0].sys_omc_register_contact_person is None else sys_omc_registration_table[0].sys_omc_register_contact_person,
+                   0].sys_omc_register_contact_person is None else sys_omc_registration_table[
+             0].sys_omc_register_contact_person,
          "" if sys_omc_registration_table[
-             0].sys_omc_register_contact_mobile is None else sys_omc_registration_table[0].sys_omc_register_contact_mobile,
+                   0].sys_omc_register_contact_mobile is None else sys_omc_registration_table[
+             0].sys_omc_register_contact_mobile,
          "" if sys_omc_registration_table[0].sys_omc_register_alternate_contact is None else sys_omc_registration_table[
-         0].sys_omc_register_alternate_contact,
-         "" if sys_omc_registration_table[0].sys_omc_register_contact_email is None else sys_omc_registration_table[0].sys_omc_register_contact_email)
+             0].sys_omc_register_alternate_contact,
+         "" if sys_omc_registration_table[0].sys_omc_register_contact_email is None else sys_omc_registration_table[
+             0].sys_omc_register_contact_email)
     return str_form
 
 
@@ -1603,7 +1397,7 @@ def sys_registration_form(h, host_id):
     """
     global html
     html = h
-############### Values get from the database by calling the function sys_omc_registration_table_get(host_id) ##################################
+    ############### Values get from the database by calling the function sys_omc_registration_table_get(host_id) ##################################
     # sys_omc_registration_table----------------------------------------------
     sys_omc_registration_table = []
     sys_omc_registration_table, sys_omc_config_profile_id = sys_omc_registration_table_get(
@@ -1676,15 +1470,19 @@ def sys_registration_form(h, host_id):
                 \
         </div>\
     </form>\
-    " % ("" if sys_omc_registration_table[0].sys_omc_register_contact_addr is None else sys_omc_registration_table[0].sys_omc_register_contact_addr,
+    " % ("" if sys_omc_registration_table[0].sys_omc_register_contact_addr is None else sys_omc_registration_table[
+        0].sys_omc_register_contact_addr,
          "" if host_id is None else host_id,
          "" if sys_omc_registration_table[
-             0].sys_omc_register_contact_person is None else sys_omc_registration_table[0].sys_omc_register_contact_person,
+                   0].sys_omc_register_contact_person is None else sys_omc_registration_table[
+             0].sys_omc_register_contact_person,
          "" if sys_omc_registration_table[
-             0].sys_omc_register_contact_mobile is None else sys_omc_registration_table[0].sys_omc_register_contact_mobile,
+                   0].sys_omc_register_contact_mobile is None else sys_omc_registration_table[
+             0].sys_omc_register_contact_mobile,
          "" if sys_omc_registration_table[0].sys_omc_register_alternate_contact is None else sys_omc_registration_table[
-         0].sys_omc_register_alternate_contact,
-         "" if sys_omc_registration_table[0].sys_omc_register_contact_email is None else sys_omc_registration_table[0].sys_omc_register_contact_email)
+             0].sys_omc_register_alternate_contact,
+         "" if sys_omc_registration_table[0].sys_omc_register_contact_email is None else sys_omc_registration_table[
+             0].sys_omc_register_contact_email)
 
     html.write(str(str_form))
 
@@ -1717,7 +1515,7 @@ def Syn_Omc_Registration_Configuration(h, host_id):
     """
     global html
     html = h
-############### Values get from the database by calling the function sync_config_table_get(host_id) ##################################
+    ############### Values get from the database by calling the function sync_config_table_get(host_id) ##################################
     # syn_configuration get Method--------------------------------------------
     sync_config_table, sync_config_profile_id = sync_config_table_get(
         host_id)  # This is the odu_controller function.It returns the synomcregistration form parameters and  onfig profile id
@@ -1917,15 +1715,17 @@ def Llc_Configuration(h, host_id):
     h -  is used for request
     host_id - it is come with request and used to find the ip_address,mac_address,device_id of particular device
     it displays the forms on page
+    @param h:
+    @param host_id:
     """
     global html
     html = h
-############### Values get from the database by calling the function ra_llc_conf_table_get(host_id) ##################################
-# RaLlc Configuration get Method-----------------------------------------------
+    ############### Values get from the database by calling the function ra_llc_conf_table_get(host_id) ##################################
+    # RaLlc Configuration get Method-----------------------------------------------
     ra_llc_config = []
     ra_llc_config, ra_llc_config_id = ra_llc_conf_table_get(
         host_id)  # This is the odu_controller function.It returns the llcconfiguration form parameters and  onfig profile id
-#--------------------------------------------------------------------------
+    #--------------------------------------------------------------------------
     str_form = "\
     <form action=\"ra_llc_configuration.py\" method=\"get\" id=\"ra_llc_config_form\">\
         <div class=\"row-elem\">\
@@ -2015,6 +1815,8 @@ def Llc_Cancel_Configuration(h, host_id):
     h -  is used for request
     host_id - it is come with request and used to find the ip_address,mac_address,device_id of particular device
     it displays the forms on page
+    @param h:
+    @param host_id:
     """
     global html
     html = h
@@ -2089,17 +1891,17 @@ def Acl_Configuration(h, host_id):
     """
     global html
     html = h
-############### Values get from the database by calling the function ra_acl_config_table_get(host_id) ##################################
-# ra_conf_table_get():------------------------------------------------------
+    ############### Values get from the database by calling the function ra_acl_config_table_get(host_id) ##################################
+    # ra_conf_table_get():------------------------------------------------------
     # ra_conf_table,ra_conf_profile_id = ra_conf_table_get(host_id)#This is the odu_controller function.It returns the aclconfiguration form parameters and  onfig profile id
-#--------------------------------------------------------------------------
+    #--------------------------------------------------------------------------
 
-# ru acl configuration get--------------------------------------------------
+    # ru acl configuration get--------------------------------------------------
     ra_acl_config = []
     ra_acl_config, ra_acl_config_profile_id, ra_conf = ra_acl_config_table_get(
         host_id)
-#--------------------------------------------------------------------------
-##########################################################################
+    #--------------------------------------------------------------------------
+    ##########################################################################
     global mac
     # indexmac = ra_acl_config[0][1]
     strmac_li = []
@@ -2111,7 +1913,7 @@ def Acl_Configuration(h, host_id):
     for i in range(0, 10 if len(ra_acl_config) == 0 else len(ra_acl_config)):
         if i < 10:
             temp_var = i + 1 if len(ra_acl_config) == 0 else "" if ra_acl_config[i][
-                1] is None else ra_acl_config[i][1]
+                                                                       1] is None else ra_acl_config[i][1]
             strmac_li.append("\
                 <div class=\"row-elem\" id=\"acl_row_element_%s\">\
                     <label class=\"lbl lbl-big\">MAC Address %s</label>\
@@ -2124,14 +1926,14 @@ def Acl_Configuration(h, host_id):
                         index=\"%s\"/>\
                 </div>\
                 " % (temp_var,
-                   temp_var,
-                   temp_var,
-                   temp_var,
-                   i + 1,
-                   ("" if len(ra_acl_config) == 0 else "" if ra_acl_config[i][
-                    0] is None else ra_acl_config[i][0].replace(
-                        '"', '').replace(" ", "")),
-                   i + 1))
+                     temp_var,
+                     temp_var,
+                     temp_var,
+                     i + 1,
+                     ("" if len(ra_acl_config) == 0 else "" if ra_acl_config[i][
+                                                                   0] is None else ra_acl_config[i][0].replace(
+                         '"', '').replace(" ", "")),
+                     i + 1))
         else:
             strmac_li.append("\
                 <div class=\"row-elem\" id=\"acl_row_element_%s\">\
@@ -2152,14 +1954,14 @@ def Acl_Configuration(h, host_id):
                         onclick=\"deleteAclConfigMacAddress(%s)\" />\
                 </div>\
                 " % (ra_acl_config[i][1],
-                    ra_acl_config[i][1],
-                    ra_acl_config[i][1],
-                    ra_acl_config[i][1],
-                    i + 1,
-                    (ra_acl_config[i][0].replace('"', '').replace(
-                        " ", "") if ra_acl_config[i][0] else ""),
-                    i + 1,
-                    ra_acl_config[i][1]))
+                     ra_acl_config[i][1],
+                     ra_acl_config[i][1],
+                     ra_acl_config[i][1],
+                     i + 1,
+                     (ra_acl_config[i][0].replace('"', '').replace(
+                         " ", "") if ra_acl_config[i][0] else ""),
+                     i + 1,
+                     ra_acl_config[i][1]))
 
     str_form = "\
     <form action=\"acl_config.py\" method=\"get\" id=\"acl_config_form\">\
@@ -2215,17 +2017,17 @@ def Acl_Cancel_Configuration(h, host_id):
     global html
     html = h
 
-############### Values get from the database by calling the function ra_acl_config_table_get(host_id) ##################################
-# ra_conf_table_get():------------------------------------------------------
+    ############### Values get from the database by calling the function ra_acl_config_table_get(host_id) ##################################
+    # ra_conf_table_get():------------------------------------------------------
     # ra_conf_table,ra_conf_profile_id = ra_conf_table_get(host_id)#This is the odu_controller function.It returns the aclconfiguration form parameters and  onfig profile id
-#--------------------------------------------------------------------------
+    #--------------------------------------------------------------------------
 
-# ru acl configuration get--------------------------------------------------
+    # ru acl configuration get--------------------------------------------------
     ra_acl_config = []
     ra_acl_config, ra_acl_config_profile_id, ra_conf = ra_acl_config_table_get(
         host_id)
-#--------------------------------------------------------------------------
-##########################################################################
+    #--------------------------------------------------------------------------
+    ##########################################################################
     global mac
     # indexmac = ra_acl_config[0][1]
     strmac_li = []
@@ -2237,7 +2039,7 @@ def Acl_Cancel_Configuration(h, host_id):
     for i in range(0, 10 if len(ra_acl_config) == 0 else len(ra_acl_config)):
         if i < 10:
             temp_var = i + 1 if len(ra_acl_config) == 0 else "" if ra_acl_config[i][
-                                    1] is None else ra_acl_config[i][1]
+                                                                       1] is None else ra_acl_config[i][1]
             strmac_li.append("\
                 <div class=\"row-elem\" id=\"acl_row_element_%s\">\
                    <label class=\"lbl lbl-big\">MAC Address %s</label>\
@@ -2256,9 +2058,9 @@ def Acl_Cancel_Configuration(h, host_id):
                            temp_var,
                            i + 1,
                            ("" if len(ra_acl_config) == 0 else "" if ra_acl_config[i][0]
-                            is None else ra_acl_config[i][0].replace('"', '')),
+                           is None else ra_acl_config[i][0].replace('"', '')),
                            i + 1)
-                )
+            )
         else:
 
             strmac_li.append("\
@@ -2275,15 +2077,15 @@ def Acl_Cancel_Configuration(h, host_id):
                                 index=\"%s\"/>\
                         <img src=\"images/delete16.png\" alt=\"Delete\" title=\"Delete\" class=\"imgbutton\" onclick=\"deleteAclConfigMacAddress(%s)\" />\
                 </div>" % (ra_acl_config[i][1],
-                            ra_acl_config[i][1],
-                            ra_acl_config[i][1],
-                            ra_acl_config[i][1],
-                            i + 1,
-                            (ra_acl_config[i][0].replace('"',
-                             '') if ra_acl_config[i][0] else ""),
-                            i + 1,
-                            ra_acl_config[i][1])
-                )
+                           ra_acl_config[i][1],
+                           ra_acl_config[i][1],
+                           ra_acl_config[i][1],
+                           i + 1,
+                           (ra_acl_config[i][0].replace('"',
+                                                        '') if ra_acl_config[i][0] else ""),
+                           i + 1,
+                           ra_acl_config[i][1])
+            )
 
     str_form = "<form action=\"acl_config.py\" method=\"get\" id=\"acl_config_form\">\
                     <div class=\"row-elem\">\
@@ -2315,135 +2117,6 @@ def Acl_Cancel_Configuration(h, host_id):
                             "" if host_id is None else host_id)
     html.write(str(str_form))
 
-
-### Author - Anuj Samariya
-### This function is displaying form of LLC Configuration
-### h -  is used for request
-### host_id - it is come with request and used to find the ip_address,mac_address,device_id of particular device
-### it displays the forms on page
-# def Llc_Configuration(h,host_id):
-##    """
-##    @requires:
-##    @return:
-##    @rtype:
-##    @author:Anuj Samariya
-##    @since:
-##    @version:
-##    @date:
-##    @note:
-##    @organisation: Codescape Consultants Pvt. Ltd.
-##    @copyright: 2011 Anuj Samariya from Codescape Consultants Pvt. Ltd.
-##    """
-##    global html
-##    html=h
-##    str_form=""
-################# Values get from the database by calling the function ra_llc_conf_table_get(host_id) ##################################
-### RaLlc Configuration get Method-----------------------------------------------
-##    ra_llc_config=[]
-##    ra_llc_config,ra_llc_config_id=ra_llc_conf_table_get(host_id)#This is the odu_controller function.It returns the llcconfiguration form parameters and  onfig profile id
-###--------------------------------------------------------------------------
-##    str_form+="<form action=\"ra_llc_configuration.py\" method=\"get\" id=\"ra_llc_config_form\">\
-##                        <div class=\"row-elem\">\
-##                            <label class=\"lbl lbl-big\">ARQ Mode</label>\
-##                            <Select id=\"RU.RA.1.LLC.RALLCConfTable.llcArqEnable\" name=\"RU.RA.1.LLC.RALLCConfTable.llcArqEnable\" fact=\".1.3.6.1.4.1.26149.2.2.13.6.1.1.1.1\" val=\"Integer\" value=\"%s\" field=\"llc_arq_enable\" tablename=\"SetOdu16RALlcConfTable\">\
-##                                <option value=\"0\">Disabled(0)</option>\
-##                                <option value=\"1\">Enabled(1)</option>\
-##                            </Select>\
-##                        <input name=\"llcArqEnable\" type=\"hidden\" value=\"%s\"/>\
-##                        \
-##                        \
-##                        </div>\
-##                        <div class=\"row-elem\">\
-##                            <label class=\"lbl lbl-big\">ArqWin(Retransmit Window Size)</label>\
-##                            <input type=\"text\" name=\"RU.RA.1.LLC.RALLCConfTable.arqWin\" id=\"RU.RA.1.LLC.RALLCConfTable.arqWin\" fact=\".1.3.6.1.4.1.26149.2.2.13.6.1.1.2.1\" val=\"Integer\" value=\"%s\" field=\"arq_win\" tablename=\"SetOdu16RALlcConfTable\"/>\
-##                        </div>\
-##                        <div class=\"row-elem\">\
-##                            <label class=\"lbl lbl-big\">Frame Loss Threshold</label>\
-##                            <input type=\"text\" name=\"RU.RA.1.LLC.RALLCConfTable.frameLossThreshold\" id=\"RU.RA.1.LLC.RALLCConfTable.frameLossThreshold\" fact=\".1.3.6.1.4.1.26149.2.2.13.6.1.1.3.1\" val=\"Integer\" value=\"%s\" field=\"frame_loss_threshold \" tablename=\"SetOdu16RALlcConfTable\"/>\
-##                        </div>\
-##                        <div class=\"row-elem\">\
-##                            <label class=\"lbl lbl-big\">Leaky Bucket Timer</label>\
-##                            <input type=\"text\" name=\"RU.RA.1.LLC.RALLCConfTable.leakyBucketTimer\" id=\"RU.RA.1.LLC.RALLCConfTable.leakyBucketTimer\" fact=\".1.3.6.1.4.1.26149.2.2.13.6.1.1.4.1\" val=\"Integer\" value=\"%s\" field=\"leaky_bucket_timer_val\" tablename=\"SetOdu16RALlcConfTable\"/>\
-##                        </div>\
-##                        <div class=\"row-elem\">\
-##                            <label class=\"lbl lbl-big\">Frame Loss Time Out</label>\
-##                            <input type=\"text\" name=\"RU.RA.1.LLC.RALLCConfTable.frameLossTimeout\" id=\"RU.RA.1.LLC.RALLCConfTable.frameLossTimeout\" fact=\".1.3.6.1.4.1.26149.2.2.13.6.1.1.5.1\" val=\"Integer\" value=\"%s\" field=\"frame_loss_timeout\" tablename=\"SetOdu16RALlcConfTable\"/>\
-##                            <input type=\"hidden\" id=\"host_id\" name=\"host_id\" value=\"%s\"/>\
-##                        </div>\
-##                        <div class=\"row-elem\">\
-##                                <input type=\"submit\" value=\"Save\" class=\"yo-small yo-button\"/>\
-##                                \
-##                        </div>\
-##                    </form>" %("" if ra_llc_config[0][0]==None else ra_llc_config[0][0],\
-##            "" if ra_llc_config[0][0]==None else ra_llc_config[0][0],"" if ra_llc_config[0][1]==None else ra_llc_config[0][1],\
-##            "" if ra_llc_config[0][2]== None else ra_llc_config[0][2],"" if ra_llc_config[0][3]==None else ra_llc_config[0][3],\
-##            "" if ra_llc_config[0][4]==None else ra_llc_config[0][3],"" if host_id==None else host_id)
-##    return str_form
-##
-##
-### Author - Anuj Samariya
-### This function is displaying form of LLC Configuration
-### h -  is used for request
-### host_id - it is come with request and used to find the ip_address,mac_address,device_id of particular device
-### it displays the forms on page
-# def Llc_Cancel_Configuration(h,host_id):
-##    """
-##    @requires:
-##    @return:
-##    @rtype:
-##    @author:Anuj Samariya
-##    @since:
-##    @version:
-##    @date:
-##    @note:
-##    @organisation: Codescape Consultants Pvt. Ltd.
-##    @copyright: 2011 Anuj Samariya from Codescape Consultants Pvt. Ltd.
-##    """
-##    global html
-##    html=h
-##    str_form=""
-################# Values get from the database by calling the function ra_llc_conf_table_get(host_id) ##################################
-### RaLlc Configuration get Method-----------------------------------------------
-##    ra_llc_config=[]
-##    ra_llc_config,ra_llc_config_id=ra_llc_conf_table_get(host_id)#This is the odu_controller function.It returns the llcconfiguration form parameters and  onfig profile id
-###--------------------------------------------------------------------------
-##    str_form+="<form action=\"ra_llc_configuration.py\" method=\"get\" id=\"ra_llc_config_form\">\
-##                        <div class=\"row-elem\">\
-##                            <label class=\"lbl lbl-big\">ARQ Mode</label>\
-##                            <Select id=\"RU.RA.1.LLC.RALLCConfTable.llcArqEnable\" name=\"RU.RA.1.LLC.RALLCConfTable.llcArqEnable\" fact=\".1.3.6.1.4.1.26149.2.2.13.6.1.1.1.1\" val=\"Integer\" value=\"%s\" field=\"llc_arq_enable\" tablename=\"SetOdu16RALlcConfTable\">\
-##                                <option value=\"0\">Disabled(0)</option>\
-##                                <option value=\"1\">Enabled(1)</option>\
-##                            </Select>\
-##                        <input name=\"llcArqEnable\" type=\"hidden\" value=\"%s\"/>\
-##                        \
-##                        \
-##                        </div>\
-##                        <div class=\"row-elem\">\
-##                            <label class=\"lbl lbl-big\">ArqWin(Retransmit Window Size)</label>\
-##                            <input type=\"text\" name=\"RU.RA.1.LLC.RALLCConfTable.arqWin\" id=\"RU.RA.1.LLC.RALLCConfTable.arqWin\" fact=\".1.3.6.1.4.1.26149.2.2.13.6.1.1.2.1\" val=\"Integer\" value=\"%s\" field=\"arq_win\" tablename=\"SetOdu16RALlcConfTable\"/>\
-##                        </div>\
-##                        <div class=\"row-elem\">\
-##                            <label class=\"lbl lbl-big\">Frame Loss Threshold</label>\
-##                            <input type=\"text\" name=\"RU.RA.1.LLC.RALLCConfTable.frameLossThreshold\" id=\"RU.RA.1.LLC.RALLCConfTable.frameLossThreshold\" fact=\".1.3.6.1.4.1.26149.2.2.13.6.1.1.3.1\" val=\"Integer\" value=\"%s\" field=\"frame_loss_threshold \" tablename=\"SetOdu16RALlcConfTable\"/>\
-##                        </div>\
-##                        <div class=\"row-elem\">\
-##                            <label class=\"lbl lbl-big\">Leaky Bucket Timer</label>\
-##                            <input type=\"text\" name=\"RU.RA.1.LLC.RALLCConfTable.leakyBucketTimer\" id=\"RU.RA.1.LLC.RALLCConfTable.leakyBucketTimer\" fact=\".1.3.6.1.4.1.26149.2.2.13.6.1.1.4.1\" val=\"Integer\" value=\"%s\" field=\"leaky_bucket_timer_val\" tablename=\"SetOdu16RALlcConfTable\"/>\
-##                        </div>\
-##                        <div class=\"row-elem\">\
-##                            <label class=\"lbl lbl-big\">Frame Loss Time Out</label>\
-##                            <input type=\"text\" name=\"RU.RA.1.LLC.RALLCConfTable.frameLossTimeout\" id=\"RU.RA.1.LLC.RALLCConfTable.frameLossTimeout\" fact=\".1.3.6.1.4.1.26149.2.2.13.6.1.1.5.1\" val=\"Integer\" value=\"%s\" field=\"frame_loss_timeout\" tablename=\"SetOdu16RALlcConfTable\"/>\
-##                            <input type=\"hidden\" id=\"host_id\" name=\"host_id\" value=\"%s\"/>\
-##                        </div>\
-##                        <div class=\"row-elem\">\
-##                                <input type=\"submit\" value=\"Save\" class=\"yo-small yo-button\"/>\
-##                                \
-##                        </div>\
-##                    </form>" %("" if ra_llc_config[0][0]==None else ra_llc_config[0][0],\
-##            "" if ra_llc_config[0][0]==None else ra_llc_config[0][0],"" if ra_llc_config[0][1]==None else ra_llc_config[0][1],\
-##            "" if ra_llc_config[0][2]== None else ra_llc_config[0][2],"" if ra_llc_config[0][3]==None else ra_llc_config[0][3],\
-##            "" if ra_llc_config[0][4]==None else ra_llc_config[0][3],"" if host_id==None else host_id)
-##    html.write(str(str_form))
 # Author - Anuj Samariya
 # This function is displaying form of TDD MAC Configuration
 # h -  is used for request
@@ -2469,12 +2142,12 @@ def Tdd_Mac_Configuration(h, host_id):
     """
     global html
     html = h
-############### Values get from the database by calling the function ra_td
+    ############### Values get from the database by calling the function ra_td
     str_form = ""
-# RaTdd Mac Configuration get Method--------------------------------------
+    # RaTdd Mac Configuration get Method--------------------------------------
     ra_tdd_mac_config, ra_tdd_mac_config_id = ra_tdd_mac_config_get(
         host_id)  # This is the odu_controller function.It returns the tddmacconfiguration form parameters and  onfig profile id
-#------------------------------------------------------------------------------
+    #------------------------------------------------------------------------------
 
     str_form += "<form action=\"tdd_mac_config.py\" method=\"get\" id=\"tdd_mac_config_form\">\
                         <div class=\"row-elem\">\
@@ -2543,12 +2216,14 @@ def Tdd_Mac_Configuration(h, host_id):
                                 <input type=\"submit\" value=\"Save\" class=\"yo-small yo-button\"/>\
                                 \
                         </div>\
-                    </form>" % ("" if ra_tdd_mac_config[0][0] is None else ra_tdd_mac_config[0][0], "" if ra_tdd_mac_config[0][0] is None else ra_tdd_mac_config[0][0],
+                    </form>" % ("" if ra_tdd_mac_config[0][0] is None else ra_tdd_mac_config[0][0],
+                                "" if ra_tdd_mac_config[0][0] is None else ra_tdd_mac_config[0][0],
                                 "" if ra_tdd_mac_config[0][2] is None else ra_tdd_mac_config[0][
                                     2], "" if ra_tdd_mac_config[0][3] is None else ra_tdd_mac_config[0][3],
                                 "" if ra_tdd_mac_config[0][1] is None else ra_tdd_mac_config[0][
                                     1], "" if ra_tdd_mac_config[0][4] is None else ra_tdd_mac_config[0][4],
-                                "" if ra_tdd_mac_config[0][5] is None else ra_tdd_mac_config[0][5], "" if host_id is None else host_id)
+                                "" if ra_tdd_mac_config[0][5] is None else ra_tdd_mac_config[0][5],
+                                "" if host_id is None else host_id)
     return str_form
 
 
@@ -2572,12 +2247,12 @@ def Tdd_Mac_Cancel_Configuration(h, host_id):
     """
     global html
     html = h
-############### Values get from the database by calling the function ra_td
+    ############### Values get from the database by calling the function ra_td
     str_form = ""
-# RaTdd Mac Configuration get Method--------------------------------------
+    # RaTdd Mac Configuration get Method--------------------------------------
     ra_tdd_mac_config, ra_tdd_mac_config_id = ra_tdd_mac_config_get(
         host_id)  # This is the odu_controller function.It returns the tddmacconfiguration form parameters and  onfig profile id
-#------------------------------------------------------------------------------
+    #------------------------------------------------------------------------------
 
     str_form += "<form action=\"tdd_mac_config.py\" method=\"get\" id=\"tdd_mac_config_form\">\
                         <div class=\"row-elem\">\
@@ -2645,12 +2320,14 @@ def Tdd_Mac_Cancel_Configuration(h, host_id):
                                 <input type=\"submit\" value=\"Save\" class=\"yo-small yo-button\"/>\
                                 \
                         </div>\
-                    </form>" % ("" if ra_tdd_mac_config[0][0] is None else ra_tdd_mac_config[0][0], "" if ra_tdd_mac_config[0][0] is None else ra_tdd_mac_config[0][0],
+                    </form>" % ("" if ra_tdd_mac_config[0][0] is None else ra_tdd_mac_config[0][0],
+                                "" if ra_tdd_mac_config[0][0] is None else ra_tdd_mac_config[0][0],
                                 "" if ra_tdd_mac_config[0][1] is None else ra_tdd_mac_config[0][
                                     1], "" if ra_tdd_mac_config[0][2] is None else ra_tdd_mac_config[0][2],
                                 "" if ra_tdd_mac_config[0][3] is None else ra_tdd_mac_config[0][
                                     3], "" if ra_tdd_mac_config[0][4] is None else ra_tdd_mac_config[0][4],
-                                "" if ra_tdd_mac_config[0][5] is None else ra_tdd_mac_config[0][5], "" if host_id is None else host_id)
+                                "" if ra_tdd_mac_config[0][5] is None else ra_tdd_mac_config[0][5],
+                                "" if host_id is None else host_id)
     html.write(str(str_form))
 
 
@@ -2679,16 +2356,16 @@ def Peer_mac(h, host_id):
     """
     global html
     html = h
-############### Values get from the database by calling the function peer_
+    ############### Values get from the database by calling the function peer_
     str_form = ""
-# peer_config_table_get--------------------------------------------------------
+    # peer_config_table_get--------------------------------------------------------
     peer_config_table = []
     peer_config_table, peer_config_profile_id = peer_config_table_get(
         host_id)  # This is the odu_controller function.It returns the peermacconfiguration form parameters and config profile id
     # syn_configuration get Method--------------------------------------------
     sync_config_table, sync_config_profile_id = sync_config_table_get(
         host_id)  # This is the odu_controller function.It returns the synconfiguration form parameters and  onfig profile id
-#------------------------------------------------------------------------------
+    #------------------------------------------------------------------------------
     peermac = 8
     peer_count = len(peer_config_table)
     strpeermac = ""
@@ -2698,14 +2375,16 @@ def Peer_mac(h, host_id):
             strpeermac += "<div class=\"row-elem\">\
                         <label class=\"lbl lbl-big\">Timeslot %s MAC Address</label>\
                             <input type=\"text\" name=\"ru.np.ra.1.peer.%s.config.macAddress\" id=\"ru.np.ra.1.peer.%s.config.macAddress\" fact=\".1.3.6.1.4.1.26149.2.2.13.9.1.1.2.1.%s\" val=\"string\" value=\"%s\" field=\"peer_mac_address\" tablename=\"SetOdu16PeerConfigTable\" index=\"%s\"/>\
-                    </div>" % (i + 1, i + 1, i + 1, i + 1, "" if peer_config_table[i][0] is None else peer_config_table[i][0].replace('"', ''), i + 1)
+                    </div>" % (i + 1, i + 1, i + 1, i + 1,
+                               "" if peer_config_table[i][0] is None else peer_config_table[i][0].replace('"', ''),
+                               i + 1)
             peer_count = peer_count - 1
         else:
             strpeermac += "<div class=\"row-elem\">\
                         <label class=\"lbl lbl-big\">Timeslot %s Mac Address</label>\
                             <input type=\"text\" name=\"ru.np.ra.1.peer.%s.config.macAddress\" id=\"ru.np.ra.1.peer.%s.config.macAddress\" fact=\".1.3.6.1.4.1.26149.2.2.13.9.1.1.2.1.%s\" val=\"string\" value=\"%s\" field=\"peer_mac_address\" tablename=\"SetOdu16PeerConfigTable\" index=\"%s\"/>\
                     </div>" % (i + 1, i + 1, i + 1, i + 1, peer_val, i + 1)
-#------------------------------------------------------------------------------
+        #------------------------------------------------------------------------------
     str_form += "<form action=\"peer_config.py\" method=\"get\" id=\"peer_config_form\">\
                         <div class=\"row-elem\">\
                             <label class=\"lbl lbl-big\">Number of Slaves</label>\
@@ -2728,7 +2407,8 @@ def Peer_mac(h, host_id):
                             <input type=\"submit\" value=\"Save\" class=\"yo-small yo-button\"/>\
                             \
                         </div></form>" % ("" if sync_config_table[0][1] is None else sync_config_table[0][1],
-                                          "" if sync_config_table[0][1] is None else sync_config_table[0][1], "" if strpeermac is None else strpeermac, "" if host_id is None else host_id)
+                                          "" if sync_config_table[0][1] is None else sync_config_table[0][1],
+                                          "" if strpeermac is None else strpeermac, "" if host_id is None else host_id)
     return str_form
 
 
@@ -2758,16 +2438,16 @@ def Peer_mac_Cancel(h, host_id):
 
     global html
     html = h
-############### Values get from the database by calling the function peer_
+    ############### Values get from the database by calling the function peer_
     str_form = ""
-# peer_config_table_get--------------------------------------------------------
+    # peer_config_table_get--------------------------------------------------------
     peer_config_table = []
     peer_config_table, peer_config_profile_id = peer_config_table_get(
         host_id)  # This is the odu_controller function.It returns the peermacconfiguration form parameters and config profile id
     # syn_configuration get Method--------------------------------------------
     sync_config_table, sync_config_profile_id = sync_config_table_get(
         host_id)  # This is the odu_controller function.It returns the synconfiguration form parameters and  onfig profile id
-#------------------------------------------------------------------------------
+    #------------------------------------------------------------------------------
     peermac = 8
     peer_count = len(peer_config_table)
     strpeermac = ""
@@ -2777,14 +2457,16 @@ def Peer_mac_Cancel(h, host_id):
             strpeermac += "<div class=\"row-elem\">\
                         <label class=\"lbl lbl-big\">Timeslot %s MAC Address</label>\
                             <input type=\"text\" name=\"ru.np.ra.1.peer.%s.config.macAddress\" id=\"ru.np.ra.1.peer.%s.config.macAddress\" fact=\".1.3.6.1.4.1.26149.2.2.13.9.1.1.2.1.%s\" val=\"string\" value=\"%s\" field=\"peer_mac_address\" tablename=\"SetOdu16PeerConfigTable\" index=\"%s\"/>\
-                    </div>" % (i + 1, i + 1, i + 1, i + 1, "" if peer_config_table[i][0] is None else peer_config_table[i][0].replace('"', ''), i + 1)
+                    </div>" % (i + 1, i + 1, i + 1, i + 1,
+                               "" if peer_config_table[i][0] is None else peer_config_table[i][0].replace('"', ''),
+                               i + 1)
             peer_count = peer_count - 1
         else:
             strpeermac += "<div class=\"row-elem\">\
                         <label class=\"lbl lbl-big\">Timeslot %s Mac Address</label>\
                             <input type=\"text\" name=\"ru.np.ra.1.peer.%s.config.macAddress\" id=\"ru.np.ra.1.peer.%s.config.macAddress\" fact=\".1.3.6.1.4.1.26149.2.2.13.9.1.1.2.1.%s\" val=\"string\" value=\"%s\" field=\"peer_mac_address\" tablename=\"SetOdu16PeerConfigTable\" index=\"%s\"/>\
                     </div>" % (i + 1, i + 1, i + 1, i + 1, peer_val, i + 1)
-#------------------------------------------------------------------------------
+        #------------------------------------------------------------------------------
     str_form += "<form action=\"peer_config.py\" method=\"get\" id=\"peer_config_form\">\
                         <div class=\"row-elem\">\
                             <label class=\"lbl lbl-big\">Number of Slaves</label>\
@@ -2807,7 +2489,8 @@ def Peer_mac_Cancel(h, host_id):
                             <input type=\"submit\" value=\"Save\" class=\"yo-small yo-button\"/>\
                             \
                         </div></form>" % ("" if sync_config_table[0][1] is None else sync_config_table[0][1],
-                                          "" if sync_config_table[0][1] is None else sync_config_table[0][1], "" if strpeermac is None else strpeermac, "" if host_id is None else host_id)
+                                          "" if sync_config_table[0][1] is None else sync_config_table[0][1],
+                                          "" if strpeermac is None else strpeermac, "" if host_id is None else host_id)
     html.write(str(str_form))
 
 
@@ -2832,7 +2515,7 @@ def cancel_odu_form(h):
     html = h
     action = str(html.var("action_name")).split(".")[0]
     host_id = html.var("host_id")
-    exec(action + "(h,host_id)")  # this function is used to execute the string
+    exec (action + "(h,host_id)")  # this function is used to execute the string
 
 
 def omc_config_detail(h):
@@ -2866,9 +2549,9 @@ def omc_config_detail(h):
     omc_config.append(html.var('RU.OMCConfTable.omcIPAddress'))
     omc_config.append(html.var('RU.OMCConfTable.periodicStatisticsTimer'))
     result = omc_conf_set(host_id, omc_fields, omc_config, user_name)
-                          # this funtion takes the host_id ,form names,forms
-                          # parameters and return the dcitionary that the
-                          # values are set or not
+    # this funtion takes the host_id ,form names,forms
+    # parameters and return the dcitionary that the
+    # values are set or not
     html.write(str(result))
 
 
@@ -2906,77 +2589,12 @@ def ru_configuration(h):
     ru_config_param.append(html.var('RU.RUConfTable.countryCode'))
     result = ru_config_table_set(
         host_id, ru_config_fields, ru_config_param, user_name)
-                                 # this funtion takes the host_id ,form
-                                 # names,forms parameters and return the
-                                 # dcitionary that the values are set or not
+    # this funtion takes the host_id ,form
+    # names,forms parameters and return the
+    # dcitionary that the values are set or not
     html.write(str(result))
 
 
-# def ru_date_time_table(h):
-##    """
-##    @requires:
-##    @return:
-##    @rtype:
-##    @author:Anuj Samariya
-##    @since:
-##    @version:
-##    @date:
-##    @note:
-##    @organisation: Codescape Consultants Pvt. Ltd.
-##    @copyright: 2011 Anuj Samariya from Codescape Consultants Pvt. Ltd.
-##    """
-##
-##    global html
-##    html=h
-##    host_id = html.var("host_id")
-##    user_name =  html.req.session['username']
-##    if user_name==None:
-##        user_name = ""
-##    date_time_fields=[]
-##    date_time_param=[]
-##    date_time_fields.append('RU.RUDateTimeTable.Year')
-##    date_time_fields.append('RU.RUDateTimeTable.Month')
-##    date_time_fields.append('RU.RUDateTimeTable.Day')
-##    date_time_fields.append('RU.RUDateTimeTable.Hour')
-##    date_time_fields.append('RU.RUDateTimeTable.Minutes')
-##    date_time_fields.append('RU.RUDateTimeTable.Seconds')
-##    date_time_param.append(html.var('RU.RUDateTimeTable.Year'))
-##    date_time_param.append(html.var('RU.RUDateTimeTable.Month'))
-##    date_time_param.append(html.var('RU.RUDateTimeTable.Day'))
-##    date_time_param.append(html.var('RU.RUDateTimeTable.Hour'))
-##    date_time_param.append(html.var('RU.RUDateTimeTable.Minutes'))
-##    date_time_param.append(html.var('RU.RUDateTimeTable.Seconds'))
-##    result=ru_date_time_table_set(host_id,date_time_fields,date_time_param,user_name)# this funtion takes the host_id ,form names,forms parameters and return the dcitionary that the values are set or not
-##    html.write(str(result))
-
-# def network_interface_config(h):
-##    """
-##    @requires:
-##    @return:
-##    @rtype:
-##    @author:Anuj Samariya
-##    @since:
-##    @version:
-##    @date:
-##    @note:
-##    @organisation: Codescape Consultants Pvt. Ltd.
-##    @copyright: 2011 Anuj Samariya from Codescape Consultants Pvt. Ltd.
-##    """
-##    global html
-##    global arr
-##    html=h
-##    host_id = html.var("host_id")
-##    user_name =  html.req.session['username']
-##    if user_name==None:
-##        user_name = ""
-##    network_interface_config_fields=[]
-##    network_interface_config_param=[]
-##    for i in range(len(arr)):
-##        count=i+1
-##        network_interface_config_fields.append('RU.NetworkInterface.%s.NetworkInterfaceConfigTable.ssId' %(count))
-##        network_interface_config_param.append(html.var('RU.NetworkInterface.%s.NetworkInterfaceConfigTable.ssId'%(count)))
-##    result=network_interface_config_set(host_id,network_interface_config_fields,network_interface_config_param,user_name)
-##    html.write(str(result))
 
 
 def tdd_mac_config(h):
@@ -3025,9 +2643,9 @@ def tdd_mac_config(h):
         html.var('RU.RA.1.TddMac.RATDDMACConfigTable.leakyBucketTimer'))
     result = ra_tdd_mac_config_set(
         host_id, tdd_mac_config_fields, tdd_mac_config_param, user_name)
-                                   # this funtion takes the host_id ,form
-                                   # names,forms parameters and return the
-                                   # dcitionary that the values are set or not
+    # this funtion takes the host_id ,form
+    # names,forms parameters and return the
+    # dcitionary that the values are set or not
     html.write(str(result))
 
 
@@ -3036,6 +2654,7 @@ def ra_llc_configuration(h):
     Author - Anuj Samariya
     this function is used to take values of llc_config form from page and send to the function ra_llc_configuration_set of odu_controller function
     this function returns the result in which diplays which values are set or which are not set
+    @param h:
     """
     global html
     html = h
@@ -3065,10 +2684,10 @@ def ra_llc_configuration(h):
         html.var('RU.RA.1.LLC.RALLCConfTable.frameLossTimeout'))
     result = ra_llc_configuration_set(
         host_id, llc_configuration_fields, llc_configuration_param, user_name)
-                                      # this funtion takes the host_id ,form
-                                      # names,forms parameters and return the
-                                      # dcitionary that the values are set or
-                                      # not
+    # this funtion takes the host_id ,form
+    # names,forms parameters and return the
+    # dcitionary that the values are set or
+    # not
     html.write(str(result))
 
 
@@ -3120,11 +2739,11 @@ def omc_registration_configuration(h):
         html.var('RU.SysOmcRegistrationTable.sysOmcRegistercontactEmail'))
     result = omc_registration_configuration_set(
         host_id, omc_registration_fields, omc_registration_param, user_name)
-                                                # this funtion takes the
-                                                # host_id ,form names,forms
-                                                # parameters and return the
-                                                # dcitionary that the values
-                                                # are set or not
+    # this funtion takes the
+    # host_id ,form names,forms
+    # parameters and return the
+    # dcitionary that the values
+    # are set or not
     html.write(str(result))
 
 
@@ -3177,9 +2796,9 @@ def syn_configuration(h):
         html.var('RU.SyncClock.SyncConfigTable.timerAdjust'))
     result = syn_configuration_set(
         host_id, syn_configuration_fields, syn_configuration_param, user_name)
-                                   # this funtion takes the host_id ,form
-                                   # names,forms parameters and return the
-                                   # dcitionary that the values are set or not
+    # this funtion takes the host_id ,form
+    # names,forms parameters and return the
+    # dcitionary that the values are set or not
     html.write(str(result))
 
 
@@ -3215,9 +2834,9 @@ def ra_config(h):
     ra_config_param.append(html.var('RU.RA.1.RAConfTable.ssId'))
     result = ra_config_set(
         host_id, ra_config_fields, ra_config_param, user_name)
-                           # this funtion takes the host_id ,form names,forms
-                           # parameters and return the dcitionary that the
-                           # values are set or not
+    # this funtion takes the host_id ,form names,forms
+    # parameters and return the dcitionary that the
+    # values are set or not
     html.write(str(result))
 
 
@@ -3267,9 +2886,9 @@ def peer_config(h):
             break
     result = peer_config_set(host_id, status, peer_config_fields,
                              peer_config_param, time_slot_param, user_name)
-                             # this funtion takes the host_id ,form names,forms
-                             # parameters and return the dcitionary that the
-                             # values are set or not
+    # this funtion takes the host_id ,form names,forms
+    # parameters and return the dcitionary that the
+    # values are set or not
     html.write(str(result))
 
 
@@ -3321,9 +2940,9 @@ def peer_delete_slaves(h):
         html.var('RU.SyncClock.SyncConfigTable.timerAdjust'))
     result = peer_slaves(
         host_id, peermac, syn_configuration_fields, syn_configuration_param)
-                         # this funtion takes the host_id ,form names,forms
-                         # parameters and return the dcitionary that the values
-                         # are set or not
+    # this funtion takes the host_id ,form names,forms
+    # parameters and return the dcitionary that the values
+    # are set or not
     html.write(str(result))
 
 
@@ -3362,7 +2981,8 @@ def acl_config(h):
     acl_mode = html.var('RU.RA.1.RAConfTable.aclMode')
     acl_count = int(html.var('acl_count'))
     while acl_count > 10:
-        if html.var('RU.RA.1.RAACLConfig.%s.macAddress' % (acl_count)) is None or html.var('RU.RA.1.RAACLConfig.%s.macAddress' % (acl_count)) == '':
+        if html.var('RU.RA.1.RAACLConfig.%s.macAddress' % (acl_count)) is None or html.var(
+                        'RU.RA.1.RAACLConfig.%s.macAddress' % (acl_count)) == '':
             acl_count = acl_count - 1
         else:
             break
@@ -3373,9 +2993,9 @@ def acl_config(h):
             html.var('RU.RA.1.RAACLConfig.%s.macAddress' % (count)))
     result = acl_config_set(host_id, acl_mode_field, acl_mode,
                             acl_config_fields, acl_config_param, user_name)
-                            # this funtion takes the host_id ,form names,forms
-                            # parameters and return the dcitionary that the
-                            # values are set or not
+    # this funtion takes the host_id ,form names,forms
+    # parameters and return the dcitionary that the
+    # values are set or not
     html.write(str(result))
 
 
@@ -3439,8 +3059,8 @@ def retry_set_for_odu16(h):
     host_id = html.var("host_id")
     result = retry_set_one(host_id, table_name, textbox, textbox_value,
                            textbox_field, index_value, user_name)
-                           # this funtion takes the host_id ,table name,textbox
-                           # name,textbox value,textbox field,index value
+    # this funtion takes the host_id ,table name,textbox
+    # name,textbox value,textbox field,index value
     html.write(str(result))
 
 
@@ -3495,10 +3115,10 @@ def retry_set_all_for_odu16(h):
             index_value_list = index_value.split(",")
     result = retry_set_for_all_odu16(
         host_id, table_name_list, textbox_list, textbox_field_list,
-                                     textbox_value_list, index_value_list, user_name)
-                                     # this funtion takes the host_id ,table
-                                     # name,textbox name,textbox value,textbox
-                                     # field,index value
+        textbox_value_list, index_value_list, user_name)
+    # this funtion takes the host_id ,table
+    # name,textbox name,textbox value,textbox
+    # field,index value
     html.write(str(result))
 
 
@@ -3531,10 +3151,10 @@ def commit_flash(h):
                 obj_essential.host_status(host_id, 4)
                 result = commit_to_flash(
                     host_id, 'RU.RUOMOperationsTable.omOperationsReq', user_name)
-                                         # this funtion takes the host_id ,form
-                                         # names,forms parameters and return
-                                         # the dcitionary that the values are
-                                         # set or not
+                # this funtion takes the host_id ,form
+                # names,forms parameters and return
+                # the dcitionary that the values are
+                # set or not
                 html.write(str(result))
             else:
                 result = "Device is busy, Device " + str(
@@ -3544,10 +3164,10 @@ def commit_flash(h):
         else:
             result = commit_to_flash(
                 host_id, 'RU.RUOMOperationsTable.omOperationsReq', user_name)
-                                     # this funtion takes the host_id ,form
-                                     # names,forms parameters and return the
-                                     # dcitionary that the values are set or
-                                     # not
+            # this funtion takes the host_id ,form
+            # names,forms parameters and return the
+            # dcitionary that the values are set or
+            # not
             html.write(str(result))
     except Exception as e:
         dic_result["success"] = 1
@@ -3556,8 +3176,8 @@ def commit_flash(h):
 
     finally:
         obj_essential.host_status(host_id, 0, None, 4)
-    # this funtion takes the host_id ,form names,forms parameters and return
-    # the dcitionary that the values are set or not
+        # this funtion takes the host_id ,form names,forms parameters and return
+        # the dcitionary that the values are set or not
 
 
 def get_device_data_table(h):
@@ -3619,12 +3239,12 @@ def get_device_data_table(h):
     if html.req.session["role"] == "admin" or html.req.session["role"] == "user":
         result = get_device_list(
             ip_address, mac_address, selected_device, i_display_start, i_display_length, s_search, sEcho, sSortDir_0,
-                                 iSortCol_0, userid, html_req)  # sSortDir_0,iSortCol_0,
+            iSortCol_0, userid, html_req)  # sSortDir_0,iSortCol_0,
     else:
         result = get_device_list_guest(
             ip_address, mac_address, selected_device, i_display_start, i_display_length, s_search, sEcho, sSortDir_0,
-                                       iSortCol_0, userid, html_req)  # sSortDir_0,iSortCol_0,
-    # display the result on page
+            iSortCol_0, userid, html_req)  # sSortDir_0,iSortCol_0,
+        # display the result on page
     # html.write(str(result))
     # html.write(table_view)
     html.req.content_type = 'application/json'
@@ -3669,7 +3289,7 @@ def get_device_list_odu(h):
         mac_address = ""
     else:
         mac_address = html.var("mac_address")
-    # take value of SelectedDevice from the page through html.var
+        # take value of SelectedDevice from the page through html.var
     # check that value is None Then It takes the empty string
     if html.var("selected_device_type") is None:
         selected_device = "odu16"
@@ -3689,10 +3309,9 @@ def get_device_list_odu(h):
             odu_profiling_form(h, result)
         else:
             odu100_profiling_form(result, selected_device)
-    # except Exception as e:
-    #     import traceback
-    #     html.write(traceback.format_exc())
-    #     #html.write(str(e[-1]))
+            # except Exception as e:
+            #     html.write(traceback.format_exc())
+            #     #html.write(str(e[-1]))
 
 # Classes Structure For Odu Profiling#####################################
 
@@ -3706,6 +3325,7 @@ class OduConfiguration():
     @organisation : Codescape Consultants Pvt. Ltd.
     @copyright : 2011 Anuj Samariya from Codescape Consultants Pvt. Ltd.
     """
+
     def __init__(self):
         self.odu100_select_list_object = MakeOdu100SelectListWithDic()
 
@@ -3720,6 +3340,11 @@ class OduConfiguration():
 
     def odu100_profiling(self, host_id, selected_device):
 
+        """
+
+        @param host_id:
+        @param selected_device:
+        """
         global html
         # This the main div container for all the forms of odu100
         html.write(
@@ -3729,6 +3354,10 @@ class OduConfiguration():
 
     def odu100_ru_configuration(self, host_id, selected_device):
         """
+
+
+        @param host_id:
+        @param selected_device:
         @author : Anuj Samariya
         @version :0.0
         @date : 20 Augugst 2011
@@ -3796,28 +3425,30 @@ class OduConfiguration():
                 </form>\
         " % (self.odu100_select_list_object.channel_bandwidth_select_list(
                 str("" if ru_configuration[0][0]
- is None else ru_configuration[0][0]),
-                    "enabled", "ru.ruConfTable.channelBandwidth", "false", "Channel Bandwidth"),
-            self.odu100_select_list_object.sync_source_select_list(
-                (0 if ru_configuration[0][5] is None else "0" if ru_configuration[0][5] == 0 or ru_configuration[0][5] == 2 else str(
-                    "" if ru_configuration[0][5] is None else ru_configuration[0][5])),
-                ("disabled" if ru_configuration[0][5] is None else "disabled" if ru_configuration[0][5]
-                 == 0 or ru_configuration[0][5] == 2 else "enabled"),
-                "ru.ruConfTable.synchSource", "false", "Sync Source"),
-            self.odu100_select_list_object.country_code_select_list(
-                str("" if ru_configuration[0][2] is None else str(
-                    "" if ru_configuration[0][2] is None else ru_configuration[0][2])),
-                "enabled", "ru.ruConfTable.countryCode", "false", "Country Code"),
-            "" if firmware_version == "7.2.20" else "display:none",
-            "" if firmware_version == "7.2.25" or firmware_version == "7.2.29" else self.odu100_select_list_object.poe_state_select_list_cpu(
-                str("" if ru_configuration[0][3]
- is None else ru_configuration[0][3]),
-                "enabled", "ru.ruConfTable.poeState", "false", "Poe State")
-                if int(cpuid) == 1 or int(cpuid) == 5 else self.odu100_select_list_object.poe_state_select_list(
-                    str("" if ru_configuration[0][3]
- is None else ru_configuration[0][3]),
-                    "enabled", "ru.ruConfTable.poeState", "false", "Poe State"),
-            "" if ru_configuration[0][4] is None else ru_configuration[0][4], host_id, selected_device)
+                is None else ru_configuration[0][0]),
+                "enabled", "ru.ruConfTable.channelBandwidth", "false", "Channel Bandwidth"),
+             self.odu100_select_list_object.sync_source_select_list(
+                 (0 if ru_configuration[0][5] is None else "0" if ru_configuration[0][5] == 0 or ru_configuration[0][
+                     5] == 2 else str(
+                     "" if ru_configuration[0][5] is None else ru_configuration[0][5])),
+                 ("disabled" if ru_configuration[0][5] is None else "disabled" if ru_configuration[0][5]
+                                                                                  == 0 or ru_configuration[0][
+                     5] == 2 else "enabled"),
+                 "ru.ruConfTable.synchSource", "false", "Sync Source"),
+             self.odu100_select_list_object.country_code_select_list(
+                 str("" if ru_configuration[0][2] is None else str(
+                     "" if ru_configuration[0][2] is None else ru_configuration[0][2])),
+                 "enabled", "ru.ruConfTable.countryCode", "false", "Country Code"),
+             "" if firmware_version == "7.2.20" else "display:none",
+             "" if firmware_version == "7.2.25" or firmware_version == "7.2.29" else self.odu100_select_list_object.poe_state_select_list_cpu(
+                 str("" if ru_configuration[0][3]
+                 is None else ru_configuration[0][3]),
+                 "enabled", "ru.ruConfTable.poeState", "false", "Poe State")
+             if int(cpuid) == 1 or int(cpuid) == 5 else self.odu100_select_list_object.poe_state_select_list(
+                 str("" if ru_configuration[0][3]
+                 is None else ru_configuration[0][3]),
+                 "enabled", "ru.ruConfTable.poeState", "false", "Poe State"),
+             "" if ru_configuration[0][4] is None else ru_configuration[0][4], host_id, selected_device)
 
         else:
             if ru_config_table_data["success"] == 1:
@@ -3857,20 +3488,26 @@ class OduConfiguration():
                         </div>\
                     </div>\
                 </form>\
-                " % (self.odu100_select_list_object.channel_bandwidth_select_list("", "enabled", "ru.ruConfTable.channelBandwidth", "false", "Channel Bandwidth"),
-                   self.odu100_select_list_object.sync_source_select_list(
-                       "", "enable", "ru.ruConfTable.synchSource", "false", "Sync Source"),
-                   self.odu100_select_list_object.country_code_select_list(
-                       "", "enabled", "ru.ruConfTable.countryCode", "false", "Country Code"),
-                   self.odu100_select_list_object.poe_state_select_list(
-                       "", "enabled", "ru.ruConfTable.poeState", "false", "Poe State"),
-                   host_id, selected_device
-                   )
+                " % (self.odu100_select_list_object.channel_bandwidth_select_list("", "enabled",
+                                                                                  "ru.ruConfTable.channelBandwidth",
+                                                                                  "false", "Channel Bandwidth"),
+                     self.odu100_select_list_object.sync_source_select_list(
+                         "", "enable", "ru.ruConfTable.synchSource", "false", "Sync Source"),
+                     self.odu100_select_list_object.country_code_select_list(
+                         "", "enabled", "ru.ruConfTable.countryCode", "false", "Country Code"),
+                     self.odu100_select_list_object.poe_state_select_list(
+                         "", "enabled", "ru.ruConfTable.poeState", "false", "Poe State"),
+                     host_id, selected_device
+                )
 
         return str(odu100_ru_config_form)
 
     def odu100_ra_configuration(self, host_id, selected_device):
         """
+
+
+        @param host_id:
+        @param selected_device:
         @author : Anuj Samariya
         @version :0.0
         @date : 20 Augugst 2011
@@ -3894,21 +3531,22 @@ class OduConfiguration():
         else:
             firmware_version = '7.2.20'
 
-
         odu100_ra_config_form, forcemimo_div, anc_div = '', '', ''
 
         table_name = '%s_%s' % ('odu100', firmware_version.replace('.', '_'))
 
-        if (firmware_version == '7.2.25' or firmware_version == '7.2.29') and (not ru_configuration[0].defaultNodeType % 2):
+        if (firmware_version == '7.2.25' or firmware_version == '7.2.29') and (
+        not ru_configuration[0].defaultNodeType % 2):
             anc_div = "\
             <div class=\"row-elem\" style=\"%s\">\
                 <label class=\"lbl\">ANC</label>\
                 %s\
             </div>\
-            " % ("display:none" if ru_configuration[0].defaultNodeType is not None and ru_configuration[0].defaultNodeType % 2 else "",
-                get_select_list(
-                    ra_configuration[0][10], "ru.ra.raConfTable.anc", table_name)
-                )
+            " % ("display:none" if ru_configuration[0].defaultNodeType is not None and ru_configuration[
+                0].defaultNodeType % 2 else "",
+                 get_select_list(
+                     ra_configuration[0][10], "ru.ra.raConfTable.anc", table_name)
+            )
 
         if firmware_version == '7.2.29':
             forcemimo_div = "\
@@ -3917,8 +3555,8 @@ class OduConfiguration():
                 %s\
             </div>\
             " % (get_select_list(ra_configuration[0][11],
-                                "ru.ra.raConfTable.forceMimo", table_name)
-                )
+                                 "ru.ra.raConfTable.forceMimo", table_name)
+            )
 
         # TODO: update all self.odu100_select_list_object.select_list() to get_select_list()
         # FixMe: check the defaultNodeType nested if else, need to be optimized.
@@ -4003,48 +3641,68 @@ class OduConfiguration():
                     </div>\
                 </div>\
             </form>\
-        " % ("display:none" if ru_configuration[0].defaultNodeType is not None and ru_configuration[0].defaultNodeType % 2 else "",
+        " % ("display:none" if ru_configuration[0].defaultNodeType is not None and ru_configuration[
+                0].defaultNodeType % 2 else "",
              self.odu100_select_list_object.timeslot_select_list(
-                int(0 if ra_configuration[0][0] is None else ra_configuration[0][0]),
-                "enabled" if ru_configuration[0].defaultNodeType is not None and not ru_configuration[0].defaultNodeType % 2 else "disabled",
-                "ru.ra.raConfTable.numSlaves", "false", "TimeSlot"),
-             "display:none" if ru_configuration[0].defaultNodeType is not None and ru_configuration[0].defaultNodeType % 2 else "",
+                 int(0 if ra_configuration[0][0] is None else ra_configuration[0][0]),
+                 "enabled" if ru_configuration[0].defaultNodeType is not None and not ru_configuration[
+                                                                                          0].defaultNodeType % 2 else "disabled",
+                 "ru.ra.raConfTable.numSlaves", "false", "TimeSlot"),
+             "display:none" if ru_configuration[0].defaultNodeType is not None and ru_configuration[
+                 0].defaultNodeType % 2 else "",
              "" if ra_configuration[0][1] is None else ra_configuration[0][1],
-             '' if ru_configuration[0].defaultNodeType is not None and not ru_configuration[0].defaultNodeType % 2 else 'disabled=\"disabled\"',
+             '' if ru_configuration[0].defaultNodeType is not None and not ru_configuration[
+                                                                               0].defaultNodeType % 2 else 'disabled=\"disabled\"',
              self.odu100_select_list_object.encryption_type_select_list(
-                str(tddmac_configuration[0][0] if str(tddmac_configuration[0][0]) else ""),
-                "enabled", "ru.ra.tddMac.raTddMacConfigTable.encryptionType", "false", "Encryption Type"),
+                 str(tddmac_configuration[0][0] if str(tddmac_configuration[0][0]) else ""),
+                 "enabled", "ru.ra.tddMac.raTddMacConfigTable.encryptionType", "false", "Encryption Type"),
              (tddmac_configuration[0][1] if tddmac_configuration[0][1] else ""),
              "" if tddmac_configuration[0][2] is None else tddmac_configuration[0][2],
              "" if tddmac_configuration[0][3] is None else tddmac_configuration[0][3],
              "" if tddmac_configuration[0][4] is None else tddmac_configuration[0][4],
-             "display:none" if ru_configuration[0].defaultNodeType is not None and ru_configuration[0].defaultNodeType % 2 else "",
-             self.odu100_select_list_object.acm_select_list(str("" if ra_configuration[0][2] is None else ra_configuration[0][2]),
-                "enabled" if ru_configuration[0].defaultNodeType is not None and not ru_configuration[0].defaultNodeType % 2 else "disabled",
-                "ru.ra.raConfTable.acm", "false", "ACM"),
-             "display:none" if ru_configuration[0].defaultNodeType is not None and ru_configuration[0].defaultNodeType % 2 else "",
-             self.odu100_select_list_object.dba_select_list(str("" if ra_configuration[0][3] is None else ra_configuration[0][3]),
-                "enabled" if ru_configuration[0].defaultNodeType is not None and not ru_configuration[0].defaultNodeType % 2 else "disabled",
-                "ru.ra.raConfTable.dba", "false", "DBA"),
-             "display:none" if ru_configuration[0].defaultNodeType is not None and ru_configuration[0].defaultNodeType % 2 else "",
+             "display:none" if ru_configuration[0].defaultNodeType is not None and ru_configuration[
+                 0].defaultNodeType % 2 else "",
+             self.odu100_select_list_object.acm_select_list(
+                 str("" if ra_configuration[0][2] is None else ra_configuration[0][2]),
+                 "enabled" if ru_configuration[0].defaultNodeType is not None and not ru_configuration[
+                                                                                          0].defaultNodeType % 2 else "disabled",
+                 "ru.ra.raConfTable.acm", "false", "ACM"),
+             "display:none" if ru_configuration[0].defaultNodeType is not None and ru_configuration[
+                 0].defaultNodeType % 2 else "",
+             self.odu100_select_list_object.dba_select_list(
+                 str("" if ra_configuration[0][3] is None else ra_configuration[0][3]),
+                 "enabled" if ru_configuration[0].defaultNodeType is not None and not ru_configuration[
+                                                                                          0].defaultNodeType % 2 else "disabled",
+                 "ru.ra.raConfTable.dba", "false", "DBA"),
+             "display:none" if ru_configuration[0].defaultNodeType is not None and ru_configuration[
+                 0].defaultNodeType % 2 else "",
              "" if ra_configuration[0][4] is None else ra_configuration[0][4],
-             '' if ru_configuration[0].defaultNodeType is not None and not ru_configuration[0].defaultNodeType % 2 else 'disabled=\"disabled\"',
-             "display:none" if ru_configuration[0].defaultNodeType is not None and ru_configuration[0].defaultNodeType % 2 else "",
-             self.odu100_select_list_object.acs_select_list(str("" if ra_configuration[0][5] is None else ra_configuration[0][5]),
-                "enabled" if ru_configuration[0].defaultNodeType is not None and not ru_configuration[0].defaultNodeType % 2 else "disabled",
-                "ru.ra.raConfTable.acs", "false", "ACS"),
-             "display:none" if ru_configuration[0].defaultNodeType is not None and ru_configuration[0].defaultNodeType % 2 else "",
-             self.odu100_select_list_object.dfs_select_list(str("" if ra_configuration[0][6] is None else ra_configuration[0][6]),
-                "enabled" if ru_configuration[0].defaultNodeType is not None and not ru_configuration[0].defaultNodeType % 2 else "disabled",
-                "ru.ra.raConfTable.dfs", "false", "DFS"),
+             '' if ru_configuration[0].defaultNodeType is not None and not ru_configuration[
+                                                                               0].defaultNodeType % 2 else 'disabled=\"disabled\"',
+             "display:none" if ru_configuration[0].defaultNodeType is not None and ru_configuration[
+                 0].defaultNodeType % 2 else "",
+             self.odu100_select_list_object.acs_select_list(
+                 str("" if ra_configuration[0][5] is None else ra_configuration[0][5]),
+                 "enabled" if ru_configuration[0].defaultNodeType is not None and not ru_configuration[
+                                                                                          0].defaultNodeType % 2 else "disabled",
+                 "ru.ra.raConfTable.acs", "false", "ACS"),
+             "display:none" if ru_configuration[0].defaultNodeType is not None and ru_configuration[
+                 0].defaultNodeType % 2 else "",
+             self.odu100_select_list_object.dfs_select_list(
+                 str("" if ra_configuration[0][6] is None else ra_configuration[0][6]),
+                 "enabled" if ru_configuration[0].defaultNodeType is not None and not ru_configuration[
+                                                                                          0].defaultNodeType % 2 else "disabled",
+                 "ru.ra.raConfTable.dfs", "false", "DFS"),
              self.odu100_select_list_object.antenna_port_select_list(
                  str("" if ra_configuration[0][8] is None else ra_configuration[0][8]),
                  "enabled", "ru.ra.raConfTable.antennaPort", "false", "Antenna Port"),
-             "display:none" if ru_configuration[0].defaultNodeType is not None and ru_configuration[0].defaultNodeType % 2 else "",
+             "display:none" if ru_configuration[0].defaultNodeType is not None and ru_configuration[
+                 0].defaultNodeType % 2 else "",
              self.odu100_select_list_object.link_distance_select_list(
-                str("" if ra_configuration[0][9] is None else ra_configuration[0][9]),
-                "enabled" if ru_configuration[0].defaultNodeType is not None and not ru_configuration[0].defaultNodeType % 2 else "disabled",
-                "ru.ra.raConfTable.linkDistance", "false", "Link Distance"),
+                 str("" if ra_configuration[0][9] is None else ra_configuration[0][9]),
+                 "enabled" if ru_configuration[0].defaultNodeType is not None and not ru_configuration[
+                                                                                          0].defaultNodeType % 2 else "disabled",
+                 "ru.ra.raConfTable.linkDistance", "false", "Link Distance"),
              "" if firmware_version == "7.2.20" else anc_div,
              forcemimo_div if firmware_version == "7.2.29" else "",
              host_id, selected_device, ru_configuration[0].defaultNodeType)
@@ -4054,7 +3712,9 @@ class OduConfiguration():
                 anc_div = "<div class=\"row-elem\">\
                             <label class=\"lbl\">ANC</label>\
                             %s\
-                        </div>" % (self.odu100_select_list_object.ans_select_list(str(""), "enabled", "ru.ra.raConfTable.anc", "false", "ANC"))
+                        </div>" % (
+                self.odu100_select_list_object.ans_select_list(str(""), "enabled", "ru.ra.raConfTable.anc", "false",
+                                                               "ANC"))
 
                 self.flag = 1
                 odu100_ra_config_form = "\
@@ -4132,34 +3792,40 @@ class OduConfiguration():
                     <div id=\"ra_config_form_result\" name=\"ra_config_form_result\">\
                     </div>\
                 </form>\
-                " % (self.odu100_select_list_object.timeslot_select_list(str(""), "disabled", "ru.ra.raConfTable.numSlaves", "false", "TimeSlot"),
-                     self.odu100_select_list_object.encryption_type_select_list(
-                         str(
-                             ""), "enabled", "ru.ra.tddMac.raTddMacConfigTable.encryptionType", "false", "Encryption Type"),
-                     self.odu100_select_list_object.acm_select_list(
-                         str(
-                             ""), "enabled", "ru.ra.raConfTable.acm", "false", "ACM"),
-                     self.odu100_select_list_object.dba_select_list(
-                         str(
-                             ""), "disabled", "ru.ra.raConfTable.dba", "false", "DBA"),
-                     self.odu100_select_list_object.acs_select_list(
-                         str(
-                             ""), "enabled", "ru.ra.raConfTable.acs", "false", "ACS"),
-                     self.odu100_select_list_object.dfs_select_list(
-                         str(
-                             ""), "enabled", "ru.ra.raConfTable.dfs", "false", "DFS"),
-                     self.odu100_select_list_object.antenna_port_select_list(
-                         str(
-                             ""), "enabled", "ru.ra.raConfTable.antennaPort", "false", "Antenna Port"),
-                     self.odu100_select_list_object.link_distance_select_list(str(
-                         ""), "enabled", "ru.ra.raConfTable.linkDistance", "false", "Link Distance"),
-                     "" if firmware_version == "7.2.20" else anc_div,
-                     host_id, selected_device)
+                " % (
+                self.odu100_select_list_object.timeslot_select_list(str(""), "disabled", "ru.ra.raConfTable.numSlaves",
+                                                                    "false", "TimeSlot"),
+                self.odu100_select_list_object.encryption_type_select_list(
+                    str(
+                        ""), "enabled", "ru.ra.tddMac.raTddMacConfigTable.encryptionType", "false", "Encryption Type"),
+                self.odu100_select_list_object.acm_select_list(
+                    str(
+                        ""), "enabled", "ru.ra.raConfTable.acm", "false", "ACM"),
+                self.odu100_select_list_object.dba_select_list(
+                    str(
+                        ""), "disabled", "ru.ra.raConfTable.dba", "false", "DBA"),
+                self.odu100_select_list_object.acs_select_list(
+                    str(
+                        ""), "enabled", "ru.ra.raConfTable.acs", "false", "ACS"),
+                self.odu100_select_list_object.dfs_select_list(
+                    str(
+                        ""), "enabled", "ru.ra.raConfTable.dfs", "false", "DFS"),
+                self.odu100_select_list_object.antenna_port_select_list(
+                    str(
+                        ""), "enabled", "ru.ra.raConfTable.antennaPort", "false", "Antenna Port"),
+                self.odu100_select_list_object.link_distance_select_list(str(
+                    ""), "enabled", "ru.ra.raConfTable.linkDistance", "false", "Link Distance"),
+                "" if firmware_version == "7.2.20" else anc_div,
+                host_id, selected_device)
 
         return str(odu100_ra_config_form)
 
     def odu100_peer_configuration(self, host_id, selected_device):
         """
+
+
+        @param host_id:
+        @param selected_device:
         @author : Anuj Samariya
         @version :0.0
         @date : 20 Augugst 2011
@@ -4176,7 +3842,7 @@ class OduConfiguration():
         ra_configuration = ra_conf_result["result"]
         if len(ra_configuration) > 0:
             antenna_port = 1 if ra_configuration[
-                0].antennaPort is None else ra_configuration[0].antennaPort
+                                    0].antennaPort is None else ra_configuration[0].antennaPort
         ru_config_table_data = odu100_get_ruconfigtable(host_id)
         ru_configuration = ru_config_table_data["result"]
         peer_configuration = peer_config_table_data["result"]
@@ -4207,43 +3873,57 @@ class OduConfiguration():
                         %s\
                     </div>" % (i + 1, i + 1,
                                "" if peer_configuration[
-                                   i].peerMacAddress is None else peer_configuration[i].peerMacAddress,
+                                         i].peerMacAddress is None else peer_configuration[i].peerMacAddress,
                                i + 1, i + 1,
-                               "512" if peer_configuration[i].guaranteedUplinkBW is None else peer_configuration[i].guaranteedUplinkBW, "" if ru_configuration[
-                                   0].defaultNodeType is None else "" if ru_configuration[0].defaultNodeType == 0 or ru_configuration[0].defaultNodeType == 2 else "disabled=disabled",
+                               "512" if peer_configuration[i].guaranteedUplinkBW is None else peer_configuration[
+                                   i].guaranteedUplinkBW, "" if ru_configuration[
+                                                                    0].defaultNodeType is None else "" if
+                    ru_configuration[0].defaultNodeType == 0 or ru_configuration[
+                        0].defaultNodeType == 2 else "disabled=disabled",
                                i + 1, i + 1,
-                               "512" if peer_configuration[i].guaranteedDownlinkBW is None else peer_configuration[i].guaranteedDownlinkBW, "" if ru_configuration[
-                                   0].defaultNodeType is None else "" if ru_configuration[0].defaultNodeType == 0 or ru_configuration[0].defaultNodeType == 2 else "disabled=disabled",
+                               "512" if peer_configuration[i].guaranteedDownlinkBW is None else peer_configuration[
+                                   i].guaranteedDownlinkBW, "" if ru_configuration[
+                                                                      0].defaultNodeType is None else "" if
+                    ru_configuration[0].defaultNodeType == 0 or ru_configuration[
+                        0].defaultNodeType == 2 else "disabled=disabled",
                                i + 1, i + 1, "100000" if peer_configuration[
-                                   i].maxDownlinkBW is None else peer_configuration[i].maxDownlinkBW,
+                                                             i].maxDownlinkBW is None else peer_configuration[
+                        i].maxDownlinkBW,
                                "" if ru_configuration[0].defaultNodeType is None else "" if ru_configuration[
-                                   0].defaultNodeType == 0 or ru_configuration[0].defaultNodeType == 2 else "disabled=disabled",
+                                                                                                0].defaultNodeType == 0 or
+                                                                                            ru_configuration[
+                                                                                                0].defaultNodeType == 2 else "disabled=disabled",
                                i + 1, i + 1, "100000" if peer_configuration[
-                                   i].maxUplinkBW is None else peer_configuration[i].maxUplinkBW,
+                                                             i].maxUplinkBW is None else peer_configuration[
+                        i].maxUplinkBW,
                                "" if ru_configuration[0].defaultNodeType is None else "" if ru_configuration[
-                                   0].defaultNodeType == 0 or ru_configuration[0].defaultNodeType == 2 else "disabled=disabled",
+                                                                                                0].defaultNodeType == 0 or
+                                                                                            ru_configuration[
+                                                                                                0].defaultNodeType == 2 else "disabled=disabled",
                                self.odu100_select_list_object.mcs_index_select_list(
-                                        "-1" if peer_configuration[i].basicrateMCSIndex is None or peer_configuration[
-                                            i].basicrateMCSIndex == "" else peer_configuration[i].basicrateMCSIndex,
-                                        "" if ru_configuration[
-                                            0].defaultNodeType is None else "enabled"
-                                            if ru_configuration[0].defaultNodeType == 0 or ru_configuration[0].defaultNodeType == 2 else "disabled",
-                                        'ru.ra.peerNode.peerConfigTable.basicRateMCSIndex.%s' % (
-                                            i + 1),
-                                        False, "MCS Index", {
-                                            'style': 'width:118px'}
-                                    )
-                                    if int(antenna_port) == 1 or int(antenna_port) == 2
-                                    else self.odu100_select_list_object.mcs_index_select_list_mimo(
-                                        "-1" if peer_configuration[i].basicrateMCSIndex is None or peer_configuration[
-                                            i].basicrateMCSIndex == "" else peer_configuration[i].basicrateMCSIndex,
-                                        "" if ru_configuration[
-                                            0].defaultNodeType is None else "enabled"
-                                            if ru_configuration[0].defaultNodeType == 0 or ru_configuration[0].defaultNodeType == 2 else "disabled",
-                                        'ru.ra.peerNode.peerConfigTable.basicRateMCSIndex.%s' % (
-                                            i + 1),
-                                        False, "MCS Index", {'style': 'width:118px'})
-                                    )
+                                   "-1" if peer_configuration[i].basicrateMCSIndex is None or peer_configuration[
+                                       i].basicrateMCSIndex == "" else peer_configuration[i].basicrateMCSIndex,
+                                   "" if ru_configuration[
+                                             0].defaultNodeType is None else "enabled"
+                                   if ru_configuration[0].defaultNodeType == 0 or ru_configuration[
+                                       0].defaultNodeType == 2 else "disabled",
+                                   'ru.ra.peerNode.peerConfigTable.basicRateMCSIndex.%s' % (
+                                       i + 1),
+                                   False, "MCS Index", {
+                                       'style': 'width:118px'}
+                               )
+                               if int(antenna_port) == 1 or int(antenna_port) == 2
+                               else self.odu100_select_list_object.mcs_index_select_list_mimo(
+                                   "-1" if peer_configuration[i].basicrateMCSIndex is None or peer_configuration[
+                                       i].basicrateMCSIndex == "" else peer_configuration[i].basicrateMCSIndex,
+                                   "" if ru_configuration[
+                                             0].defaultNodeType is None else "enabled"
+                                   if ru_configuration[0].defaultNodeType == 0 or ru_configuration[
+                                       0].defaultNodeType == 2 else "disabled",
+                                   'ru.ra.peerNode.peerConfigTable.basicRateMCSIndex.%s' % (
+                                       i + 1),
+                                   False, "MCS Index", {'style': 'width:118px'})
+                    )
 
                 else:
                     odu100_peer_config_form += "\
@@ -4254,16 +3934,56 @@ class OduConfiguration():
                         <input type = \"text\" id =\"ru.ra.peerNode.peerConfigTable.maxDownlinkBW.%s\" name=\"ru.ra.peerNode.peerConfigTable.maxDownlinkBW.%s\" value = \"100000\" style=\"width:61px;\" %s/>\
                         <input type = \"text\" id =\"ru.ra.peerNode.peerConfigTable.maxUplinkBW.%s\" name = \"ru.ra.peerNode.peerConfigTable.maxUplinkBW.%s\" value = \"100000\" style=\"width:61px;\" %s/>\
                         %s\
-                    </div>" % (i + 1, i + 1, "", "" if ru_configuration[0].defaultNodeType is None else "" if ru_configuration[0].defaultNodeType == 0 or ru_configuration[0].defaultNodeType == 2 else "disabled=disabled",
-                               i + 1, i + 1, "512", "" if ru_configuration[0].defaultNodeType is None else "" if ru_configuration[
-                                   0].defaultNodeType == 0 or ru_configuration[0].defaultNodeType == 2 else "disabled=disabled",
-                               i + 1, i + 1, "512", "" if ru_configuration[0].defaultNodeType is None else "" if ru_configuration[0].defaultNodeType == 0 or ru_configuration[0].defaultNodeType == 2 else "disabled=disabled", i + 1, i + 1, "" if ru_configuration[
-                                   0].defaultNodeType is None else "enabled" if ru_configuration[0].defaultNodeType == 0 or ru_configuration[0].defaultNodeType == 2 else "disabled",
-                               i + 1, i + 1, "" if ru_configuration[0].defaultNodeType is None else "enabled" if ru_configuration[
-                                   0].defaultNodeType == 0 or ru_configuration[0].defaultNodeType == 2 else "disabled",
+                    </div>" % (i + 1, i + 1, "",
+                               "" if ru_configuration[0].defaultNodeType is None else "" if ru_configuration[
+                                                                                                0].defaultNodeType == 0 or
+                                                                                            ru_configuration[
+                                                                                                0].defaultNodeType == 2 else "disabled=disabled",
+                               i + 1, i + 1, "512",
+                               "" if ru_configuration[0].defaultNodeType is None else "" if ru_configuration[
+                                                                                                0].defaultNodeType == 0 or
+                                                                                            ru_configuration[
+                                                                                                0].defaultNodeType == 2 else "disabled=disabled",
+                               i + 1, i + 1, "512",
+                               "" if ru_configuration[0].defaultNodeType is None else "" if ru_configuration[
+                                                                                                0].defaultNodeType == 0 or
+                                                                                            ru_configuration[
+                                                                                                0].defaultNodeType == 2 else "disabled=disabled",
+                               i + 1, i + 1, "" if ru_configuration[
+                                                       0].defaultNodeType is None else "enabled" if ru_configuration[
+                                                                                                        0].defaultNodeType == 0 or
+                                                                                                    ru_configuration[
+                                                                                                        0].defaultNodeType == 2 else "disabled",
+                               i + 1, i + 1,
+                               "" if ru_configuration[0].defaultNodeType is None else "enabled" if ru_configuration[
+                                                                                                       0].defaultNodeType == 0 or
+                                                                                                   ru_configuration[
+                                                                                                       0].defaultNodeType == 2 else "disabled",
                                self.odu100_select_list_object.mcs_index_select_list(-1,
-                                                                                            "" if ru_configuration[0].defaultNodeType is None else "enabled" if ru_configuration[0].defaultNodeType == 0 or ru_configuration[0].defaultNodeType == 2 else "disabled", 'ru.ra.peerNode.peerConfigTable.basicRateMCSIndex.%s' % (i + 1), False, "MCS Index", {'style': 'width:118px'})if int(antenna_port) == 1 or int(antenna_port) == 2 else self.odu100_select_list_object.mcs_index_select_list_mimo(-1,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          "" if ru_configuration[0].defaultNodeType is None else "enabled" if ru_configuration[0].defaultNodeType == 0 or ru_configuration[0].defaultNodeType == 2 else "disabled", 'ru.ra.peerNode.peerConfigTable.basicRateMCSIndex.%s' % (i + 1), False, "MCS Index", {'style': 'width:118px'}))
+                                                                                    "" if ru_configuration[
+                                                                                              0].defaultNodeType is None else "enabled" if
+                                                                                    ru_configuration[
+                                                                                        0].defaultNodeType == 0 or
+                                                                                    ru_configuration[
+                                                                                        0].defaultNodeType == 2 else "disabled",
+                                                                                    'ru.ra.peerNode.peerConfigTable.basicRateMCSIndex.%s' % (
+                                                                                    i + 1), False, "MCS Index",
+                                                                                    {'style': 'width:118px'}) if int(
+                                   antenna_port) == 1 or int(
+                                   antenna_port) == 2 else self.odu100_select_list_object.mcs_index_select_list_mimo(-1,
+                                                                                                                     "" if
+                                                                                                                     ru_configuration[
+                                                                                                                         0].defaultNodeType is None else "enabled" if
+                                                                                                                     ru_configuration[
+                                                                                                                         0].defaultNodeType == 0 or
+                                                                                                                     ru_configuration[
+                                                                                                                         0].defaultNodeType == 2 else "disabled",
+                                                                                                                     'ru.ra.peerNode.peerConfigTable.basicRateMCSIndex.%s' % (
+                                                                                                                     i + 1),
+                                                                                                                     False,
+                                                                                                                     "MCS Index",
+                                                                                                                     {
+                                                                                                                     'style': 'width:118px'}))
 
             #%("" if peer_configuration[i][0]==None else peer_configuration[i][0],"" if peer_configuration[i][1]==None else peer_configuration[i][1],"" if peer_configuration[i][2]==None else peer_configuration[i][2],"" if peer_configuration[i][3]==None else peer_configuration[i][3])
             odu100_peer_config_form += "\
@@ -4283,7 +4003,8 @@ class OduConfiguration():
                 <div id=\"peer_config_form_result\" name=\"peer_config_form_result\">\
                 </div>\
             </form>\
-            " % (host_id, selected_device, "" if ru_configuration[0][0] is None else ru_configuration[0][0] if len(ru_configuration) > 0 else 0,
+            " % (host_id, selected_device,
+                 "" if ru_configuration[0][0] is None else ru_configuration[0][0] if len(ru_configuration) > 0 else 0,
                  "" if ra_configuration[0][8] is None else ra_configuration[0][8] if len(ra_configuration) > 0 else 1)
         else:
             if peer_config_table_data["success"] == 1:
@@ -4313,23 +4034,41 @@ class OduConfiguration():
                             %s\
                         </div>" % (i + 1, i + 1,
                                    "" if peer_configuration[
-                                       i].peerMacAddress is None else peer_configuration[i].peerMacAddress,
+                                             i].peerMacAddress is None else peer_configuration[i].peerMacAddress,
                                    i + 1, i + 1,
                                    "512" if peer_configuration[
-                                       i].guaranteedUplinkBW is None else peer_configuration[i].guaranteedUplinkBW,
+                                                i].guaranteedUplinkBW is None else peer_configuration[
+                                       i].guaranteedUplinkBW,
                                    "" if ru_configuration[0].defaultNodeType is None else "" if ru_configuration[
-                                       0].defaultNodeType == 0 or ru_configuration[0].defaultNodeType == 2 else "disabled=disabled",
+                                                                                                    0].defaultNodeType == 0 or
+                                                                                                ru_configuration[
+                                                                                                    0].defaultNodeType == 2 else "disabled=disabled",
                                    i + 1, i + 1,
                                    "512" if peer_configuration[
-                                       i].guaranteedDownlinkBW is None else peer_configuration[i].guaranteedDownlinkBW,
+                                                i].guaranteedDownlinkBW is None else peer_configuration[
+                                       i].guaranteedDownlinkBW,
                                    "" if ru_configuration[0].defaultNodeType is None else "" if ru_configuration[
-                                       0].defaultNodeType == 0 or ru_configuration[0].defaultNodeType == 2 else "disabled=disabled",
-                                   i + 1, i + 1, "" if ru_configuration[0].defaultNodeType is None else "" if ru_configuration[
-                                       0].defaultNodeType == 0 or ru_configuration[0].defaultNodeType == 2 else "disabled=disabled",
-                                   i + 1, i + 1, "" if ru_configuration[0].defaultNodeType is None else "" if ru_configuration[
-                                       0].defaultNodeType == 0 or ru_configuration[0].defaultNodeType == 2 else "disabled=disabled",
-                                   self.odu100_select_list_object.mcs_index_select_list("-1" if peer_configuration[i].basicrateMCSIndex is None or peer_configuration[i].basicrateMCSIndex == "" else peer_configuration[i].basicrateMCSIndex,
-                                                                                        "" if ru_configuration[0].defaultNodeType is None else "enabled" if ru_configuration[0].defaultNodeType == 0 or ru_configuration[0].defaultNodeType == 2 else "disabled", 'ru.ra.peerNode.peerConfigTable.basicRateMCSIndex.%s' % (i + 1), False, "MCS Index", {'style': 'width:118px'}))
+                                                                                                    0].defaultNodeType == 0 or
+                                                                                                ru_configuration[
+                                                                                                    0].defaultNodeType == 2 else "disabled=disabled",
+                                   i + 1, i + 1,
+                                   "" if ru_configuration[0].defaultNodeType is None else "" if ru_configuration[
+                                                                                                    0].defaultNodeType == 0 or
+                                                                                                ru_configuration[
+                                                                                                    0].defaultNodeType == 2 else "disabled=disabled",
+                                   i + 1, i + 1,
+                                   "" if ru_configuration[0].defaultNodeType is None else "" if ru_configuration[
+                                                                                                    0].defaultNodeType == 0 or
+                                                                                                ru_configuration[
+                                                                                                    0].defaultNodeType == 2 else "disabled=disabled",
+                                   self.odu100_select_list_object.mcs_index_select_list(
+                                       "-1" if peer_configuration[i].basicrateMCSIndex is None or peer_configuration[
+                                           i].basicrateMCSIndex == "" else peer_configuration[i].basicrateMCSIndex,
+                                       "" if ru_configuration[0].defaultNodeType is None else "enabled" if
+                                       ru_configuration[0].defaultNodeType == 0 or ru_configuration[
+                                           0].defaultNodeType == 2 else "disabled",
+                                       'ru.ra.peerNode.peerConfigTable.basicRateMCSIndex.%s' % (i + 1), False,
+                                       "MCS Index", {'style': 'width:118px'}))
 
                     else:
                         odu100_peer_config_form += "\
@@ -4343,16 +4082,34 @@ class OduConfiguration():
                         </div>" % (i + 1, i + 1, "",
                                    i + 1, i + 1, "512",
                                    "" if ru_configuration[0].defaultNodeType is None else "" if ru_configuration[
-                                       0].defaultNodeType == 0 or ru_configuration[0].defaultNodeType == 2 else "disabled=disabled",
+                                                                                                    0].defaultNodeType == 0 or
+                                                                                                ru_configuration[
+                                                                                                    0].defaultNodeType == 2 else "disabled=disabled",
                                    i + 1, i + 1, "512",
                                    "" if ru_configuration[0].defaultNodeType is None else "" if ru_configuration[
-                                       0].defaultNodeType == 0 or ru_configuration[0].defaultNodeType == 2 else "disabled=disabled",
-                                   i + 1, i + 1, "" if ru_configuration[0].defaultNodeType is None else "" if ru_configuration[
-                                       0].defaultNodeType == 0 or ru_configuration[0].defaultNodeType == 2 else "disabled=disabled",
-                                   i + 1, i + 1, "" if ru_configuration[0].defaultNodeType is None else "" if ru_configuration[
-                                       0].defaultNodeType == 0 or ru_configuration[0].defaultNodeType == 2 else "disabled=disabled",
+                                                                                                    0].defaultNodeType == 0 or
+                                                                                                ru_configuration[
+                                                                                                    0].defaultNodeType == 2 else "disabled=disabled",
+                                   i + 1, i + 1,
+                                   "" if ru_configuration[0].defaultNodeType is None else "" if ru_configuration[
+                                                                                                    0].defaultNodeType == 0 or
+                                                                                                ru_configuration[
+                                                                                                    0].defaultNodeType == 2 else "disabled=disabled",
+                                   i + 1, i + 1,
+                                   "" if ru_configuration[0].defaultNodeType is None else "" if ru_configuration[
+                                                                                                    0].defaultNodeType == 0 or
+                                                                                                ru_configuration[
+                                                                                                    0].defaultNodeType == 2 else "disabled=disabled",
                                    self.odu100_select_list_object.mcs_index_select_list(-1,
-                                                                                        "" if ru_configuration[0].defaultNodeType is None else "enabled" if ru_configuration[0].defaultNodeType == 0 or ru_configuration[0].defaultNodeType == 2 else "disabled", 'ru.ra.peerNode.peerConfigTable.basicRateMCSIndex.%s' % (i + 1), False, "MCS Index", {'style': 'width:118px'}))
+                                                                                        "" if ru_configuration[
+                                                                                                  0].defaultNodeType is None else "enabled" if
+                                                                                        ru_configuration[
+                                                                                            0].defaultNodeType == 0 or
+                                                                                        ru_configuration[
+                                                                                            0].defaultNodeType == 2 else "disabled",
+                                                                                        'ru.ra.peerNode.peerConfigTable.basicRateMCSIndex.%s' % (
+                                                                                        i + 1), False, "MCS Index",
+                                                                                        {'style': 'width:118px'}))
                 odu100_peer_config_form += "\
                         <div class=\"row-elem\">\
                             <input type=\"submit\" name =\"odu100_submit\" value=\"Save\" id=\"id_omc_submit_save\" onClick=\"return odu100PeerForm('odu100_peer_configuration_form',this)\" class=\"yo-small yo-button\" />\
@@ -4371,45 +4128,14 @@ class OduConfiguration():
 
         # html.write(str(odu100_peer_config_form ))
         return str(odu100_peer_config_form)
-##
-##    # Author - Anuj Samariya
-##    # This function is used to make form of odu100_prefferd_channellist_configuration
-##    # h - request object
-##    # This returns the html form in string
-##    def odu100_preffered_channellist_configuration(self,h):
-##        """
-##        Author - Anuj Samariya
-##        This function is used to make form of odu100_preffered_channellist_configuration
-##        h - request object
-##        This returns the string in html form
-##        """
-##        #This variable is used for storing html form which is in string form [type - string]
-##        odu100_preffered_channel_list_config_form = ""
-##        global html
-##        html = h
-##        odu100_preffered_channel_list_config_form = "<div id =\"preffered_channellist_config_form_container\" name=\"preffered_channellist_config_form_container\">\
-##                                <form id = \"odu100_preffered_channellist_config_form\" name = \"odu100_preffered_channellist_config_form\" action = \"odu100_preffered_channellist_config\">\
-##                                    <div id=\"odu100_preffered_channellist_form_parmeters_container\" name=\"odu100_preffered_channellist_form_parmeters_container\">\
-##                                        <div class=\"row-elem\">\
-##                                            <label class=\"lbl\">Frequency</label>\
-##                                        <div>"
-##        for i in range(0,10):
-##            odu100_preffered_channel_list_config_form += "<div class=\"row-elem\">\
-##                                                                %s\
-##                                                            </div>" %(self.odu100_select_list_object.preffered_channel_select_list("","enabled",,is_readonly,select_list_initial_msg))
-##        odu100_preffered_channel_list_config_form += " <div class=\"row-elem\">\
-##                                    <input type=\"submit\" value=\"Save\"/>\
-##                                </div>\
-##                                </div>\
-##                                    <div id=\"preffered_channellist_config_form_result\" name=\"preffered_channellist_config_form_result\">\
-##                                    </div>\
-##                                </form>\
-##                            </div>"
-##        html.write(odu100_preffered_channel_list_config_form)
-##
+
 
     def odu100_sync_configuration(self, host_id, selected_device):
         """
+
+
+        @param host_id:
+        @param selected_device:
         @author : Anuj Samariya
         @version :0.0
         @date : 20 Augugst 2011
@@ -4427,111 +4153,138 @@ class OduConfiguration():
         ru_configuration = ru_config_table_data["result"]
         if len(sync_configuration) > 0 and len(ru_configuration) > 0:
             odu100_sync_config_form = "\
-                                            <form id = \"odu100_sync_config_form\" name = \"odu100_sync_config_form\" action = \"odu100_sync_config.py\" method=\"get\">\
-                                                <div id=\"odu100_sync_form_parmeters_container\" name=\"odu100_sync_form_parmeters_container\">\
-                                                    <div class=\"row-elem\" style=\"%s\">\
-                                                        <label class=\"lbl\">Raster Time</label>\
-                                                        %s\
-                                                    </div>\
-                                                    <div class=\"row-elem\">\
-                                                        <label class=\"lbl\">Sync Loss Threshold</label>\
-                                                        <input type = \"text\" id =\"ru.syncClock.syncConfigTable.syncLossThreshold\" name = \"ru.syncClock.syncConfigTable.syncLossThreshold\" value = \"%s\" maxlength = \"15\"/>\
-                                                        <span style=\"font-size:9px\">&nbsp;&nbsp;1 to 100</span>\
-                                                    </div>\
-                                                    <div class=\"row-elem\">\
-                                                        <label class=\"lbl\">Leaky Bucket Timer</label>\
-                                                        <input type = \"text\" id =\"ru.syncClock.syncConfigTable.leakyBucketTimer\" name = \"ru.syncClock.syncConfigTable.leakyBucketTimer\" value = \"%s\" maxlength = \"15\"/>\
-                                                        <span style=\"font-size:9px\">&nbsp;&nbsp;1 to 60</span>\
-                                                    </div>\
-                                                    <div class=\"row-elem\">\
-                                                        <label class=\"lbl\">Sync Loss Timeout</label>\
-                                                        <input type = \"text\" id =\"ru.syncClock.syncConfigTable.syncLostTimeout\" name = \"ru.syncClock.syncConfigTable.syncLostTimeout\" value = \"%s\" maxlength = \"15\"/>\
-                                                        <span style=\"font-size:9px\">&nbsp;&nbsp;30 to 600</span>\
-                                                    </div>\
-                                                    <div class=\"row-elem\" style=\"%s\">\
-                                                        <label class=\"lbl\">Sync Timer Adjust</label>\
-                                                        <input type = \"text\" id =\"ru.syncClock.syncConfigTable.syncConfigTimerAdjust\" name = \"ru.syncClock.syncConfigTable.syncConfigTimerAdjust\" value = \"%s\" maxlength = \"15\" \"%s\"/>\
-                                                        <span style=\"font-size:9px\">&nbsp;&nbsp;-127 to 127</span>\
-                                                    </div>\
-                                                    <div class=\"row-elem\" style=\"%s\">\
-                                                        <label class=\"lbl\">Percentage Downlink Transmit Time</label>\
-                                                        <input type = \"text\" id =\"ru.syncClock.syncConfigTable.percentageDownlinkTransmitTime\" name = \"ru.syncClock.syncConfigTable.percentageDownlinkTransmitTime\" value = \"%s\" maxlength = \"15\" \"%s\"/>\
-                                                        <span style=\"font-size:9px\">&nbsp;&nbsp;20 to 80</span>\
-                                                    </div>\
-                                                    <div class=\"row-elem\">\
-                                                        <input type=\"submit\" name=\"odu100_submit\" value=\"Save\" id=\"id_omc_submit_save\" onClick=\"return odu100CommonFormSubmit('odu100_sync_config_form',this)\" class=\"yo-small yo-button\" />\
-                                                        <input type =\"submit\" name=\"odu100_submit\"  id=\"id_omc_button_retry_all\" value=\"Retry\" style=\"Display:None\" onClick=\"return odu100CommonFormSubmit('odu100_sync_config_form',this)\" class=\"yo-small yo-button\" />\
-                                                        <input type =\"submit\" name=\"odu100_submit\" id=\"id_omc_button_cancel\" value=\"Cancel\" style=\"Display:None\" onClick=\"return odu100CommonFormSubmit('odu100_sync_config_form',this)\" class=\"yo-small yo-button\" />\
-                                                        <input type =\"submit\" name=\"odu100_submit\" id=\"id_omc_button_ok\" value=\"Ok\" style=\"Display:None\" onClick=\"return odu100CommonFormSubmit('odu100_sync_config_form',this)\" class=\"yo-small yo-button\" />\
-                                                        <input type = \"hidden\" name=\"host_id\" value=\"%s\" style=\"Display:None\"/>\
-                                                        <input type = \"hidden\" name=\"device_type\" value=\"%s\" />\
-                                                        <input type = \"hidden\" name=\"node_type\" value=\"%s\" />\
-                                                        <input type = \"hidden\" id=\"common_rec\" name=\"common_rec\" form_name=\"odu100_sync_configuration\" tablename=\"syncConfigTable\"/>\
-                                                    </div>\
-                                                </div>\
-                                                <div id=\"sync_config_form_result\" name=\"sync_config_form_result\">\
-                                                </div>\
-                                            </form>\
-                                        " % ("display:none" if ru_configuration[0].defaultNodeType is not None and ru_configuration[0].defaultNodeType % 2 else "",
-                                             self.odu100_select_list_object.raster_time_select_list(str("" if sync_configuration[0][0] is None else sync_configuration[0][0]), "disabled" if ru_configuration[0].defaultNodeType is None else "enabled" if ru_configuration[0].defaultNodeType == 0 or ru_configuration[0]
-                                                                                                    .defaultNodeType == 2 else "disabled", "ru.syncClock.syncConfigTable.rasterTime", "false", "Raster Time"), "" if sync_configuration[0][1] is None else sync_configuration[0][1], "" if sync_configuration[0][2] is None else sync_configuration[0][2],
-                                             "" if sync_configuration[0][
-                                                 3] is None else sync_configuration[0][3],
-                                             "" if ru_configuration[0].defaultNodeType is None else "" if ru_configuration[
-                                                 0].defaultNodeType == 0 or ru_configuration[0].defaultNodeType == 2 else "display:none",
-                                             "" if sync_configuration[0][4] is None else sync_configuration[0][4], "disabled=disabled" if ru_configuration[
-                                                 0].defaultNodeType is None else "" if int(ru_configuration[0].defaultNodeType) == 0 or ru_configuration[0].defaultNodeType == 2 else "disabled=disabled",
-                                             "" if ru_configuration[0].defaultNodeType is None else "" if ru_configuration[
-                                                 0].defaultNodeType == 0 or ru_configuration[0].defaultNodeType == 2 else "display:none",
-                                             sync_configuration[0][5], "disabled" if ru_configuration[0].defaultNodeType is None else "" if int(ru_configuration[0].defaultNodeType) == 0 or ru_configuration[0].defaultNodeType == 2 else "disabled=disabled", host_id, selected_device, ru_configuration[0].defaultNodeType)
+                <form id = \"odu100_sync_config_form\" name = \"odu100_sync_config_form\" action = \"odu100_sync_config.py\" method=\"get\">\
+                    <div id=\"odu100_sync_form_parmeters_container\" name=\"odu100_sync_form_parmeters_container\">\
+                        <div class=\"row-elem\" style=\"%s\">\
+                            <label class=\"lbl\">Raster Time</label>\
+                            %s\
+                        </div>\
+                        <div class=\"row-elem\">\
+                            <label class=\"lbl\">Sync Loss Threshold</label>\
+                            <input type = \"text\" id =\"ru.syncClock.syncConfigTable.syncLossThreshold\" name = \"ru.syncClock.syncConfigTable.syncLossThreshold\" value = \"%s\" maxlength = \"15\"/>\
+                            <span style=\"font-size:9px\">&nbsp;&nbsp;1 to 100</span>\
+                        </div>\
+                        <div class=\"row-elem\">\
+                            <label class=\"lbl\">Leaky Bucket Timer</label>\
+                            <input type = \"text\" id =\"ru.syncClock.syncConfigTable.leakyBucketTimer\" name = \"ru.syncClock.syncConfigTable.leakyBucketTimer\" value = \"%s\" maxlength = \"15\"/>\
+                            <span style=\"font-size:9px\">&nbsp;&nbsp;1 to 60</span>\
+                        </div>\
+                        <div class=\"row-elem\">\
+                            <label class=\"lbl\">Sync Loss Timeout</label>\
+                            <input type = \"text\" id =\"ru.syncClock.syncConfigTable.syncLostTimeout\" name = \"ru.syncClock.syncConfigTable.syncLostTimeout\" value = \"%s\" maxlength = \"15\"/>\
+                            <span style=\"font-size:9px\">&nbsp;&nbsp;30 to 600</span>\
+                        </div>\
+                        <div class=\"row-elem\" style=\"%s\">\
+                            <label class=\"lbl\">Sync Timer Adjust</label>\
+                            <input type = \"text\" id =\"ru.syncClock.syncConfigTable.syncConfigTimerAdjust\" name = \"ru.syncClock.syncConfigTable.syncConfigTimerAdjust\" value = \"%s\" maxlength = \"15\" \"%s\"/>\
+                            <span style=\"font-size:9px\">&nbsp;&nbsp;-127 to 127</span>\
+                        </div>\
+                        <div class=\"row-elem\" style=\"%s\">\
+                            <label class=\"lbl\">Percentage Downlink Transmit Time</label>\
+                            <input type = \"text\" id =\"ru.syncClock.syncConfigTable.percentageDownlinkTransmitTime\" name = \"ru.syncClock.syncConfigTable.percentageDownlinkTransmitTime\" value = \"%s\" maxlength = \"15\" \"%s\"/>\
+                            <span style=\"font-size:9px\">&nbsp;&nbsp;20 to 80</span>\
+                        </div>\
+                        <div class=\"row-elem\">\
+                            <input type=\"submit\" name=\"odu100_submit\" value=\"Save\" id=\"id_omc_submit_save\" onClick=\"return odu100CommonFormSubmit('odu100_sync_config_form',this)\" class=\"yo-small yo-button\" />\
+                            <input type =\"submit\" name=\"odu100_submit\"  id=\"id_omc_button_retry_all\" value=\"Retry\" style=\"Display:None\" onClick=\"return odu100CommonFormSubmit('odu100_sync_config_form',this)\" class=\"yo-small yo-button\" />\
+                            <input type =\"submit\" name=\"odu100_submit\" id=\"id_omc_button_cancel\" value=\"Cancel\" style=\"Display:None\" onClick=\"return odu100CommonFormSubmit('odu100_sync_config_form',this)\" class=\"yo-small yo-button\" />\
+                            <input type =\"submit\" name=\"odu100_submit\" id=\"id_omc_button_ok\" value=\"Ok\" style=\"Display:None\" onClick=\"return odu100CommonFormSubmit('odu100_sync_config_form',this)\" class=\"yo-small yo-button\" />\
+                            <input type = \"hidden\" name=\"host_id\" value=\"%s\" style=\"Display:None\"/>\
+                            <input type = \"hidden\" name=\"device_type\" value=\"%s\" />\
+                            <input type = \"hidden\" name=\"node_type\" value=\"%s\" />\
+                            <input type = \"hidden\" id=\"common_rec\" name=\"common_rec\" form_name=\"odu100_sync_configuration\" tablename=\"syncConfigTable\"/>\
+                        </div>\
+                    </div>\
+                    <div id=\"sync_config_form_result\" name=\"sync_config_form_result\">\
+                    </div>\
+                </form>\
+            " % (
+            "display:none" if ru_configuration[0].defaultNodeType is not None and ru_configuration[
+                0].defaultNodeType % 2 else "",
+            self.odu100_select_list_object.raster_time_select_list(
+                str("" if sync_configuration[0][0] is None else sync_configuration[0][0]),
+                "disabled" if ru_configuration[0].defaultNodeType is None else "enabled" if ru_configuration[
+                                                                                                0].defaultNodeType == 0 or
+                                                                                            ru_configuration[0]
+                                                                                            .defaultNodeType == 2 else "disabled",
+                "ru.syncClock.syncConfigTable.rasterTime", "false", "Raster Time"),
+            "" if sync_configuration[0][1] is None else sync_configuration[0][1],
+            "" if sync_configuration[0][2] is None else sync_configuration[0][2],
+            "" if sync_configuration[0][
+                      3] is None else sync_configuration[0][3],
+            "" if ru_configuration[0].defaultNodeType is None else "" if ru_configuration[
+                                                                             0].defaultNodeType == 0 or
+                                                                         ru_configuration[
+                                                                             0].defaultNodeType == 2 else "display:none",
+            "" if sync_configuration[0][4] is None else sync_configuration[0][4],
+            "disabled=disabled" if ru_configuration[
+                                       0].defaultNodeType is None else "" if int(
+                ru_configuration[0].defaultNodeType) == 0 or ru_configuration[
+                                                                                 0].defaultNodeType == 2 else "disabled=disabled",
+            "" if ru_configuration[0].defaultNodeType is None else "" if ru_configuration[
+                                                                             0].defaultNodeType == 0 or
+                                                                         ru_configuration[
+                                                                             0].defaultNodeType == 2 else "display:none",
+            sync_configuration[0][5], "disabled" if ru_configuration[0].defaultNodeType is None else "" if int(
+                ru_configuration[0].defaultNodeType) == 0 or ru_configuration[
+                                                                                                               0].defaultNodeType == 2 else "disabled=disabled",
+            host_id, selected_device, ru_configuration[0].defaultNodeType)
         else:
             if sync_config_table_data["success"] == 1:
                 self.flag = 1
                 odu100_sync_config_form = "\
-                                                <form id = \"odu100_sync_config_form\" name = \"odu100_sync_config_form\" action = \"odu100_sync_config.py\" method=\"get\">\
-                                                    <div id=\"odu100_sync_form_parmeters_container\" name=\"odu100_sync_form_parmeters_container\">\
-                                                        <div class=\"row-elem\">\
-                                                            <label class=\"lbl\">Raster Time</label>\
-                                                            %s\
-                                                        </div>\
-                                                        <div class=\"row-elem\">\
-                                                            <label class=\"lbl\">Sync Loss Threshold</label>\
-                                                            <input type = \"text\" id =\"ru.syncClock.syncConfigTable.syncLossThreshold\" name = \"ru.syncClock.syncConfigTable.syncLossThreshold\" value = \"\" maxlength = \"15\"/>\
-                                                        </div>\
-                                                        <div class=\"row-elem\">\
-                                                            <label class=\"lbl\">Leaky Bucket Timer</label>\
-                                                            <input type = \"text\" id =\"ru.syncClock.syncConfigTable.leakyBucketTimer\" name = \"ru.syncClock.syncConfigTable.leakyBucketTimer\" value = \"\" maxlength = \"15\"/>\
-                                                        </div>\
-                                                        <div class=\"row-elem\">\
-                                                            <label class=\"lbl\">Sync Loss Timeout</label>\
-                                                            <input type = \"text\" id =\"ru.syncClock.syncConfigTable.syncLostTimeout\" name = \"ru.syncClock.syncConfigTable.syncLostTimeout\" value = \"\" maxlength = \"15\"/>\
-                                                        </div>\
-                                                        <div class=\"row-elem\">\
-                                                            <label class=\"lbl\">Sync Timer Adjust</label>\
-                                                            <input type = \"text\" id =\"ru.syncClock.syncConfigTable.syncConfigTimerAdjust\" name = \"ru.syncClock.syncConfigTable.syncConfigTimerAdjust\" value = \"\" maxlength = \"15\"/>\
-                                                        </div>\
-                                                        <div class=\"row-elem\">\
-                                                            <label class=\"lbl\">Percentage Downlink Transmit Time</label>\
-                                                            <input type = \"text\" id =\"ru.syncClock.syncConfigTable.percentageDownlinkTransmitTime\" name = \"ru.syncClock.syncConfigTable.percentageDownlinkTransmitTime\" value = \"\" maxlength = \"15\"/>\
-                                                        </div>\
-                                                        <div class=\"row-elem\">\
-                                                            <input type=\"submit\" name =\"odu100_submit\" value=\"Save\" id=\"id_omc_submit_save\" onClick=\"return odu100CommonFormSubmit('odu100_sync_config_form',this)\" class=\"yo-small yo-button\" />\
-                                                            <input type =\"submit\" name =\"odu100_submit\"  id=\"id_omc_button_retry_all\" value=\"Retry\" style=\"Display:None\" onClick=\"return odu100CommonFormSubmit('odu100_sync_config_form',this)\" class=\"yo-small yo-button\" />\
-                                                            <input type =\"submit\" name =\"odu100_submit\" id=\"id_omc_button_cancel\" value=\"Cancel\" style=\"Display:None\" onClick=\"return odu100CommonFormSubmit('odu100_sync_config_form',this)\" class=\"yo-small yo-button\" />\
-                                                            <input type =\"submit\" name =\"odu100_submit\" id=\"id_omc_button_ok\" value=\"Ok\"/ style=\"Display:None\" onClick=\"return odu100CommonFormSubmit('odu100_sync_config_form',this)\" class=\"yo-small yo-button\" />\
-                                                            <input type = \"hidden\" name = \"host_id\" value=\"%s\" style=\"Display:None\"/>\
-                                                            <input type = \"hidden\" name = \"device_type\" value=\"%s\" />\
-                                                            <input type = \"hidden\" id=\"common_rec\" name=\"common_rec\" form_name=\"odu100_sync_configuration\" tablename=\"syncConfigTable\"/>\
-                                                        </div>\
-                                                    </div>\
-                                                    <div id=\"sync_config_form_result\" name=\"sync_config_form_result\">\
-                                                    </div>\
-                                                </form>\
-                                            " % (self.odu100_select_list_object.raster_time_select_list(str(""), "enabled", "ru.syncClock.syncConfigTable.rasterTime", "false", "Raster Time"), host_id, selected_device)
+                    <form id = \"odu100_sync_config_form\" name = \"odu100_sync_config_form\" action = \"odu100_sync_config.py\" method=\"get\">\
+                        <div id=\"odu100_sync_form_parmeters_container\" name=\"odu100_sync_form_parmeters_container\">\
+                            <div class=\"row-elem\">\
+                                <label class=\"lbl\">Raster Time</label>\
+                                %s\
+                            </div>\
+                            <div class=\"row-elem\">\
+                                <label class=\"lbl\">Sync Loss Threshold</label>\
+                                <input type = \"text\" id =\"ru.syncClock.syncConfigTable.syncLossThreshold\" name = \"ru.syncClock.syncConfigTable.syncLossThreshold\" value = \"\" maxlength = \"15\"/>\
+                            </div>\
+                            <div class=\"row-elem\">\
+                                <label class=\"lbl\">Leaky Bucket Timer</label>\
+                                <input type = \"text\" id =\"ru.syncClock.syncConfigTable.leakyBucketTimer\" name = \"ru.syncClock.syncConfigTable.leakyBucketTimer\" value = \"\" maxlength = \"15\"/>\
+                            </div>\
+                            <div class=\"row-elem\">\
+                                <label class=\"lbl\">Sync Loss Timeout</label>\
+                                <input type = \"text\" id =\"ru.syncClock.syncConfigTable.syncLostTimeout\" name = \"ru.syncClock.syncConfigTable.syncLostTimeout\" value = \"\" maxlength = \"15\"/>\
+                            </div>\
+                            <div class=\"row-elem\">\
+                                <label class=\"lbl\">Sync Timer Adjust</label>\
+                                <input type = \"text\" id =\"ru.syncClock.syncConfigTable.syncConfigTimerAdjust\" name = \"ru.syncClock.syncConfigTable.syncConfigTimerAdjust\" value = \"\" maxlength = \"15\"/>\
+                            </div>\
+                            <div class=\"row-elem\">\
+                                <label class=\"lbl\">Percentage Downlink Transmit Time</label>\
+                                <input type = \"text\" id =\"ru.syncClock.syncConfigTable.percentageDownlinkTransmitTime\" name = \"ru.syncClock.syncConfigTable.percentageDownlinkTransmitTime\" value = \"\" maxlength = \"15\"/>\
+                            </div>\
+                            <div class=\"row-elem\">\
+                                <input type=\"submit\" name =\"odu100_submit\" value=\"Save\" id=\"id_omc_submit_save\" onClick=\"return odu100CommonFormSubmit('odu100_sync_config_form',this)\" class=\"yo-small yo-button\" />\
+                                <input type =\"submit\" name =\"odu100_submit\"  id=\"id_omc_button_retry_all\" value=\"Retry\" style=\"Display:None\" onClick=\"return odu100CommonFormSubmit('odu100_sync_config_form',this)\" class=\"yo-small yo-button\" />\
+                                <input type =\"submit\" name =\"odu100_submit\" id=\"id_omc_button_cancel\" value=\"Cancel\" style=\"Display:None\" onClick=\"return odu100CommonFormSubmit('odu100_sync_config_form',this)\" class=\"yo-small yo-button\" />\
+                                <input type =\"submit\" name =\"odu100_submit\" id=\"id_omc_button_ok\" value=\"Ok\"/ style=\"Display:None\" onClick=\"return odu100CommonFormSubmit('odu100_sync_config_form',this)\" class=\"yo-small yo-button\" />\
+                                <input type = \"hidden\" name = \"host_id\" value=\"%s\" style=\"Display:None\"/>\
+                                <input type = \"hidden\" name = \"device_type\" value=\"%s\" />\
+                                <input type = \"hidden\" id=\"common_rec\" name=\"common_rec\" form_name=\"odu100_sync_configuration\" tablename=\"syncConfigTable\"/>\
+                            </div>\
+                        </div>\
+                        <div id=\"sync_config_form_result\" name=\"sync_config_form_result\">\
+                        </div>\
+                    </form>\
+                " % (
+                self.odu100_select_list_object.raster_time_select_list(str(""), "enabled",
+                                                                       "ru.syncClock.syncConfigTable.rasterTime",
+                                                                       "false", "Raster Time"), host_id,
+                selected_device)
         return str((odu100_sync_config_form))
 
     def odu100_ip_configuration(self, host_id, selected_device):
         """
+
+
+        @param host_id:
+        @param selected_device:
         @author : Anuj Samariya
         @version :0.0
         @date : 20 Augugst 2011
@@ -4548,76 +4301,88 @@ class OduConfiguration():
         ip_configuration = ip_config_table_data["result"]
         if len(ip_configuration) > 0:
             odu100_ip_config_form = "\
-                                            <form id = \"odu100_ip_config_form\" name = \"odu100_ip_config_form\" action=\"odu100_ip_config.py\" method =\"get\">\
-                                                <div id=\"ip_config_form_parmeters_container\" name=\"ip_config_form_parmeters_container\">\
-                                                    <div class=\"row-elem\">\
-                                                        <label class=\"lbl\">IP Address</label>\
-                                                        <input type = \"text\" id =\"ru.ipConfigTable.ipAddress\" name = \"ru.ipConfigTable.ipAddress\" value = \"%s\" maxlength = \"15\" disabled=\"disabled\"/>\
-                                                    </div>\
-                                                    <div class=\"row-elem\">\
-                                                        <label class=\"lbl\">IP Netmask</label>\
-                                                        <input type = \"text\" id =\"ru.ipConfigTable.ipNetworkMask\" name = \"ru.ipConfigTable.ipNetworkMask\" value = \"%s\" maxlength = \"15\"/>\
-                                                    </div>\
-                                                    <div class=\"row-elem\">\
-                                                        <label class=\"lbl\">IP Default Gateway</label>\
-                                                        <input type = \"text\" id =\"ru.ipConfigTable.ipDefaultGateway\" name = \"ru.ipConfigTable.ipDefaultGateway\" value = \"%s\" maxlength = \"15\"/>\
-                                                    </div>\
-                                                    <div class=\"row-elem\" style=\"diplay:none\">\
-                                                        <label class=\"lbl\">DHCP state</label>\
-                                                        %s\
-                                                    </div>\
-                                                    <div class=\"row-elem\">\
-                                                        <input type=\"submit\" name =\"odu100_submit\" value=\"Save\" id=\"id_omc_submit_save\" onClick=\"return odu100IpConfigFormSubmitCheck('odu100_ip_config_form',this)\" class=\"yo-small yo-button\" />\
-                                                        <input type =\"submit\" name =\"odu100_submit\"  id=\"id_omc_button_retry_all\" value=\"Retry\" style=\"Display:None\" onClick=\"return odu100IpConfigFormSubmitCheck('odu100_ip_config_form',this)\" class=\"yo-small yo-button\" />\
-                                                        <input type =\"submit\" name =\"odu100_submit\" id=\"id_omc_button_cancel\" value=\"Cancel\" style=\"Display:None\" onClick=\"return odu100IpConfigFormSubmitCheck('odu100_ip_config_form',this)\" class=\"yo-small yo-button\" />\
-                                                        <input type =\"submit\" name =\"odu100_submit\" id=\"id_omc_button_ok\" value=\"Ok\"/ style=\"Display:None\" onClick=\"return odu100IpConfigFormSubmitCheck('odu100_ip_config_form',this)\" class=\"yo-small yo-button\" />\
-                                                        <input type = \"hidden\" name = \"host_id\" value=\"%s\" style=\"Display:None\"/>\
-                                                        <input type = \"hidden\" name = \"device_type\" value=\"%s\" />\
-                                                    </div>\
-                                                </div>\
-                                                <div id=\"odu100_ip_config_form_result\" name=\"odu100_ip_config_form_result\" >\
-                                                </div>\
-                                            </form>\
-                                        " % ("" if ip_configuration[0][0] is None else ip_configuration[0][0], "" if ip_configuration[0][1] is None else ip_configuration[0][1], "" if ip_configuration[0][2] is None else ip_configuration[0][2], self.odu100_select_list_object.dhcp_select_list(str("" if ip_configuration[0][3] is None else ip_configuration[0][3]), "enabled", "ru.ipConfigTable.autoIpConfig", "false", "DHCP State"), host_id, selected_device)
+                <form id = \"odu100_ip_config_form\" name = \"odu100_ip_config_form\" action=\"odu100_ip_config.py\" method =\"get\">\
+                    <div id=\"ip_config_form_parmeters_container\" name=\"ip_config_form_parmeters_container\">\
+                        <div class=\"row-elem\">\
+                            <label class=\"lbl\">IP Address</label>\
+                            <input type = \"text\" id =\"ru.ipConfigTable.ipAddress\" name = \"ru.ipConfigTable.ipAddress\" value = \"%s\" maxlength = \"15\" disabled=\"disabled\"/>\
+                        </div>\
+                        <div class=\"row-elem\">\
+                            <label class=\"lbl\">IP Netmask</label>\
+                            <input type = \"text\" id =\"ru.ipConfigTable.ipNetworkMask\" name = \"ru.ipConfigTable.ipNetworkMask\" value = \"%s\" maxlength = \"15\"/>\
+                        </div>\
+                        <div class=\"row-elem\">\
+                            <label class=\"lbl\">IP Default Gateway</label>\
+                            <input type = \"text\" id =\"ru.ipConfigTable.ipDefaultGateway\" name = \"ru.ipConfigTable.ipDefaultGateway\" value = \"%s\" maxlength = \"15\"/>\
+                        </div>\
+                        <div class=\"row-elem\" style=\"diplay:none\">\
+                            <label class=\"lbl\">DHCP state</label>\
+                            %s\
+                        </div>\
+                        <div class=\"row-elem\">\
+                            <input type=\"submit\" name =\"odu100_submit\" value=\"Save\" id=\"id_omc_submit_save\" onClick=\"return odu100IpConfigFormSubmitCheck('odu100_ip_config_form',this)\" class=\"yo-small yo-button\" />\
+                            <input type =\"submit\" name =\"odu100_submit\"  id=\"id_omc_button_retry_all\" value=\"Retry\" style=\"Display:None\" onClick=\"return odu100IpConfigFormSubmitCheck('odu100_ip_config_form',this)\" class=\"yo-small yo-button\" />\
+                            <input type =\"submit\" name =\"odu100_submit\" id=\"id_omc_button_cancel\" value=\"Cancel\" style=\"Display:None\" onClick=\"return odu100IpConfigFormSubmitCheck('odu100_ip_config_form',this)\" class=\"yo-small yo-button\" />\
+                            <input type =\"submit\" name =\"odu100_submit\" id=\"id_omc_button_ok\" value=\"Ok\"/ style=\"Display:None\" onClick=\"return odu100IpConfigFormSubmitCheck('odu100_ip_config_form',this)\" class=\"yo-small yo-button\" />\
+                            <input type = \"hidden\" name = \"host_id\" value=\"%s\" style=\"Display:None\"/>\
+                            <input type = \"hidden\" name = \"device_type\" value=\"%s\" />\
+                        </div>\
+                    </div>\
+                    <div id=\"odu100_ip_config_form_result\" name=\"odu100_ip_config_form_result\" >\
+                    </div>\
+                </form>\
+            " % ("" if ip_configuration[0][0] is None else ip_configuration[0][0],
+                 "" if ip_configuration[0][1] is None else ip_configuration[0][1],
+                 "" if ip_configuration[0][2] is None else ip_configuration[0][2],
+                 self.odu100_select_list_object.dhcp_select_list(
+                     str("" if ip_configuration[0][3] is None else ip_configuration[0][3]),
+                     "enabled", "ru.ipConfigTable.autoIpConfig", "false", "DHCP State"),
+                 host_id, selected_device)
         else:
             if ip_config_table_data["success"] == 1:
                 self.flag = 1
                 odu100_ip_config_form = "\
-                                                <form id = \"odu100_ip_config_form\" name = \"odu100_ip_config_form\" action=\"odu100_ip_config.py\" method =\"get\">\
-                                                    <div id=\"ip_config_form_parmeters_container\" name=\"ip_config_form_parmeters_container\">\
-                                                        <div class=\"row-elem\">\
-                                                            <label class=\"lbl\">IP Address</label>\
-                                                            <input type = \"text\" id =\"ru.ipConfigTable.ipAddress\" name = \"ru.ipConfigTable.ipAddress\" value = \"\" maxlength = \"15\"/>\
-                                                        </div>\
-                                                        <div class=\"row-elem\">\
-                                                            <label class=\"lbl\">IP Netmask</label>\
-                                                            <input type = \"text\" id =\"ru.ipConfigTable.ipNetworkMask\" name = \"ru.ipConfigTable.ipNetworkMask\" value = \"\" maxlength = \"15\"/>\
-                                                        </div>\
-                                                        <div class=\"row-elem\">\
-                                                            <label class=\"lbl\">IP Default Gateway</label>\
-                                                            <input type = \"text\" id =\"ru.ipConfigTable.ipDefaultGateway\" name = \"ru.ipConfigTable.ipDefaultGateway\" value = \"\" maxlength = \"15\"/>\
-                                                        </div>\
-                                                        <div class=\"row-elem\">\
-                                                            <label class=\"lbl\">DHCP state</label>\
-                                                            %s\
-                                                        </div>\
-                                                        <div class=\"row-elem\">\
-                                                            <input type=\"submit\" name =\"odu100_submit\" value=\"Save\" id=\"id_omc_submit_save\" onClick=\"return odu100IpConfigFormSubmitCheck('odu100_ip_config_form',this)\" class=\"yo-small yo-button\" />\
-                                                            <input type =\"submit\" name =\"odu100_submit\"  id=\"id_omc_button_retry_all\" value=\"Retry\" style=\"Display:None\" onClick=\"return odu100IpConfigFormSubmitCheck('odu100_ip_config_form',this)\" class=\"yo-small yo-button\" />\
-                                                            <input type =\"submit\" name =\"odu100_submit\" id=\"id_omc_button_cancel\" value=\"Cancel\" style=\"Display:None\" onClick=\"return odu100IpConfigFormSubmitCheck('odu100_ip_config_form',this)\" class=\"yo-small yo-button\" />\
-                                                            <input type =\"submit\" name =\"odu100_submit\" id=\"id_omc_button_ok\" value=\"Ok\"/ style=\"Display:None\" onClick=\"return odu100IpConfigFormSubmitCheck('odu100_ip_config_form',this)\" class=\"yo-small yo-button\" />\
-                                                            <input type = \"hidden\" name = \"host_id\" value=\"%s\" style=\"Display:None\"/>\
-                                                            <input type = \"hidden\" name = \"device_type\" value=\"%s\" />\
-                                                        </div>\
-                                                    </div>\
-                                                    <div id=\"odu100_ip_config_form_result\" name=\"odu100_ip_config_form_result\">\
-                                                    </div>\
-                                                </form>\
-                                            " % (self.odu100_select_list_object.dhcp_select_list(str(""), "enabled", "ru.ipConfigTable.autoIpConfig", "false", "DHCP State"), host_id, selected_device)
+                    <form id = \"odu100_ip_config_form\" name = \"odu100_ip_config_form\" action=\"odu100_ip_config.py\" method =\"get\">\
+                        <div id=\"ip_config_form_parmeters_container\" name=\"ip_config_form_parmeters_container\">\
+                            <div class=\"row-elem\">\
+                                <label class=\"lbl\">IP Address</label>\
+                                <input type = \"text\" id =\"ru.ipConfigTable.ipAddress\" name = \"ru.ipConfigTable.ipAddress\" value = \"\" maxlength = \"15\"/>\
+                            </div>\
+                            <div class=\"row-elem\">\
+                                <label class=\"lbl\">IP Netmask</label>\
+                                <input type = \"text\" id =\"ru.ipConfigTable.ipNetworkMask\" name = \"ru.ipConfigTable.ipNetworkMask\" value = \"\" maxlength = \"15\"/>\
+                            </div>\
+                            <div class=\"row-elem\">\
+                                <label class=\"lbl\">IP Default Gateway</label>\
+                                <input type = \"text\" id =\"ru.ipConfigTable.ipDefaultGateway\" name = \"ru.ipConfigTable.ipDefaultGateway\" value = \"\" maxlength = \"15\"/>\
+                            </div>\
+                            <div class=\"row-elem\">\
+                                <label class=\"lbl\">DHCP state</label>\
+                                %s\
+                            </div>\
+                            <div class=\"row-elem\">\
+                                <input type=\"submit\" name =\"odu100_submit\" value=\"Save\" id=\"id_omc_submit_save\" onClick=\"return odu100IpConfigFormSubmitCheck('odu100_ip_config_form',this)\" class=\"yo-small yo-button\" />\
+                                <input type =\"submit\" name =\"odu100_submit\"  id=\"id_omc_button_retry_all\" value=\"Retry\" style=\"Display:None\" onClick=\"return odu100IpConfigFormSubmitCheck('odu100_ip_config_form',this)\" class=\"yo-small yo-button\" />\
+                                <input type =\"submit\" name =\"odu100_submit\" id=\"id_omc_button_cancel\" value=\"Cancel\" style=\"Display:None\" onClick=\"return odu100IpConfigFormSubmitCheck('odu100_ip_config_form',this)\" class=\"yo-small yo-button\" />\
+                                <input type =\"submit\" name =\"odu100_submit\" id=\"id_omc_button_ok\" value=\"Ok\"/ style=\"Display:None\" onClick=\"return odu100IpConfigFormSubmitCheck('odu100_ip_config_form',this)\" class=\"yo-small yo-button\" />\
+                                <input type = \"hidden\" name = \"host_id\" value=\"%s\" style=\"Display:None\"/>\
+                                <input type = \"hidden\" name = \"device_type\" value=\"%s\" />\
+                            </div>\
+                        </div>\
+                        <div id=\"odu100_ip_config_form_result\" name=\"odu100_ip_config_form_result\">\
+                        </div>\
+                    </form>\
+                " % (
+                self.odu100_select_list_object.dhcp_select_list(str(""), "enabled", "ru.ipConfigTable.autoIpConfig",
+                                                                "false", "DHCP State"), host_id, selected_device)
         return str(odu100_ip_config_form)
 
     def odu100_omc_configuration(self, host_id, selected_device):
         """
+
+
+        @param host_id:
+        @param selected_device:
         @author : Anuj Samariya
         @version :0.0
         @date : 20 Augugst 2011
@@ -4634,66 +4399,72 @@ class OduConfiguration():
             omc_configuration = omc_config_table_data["result"]
             if len(omc_configuration) > 0:
                 odu100_omc_config_form = "\
-                                                <form id=\"odu100_omc_config_form\" name=\"odu100_omc_config_form\" action=\"odu100_omc_config.py\" method=\"get\">\
-                                                    <div class=\"omc_config_form_parmeters_container\" name=\"omc_config_form_parmeters_container\">\
-                                                        <div class=\"row-elem\">\
-                                                            <label class=\"lbl\">UNMP IP **</label>\
-                                                            <input type=\"text\" id=\"ru.omcConfTable.omcIpAddress\" name=\"ru.omcConfTable.omcIpAddress\" value=\"%s\" maxlength=\"15\"/>\
-                                                        </div>\
-                                                        <div class=\"row-elem\" style=\"display:none\">\
-                                                            <label class=\"lbl\">Periodic Statistics Timer</label>\
-                                                            <input type = \"text\" id =\"ru.omcConfTable.periodicStatsTimer\" name = \"ru.omcConfTable.periodicStatsTimer\" value = \"%s\" maxlength = \"15\"/>\
-                                                        </div>\
-                                                        <div class=\"row-elem\" style=\"width: 600px;\">\
-                                                            <input type=\"submit\" name =\"odu100_submit\" value=\"Save\" id=\"id_omc_submit_save\" onClick=\"return odu100CommonFormSubmit('odu100_omc_config_form',this)\" class=\"yo-small yo-button\" />\
-                                                            <input type =\"submit\" name =\"odu100_submit\"  id=\"id_omc_button_retry_all\" value=\"Retry\" style=\"Display:None\" onClick=\"return odu100CommonFormSubmit('odu100_omc_config_form',this)\" class=\"yo-small yo-button\"/>\
-                                                            <input type =\"submit\" name =\"odu100_submit\" id=\"id_omc_button_cancel\" value=\"Cancel\" style=\"Display:None\" onClick=\"return odu100CommonFormSubmit('odu100_omc_config_form',this)\" class=\"yo-small yo-button\"/>\
-                                                            <input type =\"submit\" name =\"odu100_submit\" id=\"id_omc_button_ok\" value=\"Ok\" style=\"Display:None\" onClick=\"return odu100CommonFormSubmit('odu100_omc_config_form',this)\" class=\"yo-small yo-button\" />\
-                                                            <input type = \"hidden\" name = \"host_id\" value=\"%s\" style=\"Display:None\"/>\
-                                                            <input type = \"hidden\" name = \"device_type\" value=\"%s\" /><br/><br/>\
-                                                            <input type = \"hidden\" id=\"common_rec\" name=\"common_rec\" form_name=\"odu100_omc_configuration\" tablename=\"omcConfTable\"/>\
-                                                            <span  style=\"font-size: 11px;\" class=\"note\">** UNMP IP - Configuring UNMP IP is important for capturing and monitoring the device alarms</span>\
-                                                        </div>\
-                                                    </div>\
-                                                    <div id=\"odu100_omc_config_form_result\" name=\"odu100_omc_config_form_result\">\
-                                                    </div>\
-                                                </form>\
-                                            " % ("" if omc_configuration[0][0] is None else omc_configuration[0][0], "" if omc_configuration[0][1] is None else omc_configuration[0][1], host_id, selected_device)
+                    <form id=\"odu100_omc_config_form\" name=\"odu100_omc_config_form\" action=\"odu100_omc_config.py\" method=\"get\">\
+                        <div class=\"omc_config_form_parmeters_container\" name=\"omc_config_form_parmeters_container\">\
+                            <div class=\"row-elem\">\
+                                <label class=\"lbl\">UNMP IP **</label>\
+                                <input type=\"text\" id=\"ru.omcConfTable.omcIpAddress\" name=\"ru.omcConfTable.omcIpAddress\" value=\"%s\" maxlength=\"15\"/>\
+                            </div>\
+                            <div class=\"row-elem\" style=\"display:none\">\
+                                <label class=\"lbl\">Periodic Statistics Timer</label>\
+                                <input type = \"text\" id =\"ru.omcConfTable.periodicStatsTimer\" name = \"ru.omcConfTable.periodicStatsTimer\" value = \"%s\" maxlength = \"15\"/>\
+                            </div>\
+                            <div class=\"row-elem\" style=\"width: 600px;\">\
+                                <input type=\"submit\" name =\"odu100_submit\" value=\"Save\" id=\"id_omc_submit_save\" onClick=\"return odu100CommonFormSubmit('odu100_omc_config_form',this)\" class=\"yo-small yo-button\" />\
+                                <input type =\"submit\" name =\"odu100_submit\"  id=\"id_omc_button_retry_all\" value=\"Retry\" style=\"Display:None\" onClick=\"return odu100CommonFormSubmit('odu100_omc_config_form',this)\" class=\"yo-small yo-button\"/>\
+                                <input type =\"submit\" name =\"odu100_submit\" id=\"id_omc_button_cancel\" value=\"Cancel\" style=\"Display:None\" onClick=\"return odu100CommonFormSubmit('odu100_omc_config_form',this)\" class=\"yo-small yo-button\"/>\
+                                <input type =\"submit\" name =\"odu100_submit\" id=\"id_omc_button_ok\" value=\"Ok\" style=\"Display:None\" onClick=\"return odu100CommonFormSubmit('odu100_omc_config_form',this)\" class=\"yo-small yo-button\" />\
+                                <input type = \"hidden\" name = \"host_id\" value=\"%s\" style=\"Display:None\"/>\
+                                <input type = \"hidden\" name = \"device_type\" value=\"%s\" /><br/><br/>\
+                                <input type = \"hidden\" id=\"common_rec\" name=\"common_rec\" form_name=\"odu100_omc_configuration\" tablename=\"omcConfTable\"/>\
+                                <span  style=\"font-size: 11px;\" class=\"note\">** UNMP IP - Configuring UNMP IP is important for capturing and monitoring the device alarms</span>\
+                            </div>\
+                        </div>\
+                        <div id=\"odu100_omc_config_form_result\" name=\"odu100_omc_config_form_result\">\
+                        </div>\
+                    </form>\
+                " % ("" if omc_configuration[0][0] is None else omc_configuration[0][0],
+                     "" if omc_configuration[0][1] is None else omc_configuration[0][1],
+                     host_id, selected_device)
             else:
                 if omc_config_table_data["success"] == 1:
                     self.flag = 1
                     odu100_omc_config_form = "\
-                                                    <form id=\"odu100_omc_config_form\" name=\"odu100_omc_config_form\" action=\"odu100_omc_config.py\" method=\"get\">\
-                                                        <div class=\"omc_config_form_parmeters_container\" name=\"omc_config_form_parmeters_container\">\
-                                                            <div class=\"row-elem\">\
-                                                                <label class=\"lbl\">UNMP IP</label>\
-                                                                <input type=\"text\" id=\"ru.omcConfTable.omcIpAddress\" name=\"ru.omcConfTable.omcIpAddress\" value=\"\" maxlength=\"15\"/>\
-                                                            </div>\
-                                                            <div class=\"row-elem\" style=\"display:none\">\
-                                                                <label class=\"lbl\">Periodic Statistics Timer</label>\
-                                                                <input type = \"text\" id =\"ru.omcConfTable.periodicStatsTimer\" name = \"ru.omcConfTable.periodicStatsTimer\" value=\"\" maxlength = \"15\"/>\
-                                                            </div>\
-                                                            <div class=\"row-elem\">\
-                                                                <input type=\"submit\" name =\"odu100_submit\" value=\"Save\" id=\"id_omc_submit_save\" onClick=\"return odu100CommonFormSubmit('odu100_omc_config_form',this)\" class=\"yo-small yo-button\" />\
-                                                                <input type =\"submit\" name =\"odu100_submit\"  id=\"id_omc_button_retry_all\" value=\"Retry\" style=\"Display:None\" onClick=\"return odu100CommonFormSubmit('odu100_omc_config_form',this)\" class=\"yo-small yo-button\" />\
-                                                                <input type =\"submit\" name =\"odu100_submit\" id=\"id_omc_button_cancel\" value=\"Cancel\" style=\"Display:None\" onClick=\"return odu100CommonFormSubmit('odu100_omc_config_form',this)\" class=\"yo-small yo-button\" />\
-                                                                <input type =\"submit\" name =\"odu100_submit\" id=\"id_omc_button_ok\" value=\"Ok\" style=\"Display:None\" onClick=\"return odu100CommonFormSubmit('odu100_omc_config_form',this)\" class=\"yo-small yo-button\" /><br/><br/>\
-                                                                <span  style=\"font-size: 11px;\">**UNMP IP - Configuring UNMP IP is important for capturing and monitoring the device alarms</span>\
-                                                                <input type = \"hidden\" name = \"host_id\" value=\"%s\" style=\"Display:None\"/>\
-                                                                <input type = \"hidden\" name = \"device_type\" value=\"%s\" />\
-                                                                <input type = \"hidden\" id=\"common_rec\" name=\"common_rec\" form_name=\"odu100_omc_configuration\" tablename=\"omcConfTable\"/>\
-                                                            </div>\
-                                                        </div>\
-                                                        <div id=\"odu100_omc_config_form_result\" name=\"odu100_omc_config_form_result\">\
-                                                        </div>\
-                                                    </form>\
-                                                " % (host_id, selected_device)
+                        <form id=\"odu100_omc_config_form\" name=\"odu100_omc_config_form\" action=\"odu100_omc_config.py\" method=\"get\">\
+                            <div class=\"omc_config_form_parmeters_container\" name=\"omc_config_form_parmeters_container\">\
+                                <div class=\"row-elem\">\
+                                    <label class=\"lbl\">UNMP IP</label>\
+                                    <input type=\"text\" id=\"ru.omcConfTable.omcIpAddress\" name=\"ru.omcConfTable.omcIpAddress\" value=\"\" maxlength=\"15\"/>\
+                                </div>\
+                                <div class=\"row-elem\" style=\"display:none\">\
+                                    <label class=\"lbl\">Periodic Statistics Timer</label>\
+                                    <input type = \"text\" id =\"ru.omcConfTable.periodicStatsTimer\" name = \"ru.omcConfTable.periodicStatsTimer\" value=\"\" maxlength = \"15\"/>\
+                                </div>\
+                                <div class=\"row-elem\">\
+                                    <input type=\"submit\" name =\"odu100_submit\" value=\"Save\" id=\"id_omc_submit_save\" onClick=\"return odu100CommonFormSubmit('odu100_omc_config_form',this)\" class=\"yo-small yo-button\" />\
+                                    <input type =\"submit\" name =\"odu100_submit\"  id=\"id_omc_button_retry_all\" value=\"Retry\" style=\"Display:None\" onClick=\"return odu100CommonFormSubmit('odu100_omc_config_form',this)\" class=\"yo-small yo-button\" />\
+                                    <input type =\"submit\" name =\"odu100_submit\" id=\"id_omc_button_cancel\" value=\"Cancel\" style=\"Display:None\" onClick=\"return odu100CommonFormSubmit('odu100_omc_config_form',this)\" class=\"yo-small yo-button\" />\
+                                    <input type =\"submit\" name =\"odu100_submit\" id=\"id_omc_button_ok\" value=\"Ok\" style=\"Display:None\" onClick=\"return odu100CommonFormSubmit('odu100_omc_config_form',this)\" class=\"yo-small yo-button\" /><br/><br/>\
+                                    <span  style=\"font-size: 11px;\">**UNMP IP - Configuring UNMP IP is important for capturing and monitoring the device alarms</span>\
+                                    <input type = \"hidden\" name = \"host_id\" value=\"%s\" style=\"Display:None\"/>\
+                                    <input type = \"hidden\" name = \"device_type\" value=\"%s\" />\
+                                    <input type = \"hidden\" id=\"common_rec\" name=\"common_rec\" form_name=\"odu100_omc_configuration\" tablename=\"omcConfTable\"/>\
+                                </div>\
+                            </div>\
+                            <div id=\"odu100_omc_config_form_result\" name=\"odu100_omc_config_form_result\">\
+                            </div>\
+                        </form>\
+                    " % (host_id, selected_device)
             return str(odu100_omc_config_form)
         except Exception as e:
             return str(e)
 
     def odu100_acl_configuration(self, host_id, selected_device):
         """
+
+
+        @param host_id:
+        @param selected_device:
         @author : Anuj Samariya
         @version :0.0
         @date : 20 Augugst 2011
@@ -4710,33 +4481,34 @@ class OduConfiguration():
         acl_configuration = acl_config_table_data["result"]
         if len(acl_configuration) > 0:
             odu100_acl_config_form = "\
-                                        \
-                                        <fieldset>\
-                                            <legend> ACL </legend>\
-                                                <form id = \"odu100_acl_add_mac_config_form\" name = \"odu100_acl_add_mac_config_form\" action=\"odu100_acl_add_mac_config.py\" method=\"get\">\
-                                                "
-
-            odu100_acl_config_form += "<div class=\"row-elem\">\
-                                            <label class=\"lbl\">Index</label>\
-                                            %s\
-                                        </div>\
-                                        <div class=\"row-elem\">\
-                                            <label class=\"lbl\">MAC Address</label>\
-                                            <input type = \"text\" id =\"ru.ra.raAclConfigTable.macaddress\" name = \"ru.ra.raAclConfigTable.macaddress\" value = \"%s\"/>\
-                                        </div>\
-                                        <div class=\"row-elem\">\
-                                            <input type=\"submit\" name =\"odu100_submit\" value=\"Add\" id=\"id_omc_submit_save\" onClick=\"return odu100CommonFormSubmit('odu100_acl_add_mac_config_form',this)\" class=\"yo-small yo-button\" />\
-                                            <input type=\"button\" name =\"odu100_acl_reconcile\" value=\"ACL Reconciliation\" id=\"odu100_acl_reconcile\" onClick=\"return odu100AclConfig('odu100_acl_add_mac_config_form',this)\" class=\"yo-small yo-button\" />\
-                                            <input type =\"submit\" name =\"odu100_submit\"  id=\"id_omc_button_retry_all\" value=\"Retry\" style=\"Display:None\" onClick=\"return odu100CommonFormSubmit('odu100_acl_add_mac_config_form',this)\" class=\"yo-small yo-button\" />\
-                                            <input type =\"submit\" name =\"odu100_submit\" id=\"id_omc_button_cancel\" value=\"Cancel\" style=\"Display:None\"  onClick=\"return odu100CommonFormSubmit('odu100_acl_add_mac_config_form',this)\" class=\"yo-small yo-button\" />\
-                                            <input type =\"submit\" name =\"odu100_submit\" id=\"id_omc_button_ok\" value=\"Ok\" style=\"Display:None\" onClick=\"return odu100CommonFormSubmit('odu100_acl_add_mac_config_form',this)\" class=\"yo-small yo-button\" />\
-                                            <input type = \"hidden\" name = \"raacl_index\" value=\"%s\" style=\"display:None\"/>\
-                                            <input type = \"hidden\" name = \"host_id\" value=\"%s\" style=\"display:None\"/>\
-                                            <input type = \"hidden\" name = \"device_type\" value=\"%s\" />\
-                                            <input type = \"hidden\" name = \"total_rows\" value=\"%s\" id=\"total_rows\"/>\
-                                            <input type = \"hidden\" id=\"common_rec\" name=\"common_rec\" form_name=\"odu100_acl_configuration\" tablename=\"raLlcConfTable\"/>\
-                                        </div>" % (self.odu100_select_list_object.acl_index_select_list("" if acl_configuration[0][0] is None else acl_configuration[0][0], "enabled", "aclindex", "false", "Index", host_id),
-                                                   "" if acl_configuration[0][1] is None else acl_configuration[0][1], "" if acl_configuration[0][3] is None else acl_configuration[0][3], host_id, selected_device, len(acl_configuration))
+                <fieldset>\
+                    <legend> ACL </legend>\
+                        <form id = \"odu100_acl_add_mac_config_form\" name = \"odu100_acl_add_mac_config_form\" action=\"odu100_acl_add_mac_config.py\" method=\"get\">\
+                            <div class=\"row-elem\">\
+                                <label class=\"lbl\">Index</label>\
+                                %s\
+                            </div>\
+                            <div class=\"row-elem\">\
+                                <label class=\"lbl\">MAC Address</label>\
+                                <input type = \"text\" id =\"ru.ra.raAclConfigTable.macaddress\" name = \"ru.ra.raAclConfigTable.macaddress\" value = \"%s\"/>\
+                            </div>\
+                            <div class=\"row-elem\">\
+                                <input type=\"submit\" name =\"odu100_submit\" value=\"Add\" id=\"id_omc_submit_save\" onClick=\"return odu100CommonFormSubmit('odu100_acl_add_mac_config_form',this)\" class=\"yo-small yo-button\" />\
+                                <input type=\"button\" name =\"odu100_acl_reconcile\" value=\"ACL Reconciliation\" id=\"odu100_acl_reconcile\" onClick=\"return odu100AclConfig('odu100_acl_add_mac_config_form',this)\" class=\"yo-small yo-button\" />\
+                                <input type =\"submit\" name =\"odu100_submit\"  id=\"id_omc_button_retry_all\" value=\"Retry\" style=\"Display:None\" onClick=\"return odu100CommonFormSubmit('odu100_acl_add_mac_config_form',this)\" class=\"yo-small yo-button\" />\
+                                <input type =\"submit\" name =\"odu100_submit\" id=\"id_omc_button_cancel\" value=\"Cancel\" style=\"Display:None\"  onClick=\"return odu100CommonFormSubmit('odu100_acl_add_mac_config_form',this)\" class=\"yo-small yo-button\" />\
+                                <input type =\"submit\" name =\"odu100_submit\" id=\"id_omc_button_ok\" value=\"Ok\" style=\"Display:None\" onClick=\"return odu100CommonFormSubmit('odu100_acl_add_mac_config_form',this)\" class=\"yo-small yo-button\" />\
+                                <input type = \"hidden\" name = \"raacl_index\" value=\"%s\" style=\"display:None\"/>\
+                                <input type = \"hidden\" name = \"host_id\" value=\"%s\" style=\"display:None\"/>\
+                                <input type = \"hidden\" name = \"device_type\" value=\"%s\" />\
+                                <input type = \"hidden\" name = \"total_rows\" value=\"%s\" id=\"total_rows\"/>\
+                                <input type = \"hidden\" id=\"common_rec\" name=\"common_rec\" form_name=\"odu100_acl_configuration\" tablename=\"raLlcConfTable\"/>\
+                            </div>" % (self.odu100_select_list_object.acl_index_select_list(
+                                        "" if acl_configuration[0][0] is None else acl_configuration[0][0], "enabled", "aclindex", "false",
+                                        "Index", host_id),
+                   "" if acl_configuration[0][1] is None else acl_configuration[0][1],
+                   "" if acl_configuration[0][3] is None else acl_configuration[0][3],
+                   host_id, selected_device, len(acl_configuration))
 
             odu100_acl_config_form += "\
                                         \
@@ -4762,7 +4534,9 @@ class OduConfiguration():
                                         </form>\
                                         </legend></fieldset>\
                                 \
-                            " % (self.odu100_select_list_object.acl_select_list(str("" if ra_configuration[0][7] is None else ra_configuration[0][7]), "enabled", "ru.ra.raConfTable.aclMode", "false", "ACL Mode"), host_id, selected_device, len(acl_configuration))
+                            " % (self.odu100_select_list_object.acl_select_list(
+                str("" if ra_configuration[0][7] is None else ra_configuration[0][7]), "enabled",
+                "ru.ra.raConfTable.aclMode", "false", "ACL Mode"), host_id, selected_device, len(acl_configuration))
 
             odu100_acl_config_form += "\
                                             \
@@ -4787,7 +4561,15 @@ class OduConfiguration():
                                                 <td>%s</td>\
                                                 <td><a href=\"javascript:editMac('%s','0','%s',this,'%s','%s','%s');\" class=\"acl_edit_anchor\"><img src = \"images/edit16.png\" title=\"Edit Profile\" style=\"width:16px;height:16px;\" class=\"imgbutton\"/></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src = \"images/delete16.png\" title=\"Delete Profile\" style=\"width:16px;height:16px;\" class=\"imgbutton\" onclick=\"editMac('%s','1','%s',this,'%s','%s','%s');\"/></td>\
                                                 \
-                                           </tr>" % (str("" if acl_configuration[i][0] is None else acl_configuration[i][0]), "" if acl_configuration[i][1] is None else acl_configuration[i][1], "" if acl_configuration[i][2] is None else acl_configuration[i][2], host_id, str("" if ra_configuration[0][7] is None else ra_configuration[0][7]), len(acl_configuration), "" if acl_configuration[i][1] is None else acl_configuration[i][1], "" if acl_configuration[i][2] is None else acl_configuration[i][2], host_id, str("" if ra_configuration[0][7] is None else ra_configuration[0][7]), len(acl_configuration), "" if acl_configuration[i][1] is None else acl_configuration[i][1])
+                                           </tr>" % (
+                str("" if acl_configuration[i][0] is None else acl_configuration[i][0]),
+                "" if acl_configuration[i][1] is None else acl_configuration[i][1],
+                "" if acl_configuration[i][2] is None else acl_configuration[i][2], host_id,
+                str("" if ra_configuration[0][7] is None else ra_configuration[0][7]), len(acl_configuration),
+                "" if acl_configuration[i][1] is None else acl_configuration[i][1],
+                "" if acl_configuration[i][2] is None else acl_configuration[i][2], host_id,
+                str("" if ra_configuration[0][7] is None else ra_configuration[0][7]), len(acl_configuration),
+                "" if acl_configuration[i][1] is None else acl_configuration[i][1])
 
             odu100_acl_config_form += "</tbody></table>\
                                     </div>\
@@ -4824,9 +4606,11 @@ class OduConfiguration():
                                                 <input type = \"hidden\" name = \"device_type\" value=\"%s\" />\
                                                 <input type = \"hidden\" name = \"total_rows\" value=\"%s\" id=\"total_rows\"/>\
                                                 <input type = \"hidden\" id=\"common_rec\" name=\"common_rec\" form_name=\"odu100_acl_configuration\" tablename=\"raLlcConfTable\"/>\
-                                                </div>" % (self.odu100_select_list_object.acl_index_select_list("", "enabled", "aclindex", "false", "Index", host_id),
-                                                           "",
-                                                           1, host_id, selected_device, len(acl_configuration))
+                                                </div>" % (
+                self.odu100_select_list_object.acl_index_select_list("", "enabled", "aclindex", "false", "Index",
+                                                                     host_id),
+                "",
+                1, host_id, selected_device, len(acl_configuration))
 
                 odu100_acl_config_form += "\
                                         \
@@ -4852,7 +4636,9 @@ class OduConfiguration():
                                         </form>\
                                         </legend></fieldset>\
                                 \
-                            " % (self.odu100_select_list_object.acl_select_list(str("" if ra_configuration[0][7] is None else ra_configuration[0][7]), "enabled", "ru.ra.raConfTable.aclMode", "false", "ACL Mode"), host_id, selected_device, len(acl_configuration))
+                            " % (self.odu100_select_list_object.acl_select_list(
+                    str("" if ra_configuration[0][7] is None else ra_configuration[0][7]), "enabled",
+                    "ru.ra.raConfTable.aclMode", "false", "ACL Mode"), host_id, selected_device, len(acl_configuration))
 
                 odu100_acl_config_form += "\
                                                 \
@@ -4883,7 +4669,15 @@ class OduConfiguration():
                                                     <td>%s</td>\
                                                     <td><a href=\"javascript:editMac('%s','0','%s',this,'%s','%s','%s');\" class=\"acl_edit_anchor\"><img src = \"images/edit16.png\" title=\"Edit Profile\" style=\"width:16px;height:16px;\" class=\"imgbutton\"/></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src = \"images/delete16.png\" title=\"Delete Profile\" style=\"width:16px;height:16px;\" class=\"imgbutton\" onclick=\"editMac('%s','1','%s',this,'%s','%s','%s');\"/></td>\
                                                     <td></td>\
-                                               </tr>" % (str("" if acl_configuration[i][0] is None else acl_configuration[i][0]), "" if acl_configuration[i][1] is None else acl_configuration[i][1], "" if acl_configuration[i][2] is None else acl_configuration[i][2], host_id, str("" if ra_configuration[0][7] is None else ra_configuration[0][7]), len(acl_configuration), "" if acl_configuration[i][1] is None else acl_configuration[i][1], "" if acl_configuration[i][2] is None else acl_configuration[i][2], host_id, str("" if ra_configuration[0][7] is None else ra_configuration[0][7]), len(acl_configuration), "" if acl_configuration[i][1] is None else acl_configuration[i][1])
+                                               </tr>" % (
+                        str("" if acl_configuration[i][0] is None else acl_configuration[i][0]),
+                        "" if acl_configuration[i][1] is None else acl_configuration[i][1],
+                        "" if acl_configuration[i][2] is None else acl_configuration[i][2], host_id,
+                        str("" if ra_configuration[0][7] is None else ra_configuration[0][7]), len(acl_configuration),
+                        "" if acl_configuration[i][1] is None else acl_configuration[i][1],
+                        "" if acl_configuration[i][2] is None else acl_configuration[i][2], host_id,
+                        str("" if ra_configuration[0][7] is None else ra_configuration[0][7]), len(acl_configuration),
+                        "" if acl_configuration[i][1] is None else acl_configuration[i][1])
 
                 odu100_acl_config_form += "</tbody></table>\
                                     </div>\
@@ -4894,6 +4688,12 @@ class OduConfiguration():
         return str(odu100_acl_config_form)
 
     def odu100_sys_omc_registration(self, host_id, selected_device):
+        """
+
+        @param host_id:
+        @param selected_device:
+        @return:
+        """
         sys_registration = []
         sys_registration_data = []
         sys_registration = odu100_get_sysconfigtable(host_id)
@@ -4929,18 +4729,24 @@ class OduConfiguration():
                             <input type = \"hidden\" name = \"host_id\" value=\"%s\"/>\
                             <input type = \"hidden\" name = \"device_type\" value=\"%s\" />\
                         </div>\
-                    </form>" % (sys_registration_data[0].sysOmcRegisterContactAddr if len(sys_registration_data) > 0 else "",
-                                sys_registration_data[0].sysOmcRegisterContactPerson if len(
-                                    sys_registration_data) > 0 else "",
-                                sys_registration_data[0].sysOmcRegisterContactMobile if len(
-                                    sys_registration_data) > 0 else "", sys_registration_data[0].sysOmcRegisterAlternateContact if len(sys_registration_data) > 0 else "",
-                                sys_registration_data[0].sysOmcRegisterContactEmail if len(
-                                    sys_registration_data) > 0 else "",
-                                host_id, selected_device)
+                    </form>" % (
+        sys_registration_data[0].sysOmcRegisterContactAddr if len(sys_registration_data) > 0 else "",
+        sys_registration_data[0].sysOmcRegisterContactPerson if len(
+            sys_registration_data) > 0 else "",
+        sys_registration_data[0].sysOmcRegisterContactMobile if len(
+            sys_registration_data) > 0 else "",
+        sys_registration_data[0].sysOmcRegisterAlternateContact if len(sys_registration_data) > 0 else "",
+        sys_registration_data[0].sysOmcRegisterContactEmail if len(
+            sys_registration_data) > 0 else "",
+        host_id, selected_device)
         return str_form
 
     def odu100_packet_filter(self, host_id, selected_device):
         """
+
+
+        @param host_id:
+        @param selected_device:
         @author : Anuj Samariya
         @param h : html Class Object
         @var html : this is html Class Object defined globally
@@ -4957,13 +4763,15 @@ class OduConfiguration():
         """
         ip_filter_table = odu100_ip_packet_table(host_id)
         ip_filter_data = ip_filter_table['result'] if ip_filter_table[
-            'success'] == 0 and len(ip_filter_table['result']) > 0 else []
+                                                          'success'] == 0 and len(ip_filter_table['result']) > 0 else []
         mac_filter_table = odu100_mac_packet_table(host_id)
         mac_filter_data = mac_filter_table['result'] if mac_filter_table[
-            'success'] == 0 and len(mac_filter_table['result']) > 0 else []
+                                                            'success'] == 0 and len(
+            mac_filter_table['result']) > 0 else []
         filter_status_result = odu100_get_ruconfigtable(host_id)
         filter_status_field = filter_status_result['result'] if filter_status_result[
-            'success'] == 0 and len(filter_status_result['result']) > 0 else []
+                                                                    'success'] == 0 and len(
+            filter_status_result['result']) > 0 else []
 
         tab_str = ''
         tab_str += "<div id=\"content_9\" class=\"tab-content form-div\" style=\"margin-bottom: 0px; margin-top: 26px; display: block;\">\
@@ -4986,8 +4794,9 @@ class OduConfiguration():
                                 <label class=\"lbl-small\">%i</label>\
                                 <input type=\"text\" name=\"ru.packetFilters.ipFilterTable.ipFilterIpAddress.%s\" id=\"ru.packetFilters.ipFilterTable.ipFilterIpAddress.%s\" field=\"sys_omc_register_contact_email\" value=\"%s\" style=\"width: 100px;\" />\
                                 <input type=\"text\" name=\"ru.packetFilters.ipFilterTable.ipFilterNetworkMask.%s\" id=\"ru.packetFilters.ipFilterTable.ipFilterNetworkMask.%s\" field=\"sys_omc_register_contact_email\" value=\"%s\" style=\"width: 100px;\"/>\
-                            </div>" % (i, i, i, ip_filter_data[i - 1].ipFilterIpAddress if len(ip_filter_data) > 0 else "",
-                                       i, i, ip_filter_data[i - 1].ipFilterNetworkMask if len(ip_filter_data) > 0 else "")
+                            </div>" % (
+            i, i, i, ip_filter_data[i - 1].ipFilterIpAddress if len(ip_filter_data) > 0 else "",
+            i, i, ip_filter_data[i - 1].ipFilterNetworkMask if len(ip_filter_data) > 0 else "")
         tab_str += "\
                                 <input type =\"submit\" name =\"odu100_submit\"  id=\"id_omc_submit_save\" value=\"Save\" onClick=\"return odu100CommonFormSubmit('ip_packet_filter_form',this)\" class=\"yo-small yo-button\"/>\
                                 <input type =\"button\" name =\"odu100_submit\"  id=\"id_omc_button_retry_all\" value=\"Retry\" style=\"Display:None\" onClick=\"odu100CommonFormSubmit('ip_packet_filter_form',this)\" class=\"yo-small yo-button\" />\
@@ -5012,7 +4821,8 @@ class OduConfiguration():
                             <div class=\"row-elem\">\
                                 <label class=\"lbl-small\">%i</label>\
                                 <input type=\"text\" name=\"ru.packetFilters.macFilterTable.filterMacAddress.%s\" id=\"ru.packetFilters.macFilterTable.filterMacAddress.%s\" field=\"sys_omc_register_contact_email\" value=\"%s\" style=\"width: 100px;\"/>\
-                            </div>" % (i, i, i, mac_filter_data[i - 1].filterMacAddress if len(mac_filter_data) > 0 else "")
+                            </div>" % (
+            i, i, i, mac_filter_data[i - 1].filterMacAddress if len(mac_filter_data) > 0 else "")
         tab_str += "\
                                 <input type =\"submit\" name =\"odu100_submit\"  id=\"id_omc_submit_save\" value=\"Save\" onClick=\"return odu100CommonFormSubmit('mac_packet_filter_form',this)\" class=\"yo-small yo-button\"/>\
                                 <input type =\"button\" name =\"odu100_submit\"  id=\"id_omc_button_retry_all\" value=\"Retry\" style=\"Display:None\" onClick=\"odu100CommonFormSubmit('mac_packet_filter_form',this)\" class=\"yo-small yo-button\" />\
@@ -5045,10 +4855,19 @@ class OduConfiguration():
                        </div>\
                     </div>\
                </div>\
-            </div>" % (host_id, selected_device, self.odu100_select_list_object.packet_filter_select_list(str(0 if filter_status_field[0][6] is None else filter_status_field[0][6]), "enabled", "ru.ruConfTable.ethFiltering", "false", "Filter Mode"), host_id, selected_device)
+            </div>" % (host_id, selected_device, self.odu100_select_list_object.packet_filter_select_list(
+            str(0 if filter_status_field[0][6] is None else filter_status_field[0][6]), "enabled",
+            "ru.ruConfTable.ethFiltering", "false", "Filter Mode"), host_id, selected_device)
         return tab_str
 
     def odu100_channel_configuration(self, host_id, selected_device, i=0):
+        """
+
+        @param host_id:
+        @param selected_device:
+        @param i:
+        @return:
+        """
         global html
         obj_get_data = IduGetData()
         channel_config_table_data = odu100_get_channelConfig(host_id)
@@ -5066,7 +4885,20 @@ class OduConfiguration():
                 str_form += "<div class=\"row-elem\" style=\"align:center\">\
                                     \
                                     %s\
-                                </div>" % (self.odu100_select_list_object.preffered_channel_select_list((0 if channel_configuration[j].rafrequency is None or channel_configuration[j].rafrequency == "" else channel_configuration[j].rafrequency), "disabled" if i == 2 or len(ra_channel_list) == 0 else "enabled", 'RU.RA.PrefRfChanFreq.frequency.%s' % (j + 1), "false", "Channel list", host_id, selected_device))
+                                </div>" % (self.odu100_select_list_object.preffered_channel_select_list((0 if
+                                                                                                                                     channel_configuration[
+                                                                                                                                         j].rafrequency is None or
+                                                                                                                                     channel_configuration[
+                                                                                                                                         j].rafrequency == "" else
+                                                                                                                                     channel_configuration[
+                                                                                                                                         j].rafrequency),
+                                                                                                        "disabled" if i == 2 or len(
+                                                                                                            ra_channel_list) == 0 else "enabled",
+                                                                                                        'RU.RA.PrefRfChanFreq.frequency.%s' % (
+                                                                                                        j + 1), "false",
+                                                                                                        "Channel list",
+                                                                                                        host_id,
+                                                                                                        selected_device))
             str_form += "<div class=\"row-elem\">\
                             <input type =\"submit\" name =\"odu100_submit\" id=\"id_omc_submit_save\" value=\"Save\" onClick=\"return odu100CommonFormSubmit('channel_configuration_form',this)\" class=\"yo-small yo-button\" disabled=\"disabled\"/>\
                             <input type =\"button\" name =\"refresh_channel\" id=\"refresh_channel\" value=\"Channel List Reconciliation\"  onClick=\"refreshchannelList();\" class=\"yo-small yo-button\" />\
@@ -5093,7 +4925,11 @@ class OduConfiguration():
                         str_form += "<div class=\"row-elem\" style=\"align:center\">\
                                             \
                                             %s\
-                                        </div>" % (self.odu100_select_list_object.default_preffered_channel_select_list(0, "disabled", 'RU.RA.PrefRfChanFreq.frequency.%s' % (j + 1), "false", "Channel List"))
+                                        </div>" % (
+                        self.odu100_select_list_object.default_preffered_channel_select_list(0, "disabled",
+                                                                                             'RU.RA.PrefRfChanFreq.frequency.%s' % (
+                                                                                             j + 1), "false",
+                                                                                             "Channel List"))
                     str_form += "<div class=\"row-elem\">\
                                     <input type =\"submit\" name =\"odu100_submit\" id=\"id_omc_submit_save\" value=\"Save\" onClick=\"return odu100CommonFormSubmit('channel_configuration_form',this)\" class=\"yo-small yo-button\" disabled=\"disabled\"/>\
                                     <input type =\"button\" name =\"refresh_channel\" id=\"refresh_channel\" value=\"Channel List Reconciliation\"  onClick=\"refreshchannelList()\" class=\"yo-small yo-button\" />\
@@ -5106,52 +4942,28 @@ class OduConfiguration():
                                     <input type = \"hidden\" id=\"common_rec\" name=\"common_rec\" form_name=\"odu100_channel_configuration\" tablename=\"raPreferredRFChannelTable\"/>\
                             </div>\
                                 </form>" % (host_id, selected_device)
-##                    if len(ru_configuration)>0:
-##                        if int(ru_configuration[0].channelBandwidth) ==0 or int(ru_configuration[0].channelBandwidth) == 1 or int(ru_configuration[0].channelBandwidth) ==2:
-##                            bw = 1
-##                        else:
-##                            bw = 2
-##                    if len(channel_configuration)>0:
-##                        for i in range(0,10):
-##                            str_form+="<div class=\"row-elem\" style=\"align:center\">\
-##                                            \
-##                                            %s\
-##                                        </div>"%(self.odu100_select_list_object.preffered_channel_select_list10((0 if channel_configuration[i].rafrequency==None or channel_configuration[i].rafrequency=="" else channel_configuration[i].rafrequency),"enabled",'RU.RA.PrefRfChanFreq.frequency.%s'%(i+1),"false","Channel list") if bw==1 else self.odu100_select_list_object.preffered_channel_select_list40((0 if channel_configuration[i].rafrequency==None else channel_configuration[i].rafrequency),"enabled",'RU.RA.PrefRfChanFreq.frequency.%s'%(i+1),"false","Channel List"))
-##                        str_form+="<div class=\"row-elem\">\
-##                                        <input type =\"submit\" name =\"odu100_submit\" id=\"id_omc_submit_save\" value=\"Save\" onClick=\"return odu100CommonFormSubmit('channel_configuration_form',this)\" class=\"yo-small yo-button\"/>\
-##                                        <input type =\"submit\" name =\"refresh_channel\" id=\"refresh_channel\" value=\"Channel List Reconciliation\"  onClick=\"return refreshchannelList()\" class=\"yo-small yo-button\" />\
-##                                        <input type =\"submit\" name =\"odu100_submit\" id=\"id_omc_button_retry_all\" value=\"Retry\" style=\"Display:None\" onClick=\"return odu100CommonFormSubmit('channel_configuration_form',this)\" class=\"yo-small yo-button\" />\
-##                                        <input type =\"submit\" name =\"odu100_submit\" id=\"id_omc_button_cancel\" value=\"Cancel\" style=\"Display:None\"  onClick=\"return odu100CommonFormSubmit('channel_configuration_form',this)\" class=\"yo-small yo-button\" />\
-##                                        <input type =\"submit\" name =\"odu100_submit\" id=\"id_omc_button_ok\" value=\"Ok\" style=\"Display:None\" onClick=\"return odu100CommonFormSubmit('channel_configuration_form',this)\" class=\"yo-small yo-button\" />\
-##                                        <input type = \"hidden\" name = \"host_id\" value=\"%s\"/>\
-##                                        <input type = \"hidden\" name = \"device_type\" value=\"%s\" />\
-##                                </div>\
-##                                    </form>"%(host_id,selected_device)
-##
-##                    else:
-##                        for i in range(0,10):
-##                            str_form+="<div class=\"row-elem\">\
-##                                            <label class=\"lbl lbl-big\">%s</label>\
-##                                            %s\
-##                                        </div>"%(i+1,self.odu100_select_list_object.preffered_channel_select_list((0,"enabled",'RU.RA.PrefRfChanFreq.frequency.%s'%(i+1),"false","Channel List")))
-##                        str_form+="<div class=\"row-elem\">\
-##                                        <input type =\"submit\" name =\"odu100_submit\"  id=\"id_omc_submit_save\" value=\"Save\" onClick=\"return odu100CommonFormSubmit('channel_configuration_form',this)\" class=\"yo-small yo-button\"/>\
-##                                        <input type =\"submit\" name =\"refresh_channel\" id=\"refresh_channel\" value=\"Channel List Reconciliation\"  onClick=\"return refreshchannelList()\" class=\"yo-small yo-button\" />\
-##                                        <input type =\"submit\" name =\"odu100_submit\"  id=\"id_omc_button_retry_all\" value=\"Retry\" style=\"Display:None\" onClick=\"return odu100CommonFormSubmit('channel_configuration_form',this)\" class=\"yo-small yo-button\" />\
-##                                        <input type =\"submit\" name =\"odu100_submit\" id=\"id_omc_button_cancel\" value=\"Cancel\" style=\"Display:None\"  onClick=\"return odu100CommonFormSubmit('channel_configuration_form',this)\" class=\"yo-small yo-button\" />\
-##                                        <input type =\"submit\" name =\"odu100_submit\" id=\"id_omc_button_ok\" value=\"Ok\" style=\"Display:None\" onClick=\"return odu100CommonFormSubmit('channel_configuration_form',this)\" class=\"yo-small yo-button\" />\
-##                                        <input type = \"hidden\" name = \"raacl_index\" value=\"%s\" style=\"Display:None\"/>\
-##                                        <input type = \"hidden\" name = \"host_id\" value=\"\" style=\"Display:None\"/>\
-##                                        <input type = \"hidden\" name = \"device_type\" value=\"\" />\
-##                                        <input type = \"hidden\" name = \"total_rows\" value=\"%s\" id=\"total_rows\"/>\
-##                                </div>\
-##                                    </form>"%(host_id,selected_device)
+
                 else:
                     for j in range(0, 10):
                         str_form += "<div class=\"row-elem\" style=\"align:center\">\
                                             \
                                             %s\
-                                        </div>" % (self.odu100_select_list_object.preffered_channel_select_list_snmp((0 if channel_configuration[j].rafrequency is None or channel_configuration[j].rafrequency == "" or int(channel_configuration[j].rafrequency) == 0 else str(channel_configuration[j].rafrequency)), "disabled" if len(ra_channel_list) == 0 else "enabled", 'RU.RA.PrefRfChanFreq.frequency.%s' % (j + 1), "false", "Channel list"))
+                                        </div>" % (self.odu100_select_list_object.preffered_channel_select_list_snmp((
+                                                                                                                                                         0 if
+                                                                                                                                                         channel_configuration[
+                                                                                                                                                             j].rafrequency is None or
+                                                                                                                                                         channel_configuration[
+                                                                                                                                                             j].rafrequency == "" or int(
+                                                                                                                                                             channel_configuration[
+                                                                                                                                                                 j].rafrequency) == 0 else str(
+                                                                                                                                                             channel_configuration[
+                                                                                                                                                                 j].rafrequency)),
+                                                                                                                     "disabled" if len(
+                                                                                                                         ra_channel_list) == 0 else "enabled",
+                                                                                                                     'RU.RA.PrefRfChanFreq.frequency.%s' % (
+                                                                                                                     j + 1),
+                                                                                                                     "false",
+                                                                                                                     "Channel list"))
                     str_form += "<div class=\"row-elem\">\
                                         <input type =\"submit\" name =\"odu100_submit\" id=\"id_omc_submit_save\" value=\"Save\" onClick=\"return odu100CommonFormSubmit('channel_configuration_form',this)\" class=\"yo-small yo-button\"/>\
                                         <input type =\"button\" name =\"refresh_channel\" id=\"refresh_channel\" value=\"Channel List Reconciliation\"  onClick=\"refreshchannelList()\" class=\"yo-small yo-button\" />\
@@ -5168,7 +4980,21 @@ class OduConfiguration():
                     str_form += "<div class=\"row-elem\" style=\"align:center\">\
                                         \
                                         %s\
-                                    </div>" % (self.odu100_select_list_object.preffered_channel_select_list((0 if channel_configuration[j].rafrequency is None or channel_configuration[j].rafrequency == "" else channel_configuration[j].rafrequency), "disabled" if len(ra_channel_list) == 0 else "enabled", 'RU.RA.PrefRfChanFreq.frequency.%s' % (j + 1), "false", "Channel list", host_id, selected_device))
+                                    </div>" % (self.odu100_select_list_object.preffered_channel_select_list((0 if
+                                                                                                                                             channel_configuration[
+                                                                                                                                                 j].rafrequency is None or
+                                                                                                                                             channel_configuration[
+                                                                                                                                                 j].rafrequency == "" else
+                                                                                                                                             channel_configuration[
+                                                                                                                                                 j].rafrequency),
+                                                                                                            "disabled" if len(
+                                                                                                                ra_channel_list) == 0 else "enabled",
+                                                                                                            'RU.RA.PrefRfChanFreq.frequency.%s' % (
+                                                                                                            j + 1),
+                                                                                                            "false",
+                                                                                                            "Channel list",
+                                                                                                            host_id,
+                                                                                                            selected_device))
                 str_form += "<div class=\"row-elem\">\
                                     <input type =\"submit\" name =\"odu100_submit\" id=\"id_omc_submit_save\" value=\"Save\" onClick=\"return odu100CommonFormSubmit('channel_configuration_form',this)\" class=\"yo-small yo-button\"/>\
                                     <input type =\"button\" name =\"refresh_channel\" id=\"refresh_channel\" value=\"Channel List Reconciliation\"  onClick=\"refreshchannelList()\" class=\"yo-small yo-button\" />\
@@ -5183,6 +5009,11 @@ class OduConfiguration():
         return str_form
 
     def site_survey_form(self, site_survey_record):
+        """
+
+        @param site_survey_record:
+        @return:
+        """
         form_str = ""
         form_str += "<div id=\"site_survey_result\">\
                         <table id=\"site_survey_table\" name=\"site_survey_table\" class=\"yo-table\" style=\"width:100%\" cellspacing=\"0\" cellpadding=\"0\">\
@@ -5213,9 +5044,10 @@ class OduConfiguration():
                                 <td>%s</td>\
                             </tr>" % (site_survey_record[i].scanIndex, site_survey_record[i].rfChannelFrequency,
                                       site_survey_record[i].numCrcErrors, site_survey_record[
-                                          i].maxRslCrcError, site_survey_record[i].numPhyErrors,
+                    i].maxRslCrcError, site_survey_record[i].numPhyErrors,
                                       site_survey_record[i].maxRslPhyError,
-                                      site_survey_record[i].maxRslValidFrames, site_survey_record[i].channelnumber, site_survey_record[i].noiseFloor)
+                                      site_survey_record[i].maxRslValidFrames, site_survey_record[i].channelnumber,
+                                      site_survey_record[i].noiseFloor)
         else:
             form_str += "<tr>\
                             <td colspan=\"9\">No Data Exist</td>\
@@ -5225,6 +5057,12 @@ class OduConfiguration():
         return str(form_str)
 
     def bw_form(self, host_id, device_type):
+        """
+
+        @param host_id:
+        @param device_type:
+        @return:
+        """
         str_form = ""
         tx_rate = ""
         tx_time = ""
@@ -5267,14 +5105,16 @@ class OduConfiguration():
         h -  is used for request
         host_id - it is come with request and used to find the ip_address,mac_address,device_id of particular device
         it displays the forms on page
+        @param host_id:
+        @param device_type:
         """
         str_form = ""
-    ############### Values get from the database by calling the function ra_llc_conf_table_get(host_id) ##################################
-    # RaLlc Configuration get Method------------------------------------------
+        ############### Values get from the database by calling the function ra_llc_conf_table_get(host_id) ##################################
+        # RaLlc Configuration get Method------------------------------------------
         odu100_llc_config_form = ""
         llc_config_table_data = odu100_get_llcconfigtable(host_id)
         ra_llc_config = llc_config_table_data["result"]
-    #--------------------------------------------------------------------------
+        #--------------------------------------------------------------------------
         str_form += "<form action=\"llc_configuration.py\" method=\"get\" id=\"llc_config_form\" name=\"llc_config_form\">\
                         <div id=\"llc_config_form_parmeters_container\" name=\"llc_config_form_parmeters_container\">\
                             <div class=\"row-elem\">\
@@ -5312,21 +5152,28 @@ class OduConfiguration():
                                 <input type = \"hidden\" id=\"common_rec\" name=\"common_rec\" form_name=\"llc_config\" tablename=\"raLlcConfTable\"/>\
                             </div>\
                         </div>\
-                    </form>" % ("" if len(ra_llc_config) == 0 else "" if ra_llc_config[0].arqWinHigh is None else ra_llc_config[0].arqWinHigh,
-                                "" if len(ra_llc_config) == 0 else "" if ra_llc_config[
-                                          0].arqWinLow is None else ra_llc_config[0].arqWinLow,
-                                "" if len(ra_llc_config) == 0 else "" if ra_llc_config[
-                                          0].frameLossThreshold is None else ra_llc_config[0].frameLossThreshold,
-                                "" if len(ra_llc_config) == 0 else "" if ra_llc_config[
-                                          0].leakyBucketTimerVal is None else ra_llc_config[0].leakyBucketTimerVal,
-                                "" if len(ra_llc_config) == 0 else "" if ra_llc_config[
-                                          0].frameLossTimeout is None else ra_llc_config[0].frameLossTimeout,
-                                "" if host_id is None else host_id, "" if device_type is None else device_type)
+                    </form>" % (
+        "" if len(ra_llc_config) == 0 else "" if ra_llc_config[0].arqWinHigh is None else ra_llc_config[0].arqWinHigh,
+        "" if len(ra_llc_config) == 0 else "" if ra_llc_config[
+                                                     0].arqWinLow is None else ra_llc_config[0].arqWinLow,
+        "" if len(ra_llc_config) == 0 else "" if ra_llc_config[
+                                                     0].frameLossThreshold is None else ra_llc_config[
+            0].frameLossThreshold,
+        "" if len(ra_llc_config) == 0 else "" if ra_llc_config[
+                                                     0].leakyBucketTimerVal is None else ra_llc_config[
+            0].leakyBucketTimerVal,
+        "" if len(ra_llc_config) == 0 else "" if ra_llc_config[
+                                                     0].frameLossTimeout is None else ra_llc_config[0].frameLossTimeout,
+        "" if host_id is None else host_id, "" if device_type is None else device_type)
         return str_form
 
 
 # Actions of Forms For odu100 forms ######################################
 def bw_action(h):
+    """
+
+    @param h:
+    """
     global html, host_status_dic, obj_essential
     html = h
     dic_result = {'success': 0, 'result': {}}
@@ -5399,6 +5246,10 @@ def bw_action(h):
 
 
 def sys_registration_configuration(h):
+    """
+
+    @param h:
+    """
     try:
         global html, host_status_dic, obj_essential
         html = h
@@ -5409,7 +5260,8 @@ def sys_registration_configuration(h):
         host_op_status = obj_essential.get_hoststatus(host_id)
         if host_op_status is None or host_op_status == 0:
             obj_essential.host_status(host_id, 12)
-            if html.var("odu100_submit") == "Save" or html.var("odu100_submit") == "Retry" or html.var("odu100_submit") == "":
+            if html.var("odu100_submit") == "Save" or html.var("odu100_submit") == "Retry" or html.var(
+                    "odu100_submit") == "":
                 if html.var("host_id") == "" or html.var("host_id") is None:
                     dic_result["result"] = "Host does not exist"
                     flag = 1
@@ -5437,7 +5289,8 @@ def sys_registration_configuration(h):
                             flag = 1
                             dic_result["result"] = "Mobile is required field"
                     if html.var("ru.sysOmcRegistrationTable.sysOmcRegisterAlternateContact"):
-                        if Validation.is_required(html.var("ru.sysOmcRegistrationTable.sysOmcRegisterAlternateContact")):
+                        if Validation.is_required(
+                                html.var("ru.sysOmcRegistrationTable.sysOmcRegisterAlternateContact")):
                             dic_result["ru.sysOmcRegistrationTable.sysOmcRegisterAlternateContact"] = html.var(
                                 "ru.sysOmcRegistrationTable.sysOmcRegisterAlternateContact")
                         else:
@@ -5499,7 +5352,6 @@ def sys_registration_configuration(h):
 
 
 def odu100_omc_config(h):
-
     """
     @author : Anuj Samariya
     @param h : html Class Object
@@ -5697,8 +5549,10 @@ def odu100_sync_config(h):
                                 "Sync Timer Adjust"] = "Sync Timer Adjust is required"
                             flag = 1
                     if html.var("ru.syncClock.syncConfigTable.percentageDownlinkTransmitTime"):
-                        if Validation.is_required(html.var("ru.syncClock.syncConfigTable.percentageDownlinkTransmitTime")):
-                            if Validation.is_number(html.var("ru.syncClock.syncConfigTable.percentageDownlinkTransmitTime")):
+                        if Validation.is_required(
+                                html.var("ru.syncClock.syncConfigTable.percentageDownlinkTransmitTime")):
+                            if Validation.is_number(
+                                    html.var("ru.syncClock.syncConfigTable.percentageDownlinkTransmitTime")):
                                 dic_result["ru.syncClock.syncConfigTable.percentageDownlinkTransmitTime"] = html.var(
                                     "ru.syncClock.syncConfigTable.percentageDownlinkTransmitTime")
                             else:
@@ -5935,16 +5789,20 @@ def odu100_ra_configuration(h):
                                             indicate = 1
                                             dic_result[
                                                 "result"] = "Number of slaves one is not valid if guranteedBroadcastBandwidth is non-zero"
-                                   # if html.var("ru.ra.raConfTable.dba")!=None:
-                                   #     if int(html.var("ru.ra.raConfTable.dba"))==1:
-                                   #         indicate = 1
-                                   # dic_result["result"] = "Number of slaves
-                                   # one is not valid if DBA enabled"
+                                            # if html.var("ru.ra.raConfTable.dba")!=None:
+                                            #     if int(html.var("ru.ra.raConfTable.dba"))==1:
+                                            #         indicate = 1
+                                            # dic_result["result"] = "Number of slaves
+                                            # one is not valid if DBA enabled"
                                     if indicate == 0 or indicate == "0":
                                         dic_result["ru.ra.raConfTable.numSlaves"] = html.var(
                                             "ru.ra.raConfTable.numSlaves")
                                 else:
-                                    if str(check_timeslot(host_id, int(html.var("ru.ra.raConfTable.numSlaves")))) == '0' or check_timeslot(host_id, int(html.var("ru.ra.raConfTable.numSlaves"))) == '0':
+                                    if str(check_timeslot(host_id, int(
+                                            html.var("ru.ra.raConfTable.numSlaves")))) == '0' or check_timeslot(host_id,
+                                                                                                                int(
+                                                                                                                        html.var(
+                                                                                                                                "ru.ra.raConfTable.numSlaves"))) == '0':
                                         dic_result["ru.ra.raConfTable.numSlaves"] = html.var(
                                             "ru.ra.raConfTable.numSlaves")
                                     else:
@@ -5963,7 +5821,8 @@ def odu100_ra_configuration(h):
                     if html.var("ru.ra.raConfTable.ssID") is None:
                         dic_result["ru.ra.raConfTable.ssID"] = ""
                     else:
-                        if len(html.var("ru.ra.raConfTable.ssID")) >= 0 and len(html.var("ru.ra.raConfTable.ssID")) < 33:
+                        if len(html.var("ru.ra.raConfTable.ssID")) >= 0 and len(
+                                html.var("ru.ra.raConfTable.ssID")) < 33:
                             dic_result["ru.ra.raConfTable.ssID"] = html.var(
                                 "ru.ra.raConfTable.ssID")
                         else:
@@ -5979,7 +5838,8 @@ def odu100_ra_configuration(h):
                             flag = 1
                             dic_result["result"] = "Please Select Encryption"
                     if html.var("ru.ra.tddMac.raTddMacConfigTable.passPhrase"):
-                        if len(html.var("ru.ra.tddMac.raTddMacConfigTable.passPhrase")) >= 0 and len(html.var("ru.ra.tddMac.raTddMacConfigTable.passPhrase")) < 65:
+                        if len(html.var("ru.ra.tddMac.raTddMacConfigTable.passPhrase")) >= 0 and len(
+                                html.var("ru.ra.tddMac.raTddMacConfigTable.passPhrase")) < 65:
                             dic_result["ru.ra.tddMac.raTddMacConfigTable.passPhrase"] = html.var(
                                 "ru.ra.tddMac.raTddMacConfigTable.passPhrase")
                         else:
@@ -6046,24 +5906,24 @@ def odu100_ra_configuration(h):
                                 flag = 1
                                 dic_result["result"] = "Please Select DBA "
 
-                   # if int(html.var("node_type"))==0 or int(html.var("node_type"))==2:
-                   #     if html.var("ru.ra.raConfTable.dba")!=None:
-                   #         if Validation.is_required(html.var("ru.ra.raConfTable.dba")):
-                   #             if html.var("ru.ra.raConfTable.numSlaves")!=None:
-                   #                 if Validation.is_required(html.var("ru.ra.raConfTable.numSlaves")):
-                   #                     if int(html.var("ru.ra.raConfTable.numSlaves"))==1:
-                   #                         if int(html.var("ru.ra.raConfTable.dba"))==1:
-                   #                             flag = 1
-                   #                             dic_result["result"]="DBA can not be enabled if number of slaves is one"
-                   #                         else:
-                   #                             dic_result["ru.ra.raConfTable.dba"] = html.var("ru.ra.raConfTable.dba")
-                   #                     else:
-                   #                         dic_result["ru.ra.raConfTable.dba"] = html.var("ru.ra.raConfTable.dba")
-                   #                 else:
-                   #                     flag = 1
-                   #         else:
-                   #             flag = 1
-                   #             dic_result["DBA"] = "Please Select DBA "
+                                # if int(html.var("node_type"))==0 or int(html.var("node_type"))==2:
+                                #     if html.var("ru.ra.raConfTable.dba")!=None:
+                                #         if Validation.is_required(html.var("ru.ra.raConfTable.dba")):
+                                #             if html.var("ru.ra.raConfTable.numSlaves")!=None:
+                                #                 if Validation.is_required(html.var("ru.ra.raConfTable.numSlaves")):
+                                #                     if int(html.var("ru.ra.raConfTable.numSlaves"))==1:
+                                #                         if int(html.var("ru.ra.raConfTable.dba"))==1:
+                                #                             flag = 1
+                                #                             dic_result["result"]="DBA can not be enabled if number of slaves is one"
+                                #                         else:
+                                #                             dic_result["ru.ra.raConfTable.dba"] = html.var("ru.ra.raConfTable.dba")
+                                #                     else:
+                                #                         dic_result["ru.ra.raConfTable.dba"] = html.var("ru.ra.raConfTable.dba")
+                                #                 else:
+                                #                     flag = 1
+                                #         else:
+                                #             flag = 1
+                                #             dic_result["DBA"] = "Please Select DBA "
 
                     if html.var("ru.ra.raConfTable.guaranteedBroadcastBW"):
                         if Validation.is_required(html.var("ru.ra.raConfTable.guaranteedBroadcastBW")):
@@ -6071,7 +5931,8 @@ def odu100_ra_configuration(h):
                                 if html.var("ru.ra.raConfTable.numSlaves"):
                                     if Validation.is_required(html.var("ru.ra.raConfTable.numSlaves")):
                                         if int(html.var("ru.ra.raConfTable.numSlaves")) == 1:
-                                            if int(html.var("ru.ra.raConfTable.numSlaves")) == 1 and int(html.var("ru.ra.raConfTable.guaranteedBroadcastBW")) == 0:
+                                            if int(html.var("ru.ra.raConfTable.numSlaves")) == 1 and int(
+                                                    html.var("ru.ra.raConfTable.guaranteedBroadcastBW")) == 0:
                                                 dic_result["ru.ra.raConfTable.guaranteedBroadcastBW"] = html.var(
                                                     "ru.ra.raConfTable.guaranteedBroadcastBW")
                                             else:
@@ -6079,7 +5940,8 @@ def odu100_ra_configuration(h):
                                                 dic_result[
                                                     "result"] = "Gauranteed Broadcast can not be greater than zero if number of slaves is one"
                                         else:
-                                            if int(html.var("ru.ra.raConfTable.numSlaves")) > 1 and int(html.var("ru.ra.raConfTable.guaranteedBroadcastBW")) > 0:
+                                            if int(html.var("ru.ra.raConfTable.numSlaves")) > 1 and int(
+                                                    html.var("ru.ra.raConfTable.guaranteedBroadcastBW")) > 0:
                                                 dic_result["ru.ra.raConfTable.guaranteedBroadcastBW"] = html.var(
                                                     "ru.ra.raConfTable.guaranteedBroadcastBW")
                                             else:
@@ -6145,7 +6007,7 @@ def odu100_ra_configuration(h):
                     if html.var("ru.ra.raConfTable.forceMimo"):
                         if Validation.is_required(html.var("ru.ra.raConfTable.forceMimo")):
                             if (html.var("ru.ra.raConfTable.antennaPort") == "3" or
-                             html.var("ru.ra.raConfTable.forceMimo") == "0"):
+                                        html.var("ru.ra.raConfTable.forceMimo") == "0"):
                                 dic_result["ru.ra.raConfTable.forceMimo"] = html.var(
                                     "ru.ra.raConfTable.forceMimo")
                             else:
@@ -6162,7 +6024,9 @@ def odu100_ra_configuration(h):
                 elif timeslot_chk == 1 or timeslot_chk == '1':
                     dic_result = {}
                     dic_result["success"] = 1
-                    dic_result["result"] = "Remove any pre-configured links on the Removed timeslots. One such exists on Timeslot[%s]" % (timeslot)
+                    dic_result[
+                        "result"] = "Remove any pre-configured links on the Removed timeslots. One such exists on Timeslot[%s]" % (
+                    timeslot)
                     html.write(str(dic_result))
                 else:
                     # html.write(str(dic_result))
@@ -6211,7 +6075,7 @@ def odu100_ra_configuration(h):
                         "ru.ra.raConfTable.dfs")
                 if html.var("ru.ra.raConfTable.anc"):
                     dic_result["ru.ra.raConfTable.anc"] = html.var(
-                                    "ru.ra.raConfTable.anc")
+                        "ru.ra.raConfTable.anc")
                 if html.var("ru.ra.raConfTable.forceMimo"):
                     dic_result["ru.ra.raConfTable.forceMimo"] = html.var(
                         "ru.ra.raConfTable.forceMimo")
@@ -6252,7 +6116,7 @@ def odu100_ra_configuration(h):
                         "ru.ra.raConfTable.dfs")
                 if html.var("ru.ra.raConfTable.anc"):
                     dic_result["result"]["ru.ra.raConfTable.anc"] = html.var(
-                                    "ru.ra.raConfTable.anc")
+                        "ru.ra.raConfTable.anc")
                 if html.var("ru.ra.raConfTable.forceMimo"):
                     dic_result["result"]["ru.ra.raConfTable.forceMimo"] = html.var(
                         "ru.ra.raConfTable.forceMimo")
@@ -6271,7 +6135,6 @@ def odu100_ra_configuration(h):
     except Exception as e:
         # html.write(str(dic_result))
         logme(" exception ")
-        import traceback
         # html.write(str(e[-1]))
         html.write(traceback.format_exc())
     finally:
@@ -6462,8 +6325,10 @@ def odu100_peer_configuration(h):
                                     i)] = html.var("ru.ra.peerNode.peerConfigTable.peerMacAddress.%s" % (i))
 
                             if html.var("ru.ra.peerNode.peerConfigTable.guaranteedUplinkBW.%s" % (i)) is not None:
-                                if Validation.is_required(html.var("ru.ra.peerNode.peerConfigTable.guaranteedUplinkBW.%s" % (i))):
-                                    if Validation.is_number(html.var("ru.ra.peerNode.peerConfigTable.guaranteedUplinkBW.%s" % (i))):
+                                if Validation.is_required(
+                                        html.var("ru.ra.peerNode.peerConfigTable.guaranteedUplinkBW.%s" % (i))):
+                                    if Validation.is_number(
+                                            html.var("ru.ra.peerNode.peerConfigTable.guaranteedUplinkBW.%s" % (i))):
                                         dic_result["ru.ra.peerNode.peerConfigTable.guaranteedUplinkBW.%s" % (
                                             i)] = html.var("ru.ra.peerNode.peerConfigTable.guaranteedUplinkBW.%s" % (i))
                                     else:
@@ -6475,10 +6340,13 @@ def odu100_peer_configuration(h):
                                     dic_result[
                                         "result"] = "GuaranteedUplinkBW is required"
                             if html.var("ru.ra.peerNode.peerConfigTable.guaranteedDownlinkBW.%s" % (i)) is not None:
-                                if Validation.is_required(html.var("ru.ra.peerNode.peerConfigTable.guaranteedDownlinkBW.%s" % (i))):
-                                    if Validation.is_number(html.var("ru.ra.peerNode.peerConfigTable.guaranteedDownlinkBW.%s" % (i))):
+                                if Validation.is_required(
+                                        html.var("ru.ra.peerNode.peerConfigTable.guaranteedDownlinkBW.%s" % (i))):
+                                    if Validation.is_number(
+                                            html.var("ru.ra.peerNode.peerConfigTable.guaranteedDownlinkBW.%s" % (i))):
                                         dic_result["ru.ra.peerNode.peerConfigTable.guaranteedDownlinkBW.%s" % (
-                                            i)] = html.var("ru.ra.peerNode.peerConfigTable.guaranteedDownlinkBW.%s" % (i))
+                                            i)] = html.var(
+                                            "ru.ra.peerNode.peerConfigTable.guaranteedDownlinkBW.%s" % (i))
                                     else:
                                         flag = 1
                                         dic_result[
@@ -6488,8 +6356,10 @@ def odu100_peer_configuration(h):
                                     dic_result[
                                         "result"] = "GuaranteedDownlinkBW is required"
                             if html.var("ru.ra.peerNode.peerConfigTable.basicRateMCSIndex.%s" % (i)) is not None:
-                                if Validation.is_required(html.var("ru.ra.peerNode.peerConfigTable.basicRateMCSIndex.%s" % (i))):
-                                    if Validation.is_number(html.var("ru.ra.peerNode.peerConfigTable.basicRateMCSIndex.%s" % (i))):
+                                if Validation.is_required(
+                                        html.var("ru.ra.peerNode.peerConfigTable.basicRateMCSIndex.%s" % (i))):
+                                    if Validation.is_number(
+                                            html.var("ru.ra.peerNode.peerConfigTable.basicRateMCSIndex.%s" % (i))):
                                         dic_result["ru.ra.peerNode.peerConfigTable.basicRateMCSIndex.%s" % (
                                             i)] = html.var("ru.ra.peerNode.peerConfigTable.basicRateMCSIndex.%s" % (i))
                                     else:
@@ -6501,10 +6371,13 @@ def odu100_peer_configuration(h):
                                     dic_result[
                                         "result"] = "BasicRateMCSIndex is required"
                             if html.var("ru.ra.peerNode.peerConfigTable.maxUplinkBW.%s" % (i)) is not None:
-                                if Validation.is_required(html.var("ru.ra.peerNode.peerConfigTable.maxUplinkBW.%s" % (i))):
-                                    if Validation.is_number(html.var("ru.ra.peerNode.peerConfigTable.maxUplinkBW.%s" % (i))):
+                                if Validation.is_required(
+                                        html.var("ru.ra.peerNode.peerConfigTable.maxUplinkBW.%s" % (i))):
+                                    if Validation.is_number(
+                                            html.var("ru.ra.peerNode.peerConfigTable.maxUplinkBW.%s" % (i))):
                                         dic_result["ru.ra.peerNode.peerConfigTable.maxUplinkBW.%s" %
-                                            (i)] = html.var("ru.ra.peerNode.peerConfigTable.maxUplinkBW.%s" % (i))
+                                                   (i)] = html.var(
+                                            "ru.ra.peerNode.peerConfigTable.maxUplinkBW.%s" % (i))
                                     else:
                                         flag = 1
                                         dic_result[
@@ -6514,8 +6387,10 @@ def odu100_peer_configuration(h):
                                     dic_result[
                                         "result"] = "Maximum Uplink is required"
                             if html.var("ru.ra.peerNode.peerConfigTable.maxDownlinkBW.%s" % (i)) is not None:
-                                if Validation.is_required(html.var("ru.ra.peerNode.peerConfigTable.maxDownlinkBW.%s" % (i))):
-                                    if Validation.is_number(html.var("ru.ra.peerNode.peerConfigTable.maxDownlinkBW.%s" % (i))):
+                                if Validation.is_required(
+                                        html.var("ru.ra.peerNode.peerConfigTable.maxDownlinkBW.%s" % (i))):
+                                    if Validation.is_number(
+                                            html.var("ru.ra.peerNode.peerConfigTable.maxDownlinkBW.%s" % (i))):
                                         dic_result["ru.ra.peerNode.peerConfigTable.maxDownlinkBW.%s" % (
                                             i)] = html.var("ru.ra.peerNode.peerConfigTable.maxDownlinkBW.%s" % (i))
                                     else:
@@ -6552,7 +6427,8 @@ def odu100_peer_configuration(h):
                                     dic_result = {}
                                     if mac_accept == 1:
                                         dic_result["success"] = 1
-                                        dic_result["result"] = "ACL ACCEPT mode PEER MAC should be same as in ACL MAC list"
+                                        dic_result[
+                                            "result"] = "ACL ACCEPT mode PEER MAC should be same as in ACL MAC list"
                                     if mac_deny == 1:
                                         dic_result["success"] = 1
                                         dic_result[
@@ -6635,7 +6511,7 @@ def odu100_peer_configuration(h):
             for i in range(1, timeslot_val + 1):
                 if html.var("ru.ra.peerNode.peerConfigTable.peerMacAddress.%s" % (i)) is not None:
                     dic_result["ru.ra.peerNode.peerConfigTable.peerMacAddress.%s" %
-                        (i)] = html.var("ru.ra.peerNode.peerConfigTable.peerMacAddress.%s" % (1))
+                               (i)] = html.var("ru.ra.peerNode.peerConfigTable.peerMacAddress.%s" % (1))
                 if html.var("ru.ra.peerNode.peerConfigTable.guaranteedUplinkBW.%s" % (i)) is not None:
                     dic_result["ru.ra.peerNode.peerConfigTable.guaranteedUplinkBW.%s" % (i)] = html.var(
                         "ru.ra.peerNode.peerConfigTable.guaranteedUplinkBW.%s" % (1))
@@ -6644,7 +6520,7 @@ def odu100_peer_configuration(h):
                         "ru.ra.peerNode.peerConfigTable.guaranteedDownlinkBW.%s" % (1))
                 if html.var("ru.ra.peerNode.peerConfigTable.basicRateMCSIndex.%s" % (i)) is not None:
                     dic_result["ru.ra.peerNode.peerConfigTable.basicRateMCSIndex.%s" %
-                        (i)] = html.var("ru.ra.peerNode.peerConfigTable.basicRateMCSIndex.%s" % (1))
+                               (i)] = html.var("ru.ra.peerNode.peerConfigTable.basicRateMCSIndex.%s" % (1))
             dic_result["success"] = 0
             # result = odu100_common_cancel(host_id,device_type_id,dic_result)
             html.write(str(dic_result))
@@ -6817,6 +6693,10 @@ def llc_configuration(h):
 
 
 def channel_configuration(h):
+    """
+
+    @param h:
+    """
     global html, host_status_dic, obj_essential
     html = h
     dic_result = {}
@@ -6830,14 +6710,16 @@ def channel_configuration(h):
     try:
         host_op_status = obj_essential.get_hoststatus(host_id)
         if host_op_status is None or host_op_status == 0:
-            if html.var("odu100_submit") == "Save" or html.var("odu100_submit") == "Retry" or html.var("odu100_submit") == "":
+            if html.var("odu100_submit") == "Save" or html.var("odu100_submit") == "Retry" or html.var(
+                    "odu100_submit") == "":
                 obj_essential.host_status(host_id, 12)
                 if html.var("host_id") == "" or html.var("host_id") is None:
                     dic_result["result"] = "Host does not exist"
                     dic_result["success"] = 1
                 else:
                     for i in range(0, channel_config):
-                        if html.var('RU.RA.PrefRfChanFreq.frequency.%s' % (i + 1)) and html.var('RU.RA.PrefRfChanFreq.frequency.%s' % (i + 1)) != "":
+                        if html.var('RU.RA.PrefRfChanFreq.frequency.%s' % (i + 1)) and html.var(
+                                        'RU.RA.PrefRfChanFreq.frequency.%s' % (i + 1)) != "":
                             dic_result['RU.RA.PrefRfChanFreq.frequency.%s' % (
                                 i + 1)] = html.var('RU.RA.PrefRfChanFreq.frequency.%s' % (i + 1))
 
@@ -6879,6 +6761,10 @@ def channel_configuration(h):
 
 
 def ip_packet_filter(h):
+    """
+
+    @param h:
+    """
     global html, host_status_dic, obj_essential
     html = h
     dic_result = {}
@@ -6891,7 +6777,8 @@ def ip_packet_filter(h):
     try:
         host_op_status = obj_essential.host_status(host_id, 12)
         if host_op_status == 0:
-            if html.var("odu100_submit") == "Save" or html.var("odu100_submit") == "Retry" or html.var("odu100_submit") == "":
+            if html.var("odu100_submit") == "Save" or html.var("odu100_submit") == "Retry" or html.var(
+                    "odu100_submit") == "":
                 if html.var("host_id") == "" or html.var("host_id") is None:
                     dic_result["result"] = "Host does not exist"
                     dic_result["success"] = 1
@@ -6899,10 +6786,17 @@ def ip_packet_filter(h):
                     for i in range(1, ip_range):
                         if html.var('ru.packetFilters.ipFilterTable.ipFilterIpAddress.%s' % (i)):
                             if html.var('ru.packetFilters.ipFilterTable.ipFilterIpAddress.%s' % (i)) != "":
-                                if Validation.is_valid_ip(html.var('ru.packetFilters.ipFilterTable.ipFilterIpAddress.%s' % (i))) and int(html.var('ru.packetFilters.ipFilterTable.ipFilterIpAddress.%s' % (i)).split('.')[0]) not in [0, 255] and int(html.var('ru.packetFilters.ipFilterTable.ipFilterIpAddress.%s' % (i)).split('.')[-1]) not in [0, 255]:
-                                    if html.var('ru.packetFilters.ipFilterTable.ipFilterIpAddress.%s' % (i)) not in dic_result.values():
+                                if Validation.is_valid_ip(
+                                        html.var('ru.packetFilters.ipFilterTable.ipFilterIpAddress.%s' % (i))) and int(
+                                        html.var('ru.packetFilters.ipFilterTable.ipFilterIpAddress.%s' % (i)).split(
+                                                '.')[0]) not in [0, 255] and int(
+                                        html.var('ru.packetFilters.ipFilterTable.ipFilterIpAddress.%s' % (i)).split(
+                                                '.')[-1]) not in [0, 255]:
+                                    if html.var('ru.packetFilters.ipFilterTable.ipFilterIpAddress.%s' % (
+                                    i)) not in dic_result.values():
                                         dic_result['ru.packetFilters.ipFilterTable.ipFilterIpAddress.%s' %
-                                            (i)] = html.var('ru.packetFilters.ipFilterTable.ipFilterIpAddress.%s' % (i))
+                                                   (i)] = html.var(
+                                            'ru.packetFilters.ipFilterTable.ipFilterIpAddress.%s' % (i))
                                     else:
                                         flag = 1
                                         dic_result[
@@ -6912,11 +6806,12 @@ def ip_packet_filter(h):
                                     dic_result["result"] = "Please Enter a Valid Ip Address of index no %s " % (i)
                             else:
                                 dic_result['ru.packetFilters.ipFilterTable.ipFilterIpAddress.%s' %
-                                    (i)] = ""
+                                           (i)] = ""
 
                         if html.var('ru.packetFilters.ipFilterTable.ipFilterNetworkMask.%s' % (i)):
                             if html.var('ru.packetFilters.ipFilterTable.ipFilterNetworkMask.%s' % (i)) != "":
-                                if Validation.is_valid_ip(html.var('ru.packetFilters.ipFilterTable.ipFilterNetworkMask.%s' % (i))):
+                                if Validation.is_valid_ip(
+                                        html.var('ru.packetFilters.ipFilterTable.ipFilterNetworkMask.%s' % (i))):
                                     dic_result['ru.packetFilters.ipFilterTable.ipFilterNetworkMask.%s' % (
                                         i)] = html.var('ru.packetFilters.ipFilterTable.ipFilterNetworkMask.%s' % (i))
                                 else:
@@ -6959,6 +6854,10 @@ def ip_packet_filter(h):
 
 
 def mac_packet_filter(h):
+    """
+
+    @param h:
+    """
     global html, host_status_dic, obj_essential
     html = h
     dic_result = {}
@@ -6971,7 +6870,8 @@ def mac_packet_filter(h):
     try:
         host_op_status = obj_essential.host_status(host_id, 12)
         if host_op_status == 0:
-            if html.var("odu100_submit") == "Save" or html.var("odu100_submit") == "Retry" or html.var("odu100_submit") == "":
+            if html.var("odu100_submit") == "Save" or html.var("odu100_submit") == "Retry" or html.var(
+                    "odu100_submit") == "":
                 if html.var("host_id") == "" or html.var("host_id") is None:
                     dic_result["result"] = "Host does not exist"
                     dic_result["success"] = 1
@@ -6979,10 +6879,13 @@ def mac_packet_filter(h):
                     for i in range(1, ip_range):
                         if html.var('ru.packetFilters.macFilterTable.filterMacAddress.%s' % (i)):
                             if html.var('ru.packetFilters.macFilterTable.filterMacAddress.%s' % (i)) != "":
-                                if Validation.is_valid_mac(html.var('ru.packetFilters.macFilterTable.filterMacAddress.%s' % (i)).strip()):
-                                    if html.var('ru.packetFilters.macFilterTable.filterMacAddress.%s' % (i)) not in dic_result.values():
+                                if Validation.is_valid_mac(
+                                        html.var('ru.packetFilters.macFilterTable.filterMacAddress.%s' % (i)).strip()):
+                                    if html.var('ru.packetFilters.macFilterTable.filterMacAddress.%s' % (
+                                    i)) not in dic_result.values():
                                         dic_result['ru.packetFilters.macFilterTable.filterMacAddress.%s' %
-                                            (i)] = html.var('ru.packetFilters.macFilterTable.filterMacAddress.%s' % (i))
+                                                   (i)] = html.var(
+                                            'ru.packetFilters.macFilterTable.filterMacAddress.%s' % (i))
                                     else:
                                         flag = 1
                                         dic_result["result"] = "Dupliacte MAC Address of index no %s" % i
@@ -6992,7 +6895,7 @@ def mac_packet_filter(h):
                                         "result"] = "Please Enter a Valid MAC Address of index no %s " % (i)
                             else:
                                 dic_result['ru.packetFilters.macFilterTable.filterMacAddress.%s' %
-                                    (i)] = ""
+                                           (i)] = ""
                 if flag == 1:
                     dic_result["success"] = 1
                     html.write(str(dic_result))
@@ -7022,7 +6925,6 @@ def mac_packet_filter(h):
 
 
 def packet_filter_mode(h):
-
     """
     @author : Anuj Samariya
     @param h : html Class Object
@@ -7053,7 +6955,8 @@ def packet_filter_mode(h):
         filter_result = totalPacketIpMAC(host_id)
         host_op_status = obj_essential.host_status(host_id, 12)
         if host_op_status == 0:
-            if html.var("odu100_submit") == "Save" or html.var("odu100_submit") == "Retry" or html.var("odu100_submit") == "":
+            if html.var("odu100_submit") == "Save" or html.var("odu100_submit") == "Retry" or html.var(
+                    "odu100_submit") == "":
                 if html.var("host_id") == "" or html.var("host_id") is None:
                     dic_result["result"] = "Host does not exist"
                     dic_result["success"] = 1
@@ -7063,10 +6966,10 @@ def packet_filter_mode(h):
                         if filter_result['success'] == 0:
                             if int(html.var('ru.ruConfTable.ethFiltering')) == 1:
                                 flag = 2 if filter_result[
-                                    'ip_result'] and filter_result['ip_result'] == [] else 0
+                                                'ip_result'] and filter_result['ip_result'] == [] else 0
                             elif int(html.var('ru.ruConfTable.ethFiltering')) == 2:
                                 flag = 3 if filter_result[
-                                    'mac_result'] and filter_result['mac_result'] == [] else 0
+                                                'mac_result'] and filter_result['mac_result'] == [] else 0
                             else:
                                 dic_result['ru.ruConfTable.ethFiltering'] = html.var(
                                     'ru.ruConfTable.ethFiltering')
@@ -7254,28 +7157,30 @@ def odu100_acl_add_mac_config(h):
                     dic_result["result"] = "Index is not selected"
                 else:
                     dic_result["aclindex"] = html.var("aclindex")
-        ##        if html.var("ru.ra.raConfTable.aclMode") == None or html.var("ru.ra.raConfTable.aclMode") == "":
-        ##            flag = 1
-        ##            dic_result["ru.ra.raConfTable.aclMode"] = "ACL mode is not selected"
-        ##        else:
-        ##            if html.var("ru.ra.raConfTable.aclMode") == 1 or html.var("ru.ra.raConfTable.aclMode") == "1":
-        ##                acl_accept = check_acl_accept(host_id,html.var("ru.ra.raAclConfigTable.macaddress"),html.var("ru.ra.raConfTable.aclMode"))
-        ##                if acl_accept == 0:
-        ##                    dic_result["ru.ra.raConfTable.aclMode"] = html.var("ru.ra.raConfTable.aclMode")
-        ##
-        ##            elif html.var("ru.ra.raConfTable.aclMode") == 2 or html.var("ru.ra.raConfTable.aclMode") == "2":
-        ##                if check_acl_deny(host_id,html.var("ru.ra.raAclConfigTable.macaddress"),html.var("ru.ra.raConfTable.aclMode"))==0:
-        ##                    dic_result["ru.ra.raConfTable.aclMode"] = html.var("ru.ra.raConfTable.aclMode")
-        ##                else:
-        ##                    acl_deny = 1
-        ##            else:
-        # dic_result["ru.ra.raConfTable.aclMode"] =
-        # html.var("ru.ra.raConfTable.aclMode")
-                if html.var("ru.ra.raAclConfigTable.macaddress") == "" or html.var("ru.ra.raAclConfigTable.macaddress") is None:
+                    ##        if html.var("ru.ra.raConfTable.aclMode") == None or html.var("ru.ra.raConfTable.aclMode") == "":
+                    ##            flag = 1
+                    ##            dic_result["ru.ra.raConfTable.aclMode"] = "ACL mode is not selected"
+                    ##        else:
+                    ##            if html.var("ru.ra.raConfTable.aclMode") == 1 or html.var("ru.ra.raConfTable.aclMode") == "1":
+                    ##                acl_accept = check_acl_accept(host_id,html.var("ru.ra.raAclConfigTable.macaddress"),html.var("ru.ra.raConfTable.aclMode"))
+                    ##                if acl_accept == 0:
+                    ##                    dic_result["ru.ra.raConfTable.aclMode"] = html.var("ru.ra.raConfTable.aclMode")
+                    ##
+                    ##            elif html.var("ru.ra.raConfTable.aclMode") == 2 or html.var("ru.ra.raConfTable.aclMode") == "2":
+                    ##                if check_acl_deny(host_id,html.var("ru.ra.raAclConfigTable.macaddress"),html.var("ru.ra.raConfTable.aclMode"))==0:
+                    ##                    dic_result["ru.ra.raConfTable.aclMode"] = html.var("ru.ra.raConfTable.aclMode")
+                    ##                else:
+                    ##                    acl_deny = 1
+                    ##            else:
+                    # dic_result["ru.ra.raConfTable.aclMode"] =
+                    # html.var("ru.ra.raConfTable.aclMode")
+                if html.var("ru.ra.raAclConfigTable.macaddress") == "" or html.var(
+                        "ru.ra.raAclConfigTable.macaddress") is None:
                     flag = 1
                     dic_result["result"] = "MAC Address is Empty"
                 else:
-                    if check_mac(host_id, html.var("ru.ra.raAclConfigTable.macaddress"), html.var("ru.ra.raConfTable.aclMode"), submit_btn_name, html.var("aclindex")) == 1:
+                    if check_mac(host_id, html.var("ru.ra.raAclConfigTable.macaddress"),
+                                 html.var("ru.ra.raConfTable.aclMode"), submit_btn_name, html.var("aclindex")) == 1:
                         mac_flag = 1
                         dic_result[
                             "ru.ra.raAclConfigTable.macaddress"] = "MAC Address Already Exist in Peer Mac.Please Enter the Another One"
@@ -7317,21 +7222,21 @@ def odu100_acl_add_mac_config(h):
                     dic_result["success"] = 1
                     dic_result["result"] = "ACL DENY mode PEER MAC should be different from ACL MAC list"
                     html.write(str(dic_result))
-        ##        elif acl_accept == 1:
-        ##            dic_result = {}
-        ##            dic_result["success"] = 1
-        ##            dic_result["result"] = "ACL ACCEPT mode PEER MAC should be same as in ACL MAC list"
-        ##            html.write(str(dic_result))
-        ##        elif acl_accept == 2:
-        ##            dic_result = {}
-        ##            dic_result["success"] = 1
-        ##            dic_result["result"] = "ACL Mode cannot be ACCEPT if the ACL MAC list is empty"
-        ##            html.write(str(dic_result))
-        ##        elif acl_deny == 1:
-        ##            dic_result = {}
-        ##            dic_result["success"] = 1
-        ##            dic_result["result"] = "ACL DENY mode PEER MAC should be different from ACL MAC list"
-        ##            html.write(str(dic_result))
+                    ##        elif acl_accept == 1:
+                    ##            dic_result = {}
+                    ##            dic_result["success"] = 1
+                    ##            dic_result["result"] = "ACL ACCEPT mode PEER MAC should be same as in ACL MAC list"
+                    ##            html.write(str(dic_result))
+                    ##        elif acl_accept == 2:
+                    ##            dic_result = {}
+                    ##            dic_result["success"] = 1
+                    ##            dic_result["result"] = "ACL Mode cannot be ACCEPT if the ACL MAC list is empty"
+                    ##            html.write(str(dic_result))
+                    ##        elif acl_deny == 1:
+                    ##            dic_result = {}
+                    ##            dic_result["success"] = 1
+                    ##            dic_result["result"] = "ACL DENY mode PEER MAC should be different from ACL MAC list"
+                    ##            html.write(str(dic_result))
                 else:
                     dic_result["success"] = 0
                     result = acl_controller_add_edit(
@@ -7341,9 +7246,9 @@ def odu100_acl_add_mac_config(h):
             elif html.var("odu100_submit") == "Retry" or html.var("odu100_submit") == "":
                 if html.var("aclindex"):
                     dic_result["aclindex"] = html.var("aclindex")
-    ##            if html.var("ru.ra.raConfTable.aclMode") != None:
-    # dic_result["ru.ra.raConfTable.aclMode"] =
-    # html.var("ru.ra.raConfTable.aclMode")
+                    ##            if html.var("ru.ra.raConfTable.aclMode") != None:
+                    # dic_result["ru.ra.raConfTable.aclMode"] =
+                    # html.var("ru.ra.raConfTable.aclMode")
                 if html.var("ru.ra.raAclConfigTable.macaddress"):
                     dic_result["ru.ra.raAclConfigTable.macaddress"] = html.var(
                         "ru.ra.raAclConfigTable.macaddress")
@@ -7361,8 +7266,8 @@ def odu100_acl_add_mac_config(h):
                     "ru.ra.raConfTable.aclMode")
                 dic_result["result"]["ru.ra.raAclConfigTable.macaddress"] = html.var(
                     "ru.ra.raAclConfigTable.macaddress")
-        # dic_result["result"]["ru.ra.peerNode.peerConfigTable.basicRateMCSIndex"]
-        # = html.var("ru.ra.peerNode.peerConfigTable.basicRateMCSIndex")
+                # dic_result["result"]["ru.ra.peerNode.peerConfigTable.basicRateMCSIndex"]
+                # = html.var("ru.ra.peerNode.peerConfigTable.basicRateMCSIndex")
                 result = odu100_common_cancel(
                     host_id, device_type_id, dic_result)
                 html.write(str(result))
@@ -7419,14 +7324,18 @@ def odu100_acl_mode(h):
 
                     if html.var("ru.ra.raConfTable.aclMode") == 1 or html.var("ru.ra.raConfTable.aclMode") == "1":
                         acl_accept = check_acl_accept(host_id, "" if html.var(
-                            "ru.ra.raAclConfigTable.macaddress") is None else html.var("ru.ra.raAclConfigTable.macaddress"), html.var("ru.ra.raConfTable.aclMode"))
+                            "ru.ra.raAclConfigTable.macaddress") is None else html.var(
+                            "ru.ra.raAclConfigTable.macaddress"), html.var("ru.ra.raConfTable.aclMode"))
                         if acl_accept == 0:
                             dic_result["ru.ra.raConfTable.aclMode"] = html.var(
                                 "ru.ra.raConfTable.aclMode")
 
                     elif html.var("ru.ra.raConfTable.aclMode") == 2 or html.var("ru.ra.raConfTable.aclMode") == "2":
 
-                        if check_acl_deny(host_id, "" if html.var("ru.ra.raAclConfigTable.macaddress") is None else html.var("ru.ra.raAclConfigTable.macaddress"), html.var("ru.ra.raConfTable.aclMode")) == 0:
+                        if check_acl_deny(host_id,
+                                          "" if html.var("ru.ra.raAclConfigTable.macaddress") is None else html.var(
+                                                  "ru.ra.raAclConfigTable.macaddress"),
+                                          html.var("ru.ra.raConfTable.aclMode")) == 0:
                             dic_result["ru.ra.raConfTable.aclMode"] = html.var(
                                 "ru.ra.raConfTable.aclMode")
                         else:
@@ -7547,7 +7456,15 @@ def update_mac_list(h):
                                             <td>%s</td>\
                                             <td><a href=\"javascript:editMac('%s','0','%s',this,'%s','%s','%s');\" class=\"acl_edit_anchor\"><img src = \"images/edit16.png\" title=\"Edit Profile\" style=\"width:16px;height:16px;\" class=\"imgbutton\"/></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src = \"images/delete16.png\" title=\"Delete Profile\" style=\"width:16px;height:16px;\" class=\"imgbutton\" onclick=\"editMac('%s','1','%s',this,'%s','%s','%s');\"/></td>\
                                                 \
-                                           </tr>" % (str("" if acl_configuration[i][0] is None else acl_configuration[i][0]), "" if acl_configuration[i][1] is None else acl_configuration[i][1], "" if acl_configuration[i][2] is None else acl_configuration[i][2], host_id, str("" if ra_configuration[0][7] is None else ra_configuration[0][7]), len(acl_configuration), "" if acl_configuration[i][1] is None else acl_configuration[i][1], "" if acl_configuration[i][2] is None else acl_configuration[i][2], host_id, str("" if ra_configuration[0][7] is None else ra_configuration[0][7]), len(acl_configuration), "" if acl_configuration[i][1] is None else acl_configuration[i][1])
+                                           </tr>" % (
+            str("" if acl_configuration[i][0] is None else acl_configuration[i][0]),
+            "" if acl_configuration[i][1] is None else acl_configuration[i][1],
+            "" if acl_configuration[i][2] is None else acl_configuration[i][2], host_id,
+            str("" if ra_configuration[0][7] is None else ra_configuration[0][7]), len(acl_configuration),
+            "" if acl_configuration[i][1] is None else acl_configuration[i][1],
+            "" if acl_configuration[i][2] is None else acl_configuration[i][2], host_id,
+            str("" if ra_configuration[0][7] is None else ra_configuration[0][7]), len(acl_configuration),
+            "" if acl_configuration[i][1] is None else acl_configuration[i][1])
         odu100_acl_config_form += "</tbody></table>\
                                     </div>"
     else:
@@ -7643,29 +7560,6 @@ def odu16_reconcilation(h):
     html.req.content_type = 'application/json'
     html.req.write(str(JSONEncoder().encode(result)))
 
-# def reconcilation(h):
-##    """
-##    @requires:
-##    @return:
-##    @rtype:
-##    @author:Anuj Samariya
-##    @since:
-##    @version:
-##    @date:
-##    @note:
-##    @organisation: Codescape Consultants Pvt. Ltd.
-##    @copyright: 2011 Anuj Samariya from Codescape Consultants Pvt. Ltd.
-##    """
-##    global html
-##    html = h
-##    host_id = html.var("host_id")
-##    device_type_id = html.var("device_type_id")
-##    table_prefix = html.var("table_prefix")
-##    insert_update = html.var("insert_update")
-##    obj_reconcilation = OduReconcilation()
-##    #result = obj_reconcilation.reconcilation_controller(host_id,device_type_id,table_prefix,insert_update)
-##    html.write(str(result))
-
 
 def chk_reconcilation_status(h):
     """
@@ -7688,28 +7582,6 @@ def chk_reconcilation_status(h):
     obj_reconcilation = OduReconcilation()
     result = obj_reconcilation.reconcilation_chk_status(host_id)
     html.write(str(result))
-
-# def reconcilation_status_chk(h):
-##    """
-##    @author : Anuj Samariya
-##    @param h : html Class Object
-##    @var host_id : in this the host id is stored for access of particular host
-##    @var html : this is html Class Object defined globally
-##    @var obj_reconciliation : this is object of OduReconciliation class
-##    @var result : this is used to store the result which is in string format
-##    @since : 20 August 2011
-##    @version :0.0
-##    @date : 20 August 2011
-##    @note : this function is used to check the status of reconciliation that the device reconciliation is completed or not
-##    @organisation : Codescape Consultants Pvt. Ltd.
-##    @copyright : 2011 Anuj Samariya from Codescape Consultants Pvt. Ltd.
-##    """
-##    global html
-##    html = h
-##    host_id = html.var("host_id")
-##    obj_reconcilation = OduReconcilation()
-##    result = obj_reconcilation.reconcilation_chk_status(host_id)
-##    html.write(str(result))
 
 
 def reconcilation_list(h):
@@ -7735,6 +7607,10 @@ def reconcilation_list(h):
 
 
 def odu100_acl_reconcile(h):
+    """
+
+    @param h:
+    """
     global html, host_status_dic, obj_essential
     try:
         html = h
@@ -7763,6 +7639,10 @@ def odu100_acl_reconcile(h):
 
 
 def reboot_odu(h):
+    """
+
+    @param h:
+    """
     global html, host_status_dic, obj_essential
     html = h
     host_id = html.var("host_id")
@@ -7822,6 +7702,10 @@ def ping_chk(h):
 
 
 def refresh_channel_list(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     time.sleep(2)
@@ -7843,6 +7727,10 @@ def refresh_channel_list(h):
 
 
 def ra_channel_list_table(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     host_id = html.var("host_id")
@@ -7878,6 +7766,10 @@ def ra_channel_list_table(h):
 
 
 def refresh_channel_freq_list(h):
+    """
+
+    @param h:
+    """
     global html, host_status_dic, obj_essential
     html = h
     host_id = html.var("host_id")
@@ -7899,6 +7791,10 @@ def refresh_channel_freq_list(h):
 
 
 def refresh_peer_form(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     host_id = html.var("host_id")
@@ -7909,6 +7805,10 @@ def refresh_peer_form(h):
 
 
 def view_modulation_rate(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     table_str = ""
@@ -7921,8 +7821,8 @@ def view_modulation_rate(h):
     modulation_type = {1: "BPSK", 2: "QPSK", 3: "QAM16", 4: "QAM64"}
     coding_rate = {1: "1/2", 2: "2/3", 3: "3/4", 4: "5/6"}
     host_id = html.var('host_id')
-##    ra_conf_result = odu100_get_raconfigtable(host_id)
-##    ra_configuration = ra_conf_result["result"]
+    ##    ra_conf_result = odu100_get_raconfigtable(host_id)
+    ##    ra_configuration = ra_conf_result["result"]
     view_modulation_rate = get_modulation_rate(host_id)
     if view_modulation_rate['success'] == 0:
         for i in view_modulation_rate['result']:
@@ -7932,8 +7832,10 @@ def view_modulation_rate(h):
                         <td>%s</td>\
                         <td>%s</td>\
                         <td>%s</td>\
-                    </tr>" % (int(view_modulation_rate['result'][i][1]) - 1, view_modulation_rate['result'][i][2], modulation_type[int(view_modulation_rate['result'][i][3])],
-                              coding_rate[int(view_modulation_rate['result'][i][4])], view_modulation_rate['result'][i][5])
+                    </tr>" % (int(view_modulation_rate['result'][i][1]) - 1, view_modulation_rate['result'][i][2],
+                              modulation_type[int(view_modulation_rate['result'][i][3])],
+                              coding_rate[int(view_modulation_rate['result'][i][4])],
+                              view_modulation_rate['result'][i][5])
         table_str += "</table>"
     else:
         table_str = "<table style=\"width:100%;height:100%\"><th class=\"center ui-state-default\" style=\"height:20px\">MCS Index</th>\
@@ -7950,6 +7852,10 @@ def view_modulation_rate(h):
 
 
 def site_survey_data(h):
+    """
+
+    @param h:
+    """
     global html, host_status_dic, obj_essential
     html = h
     host_id = html.var("host_id")
@@ -7976,6 +7882,10 @@ def site_survey_data(h):
 
 
 def site_survey_result(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     host_id = html.var("host_id")
@@ -7987,17 +7897,23 @@ def site_survey_result(h):
     obj_site_survey_form = OduConfiguration()
     # if len(site_survey_record)>0 or  site_survey_record != [] :
     form_str = obj_site_survey_form.site_survey_form(site_survey_record)
-    html.write("<br/><br/>List Of Channels : <div id=\"ru_value\"> <input type=\"text\" name=\"listOfChannels\" id=\"listOfChannels\" /></div>")
+    html.write(
+        "<br/><br/>List Of Channels : <div id=\"ru_value\"> <input type=\"text\" name=\"listOfChannels\" id=\"listOfChannels\" /></div>")
     html.write(
         "<input type=\"button\" name=\"refresh_scan_list\" id=\"refresh_scan_list\" value=\"Calculate\" class=\"yo-small yo-button\"/>")
     html.write(
         "<input type=\"button\" name=\"get_scan_list\" id=\"get_scan_list\" value=\"Refresh Site Survey\" class=\"yo-small yo-button\"/><br/><br/>")
     html.write(form_str)
+
 #    else:
 #       html.write("true")
 
 
 def site_survey_snmp(h):
+    """
+
+    @param h:
+    """
     try:
         global html, host_status_dic, obj_essential
         html = h
@@ -8026,6 +7942,10 @@ def site_survey_snmp(h):
 
 
 def get_site_survey(h):
+    """
+
+    @param h:
+    """
     global html, host_status_dic, obj_essential
     html = h
     result = {}
@@ -8051,6 +7971,10 @@ def get_site_survey(h):
 
 
 def hw_sw_frequency_status(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     host_id = html.var("host_id")
@@ -8083,6 +8007,10 @@ def hw_sw_frequency_status(h):
 
 
 def show_peer_status(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     host_id = html.var("host_id")
@@ -8097,14 +8025,17 @@ def show_peer_status(h):
         if len(result_dic['result']) > 0:
             for i in result_dic['result']:
                 html_str += "<tr>"
-                if int(result_dic['result'][i]['signalstrength']) == 1 or result_dic['result'][i]['signalstrength'] is None:
+                if int(result_dic['result'][i]['signalstrength']) == 1 or result_dic['result'][i][
+                    'signalstrength'] is None:
                     html_str += "<td colspan=\"3\">Device Unreachable</td>"
                 else:
-                    html_str += "<td>%s</td><td>%s</td><td>%s</td>" % ("-" if result_dic['result'][i]['mac_address'] is None else result_dic['result'][i]['mac_address'][1:-1],
-                                                                       "-" if result_dic['result'][
-                                                                           i][
-                                                                               'signalstrength'] is None else result_dic['result'][i]['signalstrength'],
-                                                                       "-" if result_dic['result'][i]['timestamp'] is None else result_dic['result'][i]['timestamp'])
+                    html_str += "<td>%s</td><td>%s</td><td>%s</td>" % (
+                    "-" if result_dic['result'][i]['mac_address'] is None else result_dic['result'][i]['mac_address'][
+                                                                               1:-1],
+                    "-" if result_dic['result'][
+                               i][
+                               'signalstrength'] is None else result_dic['result'][i]['signalstrength'],
+                    "-" if result_dic['result'][i]['timestamp'] is None else result_dic['result'][i]['timestamp'])
                 html_str += "</tr>"
         else:
             html_str += "<tr><td colspan=3>No Peer connected</td></tr>"
@@ -8114,6 +8045,10 @@ def show_peer_status(h):
 
 
 def admin_state_show(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     host_id = html.var("host_id")
@@ -8126,25 +8061,32 @@ def admin_state_show(h):
         html_str += "<table class=\"yo-table\" id=\"table_status\" style=\"border:2px;border-style:solid;border-color:#6b6969;z-index:1\">"
         html_str += "<tr><th>RU Admin State</th>"
         html_str += "<td><img class=\"n-reconcile\" title=\"RU Admin State\" src=\"%s\" id=\"ru.ruConfTable.adminstate\" name=\"ru.ruConfTable.adminstate\" style=\"width:10px;height:10px;\" state=\"%s\" \
-        onClick=\"adminStateCheck(event,this,'%s','%s','ru.ruConfTable.adminstate');\"/></div></td></tr>"\
-            % (
-                "images/temp/green_dot.png" if result_dic[
-                    'ru_admin'] == 1 else "images/temp/red_dot.png",
-               1 if result_dic['ru_admin'] == 1 else 0, host_id, device_type)
+        onClick=\"adminStateCheck(event,this,'%s','%s','ru.ruConfTable.adminstate');\"/></div></td></tr>" \
+                    % (
+            "images/temp/green_dot.png" if result_dic[
+                                               'ru_admin'] == 1 else "images/temp/red_dot.png",
+            1 if result_dic['ru_admin'] == 1 else 0, host_id, device_type)
         html_str += "<tr><th>RA Admin State</th>"
         html_str += "<td><img class=\"n-reconcile\" title=\"RA Admin State\" src=\"%s\" id=\"ru.ra.raConfTable.raAdminState\" name=\"ru.ra.raConfTable.raAdminState\" style=\"width:10px;height:10px;\" state=\"%s\" \
-        onClick=\"adminStateCheck(event,this,'%s','%s','ru.ra.raConfTable.raAdminState');\" /></td></tr>" % ("images/temp/green_dot.png" if result_dic['ra_admin'] == 1 else "images/temp/red_dot.png", 1 if result_dic['ra_admin'] == 1 else 0, host_id, device_type)
+        onClick=\"adminStateCheck(event,this,'%s','%s','ru.ra.raConfTable.raAdminState');\" /></td></tr>" % (
+        "images/temp/green_dot.png" if result_dic['ra_admin'] == 1 else "images/temp/red_dot.png",
+        1 if result_dic['ra_admin'] == 1 else 0, host_id, device_type)
         html_str += "<tr><th>Sync Admin State</th>"
         html_str += "<td><img class=\"n-reconcile\" title=\"Sync Admin State\" src=\"%s\" id=\"ru.syncClock.syncConfigTable.adminStatus\" name=\"ru.syncClock.syncConfigTable.adminStatus\" style=\"width:10px;height:10px;\" state=\"%s\" onClick=\"adminStateCheck(event,this,'%s','%s','ru.syncClock.syncConfigTable.adminStatus');\"/></td></tr>" % (
-            "images/temp/green_dot.png" if result_dic['sync_admin'] == 1 else "images/temp/red_dot.png", 1 if result_dic['sync_admin'] == 1 else 0, host_id, device_type)
+            "images/temp/green_dot.png" if result_dic['sync_admin'] == 1 else "images/temp/red_dot.png",
+            1 if result_dic['sync_admin'] == 1 else 0, host_id, device_type)
         html_str += "<tr><td><input type=\"radio\" class=\"n-reconcile\" title=\"Locked All Admin State\" id=\"lock\" name=\"lock_unlock\" onClick=\"lock_unlock_check(event,this,'%s','%s','%s',0);\"/>Lock All\
-        </td><td><input type=\"radio\" id=\"unlock\" class=\"n-reconcile\" title=\"Unlocked All Admin State\" name=\"lock_unlock\" onClick=\"lock_unlock_check(event,this,'%s','%s','%s',1);\"/>Unlock All</td></tr>"\
-            % (host_id, device_type, admin_states, host_id, device_type, admin_states)
+        </td><td><input type=\"radio\" id=\"unlock\" class=\"n-reconcile\" title=\"Unlocked All Admin State\" name=\"lock_unlock\" onClick=\"lock_unlock_check(event,this,'%s','%s','%s',1);\"/>Unlock All</td></tr>" \
+                    % (host_id, device_type, admin_states, host_id, device_type, admin_states)
         html_str += "</table>"
     html.write(html_str)
 
 
 def change_admin_state(h):
+    """
+
+    @param h:
+    """
     global html, host_status_dic, obj_essential
     html = h
     try:
@@ -8175,6 +8117,10 @@ def change_admin_state(h):
 
 
 def all_lock_unlock(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     host_id = html.var("host_id")
@@ -8189,6 +8135,10 @@ def all_lock_unlock(h):
 
 
 def global_admin_status(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     host_id = html.var("host_id")
@@ -8199,6 +8149,10 @@ def global_admin_status(h):
 
 
 def bw_calculate_form(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     host_id = html.var("hostId")
@@ -8209,6 +8163,10 @@ def bw_calculate_form(h):
 
 
 def odu_form_reconcile(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     if html.var("host_id"):

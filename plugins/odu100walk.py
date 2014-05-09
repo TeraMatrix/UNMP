@@ -1082,7 +1082,7 @@ def main():
             # receive port number
             port_no = arg[arg.index("-p") + 1]
 
-            run_loop = 0
+            run_loop = 1
             device_type = 'odu100'
 
             table_dict = main_dict[device_type]
@@ -1134,8 +1134,10 @@ def main():
                     else:
                         temp_exit = 0
                         if int(snmp_result_dict['result'].keys()[0]) in error_dict:
-                            print " No Response,", snmp_result_dict[
-                                'result'].values()[0]
+                            print "For %s No Response, Error : %s " % (
+                                name_table_dict.get(table_name, 'table_name'),
+                                error_dict.get(int(snmp_result_dict['result'].keys()[0]))
+                                )
                         else:
                             print "For %s No Response, Unknown Error : %s " % (
                                 name_table_dict.get(table_name, 'table_name'),

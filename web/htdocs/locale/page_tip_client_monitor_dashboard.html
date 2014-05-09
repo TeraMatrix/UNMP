@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Help: AP Client Dashboard</title>
+    <link href="css/example.css"/>
+</head>
+<body>
+<div id="help_container">
+    <h1>Dashboard</h1>
+
+    <div>This <strong>Dashboard</strong> show client silver statistics information by graph.</div>
+    <br/>
+    <br/>
+
+    <div class="action-tip">
+        <div class="img-div"><img style="width:16px;height:16px;" src="images/red/round_plus.png"/></div>
+        <div class="txt-div">Show device details.</div>
+    </div>
+    <br/>
+
+    <div class="action-tip">
+        <div class="img-div"><img style="width:16px;height:16px;" src="images/red/round_minus.png"/></div>
+        <div class="txt-div">Hide device details.</div>
+    </div>
+    <br/>
+
+    <div class="action-tip">
+        <div class="img-div img-div2"><img style="width:16px;height:16px;" src="images/device-down.gif"/></div>
+        <div class="txt-div">Device Unreachable.</div>
+    </div>
+    <br/>
+
+    <div><input class="yo-button yo-small" type="button" style="width: 30px;" value="Back" name="odu_graph_show"> This
+        button back to dashboard or back to AP listing according to enter state.
+    </div>
+    <div><input class="yo-button yo-small" type="button" style="width: 50px;" value="Dashboard Configuration"
+                name="odu_graph_show"> This is open a window for customize the graph according to User.
+    </div>
+    <br/>
+
+    <div>
+        <button id="odu_report_btn" class="yo-button" style="margin-top: 5px;" type="button"><span
+                class="report">Report</span></button>
+        Download the Excel report.
+    </div>
+    <br/>
+
+    <div>
+        <button id="odu_report_btn" class="yo-button" style="margin-top: 5px;" type="button"><span class="report">CSV Report</span>
+        </button>
+        Download the CSV report.
+    </div>
+    <br/>
+    <br/>
+
+    <div><strong>Note:</strong>
+        Displayed monitoring information is real time. Default refresh interval is 10 minutes.
+    </div>
+</div>
+</body>
+</html>

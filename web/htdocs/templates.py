@@ -1,14 +1,6 @@
 #!/usr/bin/python2.6
 
-import config
-import htmllib
-import pprint
-import sidebar
-import views
-import time
-import defaults
 import os
-import cgi
 import xml.dom.minidom
 from lib import *
 
@@ -19,9 +11,10 @@ def page_manage_service_template(h):
     global html
     html = h
     css_list = []
-    js_list = ["js/templates.js"]
+    js_list = ["js/unmp/main/templates.js"]
     html.new_header("Manage Service Template", "", "", css_list, js_list)
-    html.write("<div class=\"main-title\" style=\"cursor: pointer;\" id=\"createTemplateDiv\" onclick=\"createTemplate()\"><img alt=\"add\" src=\"images/add16.png\"><span>Create Template</span></div>")
+    html.write(
+        "<div class=\"main-title\" style=\"cursor: pointer;\" id=\"createTemplateDiv\" onclick=\"createTemplate()\"><img alt=\"add\" src=\"images/add16.png\"><span>Create Template</span></div>")
     html.write("<div class=\"template-div\" id=\"templateDiv\">")
     html.write(template_services_list())
     html.write("</div>")
@@ -35,7 +28,8 @@ def page_manage_service_template(h):
     html.write("<div class=\"template-div\" id=\"editTemplateForm\">")
     html.write(edit_template())
     html.write("</div>")
-    html.write("<div class=\"main-title\" style=\"cursor: pointer;\" id=\"addService\" onclick=\"addService()\"><img alt=\"add\" src=\"images/add16.png\"><span>Add Service</span></div>")
+    html.write(
+        "<div class=\"main-title\" style=\"cursor: pointer;\" id=\"addService\" onclick=\"addService()\"><img alt=\"add\" src=\"images/add16.png\"><span>Add Service</span></div>")
     html.write("<div class=\"template-div\" id=\"templateServiceList\">")
     html.write("</div>")
     html.new_footer()
@@ -44,7 +38,7 @@ def page_manage_service_template(h):
 def template_services_list():
     site = __file__.split("/")[3]
     dom = xml.dom.minidom.parseString("<hosts></hosts>")
-    if(os.path.isfile("/omd/sites/%s/share/check_mk/web/htdocs/xml/service_template.xml" % site)):
+    if (os.path.isfile("/omd/sites/%s/share/check_mk/web/htdocs/xml/service_template.xml" % site)):
         dom = xml.dom.minidom.parse(
             "/omd/sites/%s/share/check_mk/web/htdocs/xml/service_template.xml" % site)
     htmlString = ""
@@ -52,23 +46,23 @@ def template_services_list():
         hostName = host.getAttribute("name").strip()
         hostId = host.getAttribute("id").strip()
         srvList = "<div class=\"service-list-div\" id=\"serviceListDiv" + \
-            hostId + "\">"
+                  hostId + "\">"
         srvCount = 0
         for srv in host.getElementsByTagName("service"):
             srvCount += 1
             if srvCount % 2 == 0:
                 srvList += "<div class=\"row-even\">" + \
-                    srv.getAttribute("name") + "</div>"
+                           srv.getAttribute("name") + "</div>"
             else:
                 srvList += "<div class=\"row-even\">" + \
-                    srv.getAttribute("name") + "</div>"
+                           srv.getAttribute("name") + "</div>"
         srvList += "</div>"
         htmlString += "<div class=\"sub-title\"><span class=\"span-button\" onclick=\"hostServiceShowHide(this,'" + hostId + "')\">" + \
-            hostName + "</span>"
+                      hostName + "</span>"
         htmlString += "<img onclick=\"editTemplate('" + hostId + \
-            "')\" class=\"delete-button\" title=\"Delete Template\" alt=\"delete\" src=\"images/delete16.png\"/>"
+                      "')\" class=\"delete-button\" title=\"Delete Template\" alt=\"delete\" src=\"images/delete16.png\"/>"
         htmlString += "<img onclick=\"deleteTemplate('" + hostId + \
-            "')\" class=\"edit-button\" title=\"Edit Template\" alt=\"edit\" src=\"images/edit16.png\"/>"
+                      "')\" class=\"edit-button\" title=\"Edit Template\" alt=\"edit\" src=\"images/edit16.png\"/>"
         htmlString += "</div>"
         htmlString += srvList
 

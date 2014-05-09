@@ -1,6 +1,6 @@
 #!/usr/bin/python2.6
 
-'''
+"""
 @author: Yogesh Kumar
 @since: 23-Oct-2011
 @version: 0.1
@@ -8,49 +8,61 @@
 @organization: Codescape Consultants Pvt. Ltd.
 @copyright: 2011 Yogesh Kumar for Codescape Consultants Pvt. Ltd.
 @see: http://www.codescape.in
-'''
+"""
 
 
 # Import modules that contain the function and libraries
-from inventory_bll import HostgroupBll, VendorBll, BlackListMacBll, HostBll, DiscoveryBll, ServiceBll, NagioConfigurationBll, SystemSetting, all_firmware_detail
-
-from inventory import Host
-from inventory import Hostgroup
-from inventory import Discovery
-from inventory import Service
-from inventory import NetworkMap
-from inventory import Vendor
-from inventory import BlackListMac
-
-from utility import ErrorMessages, DeviceUtility, Validation, UNMPDeviceType
 from datetime import datetime
+from json import JSONEncoder
+
 from common import Common
 from common_bll import Essential
-from json import JSONEncoder
+from inventory import BlackListMac
+from inventory import Discovery
+from inventory import Host
+from inventory import Hostgroup
+from inventory import NetworkMap
+from inventory import Service
+from inventory import Vendor
+from inventory_bll import (HostgroupBll, VendorBll, BlackListMacBll,
+                           HostBll, DiscoveryBll, ServiceBll,
+                           NagioConfigurationBll, SystemSetting,
+                           all_firmware_detail)
 from license_bll import LicenseBll
+from py_module import pysnmp_geter
 from pysnmp_ap import pysnmp_get_table, pysnmp_get_node, pysnmp_get
 from pysnmp_v1 import pysnmp_get_table as pysnmp_get_table_ccu
-from py_module import pysnmp_geter
+from utility import ErrorMessages, DeviceUtility, Validation, UNMPDeviceType
+
 #
 
 
 def server_time(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     a = datetime.now()
     html.req.content_type = 'application/json'
     html.write(JSONEncoder().encode({"date_time_server": [a.year,
-               a.month, a.day, a.hour, a.minute, a.second]}))
+                                                          a.month, a.day, a.hour, a.minute, a.second]}))
+
 # html.write(JSONEncoder().encode([a.year,a.month,a.day,a.hour,a.minute,a.second]))
 
 # Host
 
 
 def manage_host(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     css_list = ["css/demo_table_jui.css", "css/jquery-ui-1.8.4.custom.css"]
-    js_list = ["js/jquery.dataTables.min.js", "js/pages/inventory_host.js"]
+    js_list = ["js/lib/main/jquery.dataTables.min.js", "js/unmp/main/inventory_host.js"]
     header_btn = Host.header_buttons()
     html.new_header("Hosts", "manage_host.py", header_btn, css_list, js_list)
     html.write(Host.manage_host())
@@ -58,6 +70,10 @@ def manage_host(h):
 
 
 def grid_view_active_host(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     i_display_start = str(html.var("iDisplayStart"))
@@ -72,10 +88,11 @@ def grid_view_active_host(h):
         hst_bll = HostBll(
             user_id)                             # creating the HostBll object
         all_hosts_dict = hst_bll.grid_view_active_host(
-            i_display_start, i_display_length, s_search, sEcho, sSortDir_0, iSortCol_0, html.req.vars)     # fetching all hosts data from database
+            i_display_start, i_display_length, s_search, sEcho, sSortDir_0, iSortCol_0,
+            html.req.vars)     # fetching all hosts data from database
         # html.write(str(all_hosts_dict))
         hosts_list = []
-            # creating empty list [we will use this in datatables]
+        # creating empty list [we will use this in datatables]
         s_no = 0
         all_hosts = all_hosts_dict["aaData"]
         for hst in all_hosts:
@@ -99,8 +116,10 @@ def grid_view_active_host(h):
                                    hst.mac_address != None and hst.mac_address or "-",
                                    host_parent != None and host_parent or "-",
                                    hst.priority_name != None and hst.priority_name or "-",
-                                   "<a href=\"device_details_example.py?host_id=%s\"><img class='host_opr' title='View Host Details' src='images/new/info.png' alt='view' style=\"width:16px;height:16px;\"/></a>&nbsp; <a href=\"javascript:editHost(%s,%s);\"><img class='host_opr' title='Edit Host Details' src='images/new/edit.png' alt='edit'/></a>" % (hst.host_id, hst.host_id, hst.is_localhost)])       # creating 2D List of host details
-    #    html.write(str(hosts_list))
+                                   "<a href=\"device_details_example.py?host_id=%s\"><img class='host_opr' title='View Host Details' src='images/new/info.png' alt='view' style=\"width:16px;height:16px;\"/></a>&nbsp; <a href=\"javascript:editHost(%s,%s);\"><img class='host_opr' title='Edit Host Details' src='images/new/edit.png' alt='edit'/></a>" % (
+                                   hst.host_id, hst.host_id,
+                                   hst.is_localhost)])       # creating 2D List of host details
+                #    html.write(str(hosts_list))
         all_hosts_dict["aaData"] = hosts_list
         html.write(JSONEncoder().encode(all_hosts_dict))
         # html.write(str(all_hosts_dict))
@@ -118,6 +137,10 @@ def grid_view_active_host(h):
 
 
 def grid_view_disable_host(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     i_display_start = str(html.var("iDisplayStart"))
@@ -132,9 +155,10 @@ def grid_view_disable_host(h):
         hst_bll = HostBll(
             user_id)                             # creating the HostBll object
         all_hosts_dict = hst_bll.grid_view_disable_host(
-            i_display_start, i_display_length, s_search, sEcho, sSortDir_0, iSortCol_0, html.req.vars)     # fetching all hosts data from database
+            i_display_start, i_display_length, s_search, sEcho, sSortDir_0, iSortCol_0,
+            html.req.vars)     # fetching all hosts data from database
         hosts_list = []
-            # creating empty list [we will use this in datatables]
+        # creating empty list [we will use this in datatables]
         s_no = 0
         all_hosts = all_hosts_dict["aaData"]
         for hst in all_hosts:
@@ -148,7 +172,8 @@ def grid_view_disable_host(h):
                                hst.mac_address != None and hst.mac_address or "-",
                                hst[9] != None and hst[9] or "-",
                                hst.priority_name != None and hst.priority_name or "-",
-                               "<a href=\"device_details_example.py?host_id=%s\"><img class='host_opr' title='View Host Details' src='images/new/info.png' alt='view'/></a>&nbsp; <a href=\"javascript:editHost(%s,%s);\"><img class='host_opr' title='Edit Host Details' src='images/new/edit.png' alt='edit'/></a>" % (hst.host_id, hst.host_id, hst.is_localhost)])       # creating 2D List of host details
+                               "<a href=\"device_details_example.py?host_id=%s\"><img class='host_opr' title='View Host Details' src='images/new/info.png' alt='view'/></a>&nbsp; <a href=\"javascript:editHost(%s,%s);\"><img class='host_opr' title='Edit Host Details' src='images/new/edit.png' alt='edit'/></a>" % (
+                               hst.host_id, hst.host_id, hst.is_localhost)])       # creating 2D List of host details
         all_hosts_dict["aaData"] = hosts_list
         html.req.content_type = 'application/json'
         html.write(JSONEncoder().encode(all_hosts_dict))
@@ -164,6 +189,10 @@ def grid_view_disable_host(h):
 
 
 def grid_view_deleted_host(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     user_id = html.req.session['user_id']
@@ -178,9 +207,10 @@ def grid_view_deleted_host(h):
         hst_bll = HostBll(
             user_id)                             # creating the HostBll object
         all_hosts_dict = hst_bll.grid_view_deleted_host(
-            i_display_start, i_display_length, s_search, sEcho, sSortDir_0, iSortCol_0, html.req.vars)     # fetching all hosts data from database
+            i_display_start, i_display_length, s_search, sEcho, sSortDir_0, iSortCol_0,
+            html.req.vars)     # fetching all hosts data from database
         hosts_list = []
-            # creating empty list [we will use this in datatables]
+        # creating empty list [we will use this in datatables]
         s_no = 0
         all_hosts = all_hosts_dict["aaData"]
         for hst in all_hosts:
@@ -195,8 +225,9 @@ def grid_view_deleted_host(h):
                                hst[11] != None and hst[11] or "-",
                                hst.priority_name != None and hst.priority_name or "-",
                                hst.updated_by != None and hst.updated_by or "-",
-                               hst.timestamp != None and hst.timestamp.strftime("%d-%m-%Y %H:%M") or "-"])       # creating 2D List of host details
-    #    html.write(str(hosts_list))
+                               hst.timestamp != None and hst.timestamp.strftime(
+                                   "%d-%m-%Y %H:%M") or "-"])       # creating 2D List of host details
+            #    html.write(str(hosts_list))
         all_hosts_dict["aaData"] = hosts_list
         html.write(JSONEncoder().encode(all_hosts_dict))
         JSONEncoder().encode(all_hosts_dict)
@@ -214,6 +245,10 @@ def grid_view_deleted_host(h):
 
 
 def grid_view_discovered_host(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     i_display_start = str(html.var("iDisplayStart"))
@@ -227,9 +262,10 @@ def grid_view_discovered_host(h):
     )                             # creating the HostBll object
     try:
         all_hosts_dict = hst_bll.grid_view_tcp_discovered_host(
-            0, 30000, s_search, sEcho, sSortDir_0, iSortCol_0, html.req.vars)     # fetching all hosts data from database
+            0, 30000, s_search, sEcho, sSortDir_0, iSortCol_0,
+            html.req.vars)     # fetching all hosts data from database
         hosts_list = []
-            # creating empty list [we will use this in datatables]
+        # creating empty list [we will use this in datatables]
         temp_res = []
         s_no = 0
         temp_list = []
@@ -254,7 +290,8 @@ def grid_view_discovered_host(h):
                                        hst.site_mac != None and hst.site_mac or "",
                                        di_product_id.get(
                                            hst.product_id, "Unknown"),
-                                       hst.timestamp != "None" and hst.timestamp.strftime("%d-%m-%Y %H:%M") or ""])       # creating 2D List of host details
+                                       hst.timestamp != "None" and hst.timestamp.strftime(
+                                           "%d-%m-%Y %H:%M") or ""])       # creating 2D List of host details
                     temp_list.append(hst.ip_address)
         all_hosts_dict2 = hst_bll.grid_view_discovered_host(
             0, 30000, s_search, sEcho, sSortDir_0, iSortCol_0, html.req.vars)
@@ -272,17 +309,18 @@ def grid_view_discovered_host(h):
                                        hst.ip_address != None and hst.ip_address or "",
                                        hst.mac_address != None and hst.mac_address or "",
                                        " - ",
-                                       hst.timestamp != None and hst.timestamp.strftime("%d-%m-%Y %H:%M") or ""])       # creating 2D List of host details
+                                       hst.timestamp != None and hst.timestamp.strftime(
+                                           "%d-%m-%Y %H:%M") or ""])       # creating 2D List of host details
                     temp_list.append(hst.ip_address)
         temp_res += hosts_list
-        if(str(sSortDir_0) == "asc"):
+        if (str(sSortDir_0) == "asc"):
             var = False
             temp_res = sorted(temp_res, key=lambda temp_res:
-                              temp_res[int(iSortCol_0)], reverse=False)
+            temp_res[int(iSortCol_0)], reverse=False)
         else:
             var = True
             temp_res = sorted(temp_res, key=lambda temp_res: temp_res[
-                              int(iSortCol_0)], reverse=True)
+                int(iSortCol_0)], reverse=True)
         all_hosts_dict["aaData"] = temp_res[int(
             i_display_start):int(i_display_start) + int(i_display_length)]
         all_hosts_dict["iTotalRecords"] = len(temp_res)
@@ -303,6 +341,10 @@ def grid_view_discovered_host(h):
 
 
 def get_mac_details(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     ip_address = html.var("ip_address")
@@ -333,6 +375,10 @@ def get_mac_details(h):
 
 
 def get_firmware_details(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     ip_address = html.var("ip_address")
@@ -358,6 +404,10 @@ def get_firmware_details(h):
 
 
 def get_hardware_detail(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     ip_address = html.var("ip_address")
@@ -393,6 +443,10 @@ def get_hardware_detail(h):
 
 
 def get_all_device_firmware_details(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     result = all_firmware_detail()
@@ -401,6 +455,10 @@ def get_all_device_firmware_details(h):
 
 
 def odu_master_list(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     device_type_id = html.var("device_type_id")
@@ -431,6 +489,10 @@ def odu_master_list(h):
 
 
 def form_host(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     # get snmp version list
@@ -602,11 +664,16 @@ def form_host(h):
     # Host.create_form(device_type_select_list,host_state_select_list,host_priority_select_list,host_vendor_select_list,host_parent_select_list,dns_state_select_list,snmp_version_select_list)
     html.write(
         Host.create_form(
-            device_type_select_list, host_state_select_list, host_priority_select_list, host_vendor_select_list, host_os_select_list, host_parent_select_list, dns_state_select_list,
+            device_type_select_list, host_state_select_list, host_priority_select_list, host_vendor_select_list,
+            host_os_select_list, host_parent_select_list, dns_state_select_list,
             snmp_version_select_list, host_hostgroups_select_list, master_list_select_list))
 
 
 def host_parents(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     hst_bll = HostBll(
@@ -631,10 +698,15 @@ def host_parents(h):
 
 
 def get_odu_ra_mac_and_node_type(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
-    out = {"node_type_success": 1, "ra_mac_success": 1, "node_type": "SNMP agent gone away or device Unreachable", "ra_mac":
-           "SNMP agent gone away or device Unreachable"}
+    out = {"node_type_success": 1, "ra_mac_success": 1, "node_type": "SNMP agent gone away or device Unreachable",
+           "ra_mac":
+               "SNMP agent gone away or device Unreachable"}
     ip_address = html.var("ip_address")
     device_type = html.var("device_type")
     username = html.var("username")
@@ -646,12 +718,13 @@ def get_odu_ra_mac_and_node_type(h):
 
     du = DeviceUtility()
     node_type = du.get_odu_node_type(
-        ip_address.split(":")[0], community, port)   # @return: 0,2 -> Master, 1,3 -> Slave, 4 -> SNMP_Response_timeout, 5 -> error_status_present_in_pysnmp_packet, 6 -> Function_Exception
+        ip_address.split(":")[0], community,
+        port)   # @return: 0,2 -> Master, 1,3 -> Slave, 4 -> SNMP_Response_timeout, 5 -> error_status_present_in_pysnmp_packet, 6 -> Function_Exception
     ra_mac = None
     if device_type == UNMPDeviceType.odu16:
         ra_mac = du.get_odu_ra_mac_cgi(
             "http://" + ip_address, username, password)
-                                       # #{'result': '00:80:48:71:85:B9', 'success': 0}
+        # #{'result': '00:80:48:71:85:B9', 'success': 0}
     elif device_type == UNMPDeviceType.odu100:
         ra_mac = du.get_odu100_ra_mac(ip_address.split(
             ":")[0], community, port)         # #{'result': '00:80:48:71:85:B9', 'success': 0}
@@ -671,10 +744,14 @@ def get_odu_ra_mac_and_node_type(h):
 
 
 def get_master_mac_from_slave(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     out = {"success": 1, "result":
-           "SNMP agent gone away or device Unreachable"}
+        "SNMP agent gone away or device Unreachable"}
     ip_address = html.var("ip_address")
     community = html.var(
         "community") != None and html.var("community") or "public"
@@ -704,10 +781,14 @@ def get_master_mac_from_slave(h):
 
 
 def get_network_details(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     out = {"success": 1, "result":
-           "SNMP agent gone away or device Unreachable"}
+        "SNMP agent gone away or device Unreachable"}
     ip_address = html.var("ip_address")
     community = html.var(
         "community") != None and html.var("community") or "public"
@@ -819,6 +900,10 @@ def get_network_details(h):
 
 
 def host_default_details(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     hst_bll = HostBll(
@@ -828,6 +913,10 @@ def host_default_details(h):
 
 
 def get_host_by_id(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     host_id = html.var("host_id")
@@ -851,6 +940,10 @@ def get_host_by_id(h):
 
 
 def is_duplicate_host_with_mac_address(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     mac_address = html.var("mac_address")
@@ -860,6 +953,10 @@ def is_duplicate_host_with_mac_address(h):
 
 
 def is_duplicate_host_with_ip_address(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     ip_address = html.var("ip_address")
@@ -869,6 +966,10 @@ def is_duplicate_host_with_ip_address(h):
 
 
 def is_duplicate_host_with_host_alias(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     host_alias = html.var("host_alias")
@@ -878,6 +979,11 @@ def is_duplicate_host_with_host_alias(h):
 
 
 def add_host(h):
+    """
+
+    @param h:
+    @return:
+    """
     global html
     html = h
     try:
@@ -944,12 +1050,12 @@ def add_host(h):
             firmware_version = html.var("firmware_version")
             # check the version only for odu
             if device_type_id == "odu100" and (firmware_version is None or len(firmware_version) < 3):
-                html.req.content_type = 'application/json'
+                #html.req.content_type = 'application/json'
                 result = {
                     "success": 1,
-                    "msg": "Firmware version is required for device type RM"
+                    "msg": "Firmware version is required for device type RM",
                 }
-                html.write(JSONEncoder().encode(result))
+                #html.write(JSONEncoder().encode(result))
                 return
 
             if firmware_version != None and firmware_version != "":  # len(firmware_version)>1:
@@ -961,8 +1067,14 @@ def add_host(h):
             hst_bll = HostBll(
             )                             # creating the HostBll object
             host = hst_bll.add(
-                host_name, host_alias, ip_address, mac_address, device_type_id, netmask, gateway, primary_dns, secondary_dns, dns_state, odu100_management_mode, odu100_vlan_tag, idu4_management_mode, idu4_vlan_tag, idu4_tdm_ip, ccu_dhcp_netmask, timestamp, created_by, creation_time, is_deleted, updated_by, ne_id, site_id, host_state_id, priority_id, host_vendor_id, host_os_id, http_username, http_password, http_port, ssh_username, ssh_password, ssh_port, snmp_read_community,
-                snmp_write_community, snmp_port, snmp_trap_port, snmp_version_id, comment, nms_instance, parent_name, lock_status, is_localhost, longitude, latitude, serial_number, hardware_version, hostgroup, ra_mac, node_type, master_id, firmware_version, is_reconciliation)
+                host_name, host_alias, ip_address, mac_address, device_type_id, netmask, gateway, primary_dns,
+                secondary_dns, dns_state, odu100_management_mode, odu100_vlan_tag, idu4_management_mode, idu4_vlan_tag,
+                idu4_tdm_ip, ccu_dhcp_netmask, timestamp, created_by, creation_time, is_deleted, updated_by, ne_id,
+                site_id, host_state_id, priority_id, host_vendor_id, host_os_id, http_username, http_password,
+                http_port, ssh_username, ssh_password, ssh_port, snmp_read_community,
+                snmp_write_community, snmp_port, snmp_trap_port, snmp_version_id, comment, nms_instance, parent_name,
+                lock_status, is_localhost, longitude, latitude, serial_number, hardware_version, hostgroup, ra_mac,
+                node_type, master_id, firmware_version, is_reconciliation)
             if isinstance(host, ErrorMessages):
                 result = {"success": 1, "msg": str(host.error_msg)}
             elif isinstance(host, Exception):
@@ -976,6 +1088,7 @@ def add_host(h):
     except Exception, e:
         result = {}
         import traceback
+
         result["success"] = 1
         result["result"] = str(traceback.format_exc())
     finally:
@@ -984,6 +1097,11 @@ def add_host(h):
 
 
 def edit_host(h):
+    """
+
+    @param h:
+    @return:
+    """
     global html
     html = h
     nms_instance = __file__.split(
@@ -1068,13 +1186,23 @@ def edit_host(h):
         if str(ip_update) == "1":
             dhcp = dns_state == "Enable" and "1" or "0"
             device_dic = {
-                "host_id": host_id, "device_type_id": device_type_id, "ip_address": ip_address, "ip_network_mask": netmask, "ip_gateway": gateway, "dhcp": dhcp, "primarydns": primary_dns, "secondarydns": secondary_dns, "odu100_vlan_tag": odu100_vlan_tag, "odu100_management_mode": odu100_management_mode,
-                "idu4_management_mode": idu4_management_mode, "idu4_vlan_tag": idu4_vlan_tag, "idu4_tdm_ip": idu4_tdm_ip, "ccu_dhcp_netmask": ccu_dhcp_netmask}
+                "host_id": host_id, "device_type_id": device_type_id, "ip_address": ip_address,
+                "ip_network_mask": netmask, "ip_gateway": gateway, "dhcp": dhcp, "primarydns": primary_dns,
+                "secondarydns": secondary_dns, "odu100_vlan_tag": odu100_vlan_tag,
+                "odu100_management_mode": odu100_management_mode,
+                "idu4_management_mode": idu4_management_mode, "idu4_vlan_tag": idu4_vlan_tag,
+                "idu4_tdm_ip": idu4_tdm_ip, "ccu_dhcp_netmask": ccu_dhcp_netmask}
             result_dic = hst_bll.change_device_network_details(device_dic)
             if isinstance(result_dic, dict) and result_dic.get("success") == 0:
                 host = hst_bll.edit(
-                    host_id, host_name, host_alias, ip_address, mac_address, device_type_id, netmask, gateway, primary_dns, secondary_dns, dns_state, odu100_management_mode, odu100_vlan_tag, idu4_management_mode, idu4_vlan_tag, idu4_tdm_ip, ccu_dhcp_netmask, is_deleted, updated_by, host_state_id, priority_id, host_vendor_id, host_os_id, http_username, http_password, http_port, ssh_username, ssh_password, ssh_port, snmp_read_community,
-                    snmp_write_community, snmp_port, snmp_trap_port, snmp_version_id, comment, nms_instance, parent_name, lock_status, longitude, latitude, serial_number, hardware_version, hostgroup, ra_mac, node_type, master_id, firmware_version)
+                    host_id, host_name, host_alias, ip_address, mac_address, device_type_id, netmask, gateway,
+                    primary_dns, secondary_dns, dns_state, odu100_management_mode, odu100_vlan_tag,
+                    idu4_management_mode, idu4_vlan_tag, idu4_tdm_ip, ccu_dhcp_netmask, is_deleted, updated_by,
+                    host_state_id, priority_id, host_vendor_id, host_os_id, http_username, http_password, http_port,
+                    ssh_username, ssh_password, ssh_port, snmp_read_community,
+                    snmp_write_community, snmp_port, snmp_trap_port, snmp_version_id, comment, nms_instance,
+                    parent_name, lock_status, longitude, latitude, serial_number, hardware_version, hostgroup, ra_mac,
+                    node_type, master_id, firmware_version)
                 if isinstance(host, ErrorMessages):
                     result = {"success": 1, "msg": str(host.error_msg)}
                 elif isinstance(host, Exception):
@@ -1089,8 +1217,14 @@ def edit_host(h):
             html.write(JSONEncoder().encode(result))
         else:
             host = hst_bll.edit(
-                host_id, host_name, host_alias, ip_address, mac_address, device_type_id, netmask, gateway, primary_dns, secondary_dns, dns_state, odu100_management_mode, odu100_vlan_tag, idu4_management_mode, idu4_vlan_tag, idu4_tdm_ip, ccu_dhcp_netmask, is_deleted, updated_by, host_state_id, priority_id, host_vendor_id, host_os_id, http_username, http_password, http_port, ssh_username, ssh_password, ssh_port, snmp_read_community,
-                snmp_write_community, snmp_port, snmp_trap_port, snmp_version_id, comment, nms_instance, parent_name, lock_status, longitude, latitude, serial_number, hardware_version, hostgroup, ra_mac, node_type, master_id, firmware_version)
+                host_id, host_name, host_alias, ip_address, mac_address, device_type_id, netmask, gateway, primary_dns,
+                secondary_dns, dns_state, odu100_management_mode, odu100_vlan_tag, idu4_management_mode, idu4_vlan_tag,
+                idu4_tdm_ip, ccu_dhcp_netmask, is_deleted, updated_by, host_state_id, priority_id, host_vendor_id,
+                host_os_id, http_username, http_password, http_port, ssh_username, ssh_password, ssh_port,
+                snmp_read_community,
+                snmp_write_community, snmp_port, snmp_trap_port, snmp_version_id, comment, nms_instance, parent_name,
+                lock_status, longitude, latitude, serial_number, hardware_version, hostgroup, ra_mac, node_type,
+                master_id, firmware_version)
             if isinstance(host, ErrorMessages):
                 result = {"success": 1, "msg": str(host.error_msg)}
             elif isinstance(host, Exception):
@@ -1109,6 +1243,10 @@ def edit_host(h):
 
 
 def del_host(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     nms_instance = __file__.split(
@@ -1130,6 +1268,10 @@ def del_host(h):
 
 
 def del_deleted_host(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     nms_instance = __file__.split(
@@ -1152,6 +1294,10 @@ def del_deleted_host(h):
 
 
 def add_deleted_host(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     nms_instance = __file__.split(
@@ -1173,20 +1319,24 @@ def add_deleted_host(h):
     html.write(JSONEncoder().encode(result))
 
 
-def page_tip_inventory_host(h):
-    global html
-    html = h
-    html.write(Host.page_tip_host())
+# def page_tip_inventory_host(h):
+#     global html
+#     html = h
+#     html.write(Host.page_tip_host())
 # End-Host
 
 
 # Hostgroup
 def manage_hostgroup(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     css_list = ["css/demo_table_jui.css", "css/jquery-ui-1.8.4.custom.css"]
-    js_list = ["js/jquery.dataTables.min.js",
-               "js/pages/inventory_hostgroup.js"]
+    js_list = ["js/lib/main/jquery.dataTables.min.js",
+               "js/unmp/main/inventory_hostgroup.js"]
     header_btn = Hostgroup.header_buttons()
     html.new_header(
         "Hostgroups", "manage_hostgroup.py", header_btn, css_list, js_list)
@@ -1195,6 +1345,10 @@ def manage_hostgroup(h):
 
 
 def grid_view_hostgroup(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     flag_value = 1
@@ -1202,20 +1356,20 @@ def grid_view_hostgroup(h):
 
     if html.req.session['group'].lower() == 'SuperAdmin'.lower():
         flag_value = 0
-    # html.write(str(flag_value))
+        # html.write(str(flag_value))
     if flag_value:
         user_id = html.req.session['user_id']
         es = Essential()
         hostgroup_id_list = es.get_hostgroup_ids(user_id)
     hostgroups_list = []
-        # creating empty list [we will use this in datatables]
+    # creating empty list [we will use this in datatables]
     # html.write(str(flag_value))
     if len(hostgroup_id_list) > 0 or flag_value == 0:
         hg_bll = HostgroupBll(
         )                             # creating the HostgorupBll object
         all_hostgroups = hg_bll.grid_view(hostgroup_id_list, flag_value)
-                                          # fetching all hostgroups data from
-                                          # database
+        # fetching all hostgroups data from
+        # database
         number_of_hosts = hg_bll.grid_view_number_of_hosts(
             hostgroup_id_list, flag_value)
         # html.write(str(number_of_hosts))
@@ -1233,7 +1387,7 @@ def grid_view_hostgroup(h):
             else:
                 j = [row[4] + " (" + str(row[3]) + ") "]
                 di_hg[key] = j
-        # html.write(str(all_hostgroups)+" &&&&&&  "+str(hostgroup_id_list)+str(flag_value)+" ;; ")
+            # html.write(str(all_hostgroups)+" &&&&&&  "+str(hostgroup_id_list)+str(flag_value)+" ;; ")
         # html.write(str(di_hg))
         for hg in all_hostgroups:
             s_no += 1
@@ -1253,19 +1407,29 @@ def grid_view_hostgroup(h):
                                         ", ".join(di_hg[str(hg.hostgroup_id)]) if str(
                                             hg.hostgroup_id) in di_hg else "",
                                         "<img id=\"%s\" src=\"images/new/group.png\" title=\"Manage Assigned Usergroups\" alt=\"manage\" class=\"img-link\" />&nbsp\
-                                    <a href=\"javascript:editHostgroup(%s,%s);\"><img class=\"host_opr\" title=\"Edit Hostgroup\" src=\"images/new/edit.png\" alt=\"edit\"/></a>" % (hg.hostgroup_id, hg.hostgroup_id, hg.is_default)])       # creating 2D List of hostgroup details
+                                    <a href=\"javascript:editHostgroup(%s,%s);\"><img class=\"host_opr\" title=\"Edit Hostgroup\" src=\"images/new/edit.png\" alt=\"edit\"/></a>" % (
+                                        hg.hostgroup_id, hg.hostgroup_id,
+                                        hg.is_default)])       # creating 2D List of hostgroup details
                 temp_list.append(hg.hostgroup_id)
 
     html.write(str(hostgroups_list))
 
 
 def form_hostgroup(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     html.write(Hostgroup.create_form())
 
 
 def add_hostgroup(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     nms_instance = __file__.split(
@@ -1294,6 +1458,10 @@ def add_hostgroup(h):
 
 
 def get_hostgroup_by_id(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     hostgroup_id = html.var("hostgroup_id")
@@ -1305,12 +1473,23 @@ def get_hostgroup_by_id(h):
     elif isinstance(hostgroup, Exception):
         result = {"success": 1, "msg": "sysError"}
     else:
-        result = {"success": 0, "result": [str(hostgroup.hostgroup_id), hostgroup.hostgroup_name != None and hostgroup.hostgroup_name or "", hostgroup.hostgroup_alias != None and hostgroup.hostgroup_alias or "", hostgroup.timestamp != None and hostgroup.timestamp.strftime("%d-%m-%Y %H:%M") or "",
-                                               hostgroup.created_by != None and hostgroup.created_by or "", hostgroup.creation_time != None and hostgroup.creation_time.strftime("%d-%m-%Y %H:%M") or "", hostgroup.updated_by != None and hostgroup.updated_by or ""]}
+        result = {"success": 0, "result": [str(hostgroup.hostgroup_id),
+                                           hostgroup.hostgroup_name != None and hostgroup.hostgroup_name or "",
+                                           hostgroup.hostgroup_alias != None and hostgroup.hostgroup_alias or "",
+                                           hostgroup.timestamp != None and hostgroup.timestamp.strftime(
+                                               "%d-%m-%Y %H:%M") or "",
+                                           hostgroup.created_by != None and hostgroup.created_by or "",
+                                           hostgroup.creation_time != None and hostgroup.creation_time.strftime(
+                                               "%d-%m-%Y %H:%M") or "",
+                                           hostgroup.updated_by != None and hostgroup.updated_by or ""]}
     html.write(str(result))
 
 
 def edit_hostgroup(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     nms_instance = __file__.split(
@@ -1323,10 +1502,10 @@ def edit_hostgroup(h):
     updated_by = html.req.session["username"]
     is_default = 0
     hg_bll = HostgroupBll(
-        )                             # creating the HostgorupBll object
+    )                             # creating the HostgorupBll object
     hostgroup_id = hg_bll.edit(
         hostgroup_id, hostgroup_name, hostgroup_alias, timestamp,
-                               is_deleted, updated_by, is_default, nms_instance)
+        is_deleted, updated_by, is_default, nms_instance)
     if isinstance(hostgroup_id, ErrorMessages):
         result = {"success": 1, "msg": str(hostgroup_id.error_msg)}
     elif isinstance(hostgroup_id, Exception):
@@ -1337,6 +1516,10 @@ def edit_hostgroup(h):
 
 
 def del_hostgroup(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     nms_instance = __file__.split(
@@ -1345,7 +1528,7 @@ def del_hostgroup(h):
     hostgroup_ids = hostgroup_ids != None and hostgroup_ids or ""
     updated_by = html.req.session["username"]
     hg_bll = HostgroupBll(
-        )                             # creating the HostgorupBll object
+    )                             # creating the HostgorupBll object
     hostgroup_count = hg_bll.delete(
         hostgroup_ids.split(","), nms_instance, updated_by)
     if isinstance(hostgroup_count, ErrorMessages):
@@ -1357,21 +1540,25 @@ def del_hostgroup(h):
     html.write(str(result))
 
 
-def page_tip_inventory_hostgroup(h):
-    global html
-    html = h
-    html.write(Hostgroup.page_tip_hostgroup())
+# def page_tip_inventory_hostgroup(h):
+#     global html
+#     html = h
+#     html.write(Hostgroup.page_tip_hostgroup())
 # End-Hostgroup
 
 # Discovery
 
 
 def discovery(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     css_list = ["css/demo_table_jui.css", "css/jquery-ui-1.8.4.custom.css"]
-    js_list = ["js/jquery.dataTables.min.js",
-        "js/pages/inventory_discovery.js"]
+    js_list = ["js/lib/main/jquery.dataTables.min.js",
+               "js/unmp/main/inventory_discovery.js"]
     header_btn = Discovery.header_buttons()
     html.new_header("Discovery", "discovery.py", header_btn, css_list, js_list)
     html.write(Discovery.discovery())
@@ -1379,12 +1566,20 @@ def discovery(h):
 
 
 def ping_discovery_form(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     html.write(Discovery.ping_form())
 
 
 def ping_discovery(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     ping_ip_base = html.var("ping_ip_base")
@@ -1398,10 +1593,10 @@ def ping_discovery(h):
     is_deleted = 0
     updated_by = created_by
     dis_bll = DiscoveryBll(
-        )                             # creating the HostgorupBll object
+    )                             # creating the HostgorupBll object
     ping_dis_id = dis_bll.ping_discovery(
         ping_ip_base, ping_ip_base_start, ping_ip_base_end, ping_timeout, ping_service_mng, timestamp,
-                                         created_by, creation_time, updated_by, is_deleted)
+        created_by, creation_time, updated_by, is_deleted)
     if isinstance(ping_dis_id, ErrorMessages):
         result = {"success": 1, "msg": str(ping_dis_id.error_msg)}
     elif isinstance(ping_dis_id, Exception):
@@ -1412,6 +1607,10 @@ def ping_discovery(h):
 
 
 def run_ping_discovery(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     discovery_id = html.var("discovery_id")
@@ -1427,6 +1626,10 @@ def run_ping_discovery(h):
 
 
 def run_snmp_discovery(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     discovery_id = html.var("discovery_id")
@@ -1442,6 +1645,10 @@ def run_snmp_discovery(h):
 
 
 def run_upnp_discovery(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     discovery_id = html.var("discovery_id")
@@ -1457,6 +1664,10 @@ def run_upnp_discovery(h):
 
 
 def snmp_discovery_form(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
 
@@ -1474,6 +1685,10 @@ def snmp_discovery_form(h):
 
 
 def snmp_discovery(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     snmp_ip_base = html.var("snmp_ip_base")
@@ -1490,10 +1705,11 @@ def snmp_discovery(h):
     is_deleted = 0
     updated_by = created_by
     dis_bll = DiscoveryBll(
-        )                             # creating the HostgorupBll object
+    )                             # creating the HostgorupBll object
     snmp_dis_id = dis_bll.snmp_discovery(
-        snmp_ip_base, snmp_ip_base_start, snmp_ip_base_end, snmp_timeout, snmp_community, snmp_port, snmp_version, snmp_service_mng,
-                                         timestamp, created_by, creation_time, updated_by, is_deleted)
+        snmp_ip_base, snmp_ip_base_start, snmp_ip_base_end, snmp_timeout, snmp_community, snmp_port, snmp_version,
+        snmp_service_mng,
+        timestamp, created_by, creation_time, updated_by, is_deleted)
     if isinstance(snmp_dis_id, ErrorMessages):
         result = {"success": 1, "msg": str(snmp_dis_id.error_msg)}
     elif isinstance(snmp_dis_id, Exception):
@@ -1504,12 +1720,20 @@ def snmp_discovery(h):
 
 
 def upnp_discovery_form(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     html.write(Discovery.upnp_form())
 
 
 def upnp_discovery(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     upnp_timeout = html.var("upnp_timeout")
@@ -1520,10 +1744,10 @@ def upnp_discovery(h):
     is_deleted = 0
     updated_by = created_by
     dis_bll = DiscoveryBll(
-        )                             # creating the HostgorupBll object
+    )                             # creating the HostgorupBll object
     upnp_dis_id = dis_bll.upnp_discovery(
         upnp_timeout, upnp_service_mng, timestamp,
-                                         created_by, creation_time, updated_by, is_deleted)
+        created_by, creation_time, updated_by, is_deleted)
     if isinstance(upnp_dis_id, ErrorMessages):
         result = {"success": 1, "msg": str(upnp_dis_id.error_msg)}
     elif isinstance(upnp_dis_id, Exception):
@@ -1533,13 +1757,17 @@ def upnp_discovery(h):
     html.write(str(result))
 
 
-def page_tip_inventory_discovery(h):
-    global html
-    html = h
-    html.write(Discovery.page_tip_discovery())
+# def page_tip_inventory_discovery(h):
+#     global html
+#     html = h
+#     html.write(Discovery.page_tip_discovery())
 
 
 def delete_discovered_host(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     discovery_type = html.var("discovery_type")
@@ -1549,7 +1777,7 @@ def delete_discovered_host(h):
     discovery_type = discovery_type != None and discovery_type or ""
     updated_by = html.req.session["username"]
     dis_bll = DiscoveryBll(
-        )                             # creating the HostgorupBll object
+    )                             # creating the HostgorupBll object
     host_count = dis_bll.delete_discovered_host(
         discovery_type.split(","), host_id.split(","), updated_by)
     if isinstance(host_count, ErrorMessages):
@@ -1563,33 +1791,50 @@ def delete_discovered_host(h):
 
 
 def ping_default_details(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     dis_bll = DiscoveryBll(
-        )                             # creating the HostBll object
+    )                             # creating the HostBll object
     html.write(str(dis_bll.ping_default_details()))
 
 
 def snmp_default_details(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     dis_bll = DiscoveryBll(
-        )                             # creating the HostBll object
+    )                             # creating the HostBll object
     html.write(str(dis_bll.snmp_default_details()))
 
 
 def upnp_default_details(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     dis_bll = DiscoveryBll(
-        )                             # creating the HostBll object
+    )                             # creating the HostBll object
     html.write(str(dis_bll.upnp_default_details()))
+
 # End-Discovery
 
 # Service
 
 
 def manage_service(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     # css_list = ["css/demo_table_jui.css","css/jquery-
@@ -1598,10 +1843,10 @@ def manage_service(h):
         "css/demo_table_jui.css", "css/style12.css", "css/jquery.multiselect.css",
         "css/jquery.multiselect.filter.css", "css/jquery-ui-1.8.4.custom.css"]
     js_list = [
-        "js/jquery-ui-1.8.6.custom.min.js", "js/pages/jquery.multiselect.min.js",
-        "js/pages/jquery.multiselect.filter.js", "js/jquery.dataTables.min.js", "js/pages/inventory_service.js"]
-    # js_list = ["js/jquery.dataTables.min.js","js/jquery-
-    # ui-1.8.6.custom.min.js","js/pages/jquery.multiselect.min.js","js/pages/inventory_service.js"]
+        "js/lib/main/jquery-ui-1.8.6.custom.min.js", "js/lib/main/jquery.multiselect.min.js",
+        "js/lib/main/jquery.multiselect.filter.js", "js/lib/main/jquery.dataTables.min.js", "js/unmp/main/inventory_service.js"]
+    # js_list = ["js/lib/main/jquery.dataTables.min.js","js/lib/main/jquery-
+    # ui-1.8.6.custom.min.js","js/lib/main/jquery.multiselect.min.js","js/unmp/main/inventory_service.js"]
     add_btn = "<div class=\"header-icon\"><img onclick=\"addService();\" class=\"n-tip-image\" src=\"images/%s/round_plus.png\" id=\"add_service\" style=\"width: 16px; height: 16px; margin: 6px 20px 6px 10px;\" original-title=\"Add Service\"></div>" % theme
     edit_btn = "<div class=\"header-icon\"><img onclick=\"editService();\" class=\"n-tip-image\" src=\"images/%s/doc_edit.png\" id=\"edit_service\" style=\"width: 16px; height: 16px; margin: 6px 20px 6px 10px;\" original-title=\"Edit Service\"></div>" % theme
     del_btn = "<div class=\"header-icon\"><img onclick=\"delService();\" class=\"n-tip-image\" src=\"images/%s/round_minus.png\" id=\"del_service\" style=\"width: 16px; height: 16px; margin: 6px 20px 6px 10px;\" original-title=\"Delete Service\"></div>" % theme
@@ -1612,13 +1857,17 @@ def manage_service(h):
     html.new_footer()
 
 
-def page_tip_inventory_service(h):
-    global html
-    html = h
-    html.write(Service.page_tip_service())
+# def page_tip_inventory_service(h):
+#     global html
+#     html = h
+#     html.write(Service.page_tip_service())
 
 
 def grid_view_service(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     i_display_start = str(html.var("iDisplayStart"))
@@ -1634,18 +1883,18 @@ def grid_view_service(h):
     try:                             # creating the ServiceBll object
         all_hosts_dict = srv_bll.grid_view(
             i_display_start, i_display_length, s_search, sEcho,
-                                           sSortDir_0, iSortCol_0, html.req.vars)
-                                           # fetching all hostgroups data from
-                                           # database
+            sSortDir_0, iSortCol_0, html.req.vars)
+        # fetching all hostgroups data from
+        # database
         host_list = []
-            # creating empty list [we will use this in datatables]
+        # creating empty list [we will use this in datatables]
         all_hosts = all_hosts_dict["aaData"]
         s_no = 0
         for hst in all_hosts:
             s_no += 1
             ip_address = hst.ip_address
             query_service = "GET services\nColumns: service_state service_description service_last_check service_next_check \nFilter: host_address = " + \
-                ip_address
+                            ip_address
             html.live.set_prepend_site(True)
             serv = html.live.query(query_service)
             # serv.sort()
@@ -1655,7 +1904,7 @@ def grid_view_service(h):
                               "<a href=\"#\"onclick=\"viewServiceDetails(%s,'%s')\">" % (
                                   str(
                                       hst.host_id), hst.host_alias) + (
-                                          hst.ip_address != None and hst.ip_address or "-") + "</a>",
+                                  hst.ip_address != None and hst.ip_address or "-") + "</a>",
                               hst.host_alias != None and hst.host_alias or "-",
                               hst.hostgroup_name != None and hst.hostgroup_name or "-",
                               hst.device_name != None and hst.device_name or "-",
@@ -1663,8 +1912,9 @@ def grid_view_service(h):
                               # str(srv_bll.grid_view_service(hst.host_id)),
                               make_service_box(srv_bll.grid_view_service(
                                   hst.host_id), serv),
-                              "<a href=\"javascript:editService(%s,%s);\"><img class='host_opr' title='Edit Service Details' src='images/new/edit.png' alt='edit'/></a>" % (hst.host_id, hst.is_localhost)])
-        # html.write(str(host_list))
+                              "<a href=\"javascript:editService(%s,%s);\"><img class='host_opr' title='Edit Service Details' src='images/new/edit.png' alt='edit'/></a>" % (
+                              hst.host_id, hst.is_localhost)])
+            # html.write(str(host_list))
         all_hosts_dict["aaData"] = host_list
         html.write(JSONEncoder().encode(all_hosts_dict))
         # html.write(str(all_hosts_dict))
@@ -1681,11 +1931,18 @@ def grid_view_service(h):
 
 
 def get_time_tick(timetick, flag=0):
+    """
+
+    @param timetick:
+    @param flag:
+    @return:
+    """
     import datetime
+
     last_check = ""
     if datetime.datetime.now() > datetime.datetime.fromtimestamp(timetick):
         delta = datetime.datetime.now(
-            ) - datetime.datetime.fromtimestamp(timetick)
+        ) - datetime.datetime.fromtimestamp(timetick)
         if flag:
             return " Service check is in progress"
     else:
@@ -1711,6 +1968,12 @@ def get_time_tick(timetick, flag=0):
 
 
 def make_service_box(services, live_status):
+    """
+
+    @param services:
+    @param live_status:
+    @return:
+    """
     try:
         global html
         html_str = ""
@@ -1722,13 +1985,13 @@ def make_service_box(services, live_status):
                 mins = "M"
             elif str(mins) == "1440":
                 mins = "D"
-            # elif str(mins)=="720":
+                # elif str(mins)=="720":
             #    mins="12 Hours"
 
             service_name = service_tuple[0]
             host_id = service_tuple[2]
             index = [i for i, x in enumerate(live_status)
-                                             if x.count(service_name)]
+                     if x.count(service_name)]
             if index == []:
                 continue
             time_tick = live_status[index[0]][3]
@@ -1742,20 +2005,28 @@ def make_service_box(services, live_status):
                 <img id=\"service_big_box_%s_%s_img\" style=\"z-index:3;float:left;height:15px;width:15px;vertical-align:middle;margin-top:3px;\" src=\"images/new/status-%s.png\"/> \
                 <span style=\"padding:5px;float:left;\">%s</span> \
                 <div id=\"service_box_%s_%s\" class=\"service-boxwhite\" style=\"height:12px;float:right;padding:2px 5px 5px 5px;\" >%s</div></div> \
-                " % (str(host_id), str(service_name.replace(" ", "_")), last_check, next_check, str(host_id), str(service_name.replace(" ", "_")), service_status, service_name, str(host_id), str(service_name.replace(" ", "_")), str(mins))
+                " % (str(host_id), str(service_name.replace(" ", "_")), last_check, next_check, str(host_id),
+                     str(service_name.replace(" ", "_")), service_status, service_name, str(host_id),
+                     str(service_name.replace(" ", "_")), str(mins))
             else:
                 html_str += " <div class=\"service-box n-tip-image\" id=\"service_big_box_%s_%s\" \
                 title=\"Service check <br/><br/>Time since last check:%s.<br/>Time of next scheduled check:%s.\"> \
                 <img id=\"service_big_box_%s_%s_img\" style=\"z-index:3;float:left;height:15px;width:15px;vertical-align:middle;margin-top:3px;\" src=\"images/new/status-3.png\"/> \
                 <span style=\"padding:5px;float:left;\">%s</span> \
                 <div id=\"service_box_%s_%s\" class=\"service-boxwhite\" style=\"height:12px;float:right;padding:2px 5px 5px 5px \" >%s</div></div> \
-                " % (str(host_id), str(service_name.replace(" ", "_")), last_check, next_check, str(host_id), str(service_name.replace(" ", "_")), service_name, str(host_id), str(service_name.replace(" ", "_")), str(mins))
+                " % (str(host_id), str(service_name.replace(" ", "_")), last_check, next_check, str(host_id),
+                     str(service_name.replace(" ", "_")), service_name, str(host_id),
+                     str(service_name.replace(" ", "_")), str(mins))
         return html_str
     except Exception, e:
         return str(e)
 
 
 def edit_service_details(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     host_id = html.var("host_id")
@@ -1768,6 +2039,10 @@ def edit_service_details(h):
 
 
 def apply_service_changes(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     hosts_list = str(html.var("service_hosts")).split(",")
@@ -1782,6 +2057,10 @@ def apply_service_changes(h):
 
 
 def update_service_table(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     hosts_list = str(html.var("hosts_list")).split(",")
@@ -1806,7 +2085,7 @@ def update_service_table(h):
             for host_id in all_hosts:
                 result_obj = srv_bll.get_host_details(host_id)
                 query_service = "GET services\nColumns: service_state service_description service_last_check service_next_check \nFilter: host_address = " + \
-                    result_obj[0][3]
+                                result_obj[0][3]
                 html.live.set_prepend_site(True)
                 serv = html.live.query(query_service)
                 html.live.set_prepend_site(False)
@@ -1821,12 +2100,18 @@ def update_service_table(h):
 
             # html.write(str({"html_str":html_str_list,"title_str":title_str_list,"id_array":all_host,"service_str":service_str_list}))
             html.write(JSONEncoder().encode({"html_str": html_str_list, "title_str":
-                       title_str_list, "id_array": all_host, "service_str": service_str_list, "success": 0}))
+                title_str_list, "id_array": all_host, "service_str": service_str_list, "success": 0}))
         except Exception, e:
             html.write(JSONEncoder().encode({"success": 1, "except": str(e)}))
 
 
 def update_service_box(services, live_status):
+    """
+
+    @param services:
+    @param live_status:
+    @return:
+    """
     try:
         global html
         html_str = []
@@ -1838,7 +2123,7 @@ def update_service_box(services, live_status):
             service_str.append(service_name.replace(" ", "_"))
             host_id = service_tuple[2]
             index = [i for i, x in enumerate(live_status)
-                                             if x.count(service_name)]
+                     if x.count(service_name)]
             if index == []:
                 continue
             time_tick = live_status[index[0]][3]
@@ -1846,8 +2131,9 @@ def update_service_box(services, live_status):
             time_tick = live_status[index[0]][4]
             next_check = get_time_tick(time_tick, 1)
             service_status = live_status[index[0]][1]
-            title_str.append("Service check <br/><br/>Time since last check:%s.<br/>Time of next scheduled check:%s." % (
-                last_check, next_check))
+            title_str.append(
+                "Service check <br/><br/>Time since last check:%s.<br/>Time of next scheduled check:%s." % (
+                    last_check, next_check))
             if service_status in [0, 1, 2, 3]:
                 html_str.append(service_status)
             else:
@@ -1855,15 +2141,20 @@ def update_service_box(services, live_status):
         return {"html_str": html_str, "title_str": title_str, "service_str": service_str}
     except Exception, e:
         return {"html_str": str(e), "title_str": str(e)}
+
 # End-Service
 # Network-Map
 
 
 def network_map(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     css_list = []
-    js_list = ["js/pages/inventory_network_map.js"]
+    js_list = ["js/unmp/main/inventory_network_map.js"]
     header_btn = ""
     html.new_header(
         "Network Map", "network_map.py", header_btn, css_list, js_list)
@@ -1871,20 +2162,24 @@ def network_map(h):
     html.new_footer()
 
 
-def page_tip_inventory_network_map(h):
-    global html
-    html = h
-    html.write(NetworkMap.page_tip_network_map())
+# def page_tip_inventory_network_map(h):
+#     global html
+#     html = h
+#     html.write(NetworkMap.page_tip_network_map())
 
 # End-Network-Map
 
 
 # Vendor
 def manage_vendor(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     css_list = ["css/demo_table_jui.css", "css/jquery-ui-1.8.4.custom.css"]
-    js_list = ["js/jquery.dataTables.min.js", "js/pages/inventory_vendor.js"]
+    js_list = ["js/lib/main/jquery.dataTables.min.js", "js/unmp/main/inventory_vendor.js"]
     header_btn = Vendor.header_buttons()
     html.new_header("Vendor", "#inventory", header_btn, css_list, js_list)
     html.write(Vendor.manage_vendor())
@@ -1892,14 +2187,18 @@ def manage_vendor(h):
 
 
 def grid_view_vendor(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     vd_bll = VendorBll(
-        )                             # creating the VendorBll object
+    )                             # creating the VendorBll object
     all_vendors = vd_bll.grid_view(
-        )                 # fetching all vendors data from database
+    )                 # fetching all vendors data from database
     vendors_list = []
-        # creating empty list [we will use this in datatables]
+    # creating empty list [we will use this in datatables]
     s_no = 0
     for vd in all_vendors:
         s_no += 1
@@ -1911,12 +2210,20 @@ def grid_view_vendor(h):
 
 
 def form_vendor(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     html.write(Vendor.create_form())
 
 
 def add_vendor(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     vendor_name = html.var("vendor_name")
@@ -1927,10 +2234,10 @@ def add_vendor(h):
     is_deleted = 0
     updated_by = created_by
     vd_bll = VendorBll(
-        )                             # creating the VendorBll object
+    )                             # creating the VendorBll object
     host_vendor_id = vd_bll.add(
         vendor_name, description, timestamp, created_by,
-                                creation_time, is_deleted, updated_by)
+        creation_time, is_deleted, updated_by)
     if isinstance(host_vendor_id, ErrorMessages):
         result = {"success": 1, "msg": str(host_vendor_id.error_msg)}
     elif isinstance(host_vendor_id, Exception):
@@ -1941,23 +2248,32 @@ def add_vendor(h):
 
 
 def get_vendor_by_id(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     host_vendor_id = html.var("host_vendor_id")
     vd_bll = VendorBll(
-        )                             # creating the VendorBll object
+    )                             # creating the VendorBll object
     vendor = vd_bll.get_vendor_by_id(host_vendor_id)
     if isinstance(vendor, ErrorMessages):
         result = {"success": 1, "msg": str(vendor.error_msg)}
     elif isinstance(vendor, Exception):
         result = {"success": 1, "msg": "sysError"}
     else:
-        result = {"success": 0, "result": [str(vendor.host_vendor_id), vendor.vendor_name != None and vendor.vendor_name or "",
-                                               vendor.description != None and vendor.description or ""]}
+        result = {"success": 0,
+                  "result": [str(vendor.host_vendor_id), vendor.vendor_name != None and vendor.vendor_name or "",
+                             vendor.description != None and vendor.description or ""]}
     html.write(str(result))
 
 
 def edit_vendor(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     host_vendor_id = html.var("host_vendor_id")
@@ -1967,7 +2283,7 @@ def edit_vendor(h):
     is_deleted = 0
     updated_by = html.req.session["username"]
     vd_bll = VendorBll(
-        )                             # creating the VendorBll object
+    )                             # creating the VendorBll object
     host_vendor_id = vd_bll.edit(host_vendor_id, vendor_name, description,
                                  timestamp, is_deleted, updated_by)
     if isinstance(host_vendor_id, ErrorMessages):
@@ -1980,13 +2296,17 @@ def edit_vendor(h):
 
 
 def del_vendor(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     host_vendor_ids = html.var("host_vendor_ids")
     host_vendor_ids = host_vendor_ids != None and host_vendor_ids or ""
     updated_by = html.req.session["username"]
     vd_bll = VendorBll(
-        )                             # creating the HostgorupBll object
+    )                             # creating the HostgorupBll object
     vendor_count = vd_bll.delete(host_vendor_ids.split(","), updated_by)
     if isinstance(vendor_count, ErrorMessages):
         result = {"success": 1, "msg": str(vendor_count.error_msg)}
@@ -1997,10 +2317,10 @@ def del_vendor(h):
     html.write(str(result))
 
 
-def page_tip_inventory_vendor(h):
-    global html
-    html = h
-    html.write(Vendor.page_tip_vendor())
+# def page_tip_inventory_vendor(h):
+#     global html
+#     html = h
+#     html.write(Vendor.page_tip_vendor())
 
 # End-Vendor
 
@@ -2008,11 +2328,15 @@ def page_tip_inventory_vendor(h):
 
 
 def manage_black_list_mac(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     css_list = ["css/demo_table_jui.css", "css/jquery-ui-1.8.4.custom.css"]
-    js_list = ["js/jquery.dataTables.min.js",
-        "js/pages/inventory_black_list_mac.js"]
+    js_list = ["js/lib/main/jquery.dataTables.min.js",
+               "js/unmp/main/inventory_black_list_mac.js"]
     header_btn = BlackListMac.header_buttons()
     html.new_header(
         "Black List Mac", "#inventory", header_btn, css_list, js_list)
@@ -2021,14 +2345,18 @@ def manage_black_list_mac(h):
 
 
 def grid_view_black_list_mac(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     blm_bll = BlackListMacBll(
-        )                             # creating the BlackListMacBll object
+    )                             # creating the BlackListMacBll object
     all_black_list_macs = blm_bll.grid_view(
-        )                 # fetching all black_list_macs data from database
+    )                 # fetching all black_list_macs data from database
     black_list_macs_list = []
-        # creating empty list [we will use this in datatables]
+    # creating empty list [we will use this in datatables]
     s_no = 0
     for blm in all_black_list_macs:
         s_no += 1
@@ -2040,12 +2368,20 @@ def grid_view_black_list_mac(h):
 
 
 def form_black_list_mac(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     html.write(BlackListMac.create_form())
 
 
 def add_black_list_mac(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     mac_address = html.var("mac_address")
@@ -2056,10 +2392,10 @@ def add_black_list_mac(h):
     is_deleted = 0
     updated_by = created_by
     blm_bll = BlackListMacBll(
-        )                             # creating the BlackListMacBll object
+    )                             # creating the BlackListMacBll object
     black_list_mac_id = blm_bll.add(
         mac_address, description, timestamp, created_by,
-                                    creation_time, is_deleted, updated_by)
+        creation_time, is_deleted, updated_by)
     if isinstance(black_list_mac_id, ErrorMessages):
         result = {"success": 1, "msg": str(black_list_mac_id.error_msg)}
     elif isinstance(black_list_mac_id, Exception):
@@ -2070,23 +2406,32 @@ def add_black_list_mac(h):
 
 
 def get_black_list_mac_by_id(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     black_list_mac_id = html.var("black_list_mac_id")
     blm_bll = BlackListMacBll(
-        )                             # creating the BlackListMacBll object
+    )                             # creating the BlackListMacBll object
     black_list_mac = blm_bll.get_black_list_mac_by_id(black_list_mac_id)
     if isinstance(black_list_mac, ErrorMessages):
         result = {"success": 1, "msg": str(black_list_mac.error_msg)}
     elif isinstance(black_list_mac, Exception):
         result = {"success": 1, "msg": "sysError"}
     else:
-        result = {"success": 0, "result": [str(black_list_mac.black_list_mac_id), black_list_mac.mac_address != None and black_list_mac.mac_address or "",
-                                               black_list_mac.description != None and black_list_mac.description or ""]}
+        result = {"success": 0, "result": [str(black_list_mac.black_list_mac_id),
+                                           black_list_mac.mac_address != None and black_list_mac.mac_address or "",
+                                           black_list_mac.description != None and black_list_mac.description or ""]}
     html.write(str(result))
 
 
 def edit_black_list_mac(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     black_list_mac_id = html.var("black_list_mac_id")
@@ -2096,7 +2441,7 @@ def edit_black_list_mac(h):
     is_deleted = 0
     updated_by = html.req.session["username"]
     blm_bll = BlackListMacBll(
-        )                             # creating the BlackListMacBll object
+    )                             # creating the BlackListMacBll object
     black_list_mac_id = blm_bll.edit(
         black_list_mac_id, mac_address, description, timestamp, is_deleted, updated_by)
     if isinstance(black_list_mac_id, ErrorMessages):
@@ -2109,13 +2454,17 @@ def edit_black_list_mac(h):
 
 
 def del_black_list_mac(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     black_list_mac_ids = html.var("black_list_mac_ids")
     black_list_mac_ids = black_list_mac_ids != None and black_list_mac_ids or ""
     updated_by = html.req.session["username"]
     blm_bll = BlackListMacBll(
-        )                             # creating the HostgorupBll object
+    )                             # creating the HostgorupBll object
     black_list_mac_count = blm_bll.delete(
         black_list_mac_ids.split(","), updated_by)
     if isinstance(black_list_mac_count, ErrorMessages):
@@ -2127,16 +2476,20 @@ def del_black_list_mac(h):
     html.write(str(result))
 
 
-def page_tip_inventory_black_list_mac(h):
-    global html
-    html = h
-    html.write(BlackListMac.page_tip_black_list_mac())
+# def page_tip_inventory_black_list_mac(h):
+#     global html
+#     html = h
+#     html.write(BlackListMac.page_tip_black_list_mac())
 
 # End-BlackListMac
 
 
 # Misc
 def write_nagios_config(h):
+    """
+
+    @param h:
+    """
     nms_name = __file__.split(
         "/")[3]       # it gives instance name of nagios system
     global html
@@ -2156,8 +2509,13 @@ def write_nagios_config(h):
 
 
 def reload_nagios_config(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     rslt = SystemSetting.reload_nagios_config()
     html.write(str(rslt))
+
 # End-Misc

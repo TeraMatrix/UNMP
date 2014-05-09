@@ -36,11 +36,22 @@ global upnp_host_dict
 
 
 class cmdCompleter:
+    """
+
+    @param commands:
+    """
+
     def __init__(self, commands):
         self.commands = commands
 
     # Traverses the list of available commands
     def traverse(self, tokens, tree):
+        """
+
+        @param tokens:
+        @param tree:
+        @return:
+        """
         retVal = []
 
         # If there are no commands, or no user input, return null
@@ -57,6 +68,12 @@ class cmdCompleter:
     # Returns a list of possible commands that match the partial command that
     # the user has entered
     def complete(self, text, state):
+        """
+
+        @param text:
+        @param state:
+        @return:
+        """
         try:
             tokens = readline.get_line_buffer().split()
             if not tokens or readline.get_line_buffer()[-1] == ' ':
@@ -71,6 +88,12 @@ class cmdCompleter:
 
 
 class upnp:
+    """
+
+    @param ip:
+    @param port:
+    @param iface:
+    """
     ip = False
     port = False
     completer = False
@@ -105,6 +128,13 @@ class upnp:
 
     # Initialize default sockets
     def initSockets(self, ip, port, iface):
+        """
+
+        @param ip:
+        @param port:
+        @param iface:
+        @return:
+        """
         if self.csock:
             self.csock.close()
         if self.ssock:
@@ -153,6 +183,10 @@ class upnp:
 
     # Clean up file/socket descriptors
     def cleanup(self):
+        """
+        Clean the User logs and Nagios logs
+
+        """
         if self.LOG_FILE != False:
             self.LOG_FILE.close()
         self.csock.close()
@@ -161,6 +195,12 @@ class upnp:
     # Send network data
     def send(self, data, socket):
         # By default, use the client socket that's part of this class
+        """
+
+        @param data:
+        @param socket:
+        @return:
+        """
         if socket == False:
             socket = self.csock
         try:
@@ -172,6 +212,12 @@ class upnp:
 
     # Listen for network data
     def listen(self, size, socket):
+        """
+
+        @param size:
+        @param socket:
+        @return:
+        """
         if socket == False:
             socket = self.ssock
         socket.settimeout(5)
@@ -182,6 +228,12 @@ class upnp:
 
     # Create new UDP socket on ip, bound to port
     def createNewListener(self, ip, port):
+        """
+
+        @param ip:
+        @param port:
+        @return:
+        """
         try:
             newsock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)
             newsock.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
@@ -192,14 +244,29 @@ class upnp:
 
     # Return the class's primary server socket
     def listener(self):
+        """
+
+
+        @return:
+        """
         return self.ssock
 
     # Return the class's primary client socket
     def sender(self):
+        """
+
+
+        @return:
+        """
         return self.csock
 
     # Parse a URL, return the host and the page
     def parseURL(self, url):
+        """
+
+        @param url:
+        @return:
+        """
         delim = '://'
         host = False
         page = False
@@ -219,6 +286,11 @@ class upnp:
     # The device type string looks like: 'urn:schemas-upnp-
     # org:device:WANDevice:1'
     def parseDeviceTypeName(self, string):
+        """
+
+        @param string:
+        @return:
+        """
         delim1 = 'device:'
         delim2 = ':'
 
@@ -230,6 +302,11 @@ class upnp:
     # The service type string looks like: 'urn:schemas-upnp-
     # org:service:Layer3Forwarding:1'
     def parseServiceTypeName(self, string):
+        """
+
+        @param string:
+        @return:
+        """
         delim1 = 'service:'
         delim2 = ':'
 
@@ -239,6 +316,12 @@ class upnp:
 
     # Pull the header info for the specified HTTP header - case insensitive
     def parseHeader(self, data, header):
+        """
+
+        @param data:
+        @param header:
+        @return:
+        """
         delimiter = "%s:" % header
         defaultRet = False
 
@@ -258,6 +341,12 @@ class upnp:
 
     # Extract the contents of a single XML tag from the data
     def extractSingleTag(self, data, tag):
+        """
+
+        @param data:
+        @param tag:
+        @return:
+        """
         startTag = "<%s" % tag
         endTag = "</%s>" % tag
 
@@ -273,6 +362,13 @@ class upnp:
 
     # Parses SSDP notify and reply packets, and populates the ENUM_HOSTS dict
     def parseSSDPInfo(self, data, showUniq, verbose):
+        """
+
+        @param data:
+        @param showUniq:
+        @param verbose:
+        @return:
+        """
         global upnp_host_dict
         hostFound = False
         foundLocation = False
@@ -368,6 +464,11 @@ class upnp:
     # Send GET request for a UPNP XML file
     def getXML(self, url):
 
+        """
+
+        @param url:
+        @return:
+        """
         headers = {
             'USER-AGENT': 'uPNP/' + self.UPNP_VERSION,
             'CONTENT-TYPE': 'text/xml; charset="utf-8"'
@@ -389,6 +490,15 @@ class upnp:
 
     # Send SOAP request
     def sendSOAP(self, hostName, serviceType, controlURL, actionName, actionArguments):
+        """
+
+        @param hostName:
+        @param serviceType:
+        @param controlURL:
+        @param actionName:
+        @param actionArguments:
+        @return:
+        """
         argList = ''
         soapResponse = ''
 
@@ -478,6 +588,12 @@ class upnp:
 
     # Display all info for a given host
     def showCompleteHostInfo(self, index, fp):
+        """
+
+        @param index:
+        @param fp:
+        @return:
+        """
         na = 'N/A'
         serviceKeys = ['controlURL', 'eventSubURL', 'serviceId',
                        'SCPDURL', 'fullName']
@@ -521,6 +637,13 @@ class upnp:
 
     # Wrapper function...
     def getHostInfo(self, xmlData, xmlHeaders, index):
+        """
+
+        @param xmlData:
+        @param xmlHeaders:
+        @param index:
+        @return:
+        """
         if self.ENUM_HOSTS[index]['dataComplete'] == True:
             return
 
@@ -538,6 +661,12 @@ class upnp:
 
     # Parse device info from the retrieved XML file
     def parseDeviceInfo(self, xmlRoot, index):
+        """
+
+        @param xmlRoot:
+        @param index:
+        @return:
+        """
         deviceEntryPointer = False
         devTag = "device"
         deviceType = "deviceType"
@@ -582,6 +711,12 @@ class upnp:
 
     # Parse the list of services specified in the XML file
     def parseServiceList(self, xmlRoot, device, index):
+        """
+
+        @param xmlRoot:
+        @param device:
+        @param index:
+        """
         serviceEntryPointer = False
         dictName = "services"
         serviceListTag = "serviceList"
@@ -618,6 +753,12 @@ class upnp:
 
     # Parse details about each service (arguements, variables, etc)
     def parseServiceInfo(self, service, index):
+        """
+
+        @param service:
+        @param index:
+        @return:
+        """
         argIndex = 0
         argTags = ['direction', 'relatedStateVariable']
         actionList = 'actionList'
@@ -719,6 +860,12 @@ class upnp:
     # Get info about a service's state variables
     def parseServiceStateVars(self, xmlRoot, servicePointer):
 
+        """
+
+        @param xmlRoot:
+        @param servicePointer:
+        @return:
+        """
         na = 'N/A'
         varVals = ['sendEvents', 'dataType', 'defaultValue', 'allowedValues']
         serviceStateTable = 'serviceStateTable'
@@ -805,6 +952,11 @@ class upnp:
 
     # Update the command completer
     def updateCmdCompleter(self, struct):
+        """
+
+        @param struct:
+        @return:
+        """
         indexOnlyList = {
             'host': ['get', 'details', 'summary'],
             'save': ['info']
@@ -855,6 +1007,12 @@ class upnp:
 # These functions handle user commands from the shell
 # Actively search for UPNP devices
 def msearch(hp, time_out=10):
+    """
+
+    @param hp:
+    @param time_out:
+    @return:
+    """
     global upnp_host_dict
     defaultST = "upnp:rootdevice"
     st = "schemas-upnp-org"
@@ -897,6 +1055,12 @@ def msearch(hp, time_out=10):
 
 
 def pcap(argc, argv, hp):
+    """
+
+    @param argc:
+    @param argv:
+    @param hp:
+    """
     print 'Entering passive mode, Ctl+C to stop...'
     print ''
     while True:
@@ -910,6 +1074,13 @@ def pcap(argc, argv, hp):
 
 
 def head(argc, argv, hp):
+    """
+
+    @param argc:
+    @param argv:
+    @param hp:
+    @return:
+    """
     if argc >= 2:
         action = argv[1]
         # Show current headers
@@ -943,6 +1114,13 @@ def head(argc, argv, hp):
 
 
 def seti(argc, argv, hp):
+    """
+
+    @param argc:
+    @param argv:
+    @param hp:
+    @return:
+    """
     if argc >= 2:
         action = argv[1]
         if action == 'uniq':
@@ -1009,6 +1187,13 @@ def seti(argc, argv, hp):
 
 def host(argc, argv, hp):
 
+    """
+
+    @param argc:
+    @param argv:
+    @param hp:
+    @return:
+    """
     indexList = []
     indexError = "Host index out of range. Try the 'host list' command to get a list of known hosts"
     if argc >= 2:
@@ -1245,6 +1430,13 @@ def host(argc, argv, hp):
 
 
 def save(argc, argv, hp):
+    """
+
+    @param argc:
+    @param argv:
+    @param hp:
+    @return:
+    """
     suffix = '%s_%s.mir'
     uniqName = ''
     saveType = ''
@@ -1312,6 +1504,13 @@ def save(argc, argv, hp):
 
 
 def load(argc, argv, hp):
+    """
+
+    @param argc:
+    @param argv:
+    @param hp:
+    @return:
+    """
     if argc == 2 and argv[1] != 'help':
         loadFile = argv[1]
 
@@ -1334,6 +1533,13 @@ def load(argc, argv, hp):
 
 
 def log(argc, argv, hp):
+    """
+
+    @param argc:
+    @param argv:
+    @param hp:
+    @return:
+    """
     if argc == 2:
         logFile = argv[1]
         try:
@@ -1361,12 +1567,25 @@ def log(argc, argv, hp):
 
 
 def help(argc, argv, hp):
+    """
+
+    @param argc:
+    @param argv:
+    @param hp:
+    """
     showHelp(False)
 
 # Debug, disabled by default
 
 
 def debug(argc, argv, hp):
+    """
+
+    @param argc:
+    @param argv:
+    @param hp:
+    @return:
+    """
     command = ''
     if hp.DEBUG == False:
         print 'Debug is disabled! To enable, try the seti command...'
@@ -1383,12 +1602,25 @@ def debug(argc, argv, hp):
 
 
 def exit(argc, argv, hp):
+    """
+
+    @param argc:
+    @param argv:
+    @param hp:
+    """
     quit(argc, argv, hp)
 
 # Quit!
 
 
 def quit(argc, argv, hp):
+    """
+
+    @param argc:
+    @param argv:
+    @param hp:
+    @return:
+    """
     if argc == 2 and argv[1] == 'help':
         showHelp(argv[0])
         return
@@ -1404,6 +1636,10 @@ def quit(argc, argv, hp):
 
 def showHelp(command):
     # Detailed help info for each command
+    """
+
+    @param command:
+    """
     helpInfo = {
         'help': {
             'longListing':
@@ -1570,6 +1806,10 @@ def showHelp(command):
 
 
 def usage():
+    """
+    UPNP discovery
+
+    """
     print '''
 Command line usage: %s [OPTIONS]
 
@@ -1587,6 +1827,12 @@ Command line usage: %s [OPTIONS]
 
 
 def parseCliOpts(argc, argv, hp):
+    """
+
+    @param argc:
+    @param argv:
+    @param hp:
+    """
     try:
         opts, args = getopt.getopt(argv[1:], 's:l:i:udvh')
     except getopt.GetoptError, e:
@@ -1654,6 +1900,11 @@ def parseCliOpts(argc, argv, hp):
 
 
 def toggleVal(val):
+    """
+
+    @param val:
+    @return:
+    """
     if val:
         return False
     else:
@@ -1663,6 +1914,12 @@ def toggleVal(val):
 
 
 def getUserInput(hp, shellPrompt):
+    """
+
+    @param hp:
+    @param shellPrompt:
+    @return:
+    """
     defaultShellPrompt = 'upnp> '
     if shellPrompt == False:
         shellPrompt = defaultShellPrompt
@@ -1690,6 +1947,11 @@ def getUserInput(hp, shellPrompt):
 def main(argc, argv):
     # Table of valid commands - all primary commands must have an associated
     # function
+    """
+
+    @param argc:
+    @param argv:
+    """
     appCommands = {
         'help': {
             'help': None
@@ -1805,6 +2067,11 @@ def main(argc, argv):
 
 
 def upnp_discover(time_out):
+    """
+
+    @param time_out:
+    @return:
+    """
     global upnp_host_dict
     upnp_host_dict = {}
     try:

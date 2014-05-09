@@ -4,8 +4,16 @@ import time
 
 
 class DashboardView(object):
+    """
+    UNMP Dashboard
+    """
     @staticmethod
     def header_buttons():
+        """
+
+
+        @return:
+        """
         add_btn = "<div class=\"header-icon\"><img onclick=\"hostInformation();\" class=\"n-tip-image\" src=\"images/{0}/round_plus.png\" id=\"host_info\" style=\"width: 16px; height: 16px; margin: 6px 20px 6px 10px;\" original-title=\"Show Status\"></div>"
         del_btn = "<div class=\"header-icon\"><img onclick=\"delHost();\" class=\"n-tip-image\" src=\"images/{0}/round_minus.png\" id=\"del_host\" style=\"width: 16px; height: 16px; margin: 6px 20px 6px 10px;\" original-title=\"Delete Host\"></div>"
         del_btn = "<div class=\"header-icon\"><img onclick=\"delHost();\" class=\"n-tip-image\" src=\"images/{0}/round_minus.png\" id=\"del_host\" style=\"width: 16px; height: 16px; margin: 6px 20px 6px 10px;\" original-title=\"Delete Host\"></div>"
@@ -16,6 +24,11 @@ class DashboardView(object):
 
     @staticmethod
     def sp_footer_tab(flag):
+        """
+
+        @param flag:
+        @return:
+        """
         if int(flag) == 0:
             html_page = '<div id=\"report_button_div\" class=\"form-div-footer\">\
             <table cellspacing="9px" cellpadding="0">\
@@ -42,6 +55,17 @@ class DashboardView(object):
 
     @staticmethod
     def sp_table(ip_address, sp_start_date, sp_start_time, sp_end_date, sp_end_time, sp_refresh_time, total_count):
+        """
+
+        @param ip_address:
+        @param sp_start_date:
+        @param sp_start_time:
+        @param sp_end_date:
+        @param sp_end_time:
+        @param sp_refresh_time:
+        @param total_count:
+        @return:
+        """
         dash_str = '\
         <input type=\"hidden\" id=\"sp_refresh_time\" name=\"refresh_time\" value=\"%s\" />\
         <input type=\"hidden\" id=\"sp_ip_address\" name=\"ip_address\" value=\"%s\" />\

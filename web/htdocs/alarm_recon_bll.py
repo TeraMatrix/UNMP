@@ -1,18 +1,30 @@
-import socket
-from pysnmp.entity import engine, config
-from pysnmp.entity.rfc3413 import cmdgen
-from pysnmp.carrier.asynsock.dgram import udp
-from pysnmp.proto.api import v2c
-import pysnmp
-import time
-import MySQLdb
+from datetime import datetime as dt
 import datetime
 import os
-from datetime import datetime as dt, timedelta
+import socket
+import time
+
+import MySQLdb
+import pysnmp
+from pysnmp.carrier.asynsock.dgram import udp
+from pysnmp.entity import engine, config
+from pysnmp.entity.rfc3413 import cmdgen
+from pysnmp.proto.api import v2c
+
 from common_bll import db_connect, host_status_dict, Essential
 
 
 class Bulk():
+    """
+
+    @param ip_address:
+    @param port:
+    @param community:
+    @param timeout:
+    @param varbinds:
+    @param limit:
+    """
+
     def __init__(self, ip_address, port=161, community='public', timeout=5, varbinds=20, limit=100):
         self.ip_address = ip_address
         self.port = port
@@ -26,6 +38,11 @@ class Bulk():
         self.make_tuple = lambda x: tuple(int(i) for i in x.split('.'))
 
     def engine(self):
+        """
+
+
+        @return:
+        """
         err_dict = {}
         try:
             success = 1
@@ -59,8 +76,18 @@ class Bulk():
             return result
 
     def cbFun(
-        self, sendRequesthandle, errorIndication, errorStatus, errorIndex,
+            self, sendRequesthandle, errorIndication, errorStatus, errorIndex,
             varBindTable, cbCtx):
+        """
+
+        @param sendRequesthandle:
+        @param errorIndication:
+        @param errorStatus:
+        @param errorIndex:
+        @param varBindTable:
+        @param cbCtx:
+        @return:
+        """
         bulk_list = self.bulk_result['result']
         success = 3
         err_dict = {}
@@ -97,7 +124,7 @@ class Bulk():
                     break
             else:
                 # print " else "
-                return  # stop on end-of-table
+                return # stop on end-of-table
             if len(bulk_list) >= self.limit:
                 return
             time.sleep(self.timeout)
@@ -116,6 +143,11 @@ class Bulk():
                 self.bulk_result['result'] = bulk_list
 
     def bulkget(self, oid):
+        """
+
+        @param oid:
+        @return:
+        """
         err_dict = {}
         try:
             snmp_result = {}
@@ -135,7 +167,8 @@ class Bulk():
             # print " exit "
 
             if len(self.bulk_result) > 0:
-                if self.bulk_result['success'] == 2 or self.bulk_result['success'] == 3 or self.bulk_result['success'] == 0 or self.bulk_result['success'] == 4:
+                if self.bulk_result['success'] == 2 or self.bulk_result['success'] == 3 or self.bulk_result[
+                    'success'] == 0 or self.bulk_result['success'] == 4:
                     success = 0
                     oid_li = []
                     var_dict = {}
@@ -177,7 +210,7 @@ class Bulk():
                         snmp_result[
                             'error'] = self.bulk_result.get('error', {})
 
-                    # print snmp_result
+                        # print snmp_result
                 elif self.bulk_result['success'] == 1:
                     snmp_result = self.bulk_result
                 self.bulk_result = {}
@@ -207,6 +240,11 @@ class Bulk():
 
 
 class CustomException(Exception):
+    """
+
+    @param args:
+    """
+
     def __init__(self, *args):
         self.msg, self.code = 'Not Defined', 100
         if len(args) == 2:
@@ -221,6 +259,13 @@ class CustomException(Exception):
 
 
 class AlarmRecon():
+    """
+
+    @param host_id:
+    @param alarms_limit:
+    @param host_ip:
+    """
+
     def __init__(self, host_id, alarms_limit=100, host_ip=None):
         self.host_id = str(host_id)
         self.alarms_limit = alarms_limit
@@ -230,6 +275,12 @@ class AlarmRecon():
         self.alarm_status = 15
 
     def get_snmp_result(self, port, community):
+        """
+
+        @param port:
+        @param community:
+        @return:
+        """
         err_dict = {}
         success = 0
         recon_dict = {}
@@ -258,7 +309,7 @@ class AlarmRecon():
                     if result['success'] == 0:
                         result = result['result']
                         recon_length = len(result)
-##                        print " result ", result
+                        ##                        print " result ", result
                         recon_dict = {}
                         trapTimeStamp = 'timestamp'
                         perceivedSeverity = 'severity'
@@ -269,7 +320,7 @@ class AlarmRecon():
                             'CLEAR ALARM': 0, 'INFORMATIONAL ALARM': 1, 'NORMAL ALARM': 2,
                             'MINOR ALARM': 3, 'MAJOR ALARM': 4, 'CRITICAL ALARM': 5}
                         for key in result:
-##                            print " key ", key
+                        ##                            print " key ", key
                             temp_di = eval(result[key][2].replace(
                                 '\n', '').replace("},", "}"))
                             temp_di['severity'] = severity_dict.get(
@@ -283,7 +334,7 @@ class AlarmRecon():
                             if first_time:
                                 pass
                             else:
-##                                print " dt_value ", dt_value
+                            ##                                print " dt_value ", dt_value
                                 first_time = dt_value
                             last_time = dt_value
                             if dt_value in recon_dict:
@@ -309,7 +360,7 @@ class AlarmRecon():
                     int(host_state), "other operation")
         except Exception, e:
             success = 1
-##            print " SELF GET SNMP RESULT ", str(e)
+            ##            print " SELF GET SNMP RESULT ", str(e)
             err_dict = str(e)
         finally:
             if is_es_set:
@@ -328,6 +379,19 @@ class AlarmRecon():
 
     def recon(self):
         # select community, port
+        # FIXME: this function has a remaining improvement in sql query
+        #      in which we select `device_sent_date`
+        #      `device_sent_date` should be selected more carefully
+        #       because every thing else is depented on this
+        # recheck and improve
+        # there seems to be too many condition in this function
+        # we could have separate function that would insert in current and clear
+        # or revise the algorithm
+        """
+
+
+        @return: @raise:
+        """
         try:
             how_many_rows = 0
             err_dict = {}
@@ -382,14 +446,18 @@ class AlarmRecon():
             else:
                 raise CustomException(" alarm mask files not exists ", 1)
 
-            if ('mask_alarm_dict' in vars() or 'mask_alarm_dict' in globals()) and ('mask_severity_dict' in vars() or 'mask_severity_dict' in globals()) and ('clear_alarm_dict' in vars() or 'clear_alarm_dict' in globals()) and ('real_alarm_list' in vars() or 'real_alarm_list' in globals()) and ('odu100' in vars() or 'odu100' in globals()):
+            if ('mask_alarm_dict' in vars() or 'mask_alarm_dict' in globals()) and (
+                    'mask_severity_dict' in vars() or 'mask_severity_dict' in globals()) and (
+                    'clear_alarm_dict' in vars() or 'clear_alarm_dict' in globals()) and (
+                    'real_alarm_list' in vars() or 'real_alarm_list' in globals()) and (
+                    'odu100' in vars() or 'odu100' in globals()):
                 pass
             else:
                 raise CustomException(" alarm mask files execution failed ", 1)
 
             snmp_result_dict = {}
             snmp_result_dict = self.get_snmp_result(port, community)
-##            print snmp_result_dict
+            ##            print snmp_result_dict
             if snmp_result_dict['success'] == 0:
                 recon_dict = snmp_result_dict.get('recon_dict', {})
                 first_time = snmp_result_dict.get('first_time')
@@ -402,7 +470,7 @@ class AlarmRecon():
                 err_dict = snmp_result_dict.get('err_dict', {})
                 return
 
-##            print " recon_dict ", recon_dict
+            ##            print " recon_dict ", recon_dict
             if len(recon_dict) > 0:
                 update_query = "UPDATE trap_alarms INNER JOIN trap_alarm_clear ON trap_alarms.agent_id = trap_alarm_clear.agent_id \
                     INNER JOIN trap_alarm_current ON trap_alarms.agent_id = trap_alarm_current.agent_id \
@@ -410,7 +478,8 @@ class AlarmRecon():
                     WHERE trap_alarms.agent_id = '%s' and trap_alarms.is_reconcile = '1' " % (self.host_ip)
 
                 device_sent_date = None
-                first_sql = "SELECT `device_sent_date` FROM `trap_alarms` where `timestamp` = (select max(`timestamp`) from trap_alarms WHERE agent_id='%s')" % (self.host_ip)
+                first_sql = "SELECT `device_sent_date` FROM `trap_alarms` where `timestamp` = (select max(`timestamp`) from trap_alarms WHERE agent_id='%s')" % (
+                self.host_ip)
                 print " first_sql ", first_sql
                 self.db = db_connect()
                 if not isinstance(self.db, MySQLdb.connection):
@@ -430,10 +499,10 @@ class AlarmRecon():
                 if len(result_sent_date) > 0 and len(result_sent_date[0]) > 0:
                     device_sent_date = result_sent_date[0][0]
 
-# print " device_sent_date, first_time >> ", device_sent_date, first_time
+                # print " device_sent_date, first_time >> ", device_sent_date, first_time
 
                 if device_sent_date == None or device_sent_date > first_time:
-##                    print " insert all of them"
+                ##                    print " insert all of them"
                     # insert all of them
                     ins_query = "INSERT INTO trap_alarms (event_id, trap_id, agent_id, trap_date, trap_receive_date, serevity, trap_event_id, trap_event_type, \
                                     manage_obj_id, manage_obj_name, component_id, trap_ip, description, device_sent_date, is_reconcile, timestamp) values"
@@ -441,30 +510,36 @@ class AlarmRecon():
                     prev_device_time = None
                     ins_timestamp = dt.now() - (first_time - last_time)
                     for i in sorted(recon_dict.keys()):
-##                        print " i ", i
+                    ##                        print " i ", i
                         if isinstance(recon_dict[i], list):
                             for ldi in recon_dict[i]:
                                 if flag:
                                     ins_timestamp += (i - prev_device_time)
                                     ins_query += ", ('ruTrap', '.1.3.6.1.4.1.26149.2.4.0.0.1', '%s', '%s', '%s', '%s', '%s', '%s', '500', 'RU', '504', '%s', '%s', '%s', '1', '%s')\
-                                        " % (self.host_ip, i.time(), ins_timestamp.ctime(), ldi['severity'], ldi['event_id'], ldi['event'],
-                                             ldi['ip'], ldi['eventdesc'], i, ins_timestamp)
+                                        " % (
+                                    self.host_ip, i.time(), ins_timestamp.ctime(), ldi['severity'], ldi['event_id'],
+                                    ldi['event'],
+                                    ldi['ip'], ldi['eventdesc'], i, ins_timestamp)
                                 else:
                                     ins_query += "('ruTrap', '.1.3.6.1.4.1.26149.2.4.0.0.1', '%s', '%s', '%s', '%s', '%s', '%s', '500', 'RU', '504', '%s', '%s', '%s', '1', '%s')\
-                                        " % (self.host_ip, i.time(), ins_timestamp.ctime(), ldi['severity'], ldi['event_id'], ldi['event'],
-                                             ldi['ip'], ldi['eventdesc'], i, ins_timestamp)
+                                        " % (
+                                    self.host_ip, i.time(), ins_timestamp.ctime(), ldi['severity'], ldi['event_id'],
+                                    ldi['event'],
+                                    ldi['ip'], ldi['eventdesc'], i, ins_timestamp)
                                     flag = 1
                                 prev_device_time = i
                         else:
                             if flag:
                                 ins_timestamp += (i - prev_device_time)
                                 ins_query += ", ('ruTrap', '.1.3.6.1.4.1.26149.2.4.0.0.1', '%s', '%s', '%s', '%s', '%s', '%s', '500', 'RU', '504', '%s', '%s', '%s', '1', '%s')\
-                                        " % (self.host_ip, i.time(), ins_timestamp.ctime(), recon_dict[i]['severity'], recon_dict[i]['event_id'], recon_dict[i]['event'],
+                                        " % (self.host_ip, i.time(), ins_timestamp.ctime(), recon_dict[i]['severity'],
+                                             recon_dict[i]['event_id'], recon_dict[i]['event'],
                                              recon_dict[i]['ip'], recon_dict[i]['eventdesc'], i, ins_timestamp)
                             else:
                                 flag = 1
                                 ins_query += "('ruTrap', '.1.3.6.1.4.1.26149.2.4.0.0.1', '%s', '%s', '%s', '%s', '%s', '%s', '500', 'RU', '504', '%s', '%s', '%s', '1', '%s')\
-                                        " % (self.host_ip, i.time(), ins_timestamp.ctime(), recon_dict[i]['severity'], recon_dict[i]['event_id'], recon_dict[i]['event'],
+                                        " % (self.host_ip, i.time(), ins_timestamp.ctime(), recon_dict[i]['severity'],
+                                             recon_dict[i]['event_id'], recon_dict[i]['event'],
                                              recon_dict[i]['ip'], recon_dict[i]['eventdesc'], i, ins_timestamp)
                             prev_device_time = i
 
@@ -487,8 +562,8 @@ class AlarmRecon():
                         else:
                             cursor.close()
                             self.db.close()
-##                    print ins_query
-##                    print how_many_rows
+                        ##                    print ins_query
+                        ##                    print how_many_rows
                     success = 0
                     success_dict['msg'] = ' Alarm Reconciliation successful, %s new alarms found ' % (
                         how_many_rows) if how_many_rows else 'Alarm Reconciliation successful'
@@ -496,12 +571,12 @@ class AlarmRecon():
                     return
 
                 else:
-##                    print " insert else"
+                ##                    print " insert else"
                     sql = "SELECT `device_sent_date`,`trap_event_id`,`trap_event_type`,`serevity`,`timestamp` FROM \
                     (SELECT `device_sent_date`,`trap_event_id`,`trap_event_type`,`serevity`,`timestamp` FROM `trap_alarms` \
                     WHERE agent_id='%s' order by timestamp desc limit %s) as t \
                     where `device_sent_date` >= '%s' " % (self.host_ip, recon_length, last_time)
-##                    print " sql query ", sql
+                    ##                    print " sql query ", sql
                     sql_result = ()
                     self.db = db_connect()
                     if not isinstance(self.db, MySQLdb.connection):
@@ -511,7 +586,7 @@ class AlarmRecon():
                         cursor = self.db.cursor()
                         cursor.execute(sql)
                         sql_result = cursor.fetchall()
-##                        print "sql_result ", sql_result
+                    ##                        print "sql_result ", sql_result
                     except Exception, e:
                         raise CustomException(
                             " error in query execution:: " + str(e), 12)
@@ -521,11 +596,11 @@ class AlarmRecon():
                     tup_di = {}
                     tup_li = []
                     timestamp_tobe = None  # define a real something
-##                    print
-##                    print " sql, length ", len(sql_result), recon_length
-##                    print " sql, first ", sql_result[0][0], first_time
-##                    print " sql, last ", sql_result[-1][0], last_time
-##                    print
+                    ##                    print
+                    ##                    print " sql, length ", len(sql_result), recon_length
+                    ##                    print " sql, first ", sql_result[0][0], first_time
+                    ##                    print " sql, last ", sql_result[-1][0], last_time
+                    ##                    print
                     if len(sql_result) == recon_length:
                         if sql_result[0][0] == first_time and sql_result[-1][0] == last_time:
                         # if sql_result[0][0] == first_time and
@@ -542,7 +617,7 @@ class AlarmRecon():
                                     li = tup_di[i[0]] if isinstance(
                                         tup_di[i[0]], list) else [tup_di[i[0]]]
                                     li.append({'event_id': str(i[1]),
-                                              'event': i[2], 'severity': int(i[3]), 'dbtime': i[4]})
+                                               'event': i[2], 'severity': int(i[3]), 'dbtime': i[4]})
                                     tup_di[i[0]] = li
                                 else:
                                     tup_di[i[0]] = {'event_id': str(
@@ -558,7 +633,7 @@ class AlarmRecon():
                                     li = tup_di[i[0]] if isinstance(
                                         tup_di[i[0]], list) else [tup_di[i[0]]]
                                     li.append({'event_id': str(i[1]),
-                                              'event': i[2], 'severity': int(i[3]), 'dbtime': i[4]})
+                                               'event': i[2], 'severity': int(i[3]), 'dbtime': i[4]})
                                     tup_di[i[0]] = li
                                 else:
                                     tup_di[i[0]] = {'event_id': str(
@@ -571,7 +646,7 @@ class AlarmRecon():
                                 li = tup_di[i[0]] if isinstance(
                                     tup_di[i[0]], list) else [tup_di[i[0]]]
                                 li.append({'event_id': str(i[1]),
-                                          'event': i[2], 'severity': int(i[3]), 'dbtime': i[4]})
+                                           'event': i[2], 'severity': int(i[3]), 'dbtime': i[4]})
                                 tup_di[i[0]] = li
                             else:
                                 tup_di[i[0]] = {'event_id': str(
@@ -581,11 +656,12 @@ class AlarmRecon():
                             else:
                                 break
 
-##                    from copy import deepcopy
-##                    print "tup_li ", tup_li
-##                    print " tup_di ", tup_di
+                            ##                    from copy import deepcopy
+                            ##                    print "tup_li ", tup_li
+                            ##                    print " tup_di ", tup_di
                     timestamp_tobe = tup_di[tup_li[-1]][0]['dbtime'] if isinstance(
-                        tup_di[tup_li[-1]], list) else tup_di[tup_li[-1]]['dbtime']  # datetime.datetime(2012, 7, 23, 19, 7, 55) # assign something real
+                        tup_di[tup_li[-1]], list) else tup_di[tup_li[-1]][
+                        'dbtime']  # datetime.datetime(2012, 7, 23, 19, 7, 55) # assign something real
                     timestamp = tup_li[-1]
                     current_di = {}
                     clear_di = {}
@@ -639,8 +715,8 @@ class AlarmRecon():
                                     if len(temp_di):
                                         remain_di[i] = temp_di
 
-# print ":::: i ", i, ' timestamp ', timestamp, ' timestamp_tobe ',
-# timestamp_tobe
+                                    # print ":::: i ", i, ' timestamp ', timestamp, ' timestamp_tobe ',
+                                    # timestamp_tobe
                         timestamp = i
                         if (i in remain_di) > 0:
                             if isinstance(recon_dict[i], list):
@@ -686,7 +762,7 @@ class AlarmRecon():
                         is_break = 0
                         li = [key for key, value in mask_alarm_dict.iteritems(
                         ) if value == i]
-##                        print "      TESTING ", i, li
+                        ##                        print "      TESTING ", i, li
                         cl_dt = clear_di[i][0]
                         if li[0] in current_di:
                             if current_di[li[0]][0] > cl_dt:
@@ -706,7 +782,7 @@ class AlarmRecon():
                                         if ldi['event_id'] == i:
                                             if cr_dt < k:
                                                 clear_di[i] = [k, clear_di[
-                                                    i][1] + k - cl_dt]
+                                                                      i][1] + k - cl_dt]
                                                 is_break = 1
                                                 break
                         else:
@@ -739,7 +815,7 @@ class AlarmRecon():
                     if len(del_clear_li) > 0:
                         for i in del_clear_li:
                             del clear_di[i]
-                    # if real alarm behavior changed in trap alarm then change
+                        # if real alarm behavior changed in trap alarm then change
                     # this too
                     if len(current_di) > 0:
                         for i in tup_di:
@@ -753,7 +829,8 @@ class AlarmRecon():
                             except Exception as e:
                                 for k in tup_di[i]:
                                     cur_event_li = [key for key,
-                                                    value in mask_alarm_dict.iteritems() if value == k['event_id']]
+                                                            value in mask_alarm_dict.iteritems() if
+                                                    value == k['event_id']]
                                     if len(cur_event_li) > 0:
                                         if cur_event_li[0] in current_di:
                                             if current_di[cur_event_li[0]][0] < i:
@@ -762,29 +839,35 @@ class AlarmRecon():
                     ins_query = "INSERT INTO trap_alarms (event_id, trap_id, agent_id, trap_date, trap_receive_date, serevity, trap_event_id, trap_event_type, \
                                     manage_obj_id, manage_obj_name, component_id, trap_ip, description, device_sent_date, is_reconcile, timestamp) values"
                     flag = 0
-##                    print "\n   remain_di  ", remain_di
-# print "  >>>>>>  clear ", clear_di, "       >>>>  current ", current_di
+                    ##                    print "\n   remain_di  ", remain_di
+                    # print "  >>>>>>  clear ", clear_di, "       >>>>  current ", current_di
                     for i in sorted(remain_di.keys()):
                         if isinstance(recon_dict[i], list):
                             for ldi in recon_dict[i]:
                                 if flag:
                                     ins_query += ", ('ruTrap', '.1.3.6.1.4.1.26149.2.4.0.0.1', '%s', '%s', '%s', '%s', '%s', '%s', '500', 'RU', '504', '%s', '%s', '%s', '1', '%s')\
-                                        " % (self.host_ip, i.time(), remain_di[i].get(ldi['event_id']).ctime(), ldi['severity'], ldi['event_id'], ldi['event'],
-                                             ldi['ip'], ldi['eventdesc'], i, remain_di[i].get(ldi['event_id']))
+                                        " % (
+                                    self.host_ip, i.time(), remain_di[i].get(ldi['event_id']).ctime(), ldi['severity'],
+                                    ldi['event_id'], ldi['event'],
+                                    ldi['ip'], ldi['eventdesc'], i, remain_di[i].get(ldi['event_id']))
                                 else:
                                     ins_query += "('ruTrap', '.1.3.6.1.4.1.26149.2.4.0.0.1', '%s', '%s', '%s', '%s', '%s', '%s', '500', 'RU', '504', '%s', '%s', '%s', '1', '%s')\
-                                        " % (self.host_ip, i.time(), remain_di[i].get(ldi['event_id']).ctime(), ldi['severity'], ldi['event_id'], ldi['event'],
-                                             ldi['ip'], ldi['eventdesc'], i, remain_di[i].get(ldi['event_id']))
+                                        " % (
+                                    self.host_ip, i.time(), remain_di[i].get(ldi['event_id']).ctime(), ldi['severity'],
+                                    ldi['event_id'], ldi['event'],
+                                    ldi['ip'], ldi['eventdesc'], i, remain_di[i].get(ldi['event_id']))
                                     flag = 1
                         else:
                             if flag:
                                 ins_query += ", ('ruTrap', '.1.3.6.1.4.1.26149.2.4.0.0.1', '%s', '%s', '%s', '%s', '%s', '%s', '500', 'RU', '504', '%s', '%s', '%s', '1', '%s')\
-                                        " % (self.host_ip, i.time(), remain_di[i].ctime(), recon_dict[i]['severity'], recon_dict[i]['event_id'], recon_dict[i]['event'],
+                                        " % (self.host_ip, i.time(), remain_di[i].ctime(), recon_dict[i]['severity'],
+                                             recon_dict[i]['event_id'], recon_dict[i]['event'],
                                              recon_dict[i]['ip'], recon_dict[i]['eventdesc'], i, remain_di[i])
                             else:
                                 flag = 1
                                 ins_query += "('ruTrap', '.1.3.6.1.4.1.26149.2.4.0.0.1', '%s', '%s', '%s', '%s', '%s', '%s', '500', 'RU', '504', '%s', '%s', '%s', '1', '%s')\
-                                        " % (self.host_ip, i.time(), remain_di[i].ctime(), recon_dict[i]['severity'], recon_dict[i]['event_id'], recon_dict[i]['event'],
+                                        " % (self.host_ip, i.time(), remain_di[i].ctime(), recon_dict[i]['severity'],
+                                             recon_dict[i]['event_id'], recon_dict[i]['event'],
                                              recon_dict[i]['ip'], recon_dict[i]['eventdesc'], i, remain_di[i])
 
                     if flag == 0:
@@ -798,23 +881,39 @@ class AlarmRecon():
                             for ldi in recon_dict[clear_di[i][0]]:
                                 if flag:
                                     ins_clear += ", ('ruTrap', '.1.3.6.1.4.1.26149.2.4.0.0.1', '%s', '%s', '%s', '%s', '%s', '%s', '500', 'RU', '504', '%s', '%s', '%s', '1', '%s')\
-                                        " % (self.host_ip, clear_di[i][0].time(), clear_di[i][1].ctime(), mask_severity_dict.get(ldi['event_id'], ldi['severity']), ldi['event_id'], clear_alarm_dict.get(ldi['event_id'], ldi['event']),
+                                        " % (self.host_ip, clear_di[i][0].time(), clear_di[i][1].ctime(),
+                                             mask_severity_dict.get(ldi['event_id'], ldi['severity']), ldi['event_id'],
+                                             clear_alarm_dict.get(ldi['event_id'], ldi['event']),
                                              ldi['ip'], ldi['eventdesc'], clear_di[i][0], clear_di[i][1])
                                 else:
                                     ins_clear += " ('ruTrap', '.1.3.6.1.4.1.26149.2.4.0.0.1', '%s', '%s', '%s', '%s', '%s', '%s', '500', 'RU', '504', '%s', '%s', '%s', '1', '%s')\
-                                        " % (self.host_ip, clear_di[i][0].time(), clear_di[i][1].ctime(), mask_severity_dict.get(ldi['event_id'], ldi['severity']), ldi['event_id'], clear_alarm_dict.get(ldi['event_id'], ldi['event']),
+                                        " % (self.host_ip, clear_di[i][0].time(), clear_di[i][1].ctime(),
+                                             mask_severity_dict.get(ldi['event_id'], ldi['severity']), ldi['event_id'],
+                                             clear_alarm_dict.get(ldi['event_id'], ldi['event']),
                                              ldi['ip'], ldi['eventdesc'], clear_di[i][0], clear_di[i][1])
                                     flag = 1
                         else:
                             if flag:
                                 ins_clear += ", ('ruTrap', '.1.3.6.1.4.1.26149.2.4.0.0.1', '%s', '%s', '%s', '%s', '%s', '%s', '500', 'RU', '504', '%s', '%s', '%s', '1', '%s')\
-                                        " % (self.host_ip, clear_di[i][0].time(), clear_di[i][1].ctime(), mask_severity_dict.get(recon_dict[clear_di[i][0]]['event_id'], recon_dict[clear_di[i][0]]['severity']), recon_dict[clear_di[i][0]]['event_id'], clear_alarm_dict.get(recon_dict[clear_di[i][0]]['event_id'], recon_dict[clear_di[i][0]]['event']),
-                                             recon_dict[clear_di[i][0]]['ip'], recon_dict[clear_di[i][0]]['eventdesc'], clear_di[i][0], clear_di[i][1])
+                                        " % (self.host_ip, clear_di[i][0].time(), clear_di[i][1].ctime(),
+                                             mask_severity_dict.get(recon_dict[clear_di[i][0]]['event_id'],
+                                                                    recon_dict[clear_di[i][0]]['severity']),
+                                             recon_dict[clear_di[i][0]]['event_id'],
+                                             clear_alarm_dict.get(recon_dict[clear_di[i][0]]['event_id'],
+                                                                  recon_dict[clear_di[i][0]]['event']),
+                                             recon_dict[clear_di[i][0]]['ip'], recon_dict[clear_di[i][0]]['eventdesc'],
+                                             clear_di[i][0], clear_di[i][1])
                             else:
                                 flag = 1
                                 ins_clear += "('ruTrap', '.1.3.6.1.4.1.26149.2.4.0.0.1', '%s', '%s', '%s', '%s', '%s', '%s', '500', 'RU', '504', '%s', '%s', '%s', '1', '%s')\
-                                        " % (self.host_ip, clear_di[i][0].time(), clear_di[i][1].ctime(), mask_severity_dict.get(recon_dict[clear_di[i][0]]['event_id'], recon_dict[clear_di[i][0]]['severity']), recon_dict[clear_di[i][0]]['event_id'], clear_alarm_dict.get(recon_dict[clear_di[i][0]]['event_id'], recon_dict[clear_di[i][0]]['event']),
-                                             recon_dict[clear_di[i][0]]['ip'], recon_dict[clear_di[i][0]]['eventdesc'], clear_di[i][0], clear_di[i][1])
+                                        " % (self.host_ip, clear_di[i][0].time(), clear_di[i][1].ctime(),
+                                             mask_severity_dict.get(recon_dict[clear_di[i][0]]['event_id'],
+                                                                    recon_dict[clear_di[i][0]]['severity']),
+                                             recon_dict[clear_di[i][0]]['event_id'],
+                                             clear_alarm_dict.get(recon_dict[clear_di[i][0]]['event_id'],
+                                                                  recon_dict[clear_di[i][0]]['event']),
+                                             recon_dict[clear_di[i][0]]['ip'], recon_dict[clear_di[i][0]]['eventdesc'],
+                                             clear_di[i][0], clear_di[i][1])
 
                     if flag == 0:
                         ins_clear = None
@@ -825,28 +924,44 @@ class AlarmRecon():
                     component_id, trap_ip, description, device_sent_date, is_reconcile, timestamp) values"
                     for i in sorted(current_di.keys()):
                         if isinstance(recon_dict[current_di[i][0]], list):
-##                            print " in ", recon_dict[current_di[i][0]]
+                        ##                            print " in ", recon_dict[current_di[i][0]]
                             for ldi in recon_dict[current_di[i][0]]:
                                 if flag:
                                     ins_current += ", ('ruTrap', '.1.3.6.1.4.1.26149.2.4.0.0.1', '%s', '%s', '%s', '%s', '%s', '%s', '500', 'RU', '504', '%s', '%s', '%s', '1', '%s')\
-                                        " % (self.host_ip, current_di[i][0].time(), current_di[i][1].ctime(), mask_severity_dict.get(ldi['event_id'], ldi['severity']), ldi['event_id'], ldi['event'],
+                                        " % (self.host_ip, current_di[i][0].time(), current_di[i][1].ctime(),
+                                             mask_severity_dict.get(ldi['event_id'], ldi['severity']), ldi['event_id'],
+                                             ldi['event'],
                                              ldi['ip'], ldi['eventdesc'], current_di[i][0], current_di[i][1])
                                 else:
                                     ins_current += " ('ruTrap', '.1.3.6.1.4.1.26149.2.4.0.0.1', '%s', '%s', '%s', '%s', '%s', '%s', '500', 'RU', '504', '%s', '%s', '%s', '1', '%s')\
-                                        " % (self.host_ip, current_di[i][0].time(), current_di[i][1].ctime(), mask_severity_dict.get(ldi['event_id'], ldi['severity']), ldi['event_id'], ldi['event'],
+                                        " % (self.host_ip, current_di[i][0].time(), current_di[i][1].ctime(),
+                                             mask_severity_dict.get(ldi['event_id'], ldi['severity']), ldi['event_id'],
+                                             ldi['event'],
                                              ldi['ip'], ldi['eventdesc'], current_di[i][0], current_di[i][1])
                                     flag = 1
                         else:
-##                            print " out  ", recon_dict[current_di[i][0]]
+                        ##                            print " out  ", recon_dict[current_di[i][0]]
                             if flag:
                                 ins_current += ", ('ruTrap', '.1.3.6.1.4.1.26149.2.4.0.0.1', '%s', '%s', '%s', '%s', '%s', '%s', '500', 'RU', '504', '%s', '%s', '%s', '1', '%s')\
-                                        " % (self.host_ip, current_di[i][0].time(), current_di[i][1].ctime(), mask_severity_dict.get(recon_dict[current_di[i][0]]['event_id'], recon_dict[current_di[i][0]]['severity']), recon_dict[current_di[i][0]]['event_id'], recon_dict[current_di[i][0]]['event'],
-                                             recon_dict[current_di[i][0]]['ip'], recon_dict[current_di[i][0]]['eventdesc'], current_di[i][0], current_di[i][1])
+                                        " % (self.host_ip, current_di[i][0].time(), current_di[i][1].ctime(),
+                                             mask_severity_dict.get(recon_dict[current_di[i][0]]['event_id'],
+                                                                    recon_dict[current_di[i][0]]['severity']),
+                                             recon_dict[current_di[i][0]]['event_id'],
+                                             recon_dict[current_di[i][0]]['event'],
+                                             recon_dict[current_di[i][0]]['ip'],
+                                             recon_dict[current_di[i][0]]['eventdesc'], current_di[i][0],
+                                             current_di[i][1])
                             else:
                                 flag = 1
                                 ins_current += "('ruTrap', '.1.3.6.1.4.1.26149.2.4.0.0.1', '%s', '%s', '%s', '%s', '%s', '%s', '500', 'RU', '504', '%s', '%s', '%s', '1', '%s')\
-                                        " % (self.host_ip, current_di[i][0].time(), current_di[i][1].ctime(), mask_severity_dict.get(recon_dict[current_di[i][0]]['event_id'], recon_dict[current_di[i][0]]['severity']), recon_dict[current_di[i][0]]['event_id'], recon_dict[current_di[i][0]]['event'],
-                                             recon_dict[current_di[i][0]]['ip'], recon_dict[current_di[i][0]]['eventdesc'], current_di[i][0], current_di[i][1])
+                                        " % (self.host_ip, current_di[i][0].time(), current_di[i][1].ctime(),
+                                             mask_severity_dict.get(recon_dict[current_di[i][0]]['event_id'],
+                                                                    recon_dict[current_di[i][0]]['severity']),
+                                             recon_dict[current_di[i][0]]['event_id'],
+                                             recon_dict[current_di[i][0]]['event'],
+                                             recon_dict[current_di[i][0]]['ip'],
+                                             recon_dict[current_di[i][0]]['eventdesc'], current_di[i][0],
+                                             current_di[i][1])
 
                     if flag == 0:
                         ins_current = None
@@ -863,9 +978,9 @@ class AlarmRecon():
                                 self.db.commit()
                             how_many_rows = cursor.execute(
                                 ins_query)  # a how many alarm reconcile value can be get
-##                            print
-##                            print "  INS ", ins_query
-##                            print
+                            ##                            print
+                            ##                            print "  INS ", ins_query
+                            ##                            print
                             self.db.commit()
                             if ins_clear:
                                 cursor.execute(
@@ -890,6 +1005,7 @@ class AlarmRecon():
 
         except Exception, e:
             import traceback
+
             print traceback.format_exc()
             success = 1
             err_dict = str(traceback.format_exc())
@@ -926,12 +1042,23 @@ class AlarmRecon():
 
 
 class recon_bll():
+    """
+
+    @param host_id:
+    @param host_ip:
+    """
+
     def __init__(self, host_id=None, host_ip=None):
         self.db = None
         self.host_id = host_id
         self.host_ip = host_ip
 
     def get_host_details(self):
+        """
+
+
+        @return: @raise:
+        """
         success = 1
         result = {}
         try:
@@ -971,6 +1098,11 @@ class recon_bll():
             return result_dict
 
     def get_host_status(self):
+        """
+
+
+        @raise:
+        """
         success = 1
         result = {}
         try:
@@ -1008,6 +1140,11 @@ class recon_bll():
                 result_dict['result'] = result
 
     def get_all_info(self):
+        """
+
+
+        @return:
+        """
         try:
             self.db = db_connect()
             final_result = {}

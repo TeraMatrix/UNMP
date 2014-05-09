@@ -58,6 +58,7 @@ def render_single_dataset(data, view, group_painters, painters, num_columns):
         rownum += num_columns
     html.write("</table></div>\n")
 
+
 multisite_layouts["dataset"] = {
     "title": "Single dataset",
     "render": render_single_dataset,
@@ -179,6 +180,7 @@ def render_grouped_boxes(data, view, group_painters, painters, num_columns):
             render_group(header, rows, paintheader)
         html.write("</td>")
     html.write("</tr></table>\n")
+
 
 multisite_layouts["boxed"] = {
     "title": "Balanced boxes",
@@ -408,6 +410,7 @@ def render_grouped_list(data, view, group_painters, painters, num_columns):
                 "<td colspan=%d class=shadowbottom></td>\n" % num_painters)
         html.write("</tr>\n")
     html.write("</table>\n")
+
 
 multisite_layouts["table"] = {
     "title": "Table",

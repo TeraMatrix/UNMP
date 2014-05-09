@@ -1,40 +1,36 @@
 #!/usr/bin/python2.6
 
 # import the packeges
-import config
-import htmllib
-import time
-import cgi
-import MySQLdb
-import sys
-from common_controller import *
-from nms_config import *
-from odu_controller import *
 from datetime import datetime
 from datetime import timedelta
-import time
-from mysql_collection import mysql_connection
-from unmp_dashboard_config import DashboardConfig
-from utility import Validation
-from operator import itemgetter
-from idu4_view import idu4View
+
+from common_controller import *
 from idu4_dashboard_bll import IDUDashboard
+from idu4_view import idu4View
+from mysql_collection import mysql_connection
+from nms_config import *
+from odu_controller import *
+from utility import Validation
 
 
 def idu4_dashboard_profiling(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     flag = 0
     css_list = ["css/style.css", "css/custom.css",
                 "calendrical/calendrical.css"]
-    javascript_list = ["js/highcharts.js", "js/idu4Dashboard.js",
+    javascript_list = ["js/lib/main/highcharts.js", "js/unmp/main/idu4Dashboard.js",
                        "calendrical/calendrical.js"]
     html.new_header("IDU4 Dashboard", "", "", css_list, javascript_list)
     html.write('<div class=\"form-div\">')
     host_id = ""
     host_id = html.var("host_id")
     extr_button = {'tag': 'button', 'id': 'adSrhIDU4', 'value':
-                   'Advance Graph', 'name': 'adSrhIDU4'}
+        'Advance Graph', 'name': 'adSrhIDU4'}
     # this is used for storing DeviceTypeList e.g "odu16,odu100"
     device_type = ""
     # this is used for storing DeviceListState e.g "enabled"
@@ -53,11 +49,11 @@ def idu4_dashboard_profiling(h):
         output, mac_address = get_device_field(host_id)
         if int(output) == 1:
             html.write(page_header_search("", "", "IDU4Port",
-                       None, "enabled", "device_type", extr_button))
+                                          None, "enabled", "device_type", extr_button))
             # html.write(page_header_search("","","UBR,UBRe",device_type,"enabled","device_type",extr_button))
         else:
             html.write(page_header_search(host_id, mac_address, "IDU4Port",
-                       device_type, "enabled", "device_type", extr_button))
+                                          device_type, "enabled", "device_type", extr_button))
     else:
         html.write(
             page_header_search(
@@ -79,6 +75,11 @@ def idu4_dashboard_profiling(h):
 
 
 def get_device_field(ip_address):
+    """
+
+    @param ip_address:
+    @return: @raise:
+    """
     try:
         mac_address = ''
         db, cursor = mysql_connection()  # create the connection
@@ -111,6 +112,11 @@ def get_device_field(ip_address):
 
 # listing function
 def get_device_list_idu4(h):
+    """
+
+    @param h:
+    @raise:
+    """
     global html
     html = h
     # this is the result which we show on the page
@@ -161,6 +167,10 @@ def get_device_list_idu4(h):
 
 
 def idu4_dashboard(h):
+    """
+
+    @param h:
+    """
     global html
     h = html
     idu_bll_obj = IDUDashboard()
@@ -187,6 +197,10 @@ def idu4_dashboard(h):
 
 
 def idu4_network_interface_graph(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     odu_start_date = html.var('start_date')
@@ -204,6 +218,10 @@ def idu4_network_interface_graph(h):
 
 
 def idu4_tdmoip_network_interface_graph(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     odu_start_date = html.var('start_date')
@@ -221,6 +239,10 @@ def idu4_tdmoip_network_interface_graph(h):
 
 
 def idu4_port_statistics_graph(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     odu_start_date = html.var('start_date')
@@ -237,6 +259,10 @@ def idu4_port_statistics_graph(h):
 
 
 def idu4_device_details(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     ip_address = html.var("ip_address")
@@ -252,6 +278,10 @@ def idu4_device_details(h):
 
 
 def idu4_event_graph(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     ip_address = html.var("ip_address")
@@ -261,6 +291,10 @@ def idu4_event_graph(h):
 
 
 def idu4_outage_graph(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     ip_address = html.var("ip_address")
@@ -270,6 +304,10 @@ def idu4_outage_graph(h):
 
 
 def idu4_alarm_event_table(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     ip_address = html.var("ip_address")
@@ -284,6 +322,10 @@ def idu4_alarm_event_table(h):
 
 
 def idu4_pdf_generating(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     result1 = ''
@@ -302,6 +344,10 @@ def idu4_pdf_generating(h):
 
 
 def idu4_excel_generating(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     result1 = ''
@@ -320,6 +366,10 @@ def idu4_excel_generating(h):
 
 
 def idu4_add_date_time_on_slide(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     try:
@@ -343,6 +393,10 @@ def idu4_add_date_time_on_slide(h):
 
 
 def idu4_link_status_table(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     odu_start_date = html.var('start_date')
@@ -359,7 +413,7 @@ def idu4_link_status_table(h):
         odu_start_date, odu_start_time, odu_end_date, odu_end_time, interface_value, ip_address, limitFlag)
     if int(link_statistics_result['success']) == 1 or int(link_status_result['success']) == 1:
         output_result = {'success': 1, 'link_statistics_result':
-                         link_statistics_result, 'link_status_result': link_status_result}
+            link_statistics_result, 'link_status_result': link_status_result}
     else:
         link_status_view_output = idu4View.idu4_link_status_view(
             link_status_result['output'], 1)
@@ -369,6 +423,10 @@ def idu4_link_status_table(h):
 
 
 def idu4_get_link_value_name(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     idu_bll_obj = IDUDashboard()
@@ -376,6 +434,10 @@ def idu4_get_link_value_name(h):
 
 
 def idu4_e1_port_status_table(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     odu_start_date = html.var('start_date')
@@ -398,31 +460,15 @@ def idu4_e1_port_status_table(h):
         link_statistics_output = idu4View.idu4_e1_port_statistics_view(
             output['output'], 0)
         output_result = {'success': 0, 'e1_port_graph': output['bpv'], 'e1_port_table':
-                         link_statistics_output['link_table'], 'time_stamp': output['timestamp']}
+            link_statistics_output['link_table'], 'time_stamp': output['timestamp']}
         html.write(str(output_result))
 
 
-def page_tip_idu4_monitor_dashboard(h):
-    global html
-    html = h
-    html_view = ""\
-        "<div id=\"help_container\">"\
-        "<h1>UBR Dashboard</h1>"\
-        "<div>This <strong>Dashboard</strong> show all device silver statistics by graph.</div>"\
-        "<br/>"\
-        "<div>On this page you can see network bandwidth graph, TDMOIP network bandwidth graph , outage graph ,Latest trap and latest alarm etc.</div>"\
-        "<br/>"\
-        "<div><input class=\"yo-button yo-small\" type=\"button\" style=\"width: 30px;\" value=\"Advaced Graph\" name=\"odu_graph_show\"> This button open a window on self click event and show more information according to data and time.</div>"\
-        "<div><input class=\"yo-button yo-small\" type=\"button\" style=\"width: 30px;\" value=\"Search\" name=\"odu_graph_show\"> Search the devices.</div>"\
-        "<div><button id=\"odu_report_btn\" class=\"yo-button\" style=\"margin-top: 5px;\" type=\"submit\"><span class=\"save\">Report</span></button>Download the PDF report.</div>"\
-        "<br/>"\
-        "<div><button id=\"odu_report_btn\" class=\"yo-button\" style=\"margin-top: 5px;\" type=\"submit\"><span class=\"report\">Report</span></button>Download the Excel report.</div>"\
-        "<br/>\
-	<br/>\
-        <div><strong>Note:</strong>This page show real time information of device and it page refresh on 5 min time interval.\
-	Search button search device by MAC address and IP address and show information by graph.\
-	Graph button display the graph according to time interval show,this time interval also change by user.\
-	report button provide PDF of all display information by graph \
-        </div>"\
-        "</div>"
-    html.write(str(html_view))
+# def page_tip_idu4_monitor_dashboard(h):
+#     global html
+#     html = h
+#     import defaults
+#     f = open(defaults.web_dir + "/htdocs/locale/page_tip_idu4_monitor_dashboard.html", "r")
+#     html_view = f.read()
+#     f.close()
+#     html.write(str(html_view))

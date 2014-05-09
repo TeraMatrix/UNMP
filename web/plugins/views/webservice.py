@@ -28,6 +28,7 @@
 def render_python_raw(data, view, group_painters, painters, num_columns):
     html.write(repr(data))
 
+
 multisite_layouts["python-raw"] = {
     "title": "Python raw data output",
     "render": render_python_raw,
@@ -50,6 +51,7 @@ def render_python(data, view, group_painters, painters, num_columns):
         html.write("],")
     html.write("\n]\n")
 
+
 multisite_layouts["python"] = {
     "title": "Python data output",
     "render": render_python,
@@ -57,11 +59,10 @@ multisite_layouts["python"] = {
     "hide": True,
 }
 
-
 json_escape = re.compile(r'[\\"\r\n\t\b\f\x00-\x1f]')
 json_encoding_table = dict([(chr(i), '\\u%04x' % i) for i in range(32)])
 json_encoding_table.update({'\b': '\\b', '\f': '\\f', '\n': '\\n', '\r':
-                           '\\r', '\t': '\\t', '\\': '\\\\', '"': '\\"'})
+    '\\r', '\t': '\\t', '\\': '\\\\', '"': '\\"'})
 
 
 def encode_string_json(s):
@@ -86,6 +87,7 @@ def render_json(data, view, group_painters, painters, num_columns):
             html.write(encode_string_json(utf8))
         html.write("]")
     html.write("\n]\n")
+
 
 multisite_layouts["json"] = {
     "title": "JSON data output",

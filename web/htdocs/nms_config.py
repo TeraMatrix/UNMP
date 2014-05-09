@@ -28,7 +28,7 @@ def get_mysql_credentials():
     xml_config_file = "/omd/sites/%s/share/check_mk/web/htdocs/xml/config.xml" % sitename
     try:
         # check config.xml file exist or not
-        if(os.path.isfile(xml_config_file)):
+        if (os.path.isfile(xml_config_file)):
             dom = xml.dom.minidom.parse(
                 xml_config_file)  # create xml dom object for config.xml file
             mysql_dom = dom.getElementsByTagName("mysql")
@@ -77,7 +77,7 @@ def get_sqlalchemy_credentials():
     # xml_config_file = "nms2"
     try:
         # check config.xml file exist or not
-        if(os.path.isfile(xml_config_file)):
+        if (os.path.isfile(xml_config_file)):
             dom = xml.dom.minidom.parse(
                 xml_config_file)  # create xml dom object for config.xml file
             mysql_dom = dom.getElementsByTagName("sqlalchemy")
@@ -116,13 +116,13 @@ def close_database_sqlalchemy_connection(db_obj_sqlalchemy):
 
 def get_refresh_time():
     sitename = __file__.split("/")[3]  # get site name
-    refresh_time = 1			# default time
+    refresh_time = 1            # default time
 
     # config.xml file path
     xml_config_file = "/omd/sites/%s/share/check_mk/web/htdocs/xml/config.xml" % sitename
     try:
         # check config.xml file exist or not
-        if(os.path.isfile(xml_config_file)):
+        if (os.path.isfile(xml_config_file)):
             dom = xml.dom.minidom.parse(
                 xml_config_file)  # create xml dom object for config.xml file
             dashboard_dom = dom.getElementsByTagName("dashboard")

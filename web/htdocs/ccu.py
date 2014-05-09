@@ -14,20 +14,23 @@
 """
 
 from utility import ErrorMessages
-from common_controller import page_header_search, make_select_list_using_dictionary, DeviceStatus
+from common_controller import page_header_search, DeviceStatus
 from ccu_view import CCUProfiling
 from ccu_profiling_bll import CCUDeviceList, CcuCommonSetValidation, CCUReconcilation
 from idu_profiling_bll import *
 from json import JSONEncoder
 from utility import Validation
 from time import sleep
-from encodings import undefined
 from datetime import datetime
 
 ccu_bll_obj = CcuCommonSetValidation()
 
 
 def ccu_listing(h):
+    """
+
+    @param h:
+    """
     try:
         """
         @requires : odu_controller,utility,from common_controller import page_header_search function
@@ -55,8 +58,8 @@ def ccu_listing(h):
         sitename = __file__.split("/")[3]
         css_list = ["css/custom.css", "css/demo_table_jui.css",
                     "css/jquery-ui-1.8.4.custom.css", 'css/ccpl_jquery_combobox.css']
-        javascript_list = ["js/jquery.dataTables.min.js",
-                           'js/ccpl_jquery_autocomplete.js', "js/ccu_listing.js"]
+        javascript_list = ["js/lib/main/jquery.dataTables.min.js",
+                           'js/unmp/main/ccpl_jquery_autocomplete.js', "js/unmp/main/ccu_listing.js"]
 
         # This we import the javascript
         ip_address = ""
@@ -92,7 +95,8 @@ def ccu_listing(h):
         # we pass parameters
         # ipaddress,macaddress,devicelist,selectedDevice,devicestate,selectdeviceid
         html.write(str(page_header_search(ip_address, mac_address,
-                   "RM18,RM,Access Point,IDU,CCU", selected_device_type, "enabled", "device_type")))
+                                          "RM18,RM,Access Point,IDU,CCU", selected_device_type, "enabled",
+                                          "device_type")))
 
         # Here we make a div to show the result in datatable
         html.write(CCUProfiling.ccu_listing())
@@ -132,10 +136,12 @@ def ccu_profiling(h):
     ##################### Header Declaration ##################################
     # Define the page header e.g Odu Profiling
     css_list = ['css/demo_table_jui.css',
-                "css/jquery.multiselect.css", "css/jquery.multiselect.filter.css", "css/jquery-ui-1.8.4.custom.css", 'css/ccpl_jquery_combobox.css']
+                "css/jquery.multiselect.css", "css/jquery.multiselect.filter.css", "css/jquery-ui-1.8.4.custom.css",
+                'css/ccpl_jquery_combobox.css']
     jss_list = [
-        "js/jquery-ui-1.8.6.custom.min.js", "js/pages/jquery.multiselect.min.js",
-        "js/pages/jquery.multiselect.filter.js", 'js/jquery.dataTables.min.js', 'js/ccpl_jquery_autocomplete.js', 'js/ccu_controller.js', 'js/jquery-ui-personalized-1.6rc2.min.js']
+        "js/lib/main/jquery-ui-1.8.6.custom.min.js", "js/lib/main/jquery.multiselect.min.js",
+        "js/lib/main/jquery.multiselect.filter.js", 'js/lib/main/jquery.dataTables.min.js', 'js/unmp/main/ccpl_jquery_autocomplete.js',
+        'js/unmp/main/ccu_controller.js', 'js/lib/main/jquery-ui-personalized-1.6rc2.min.js']
     snapin_list = ["reports", "views", "Alarm", "Inventory",
                    "Settings", "NetworkMaps", "user_management", "schedule", "Listing"]
 
@@ -168,16 +174,16 @@ def ccu_profiling(h):
         if device_list_parameter == [] or device_list_parameter == None:
             html.write(page_header_search(
                 "", "", "RM18,RM,Access Point,IDU,CCU", None, "enabled", "device_type"))
-                       # call the function of common_controller , it is used
-                       # for listing the Devices based on
-                       # IPaddress,Macaddress,DeviceTy
+            # call the function of common_controller , it is used
+            # for listing the Devices based on
+            # IPaddress,Macaddress,DeviceTy
         else:
             html.new_header("%s %s Configuration" % ("CCU", device_list_parameter[0]
-                            .ip_address), "ccu_listing.py", "", css_list, jss_list, snapin_list)
+            .ip_address), "ccu_listing.py", "", css_list, jss_list, snapin_list)
             html.write(page_header_search(device_list_parameter[0][0], device_list_parameter[0][
-                       1], "RM18,RM,Access Point,IDU,CCU", device_type, device_list_state, "device_type"))
+                1], "RM18,RM,Access Point,IDU,CCU", device_type, device_list_state, "device_type"))
             html.write(CCUProfiling.ccu_div(device_list_parameter[0][0],
-                       device_list_parameter[0][1], host_id))
+                                            device_list_parameter[0][1], host_id))
     elif isinstance(device_list_parameter, Exception):
         html.write("DataBase Error Occured")
     html.new_footer()
@@ -244,25 +250,26 @@ def ccu_device_listing_table(h):
         selected_device = "ccu"
     else:
         selected_device = html.var("device_type")
-    # call the function get_odu_list of odu-controller which return us the
+        # call the function get_odu_list of odu-controller which return us the
     # list of devices in two dimensional list according to
     # IPAddress,MACaddress,SelectedDevice
     if html.req.session["role"] == "admin" or html.req.session["role"] == "user" or True:
         device_dict = ccu_device_list_bll_obj.ccu_device_list(
-            ip_address, mac_address, selected_device, i_display_start, i_display_length, s_search, sEcho, sSortDir_0, iSortCol_0, userid, html_req)
+            ip_address, mac_address, selected_device, i_display_start, i_display_length, s_search, sEcho, sSortDir_0,
+            iSortCol_0, userid, html_req)
         device_list = device_dict["aaData"]
         index = int(device_dict["i_display_start"])
-    # display the result on page
+        # display the result on page
     # This is a empty list variable used for storing the device list
     if isinstance(device_list, list):
         # html.write(str(device_list))
         for i in range(0, len(device_list)):
-            # html.write(str(i))
-# monitoring_status = "<a target=\"main\" <!--
-# href=\"%s?host_id=%s&device_type=%s&device_list_state=%s\"--><img
-# src=\"images/new/info1.png\" style=\"width:16px;height:16px;\"
-# title=\"Current Device Status\" class=\"imgbutton n-reconcile
-# w-reconcile\"/></a>"%('sp_status_profiling.py',\device_list[i][0],device_list[i][5],device_list_state)
+        # html.write(str(i))
+        # monitoring_status = "<a target=\"main\" <!--
+        # href=\"%s?host_id=%s&device_type=%s&device_list_state=%s\"--><img
+        # src=\"images/new/info1.png\" style=\"width:16px;height:16px;\"
+        # title=\"Current Device Status\" class=\"imgbutton n-reconcile
+        # w-reconcile\"/></a>"%('sp_status_profiling.py',\device_list[i][0],device_list[i][5],device_list_state)
 
             monitoring_status = ""
 
@@ -284,20 +291,20 @@ def ccu_device_listing_table(h):
                 result_device_list.append(
                     [str(
                         device_list[i][1]), str(
-                            device_list[i][2]), str(
-                                device_list[i][3]), str(device_list[i][4]),
+                        device_list[i][2]), str(
+                        device_list[i][3]), str(device_list[i][4]),
                      str(ccu_real_data[0].ccuRTSSystemVoltage if len(
                          ccu_real_data) > 0 and str(
                          ccu_real_data[
-                         0].ccuRTSSystemVoltage) != '1111111' else "Device Unreachable"),
+                             0].ccuRTSSystemVoltage) != '1111111' else "Device Unreachable"),
                      str(ccu_real_data[0].ccuRTSSolarCurrent if len(
                          ccu_real_data) > 0 and str(
                          ccu_real_data[
-                         0].ccuRTSSolarCurrent) != '1111111' else "Device Unreachable"),
+                             0].ccuRTSSolarCurrent) != '1111111' else "Device Unreachable"),
                      str(ccu_real_data[0].ccuRTSInternalTemperature if len(
                          ccu_real_data) > 0 and str(
                          ccu_real_data[
-                         0].ccuRTSInternalTemperature) != '1111111' else "Device Unreachable"),
+                             0].ccuRTSInternalTemperature) != '1111111' else "Device Unreachable"),
                      "<a target=\"main\" href=\"ccu_profiling.py?host_id=%s&device_type=%s&device_list_state=%s\">\
                 <img id=\"%s\" src=\"images/new/edit.png\" title=\"Edit Profile\" style=\"width:16px;height:16px;\" class=\"imgbutton n-reconcile\"/></a>&nbsp;&nbsp;\
                 <a target=\"main\" href=\"%s?host_id=%s&device_type=%s&device_list_state=%s\">\
@@ -309,38 +316,39 @@ def ccu_device_listing_table(h):
                      % (
                          device_list[i][
                              0], device_list[
-                                 i][
-                                     5], device_list_state, device_list[i][0],
-                         'sp_dashboard_profiling.py' if device_list[
                              i][
-                                 5] == "ccu" else 'sp_dashboard_profiling.py',
+                             5], device_list_state, device_list[i][0],
+                         'sp_dashboard_profiling.py' if device_list[
+                                                            i][
+                                                            5] == "ccu" else 'sp_dashboard_profiling.py',
                          device_list[i][0], device_list[i][5], device_list_state, device_list[
                              i][
-                                 3], monitoring_status, images, device_list[
-                                     i][
-                                         6], device_list[
-                                             i][0], device_list[i][5],
-                         "<input type=\"hidden\" value=\"%s\" name=\"host_id\" id=\"host_id\" />" % (device_status_host_id) if i == len(device_list) - 1 else "")])
+                             3], monitoring_status, images, device_list[
+                             i][
+                             6], device_list[
+                             i][0], device_list[i][5],
+                         "<input type=\"hidden\" value=\"%s\" name=\"host_id\" id=\"host_id\" />" % (
+                         device_status_host_id) if i == len(device_list) - 1 else "")])
             else:
-# monitoring_status = "<a target=\"main\" <!--
-# href=\"%s?host_id=%s&device_type=%s&device_list_state=%s\"--><img
-# src=\"images/new/info1.png\" style=\"width:16px;height:16px;\"
-# title=\"Current Device Status\" class=\"imgbutton n-reconcile
-# w-reconcile\"/></a>"%('sp_status_profiling.py',device_list[i][0],device_list[i][5],device_list_state)
+            # monitoring_status = "<a target=\"main\" <!--
+            # href=\"%s?host_id=%s&device_type=%s&device_list_state=%s\"--><img
+            # src=\"images/new/info1.png\" style=\"width:16px;height:16px;\"
+            # title=\"Current Device Status\" class=\"imgbutton n-reconcile
+            # w-reconcile\"/></a>"%('sp_status_profiling.py',device_list[i][0],device_list[i][5],device_list_state)
                 monitoring_status = ""
 
                 result_device_list.append(
                     [str(
                         device_list[i][1]), str(
-                            device_list[i][2]), str(
-                                device_list[i][3]), str(device_list[i][4]),
+                        device_list[i][2]), str(
+                        device_list[i][3]), str(device_list[i][4]),
                      str(ccu_real_data[0].ccuRTSSystemVoltage if len(
                          ccu_real_data) > 0 else "-"),
                      str(ccu_real_data[0].ccuRTSSolarCurrent if len(
                          ccu_real_data) > 0 else "-"),
                      str(ccu_real_data[0]
-                                         .ccuRTSInternalTemperature if len(
-                                             ccu_real_data) > 0 else "-"),
+                     .ccuRTSInternalTemperature if len(
+                         ccu_real_data) > 0 else "-"),
                      "<a target=\"main\" href=\"#\">\
                 <a><img id=\"%s\" src=\"images/new/edit.png\" title=\"Edit Profile\" style=\"width:16px;height:16px;\" class=\" n-reconcile\"/></a>&nbsp;&nbsp;\
                 <a target=\"main\" href=\"%s?host_id=%s&device_type=%s&device_list_state=%s\">\
@@ -352,19 +360,24 @@ def ccu_device_listing_table(h):
                 %s<img src=\"%s\" title=\"Reconciliation %s%% Done\" style=\"width:16px;height:16px;\" class=\"imgbutton n-reconcile imgEditodu16\" \
                 state_rec=\"0\"/>%s" % (device_list[i][0],
                                         'sp_dashboard_profiling.py' if device_list[
-                                            i][
-                                        5] == "ccu" else 'sp_dashboard_profiling.py',
+                                                                           i][
+                                                                           5] == "ccu" else 'sp_dashboard_profiling.py',
                                         device_list[i][0], device_list[i][
-                                        5], device_list_state, device_list[
+                         5], device_list_state, device_list[
                                             i][
-                                                3], monitoring_status, images, device_list[i][6],
-                                        "<input type=\"hidden\" value=\"%s\" name=\"host_id\" id=\"host_id\" />" % (device_status_host_id) if i == len(device_list) - 1 else "")])
+                                            3], monitoring_status, images, device_list[i][6],
+                                        "<input type=\"hidden\" value=\"%s\" name=\"host_id\" id=\"host_id\" />" % (
+                                        device_status_host_id) if i == len(device_list) - 1 else "")])
         html.req.content_type = 'application/json'
         device_dict["aaData"] = result_device_list
         html.req.write(str(JSONEncoder().encode(device_dict)))
 
 
 def get_device_list_ccu_profiling(h):
+    """
+
+    @param h:
+    """
     try:
         global html
         html = h
@@ -387,7 +400,7 @@ def get_device_list_ccu_profiling(h):
             mac_address = ""
         else:
             mac_address = html.var("mac_address")
-        # take value of SelectedDevice from the page through html.var
+            # take value of SelectedDevice from the page through html.var
         # check that value is None Then It takes the empty string
         if html.var("selected_device_type") == None:
             selected_device = "idu4"
@@ -423,6 +436,10 @@ def get_device_list_ccu_profiling(h):
 
 
 def battery_panel_action(h):
+    """
+
+    @param h:
+    """
     global html, ccu_bll_obj
     html = h
     count = 0
@@ -443,7 +460,8 @@ def battery_panel_action(h):
         html.req.content_type = 'application/json'
         html.req.write(str(JSONEncoder().encode(dic_result)))
 
-    elif html.var("ccu_common_submit") == "Save" or html.var("ccu_common_submit") == "Retry" or html.var("ccu_common_submit") == "":
+    elif html.var("ccu_common_submit") == "Save" or html.var("ccu_common_submit") == "Retry" or html.var(
+            "ccu_common_submit") == "":
         if html.var("ccuOAM.ccuBatteryPanelConfigTable.ccuBPCSiteBatteryCapacity") != None:
             if Validation.is_required(html.var("ccuOAM.ccuBatteryPanelConfigTable.ccuBPCSiteBatteryCapacity")):
                 if Validation.is_number(html.var("ccuOAM.ccuBatteryPanelConfigTable.ccuBPCSiteBatteryCapacity")):
@@ -536,6 +554,10 @@ def battery_panel_action(h):
 
 
 def alarm_threshold_action(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     dic_result = {"success": 0}
@@ -556,7 +578,8 @@ def alarm_threshold_action(h):
         html.req.content_type = 'application/json'
         html.req.write(str(JSONEncoder().encode(dic_result)))
 
-    elif html.var("ccu_common_submit") == "Save" or html.var("ccu_common_submit") == "Retry" or html.var("ccu_common_submit") == "":
+    elif html.var("ccu_common_submit") == "Save" or html.var("ccu_common_submit") == "Retry" or html.var(
+            "ccu_common_submit") == "":
         if html.var("ccuOAM.ccuAlarmAndThresholdTable.ccuATHighTemperatureAlarm") != None:
             if Validation.is_required(html.var("ccuOAM.ccuAlarmAndThresholdTable.ccuATHighTemperatureAlarm")):
                 if Validation.is_number(html.var("ccuOAM.ccuAlarmAndThresholdTable.ccuATHighTemperatureAlarm")):
@@ -652,6 +675,10 @@ def alarm_threshold_action(h):
 
 
 def peer_action(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     dic_result = {"success": 0}
@@ -672,7 +699,8 @@ def peer_action(h):
         html.req.content_type = 'application/json'
         html.req.write(str(JSONEncoder().encode(dic_result)))
 
-    elif html.var("ccu_common_submit") == "Save" or html.var("ccu_common_submit") == "Retry" or html.var("ccu_common_submit") == "":
+    elif html.var("ccu_common_submit") == "Save" or html.var("ccu_common_submit") == "Retry" or html.var(
+            "ccu_common_submit") == "":
         if html.var("ccuOAM.ccuPeerInformationTable.ccuPIPeer1MACID") != None:
             if Validation.is_required(html.var("ccuOAM.ccuPeerInformationTable.ccuPIPeer1MACID")):
                 if Validation.is_valid_mac(html.var("ccuOAM.ccuPeerInformationTable.ccuPIPeer1MACID")):
@@ -765,6 +793,10 @@ def peer_action(h):
 
 
 def ccu_ip_action(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     dic_result = {"success": 0}
@@ -784,7 +816,8 @@ def ccu_ip_action(h):
         html.req.content_type = 'application/json'
         html.req.write(str(JSONEncoder().encode(dic_result)))
 
-    elif html.var("ccu_common_submit") == "Save" or html.var("ccu_common_submit") == "Retry" or html.var("ccu_common_submit") == "":
+    elif html.var("ccu_common_submit") == "Save" or html.var("ccu_common_submit") == "Retry" or html.var(
+            "ccu_common_submit") == "":
         if html.var("ccuOAM.ccuSiteInformationTable.ccuSITSiteName") != None:
             if Validation.is_required(html.var("ccuOAM.ccuSiteInformationTable.ccuSITSiteName")):
                 if Validation.is_string(html.var("ccuOAM.ccuSiteInformationTable.ccuSITSiteName")):
@@ -821,6 +854,10 @@ def ccu_ip_action(h):
 
 
 def aux_action(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     dic_result = {"success": 0}
@@ -841,7 +878,8 @@ def aux_action(h):
         html.req.content_type = 'application/json'
         html.req.write(str(JSONEncoder().encode(dic_result)))
 
-    elif html.var("ccu_common_submit") == "Save" or html.var("ccu_common_submit") == "Retry" or html.var("ccu_common_submit") == "":
+    elif html.var("ccu_common_submit") == "Save" or html.var("ccu_common_submit") == "Retry" or html.var(
+            "ccu_common_submit") == "":
         if html.var("ccuOAM.ccuAuxIOTable.ccuAIExternalOutput1") != None:
             if Validation.is_required(html.var("ccuOAM.ccuAuxIOTable.ccuAIExternalOutput1")):
                 dic_result["ccuOAM.ccuAuxIOTable.ccuAIExternalOutput1"] = html.var(
@@ -939,6 +977,10 @@ def aux_action(h):
 
 
 def ccu_control_form(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     dic_result = {"success": 0}
@@ -958,7 +1000,8 @@ def ccu_control_form(h):
         html.req.content_type = 'application/json'
         html.req.write(str(JSONEncoder().encode(dic_result)))
 
-    elif html.var("ccu_common_submit") == "Save" or html.var("ccu_common_submit") == "Retry" or html.var("ccu_common_submit") == "":
+    elif html.var("ccu_common_submit") == "Save" or html.var("ccu_common_submit") == "Retry" or html.var(
+            "ccu_common_submit") == "":
         if html.var("ccuOAM.ccuControlTable.ccuCTLoadTurnOff") != None:
             if Validation.is_required(html.var("ccuOAM.ccuControlTable.ccuCTLoadTurnOff")):
                 if Validation.is_number(html.var("ccuOAM.ccuControlTable.ccuCTLoadTurnOff")):
@@ -1004,6 +1047,10 @@ def ccu_control_form(h):
 
 
 def ccu_reconciliation(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     host_id = html.var("host_id")
@@ -1016,28 +1063,11 @@ def ccu_reconciliation(h):
     html.req.write(str(JSONEncoder().encode(result)))
 
 
-def page_tip_ccu_listing(h):
-    global html
-    html = h
-    html_view = ""\
-        "<div id=\"help_container\">"\
-        "<h1>CCU Listing</h1>"\
-        "<div><strong>CCU Listing</strong> has shown all CCU Type Devices.On This Page You Can see Various Options</div>"\
-        "<br/>"\
-        "<div>On this page you can Edit Configuration, See Graph and Events for Monitoring of Devices and also make Reconciliation of Devices.</div>"\
-        "<br/>"\
-        "<div><strong>Actions</strong></div>"\
-        "<div class=\"action-tip\"><div class=\"img-div img-div2\"><img style=\"width:16px;height:16px;\" src=\"images/new/edit.png\"/></div><div class=\"txt-div\">Edit Configuration</div></div>"\
-        "<div class=\"action-tip\"><div class=\"img-div img-div2\"><img style=\"width:16px;height:16px;\" src=\"images/new/graph.png\"/></div><div class=\"txt-div\">Device Monitoring</div></div>"\
-        "<div class=\"action-tip\"><div class=\"img-div img-div2\"><img style=\"width:16px;height:16px;\" src=\"images/new/alert.png\"/></div><div class=\"txt-div\">Device Events</div></div>"\
-        "<div class=\"action-tip\"><div class=\"img-div img-div2\"><img style=\"width:16px;height:16px;\" src=\"images/new/r-green.png\"/></div><div class=\"txt-div\">Reconciliation done between 91% and 100%</div></div>"\
-        "<div class=\"action-tip\"><div class=\"img-div img-div2\"><img style=\"width:16px;height:16px;\" src=\"images/new/r-black.png\"/></div><div class=\"txt-div\">Reconciliation done in between 36% and less than 90%</div></div>"\
-        "<div class=\"action-tip\"><div class=\"img-div img-div2\"><img style=\"width:16px;height:16px;\" src=\"images/new/r-red.png\"/></div><div class=\"txt-div\">Reconciliation done in between 0% and 35%</div></div>"\
-        "<br/>"\
-        "<div><strong>Note:</strong>After Reconciliation The Reconciliation Image changes according to Reconciliation Percentage.\
-    The Reconiliation Images turns Red when Reconciliation done Between 0 to 35%\
-    The Reconiliation Images turns Black when Reconciliation done Between 36% to less than 90%\
-    The Reconiliation Images turns Green when Reconciliation Percentage Greater Than and Equal To 90%\
-    </div>"\
-        "</div>"
-    html.write(str(html_view))
+# def page_tip_ccu_listing(h):
+#     global html
+#     html = h
+#     import defaults
+#     f = open(defaults.web_dir + "/htdocs/locale/page_tip_ccu_listing.html", "r")
+#     html_view = f.read()
+#     f.close()
+#     html.write(str(html_view))

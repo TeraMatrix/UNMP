@@ -1,10 +1,8 @@
 #!/usr/bin/python2.6
 
-import uuid
 import pprint
 import os.path
 import sys
-from nms_config import open_database_sqlalchemy_connection
 from sqlalchemy import *
 from sqlalchemy.orm import *
 from sqlalchemy.dialects.mysql import *
@@ -91,20 +89,23 @@ def class_structure(tablename):
         db_connect.echo = False
         metadata = MetaData(db_connect)
         result = db.execute(
-            "SELECT COLUMN_NAME , COLUMN_TYPE , COLUMN_KEY FROM COLUMNS WHERE table_name = '%s' AND table_schema = '%s'" % (tablename, database_name))
+            "SELECT COLUMN_NAME , COLUMN_TYPE , COLUMN_KEY FROM COLUMNS WHERE table_name = '%s' AND table_schema = '%s'" % (
+            tablename, database_name))
         for row in result:
             class_structure_style += "\t%s = Column(%s%s)\n" % (row['column_name'], row['column_type'].upper(
-            ), (",primary_key=True"if((row['column_key']) == "PRI") else ""))
+            ), (",primary_key=True" if ((row['column_key']) == "PRI") else ""))
 
         result = db.execute(
-            "SELECT COLUMN_NAME , COLUMN_TYPE , COLUMN_KEY FROM COLUMNS WHERE table_name = '%s' AND table_schema = '%s'" % (tablename, database_name))
+            "SELECT COLUMN_NAME , COLUMN_TYPE , COLUMN_KEY FROM COLUMNS WHERE table_name = '%s' AND table_schema = '%s'" % (
+            tablename, database_name))
         class_structure_style += "\n\tdef __init__(self"
         for row in result:
             class_structure_style += ",%s" % (row['column_name'])
 
         class_structure_style += "):\n\t\t"
         result = db.execute(
-            "SELECT COLUMN_NAME , COLUMN_TYPE , COLUMN_KEY FROM COLUMNS WHERE table_name = '%s' AND table_schema = '%s'" % (tablename, database_name))
+            "SELECT COLUMN_NAME , COLUMN_TYPE , COLUMN_KEY FROM COLUMNS WHERE table_name = '%s' AND table_schema = '%s'" % (
+            tablename, database_name))
         for row in result:
             class_structure_style += "self.%s = %s\n\t\t" % (
                 row['column_name'], row['column_name'])
@@ -112,7 +113,8 @@ def class_structure(tablename):
         class_structure_style += "\n\tdef __repr__(self):\n\t\t"
         class_structure_style += "return \"<%s(" % (table_rename)
         result = db.execute(
-            "SELECT COLUMN_NAME , COLUMN_TYPE , COLUMN_KEY FROM COLUMNS WHERE table_name = '%s' AND table_schema = '%s'" % (tablename, database_name))
+            "SELECT COLUMN_NAME , COLUMN_TYPE , COLUMN_KEY FROM COLUMNS WHERE table_name = '%s' AND table_schema = '%s'" % (
+            tablename, database_name))
         for row in result:
             class_structure_style += "\'%s\',"
 
@@ -121,7 +123,8 @@ def class_structure(tablename):
 
         class_structure_style += ")>\" %("
         result = db.execute(
-            "SELECT COLUMN_NAME , COLUMN_TYPE , COLUMN_KEY FROM COLUMNS WHERE table_name = '%s' AND table_schema = '%s'" % (tablename, database_name))
+            "SELECT COLUMN_NAME , COLUMN_TYPE , COLUMN_KEY FROM COLUMNS WHERE table_name = '%s' AND table_schema = '%s'" % (
+            tablename, database_name))
         for row in result:
             class_structure_style += "self.%s," % (row['column_name'])
 
@@ -186,7 +189,6 @@ File has 3 main functions
         make_table_array('_7_2_29')
 
 """
-
 
 """
 FixMe: In Response for TODO i have been reached that far
@@ -263,7 +265,6 @@ Note: I have found query now i have to know sql alchemy mapper and relationship 
         ```
 
 """
-
 
 database_name = 'nms'
 

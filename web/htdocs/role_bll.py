@@ -43,6 +43,12 @@ def db_close():
 
 
 def get_role_details(action, role_id=None):
+    """
+
+    @param action:
+    @param role_id:
+    @return:
+    """
     db_connect()
 
     global global_db
@@ -67,16 +73,21 @@ def get_role_details(action, role_id=None):
         if len(role_tuple) < 1:
             return 11
         else:
-#            make_list = lambda x: [" - " if i == None or i == '' else i for i in x]
-#            role_list = []
-#            for role in role_tuple:
-#                role_list.append(make_list(role))
+        #            make_list = lambda x: [" - " if i == None or i == '' else i for i in x]
+        #            role_list = []
+        #            for role in role_tuple:
+        #                role_list.append(make_list(role))
             return role_tuple
     except Exception as e:
         return 111
 
 
 def copy_it():
+    """
+
+
+    @return:
+    """
     db_connect()
     global global_db
     try:
@@ -94,6 +105,11 @@ def copy_it():
 
 
 def get_snapindata():
+    """
+
+
+    @return:
+    """
     db_connect()
     global global_db
     try:
@@ -118,6 +134,11 @@ def get_snapindata():
 
 
 def get_page_links(role_id):
+    """
+
+    @param role_id:
+    @return:
+    """
     db_connect()
     global global_db
     try:
@@ -142,6 +163,11 @@ def get_page_links(role_id):
 
 
 def get_pagedata(snapin_tuple):
+    """
+
+    @param snapin_tuple:
+    @return:
+    """
     db_connect()
     global global_db
     try:
@@ -176,6 +202,11 @@ def get_pagedata(snapin_tuple):
 
 
 def get_moduledata(page_list):
+    """
+
+    @param page_list:
+    @return:
+    """
     db_connect()
     global global_db
     try:
@@ -210,6 +241,12 @@ def get_moduledata(page_list):
 
 
 def check_rolename(name, type):
+    """
+
+    @param name:
+    @param type:
+    @return:
+    """
     db_connect()
     global global_db
     try:
@@ -273,6 +310,13 @@ def check_rolename(name, type):
 #    except Exception as e:
 #        return str(e)
 def add_role(role_name, prole_id, description):
+    """
+
+    @param role_name:
+    @param prole_id:
+    @param description:
+    @return:
+    """
     db_connect()
     global global_db
     try:
@@ -280,7 +324,8 @@ def add_role(role_name, prole_id, description):
             return 1
         role_id = uuid.uuid1()
         ins_query = "INSERT INTO `roles` (`role_id`, `role_name`, `description`, `parent_id`, `timestamp`, `created_by`, `creation_time`, `updated_by`)\
-        VALUES (\"%s\", \"%s\", \"%s\", \"%s\", CURRENT_TIMESTAMP, 'cscape', CURRENT_TIMESTAMP, 'cscape')" % (role_id, role_name, description, prole_id)
+        VALUES (\"%s\", \"%s\", \"%s\", \"%s\", CURRENT_TIMESTAMP, 'cscape', CURRENT_TIMESTAMP, 'cscape')" % (
+        role_id, role_name, description, prole_id)
 
         cursor = global_db.cursor()
         if cursor.execute(ins_query) > 0:
@@ -298,6 +343,14 @@ def add_role(role_name, prole_id, description):
 
 
 def edit_role(role_id, description, p_role_id, plink_list=None):
+    """
+
+    @param role_id:
+    @param description:
+    @param p_role_id:
+    @param plink_list:
+    @return:
+    """
     db_connect()
     global global_db
     try:
@@ -350,6 +403,11 @@ def edit_role(role_id, description, p_role_id, plink_list=None):
 
 
 def del_role(role_id):
+    """
+
+    @param role_id:
+    @return:
+    """
     db_connect()
     global global_db
     try:
@@ -407,4 +465,9 @@ def del_role(role_id):
 
 
 def update_grp_inrole(role_id, groupid_list):
+    """
+
+    @param role_id:
+    @param groupid_list:
+    """
     pass

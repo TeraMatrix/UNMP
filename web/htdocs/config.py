@@ -63,6 +63,11 @@ def load_config():
     # value - within the Apache process that has answered
     # the query, if that variable is not explicitely defined
     # in multisite.mk
+    """
+
+
+    @raise:
+    """
     global debug
     global admin_users
     global admin_users_pass
@@ -116,7 +121,7 @@ def load_config():
         user_pass = []
         guest_users = []
         guest_users_pass = []
-# users
+        # users
         if len(admin_tuple) < 1:
             admin_users = []
         else:
@@ -132,7 +137,7 @@ def load_config():
         else:
             guest_users = list(sum(guest_tuple, ()))
 
-# password
+        # password
         if len(admin_tuple_pass) < 1:
             admin_users_pass = []
         else:
@@ -155,12 +160,12 @@ def load_config():
         users_pass = list(sum(users_tuple_pass, ()))
         guest_users_pass = list(sum(guest_tuple_pass, ()))
 
-#        exec(str(admin_users),globals(),globals())
-#        exec(str(admin_users_pass),globals(),globals())
-#        exec(str(users),globals(),globals())
-#        exec(str(users_pass),globals(),globals())
-#        exec(str(guest_users),globals(),globals())
-#        exec(str(guest_users_pass),globals(),globals())
+        #        exec(str(admin_users),globals(),globals())
+        #        exec(str(admin_users_pass),globals(),globals())
+        #        exec(str(users),globals(),globals())
+        #        exec(str(users_pass),globals(),globals())
+        #        exec(str(guest_users),globals(),globals())
+        #        exec(str(guest_users_pass),globals(),globals())
 
         db.close()
     except Exception, e:
@@ -199,14 +204,27 @@ permission_sections = {}
 
 
 def declare_permission(name, title, description, defaults):
+    """
+
+    @param name:
+    @param title:
+    @param description:
+    @param defaults:
+    """
     perm = {"name": name, "title": title, "description":
-            description, "defaults": defaults}
+        description, "defaults": defaults}
     permissions_by_name[name] = perm
     permissions_by_order.append(perm)
 
 
 def declare_permission_section(name, title):
+    """
+
+    @param name:
+    @param title:
+    """
     permission_sections[name] = title
+
 
 declare_permission("use",
                    "Use Multisite at all",
@@ -264,7 +282,6 @@ declare_permission("act",
                    "Allows users to perform Nagios commands. If now futher permissions are granted,<br>actions can only be done one objects one is a contact for",
                    ["admin", "user", "guest"])
 
-
 declare_permission("see_sidebar",
                    "Use Check_MK sidebar",
                    "Without this permission the Check_MK sidebar will be invisible",
@@ -279,6 +296,11 @@ declare_permission("configure_sidebar",
 # Compute permissions for HTTP user and set in
 # global variables. Also store user.
 def login(u):
+    """
+
+    @param u:
+    @raise:
+    """
     global user
     user = u
     global role
@@ -319,10 +341,19 @@ def login(u):
 
 
 def save_site_config():
+    """
+
+
+    """
     save_user_file("siteconfig", user_siteconf)
 
 
 def role_of_user(u):
+    """
+
+    @param u:
+    @return:
+    """
     if u in admin_users:
         return "admin"
     elif u in guest_users:
@@ -336,6 +367,11 @@ def role_of_user(u):
 def may(permname):
     # handle case where declare_permission is done after login
     # and permname also not contained in save configuration
+    """
+
+    @param permname:
+    @return:
+    """
     if permname not in permissions:
         perm = permissions_by_name.get(permname)
         if not perm:  # Object does not exists, e.g. sidesnap.multisite if not is_multisite()
@@ -347,6 +383,12 @@ def may(permname):
 
 
 def user_may(u, permname):
+    """
+
+    @param u:
+    @param permname:
+    @return:
+    """
     role = role_of_user(u)
     roles = permissions.get(permname)
     if roles == None:
@@ -358,6 +400,10 @@ def user_may(u, permname):
 
 
 def load_permissions():
+    """
+
+
+    """
     global permissions
     path = config_dir + "/permissions.mk"
     if os.path.exists(path):
@@ -367,12 +413,21 @@ def load_permissions():
 
 
 def save_permissions(permissions):
+    """
+
+    @param permissions:
+    """
     write_settings_file(config_dir + "/permissions.mk", permissions)
 
 # this file edit by yogesh kumar
 
 
 def get_user_list():
+    """
+
+
+    @return:
+    """
     all = admin_users + guest_users
     if users != None:
         all += users
@@ -380,30 +435,59 @@ def get_user_list():
 
 
 def get_role_list():
+    """
+
+
+    @return:
+    """
     return roles
 
 
 def check_user(user_name):
+    """
+
+    @param user_name:
+    @return:
+    """
     all = get_user_list()
     return all.count(user_name)
 
 
 def add_user(user_name, user_role):
+    """
+
+    @param user_name:
+    @param user_role:
+    """
     addUserInFile(user_name, user_role)
 
 
 def delete_user(user_name):
+    """
+
+    @param user_name:
+    """
     user_role = role_of_user(user_name)
     deleteUserInFile(user_name, user_role)
 
 
 def update_user(user_name, user_role):
+    """
+
+    @param user_name:
+    @param user_role:
+    """
     if role_of_user(user_name) != user_role:
         delete_user(user_name)
         add_user(user_name, user_role)
 
 
 def addUserInFile(user_name, user_role):
+    """
+
+    @param user_name:
+    @param user_role:
+    """
     sitename = __file__.split("/")[3]
     fr = open("/omd/sites/%s/etc/check_mk/multisite.mk" % sitename, "r")
     fw = open("/omd/sites/%s/etc/check_mk/multisite_temp.mk" % sitename, "w")
@@ -414,7 +498,7 @@ def addUserInFile(user_name, user_role):
         if line.strip() == startText.strip() and check_writer == 1:
             check_writer = 0
             roleString = line
-            if(user_role == "admin"):
+            if (user_role == "admin"):
                 roleString += "admin_users = [ "
                 i = 0
                 for u in admin_users:
@@ -428,7 +512,7 @@ def addUserInFile(user_name, user_role):
                     roleString += "\"" + user_name + "\""
                 roleString += " ]\n"
                 fw.write(roleString)
-            elif(user_role == "user"):
+            elif (user_role == "user"):
                 roleString += "users = [ "
                 i = 0
                 for u in users:
@@ -442,7 +526,7 @@ def addUserInFile(user_name, user_role):
                     roleString += "\"" + user_name + "\""
                 roleString += " ]\n"
                 fw.write(roleString)
-            elif(user_role == "guest"):
+            elif (user_role == "guest"):
                 roleString += "guest_users = [ "
                 i = 0
                 for u in guest_users:
@@ -472,6 +556,11 @@ def addUserInFile(user_name, user_role):
 
 
 def deleteUserInFile(user_name, user_role):
+    """
+
+    @param user_name:
+    @param user_role:
+    """
     sitename = __file__.split("/")[3]
     fr = open("/omd/sites/%s/etc/check_mk/multisite.mk" % sitename, "r")
     fw = open("/omd/sites/%s/etc/check_mk/multisite_temp.mk" % sitename, "w")
@@ -482,7 +571,7 @@ def deleteUserInFile(user_name, user_role):
         if line.strip() == startText.strip() and check_writer == 1:
             check_writer = 0
             roleString = line
-            if(user_role == "admin"):
+            if (user_role == "admin"):
                 roleString += "admin_users = [ "
                 i = 0
                 for u in admin_users:
@@ -493,7 +582,7 @@ def deleteUserInFile(user_name, user_role):
                         i += 1
                 roleString += " ]\n"
                 fw.write(roleString)
-            elif(user_role == "user"):
+            elif (user_role == "user"):
                 roleString += "users = [ "
                 i = 0
                 for u in users:
@@ -504,7 +593,7 @@ def deleteUserInFile(user_name, user_role):
                         i += 1
                 roleString += " ]\n"
                 fw.write(roleString)
-            elif(user_role == "guest"):
+            elif (user_role == "guest"):
                 roleString += "guest_users = [ "
                 i = 0
                 for u in guest_users:
@@ -543,14 +632,29 @@ use_siteicons = False
 
 
 def sitenames():
+    """
+
+
+    @return:
+    """
     return sites.keys()
 
 
 def allsites():
+    """
+
+
+    @return:
+    """
     return dict([(name, site(name)) for name in sitenames()])
 
 
 def site(name):
+    """
+
+    @param name:
+    @return:
+    """
     s = sites.get(name, {})
     # Now make sure that all important keys are available.
     # Add missing entries by supplying default values.
@@ -564,20 +668,34 @@ def site(name):
 
 
 def site_is_local(name):
+    """
+
+    @param name:
+    @return:
+    """
     s = sites.get(name, {})
     sock = s.get("socket")
     return not sock or sock.startswith("unix:")
 
 
 def is_multisite():
+    """
+
+
+    @return:
+    """
     if len(sites) > 1:
         return True
-    # Also use Multisite mode if the one and only site is not local
+        # Also use Multisite mode if the one and only site is not local
     sitename = sites.keys()[0]
     return not site_is_local(sitename)
 
 
 def read_site_config():
+    """
+
+
+    """
     global user_siteconf
     user_siteconf = load_user_file("siteconfig", {})
 
@@ -645,6 +763,12 @@ doculink_urlformat = "http://mathias-kettner.de/checkmk_%s.html"
 
 
 def load_user_file(name, deflt):
+    """
+
+    @param name:
+    @param deflt:
+    @return:
+    """
     path = user_confdir + "/" + name + ".mk"
     try:
         return eval(file(path).read())
@@ -653,6 +777,12 @@ def load_user_file(name, deflt):
 
 
 def save_user_file(name, content):
+    """
+
+    @param name:
+    @param content:
+    @raise:
+    """
     path = user_confdir + "/" + name + ".mk"
     try:
         write_settings_file(path, content)

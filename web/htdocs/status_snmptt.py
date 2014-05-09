@@ -18,8 +18,6 @@
 
 ## import module
 import MySQLdb
-import calendar
-import htmllib
 from datetime import datetime
 from datetime import timedelta
 from mysql_collection import mysql_connection
@@ -34,7 +32,7 @@ err_obj = ErrorMessageClass()
 
 # Exception class for own exception handling.
 class SelfException(Exception):
-    '''
+    """
     @author                        : Rajendra Sharma
     @requires                : required text message for display.
     @return: this class return the exception msg.
@@ -44,14 +42,17 @@ class SelfException(Exception):
     @date: 18 sept 2011
     @organisation: Code Scape Consultants Pvt. Ltd.
     @copyright: 2011 Code Scape Consultants Pvt. Ltd.
-    '''
+    """
+
     def __init__(self, msg):
         output_dict = {'success': 2, 'output': str(msg)}
         html.write(str(output_dict))
 
 
 def start_page(h):
-    '''
+    """
+
+    @param h:
     @author: Rajendra Sharma
     @return: this function display the html page for trap information.
     @rtype: return type html page.
@@ -65,7 +66,7 @@ def start_page(h):
     @note: this function display the trap information page on browser.
     @organisation: Code Scape Consultants Pvt. Ltd.
     @copyright: 2011 Code Scape Consultants Pvt. Ltd.
-    '''
+    """
     global html
     html = h
     ip_address = html.var("ip_address")
@@ -83,8 +84,9 @@ def start_page(h):
             "css/demo_table_jui.css", "css/custom.css", "css/style12.css", "css/jquery-ui-1.8.4.custom.css",
             'css/ccpl_jquery_combobox.css', "facebox/facebox.css", "css/calendrical.css"]
         js_list = [
-            "js/jquery-ui-1.8.6.custom.min.js", "js/jquery.dataTables.min.js", "js/ccpl_utility.js",
-            "js/calendrical.js", "facebox/facebox.js", "js/snmptt_status1.js", 'js/ccpl_jquery_autocomplete.js']
+            "js/lib/main/jquery-ui-1.8.6.custom.min.js", "js/unmp/main/ccpl_jquery_autocomplete.js",
+            "js/lib/main/jquery.dataTables.min.js", "js/lib/main/calendrical.js",
+            "facebox/facebox.js", "js/unmp/main/snmptt_status1.js"]
         h.new_header(
             "Events Details", "status_snmptt.py", "", css_list, js_list)
 
@@ -233,7 +235,9 @@ def start_page(h):
 							<th>IP Address</th>\
 							<th>Description</th>\
 						</tr>\
-					</thead></table></div>' % (trap_status, ("" if ip_address == "" or ip_address == None else ip_address.replace("-", "")), start_date, '00:00', end_date, end_time)
+					</thead></table></div>' % (
+        trap_status, ("" if ip_address == "" or ip_address == None else ip_address.replace("-", "")), start_date,
+        '00:00', end_date, end_time)
         html.write(str(html_form))
         html.write("<div id=\"trap_data_table\">\
 		<table cellspacing=\"0\" cellpadding=\"0\" border=\"0\" id=\"trap_detail\" class=\"display\">\
@@ -243,7 +247,8 @@ def start_page(h):
         html.write("<div class='form-div-footer'>")
         html.write(
             "<table class=\"addform\" style=\"border:0px none;width:auto;\"><tr class=\"odd\">")
-        html.write("<td style=\"text-align:left;vertical-align:middle;\"><button type=\"submit\"  class=\"yo-button\" style=\"margin-top:5px;margin-bottom:5px;\" onclick=\"trapExcelReportGeneration();\"><span class=\"report\">Excel</span></button>")
+        html.write(
+            "<td style=\"text-align:left;vertical-align:middle;\"><button type=\"submit\"  class=\"yo-button\" style=\"margin-top:5px;margin-bottom:5px;\" onclick=\"trapExcelReportGeneration();\"><span class=\"report\">Excel</span></button>")
         html.write("</td>")
         html.write(
             "<td style=\"text-align:left;vertical-align:middle;\"><button type=\"submit\" class=\"yo-button\" style=\"margin-top:5px;margin-bottom:5px;\" onclick=\"trapCSVReportGeneration();\"><span class=\"report\">CSV</span></button>")
@@ -262,28 +267,32 @@ def start_page(h):
 
         html.write("<td>")
         html.write("<div class=\"trap_select_option_div\" style=\" width:100px;\" id=\"normal_div\">")
-        html.write("<img src=\"images/gr.png\"  name=\"select_option_div\" alt=\"Normal\" title=\"Normal\" style=\"width:12px\" class=\"imgbutton\"/><span  style=\"line-height:20px; padding:0px 12px;cursor:pointer;cursor:hand; \" >Normal</span>")
+        html.write(
+            "<img src=\"images/gr.png\"  name=\"select_option_div\" alt=\"Normal\" title=\"Normal\" style=\"width:12px\" class=\"imgbutton\"/><span  style=\"line-height:20px; padding:0px 12px;cursor:pointer;cursor:hand; \" >Normal</span>")
         html.write("</div>")
         html.write("</td>")
 
         html.write("<td>")
         html.write(
             "<div class=\"trap_select_option_div\" style=\" width:100px;\" id=\"minor_div\">")
-        html.write("<img src=\"images/yel.png\" alt=\"Minor\" name=\"select_option_div\" title=\"Minor\" class=\"imgbutton\" style=\"width:12px\" /><span  style=\"line-height:20px; padding:0px 12px;cursor:pointer;cursor:hand; \">Minor</span>")
+        html.write(
+            "<img src=\"images/yel.png\" alt=\"Minor\" name=\"select_option_div\" title=\"Minor\" class=\"imgbutton\" style=\"width:12px\" /><span  style=\"line-height:20px; padding:0px 12px;cursor:pointer;cursor:hand; \">Minor</span>")
         html.write("</div>")
         html.write("</td>")
 
         html.write("<td>")
         html.write(
             "<div class=\"trap_select_option_div\" style=\" width:100px;\" id=\"major_div\">")
-        html.write("<img src=\"images/or.png\" alt=\"Major\" name=\"select_option_div\" title=\"Major\"  class=\"imgbutton\" style=\"width:12px\"  /><span style=\"line-height:20px; padding:0px 12px;cursor:pointer;cursor:hand; \">Major</span>")
+        html.write(
+            "<img src=\"images/or.png\" alt=\"Major\" name=\"select_option_div\" title=\"Major\"  class=\"imgbutton\" style=\"width:12px\"  /><span style=\"line-height:20px; padding:0px 12px;cursor:pointer;cursor:hand; \">Major</span>")
         html.write("</div>")
         html.write("</td>")
 
         html.write("<td>")
         html.write(
             "<div class=\"trap_select_option_div\" style=\" width:110px;\" id=\"critical_div\">")
-        html.write("<img src=\"images/red.png\" alt=\"Critical\" name=\"select_option_div\" title=\"Critical\" class=\"imgbutton\" style=\"width:12px\"/><span  style=\"line-height:20px; padding:0px 12px; cursor:pointer;cursor:hand; \">Critical</span>")
+        html.write(
+            "<img src=\"images/red.png\" alt=\"Critical\" name=\"select_option_div\" title=\"Critical\" class=\"imgbutton\" style=\"width:12px\"/><span  style=\"line-height:20px; padding:0px 12px; cursor:pointer;cursor:hand; \">Critical</span>")
         html.write("</div>")
         html.write("</td>")
         html.write("</tr>")
@@ -298,7 +307,9 @@ def start_page(h):
 
 
 def trap_filter_function(h):
-    '''
+    """
+
+    @param h:
     @author: Rajendra Sharma
     @return: this function display the html page for trap information.
     @rtype: return type html page.
@@ -312,16 +323,16 @@ def trap_filter_function(h):
     @note: this function display the trap information page on browser.
     @organisation: Code Scape Consultants Pvt. Ltd.
     @copyright: 2011 Code Scape Consultants Pvt. Ltd.
-    '''
+    """
 
     global html
     html = h
 
     # image_dic={0:"images/status-4.png",1:"images/status-7.png.png",2:"images/status-4.png",3:"images/minor.png",4:"images/status-0.png",5:"images/critical.png"}
     image_dic = {0: "images/gr.png", 1: "images/lb.png", 2: "images/gr.png", 3:
-                 "images/yel.png", 4: "images/or.png", 5: "images/red.png"}
+        "images/yel.png", 4: "images/or.png", 5: "images/red.png"}
     image_title_name = {0: "Normal", 1: "Informationl", 2: "Normal", 3:
-                        "Minor", 4: "Major", 5: "Critical"}
+        "Minor", 4: "Major", 5: "Critical"}
     option = html.var(
         "option")        # option take (current,clear,history)status number by html object(Trap_information page).
     # event_id=html.var("eventId")    # event_id take Event Type name id by
@@ -361,15 +372,15 @@ def trap_filter_function(h):
         hostgroup_id_list = es.get_hostgroup_ids(user_id)
         if len(hostgroup_id_list) < 1:
             flag_value = 2
-    # html.write(str(agent_id))
+        # html.write(str(agent_id))
     # html.write(str(hostgroup_id_list))
     # html.write(str(flag_value))
     if flag_value == 0:
         camponent_id = html.var(
             "camponent_id")  # camponent_id take camponent id by html object(Trap_information page).
         serevity1 = html.var("serevity1", None)
-                             # serevity variable take serevity value by html
-                             # object(Trap_information page).
+        # serevity variable take serevity value by html
+        # object(Trap_information page).
         serevity2 = html.var("serevity2", None)
         serevity3 = html.var("serevity3", None)
         serevity4 = html.var("serevity4", None)
@@ -404,21 +415,21 @@ def trap_filter_function(h):
                 sql += " and"
             sql += " component_id like '%" + camponent_id + "%'"
             sql_i += 1
-        # it store the some field according to filter option
+            # it store the some field according to filter option
         filter_option = ''
-        if option == "1": 					# 1 Stand for Current Alarm Details
+        if option == "1":                     # 1 Stand for Current Alarm Details
             table_name = "trap_alarm_current"
             primary_key_id = "trap_alarm_current_id"
             filter_option = "trap_alarm_current_id"
-        if option == "2":						# 2 Stand for Clear Alarm Details
+        if option == "2":                        # 2 Stand for Clear Alarm Details
             table_name = "trap_alarm_clear"
             primary_key_id = "trap_alarm_clear_id"
             filter_option = "trap_alarm_clear_id"
-        if option == "3":					# 3 Stand for All alarm details
+        if option == "3":                    # 3 Stand for All alarm details
             table_name = "trap_alarms"
             primary_key_id = "trap_alarm_id"
             filter_option = "trap_alarm_id"
-        if option == "4":					# 3 Stand for All alarm details
+        if option == "4":                    # 3 Stand for All alarm details
             table_name = "system_alarm_table"
             primary_key_id = "system_alarm_id"
             filter_option = "system_alarm_id"
@@ -464,8 +475,10 @@ def trap_filter_function(h):
             device_type_dict = dict(
                 (row[0], row[1]) for row in device_type_result)
 
-            a_columns = ["ta.serevity", "STR_TO_DATE(ta.trap_receive_date,'%a %b %e %H:%i:%s %Y')", "ta.trap_event_type", "ta.event_id", "hosts.device_type_id", "hosts.host_alias",
-                         "ta.agent_id", "ta.manage_obj_id", "ta.manage_obj_name", "ta.component_id", "ta.description", "ta.serevity", "ta." + primary_key_id, ]
+            a_columns = ["ta.serevity", "STR_TO_DATE(ta.trap_receive_date,'%a %b %e %H:%i:%s %Y')",
+                         "ta.trap_event_type", "ta.event_id", "hosts.device_type_id", "hosts.host_alias",
+                         "ta.agent_id", "ta.manage_obj_id", "ta.manage_obj_name", "ta.component_id", "ta.description",
+                         "ta.serevity", "ta." + primary_key_id, ]
             s_index_column = "ta." + primary_key_id
             s_table = table_name
             s_join = "as ta INNER JOIN hosts ON ta.agent_id=hosts.ip_address and hosts.is_deleted=0\
@@ -487,16 +500,6 @@ def trap_filter_function(h):
                     s_where = "WHERE hostgroups.hostgroup_id IN (%s) AND agent_id like  '%s%%' AND %s AND ta.timestamp >= '%s' and  ta.timestamp <='%s'" % (
                         ','.join(hostgroup_id_list), agent_id, sql, start_date, end_date)
 
-#            s_where= "WHERE  hostgroups.hostgroup_id IN (%s) and %s AND DATE(ta.timestamp) >= '%s' and  DATE(ta.timestamp) <='%s'"%(','.join(hostgroup_id_list),sql,start_date,end_date)
-#            if agent_id == "" or agent_id == None:
-#                s_where="WHERE  hostgroups.hostgroup_id IN (%s) and  %s AND DATE(ta.timestamp) >= '%s' and  DATE(ta.timestamp) <='%s'"%(','.join(hostgroup_id_list),sql,start_date,end_date)
-#            else:
-#                if "-" in agent_id:
-#                    s_where="WHERE  hostgroups.hostgroup_id IN (%s) AND agent_id='%s' AND %s AND DATE(ta.timestamp) >= '%s' and  DATE(ta.timestamp) <='%s'"%(','.join(hostgroup_id_list),(agent_id.replace("-","")),sql,start_date,end_date)
-#                else:
-# s_where="WHERE hostgroups.hostgroup_id IN (%s) AND agent_id like  '%s%%'
-# AND %s AND DATE(ta.timestamp) >= '%s' and  DATE(ta.timestamp)
-# <='%s'"%(','.join(hostgroup_id_list),agent_id,sql,start_date,end_date)
             s_group_by = ""
             s_limit = ""
             i_display_start = html.var("iDisplayStart", None)
@@ -541,7 +544,7 @@ def trap_filter_function(h):
                         a_columns[i], MySQLdb.escape_string(s_search))
                 s_where = s_where[:-3]
                 s_where += ")"
-            # Individual column filtering
+                # Individual column filtering
             for i in range(0, len(a_columns)):
                 b_searchable_i = html.var("bSearchable_%s" % i, None)
                 s_search_i = html.var("sSearch_%s" % i, "")
@@ -563,31 +566,17 @@ def trap_filter_function(h):
             i_filtered_total = cursor.fetchone()[0]
             cursor.close()
             db.close()
-            # if last_time !="":
-            # sql+=" and ta.timestamp < '%s' and ta.timestamp >=
-            # '%s'"%(datetime.strptime(last_time,'%Y-%m-%d
-            # %H:%M:%S.%f')+timedelta(minutes=1),last_time)
-
-            # database connection and cursor object creation.
-        # db,cursor=mysql_connection('nmsp')
-            # check the connection created or not.
-            # if db ==1:
-                #   raise SelfException(cursor)
-            # cursor.execute(sql)
-            # result=cursor.fetchall()
             data_table = []
             i = 0
             if result is not None:
                 if len(result) > 0:
                     for row in result:
                         i += 1
-#				        a_columns=["ta.trap_receive_date","hosts.device_type_id","hosts.host_alias",
-#		    	       "ta.event_id","ta.agent_id","ta.serevity","ta.trap_event_id","ta.trap_event_type","ta."+primary_key_id,]
+                        #				        a_columns=["ta.trap_receive_date","hosts.device_type_id","hosts.host_alias",
+                        #		    	       "ta.event_id","ta.agent_id","ta.serevity","ta.trap_event_id","ta.trap_event_type","ta."+primary_key_id,]
                         img = '<label style="display:none;">%s</label><img src="%s" alt="%s" title="%s" class="imgbutton" style="width:12px" onclick="alarmDetail(\'%s\')"/>' % (
-                            row[11], image_dic[int(row[11])], image_title_name[int(row[11])], image_title_name[int(row[11])], int(row[12]))
-                        # datetime_object=datetime.strptime(row[3],'%a %b %d %H:%M:%S %Y')
-                        # data_table.append([img,datetime_object.strftime("%d %B %Y"),datetime_object.strftime("%I:%M:%S %p"),row[7],row[8],row[1],row[2],row[5],row[6]])
-                        # data_table.append([img,row[3],row[3],row[7],row[8],row[1],row[2],row[5],row[6]])
+                            row[11], image_dic[int(row[11])], image_title_name[int(row[11])],
+                            image_title_name[int(row[11])], int(row[12]))
                         row = list(row)
                         row[0] = img
                         row[1] = row[1].strftime("%d-%b-%Y %I:%M:%S %p")
@@ -596,34 +585,28 @@ def trap_filter_function(h):
 
             else:
                 data_table = ""
-            # close the database connection
+                # close the database connection
             output = {
                 "success": 0,
                 "sEcho": int(sEcho),
-                "iTotalRecords": int(i_total),  # i_filtered_total,#i_total,
-                "iTotalDisplayRecords": int(i_filtered_total),  # i_filtered_total,
+                "iTotalRecords": int(i_total), # i_filtered_total,#i_total,
+                "iTotalDisplayRecords": int(i_filtered_total), # i_filtered_total,
                 "aaData": data_table,
                 "query": str(sql_query2)
             }
-        # Encode Data into JSON
+            # Encode Data into JSON
             html.write(JSONEncoder().encode(output))
-        #		if (int(count_times)<1 and int(search_flag)==1) or (int(count_times)<1 and int(search_flag)==0):
-        #			output_dict={'success':0,'data_table':data_table,'last_execution_time':"","sql":str(sql)}
-        #		else:
-        #    output_dict={'success':0,'data_table':data_table,'last_execution_time':str(datetime.now())}
-        #    html.write(str(output_dict))
-        # Exception Handling
         # Exception Handling
         except MySQLdb as e:
             output = {
                 "success": 0,
                 "sEcho": int(sEcho),
-                "iTotalRecords": int(i_total),  # i_filtered_total,#i_total,
-                "iTotalDisplayRecords": int(i_filtered_total),  # i_filtered_total,
+                "iTotalRecords": int(i_total), # i_filtered_total,#i_total,
+                "iTotalDisplayRecords": int(i_filtered_total), # i_filtered_total,
                 "aaData": [],
                 "except": str(e)
             }
-        # Encode Data into JSON
+            # Encode Data into JSON
             html.write(JSONEncoder().encode(output))
         except SelfException:
             pass
@@ -631,8 +614,8 @@ def trap_filter_function(h):
             output = {
                 "success": 0,
                 "sEcho": int(sEcho),
-                "iTotalRecords": int(i_total),  # i_filtered_total,#i_total,
-                "iTotalDisplayRecords": int(i_filtered_total),  # i_filtered_total,
+                "iTotalRecords": int(i_total), # i_filtered_total,#i_total,
+                "iTotalDisplayRecords": int(i_filtered_total), # i_filtered_total,
                 "aaData": [],
                 "except": str(e),
                 "query": ""  # sql_query2
@@ -656,6 +639,10 @@ def trap_filter_function(h):
 
 
 def update_date_time(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     try:
@@ -670,6 +657,8 @@ def update_date_time(h):
 
 def trap_detail_information(h):
     """
+
+    @param h:
     @return: this function provide the information in detail of particular trap.
     @rtype: dictinoary.
     @requires: Its required a html object that provide the trap_information page information.
@@ -683,7 +672,8 @@ def trap_detail_information(h):
     """
     global html
     html = h
-    option = html.var("option")   # option take (current,clear,history)status number by html object(Trap_information page).
+    option = html.var(
+        "option")   # option take (current,clear,history)status number by html object(Trap_information page).
     trap_id = html.var(
         "trap_id")  # trap_id take trap id by html object(Trap_information page).
     image_title_name = {0: "Normal", 1: "Informational", 2: "Normal",
@@ -716,7 +706,7 @@ def trap_detail_information(h):
         else:
             sql = "SELECT trap_id,agent_id,trap_date,trap_receive_date,serevity,trap_event_id,trap_event_type,manage_obj_id,manage_obj_name,component_id,\
               trap_ip,description,device_sent_date FROM %s WHERE %s='%s'" % (table_name, primary_key_id, trap_id)
-        # html.write(str(sql))
+            # html.write(str(sql))
         cursor.execute(sql)
         result = cursor.fetchall()
         cursor.close()
@@ -852,6 +842,11 @@ def trap_detail_information(h):
 
 
 def trap_search_elements(h):
+    """
+
+    @param h:
+    @raise:
+    """
     global html
     html = h
     search_element = html.var("serarch_item")
@@ -903,6 +898,11 @@ def trap_search_elements(h):
 
 
 def trap_report_creating(h):
+    """
+
+    @param h:
+    @raise:
+    """
     global html
     html = h
     h.req.content_type = 'application/json'
@@ -919,7 +919,7 @@ def trap_report_creating(h):
     serevity4 = html.var("serevity4", None)
     serevity5 = html.var("serevity5", None)
     severity_name = {0: "Normal", 1: "Informational", 2: "Normal", 3:
-                     "Minor", 4: "Major", 5: "Critical"}
+        "Minor", 4: "Major", 5: "Critical"}
     st_date = html.var("start_date")
     st_time = html.var("start_time")
     st_date = st_date + " " + st_time
@@ -947,7 +947,7 @@ def trap_report_creating(h):
         hostgroup_id_list = es.get_hostgroup_ids(user_id)
         if len(hostgroup_id_list) < 1:
             flag_value = 2
-    # check the user privilege
+        # check the user privilege
     if flag_value == 0:
         try:
             # create the data base and cursor object.
@@ -965,6 +965,7 @@ def trap_report_creating(h):
             import csv
             import xlwt
             from xlwt import Workbook, easyxf
+
             xls_book = Workbook(encoding='ascii')
             nms_instance = __file__.split(
                 "/")[3]       # it gives instance name of nagios system
@@ -1029,22 +1030,22 @@ def trap_report_creating(h):
                     sql += " and"
                 sql += " component_id like '%" + camponent_id + "%'"
                 sql_i += 1
-            # it store the some field according to filter option
+                # it store the some field according to filter option
             for option in range(1, 5):
                 filter_option = ''
-                if int(option) == 1: 					 # 1 Stand for Current Alarm Details
+                if int(option) == 1:                      # 1 Stand for Current Alarm Details
                     table_name = "trap_alarm_current"
                     primary_key_id = "trap_alarm_current_id"
                     filter_option = "trap_alarm_current_id"
-                if int(option) == 2:					 # 2 Stand for Clear Alarm Details
+                if int(option) == 2:                     # 2 Stand for Clear Alarm Details
                     table_name = "trap_alarm_clear"
                     primary_key_id = "trap_alarm_clear_id"
                     filter_option = "trap_alarm_clear_id"
-                if int(option) == 3:					 # 3 Stand for All alarm details
+                if int(option) == 3:                     # 3 Stand for All alarm details
                     table_name = "trap_alarms"
                     primary_key_id = "trap_alarm_id"
                     filter_option = "trap_alarm_id"
-                if int(option) == 4:					 # 3 Stand for All alarm details
+                if int(option) == 4:                     # 3 Stand for All alarm details
                     table_name = "system_alarm_table"
                     primary_key_id = "system_alarm_id"
                     filter_option = "system_alarm_id"
@@ -1088,7 +1089,8 @@ def trap_report_creating(h):
 						INNER JOIN hosts ON ta.agent_id=hosts.ip_address and hosts.is_deleted=0 \
 						INNER JOIN hosts_hostgroups ON hosts_hostgroups.host_id = hosts.host_id\
 						INNER JOIN hostgroups ON hostgroups.hostgroup_id = hosts_hostgroups.hostgroup_id\
-						WHERE  hostgroups.hostgroup_id IN (%s) and %s AND ta.timestamp >= '%s' and  ta.timestamp <='%s'" % (','.join(hostgroup_id_list), sql, start_date, end_date)
+						WHERE  hostgroups.hostgroup_id IN (%s) and %s AND ta.timestamp >= '%s' and  ta.timestamp <='%s'" % (
+                    ','.join(hostgroup_id_list), sql, start_date, end_date)
                 else:
                     if "-" in agent_id:
                         sel_query = "SELECT ta." + primary_key_id + ",ta.trap_receive_date,hosts.device_type_id,ta.agent_id,hosts.host_alias,ta.serevity,ta.event_id,ta.trap_event_id,ta.trap_event_type,\
@@ -1096,26 +1098,30 @@ def trap_report_creating(h):
 					    INNER JOIN hosts ON ta.agent_id=hosts.ip_address and hosts.is_deleted=0 \
 					    INNER JOIN hosts_hostgroups ON hosts_hostgroups.host_id = hosts.host_id\
 					    INNER JOIN hostgroups ON hostgroups.hostgroup_id = hosts_hostgroups.hostgroup_id\
-					     WHERE  hostgroups.hostgroup_id IN (%s) AND agent_id='%s' AND %s AND ta.timestamp >= '%s' and  ta.timestamp <='%s'" % (','.join(hostgroup_id_list), (agent_id.replace("-", "")), sql, start_date, end_date)
+					     WHERE  hostgroups.hostgroup_id IN (%s) AND agent_id='%s' AND %s AND ta.timestamp >= '%s' and  ta.timestamp <='%s'" % (
+                        ','.join(hostgroup_id_list), (agent_id.replace("-", "")), sql, start_date, end_date)
                     else:
                         sel_query = "SELECT ta." + primary_key_id + ",ta.trap_receive_date,hosts.device_type_id,ta.agent_id,hosts.host_alias,ta.serevity,ta.event_id,ta.trap_event_id,ta.trap_event_type,\
 					    ta.manage_obj_id,ta.manage_obj_name,ta.component_id,ta.description From " + table_name + " as ta\
 					    INNER JOIN hosts ON ta.agent_id=hosts.ip_address and hosts.is_deleted=0\
 					    INNER JOIN hosts_hostgroups ON hosts_hostgroups.host_id = hosts.host_id\
 					    INNER JOIN hostgroups ON hostgroups.hostgroup_id = hosts_hostgroups.hostgroup_id\
-					    WHERE hostgroups.hostgroup_id IN (%s) AND agent_id like  '%s%%' AND %s AND ta.timestamp >= '%s' and  ta.timestamp <='%s'" % (','.join(hostgroup_id_list), agent_id, sql, start_date, end_date)
+					    WHERE hostgroups.hostgroup_id IN (%s) AND agent_id like  '%s%%' AND %s AND ta.timestamp >= '%s' and  ta.timestamp <='%s'" % (
+                        ','.join(hostgroup_id_list), agent_id, sql, start_date, end_date)
                 cursor.execute(sel_query)
                 result = cursor.fetchall()
 
                 merge_result = []
                 for row in result:
                     merge_result.append([(datetime.strptime(str(row[1]), '%a %b %d %H:%M:%S %Y').strftime(
-                        '%d %b %y %I:%M:%S %p')), device_type_dict[row[2]], row[3], row[4], severity_name[int(row[5])], row[6], row[7], row[8], row[9], row[10], row[11], row[12]])
+                        '%d %b %y %I:%M:%S %p')), device_type_dict[row[2]], row[3], row[4], severity_name[int(row[5])],
+                                         row[6], row[7], row[8], row[9], row[10], row[11], row[12]])
 
                 report_option_dict = {1: 'Current Alarms',
                                       2: 'Clear Alarms', 3: 'History', 4: 'Reachability Alarms'}
                 headings = [
-                    "Recevied Date Time", "Device Type", "IP Address", "Host Alias", "Severity", "Event Name", "Event ID", "Event Type",
+                    "Recevied Date Time", "Device Type", "IP Address", "Host Alias", "Severity", "Event Name",
+                    "Event ID", "Event Type",
                     "Manage Object ID", "Manage Object Name", "Component ID", "Description"]
 
                 sheet_count = 1
@@ -1125,13 +1131,14 @@ def trap_report_creating(h):
                     xls_sheet.row(0).height = 521
                     xls_sheet.row(1).height = 421
                     xls_sheet.write_merge(0, 0, 0, len(headings) - 1, "%s Event Report" %
-                                          report_option_dict[int(option)], style)
+                                                                      report_option_dict[int(option)], style)
                     xls_sheet.write_merge(1, 1, 0, len(headings) - 1, " %s -- %s " % (str(
                         start_date)[:11], str(end_date)[:11]), style)
                     xls_sheet.write_merge(
                         2, 2, 0, len(headings) - 1, "", style)
                     i = 4
-                    heading_xf = xlwt.easyxf('font: bold on; align: wrap on, vert centre, horiz center;pattern: pattern solid, fore_colour light_green;')
+                    heading_xf = xlwt.easyxf(
+                        'font: bold on; align: wrap on, vert centre, horiz center;pattern: pattern solid, fore_colour light_green;')
                     xls_sheet.set_panes_frozen(
                         True)   # frozen headings instead of split panes
                     xls_sheet.set_horz_split_pos(
@@ -1192,7 +1199,7 @@ def trap_report_creating(h):
             elif report_type == 'csvReport':
                 ofile.close()
             output_dict = {'success': 0, 'output': 'Report Generated Successfully.', 'file_name':
-                           str(save_file_name), 'path': path}
+                str(save_file_name), 'path': path}
             h.req.write(str(JSONEncoder().encode(output_dict)))
         # Exception Handling
         except MySQLdb as e:
@@ -1220,41 +1227,19 @@ def trap_report_creating(h):
                 db.close()
     elif flag_value == 2:
         output_dict = {'success': 1, 'error_msg':
-                       'No hostgroup assigned to your usergroup.'}
+            'No hostgroup assigned to your usergroup.'}
         h.req.write(str(JSONEncoder().encode(output_dict)))
     else:
         output_dict = {'success': 1, 'error_msg':
-                       'You are not allowed to view requested host .'}
+            'You are not allowed to view requested host .'}
         h.req.write(str(JSONEncoder().encode(output_dict)))
 
 
-def page_tip_event_details(h):
-    global html
-    html = h
-    html_view = ""\
-        "<div id=\"help_container\">"\
-        "<h1>Events Details</h1>"\
-        "<div><strong>Events Details</strong> has shown all Events information for all devices.</div>"\
-        "<br/>"\
-        "<div>On this page you can also show event information for current,clear and history.</div>"\
-        "<div><strong>History</strong>  : All events of devices</div>"\
-        "<div><strong>Current</strong> : All Alarms of devices masked in alarm masking</div>"\
-        "<div><strong>Clear</strong>   : All events of devices those are clear in respect to alarm defination in alarm masking</div>"\
-        "<div><strong>Note</strong>:For more details on Current and Clear please follow alarm masking page tip </div>"\
-        "<br/>"\
-        "<div><strong>Actions</strong></div>"\
-        "<div class=\"action-tip\"><div class=\"img-div img-div2\"><img style=\"width:16px;height:16px;\" src=\"images/lb.png\"/></div><div class=\"txt-div\">Informational events</div></div>"\
-        "<div class=\"action-tip\"><div class=\"img-div img-div2\"><img style=\"width:16px;height:16px;\" src=\"images/gr.png\"/></div><div class=\"txt-div\">Normal events</div></div>"\
-        "<div class=\"action-tip\"><div class=\"img-div img-div2\"><img style=\"width:16px;height:16px;\" src=\"images/yel.png\"/></div><div class=\"txt-div\">Minor events</div></div>"\
-        "<div class=\"action-tip\"><div class=\"img-div img-div2\"><img style=\"width:16px;height:16px;\" src=\"images/or.png\"/></div><div class=\"txt-div\">Major events</div></div>"\
-        "<div class=\"action-tip\"><div class=\"img-div img-div2\"><img style=\"width:16px;height:16px;\" src=\"images/red.png\"/></div><div class=\"txt-div\">Critical events</div></div>"\
-        "<br/>"\
-        "<div><button  class=\"yo-button\" style=\"margin-top: 5px;\" type=\"submit\">Advanced</button>This button provide the customize search window.</div>"\
-        "<br/>"\
-        "<div><button id=\"odu_report_btn\" class=\"yo-button\" style=\"margin-top: 5px;\" type=\"submit\"><span class=\"report\">Excel</span></button>Download the Excel report.</div>"\
-        "<br/>"\
-        "<div><button id=\"odu_report_btn\" class=\"yo-button\" style=\"margin-top: 5px;\" type=\"submit\"><span class=\"report\">CSV</span></button>Download the CSV report.</div>"\
-        "<div><strong>Note:</strong>This Events Details page show all events information for all devices in UNMP, this is also provide advance filtering of Events.\
-    </div>"\
-"</div>"
-    html.write(str(html_view))
+# def page_tip_event_details(h):
+#     global html
+#     html = h
+#     import defaults
+#     f = open(defaults.web_dir + "/htdocs/locale/page_tip_event_details.html", "r")
+#     html_view = f.read()
+#     f.close()
+#     html.write(str(html_view))

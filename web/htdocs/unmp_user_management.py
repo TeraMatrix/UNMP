@@ -20,6 +20,10 @@ from htmllib import *
 
 
 def login(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     login_box = '<div id=\"login_box\">\
@@ -45,13 +49,17 @@ def login(h):
     </form>\
     </div>'
     css_list = ["css/style.css"]
-    js_list = ["js/login.js"]
+    js_list = ["js/unmp/main/login.js"]
     html.new_header("Login", "", "", css_list, js_list)
     html.write(login_box)
     html.new_footer()
 
 
 def unmp_login(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     if config.check_user(html.req.session["username"]) > 0:
@@ -61,6 +69,10 @@ def unmp_login(h):
 
 
 def unmp_logout(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     html.req.session.delete()

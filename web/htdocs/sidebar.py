@@ -52,7 +52,7 @@ for fn in os.listdir(snapins_dir):
         execfile(snapins_dir + "/" + fn)
 if defaults.omd_root:
     local_snapins_dir = defaults.omd_root + \
-        "/local/share/check_mk/web/plugins/sidebar"
+                        "/local/share/check_mk/web/plugins/sidebar"
     if os.path.exists(local_snapins_dir):
         for fn in os.listdir(local_snapins_dir):
             if fn.endswith(".py"):
@@ -94,14 +94,16 @@ def footnotelinks(links):
 def iconbutton(what, url, target="side", handler="", name=""):
     if target == "side":
         onclick = "onclick=\"get_url('%s', %s, '%s')\"" % \
-            (url, handler, name)
+                  (url, handler, name)
         href = "#"
         tg = ""
     else:
         onclick = ""
         href = "%scheck_mk/%s" % (defaults.url_prefix, url)
         tg = "target=%s" % target
-    html.write("<a href=\"%s\" %s %s><img class=iconbutton onmouseover=\"hilite_icon(this, 1)\" onmouseout=\"hilite_icon(this, 0)\" align=absmiddle src=\"%scheck_mk/images/button_%s_lo.png\"></a>\n " % (href, onclick, tg, defaults.url_prefix, what))
+    html.write(
+        "<a href=\"%s\" %s %s><img class=iconbutton onmouseover=\"hilite_icon(this, 1)\" onmouseout=\"hilite_icon(this, 0)\" align=absmiddle src=\"%scheck_mk/images/button_%s_lo.png\"></a>\n " % (
+        href, onclick, tg, defaults.url_prefix, what))
 
 
 def nagioscgilink(text, target):
@@ -227,11 +229,12 @@ def render_snapin(name, state):
     if True:  # config.may("configure_sidebar"):
         html.write('<div class="closesnapin">')
         iconbutton("closesnapin", "sidebar_openclose.py?name=%s&state=off" %
-                   name, "side", "removeSnapin", 'snapin_' + name)
+                                  name, "side", "removeSnapin", 'snapin_' + name)
         html.write('</div>')
         pass
-    html.write("<b class=heading onclick=\"toggle_sidebar_snapin(this,'%s')\" onmouseover=\"this.style.cursor='pointer'\" "
-               "onmouseout=\"this.style.cursor='auto'\">%s</b>" % (url, snapin["title"]))
+    html.write(
+        "<b class=heading onclick=\"toggle_sidebar_snapin(this,'%s')\" onmouseover=\"this.style.cursor='pointer'\" "
+        "onmouseout=\"this.style.cursor='auto'\">%s</b>" % (url, snapin["title"]))
     html.write("</div>")
 
     html.write("<div id=\"snapin_%s\" class=content%s>\n" % (name, style))
@@ -303,7 +306,7 @@ def move_snapin(h):
         if name == snapname_to_move:
             snap_to_move = name, state
     if not snap_to_move:
-        return  # snaping being moved not visible. Cannot be.
+        return # snaping being moved not visible. Cannot be.
 
     # Build new config by removing snaping at current position
     # and add before "beforename" or as last if beforename is not set

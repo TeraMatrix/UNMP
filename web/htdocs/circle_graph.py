@@ -1,13 +1,9 @@
 #!/usr/bin/python2.6
 
 # import the modules
-import os.path
-import sys
-import htmllib
-import config
 import MySQLdb
 import time
-from lib import *
+from lib import *   # not required but have too look more deeply
 from mysql_collection import mysql_connection
 from cgitb import html
 from datetime import datetime
@@ -50,12 +46,21 @@ class SelfException(Exception):
     @organization: Code Scape Consultants Pvt. Ltd.
     @copyright: 2011 Code Scape Consultants Pvt. Ltd.
     """
+
     def __init__(self, msg):
         output_dict = {"success": 2, "output": str(msg)}
         html.write(str(output_dict))
 
 
 def recursive_function(graph, start, parent_len, temp_len):
+    """
+
+    @param graph:
+    @param start:
+    @param parent_len:
+    @param temp_len:
+    @return:
+    """
     global json
     global host_chain2
     host_chain2 = host_chain2 + [start]
@@ -75,11 +80,15 @@ def recursive_function(graph, start, parent_len, temp_len):
 
 
 def graph(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     nms_instance = __file__.split("/")[3]
     css_list = ["css/base.css", "css/RGraph.css", "css/sidepanel.css"]
-    js_list = ["js/excanvas.js", "js/jit.js", "js/RGraph.js"]
+    js_list = ["js/lib/main/excanvas.js", "js/lib/main/jit.js", "js/unmp/main/RGraph.js"]
     # snapin_list =
     # ["reports",
     # "views",
@@ -120,6 +129,11 @@ def graph(h):
 
 
 def show_network_graph(h):
+    """
+
+    @param h:
+    @raise:
+    """
     global html
     global json
     global host_chain2
@@ -137,7 +151,7 @@ def show_network_graph(h):
         db, cursor = mysql_connection('nms_sample')
         if db == 1:
             raise SelfException(cursor)
-        # get group id for login user
+            # get group id for login user
         userid = html.req.session['user_id']
         es = Essential()
         hostgroup_ids_list = es.get_hostgroup_ids(userid)
@@ -192,7 +206,7 @@ def show_network_graph(h):
         else:
             results = ()
         if lc_result is not None:
-#               for row in localhost_result:
+        #               for row in localhost_result:
             json = "{\"id\":\"%s\",\"name\":\"localhost\",\"children\":[" % (
                 lc_result[0][0])
 
@@ -264,6 +278,8 @@ def show_network_graph(h):
 
 def network_nms_details(h):
     """
+
+    @param h:
     @return: this function return the all NMS information.
     @rtype: this function return a dictnoray.
     @requires: this function take one html agrument.
@@ -338,6 +354,8 @@ def network_nms_details(h):
 # Success 1 for Error.
 def show_host_details(h):
     """
+
+    @param h:
     @return: this function return the host details like ipaddres,MAC address,
     services etc.
     @rtype: this function return a dictnoray.
@@ -398,7 +416,7 @@ def show_host_details(h):
         query_service = "GET services\nColumns: " \
                         "state description  host_last_state_change host_has_been_checked " \
                         "\nFilter: host_address = " + \
-            host_ip
+                        host_ip
         html.live.set_prepend_site(True)
         services = html.live.query(query_service)
         services.sort()
@@ -425,26 +443,26 @@ def show_host_details(h):
                 host_detail_data += "<div>" \
                                     "<table style=\"width:251px;font-size:11px;margin-bottom:10px;\">\
                                     <colgroup>" \
-                                        "<col width=\"40%%\"/>" \
-                                        "<col width=\"5%%\"/>" \
-                                        "<col/>" \
+                                    "<col width=\"40%%\"/>" \
+                                    "<col width=\"5%%\"/>" \
+                                    "<col/>" \
                                     "</colgroup>" \
                                     "<tr>" \
-                                        "<th align=\"left\" colspan=\"3\">\
-                                            <u>" \
-                                                "<a href=device_details_example.py?host_id=%s>%s(%s)</a>" \
-                                            "</u>" \
-                                        "</th>" \
+                                    "<th align=\"left\" colspan=\"3\">\
+                                        <u>" \
+                                    "<a href=device_details_example.py?host_id=%s>%s(%s)</a>" \
+                                    "</u>" \
+                                    "</th>" \
                                     "</tr>" % (' ' if row[5] == " "
-                                                or row[5] is None else row[5], row[7], '-' if row[1] == ""
-                                                or row[1] is None else row[1])
+                or row[5] is None else row[5], row[7], '-' if row[1] == ""
+                or row[1] is None else row[1])
 
                 if row[6] == 'odu16' or row[6] == 'odu100' or row[6] == 'idu4' or row[6] == 'ap25' or row[6] == 'ccu':
                     redirect_page = 'sp_dashboard_profiling'
                 else:
                     redirect_page = 'localhost_dashboard'
 
-                host_name = '-' if row[0] == "" or\
+                host_name = '-' if row[0] == "" or \
                                    row[0] is None \
                     else row[0]
 
@@ -455,27 +473,27 @@ def show_host_details(h):
                                   "<lable>" \
                                   "<a href=device_details_example.py?host_id=%s alt=\"ok\" style=\"algin:center;\">%s" \
                                   "</td>" % (
-                    ' ' if row[5] == " " or
-                           row[5] is None
-                    else row[5], ok)
+                                      ' ' if row[5] == " " or
+                                             row[5] is None
+                                      else row[5], ok)
                 sevices_status += "<td title=\"warning\" " \
                                   "style=\"background-color:#EEC72B; height:20px; width:20px;\">" \
                                   "<lable><a href=device_details_example.py?host_id=%s alt=\"warning\">%s</td>" % (
-                    ' ' if row[5] == " " or
-                           row[5] is None
-                    else row[5], warning)
+                                      ' ' if row[5] == " " or
+                                             row[5] is None
+                                      else row[5], warning)
                 sevices_status += "<td title=\"critical\" " \
                                   "style=\"background-color:#F07546; height:20px; width:20px;\">" \
                                   "<lable><a href=device_details_example.py?host_id=%s alt=\"critical\">%s</td>" % (
-                    ' ' if row[5] == " " or
-                           row[5] is None
-                    else row[5], critical)
+                                      ' ' if row[5] == " " or
+                                             row[5] is None
+                                      else row[5], critical)
                 sevices_status += "<td title=\"unknown\" " \
                                   "style=\"background-color:#1999CF; height:20px; width:20px;\">" \
                                   "<lable><a href=device_details_example.py?host_id=%s alt=\"unknown\">%s</td></tr>" % (
-                    ' ' if row[5] == " " or
-                           row[5] is None
-                    else row[5], unknown)
+                                      ' ' if row[5] == " " or
+                                             row[5] is None
+                                      else row[5], unknown)
 
                 # This is for enabled the device
                 enable_html = "<table style=\"width:251px;font-size:11px;\">" \
@@ -584,6 +602,12 @@ def show_host_details(h):
 
 def paint_age(timestamp, has_been_checked, bold_if_younger_than):
     """
+
+
+
+    @param timestamp:
+    @param has_been_checked:
+    @param bold_if_younger_than:
     @return: this function return the host host status age.
     @rtype: this function return type string.
     @requires: this function take three argument 1. timestamp(total up tiem) ,
@@ -617,20 +641,11 @@ def paint_age(timestamp, has_been_checked, bold_if_younger_than):
     return prefix + html.age_text(age)
 
 
-def page_tip_circle_graph(h):
-    global html
-    html = h
-    html_view = ""\
-        "<div id=\"help_container\">"\
-        "<h1>Network Map</h1>"\
-        "<div><strong>Network Map</strong>" \
-        " On this Map.You can View Every Host Connectivity." \
-        "How Host Are Connected With Each Other.When Click On " \
-        "Host You Can View Every Host Details</div>"\
-        "<br/>"\
-        "<div><strong><u>Host Details</u></strong>" \
-        "You can view the Host Detail like Host Name," \
-        "Host Alias,IP Address,MAC Address,Device Type etc. " \
-        "and its alarm status</div>"\
-        "</div>"
-    html.write(str(html_view))
+# def page_tip_circle_graph(h):
+#     global html
+#     html = h
+#     import defaults
+#     f = open(defaults.web_dir + "/htdocs/locale/page_tip_circle_graph.html", "r")
+#     html_view = f.read()
+#     f.close()
+#     html.write(str(html_view))

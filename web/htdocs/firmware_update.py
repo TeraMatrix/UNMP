@@ -11,12 +11,12 @@
 @copyright: 2011 Anuj Samariya from Codescape Consultants Pvt. Ltd.
 """
 
-from odu_controller import get_device_param,\
+from odu_controller import get_device_param, \
     get_device_list_odu_profiling, check_connection
 from common_controller import page_header_search
 import pycurl
-import MySQLdb
-from mod_python import apache, util
+#import MySQLdb
+from mod_python import util
 from mysql_collection import mysql_connection
 import StringIO
 from datetime import datetime
@@ -45,7 +45,8 @@ def common_firrmware_controller(h):
                 <label class=\"error file-error\" style=\"display: none;\">Please Choose Firmware file</label></div>")
     html.write(
         "<div id=\"firmware-update-child-div\" style=\"position:relative;float:left\"><input type=\"button\" value=\"Update Firmware\" id=\"firmware\" class=\"yo-small yo-button\"/></div>")
-    html.write("<div id=\"result-div\" style=\"margin:14px 30px 0px;position:relative;float:left;font-size:10px;\"></div>")
+    html.write(
+        "<div id=\"result-div\" style=\"margin:14px 30px 0px;position:relative;float:left;font-size:10px;\"></div>")
     html.write("</div>")
 
 
@@ -78,9 +79,9 @@ def firmware_listing(h):
     # This we import the javascript
 
     # html.write("<script type=\"text/javascript\"
-    # src=\"js/firmware_update.js\"></script>\n")
+    # src=\"js/unmp/main/firmware_update.js\"></script>\n")
     css_list = ['css/custom.css']
-    js_list = ['js/firmware_update.js']
+    js_list = ['js/unmp/main/firmware_update.js']
     html.new_header("Firmware Update", "", "", css_list, js_list)
     ip_address = ""
     mac_address = ""
@@ -116,11 +117,12 @@ def firmware_listing(h):
     if connect_chk == 0 or connect_chk == "0":
         if host_id == None or host_id == "":
             html.write(str(page_header_search(ip_address, mac_address,
-                       "UBR,UBRe", selected_device_type, "enabled", "device_type")))
+                                              "UBR,UBRe", selected_device_type, "enabled", "device_type")))
         else:
             device_list_param = get_device_param(host_id)
             html.write(str(page_header_search(device_list_param[0][0],
-                       device_list_param[0][1], "UBR,UBRe", device_type, "enabled", "device_type")))
+                                              device_list_param[0][1], "UBR,UBRe", device_type, "enabled",
+                                              "device_type")))
         common_firrmware_controller(h)
     else:
         html.write("<div id=\"odu16_form_div\" style=\"margin:10px\">")
@@ -134,6 +136,10 @@ def firmware_listing(h):
 
 def firmware_process(host_id, selected_device):
     """
+
+
+    @param host_id:
+    @param selected_device:
     @author : Anuj Samariya
     @param h : html Class Object
     @var html : this is html Class Object defined globally
@@ -183,37 +189,54 @@ def firmware_process(host_id, selected_device):
                     html.write("<input type=\"hidden\" id=\"result_final\" name=\"result_final\" value=\"%s\"/>" %
                                (str(result_final[0])))
                     html.write(
-                        "<input type=\"hidden\" id=\"result_msg\" name=\"result_msg\" value=\"%s\"/>" % (str(result_final[1])))
+                        "<input type=\"hidden\" id=\"result_msg\" name=\"result_msg\" value=\"%s\"/>" % (
+                        str(result_final[1])))
                     if result_final[0] == 0:
                         if len(firmware_result[1]) > 0:
                             master.append({'tr_master': firmware_result[1][0][0] if (firmware_result[0])
-                                          == 7 or (firmware_result[0]) == 6 else firmware_result[0][0][0]})
+                                                                                    == 7 or (
+                            firmware_result[0]) == 6 else firmware_result[0][0][0]})
                             table_str += "<tr style=\"background-color:#EEE\" slave_value=\"[]\" >\
                                                 <td><input type=\"radio\" id=\"selct_master_tr\" name=\"\"/></td>\
                                                 <td id=tr_master master_value=\"[{'tr_master':'%s'}]\" >%s(%s)</td>\
                                                 <td id=\"tr_0\" class=\"loadingimage\" style=\"width:500px\">No One Slave Connected To this Device\
                                                 <input class=\"img-loader\" title=\"loading\" style=\"float: right;\"></td>\
                                                 \
-                                            </tr>" % (firmware_result[1][0][0] if (firmware_result[0]) == 7 or (firmware_result[0]) == 6 else firmware_result[0][0][0], firmware_result[1][0][1] if (firmware_result[0]) == 7 or (firmware_result[0]) == 6 else firmware_result[0][0][1], firmware_result[1][0][3] if (firmware_result[0]) == 7 or (firmware_result[0]) == 6 else firmware_result[0][0][3])
+                                            </tr>" % (
+                            firmware_result[1][0][0] if (firmware_result[0]) == 7 or (firmware_result[0]) == 6 else
+                            firmware_result[0][0][0],
+                            firmware_result[1][0][1] if (firmware_result[0]) == 7 or (firmware_result[0]) == 6 else
+                            firmware_result[0][0][1],
+                            firmware_result[1][0][3] if (firmware_result[0]) == 7 or (firmware_result[0]) == 6 else
+                            firmware_result[0][0][3])
                             table_str += "</table>\
                                             <input type=\"hidden\" value=\"\" id=\"master\" id=\"master_value\"/>\
                                             <input type=\"hidden\" value=\"\" name=\"slave\" id=\"slave_value\"/>\
-                                            <input type=\"hidden\" value=\"%s\" name=\"device_type\" id=\"device_type\"/>" % (selected_device)
+                                            <input type=\"hidden\" value=\"%s\" name=\"device_type\" id=\"device_type\"/>" % (
+                            selected_device)
                             html.write(str(table_str))
                     else:
                         if len(firmware_result[1]) > 0:
                             master.append({'tr_master': firmware_result[1][0][0] if (firmware_result[0])
-                                          == 7 or (firmware_result[0]) == 6 else firmware_result[0][0][0]})
+                                                                                    == 7 or (
+                            firmware_result[0]) == 6 else firmware_result[0][0][0]})
                             table_str += "<tr slave_value=\"[]\">\
                                                 <td><input type=\"radio\" id=\"selct_master_tr\" name=\"select_master\"/></td>\
                                                 <td id=tr_master master_value=\"[{'tr_master':'%s'}]\">%s(%s)</td>\
                                                 <td id=\"tr_0\" class=\"loadingimage\" style=\"width:500px\">No One Slave Connected To this Device</td>\
                                                \
-                                            </tr>" % (firmware_result[1][0][0] if (firmware_result[0]) == 7 or (firmware_result[0]) == 6 else firmware_result[0][0][0], firmware_result[1][0][1] if (firmware_result[0]) == 7 or (firmware_result[0]) == 6 else firmware_result[0][0][1], firmware_result[1][0][3] if (firmware_result[0]) == 7 or (firmware_result[0]) == 6 else firmware_result[0][0][3])
+                                            </tr>" % (
+                            firmware_result[1][0][0] if (firmware_result[0]) == 7 or (firmware_result[0]) == 6 else
+                            firmware_result[0][0][0],
+                            firmware_result[1][0][1] if (firmware_result[0]) == 7 or (firmware_result[0]) == 6 else
+                            firmware_result[0][0][1],
+                            firmware_result[1][0][3] if (firmware_result[0]) == 7 or (firmware_result[0]) == 6 else
+                            firmware_result[0][0][3])
                             table_str += "</table>\
                                             <input type=\"hidden\" value=\"\" name=\"master\" id=\"master_value\"/>\
                                             <input type=\"hidden\" value=\"\" name=\"slave\" id=\"slave_value\"/>\
-                                            <input type=\"hidden\" value=\"%s\" name=\"device_type\" id=\"device_type\"/>" % (selected_device)
+                                            <input type=\"hidden\" value=\"%s\" name=\"device_type\" id=\"device_type\"/>" % (
+                            selected_device)
                             html.write(str(table_str))
                 else:
 
@@ -221,7 +244,8 @@ def firmware_process(host_id, selected_device):
                     html.write("<input type=\"hidden\" id=\"result_final\" name=\"result_final\" value=\"%s\"/>" %
                                (str(result_final[0])))
                     html.write(
-                        "<input type=\"hidden\" id=\"result_msg\" name=\"result_msg\" value=\"%s\"/>" % (str(result_final[1])))
+                        "<input type=\"hidden\" id=\"result_msg\" name=\"result_msg\" value=\"%s\"/>" % (
+                        str(result_final[1])))
                     if result_final[0] == 0:
                         for i in range(0, firmware_result[2]):
                             slaves.append(
@@ -232,10 +256,15 @@ def firmware_process(host_id, selected_device):
                                                     <td rowspan=\"%s\" id=\"tr_master\" master_value=\"[{'tr_master':'%s'}]\">%s(%s)</td>\
                                                     <td id=\"tr_%s\" class=\"loadingimage\" style=\"width:500px\">%s(%s)\
                                                     <input class=\"img-loader\" title=\"loading\" style=\"float: right;\" type=\"image\"></td>\
-                                                </tr>" % (("".join(str(slaves).split())), firmware_result[2], firmware_result[2], firmware_result[0][0][0], "Master" if firmware_result[0][0][1] == None or firmware_result[0][0][1] == "" else str(firmware_result[0][0][1]),
-                                                          "IP Address" if firmware_result[0][0][
-                                                          3] == None or firmware_result[0][0][3] == "" else firmware_result[0][0][3],
-                                                          i, firmware_result[1][0][i][5], firmware_result[1][0][i][2])
+                                                </tr>" % (
+                                ("".join(str(slaves).split())), firmware_result[2], firmware_result[2],
+                                firmware_result[0][0][0],
+                                "Master" if firmware_result[0][0][1] == None or firmware_result[0][0][1] == "" else str(
+                                    firmware_result[0][0][1]),
+                                "IP Address" if firmware_result[0][0][
+                                                    3] == None or firmware_result[0][0][3] == "" else
+                                firmware_result[0][0][3],
+                                i, firmware_result[1][0][i][5], firmware_result[1][0][i][2])
                             if i >= 1:
                                 table_str += "<tr>\
                                                     <td id=\"tr_%s\" class=\"loadingimage\">%s(%s)\
@@ -246,7 +275,8 @@ def firmware_process(host_id, selected_device):
                         table_str += "</table>\
                                         <input type=\"hidden\" value=\"\" name=\"master\" id=\"master_value\"/>\
                                         <input type=\"hidden\" value=\"\" name=\"slave\" id=\"slave_value\"/>\
-                                        <input type=\"hidden\" value=\"%s\" name=\"device_type\" id=\"device_type\"/>" % (selected_device)
+                                        <input type=\"hidden\" value=\"%s\" name=\"device_type\" id=\"device_type\"/>" % (
+                        selected_device)
                         html.write(str(table_str))
                     else:
                         for i in range(0, firmware_result[2]):
@@ -257,10 +287,15 @@ def firmware_process(host_id, selected_device):
                                                     <td rowspan=\%s\"><input type=\"radio\" id=\"selct_master_tr\" name=\"select_master\"/></td>\
                                                     <td rowspan=\"%s\" id=\"tr_master\" master_value=\"[{'tr_master':'%s'}]\" >%s(%s)</td>\
                                                     <td id=\"tr_%s\" class=\"loadingimage\" style=\"width:500px\">%s(%s)</td>\
-                                                </tr>" % (("".join(str(slaves).split())), firmware_result[2], firmware_result[2], firmware_result[0][0][0], "Master" if firmware_result[0][0][1] == None or firmware_result[0][0][1] == "" else str(firmware_result[0][0][1]),
-                                                          "IP Address" if firmware_result[0][0][
-                                                          3] == None or firmware_result[0][0][3] == "" else firmware_result[0][0][3],
-                                                          i, firmware_result[1][0][i][5], firmware_result[1][0][i][2])
+                                                </tr>" % (
+                                ("".join(str(slaves).split())), firmware_result[2], firmware_result[2],
+                                firmware_result[0][0][0],
+                                "Master" if firmware_result[0][0][1] == None or firmware_result[0][0][1] == "" else str(
+                                    firmware_result[0][0][1]),
+                                "IP Address" if firmware_result[0][0][
+                                                    3] == None or firmware_result[0][0][3] == "" else
+                                firmware_result[0][0][3],
+                                i, firmware_result[1][0][i][5], firmware_result[1][0][i][2])
 
                             if i >= 1:
                                 table_str += "<tr>\
@@ -269,7 +304,8 @@ def firmware_process(host_id, selected_device):
                         table_str += "</table>\
                                         <input type=\"hidden\" value=\"\" name=\"master\" id=\"master_value\"/>\
                                         <input type=\"hidden\" value=\"\" name=\"slave\" id=\"slave_value\"/>\
-                                        <input type=\"hidden\" value=\"%s\" name=\"device_type\" id=\"device_type\"/>" % (selected_device)
+                                        <input type=\"hidden\" value=\"%s\" name=\"device_type\" id=\"device_type\"/>" % (
+                        selected_device)
                         html.write(str(table_str))
             elif int(firmware_result[0]) == 7 or int(firmware_result[0]) == 6:
                 if len(firmware_result[1]) > 0:
@@ -281,7 +317,8 @@ def firmware_process(host_id, selected_device):
                     table_str += "</table>\
                                 <input type=\"hidden\" value=\"%s\" name=\"master\" id=\"master_value\"/>\
                                 <input type=\"hidden\" value=\"%s\" name=\"slave\" id=\"slave_value\"/>\
-                                <input type=\"hidden\" value=\"%s\" name=\"device_type\" id=\"device_type\"/>" % (master, [], selected_device)
+                                <input type=\"hidden\" value=\"%s\" name=\"device_type\" id=\"device_type\"/>" % (
+                    master, [], selected_device)
                     html.write(table_str)
         elif result == -1:
             html.write("Device Unresponsive. Please try again later.")
@@ -366,7 +403,7 @@ def get_device_list_for_firmware(h):
             mac_address = ""
         else:
             mac_address = html.var("mac_address")
-        # take value of SelectedDevice from the page through html.var
+            # take value of SelectedDevice from the page through html.var
         # check that value is None Then It takes the empty string
         if html.var("selected_device_type") == None:
             selected_device = ""
@@ -410,6 +447,7 @@ def firmware_update_set(h):
     """
 
     from datetime import datetime
+
     global html
     html = h
     master = []
@@ -435,7 +473,7 @@ def firmware_update_set(h):
         filenameval = html.var("filename")
         filenameval = filenameval.split("\\")
         file_name = filenameval[-1]
-    # slaves = list_convert(slave_value)
+        # slaves = list_convert(slave_value)
     # html.write(str(eval(slave_value)))
     if device_type != "":
         result = firmware_final_set(eval(master), eval(
@@ -445,33 +483,33 @@ def firmware_update_set(h):
     html.write(str(result))
 
 
-def page_tip_firmware_update(h):
-    """
-    @author : Anuj Samariya
-    @param h : html Class Object
-    @var html : this is html Class Object defined globally
-    @var html_view : this is used to store the html string
-    @version :0.0
-    @date : 20 Augugst 2011
-    @note : this function is used to make a page tip and show it on the page
-    @organisation : Codescape Consultants Pvt. Ltd.
-    @copyright : 2011 Anuj Samariya from Codescape Consultants Pvt. Ltd.
-    """
-    global html
-    html = h
-    html_view = ""\
-        "<div id=\"help_container\">"\
-        "<h1>Firmware Update</h1>"\
-        "<div><strong>Update Firmware</strong>of (Device).You can update the firmware of individual device.</div>"\
-        "<br/>"\
-        "<div><strong><u>Firmware Update</u></strong>On Click on Firmware Update Button The Device Firmware Will go For Firmware Update</div>"\
-        "<br/>"\
-        "<div><strong><u>Choose Firmware</u></strong>On Click on File Browser You can select the file for firmware upgrade.If You Not Select the File.Then it Shows the error</div>"\
-        "</div>"
-    html.write(str(html_view))
+# def page_tip_firmware_update(h):
+#     """
+#     @author : Anuj Samariya
+#     @param h : html Class Object
+#     @var html : this is html Class Object defined globally
+#     @var html_view : this is used to store the html string
+#     @version :0.0
+#     @date : 20 Augugst 2011
+#     @note : this function is used to make a page tip and show it on the page
+#     @organisation : Codescape Consultants Pvt. Ltd.
+#     @copyright : 2011 Anuj Samariya from Codescape Consultants Pvt. Ltd.
+#     """
+#     global html
+#     html = h
+#     import defaults
+#     f = open(defaults.web_dir + "/htdocs/locale/page_tip_firmware_update.html", "r")
+#     html_view = f.read()
+#     f.close()
+#     html.write(str(html_view))
 
 
 def firmware_file_upload(h):
+    """
+
+    @param h:
+    @raise:
+    """
     global html
     html = h
 
@@ -498,7 +536,7 @@ def firmware_file_upload(h):
             if db == 1:
                 raise SelfException(cursor)
 
-        # get the ip address of ap correspondence
+                # get the ip address of ap correspondence
             sel_query = "SELECT ip_address,http_username,http_password FROM hosts WHERE host_id='%s'" % (
                 html.req.session["host_id_session"])
             cursor.execute(sel_query)
@@ -526,7 +564,8 @@ def firmware_file_upload(h):
                 c.close()
 
                 if int(responseCode) == 404:
-                    html.write("<p style=\"font-size:10px;font-wight:bold;\">The path of firmware upload is not correct.<br/><a href=\"javascript:history.go(-1)\">Back</a><p/>")
+                    html.write(
+                        "<p style=\"font-size:10px;font-wight:bold;\">The path of firmware upload is not correct.<br/><a href=\"javascript:history.go(-1)\">Back</a><p/>")
                 elif int(responseCode) == 401:
                     html.write(
                         "<p style=\"font-size:10px;font-wight:bold;\">Username and Password are wrong.<br/><a href=\"javascript:history.go(-1)\">Back</a><p/>")
@@ -562,6 +601,7 @@ def firmware_file_upload(h):
     except Exception, e:
         html.write(
             "<p style=\"font-size:10px;font-wight:bold;\">Firmware update not done.Please try again...</p>")
+
 #    finally:
 #        if isinstance(db,MySQLdb.connection):
 #            if db.open:
@@ -569,6 +609,10 @@ def firmware_file_upload(h):
 
 
 def ap_firmware_view(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     host_id = h.var('host_id')
@@ -578,10 +622,15 @@ def ap_firmware_view(h):
     html.req.session.save()
 
     html.write(
-        "<form method=\"post\" enctype=\"multipart/form-data\" action=\"firmware_file_upload.py\" style=\"font-size:10px;\"><input type=\"hidden\" name=\"host_id\" value=\"%s\"/><input type=\"hidden\" name=\"device_type\" value=\"%s\"/><input type=\"hidden\" name=\"device_list_state\" value=\"%s\"/><label style=\"margin-top: 15px;margin-right: 25px;\" class=\"lbl\">Firmware File</label><input style=\"font-size:10px;\" type=\"file\" name=\"file_uploader\" id=\"file_uploader\"><button name=\"button_uploader\" id=\"button_uploader\" type=\"file\" style=\"font-size:10px;\" class=\"yo-button yo-small\"><span class=\"upload\">Upload</span></button></form>" % (host_id, device_type, device_list_state))
+        "<form method=\"post\" enctype=\"multipart/form-data\" action=\"firmware_file_upload.py\" style=\"font-size:10px;\"><input type=\"hidden\" name=\"host_id\" value=\"%s\"/><input type=\"hidden\" name=\"device_type\" value=\"%s\"/><input type=\"hidden\" name=\"device_list_state\" value=\"%s\"/><label style=\"margin-top: 15px;margin-right: 25px;\" class=\"lbl\">Firmware File</label><input style=\"font-size:10px;\" type=\"file\" name=\"file_uploader\" id=\"file_uploader\"><button name=\"button_uploader\" id=\"button_uploader\" type=\"file\" style=\"font-size:10px;\" class=\"yo-button yo-small\"><span class=\"upload\">Upload</span></button></form>" % (
+        host_id, device_type, device_list_state))
 
 
 def odu_firmware_view(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     host_id = h.var('host_id')
@@ -590,10 +639,17 @@ def odu_firmware_view(h):
     html.req.session["host_id_session"] = host_id
     html.req.session.save()
 
-    html.write("<form method=\"post\" enctype=\"multipart/form-data\" action=\"odu_firmware_file_upload.py\" style=\"font-size:10px;\"><input type=\"hidden\" name=\"host_id\" value=\"%s\"/><input type=\"hidden\" name=\"device_type\" value=\"%s\"/><input type=\"hidden\" name=\"device_list_state\" value=\"%s\"/><label style=\"margin-top: 15px;margin-right: 25px;\" class=\"lbl\">Firmware File</label><input style=\"font-size:10px;\" type=\"file\" name=\"file_uploader\" id=\"file_uploader\"><button name=\"button_uploader\" id=\"button_uploader\" type=\"file\" style=\"font-size:10px;\" class=\"yo-button yo-small\"><span class=\"upload\">Upload</span></button></form>" % (host_id, device_type, device_list_state))
+    html.write(
+        "<form method=\"post\" enctype=\"multipart/form-data\" action=\"odu_firmware_file_upload.py\" style=\"font-size:10px;\"><input type=\"hidden\" name=\"host_id\" value=\"%s\"/><input type=\"hidden\" name=\"device_type\" value=\"%s\"/><input type=\"hidden\" name=\"device_list_state\" value=\"%s\"/><label style=\"margin-top: 15px;margin-right: 25px;\" class=\"lbl\">Firmware File</label><input style=\"font-size:10px;\" type=\"file\" name=\"file_uploader\" id=\"file_uploader\"><button name=\"button_uploader\" id=\"button_uploader\" type=\"file\" style=\"font-size:10px;\" class=\"yo-button yo-small\"><span class=\"upload\">Upload</span></button></form>" % (
+        host_id, device_type, device_list_state))
 
 
 def odu_firmware_file_upload(h):
+    """
+
+    @param h:
+    @raise:
+    """
     global html
     html = h
 
@@ -620,7 +676,7 @@ def odu_firmware_file_upload(h):
             if db == 1:
                 raise SelfException(cursor)
 
-        # get the ip address of ap correspondence
+                # get the ip address of ap correspondence
             sel_query = "SELECT ip_address,http_username,http_password FROM hosts WHERE host_id='%s'" % (
                 html.req.session["host_id_session"])
             cursor.execute(sel_query)
@@ -662,7 +718,8 @@ def odu_firmware_file_upload(h):
                     result1 = responseString.find(
                         "Device is now being automatically rebooted")
                     if result != -1 or result1 != -1:
-                        html.write("<p style=\"font-size:10px;font-wight:bold;\">Firmware Update Successfully.Device is now being automatically rebooted.</p>")
+                        html.write(
+                            "<p style=\"font-size:10px;font-wight:bold;\">Firmware Update Successfully.Device is now being automatically rebooted.</p>")
                         if filename.find("7.2.25") >= 0:
                             sel_query = "update hosts set firmware_mapping_id = '%s' where host_id = '%s'" % (
                                 "7.2.25", html.req.session["host_id_session"])
@@ -692,6 +749,11 @@ def odu_firmware_file_upload(h):
 
 
 def idu_firmware_file_upload(h):
+    """
+
+    @param h:
+    @return: @raise:
+    """
     global html
     html = h
 
@@ -755,13 +817,14 @@ def idu_firmware_file_upload(h):
                 html.write(
                     "<p style=\"font-size:10px;font-wight:bold;\">Page not found.<br/><a href=\"javascript:history.go(-1)\">Back</a></p>")
             elif int(responseCode) == 401:
-                html.write("<p style=\"font-size:10px;font-wight:bold;\">Username and Password are wrong.<br/><a href=\"javascript:history.go(-1)\">Back</a></p>")
+                html.write(
+                    "<p style=\"font-size:10px;font-wight:bold;\">Username and Password are wrong.<br/><a href=\"javascript:history.go(-1)\">Back</a></p>")
             elif int(responseCode) == 200:
                 if responseString.find("File Transfer Complete") != -1:
                     html.write(
                         "<p style=\"font-size:10px;\">File Transfer Complete.Please wait while system Saves the file.<br/>Activating the new image file.Please Wait...</p>")
 
-                    while(1):
+                    while (1):
                         db, cursor = mysql_connection('midnms')
                         query = "select trap_event_id,description,timestamp from midnms.trap_alarms where trap_event_id = '%s' and agent_id = '%s' and timestamp>='%s'" % (
                             '4', str(ip_address), str(current_time)[:19])
@@ -803,12 +866,13 @@ def idu_firmware_file_upload(h):
                             responseString = b.getvalue()
                             c.close()
                             if int(responseCode) == 404:
-                                html.write("<p style=\"font-size:10px;font-wight:bold;\">The path of firmware upload is not correct.<br/><a href=\"javascript:history.go(-1)\">Back</a></p>")
+                                html.write(
+                                    "<p style=\"font-size:10px;font-wight:bold;\">The path of firmware upload is not correct.<br/><a href=\"javascript:history.go(-1)\">Back</a></p>")
                             elif int(responseCode) == 401:
                                 html.write(
                                     "<p style=\"font-size:10px;font-wight:bold;\">Username and Password are wrong.<br/><a href=\"javascript:history.go(-1)\">Back</a></p>")
                             elif int(responseCode) == 200:
-                                while(1):
+                                while (1):
                                     db, cursor = mysql_connection('midnms')
                                     query = "select trap_event_id,description,timestamp from midnms.trap_alarms where trap_event_id in ('%s','%s') and agent_id = '%s' and timestamp>'%s'" % (
                                         '7', '67', str(ip_address), str(current_time))
@@ -824,12 +888,14 @@ def idu_firmware_file_upload(h):
                                                 if cgi_final_result[0][1].find("Activating passive image") != -1:
                                                     html.write(
                                                         "<p style=\"font-size:10px;font-wight:bold;\">Activating image.<br/></p>")
-                                                    html.write("<p style=\"font-size:10px;font-wight:bold;\">Device is rebooting.Please wait.....<br/></p>")
+                                                    html.write(
+                                                        "<p style=\"font-size:10px;font-wight:bold;\">Device is rebooting.Please wait.....<br/></p>")
                                                     activate = 1
                                             if idu_reboot == 0:
                                                 if cgi_final_result[0][1].find("IDU started") != -1:
                                                     idu_reboot = 1
-                                            if cgi_final_result[0][1].find("Image passed approval period. Image activation success") != -1:
+                                            if cgi_final_result[0][1].find(
+                                                    "Image passed approval period. Image activation success") != -1:
                                                 html.write(
                                                     "<p style=\"font-size:10px;font-wight:bold;\">Firmware upgrade successfully.<br/></p>")
                                                 flag = 0
@@ -869,6 +935,10 @@ def idu_firmware_file_upload(h):
 
 
 def idu_firmware_view(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     host_id = h.var('host_id')
@@ -877,4 +947,6 @@ def idu_firmware_view(h):
     html.req.session["host_id_session"] = host_id
     html.req.session.save()
 
-    html.write("<form method=\"post\" enctype=\"multipart/form-data\" name=\"main_form\" action=\"idu_firmware_file_upload.py\" style=\"font-size:10px;\"><input type=\"hidden\" name=\"host_id\" value=\"%s\"/><input type=\"hidden\" name=\"device_type\" value=\"%s\"/><input type=\"hidden\" name=\"device_list_state\" value=\"%s\"/><input type=\"hidden\" name=\"current_date_time\" value=\"%s\"/><label style=\"margin-top: 15px;margin-right: 25px;\" class=\"lbl\">Firmware File</label><input style=\"font-size:10px;\" type=\"file\" name=\"fufile\" id=\"fufile\"><button name=\"button_uploader\" id=\"button_uploader\" type=\"submit\" style=\"font-size:10px;\" class=\"yo-button yo-small\"><span class=\"upload\">Upload</span></button></form>" % (host_id, device_type, device_list_state, datetime.now()))
+    html.write(
+        "<form method=\"post\" enctype=\"multipart/form-data\" name=\"main_form\" action=\"idu_firmware_file_upload.py\" style=\"font-size:10px;\"><input type=\"hidden\" name=\"host_id\" value=\"%s\"/><input type=\"hidden\" name=\"device_type\" value=\"%s\"/><input type=\"hidden\" name=\"device_list_state\" value=\"%s\"/><input type=\"hidden\" name=\"current_date_time\" value=\"%s\"/><label style=\"margin-top: 15px;margin-right: 25px;\" class=\"lbl\">Firmware File</label><input style=\"font-size:10px;\" type=\"file\" name=\"fufile\" id=\"fufile\"><button name=\"button_uploader\" id=\"button_uploader\" type=\"submit\" style=\"font-size:10px;\" class=\"yo-button yo-small\"><span class=\"upload\">Upload</span></button></form>" % (
+        host_id, device_type, device_list_state, datetime.now()))

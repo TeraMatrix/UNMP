@@ -1,5 +1,5 @@
 #!/usr/bin/python2.6
-'''
+"""
 @author: Mahipal Choudhary
 @since: 07-Nov-2011
 @version: 0.1
@@ -7,48 +7,51 @@
 @organization: Codescape Consultants Pvt. Ltd.
 @copyright: 2011 Mahipal Choudhary for Codescape Consultants Pvt. Ltd.
 @see: http://www.codescape.in
-'''
-# from reporting_bll import Report_bll as UbrReportBll
-# from ubre_reporting_bll import Report_bll as UbreReportBll
-# from ap_reporting_bll import APReportBll
+"""
+
 from copy import deepcopy
-# Import modules that contain the function and libraries
-from datetime import date, timedelta, datetime
-import MySQLdb
-from mysql_collection import mysql_connection
-from unmp_config import SystemConfig
-import xlwt
-from xlwt import Workbook, easyxf
-import json
-from json import JSONEncoder
-from inventory_bll import HostBll
-import shelve
 import csv
-from common_bll import EventLog
+from datetime import timedelta, datetime  # ,date
 from operator import itemgetter
-from config_report import get_configuration_details
+import shelve
+
+import MySQLdb
+import xlwt
+
+from common_bll import EventLog
 from common_controller import logme
-# import main_reporting_controller
+from common_vars import make_list
+from config_report import get_configuration_details
+from unmp_config import SystemConfig
 
 
 class MainReportBll(object):
+    """
+    Main reporting related BLL class
+    """
     # get sql data using query dict
     def get_sql_data(self, query_dict, date_temp_1, date_temp_2):
+        """
+
+        @param query_dict:
+        @param date_temp_1:
+        @param date_temp_2:
+        @return:
+        """
         try:
             db = MySQLdb.connect(*SystemConfig.get_mysql_credentials())
             cursor = db.cursor()
-            date1 = datetime.strptime(date_temp_1, "%Y-%m-%d %H:%M:%S")
-            date2 = datetime.strptime(date_temp_2, "%Y-%m-%d %H:%M:%S")
-            nw = datetime.now()
-            sql = ""
-            sql = "( select %s from %s %s %s %s %s )" % (query_dict["columns"], query_dict["table_name"], query_dict["join"], query_dict[
+            # date1,2 not using right now
+            # but could be useful
+            # date1 = datetime.strptime(date_temp_1, "%Y-%m-%d %H:%M:%S")
+            # date2 = datetime.strptime(date_temp_2, "%Y-%m-%d %H:%M:%S")
+            # nw = datetime.now()
+            sql = "( select %s from %s %s %s %s %s )" % (
+            query_dict["columns"], query_dict["table_name"], query_dict["join"], query_dict[
                 "where"], query_dict["group_by"], query_dict["order_by"])
             cursor.execute(sql)
-            result = cursor.fetchall()
-            make_list = lambda x: [
-                " - " if i == None or i == '' else str(i) for i in x]
             li_result = []
-            for row in result:
+            for row in cursor.fetchall():
                 li_result.append(make_list(row))
             result_dict = {"success": "0", "result": li_result}
             db.close()
@@ -60,9 +63,13 @@ class MainReportBll(object):
 
     # get selected columns and non selected columns from report template
     def main_reporting_get_column_template(self, device_type_id, report_type):
+        """
+
+        @param device_type_id:
+        @param report_type:
+        @return:
+        """
         try:
-            make_list = lambda x: [
-                " - " if i == None or i == '' else str(i) for i in x]
             db = MySQLdb.connect(*SystemConfig.get_mysql_credentials())
             cursor = db.cursor()
             sql = " select column_selected,column_non_selected from report_template where device_type='%s' and report_type='%s'" % (
@@ -82,13 +89,18 @@ class MainReportBll(object):
 
     # get all data from report template for given device type and report type
     def main_reporting_get_mapping_column(self, device_type_id, report_type):
+        """
+
+        @param device_type_id:
+        @param report_type:
+        @return:
+        """
         try:
-            make_list = lambda x: [
-                " - " if i == None or i == '' else str(i) for i in x]
             db = MySQLdb.connect(*SystemConfig.get_mysql_credentials())
             cursor = db.cursor()
             sql = " select column_selected,column_non_selected,mapping_selected,mapping_non_selected, \
-                  sheet_name,main_title,second_title,report_name,generate_method from report_template where device_type='%s' and report_type='%s'" % (device_type_id, report_type)
+                  sheet_name,main_title,second_title,report_name,generate_method from report_template where device_type='%s' and report_type='%s'" % (
+            device_type_id, report_type)
             cursor.execute(sql)
             result = cursor.fetchall()
             lis = []
@@ -105,6 +117,15 @@ class MainReportBll(object):
 
     # get a query dict for diven data
     def get_query_dict(self, device_type, report_type, date_temp_1, date_temp_2, all_host):
+        """
+
+        @param device_type:
+        @param report_type:
+        @param date_temp_1:
+        @param date_temp_2:
+        @param all_host:
+        @return:
+        """
         try:
             db = MySQLdb.connect(*SystemConfig.get_mysql_credentials())
             cursor = db.cursor()
@@ -137,6 +158,12 @@ class MainReportBll(object):
     # get host group name and id with device type and their report type ..this
     # is called initially
     def get_hostgroup_device(self, user_id, hostgroup_id_list):
+        """
+
+        @param user_id:
+        @param hostgroup_id_list:
+        @return:
+        """
         try:
             conn = MySQLdb.connect(*SystemConfig.get_mysql_credentials())
             cursor = conn.cursor()
@@ -144,7 +171,8 @@ class MainReportBll(object):
 			join (select hostgroup_id,host_id from hosts_hostgroups)  as hhg on hhg.hostgroup_id=hg.hostgroup_id \
 			join (select host_id,device_type_id from hosts) as h on h.host_id=hhg.host_id \
 			join (select device_type_id,device_name,is_deleted from device_type) as dt on dt.device_type_id=h.device_type_id \
-			where hhg.hostgroup_id IN (%s) and dt.is_deleted<>1 group  by hg.hostgroup_id ,dt.device_type_id order by dt.device_name" % ','.join(hostgroup_id_list)
+			where hhg.hostgroup_id IN (%s) and dt.is_deleted<>1 group  by hg.hostgroup_id ,dt.device_type_id order by dt.device_name" % ','.join(
+                hostgroup_id_list)
             cursor.execute(query)
             result = cursor.fetchall()
             query2 = "SELECT device_type,report_Type FROM `report_template` order by device_type,report_type"
@@ -152,8 +180,6 @@ class MainReportBll(object):
             tp = cursor.fetchall()
             di = {}
             li = []
-            make_list = lambda x: [
-                " - " if i == None or i == '' else str(i) for i in x]
             for t in tp:
                 if t[0] in di:
                     li = di[t[0]]
@@ -178,6 +204,12 @@ class MainReportBll(object):
 
     # get host data ie device name and host id
     def main_reporting_get_host_data(self, hostgroup_id, device_type_id):
+        """
+
+        @param hostgroup_id:
+        @param device_type_id:
+        @return:
+        """
         try:
             conn = MySQLdb.connect(*SystemConfig.get_mysql_credentials())
             cursor = conn.cursor()
@@ -200,10 +232,28 @@ class MainReportBll(object):
 
     # Function to form Default Data set ie fill values like '0' when values
     # are not present
-    def get_and_form_data_default(self, res, host_index, values_length, time_index, key, data_length, values1_index, values2_index, val1, val2, val3, val4, default_value):
+    def get_and_form_data_default(self, res, host_index, values_length, time_index, key, data_length, values1_index,
+                                  values2_index, val1, val2, val3, val4, default_value):
+        """
+
+        @param res:
+        @param host_index:
+        @param values_length:
+        @param time_index:
+        @param key:
+        @param data_length:
+        @param values1_index:
+        @param values2_index:
+        @param val1:
+        @param val2:
+        @param val3:
+        @param val4:
+        @param default_value:
+        @return:
+        """
         try:
             total_list = []
-            if(len(res) == 0):
+            if (len(res) == 0):
                 result_dict = {"success": 0, "result": []}
                 return result_dict
             tr = []
@@ -212,22 +262,21 @@ class MainReportBll(object):
             # fill default values in the list
             for i in range(values_length):
                 values.append(default_value)
-            # find the first host
+                # find the first host
             host = res[0][host_index]
-            make_list = lambda x: [
-                " - " if i == None or i == '' else str(i) for i in x]
             for i in range(len(res)):
                 li = make_list(res[i])
                 # IF ITS THE LAST RECORD OF THE INPUT
-                if(i == len(res) - 1):
+                if (i == len(res) - 1):
                 # if host are same
-                    if str(res[i][host_index]) == str(res[i - 1][host_index]) and str(res[i][time_index])[:16] == str(res[i - 1][time_index])[:16]:
+                    if str(res[i][host_index]) == str(res[i - 1][host_index]) and str(res[i][time_index])[:16] == str(
+                            res[i - 1][time_index])[:16]:
                         # if time is same till same minute
                         # fill the first value in the value list
                         values[int(res[i][key]) *
                                val1 + val2] = int(res[i][values1_index])
                         # fill the second value in the value list
-                        if(int(values2_index) >= 0):
+                        if (int(values2_index) >= 0):
                             values[int(res[i][key])
                                    * val3 + val4] = int(res[i][values2_index])
                         temp = li[:data_length] + values
@@ -238,7 +287,7 @@ class MainReportBll(object):
                         values[int(res[i][key]) *
                                val1 + val2] = int(res[i][values1_index])
                         # fill the second value in the value list
-                        if(int(values2_index) >= 0):
+                        if (int(values2_index) >= 0):
                             values[int(res[i][key])
                                    * val3 + val4] = int(res[i][values2_index])
                         temp = li[:data_length] + values
@@ -252,7 +301,7 @@ class MainReportBll(object):
                         values[int(res[i][key]) *
                                val1 + val2] = int(res[i][values1_index])
                         # fill the second value in the value list
-                        if(int(values2_index) >= 0):
+                        if (int(values2_index) >= 0):
                             values[int(res[i][key])
                                    * val3 + val4] = int(res[i][values2_index])
                     else:
@@ -260,7 +309,7 @@ class MainReportBll(object):
                         values[int(res[i][key]) *
                                val1 + val2] = int(res[i][values1_index])
                         # fill the second value in the value list
-                        if(int(values2_index) >= 0):
+                        if (int(values2_index) >= 0):
                             values[int(res[i][key])
                                    * val3 + val4] = int(res[i][values2_index])
                         temp = li[:data_length] + values
@@ -275,7 +324,7 @@ class MainReportBll(object):
                     values[int(
                         res[i][key]) * val1 + val2] = int(res[i][values1_index])
                     # fill the second value in the value list
-                    if(int(values2_index) >= 0):
+                    if (int(values2_index) >= 0):
                         values[int(res[i][key]) *
                                val3 + val4] = int(res[i][values2_index])
                     temp = li[:data_length] + values
@@ -295,8 +344,22 @@ class MainReportBll(object):
             result_dict["result"] = str(e)
             return result_dict
 
-#   Function to find Delta between Successive Values
-    def get_delta_for_values(self, inpt, host_index, data_length, values_length, default_value, is_append, off_value, port_index=-1):
+        #   Function to find Delta between Successive Values
+
+    def get_delta_for_values(self, inpt, host_index, data_length, values_length, default_value, is_append, off_value,
+                             port_index=-1):
+        """
+
+        @param inpt:
+        @param host_index:
+        @param data_length:
+        @param values_length:
+        @param default_value:
+        @param is_append:
+        @param off_value:
+        @param port_index:
+        @return:
+        """
         try:
             li = []
             result_list = []
@@ -308,7 +371,7 @@ class MainReportBll(object):
                 # make a deepcopy of the list
                 li = deepcopy(inpt[i])
                 # for first value ie i=0
-                if(i == 0):
+                if (i == 0):
                     # fill with 0 in li
                     for j in range(data_length, data_length + values_length):
                         if is_append == 1:
@@ -318,18 +381,18 @@ class MainReportBll(object):
                 # else if hosts are same
                 else:
                     if port_index != -1 and port_index != 0:
-                        if(inpt[i][port_index] == inpt[i - 1][port_index]):
+                        if (inpt[i][port_index] == inpt[i - 1][port_index]):
                             flag = 1
                         else:
                             flag = 0
                     else:
                         flag = 1
-                    if(inpt[i][host_index] == inpt[i - 1][host_index]) and flag == 1:
+                    if (inpt[i][host_index] == inpt[i - 1][host_index]) and flag == 1:
                     # fill with difference
                         for j in range(data_length, data_length + values_length):
-                            if(str(inpt[i][j]) == str(default_value)):
+                            if (str(inpt[i][j]) == str(default_value)):
                                 tmp = int(default_value)
-                            elif(str(inpt[i][j]) == str(off_value)):
+                            elif (str(inpt[i][j]) == str(off_value)):
                                 tmp = int(off_value)
                             elif (str(inpt[i - 1][j]) == str(default_value) or str(inpt[i - 1][j]) == str(off_value)):
                                 tmp = 0
@@ -341,16 +404,16 @@ class MainReportBll(object):
                                 li.append(int(tmp))
                             else:
                                 li[j] = int(tmp)
-                        # append to final result
+                                # append to final result
                     else:
                         for j in range(data_length, data_length + values_length):
                             if is_append == 1:
                                 li.append(int(default_value))
                             else:
                                 li[j] = int(default_value)
-                            # append to final result
+                                # append to final result
                 result_list.append(li)
-            # return result
+                # return result
             result_dict = {}
             result_dict["success"] = 0
             if port_index != -1:
@@ -367,6 +430,16 @@ class MainReportBll(object):
     # Function to form Default Data set like if values contain default data
     # value ie '1111111' then it will be replaced by 'Device Unreachable'
     def form_the_default_data(self, inpt, start_index, end_index, default_value, do_repeat, report_type=""):
+        """
+
+        @param inpt:
+        @param start_index:
+        @param end_index:
+        @param default_value:
+        @param do_repeat:
+        @param report_type:
+        @return:
+        """
         try:
             li = []
             result_list = []
@@ -377,10 +450,11 @@ class MainReportBll(object):
                 li = deepcopy(inpt[i])
                 count = 0
                 for j in range(start_index, end_index):
-                    if(str(li[j]) == str(default_value)):
+                    if (str(li[j]) == str(default_value)):
                         count = count + 1
-                    if count == (end_index - start_index) or ((report_type == "RSL" or report_type == "RSSI" or (report_type == 'CRC PHY' and count == 2)) and count != 0):
-                        if(do_repeat == 1):
+                    if count == (end_index - start_index) or ((report_type == "RSL" or report_type == "RSSI" or (
+                            report_type == 'CRC PHY' and count == 2)) and count != 0):
+                        if (do_repeat == 1):
                             for k in range(start_index, end_index):
                                 li[k] = "DEVICE WAS UNREACHABLE"
                             break
@@ -397,8 +471,15 @@ class MainReportBll(object):
             result_dict["result"] = str(e)
             return result_dict
 
-#   Function to get the description of report generated
+        #   Function to get the description of report generated
+
     def get_description(self, all_host, report_name):
+        """
+
+        @param all_host:
+        @param report_name:
+        @return:
+        """
         try:
             db = MySQLdb.connect(*SystemConfig.get_mysql_credentials())
             cursor = db.cursor()
@@ -424,7 +505,31 @@ class MainReportBll(object):
             return {"success": 1, "result": str(e)}
 
     # common and main function for all reports.. It will be called first.
-    def main_reporting_get_excel(self, date1, date2, time1, time2, all_host, report_type, column_user, device_type, all_group, view_type, i_display_start, i_display_length, s_search, sEcho, sSortDir_0, iSortCol_0, new_user_report_dict, username):
+    def main_reporting_get_excel(self, date1, date2, time1, time2, all_host, report_type, column_user, device_type,
+                                 all_group, view_type, i_display_start, i_display_length, s_search, sEcho, sSortDir_0,
+                                 iSortCol_0, new_user_report_dict, username):
+        """
+
+        @param date1:
+        @param date2:
+        @param time1:
+        @param time2:
+        @param all_host:
+        @param report_type:
+        @param column_user:
+        @param device_type:
+        @param all_group:
+        @param view_type:
+        @param i_display_start:
+        @param i_display_length:
+        @param s_search:
+        @param sEcho:
+        @param sSortDir_0:
+        @param iSortCol_0:
+        @param new_user_report_dict:
+        @param username:
+        @return:
+        """
         try:
             direct = ""
             dat1 = date1.replace("/", "-")
@@ -450,54 +555,54 @@ class MainReportBll(object):
             key_user = []
             data_report = {}
             data_report["success"] = "0"
-            if(result_columns["success"] == 0 or result_columns["success"] == "0"):
+            if (result_columns["success"] == 0 or result_columns["success"] == "0"):
                 # get columns name for both selected & non selected
                 column_value = result_columns["result"][0].split(",")
                 if result_columns["result"][1].split(",") != [""]:
                     column_value += result_columns["result"][1].split(",")
-                # get table column  names for both selected &  non selected
+                    # get table column  names for both selected &  non selected
                 column_key = result_columns["result"][2].split(";")
                 if result_columns["result"][3].split(";") != [""]:
                     column_key += result_columns["result"][3].split(";")
-                # column_key+=result_columns["result"][3].split(";")
+                    # column_key+=result_columns["result"][3].split(";")
                 # for i in range column in table if user selected the column
                 # then add in key_user
                 for i in range(len(column_user)):
-                    if(column_value.count(column_user[i]) >= 1):
+                    if (column_value.count(column_user[i]) >= 1):
                         index = column_value.index(column_user[i])
                         key_user.append(column_key[index])
-                # we use key_user for generating sql query only
+                    # we use key_user for generating sql query only
                 # but we use column_user for generating report headings
                 # here is code for special reports like Device
                 # Reachability,Traps,Clients,Configuration.
                 if (str(result_columns["result"][8]) == '1'):
                     different_report = 1
                     # generate method for network outage
-                    if(report_type.upper() == "DEVICE REACHABILITY" or report_type.upper() == "NETWORK OUTAGE"):
+                    if (report_type.upper() == "DEVICE REACHABILITY" or report_type.upper() == "NETWORK OUTAGE"):
                         # report_obj=UbrReportBll()
                         # outage_data=report_obj.get_total_data_network_outage(3000,date1,date2,time1,time2,all_group,all_host)
                         outage_data = get_outage(
                             3000, date1, date2, time1, time2, all_group, all_host)
-                        if(str(outage_data["success"]) == "0"):
+                        if (str(outage_data["success"]) == "0"):
                             inpt = deepcopy(outage_data["result"])
                         else:
                             return outage_data
-                    elif(report_type.upper() == "TRAP" or report_type.upper() == "EVENTS"):
+                    elif (report_type.upper() == "TRAP" or report_type.upper() == "EVENTS"):
                         # report_obj=UbrReportBll()
                         # trap_data=report_obj.get_total_data_trap(3000,date1,date2,time1,time2,all_group,all_host)
                         trap_data = get_total_data_trap(
                             3000, date1, date2, time1, time2, all_group, all_host)
-                        if(str(trap_data["success"]) == "0"):
+                        if (str(trap_data["success"]) == "0"):
                             inpt = deepcopy(trap_data["result"])
                         else:
                             return trap_data
-                    elif(report_type.upper() == "CLIENT" or report_type.upper() == "CLIENTS"):
+                    elif (report_type.upper() == "CLIENT" or report_type.upper() == "CLIENTS"):
                         client_data = client_data_ap()
-                        if(str(client_data["success"]) == "0"):
+                        if (str(client_data["success"]) == "0"):
                             inpt = deepcopy(client_data["result"])
                         else:
                             return client_data
-                    elif(report_type.upper() == "CONFIGURATION"):
+                    elif (report_type.upper() == "CONFIGURATION"):
                         configuration_data = get_configuration_details(
                             all_host.split(','))
                         return configuration_data
@@ -511,16 +616,18 @@ class MainReportBll(object):
                     # 1 . find the query dict corresponding to this report
                     query_dict = re.get_query_dict(
                         device_type, report_type, date_temp_1, date_temp_2, all_host)
-                    if(str(query_dict["success"]) == "0"):
+                    if (str(query_dict["success"]) == "0"):
                         # 2 . get the data for the report
                         # res_sql=re.get_sql_data(query_dict["result"])
-                        if(view_type == "data_table"):
+                        if (view_type == "data_table"):
                             dict_shelve = shelve.open(
                                 '/omd/sites/%s/share/check_mk/web/htdocs/download/%s.db' % (nms_instance,
-                                                                                            new_user_report_dict["user_id"]))
-                            dict_shelve_data = shelve.open('/omd/sites/%s/share/check_mk/web/htdocs/download/%s_data.db' %
-                                                           (nms_instance, new_user_report_dict["user_id"]))
-                            if("user_info_dict" in dict_shelve):
+                                                                                            new_user_report_dict[
+                                                                                                "user_id"]))
+                            dict_shelve_data = shelve.open(
+                                '/omd/sites/%s/share/check_mk/web/htdocs/download/%s_data.db' %
+                                (nms_instance, new_user_report_dict["user_id"]))
+                            if ("user_info_dict" in dict_shelve):
                                 user_report_dict = dict_shelve[
                                     "user_info_dict"]
                             else:
@@ -543,11 +650,11 @@ class MainReportBll(object):
                             res_sql = re.get_sql_data(
                                 query_dict["result"], date_temp_1, date_temp_2)
                         query_dict = query_dict["result"]
-                        if(str(res_sql["success"]) == "0"):
-                            if(view_type == "data_table"):
-                                if(res_sql["result"] == []):
-                                    # status={"success":0,"aaData":[],
-                                            #"sEcho":int(sEcho),"iTotalRecords":res_sql["iTotalRecords"],"iTotalDisplayRecords":res_sql["iTotalDisplayRecords"]}
+                        if (str(res_sql["success"]) == "0"):
+                            if (view_type == "data_table"):
+                                if (res_sql["result"] == []):
+                                # status={"success":0,"aaData":[],
+                                #"sEcho":int(sEcho),"iTotalRecords":res_sql["iTotalRecords"],"iTotalDisplayRecords":res_sql["iTotalDisplayRecords"]}
                                     status = {"success": 0, "aaData": [],
                                               "sEcho": 1, "iTotalRecords": 0, "iTotalDisplayRecords": 0}
                                     return status
@@ -560,58 +667,62 @@ class MainReportBll(object):
                                 data_report = res_sql["result"]
                         else:
                             return res_sql  # for exception
-                        # should we group the data like in RSSI
+                            # should we group the data like in RSSI
                         #######################################-----GROUP THE DATA
 
-                        if(str(query_dict["group_the_data"]) == "1"):
+                        if (str(query_dict["group_the_data"]) == "1"):
                             # get required variables for grouping
                             var = str(query_dict[
-                                      "group_the_data_variables"]).split(",")
+                                "group_the_data_variables"]).split(",")
                             # get_and_form_data_default(self,res,host_index,values_length,time_index,key,data_length,values1_index,values2_index):
-                            if(len(var) == 12):
+                            if (len(var) == 12):
                                 # 3. call function to group the data
                                 # return data_report
                                 res_group = re.get_and_form_data_default(data_report, int(var[0]), int(
-                                    var[1]), int(var[2]), int(var[3]), int(var[4]), int(var[5]), int(var[6]), int(var[7]), int(var[8]), int(var[9]), int(var[10]), int(var[11]))
-                                if(str(res_group["success"]) == "0"):
+                                    var[1]), int(var[2]), int(var[3]), int(var[4]), int(var[5]), int(var[6]),
+                                                                         int(var[7]), int(var[8]), int(var[9]),
+                                                                         int(var[10]), int(var[11]))
+                                if (str(res_group["success"]) == "0"):
                                     data_report = res_group["result"]
                                 else:
                                     return res_group  # for exception
-                        #######################################-----END GROUPING THE DATA
+                            #######################################-----END GROUPING THE DATA
                         #######################################-----FIND THE DELTA
                         if str(query_dict["find_delta"]) == "1":
                             # get_delta_for_values(self,inpt,host_index,data_length,values_length):
                             var_delta = str(
                                 query_dict["find_delta_variables"]).split(",")
-                            if(len(var_delta) == 7):
+                            if (len(var_delta) == 7):
                                 # 4 . find the delta
                                 # return data_report
                                 res_delta = re.get_delta_for_values(data_report, int(
-                                    var_delta[0]), int(var_delta[1]), int(var_delta[2]), int(var_delta[3]), int(var_delta[4]), int(var_delta[5]), int(var_delta[6]))
+                                    var_delta[0]), int(var_delta[1]), int(var_delta[2]), int(var_delta[3]),
+                                                                    int(var_delta[4]), int(var_delta[5]),
+                                                                    int(var_delta[6]))
                                 # return res_delta
-                                if(str(res_delta["success"]) == "0"):
+                                if (str(res_delta["success"]) == "0"):
                                     data_report = res_delta["result"]
                                 else:
                                     return res_delta  # for exception
-                        #######################################-----END DELTA
+                            #######################################-----END DELTA
                         #######################################-----FORM THE DEFAULT DATA
                         if str(query_dict["default_data"]) == "1":
                             # get_delta_for_values(self,inpt,host_index,data_length,values_length):
                             var_default = str(
                                 query_dict["default_data_variables"]).split(",")
-                            if(len(var_default) == 4):
+                            if (len(var_default) == 4):
                                 # 4 . find the delta
                                 res_default = re.form_the_default_data(data_report, int(var_default[0]), int(
                                     var_default[1]), int(var_default[2]), int(var_default[3]), report_type)
                                 # return res_default
-                                if(str(res_default["success"]) == "0"):
+                                if (str(res_default["success"]) == "0"):
                                     data_report = res_default["result"]
                                 else:
                                     return res_default  # for exception
-                        #######################################-----END DEFAULT DATA
+                                    #######################################-----END DEFAULT DATA
                     else:
                         return query_dict  # for exception
-                    # common algo for all special reports
+                        # common algo for all special reports
                     inpt = data_report
                 given = deepcopy(column_value)
                 req = deepcopy(key_user)
@@ -621,7 +732,7 @@ class MainReportBll(object):
                     for k in req:
                         li.append("0")
                     for j in given:
-                        if(req.count(j) >= 1):
+                        if (req.count(j) >= 1):
                             loc = given.index(j)
                             wloc = req.index(j)
                             temp = i[loc]
@@ -630,14 +741,14 @@ class MainReportBll(object):
                     outdata.append(li)
                 report_data_list = outdata
                 # if(data_report["success"]=="0"):
-                if(view_type == "data_table"):
-                    if(different_report == 0):
-                        if(str(sSortDir_0) == "asc"):
+                if (view_type == "data_table"):
+                    if (different_report == 0):
+                        if (str(sSortDir_0) == "asc"):
                             report_data_list2 = sorted(report_data_list, key=lambda report_data_list: report_data_list[
-                                                       int(iSortCol_0)], reverse=False)
+                                int(iSortCol_0)], reverse=False)
                         else:
                             report_data_list2 = sorted(report_data_list, key=lambda report_data_list:
-                                                       report_data_list[int(iSortCol_0)], reverse=True)
+                            report_data_list[int(iSortCol_0)], reverse=True)
                         if (str(s_search) != "" and s_search != "None" and s_search != "Null"):
                             report_data_list3 = []
                             for i in report_data_list2:
@@ -647,16 +758,19 @@ class MainReportBll(object):
                                         break
                             report_data_list2 = report_data_list3
 
-                        status = {"success": 0, "aaData": report_data_list2[int(i_display_start):int(i_display_start) + int(i_display_length)],
-                                  "sEcho": int(sEcho), "iTotalRecords": len(report_data_list2), "iTotalDisplayRecords": len(report_data_list2)}
+                        status = {"success": 0, "aaData": report_data_list2[
+                                                          int(i_display_start):int(i_display_start) + int(
+                                                              i_display_length)],
+                                  "sEcho": int(sEcho), "iTotalRecords": len(report_data_list2),
+                                  "iTotalDisplayRecords": len(report_data_list2)}
                         return status
                     else:
-                        if(str(sSortDir_0) == "asc"):
+                        if (str(sSortDir_0) == "asc"):
                             report_data_list2 = sorted(report_data_list, key=lambda report_data_list: report_data_list[
-                                                       int(iSortCol_0)], reverse=False)
+                                int(iSortCol_0)], reverse=False)
                         else:
                             report_data_list2 = sorted(report_data_list, key=lambda report_data_list:
-                                                       report_data_list[int(iSortCol_0)], reverse=True)
+                            report_data_list[int(iSortCol_0)], reverse=True)
                         if (str(s_search) != "" and s_search != "None" and s_search != "Null"):
                             report_data_list3 = []
                             for i in report_data_list2:
@@ -665,8 +779,11 @@ class MainReportBll(object):
                                         report_data_list3.append(i)
                                         break
                             report_data_list2 = report_data_list3
-                        status = {"success": 0, "aaData": report_data_list2[int(i_display_start):int(i_display_start) + int(i_display_length)],
-                                  "sEcho": int(sEcho), "iTotalRecords": len(report_data_list2), "iTotalDisplayRecords": len(report_data_list2)}
+                        status = {"success": 0, "aaData": report_data_list2[
+                                                          int(i_display_start):int(i_display_start) + int(
+                                                              i_display_length)],
+                                  "sEcho": int(sEcho), "iTotalRecords": len(report_data_list2),
+                                  "iTotalDisplayRecords": len(report_data_list2)}
                         return status
                 if view_type == "excel":
                     sheet_dict = {
@@ -721,6 +838,11 @@ class MainReportBll(object):
             return result_dict
 
     def get_excel_sheet(self, *params):
+        """
+
+        @param params:
+        @return:
+        """
         try:
             i = 4
             flag = 0
@@ -762,7 +884,7 @@ class MainReportBll(object):
             alignment.horz = xlwt.Alignment.HORZ_CENTER
             alignment.vert = xlwt.Alignment.VERT_CENTER
             style1.alignment = alignment  # Add Alignment to Style
-            xls_book = Workbook(encoding='ascii')
+            xls_book = xlwt.Workbook(encoding='ascii')
             for par in params:
                 sheet_dict = par
                 i = 4
@@ -782,10 +904,9 @@ class MainReportBll(object):
                 dat2 = date2.replace("/", "-")
                 # dat1 = dat1 + "(" + time1 + ")"
                 # dat2 = dat2 + "(" + time2 + ")"
-                name_report = main_title + "_from_" + str(dat1) + ' ' + str(time1) + ' to_' + str(dat2) + ' ' + str(time2) + "_excel.xls"
-                if data_report == []:
-                    continue
-                else:
+                name_report = main_title + "_from_" + str(dat1) + ' ' + str(time1) + ' to_' + str(dat2) + ' ' + str(
+                    time2) + "_excel.xls"
+                if data_report:
                     flag = 1
                 sheet_no = 1
                 xls_sheet = xls_book.add_sheet(
@@ -808,10 +929,10 @@ class MainReportBll(object):
                 for colx, value in enumerate(headings):
                     xls_sheet.write(i - 1, colx, value, heading_xf)
                 for row in data_report:
-                    for k in range(len(row)):
+                    for idx, elem in enumerate(row):
                         width = 5000
-                        xls_sheet.write(i, k, str(row[k]), style1)
-                        xls_sheet.col(k).width = width
+                        xls_sheet.write(i, idx, str(elem), style1)
+                        xls_sheet.col(idx).width = width
                     if i == 60000:
                         i = 4
                         sheet_no += 1
@@ -834,7 +955,6 @@ class MainReportBll(object):
                             True)  # if user does unfreeze, don't leave a split there
                         for colx, value in enumerate(headings):
                             xls_sheet.write(i - 1, colx, value, heading_xf)
-
                     i = i + 1
             if flag == 0:
                 result_dict = {"success": "1", "result": "data not available"}
@@ -849,6 +969,11 @@ class MainReportBll(object):
             return result_dict
 
     def get_csv_file(self, *params):
+        """
+
+        @param params:
+        @return:
+        """
         try:
             for par in params:
                 sheet_dict = par
@@ -873,9 +998,7 @@ class MainReportBll(object):
                 dat1 = dat1 + "(" + time1 + ")"
                 dat2 = dat2 + "(" + time2 + ")"
                 name_report = main_title + "_" + dat1 + dat2 + "_csv.csv"
-                if data_report == []:
-                    continue
-                else:
+                if data_report:
                     flag = 1
                 ofile = open(path_report + name_report, "wb")
                 writer = csv.writer(ofile, delimiter=',', quotechar='"')
@@ -906,15 +1029,24 @@ class MainReportBll(object):
             if flag == 0:
                 result_dict = {"success": "1", "result": "data not available"}
                 return result_dict
-            # xls_book.save(path_report+name_report)
+                # xls_book.save(path_report+name_report)
             result_dict = {"success": "0", "result": "report successfully generated", "file":
-                           name_report, "filename": name_report, "path_report": path_report + "/" + name_report}
+                name_report, "filename": name_report, "path_report": path_report + "/" + name_report}
             return result_dict
         except Exception, e:
             result_dict = {"success": "1", "result": str(e)}
             return result_dict
 
     def pagination_create_table(self, query_dict, i_display_start, i_display_length, s_search, sEcho):
+        """
+
+        @param query_dict:
+        @param i_display_start:
+        @param i_display_length:
+        @param s_search:
+        @param sEcho:
+        @return:
+        """
         a_columns = query_dict["columns"].split(",")
         s_index_column = a_columns[0]  # "ap.timestamp";
         s_table = query_dict["table_name"]  # " ap25_statisticsTable as ap "
@@ -947,7 +1079,7 @@ class MainReportBll(object):
                         a_columns[i], MySQLdb.escape_string(s_search))
                 s_where = s_where[:-3]
                 s_where += ")"
-            # query to get data according to searching condition given by user
+                # query to get data according to searching condition given by user
             # i_filtered_total= number of total records for searching condition
             cursor = db.cursor()
             sql_query1 = "SELECT SQL_CALC_FOUND_ROWS %s FROM %s %s %s %s %s" % (
@@ -957,12 +1089,12 @@ class MainReportBll(object):
             res_filter = cursor.fetchone()
             cursor.close()
             # if no record found
-            if(res_filter == ()):
+            if (res_filter == ()):
                 output = {
                     "success": 0,
                     "sEcho": int(sEcho),
-                    "iTotalRecords": i_total,  # i_total,#i_filtered_total,#i_total,
-                    "iTotalDisplayRecords": 0,  # i_filtered_total,
+                    "iTotalRecords": i_total, # i_total,#i_filtered_total,#i_total,
+                    "iTotalDisplayRecords": 0, # i_filtered_total,
                     "aaData": [],
                     "result": [],
                 }
@@ -974,7 +1106,7 @@ class MainReportBll(object):
             if (i_display_start != "None" and i_display_length != '-1'):
                 s_limit = "LIMIT %s, %s" % (MySQLdb.escape_string(
                     i_display_start), MySQLdb.escape_string(i_display_length))
-            # query to get data according to searching condition given by user
+                # query to get data according to searching condition given by user
             # but with limit like 0,10 or 10,10
             cursor = db.cursor()
             sql_query2 = "SELECT SQL_CALC_FOUND_ROWS %s FROM %s %s %s %s %s %s" % (
@@ -983,42 +1115,42 @@ class MainReportBll(object):
             r_result = cursor.fetchall()
             cursor.close()
             result_data = []
-            if(r_result != ()):
+            if (r_result != ()):
                 for a_row in r_result:
                     row = []
                     for i in a_row:
                         row.append(str(i))
                     result_data.append(list(row))
-            if(result_data == []):
+            if (result_data == []):
                 output = {
                     "success": 0,
                     "result": [],
                     "sEcho": int(sEcho),
-                    "iTotalRecords": i_total,  # i_total,#i_filtered_total,#i_total,
-                    "iTotalDisplayRecords": 0,  # i_filtered_total,
+                    "iTotalRecords": i_total, # i_total,#i_filtered_total,#i_total,
+                    "iTotalDisplayRecords": 0, # i_filtered_total,
                     "aaData": []
                 }
                 # Encode Data into JSON
                 return output
-            # query to get number of total records
+                # query to get number of total records
             output = {
                 "success": 0,
                 "sEcho": int(sEcho),
-                "iTotalRecords": int(i_total),  # i_filtered_total,#i_total,
-                "iTotalDisplayRecords": int(i_filtered_total),  # i_filtered_total,
-#			"aaData":result_data,
-"result": result_data
+                "iTotalRecords": int(i_total), # i_filtered_total,#i_total,
+                "iTotalDisplayRecords": int(i_filtered_total), # i_filtered_total,
+                #			"aaData":result_data,
+                "result": result_data
             }
             # Encode Data into JSON
             # req.write(JSONEncoder().encode(output))
             return output
         except Exception, e:
-#		return {"succcess" : 1 , "result":str(e) }
+        #		return {"succcess" : 1 , "result":str(e) }
             output = {
                 "success": 0,
                 "sEcho": int(sEcho),
-                "iTotalRecords": 0,  # i_total,#i_filtered_total,#i_total,
-                "iTotalDisplayRecords": 0,  # i_filtered_total,
+                "iTotalRecords": 0, # i_total,#i_filtered_total,#i_total,
+                "iTotalDisplayRecords": 0, # i_filtered_total,
                 "aaData": [],
                 "result": [],
                 "exception": str(e)
@@ -1030,8 +1162,31 @@ class MainReportBll(object):
             db.close()
 
     def trap_main_reporting_get_excel(
-        self, date1, date2, time1, time2, all_host, report_type, device_type, all_group, view_type, i_display_start,
-            i_display_length, s_search, sEcho, sSortDir_0, iSortCol_0, new_user_report_dict, username, hostgroup_id_list):
+            self, date1, date2, time1, time2, all_host, report_type, device_type, all_group, view_type, i_display_start,
+            i_display_length, s_search, sEcho, sSortDir_0, iSortCol_0, new_user_report_dict, username,
+            hostgroup_id_list):
+        """
+
+        @param date1:
+        @param date2:
+        @param time1:
+        @param time2:
+        @param all_host:
+        @param report_type:
+        @param device_type:
+        @param all_group:
+        @param view_type:
+        @param i_display_start:
+        @param i_display_length:
+        @param s_search:
+        @param sEcho:
+        @param sSortDir_0:
+        @param iSortCol_0:
+        @param new_user_report_dict:
+        @param username:
+        @param hostgroup_id_list:
+        @return:
+        """
         try:
             if device_type != "":
                 db = MySQLdb.connect(*SystemConfig.get_mysql_credentials())
@@ -1064,28 +1219,28 @@ class MainReportBll(object):
             trap_data = trap_get_total_data_trap(
                 report_type, 3000, date1, date2, time1, time2, all_group,
                 all_host, hostgroup_id_list, device_type)
-            if(str(trap_data["success"]) == "0" or trap_data["success"] == 0):
+            if (str(trap_data["success"]) == "0" or trap_data["success"] == 0):
                 report_data_dict = deepcopy(trap_data["result"])
             else:
                 return trap_data  # in case of error return
-            if(view_type == "data_table"):
+            if (view_type == "data_table"):
                 report_data_list = []
                 if report_type == "all":
                     for table in report_data_dict:
                         report_data_list += report_data_dict[table]
                 else:
                     report_data_list = report_data_dict
-                if(trap_data["result"] == [] or report_data_list == []):
+                if (trap_data["result"] == [] or report_data_list == []):
                     status = {"success": 0, "aaData": [],
                               "sEcho": 1, "iTotalRecords": 0, "iTotalDisplayRecords": 0}
                     return status
-                # report_data_list=report_data_list#trap_data["result"]
-                if(str(sSortDir_0) == "asc"):
+                    # report_data_list=report_data_list#trap_data["result"]
+                if (str(sSortDir_0) == "asc"):
                     report_data_list2 = sorted(report_data_list, key=lambda report_data_list:
-                                               report_data_list[int(iSortCol_0)], reverse=False)
+                    report_data_list[int(iSortCol_0)], reverse=False)
                 else:
                     report_data_list2 = sorted(report_data_list, key=lambda report_data_list:
-                                               report_data_list[int(iSortCol_0)], reverse=True)
+                    report_data_list[int(iSortCol_0)], reverse=True)
                 if (str(s_search) != "" and s_search != "None" and s_search != "Null"):
                     report_data_list3 = []
                     for i in report_data_list2:
@@ -1094,8 +1249,10 @@ class MainReportBll(object):
                                 report_data_list3.append(i)
                                 break
                     report_data_list2 = report_data_list3
-                status = {"success": 0, "aaData": report_data_list2[int(i_display_start):int(i_display_start) + int(i_display_length)],
-                          "sEcho": int(sEcho), "iTotalRecords": len(report_data_list2), "iTotalDisplayRecords": len(report_data_list2)}
+                status = {"success": 0, "aaData": report_data_list2[
+                                                  int(i_display_start):int(i_display_start) + int(i_display_length)],
+                          "sEcho": int(sEcho), "iTotalRecords": len(report_data_list2),
+                          "iTotalDisplayRecords": len(report_data_list2)}
                 return status
             if report_type != "all":
                 report_data_list = report_data_dict
@@ -1104,7 +1261,9 @@ class MainReportBll(object):
                         "sheet_name": "Event_Report",
                         "main_title": "Event Report(%s)" % (report_type[0].upper() + report_type[1:]),
                         "second_title": device_name,
-                        "headings": ["Timestamp", "IP Address", "Host Alias", "Hostgroup", "Device Type", "Severity", "Event Name", "Event ID", "Event Type", "Manage Object ID", "Manage Object Name", "Component ID", "Description"],
+                        "headings": ["Timestamp", "IP Address", "Host Alias", "Hostgroup", "Device Type", "Severity",
+                                     "Event Name", "Event ID", "Event Type", "Manage Object ID", "Manage Object Name",
+                                     "Component ID", "Description"],
                         "path_report": '/omd/sites/%s/share/check_mk/web/htdocs/download/' % nms_instance,
                         "name_report": "event_report.xls",
                         "data_report": report_data_list,
@@ -1125,7 +1284,9 @@ class MainReportBll(object):
                         "sheet_name": "Event_Report",
                         "main_title": "Event Report(%s)" % (report_type[0].upper() + report_type[1:]),
                         "second_title": device_name,
-                        "headings": ["Timestamp", "IP Address", "Host Alias", "Hostgroup", "Device Type", "Severity", "Event Name", "Event ID", "Event Type", "Manage Object ID", "Manage Object Name", "Component ID", "Description"],
+                        "headings": ["Timestamp", "IP Address", "Host Alias", "Hostgroup", "Device Type", "Severity",
+                                     "Event Name", "Event ID", "Event Type", "Manage Object ID", "Manage Object Name",
+                                     "Component ID", "Description"],
                         "path_report": '/omd/sites/%s/share/check_mk/web/htdocs/download/' % nms_instance,
                         "name_report": "event_report.csv",
                         "data_report": report_data_list,
@@ -1148,7 +1309,9 @@ class MainReportBll(object):
                         "sheet_name": "Event_Report_current",
                         "main_title": "Event Report(%s)" % (report_type[0].upper() + report_type[1:]),
                         "second_title": device_name,
-                        "headings": ["Timestamp", "IP Address", "Host Alias", "Hostgroup", "Device Type", "Severity", "Event Name", "Event ID", "Event Type", "Manage Object ID", "Manage Object Name", "Component ID", "Description"],
+                        "headings": ["Timestamp", "IP Address", "Host Alias", "Hostgroup", "Device Type", "Severity",
+                                     "Event Name", "Event ID", "Event Type", "Manage Object ID", "Manage Object Name",
+                                     "Component ID", "Description"],
                         "path_report": '/omd/sites/%s/share/check_mk/web/htdocs/download/' % nms_instance,
                         "name_report": "event_report.xls",
                         "data_report": report_data_dict["current"],
@@ -1161,7 +1324,9 @@ class MainReportBll(object):
                         "sheet_name": "Event_Report_clear",
                         "main_title": "Event Report(%s)" % (report_type[0].upper() + report_type[1:]),
                         "second_title": device_name,
-                        "headings": ["Timestamp", "IP Address", "Host Alias", "Hostgroup", "Device Type", "Severity", "Event Name", "Event ID", "Event Type", "Manage Object ID", "Manage Object Name", "Component ID", "Description"],
+                        "headings": ["Timestamp", "IP Address", "Host Alias", "Hostgroup", "Device Type", "Severity",
+                                     "Event Name", "Event ID", "Event Type", "Manage Object ID", "Manage Object Name",
+                                     "Component ID", "Description"],
                         "path_report": '/omd/sites/%s/share/check_mk/web/htdocs/download/' % nms_instance,
                         "name_report": "event_report.xls",
                         "data_report": report_data_dict["clear"],
@@ -1174,7 +1339,9 @@ class MainReportBll(object):
                         "sheet_name": "Event_Report_history",
                         "main_title": "Event Report(%s)" % (report_type[0].upper() + report_type[1:]),
                         "second_title": device_name,
-                        "headings": ["Timestamp", "IP Address", "Host Alias", "Hostgroup", "Device Type", "Severity", "Event Name", "Event ID", "Event Type", "Manage Object ID", "Manage Object Name", "Component ID", "Description"],
+                        "headings": ["Timestamp", "IP Address", "Host Alias", "Hostgroup", "Device Type", "Severity",
+                                     "Event Name", "Event ID", "Event Type", "Manage Object ID", "Manage Object Name",
+                                     "Component ID", "Description"],
                         "path_report": '/omd/sites/%s/share/check_mk/web/htdocs/download/' % nms_instance,
                         "name_report": "event_report.xls",
                         "data_report": report_data_dict["history"],
@@ -1196,7 +1363,9 @@ class MainReportBll(object):
                         "sheet_name": "Event_Report_current",
                         "main_title": "Event Report(%s)" % (report_type[0].upper() + report_type[1:]),
                         "second_title": device_name,
-                        "headings": ["Timestamp", "IP Address", "Host Alias", "Hostgroup", "Device Type", "Severity", "Event Name", "Event ID", "Event Type", "Manage Object ID", "Manage Object Name", "Component ID", "Description"],
+                        "headings": ["Timestamp", "IP Address", "Host Alias", "Hostgroup", "Device Type", "Severity",
+                                     "Event Name", "Event ID", "Event Type", "Manage Object ID", "Manage Object Name",
+                                     "Component ID", "Description"],
                         "path_report": '/omd/sites/%s/share/check_mk/web/htdocs/download/' % nms_instance,
                         "name_report": "event_report.csv",
                         "data_report": report_data_dict["current"],
@@ -1209,7 +1378,9 @@ class MainReportBll(object):
                         "sheet_name": "Event_Report_clear",
                         "main_title": "Event Report(%s)" % (report_type[0].upper() + report_type[1:]),
                         "second_title": device_name,
-                        "headings": ["Timestamp", "IP Address", "Host Alias", "Hostgroup", "Device Type", "Severity", "Event Name", "Event ID", "Event Type", "Manage Object ID", "Manage Object Name", "Component ID", "Description"],
+                        "headings": ["Timestamp", "IP Address", "Host Alias", "Hostgroup", "Device Type", "Severity",
+                                     "Event Name", "Event ID", "Event Type", "Manage Object ID", "Manage Object Name",
+                                     "Component ID", "Description"],
                         "path_report": '/omd/sites/%s/share/check_mk/web/htdocs/download/' % nms_instance,
                         "name_report": "event_report.csv",
                         "data_report": report_data_dict["clear"],
@@ -1222,7 +1393,9 @@ class MainReportBll(object):
                         "sheet_name": "Event_Report_history",
                         "main_title": "Event Report(%s)" % (report_type[0].upper() + report_type[1:]),
                         "second_title": device_name,
-                        "headings": ["Timestamp", "IP Address", "Host Alias", "Hostgroup", "Device Type", "Severity", "Event Name", "Event ID", "Event Type", "Manage Object ID", "Manage Object Name", "Component ID", "Description"],
+                        "headings": ["Timestamp", "IP Address", "Host Alias", "Hostgroup", "Device Type", "Severity",
+                                     "Event Name", "Event ID", "Event Type", "Manage Object ID", "Manage Object Name",
+                                     "Component ID", "Description"],
                         "path_report": '/omd/sites/%s/share/check_mk/web/htdocs/download/' % nms_instance,
                         "name_report": "event_report.csv",
                         "data_report": report_data_dict["history"],
@@ -1245,166 +1418,21 @@ class MainReportBll(object):
             return result_dict
 
 
-#   First Function for Device Reachability calculation
-def main_outage(result_tuple, end_date):
-    try:
-        count = 1
-        is_date = 0
-        main_date = ''
-        main_ip = ''
-        main_list = []
-        uptime = None
-        downtime = None
-        prev_value = ''
-        temp_temp = []
-        for tpl in result_tuple:
-            count += 1
-            tpl_temp = tpl
-            temp_ip = tpl[4]
-            temp_date = tpl[2]
-            temp_value = tpl[0]
-            if temp_ip == main_ip:
-                if temp_date.month > main_date.month or temp_date.day > main_date.day:
-                    count += 1
-
-                    is_date = 1
-                else:
-                    if prev_value == '50002':
-                        if uptime == None:
-                            uptime = (temp_date - main_date)
-                        else:
-                            uptime += (temp_date - main_date)
-
-                    elif prev_value == '50001':
-                        if downtime == None:
-                            downtime = (temp_date - main_date)
-                        else:
-                            downtime += (temp_date - main_date)
-                    count += 1
-                    main_date = temp_date  # print "jump1"
-
-            else:
-                is_new = 1
-
-            if is_new:
-                if prev_value != '':
-                    is_date = 1
-                else:
-                    main_date = temp_date
-                main_ip = temp_ip
-                is_new = 0
-
-            if is_date:
-                if uptime == None or downtime == None:
-                    mid_date = datetime(main_date.year,
-                                        main_date.month, main_date.day, 23, 59, 59)
-                    delta = mid_date - main_date
-                    if prev_value == '50002':
-                        uptime = delta
-                    elif prev_value == '50001':
-                        downtime = delta
-                    count += 1
-                else:
-                    mid_date = datetime(main_date.year,
-                                        main_date.month, main_date.day, 23, 59, 59)
-                    delta = mid_date - main_date
-                    if prev_value == '50002':
-                        uptime += delta
-                    elif prev_value == '50001':
-                        downtime += delta
-                    count += 1
-
-                main_list.append([main_date, tpl_temp[4],
-                                 tpl_temp[5], tpl_temp[6], uptime, downtime])
-                uptime = None
-                downtime = None
-
-#                    day_diff=(temp_date-main_date).days
-                # day_diff = round(float(d.seconds + d.days *
-                # 86400)/float(86400))
-                day_diff = temp_date.day - main_date.day
-                if day_diff > 1:
-                    for i in range(1, day_diff):
-                        leftout_date = main_date + timedelta(days=i)
-                        if prev_value == '50002':
-                            main_list.append([leftout_date, tpl_temp[4],
-                                             tpl_temp[5], tpl_temp[6], timedelta(0, 86399), None])
-                        elif prev_value == '50001':
-                            main_list.append([leftout_date, tpl_temp[4],
-                                             tpl_temp[5], tpl_temp[6], None, timedelta(0, 86399)])
-                    delta = temp_date - leftout_date
-                    if prev_value == '50002':
-                        if uptime == None:
-                            uptime = delta
-                        else:
-                            uptime += delta
-                    elif prev_value == '50001':
-                        if downtime == None:
-                            downtime = delta
-                        else:
-                            downtime += delta
-                else:
-                    mid_date = datetime(temp_date.year,
-                                        temp_date.month, temp_date.day, 00, 00, 00)
-                    delta = temp_date - mid_date
-                    if prev_value == '50002':
-                        uptime = delta
-                    elif prev_value == '50001':
-                        downtime = delta
-                    count += 1
-
-                main_date = temp_date
-                is_date = 0
-
-            prev_value = temp_value
-        ############################# outside loop
-        if uptime == None or downtime == None:
-            mid_date = datetime(
-                main_date.year, main_date.month, main_date.day, 23, 59, 59)
-            delta = mid_date - main_date
-            if prev_value == '50002':
-                uptime = delta
-            elif prev_value == '50001':
-                downtime = delta
-        main_list.append([main_date, tpl_temp[4], tpl_temp[5],
-                         tpl_temp[6], uptime, downtime])
-        day_diff = (end_date - main_date).days  # temp_date.day-main_date.day
-        if day_diff > 1:
-            for i in range(1, day_diff + 1):
-                leftout_date = main_date + timedelta(days=i)
-                if prev_value == '50002':
-                    main_list.append([leftout_date, tpl_temp[4],
-                                     tpl_temp[5], tpl_temp[6], timedelta(0, 86399), None])
-                elif prev_value == '50001':
-                    main_list.append([leftout_date, tpl_temp[4],
-                                     tpl_temp[5], tpl_temp[6], None, timedelta(0, 86399)])
-            main_date = leftout_date
-        day_diff = end_date.day - main_date.day
-        if day_diff > 1:
-            leftout_date = main_date + timedelta(days=1)
-            if prev_value == '50002':
-                main_list.append([leftout_date, tpl_temp[4], tpl_temp[
-                                 5], tpl_temp[6], timedelta(0, 86399), None])
-            elif prev_value == '50001':
-                main_list.append([leftout_date, tpl_temp[4], tpl_temp[
-                                 5], tpl_temp[6], None, timedelta(0, 86399)])
-        main_dict = {}
-        main_dict['success'] = 0
-        main_dict['result'] = main_list
-        main_dict['outage'] = "main_outage"
-        return main_dict
-    except Exception, e:
-        main_dict = {}
-        main_dict['success'] = 1
-        main_dict['result'] = str(e)
-        return main_dict
-
-#   Second Function for Device Reachability calculation
-
-
+# Function for Device Reachability final calculation
+# MainOutage class has main logic for device reachablity
 def get_outage(no_of_devices, date1, date2, time1, time2, all_group, all_host):
+    """
+
+    @param no_of_devices:
+    @param date1:
+    @param date2:
+    @param time1:
+    @param time2:
+    @param all_group:
+    @param all_host:
+    @return:
+    """
     try:
-        # conn = MySQLdb.connect ("localhost","root","root","nmsp")
         conn = MySQLdb.connect(*SystemConfig.get_mysql_credentials())
         cursor = conn.cursor()
         date1 = date1.replace("/", "-")
@@ -1426,7 +1454,8 @@ def get_outage(no_of_devices, date1, date2, time1, time2, all_group, all_host):
 		join ( select host_id,host_name,ip_address,host_alias from hosts ) as host on go16.agent_id=host.ip_address \
 		INNER JOIN (select host_id,hostgroup_id from hosts_hostgroups) as  hosts_hostgroups ON hosts_hostgroups.host_id = host.host_id  \
 		INNER JOIN (select hostgroup_id , hostgroup_name from hostgroups) as  hostgroups ON hostgroups.hostgroup_id = hosts_hostgroups.hostgroup_id \
-		where host.host_id='%s' and go16.timestamp>='%s' and go16.timestamp<='%s' order by timestamp" % (j, start_date, end_date)
+		where host.host_id='%s' and go16.timestamp>='%s' and go16.timestamp<='%s' order by timestamp" % (
+            j, start_date, end_date)
             cursor.execute(sel_query)
             result = cursor.fetchall()
 
@@ -1443,7 +1472,7 @@ def get_outage(no_of_devices, date1, date2, time1, time2, all_group, all_host):
                     start_date, "%Y-%m-%d %H:%M:%S")  # status_result[0][2]
                 t_date = t_date.replace(hour=0, minute=0, second=0)
                 t_list = ((status_result[0][0], status_result[0][1], t_date, status_result[0][3], status_result[0][
-                          4], status_result[0][5], status_result[0][6]),)
+                    4], status_result[0][5], status_result[0][6]),)
                 result = t_list + result
             elif status_result != ():
                 # t_date=status_result[0][2]
@@ -1451,14 +1480,13 @@ def get_outage(no_of_devices, date1, date2, time1, time2, all_group, all_host):
                     start_date, "%Y-%m-%d %H:%M:%S")  # status_result[0][2]
                 t_date = t_date.replace(hour=0, minute=0, second=0)
                 t_list = ((status_result[0][0], status_result[0][1], t_date, status_result[0][3], status_result[0][
-                          4], status_result[0][5], status_result[0][6]),)
+                    4], status_result[0][5], status_result[0][6]),)
                 result = t_list
 
             m = MainOutage(result, datetime.strptime(end_date, "%Y-%m-%d %H:%M:%S"), datetime.strptime(
-                    start_date, "%Y-%m-%d %H:%M:%S"))
+                start_date, "%Y-%m-%d %H:%M:%S"))
             temp_res = m.get_outage()
-            # temp_res = main_outage(
-            #     result, datetime.strptime(end_date, "%Y-%m-%d %H:%M:%S"))
+
             if str(temp_res['success']) == "0":
                 li_res = temp_res['result']
                 tr = []
@@ -1472,16 +1500,14 @@ def get_outage(no_of_devices, date1, date2, time1, time2, all_group, all_host):
                     else:
                         downtime = i[-1].seconds
                     total = uptime + downtime
+
                     if total != 0:
                         i[0] = str(i[0])[:11]
-                        i[-2] = int(round(float(uptime) * 100 / float(
-                            total)))  # (uptime*100)/total # int(round(float(a)*100/float(a+b)))
-                        i[-1] = int(round(float(downtime) *
-                                    100 / float(total)))  # (downtime*100)/total
-                        # if int(i[-2])+int(i[-1])!=100:
-                        #    i[-2]=int(i[-2])+1
+                        i[-2] = round((float(uptime) * 100 / float(total)), 2)
+                        i[-1] = round((float(downtime) * 100 / float(total)), 2)
+
                         tr.append(i)
-                        #[leftout_date,main_ip,tpl_temp[4],tpl_temp[5],tpl_temp[6],None,timedelta(0, 86399)])
+
                         main_result.append(i)
         result_dict = {}
         result_dict['success'] = 0
@@ -1497,6 +1523,17 @@ def get_outage(no_of_devices, date1, date2, time1, time2, all_group, all_host):
 
 # TOTAL TRAP DATA FOR A GIVEN DATE PERIOD BY SERVITY
 def get_total_data_trap(no_of_devices, date1, date2, time1, time2, all_group, all_host):
+    """
+
+    @param no_of_devices:
+    @param date1:
+    @param date2:
+    @param time1:
+    @param time2:
+    @param all_group:
+    @param all_host:
+    @return:
+    """
     try:
         conn = MySQLdb.connect(*SystemConfig.get_mysql_credentials())
         cursor = conn.cursor()
@@ -1524,7 +1561,7 @@ def get_total_data_trap(no_of_devices, date1, date2, time1, time2, all_group, al
 			 order by  ta.timestamp,hosts.host_name,ta.serevity " % (date_temp1, date_temp2, host_data)
         cursor.execute(query)
         res = cursor.fetchall()
-        if(len(res) == 0):
+        if (len(res) == 0):
             return result_dict
         length = len(res) - 1
         ls = []
@@ -1539,7 +1576,7 @@ def get_total_data_trap(no_of_devices, date1, date2, time1, time2, all_group, al
             group_name = res[i][5]
             ls.append(group_name)
             lst = [0, 0, 0, 0, 0, 0]
-            while(i < length and str(res[i][1]) == str(res[i + 1][1]) and str(res[i][0]) == str(res[i + 1][0])):
+            while (i < length and str(res[i][1]) == str(res[i + 1][1]) and str(res[i][0]) == str(res[i + 1][0])):
                 lst[int(res[i][4])] = int(res[i][3])
                 i = i + 1
             lst[int(res[i][4])] = int(res[i][3])
@@ -1576,7 +1613,22 @@ def get_total_data_trap(no_of_devices, date1, date2, time1, time2, all_group, al
         return result_dict
 
 
-def trap_get_total_data_trap(report_type, no_of_devices, date1, date2, time1, time2, all_group, all_host, hostgroup_id_list, device_type):
+def trap_get_total_data_trap(report_type, no_of_devices, date1, date2, time1, time2, all_group, all_host,
+                             hostgroup_id_list, device_type):
+    """
+
+    @param report_type:
+    @param no_of_devices:
+    @param date1:
+    @param date2:
+    @param time1:
+    @param time2:
+    @param all_group:
+    @param all_host:
+    @param hostgroup_id_list:
+    @param device_type:
+    @return:
+    """
     try:
         conn = MySQLdb.connect(*SystemConfig.get_mysql_credentials())
         cursor = conn.cursor()
@@ -1591,15 +1643,13 @@ def trap_get_total_data_trap(report_type, no_of_devices, date1, date2, time1, ti
         i = 0
         ls = []
         tr = []
-        make_list = lambda x: [
-            " - " if i == None or i == '' else str(i) for i in x]
         result_dict = {}
         result_dict["success"] = 0
         result_dict["result"] = tr
         host_data = str(
             all_host.split(',')).replace('[', '(').replace(']', ')')
         table_dict = {"clear": "trap_alarm_clear", "current":
-                      "trap_alarm_current", "history": "trap_alarms"}
+            "trap_alarm_current", "history": "trap_alarms"}
         if device_type != "":
             device_type = "AND hosts.device_type_id='%s'" % (device_type)
         else:
@@ -1617,7 +1667,8 @@ INNER JOIN device_type ON device_type.device_type_id = hosts.device_type_id \
 INNER JOIN hosts_hostgroups ON hosts_hostgroups.host_id = hosts.host_id \
 INNER JOIN hostgroups ON hostgroups.hostgroup_id = hosts_hostgroups.hostgroup_id  and hostgroups.hostgroup_id IN (%s) \
 where  ta.timestamp between '%s' AND '%s' AND hosts.host_id IN %s %s \
-order by  ta.timestamp desc ,device_type.device_name,hosts.host_name,ta.serevity" % (table_name, ','.join(hostgroup_id_list), date_temp1, date_temp2, host_data, device_type)
+order by  ta.timestamp desc ,device_type.device_name,hosts.host_name,ta.serevity" % (
+                table_name, ','.join(hostgroup_id_list), date_temp1, date_temp2, host_data, device_type)
 
             # query="SELECT date(ta.timestamp) ,hosts.host_alias,hosts.ip_address,count(ta.trap_event_id),ta.serevity,hostgroups.hostgroup_name\
             #	FROM %s as ta join (select host_name,host_id,ip_address,host_alias,device_type_id from hosts ) as hosts on hosts.ip_address=ta.agent_id\
@@ -1636,7 +1687,8 @@ INNER JOIN device_type ON device_type.device_type_id = hosts.device_type_id \
 INNER JOIN hosts_hostgroups ON hosts_hostgroups.host_id = hosts.host_id \
 INNER JOIN hostgroups ON hostgroups.hostgroup_id = hosts_hostgroups.hostgroup_id and hostgroups.hostgroup_id IN (%s) \
 where  ta.timestamp between '%s' AND '%s' %s \
-order by ta.timestamp desc,device_type.device_name,hosts.host_name,ta.serevity " % (table_name, ','.join(hostgroup_id_list), date_temp1, date_temp2, device_type)
+order by ta.timestamp desc,device_type.device_name,hosts.host_name,ta.serevity " % (
+                table_name, ','.join(hostgroup_id_list), date_temp1, date_temp2, device_type)
 
             # query="SELECT date(ta.timestamp) ,hosts.host_alias,hosts.ip_address,count(ta.trap_event_id),ta.serevity,hostgroups.hostgroup_name\
             # FROM %s as ta join (select host_name,host_id,ip_address,host_alias,device_type_id from hosts ) as hosts on hosts.ip_address=ta.agent_id\
@@ -1648,7 +1700,7 @@ order by ta.timestamp desc,device_type.device_name,hosts.host_name,ta.serevity "
             cursor.execute(query)
             res = cursor.fetchall()
             conn.close()
-            if(len(res) == 0):
+            if (len(res) == 0):
                 return result_dict
             tr = []
             for row in res:
@@ -1669,15 +1721,16 @@ INNER JOIN device_type ON device_type.device_type_id = hosts.device_type_id \
 INNER JOIN hosts_hostgroups ON hosts_hostgroups.host_id = hosts.host_id \
 INNER JOIN hostgroups ON hostgroups.hostgroup_id = hosts_hostgroups.hostgroup_id  and hostgroups.hostgroup_id IN (%s) \
 where  ta.timestamp between '%s' AND '%s' AND hosts.host_id IN %s %s \
-order by  ta.timestamp desc ,device_type.device_name,hosts.host_name,ta.serevity" % (table_name, ','.join(hostgroup_id_list), date_temp1, date_temp2, host_data, device_type)
+order by  ta.timestamp desc ,device_type.device_name,hosts.host_name,ta.serevity" % (
+                    table_name, ','.join(hostgroup_id_list), date_temp1, date_temp2, host_data, device_type)
 
-            # query="SELECT date(ta.timestamp) ,hosts.host_alias,hosts.ip_address,count(ta.trap_event_id),ta.serevity,hostgroups.hostgroup_name\
-            #	FROM %s as ta join (select host_name,host_id,ip_address,host_alias,device_type_id from hosts ) as hosts on hosts.ip_address=ta.agent_id\
-            #	INNER JOIN hosts_hostgroups ON hosts_hostgroups.host_id = hosts.host_id\
-            #	INNER JOIN hostgroups ON hostgroups.hostgroup_id = hosts_hostgroups.hostgroup_id  and hostgroups.hostgroup_id IN (%s)\
-            #	where  ta.timestamp between '%s' AND '%s' AND hosts.host_id IN %s %s group by  hosts.host_id,serevity,date(ta.timestamp)\
-            # order by  hosts.host_name,ta.timestamp,ta.serevity
-            # "%(table_name,','.join(hostgroup_id_list),date_temp1,date_temp2,host_data,device_type)
+                    # query="SELECT date(ta.timestamp) ,hosts.host_alias,hosts.ip_address,count(ta.trap_event_id),ta.serevity,hostgroups.hostgroup_name\
+                    #	FROM %s as ta join (select host_name,host_id,ip_address,host_alias,device_type_id from hosts ) as hosts on hosts.ip_address=ta.agent_id\
+                    #	INNER JOIN hosts_hostgroups ON hosts_hostgroups.host_id = hosts.host_id\
+                    #	INNER JOIN hostgroups ON hostgroups.hostgroup_id = hosts_hostgroups.hostgroup_id  and hostgroups.hostgroup_id IN (%s)\
+                    #	where  ta.timestamp between '%s' AND '%s' AND hosts.host_id IN %s %s group by  hosts.host_id,serevity,date(ta.timestamp)\
+                    # order by  hosts.host_name,ta.timestamp,ta.serevity
+                    # "%(table_name,','.join(hostgroup_id_list),date_temp1,date_temp2,host_data,device_type)
                 else:
                     query = "SELECT ta.timestamp,ta.agent_id,hosts.host_alias,hostgroups.hostgroup_name,device_type.device_name,if(ta.serevity=0,'Normal',if(ta.serevity=1,'Informational',\
 if(ta.serevity=2,'Normal',if(ta.serevity=3,'Minor', \
@@ -1688,19 +1741,20 @@ INNER JOIN device_type ON device_type.device_type_id = hosts.device_type_id \
 INNER JOIN hosts_hostgroups ON hosts_hostgroups.host_id = hosts.host_id \
 INNER JOIN hostgroups ON hostgroups.hostgroup_id = hosts_hostgroups.hostgroup_id and hostgroups.hostgroup_id IN (%s) \
 where  ta.timestamp between '%s' AND '%s' %s \
-order by ta.timestamp desc,device_type.device_name,hosts.host_name,ta.serevity " % (table_name, ','.join(hostgroup_id_list), date_temp1, date_temp2, device_type)
+order by ta.timestamp desc,device_type.device_name,hosts.host_name,ta.serevity " % (
+                    table_name, ','.join(hostgroup_id_list), date_temp1, date_temp2, device_type)
 
-            # query="SELECT date(ta.timestamp) ,hosts.host_alias,hosts.ip_address,count(ta.trap_event_id),ta.serevity,hostgroups.hostgroup_name\
-            # FROM %s as ta join (select host_name,host_id,ip_address,host_alias,device_type_id from hosts ) as hosts on hosts.ip_address=ta.agent_id\
-            # INNER JOIN hosts_hostgroups ON hosts_hostgroups.host_id = hosts.host_id\
-            # INNER JOIN hostgroups ON hostgroups.hostgroup_id = hosts_hostgroups.hostgroup_id and hostgroups.hostgroup_id IN (%s)\
-            # where  ta.timestamp between '%s' AND '%s' %s group by hosts.host_id,serevity,date(ta.timestamp)\
-            # order by  hosts.host_name,ta.timestamp,ta.serevity
-            # "%(table_name,','.join(hostgroup_id_list),date_temp1,date_temp2,device_type)
+                    # query="SELECT date(ta.timestamp) ,hosts.host_alias,hosts.ip_address,count(ta.trap_event_id),ta.serevity,hostgroups.hostgroup_name\
+                    # FROM %s as ta join (select host_name,host_id,ip_address,host_alias,device_type_id from hosts ) as hosts on hosts.ip_address=ta.agent_id\
+                    # INNER JOIN hosts_hostgroups ON hosts_hostgroups.host_id = hosts.host_id\
+                    # INNER JOIN hostgroups ON hostgroups.hostgroup_id = hosts_hostgroups.hostgroup_id and hostgroups.hostgroup_id IN (%s)\
+                    # where  ta.timestamp between '%s' AND '%s' %s group by hosts.host_id,serevity,date(ta.timestamp)\
+                    # order by  hosts.host_name,ta.timestamp,ta.serevity
+                    # "%(table_name,','.join(hostgroup_id_list),date_temp1,date_temp2,device_type)
                 cursor.execute(query)
                 res = cursor.fetchall()
-            # conn.close()
-                if(len(res) == 0):
+                # conn.close()
+                if (len(res) == 0):
                     complete_dict[table] = []
                     continue
                 tr = []
@@ -1718,7 +1772,22 @@ order by ta.timestamp desc,device_type.device_name,hosts.host_name,ta.serevity "
 # TOTAL TRAP DATA FOR A GIVEN DATE PERIOD BY SERVITY
 
 
-def trap_get_total_data_trap_old(report_type, no_of_devices, date1, date2, time1, time2, all_group, all_host, hostgroup_id_list, device_type):
+def trap_get_total_data_trap_old(report_type, no_of_devices, date1, date2, time1, time2, all_group, all_host,
+                                 hostgroup_id_list, device_type):
+    """
+
+    @param report_type:
+    @param no_of_devices:
+    @param date1:
+    @param date2:
+    @param time1:
+    @param time2:
+    @param all_group:
+    @param all_host:
+    @param hostgroup_id_list:
+    @param device_type:
+    @return:
+    """
     try:
         conn = MySQLdb.connect(*SystemConfig.get_mysql_credentials())
         cursor = conn.cursor()
@@ -1739,7 +1808,7 @@ def trap_get_total_data_trap_old(report_type, no_of_devices, date1, date2, time1
         host_data = str(
             all_host.split(',')).replace('[', '(').replace(']', ')')
         table_dict = {"clear": "trap_alarm_clear", "current":
-                      "trap_alarm_current", "history": "trap_alarms"}
+            "trap_alarm_current", "history": "trap_alarms"}
         table_name = table_dict[report_type]
         if device_type != "":
             device_type = "AND hosts.device_type_id='%s'" % (device_type)
@@ -1751,17 +1820,19 @@ def trap_get_total_data_trap_old(report_type, no_of_devices, date1, date2, time1
 	        	INNER JOIN hosts_hostgroups ON hosts_hostgroups.host_id = hosts.host_id\
 	        	INNER JOIN hostgroups ON hostgroups.hostgroup_id = hosts_hostgroups.hostgroup_id  and hostgroups.hostgroup_id IN (%s)\
 	        	where  ta.timestamp between '%s' AND '%s' AND hosts.host_id IN %s %s group by  hosts.host_id,serevity,date(ta.timestamp)\
-	        	order by  hosts.host_name,ta.timestamp,ta.serevity " % (table_name, ','.join(hostgroup_id_list), date_temp1, date_temp2, host_data, device_type)
+	        	order by  hosts.host_name,ta.timestamp,ta.serevity " % (
+            table_name, ','.join(hostgroup_id_list), date_temp1, date_temp2, host_data, device_type)
         else:
             query = "SELECT date(ta.timestamp) ,hosts.host_alias,hosts.ip_address,count(ta.trap_event_id),ta.serevity,hostgroups.hostgroup_name\
 	        FROM %s as ta join (select host_name,host_id,ip_address,host_alias,device_type_id from hosts ) as hosts on hosts.ip_address=ta.agent_id\
 	        INNER JOIN hosts_hostgroups ON hosts_hostgroups.host_id = hosts.host_id\
 	        INNER JOIN hostgroups ON hostgroups.hostgroup_id = hosts_hostgroups.hostgroup_id and hostgroups.hostgroup_id IN (%s)\
 	        where  ta.timestamp between '%s' AND '%s' %s group by hosts.host_id,serevity,date(ta.timestamp)\
-	        order by  hosts.host_name,ta.timestamp,ta.serevity " % (table_name, ','.join(hostgroup_id_list), date_temp1, date_temp2, device_type)
+	        order by  hosts.host_name,ta.timestamp,ta.serevity " % (
+            table_name, ','.join(hostgroup_id_list), date_temp1, date_temp2, device_type)
         cursor.execute(query)
         res = cursor.fetchall()
-        if(len(res) == 0):
+        if (len(res) == 0):
             return result_dict
         length = len(res) - 1
         ls = []
@@ -1776,7 +1847,7 @@ def trap_get_total_data_trap_old(report_type, no_of_devices, date1, date2, time1
             group_name = res[i][5]
             ls.append(group_name)
             lst = [0, 0, 0, 0, 0, 0]
-            while(i < length and str(res[i][1]) == str(res[i + 1][1]) and str(res[i][0]) == str(res[i + 1][0])):
+            while (i < length and str(res[i][1]) == str(res[i + 1][1]) and str(res[i][0]) == str(res[i + 1][0])):
                 lst[int(res[i][4])] = int(res[i][3])
                 i = i + 1
             lst[int(res[i][4])] = int(res[i][3])
@@ -1815,6 +1886,11 @@ def trap_get_total_data_trap_old(report_type, no_of_devices, date1, date2, time1
 
 ########## AP Functions
 def get_time_ago(date1):
+    """
+
+    @param date1:
+    @return:
+    """
     last_check = ""
     date1 = datetime.strptime(
         date1, "%Y-%m-%d %H:%M:%S")  # mysql datetime syntax
@@ -1840,6 +1916,11 @@ def get_time_ago(date1):
 
 # Client Function For AP Clients
 def client_data_ap():
+    """
+
+
+    @return:
+    """
     try:
         conn = MySQLdb.connect(*SystemConfig.get_mysql_credentials())
         cursor = conn.cursor()
@@ -1850,8 +1931,6 @@ left join (select state,host_id,client_id from ap_connected_client ) as ap_conne
 order by ap.client_id"
         cursor.execute(query)
         res = cursor.fetchall()
-        make_list = lambda x: [
-            " - " if i == None or i == '' else str(i) for i in x]
         total_li = []
         for i in range(len(res)):
             li = make_list(res[i])
@@ -1871,6 +1950,14 @@ order by ap.client_id"
 
 
 class MainOutage(object):
+    """
+
+    @param result_tuple:
+    @param end_date:
+    @param start_date:
+    """
+    from copy import deepcopy
+
     def __init__(self, result_tuple, end_date, start_date):
         self.prev_value = None
         self.prev_date = None
@@ -1880,48 +1967,66 @@ class MainOutage(object):
         self.result_tuple = result_tuple
         self.end_date = end_date
         if self.result_tuple and start_date < result_tuple[0][2]:
-            self.start_date = result_tuple[0][2]
+            self.start_date = deepcopy(result_tuple[0][2])
         else:
             self.start_date = start_date
-        # logme(" result_tuple  = "+str(result_tuple))
-        # logme(" end_date  = "+repr(end_date))
-        # logme(" start_date  = "+repr(start_date))
+            # logme(" result_tuple  = "+str(result_tuple))
+            # logme(" end_date  = "+repr(end_date))
+            # logme(" start_date  = "+repr(start_date))
 
     def fill_leftout_dates(self, leftout_days, mid_date, temp_date, is_last_call):
+        """
+
+        @param leftout_days:
+        @param mid_date:
+        @param temp_date:
+        @param is_last_call:
+        """
         for i in range(leftout_days):
-            self.prev_date = mid_date + timedelta(days = i + 1)
+            self.prev_date = mid_date + timedelta(days=i + 1)
             uptime, downtime = None, None
             if self.prev_tpl[0] == '50002':
                 uptime = timedelta(0, 86399)
             else:
                 downtime = timedelta(0, 86399)
             if not is_last_call:
-                if self.prev_date.year == temp_date.year and self.prev_date.month == temp_date.month and self.prev_date.day == temp_date.day:
+                if self.prev_date.year == temp_date.year \
+                    and self.prev_date.month == temp_date.month \
+                    and self.prev_date.day == temp_date.day:
                     continue
-            # logme(" left "+str(self.prev_date)+ "  || "+str(self.prev_value) + "  || "+str(self.prev_tpl[0]) + "\n")
+                # logme(" left "+str(self.prev_date)+ "  || "+str(self.prev_value) + "  || "+str(self.prev_tpl[0]) + "\n")
             self.main_list.append([self.prev_date, self.prev_tpl[4],
-                         self.prev_tpl[5], self.prev_tpl[6], uptime, downtime])
+                                   self.prev_tpl[5], self.prev_tpl[6], uptime, downtime])
 
         if is_last_call:
             if self.prev_date and self.prev_date < self.end_date:
                 uptime, downtime = None, None
-                logme(str(self.prev_value)+" ---------  "+str(self.prev_tpl))
+                # logme(str(self.prev_value)+" ---------  "+str(self.prev_tpl))
                 if self.prev_value == '50002':
                     uptime = timedelta(0, 86399)
                 else:
                     downtime = timedelta(0, 86399)
-                #if (self.end_date - temp_date) > timedelta(0, 86399):
-                if self.main_list[-1][0].year == self.end_date.year and self.main_list[-1][0].month == self.end_date.month and self.main_list[-1][0].day == self.end_date.day:
-                    logme(" in in ")
+                    #if (self.end_date - temp_date) > timedelta(0, 86399):
+                if self.main_list[-1][0].year == self.end_date.year \
+                    and self.main_list[-1][0].month == self.end_date.month \
+                    and self.main_list[-1][0].day == self.end_date.day:
+                    # logme(" in in ")
                     pass
                 else:
                     # logme(repr(self.main_list[-1][0])+ "  ***  "+ repr(temp_date))
                     self.main_list.append([self.end_date, self.prev_tpl[4],
-                        self.prev_tpl[5], self.prev_tpl[6], uptime, downtime])
+                                           self.prev_tpl[5], self.prev_tpl[6], uptime, downtime])
 
 
     def fill_first(self, temp_date, uptime, downtime):
-        date_to_use = temp_date - timedelta(days = 1)
+        """
+
+        @param temp_date:
+        @param uptime:
+        @param downtime:
+        @return:
+        """
+        date_to_use = temp_date - timedelta(days=1)
         mid_date = datetime(date_to_use.year,
                             date_to_use.month, date_to_use.day, 23, 59, 59)
 
@@ -1939,12 +2044,19 @@ class MainOutage(object):
         return uptime, downtime
 
     def fill_end_dates(self, temp_date, temp_value, uptime, downtime):
+        """
+
+        @param temp_date:
+        @param temp_value:
+        @param uptime:
+        @param downtime:
+        """
         deduct_date = temp_date
         if self.start_date > temp_date:
             deduct_date = self.start_date
         if self.end_date.month > temp_date.month or self.end_date.day > temp_date.day:
             mid_date = datetime(temp_date.year,
-                            temp_date.month, temp_date.day, 23, 59, 59)
+                                temp_date.month, temp_date.day, 23, 59, 59)
         else:
             if self.end_date.hour >= temp_date.hour:
                 mid_date = self.end_date
@@ -1963,12 +2075,17 @@ class MainOutage(object):
                     downtime += (mid_date - deduct_date)
                 else:
                     downtime = (mid_date - deduct_date)
-            # logme(" END "+str(temp_date) + "\n")
+                # logme(" END "+str(temp_date) + "\n")
             self.main_list.append([temp_date, self.prev_tpl[4],
-                             self.prev_tpl[5], self.prev_tpl[6], uptime, downtime])
+                                   self.prev_tpl[5], self.prev_tpl[6], uptime, downtime])
 
 
     def get_outage(self):
+        """
+
+
+        @return:
+        """
         try:
             uptime = None
             downtime = None
@@ -1985,11 +2102,15 @@ class MainOutage(object):
                         is_date = 1
                     else:
                         # logme('\n')
-                        # logme(" self.st, temp_date, uptime, self.prev_value, downtime "+ str(self.start_date)+ " || " + str(temp_date)+ " || " + str(uptime)+ " || " + str(self.prev_value)+ " || " + str(downtime))
-                        # logme('\n')
+                        # logme(" self.start ", str(self.start_date), "self.prev_date", self.prev_date, "temp_date " , str(temp_date), " uptime " , str(uptime), " self.prev_value " , str(self.prev_value), " downtime " , str(downtime))
+
                         if self.prev_value == '50002':
                             if uptime == None:
-                                if self.start_date < temp_date and (temp_date - self.start_date ) < timedelta(0, 86399):
+                                # check this and temp_date.day == self.start_date.day condition
+                                if downtime is None and self.start_date < temp_date and (
+                                    temp_date - self.start_date ) < timedelta(0,
+                                                                              86399) and temp_date.day == self.start_date.day:
+                                    # logme("iiiiiiiiii  ",str(temp_date - self.start_date))
                                     uptime = (temp_date - self.start_date)
                                 else:
                                     uptime = (temp_date - self.prev_date)
@@ -1998,14 +2119,18 @@ class MainOutage(object):
 
                         elif self.prev_value == '50001':
                             if downtime == None:
-                                if self.start_date < temp_date and (temp_date - self.start_date ) < timedelta(0, 86399):
+                                if uptime is None and self.start_date < temp_date and (
+                                    temp_date - self.start_date ) < timedelta(0,
+                                                                              86399) and temp_date.day == self.start_date.day:
+                                    # logme("KKKKKKK  ",str(temp_date - self.start_date))
                                     downtime = (temp_date - self.start_date)
                                 else:
                                     downtime = (temp_date - self.prev_date)
                             else:
                                 downtime += (temp_date - self.prev_date)
 
-
+                        # logme(" self.start ", str(self.start_date),"self.prev_date", self.prev_date, " temp_date " , str(temp_date), " uptime " , str(uptime), " self.prev_value " , str(self.prev_value), " downtime " , str(downtime))
+                        # logme('\n')
                         self.prev_date = temp_date  # print "jump1"
 
                 else:
@@ -2023,16 +2148,16 @@ class MainOutage(object):
                     self.prev_value = None
                     self.prev_date = None
 
-
                 if is_date:
                     if uptime == None and downtime == None and not self.prev_value:
                         if self.start_date < temp_date and (temp_date - self.start_date ) < timedelta(0, 86399):
                             # date_to_use = temp_date - timedelta(days = 1)
                             # mid_date = datetime(date_to_use.year,
                             #                 date_to_use.month, date_to_use.day, 23, 59, 59)
-                            mid_date = self.start_date
+                            mid_date = deepcopy(self.start_date)
                             delta = temp_date - mid_date
                             # print "IF temp_date, delta ", temp_date,' || ',  delta
+                            # logme("IF temp_date, delta ", temp_date,' || ',  delta)
                             if temp_value == '50001':
                                 uptime = delta
                             elif temp_value == '50002':
@@ -2041,7 +2166,7 @@ class MainOutage(object):
                         mid_date = datetime(self.prev_date.year,
                                             self.prev_date.month, self.prev_date.day, 23, 59, 59)
                         delta = mid_date - self.prev_date
-                        # print ">>>ELSE temp_date, delta ", mid_date, " || ",self.prev_date,' || ',  temp_date,' || ',  uptime, ' || ', downtime
+                        # logme(">>>ELSE mid_date ", mid_date, " self.prev_date ",self.prev_date,' temp_date ',  temp_date,' uptime ',  uptime, ' downtime ', downtime)
                         if self.prev_value == '50002':
                             if uptime == None:
                                 uptime = delta
@@ -2054,12 +2179,12 @@ class MainOutage(object):
                             else:
                                 downtime += delta
 
-                        # print "ELSE temp_date, delta ", self.prev_date,' || ',  temp_date,' || ',  uptime, ' || ', downtime
+                                # print "ELSE temp_date, delta ", self.prev_date,' || ',  temp_date,' || ',  uptime, ' || ', downtime
 
                     if self.prev_value:
                         # print " ______________ ", self.prev_date,' || ',  uptime,' || ',  downtime
                         self.main_list.append([self.prev_date, self.prev_tpl[4],
-                                             self.prev_tpl[5], self.prev_tpl[6], uptime, downtime])
+                                               self.prev_tpl[5], self.prev_tpl[6], uptime, downtime])
                         uptime = None
                         downtime = None
 
@@ -2089,9 +2214,10 @@ class MainOutage(object):
             main_dict['result'] = self.main_list
             main_dict['outage'] = "main_outage"
             # logme(" ^^^^^^^^^^  ", main_dict)
-            return  main_dict
+            return main_dict
         except Exception:
             import traceback
+
             main_dict = {}
             main_dict['success'] = 1
             main_dict['result'] = traceback.format_exc()

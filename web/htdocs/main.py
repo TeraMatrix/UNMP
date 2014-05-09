@@ -28,6 +28,10 @@ import config
 
 
 def page_index(html):
+    """
+
+    @param html:
+    """
     html.req.headers_out.add("Cache-Control", "max-age=7200, public")
     html.write("""
     <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
@@ -45,10 +49,14 @@ def page_index(html):
 
 
 def page_main(html):
+    """
+
+    @param html:
+    """
     css_list = [
         "css/style.css", "css/custom.css", "calendrical/calendrical.css",
         'css/ccpl_jquery_combobox.css', "css/demo_table_jui.css", "css/jquery-ui-1.8.4.custom.css"]
-    javascript_list = ["js/highcharts.js", "js/unmpDashboard.js",
+    javascript_list = ["js/lib/main/highcharts.js", "js/unmp/main/unmpDashboard.js",
                        "calendrical/calendrical.js"]
     html.new_header(
         "Network Monitoring System", "main.py", "", css_list, javascript_list)
@@ -118,7 +126,7 @@ def page_main(html):
                         </li>
                     </ul>
                 </div>
-            </div>               <!-- 5 -->               
+            </div>               <!-- 5 -->
              <div class="shortcut-icon-div" onclick="javascript:parent.main.location='main_report.py';">
                 <div>
                     <img src="images/gray_icon/64x64/notebook.png" width="44px" alt="reports">
@@ -126,7 +134,7 @@ def page_main(html):
                 <div style="width:60%;">
                     <span class='head'>Device Reports</span><span class='sub-head'>Generates device reports</span>
                 </div>
-            </div>              <!-- 6 --> 
+            </div>              <!-- 6 -->
             <div class="shortcut-icon-div">
                 <div>
                     <img src="images/gray_icon/64x64/listing.png" width="44px" alt="listing">
@@ -217,7 +225,7 @@ def page_main(html):
                 <div style="width:60%;">
                     <span class='head'>UNMP System Log</span><span class='sub-head'>View all system &amp; device related activity logs</span>
                 </div>
-            </div>          <!-- 16 --> 
+            </div>          <!-- 16 -->
             <div class="shortcut-icon-div" onclick="javascript:parent.main.location='manage_license.py';">
                 <div style="margin-left:-8px !important;">
                     <img src="images/gray_icon/64x64/key.png" alt="license">
@@ -225,7 +233,7 @@ def page_main(html):
                 <div style="width:60%;">
                     <span class='head'>License Management</span><span class='sub-head'>View License info and upgrade UNMP System License</span>
                 </div>
-            </div>              <!-- 17 --> 
+            </div>              <!-- 17 -->
             <div class="shortcut-icon-div"  style="display:none;" onclick="javascript:parent.main.location='status_snmptt.py';">
                 <div>
                     <img src="images/gray_icon/64x64/page.png" width="44px" alt="traps">
@@ -337,10 +345,11 @@ def page_main(html):
         Snapins
     </div>
     <div id="home_dashboard_id" class="form-div" style="margin-bottom:0px;background-color:#FFF;">
-        <table cellspacing="10px" cellpadding="0" width="100%%">
-            <colgroup></colgroup>
-            <col style="width:50%;">
-            <col style="width:50%;">
+        <table cellspacing="10px" cellpadding="0" width="100%">
+            <colgroup>
+                <col width="50%" style="width:50%;">
+                <col width="50%" style="width:50%;">
+            </colgroup>
             <tr>
                 <td>
                     <div id="dashboard1" class="db-box"></div>
@@ -368,4 +377,8 @@ def page_main(html):
 
 
 def ajax_switch_site(html):
+    """
+
+    @param html:
+    """
     pass

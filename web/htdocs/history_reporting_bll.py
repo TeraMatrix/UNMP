@@ -1,5 +1,5 @@
 #!/usr/bin/python2.6
-'''
+"""
 @author: Mahipal Choudhary
 @since: 07-Nov-2011
 @version: 0.1
@@ -7,38 +7,45 @@
 @organization: Codescape Consultants Pvt. Ltd.
 @copyright: 2011 Mahipal Choudhary for Codescape Consultants Pvt. Ltd.
 @see: http://www.codescape.in
-'''
-from copy import deepcopy
+"""
 # Import modules that contain the function and libraries
-from datetime import date, timedelta, datetime
-import MySQLdb
-from mysql_collection import mysql_connection
-from unmp_config import SystemConfig
-import xlwt
-from xlwt import Workbook, easyxf
-import json
-from json import JSONEncoder
+
+from copy import deepcopy
+import csv
+from datetime import timedelta, datetime
+from operator import itemgetter
+import os
 import shelve
 import subprocess
-import os
 import tarfile
-import calendar
 import time
-import csv
+
+import MySQLdb
+import xlwt
 from common_bll import EventLog
-from operator import itemgetter
+from common_vars import make_list
+from defaults import site as nms_instance
 from main_reporting_bll import MainOutage
+from unmp_config import SystemConfig
+
 
 class HistoryReportBll(object):
+    """
+    Historical report related Model class
+    """
     def restore_backup(self, month_var, db_backup):
+        """
+
+        @param month_var:
+        @param db_backup:
+        @return:
+        """
         try:
             month_var = month_var.split('_')
             year = month_var[0]
             month = month_var[1]
             cur_db = SystemConfig.get_mysql_credentials()[3]
-#            cur_db="nmsp"
-            nms_instance = __file__.split(
-                "/")[3]       # it gives instance name of nagios system
+            #            cur_db="nmsp"
             path_backup = '/omd/daemon/mysql_backup/%s_%s.tar.bz2' % (
                 year, month)
             path_temp = '/omd/daemon/mysql_temp/'
@@ -53,7 +60,7 @@ class HistoryReportBll(object):
             path_temp = '/omd/daemon/mysql_temp/%s_%s' % (year, month)
             path_sh = '/omd/daemon/mysql_scripts/mysql_restore.sh'
             proc = subprocess.Popen(['sh', path_sh, path_temp, db_backup,
-                                    cur_db], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+                                     cur_db], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
             output, err = proc.communicate()
             buf_data = output
             # code = proc.wait()
@@ -63,14 +70,17 @@ class HistoryReportBll(object):
             return str(e)
 
     def create_backup(self, month_var):
+        """
+
+        @param month_var:
+        @return:
+        """
         try:
-            nms_instance = __file__.split(
-                "/")[3]       # it gives instance name of nagios system
             month_var = month_var.split('_')
             year = month_var[0]
             month = month_var[1]
             cur_db = SystemConfig.get_mysql_credentials()[3]
-#            cur_db="nmsp"
+            #            cur_db="nmsp"
             path_backup = '/omd/daemon/mysql_backup'
             path_temp = '/omd/daemon/mysql_temp/%s_%s' % (year, month)
             str_time = " timestamp between '%s-%s-01 00:00:00' and '%s-%s-31 23:59:59'  " % (
@@ -84,7 +94,7 @@ class HistoryReportBll(object):
             # bufData = proc.stdout.read()
             dstfolder = path_backup  # where backup will be stored
             fileorfolder = path_temp  # which file you want backup of
-#	    time.sleep(5)
+            #	    time.sleep(5)
             dst = '%s.tar.bz2' % os.path.join(
                 dstfolder, os.path.basename(fileorfolder))
             out = tarfile.TarFile.open(dst, 'w:bz2')
@@ -95,6 +105,11 @@ class HistoryReportBll(object):
             return str(e)
 
     def cleanup_data_historical(self, month_var):
+        """
+
+        @param month_var:
+        @return:
+        """
         try:
             month_var = month_var.split('_')
             year = month_var[0]
@@ -114,6 +129,11 @@ class HistoryReportBll(object):
             return {'success': 1, 'result': str(e)}
 
     def backup_data_check_historical(self, month_var):
+        """
+
+        @param month_var:
+        @return:
+        """
         try:
             filename = '/omd/daemon/mysql_backup/%s.tar.bz2' % (month_var)
             if os.path.isfile(filename):
@@ -124,6 +144,11 @@ class HistoryReportBll(object):
             return {'success': 1, 'result': str(e)}
 
     def backup_data_historical(self, month_var):
+        """
+
+        @param month_var:
+        @return:
+        """
         try:
             result = self.create_backup(month_var)
             if result == "done":
@@ -135,6 +160,11 @@ class HistoryReportBll(object):
             return {'success': 1, 'result': str(e)}
 
     def check_db_status_historical(self, user_id):
+        """
+
+        @param user_id:
+        @return:
+        """
         try:
             db = MySQLdb.connect(*SystemConfig.get_mysql_credentials())
             cursor = db.cursor()
@@ -152,6 +182,11 @@ class HistoryReportBll(object):
             return {'success': 1, 'result': str(e)}
 
     def update_db_status_historical(self, user_id):
+        """
+
+        @param user_id:
+        @return:
+        """
         try:
             db = MySQLdb.connect(*SystemConfig.get_mysql_credentials())
             cursor = db.cursor()
@@ -165,6 +200,11 @@ class HistoryReportBll(object):
             return {'success': 1, 'result': str(e)}
 
     def set_last_access_time_historical(self, user_id):
+        """
+
+        @param user_id:
+        @return:
+        """
         try:
             db = MySQLdb.connect(*SystemConfig.get_mysql_credentials())
             cursor = db.cursor()
@@ -178,6 +218,11 @@ class HistoryReportBll(object):
             return {'success': 1, 'result': str(e)}
 
     def get_year_month_historical(self, user_id):
+        """
+
+        @param user_id:
+        @return:
+        """
         try:
             db = MySQLdb.connect(*SystemConfig.get_mysql_credentials())
             cursor = db.cursor()
@@ -194,6 +239,11 @@ class HistoryReportBll(object):
             return {'success': 1, 'result': str(e)}
 
     def clear_data_historical(self, user_id):
+        """
+
+        @param user_id:
+        @return:
+        """
         try:
             db = MySQLdb.connect(*SystemConfig.get_mysql_credentials())
             cursor = db.cursor()
@@ -226,6 +276,11 @@ class HistoryReportBll(object):
             return {'success': 1, 'result': str(e)}
 
     def get_year_month_status_historical(self, user_id):
+        """
+
+        @param user_id:
+        @return:
+        """
         try:
             db = MySQLdb.connect(*SystemConfig.get_mysql_credentials())
             cursor = db.cursor()
@@ -242,6 +297,14 @@ class HistoryReportBll(object):
             return {'success': 1, 'result': str(e)}
 
     def history_reporting_make_db(self, user_id, user_name, month_var, db_name):
+        """
+
+        @param user_id:
+        @param user_name:
+        @param month_var:
+        @param db_name:
+        @return:
+        """
         try:
             db = MySQLdb.connect(*SystemConfig.get_mysql_credentials())
             cursor = db.cursor()
@@ -276,6 +339,14 @@ class HistoryReportBll(object):
 
     # get sql data using query dict
     def get_sql_data(self, query_dict, date_temp_1, date_temp_2, db_historical):
+        """
+
+        @param query_dict:
+        @param date_temp_1:
+        @param date_temp_2:
+        @param db_historical:
+        @return:
+        """
         try:
             db = MySQLdb.connect(*SystemConfig.get_mysql_credentials())
             db.select_db(db_historical)
@@ -299,12 +370,11 @@ class HistoryReportBll(object):
             #        result=res1+res2
             #    else:
             #       result=res1
-            sql = "( select %s from %s %s %s %s %s )" % (query_dict["columns"], query_dict["table_name"], query_dict["join"], query_dict[
+            sql = "( select %s from %s %s %s %s %s )" % (
+            query_dict["columns"], query_dict["table_name"], query_dict["join"], query_dict[
                 "where"], query_dict["group_by"], query_dict["order_by"])
             cursor.execute(sql)
             result = cursor.fetchall()
-            make_list = lambda x: [
-                " - " if i == None or i == '' else str(i) for i in x]
             li_result = []
             for row in result:
                 li_result.append(make_list(row))
@@ -315,12 +385,18 @@ class HistoryReportBll(object):
             db.close()
             result_dict = {"success": "1", "result": str(e)}
             return result_dict
-    # get selected columns and non selected columns from report template
+
+        # get selected columns and non selected columns from report template
 
     def history_reporting_get_column_template(self, device_type_id, report_type, db_historical):
+        """
+
+        @param device_type_id:
+        @param report_type:
+        @param db_historical:
+        @return:
+        """
         try:
-            make_list = lambda x: [
-                " - " if i == None or i == '' else str(i) for i in x]
             db = MySQLdb.connect(*SystemConfig.get_mysql_credentials())
             db.select_db(db_historical)
             cursor = db.cursor()
@@ -338,17 +414,24 @@ class HistoryReportBll(object):
             db.close()
             result_dict = {"success": "1", "result": str(e)}
             return result_dict
-    # get all data from report template for given device type and report type
+
+        # get all data from report template for given device type and report type
 
     def history_reporting_get_mapping_column(self, device_type_id, report_type, db_historical):
+        """
+
+        @param device_type_id:
+        @param report_type:
+        @param db_historical:
+        @return:
+        """
         try:
-            make_list = lambda x: [
-                " - " if i == None or i == '' else str(i) for i in x]
             db = MySQLdb.connect(*SystemConfig.get_mysql_credentials())
             db.select_db(db_historical)
             cursor = db.cursor()
             sql = " select column_selected,column_non_selected,mapping_selected,mapping_non_selected, \
-                  sheet_name,main_title,second_title,report_name,generate_method from report_template where device_type='%s' and report_type='%s'" % (device_type_id, report_type)
+                  sheet_name,main_title,second_title,report_name,generate_method from report_template where device_type='%s' and report_type='%s'" % (
+            device_type_id, report_type)
             cursor.execute(sql)
             result = cursor.fetchall()
             lis = []
@@ -365,6 +448,16 @@ class HistoryReportBll(object):
 
     # get a query dict for diven data
     def get_query_dict(self, device_type, report_type, date_temp_1, date_temp_2, all_host, db_historical):
+        """
+
+        @param device_type:
+        @param report_type:
+        @param date_temp_1:
+        @param date_temp_2:
+        @param all_host:
+        @param db_historical:
+        @return:
+        """
         try:
             db = MySQLdb.connect(*SystemConfig.get_mysql_credentials())
             db.select_db(db_historical)
@@ -398,6 +491,13 @@ class HistoryReportBll(object):
     # get host group name and id with device type and their report type ..this
     # is called initially
     def get_hostgroup_device(self, user_id, hostgroup_id_list, db_historical):
+        """
+
+        @param user_id:
+        @param hostgroup_id_list:
+        @param db_historical:
+        @return:
+        """
         try:
             conn = MySQLdb.connect(*SystemConfig.get_mysql_credentials())
             conn.select_db(db_historical)
@@ -406,7 +506,8 @@ class HistoryReportBll(object):
 			join (select hostgroup_id,host_id from hosts_hostgroups)  as hhg on hhg.hostgroup_id=hg.hostgroup_id \
 			join (select host_id,device_type_id from hosts) as h on h.host_id=hhg.host_id \
 			join (select device_type_id,device_name,is_deleted from device_type) as dt on dt.device_type_id=h.device_type_id \
-			where hhg.hostgroup_id IN (%s) and dt.is_deleted<>1 group  by hg.hostgroup_id ,dt.device_type_id order by dt.device_name" % ','.join(hostgroup_id_list)
+			where hhg.hostgroup_id IN (%s) and dt.is_deleted<>1 group  by hg.hostgroup_id ,dt.device_type_id order by dt.device_name" % ','.join(
+                hostgroup_id_list)
             cursor.execute(query)
             result = cursor.fetchall()
             query2 = "SELECT device_type,report_Type FROM `report_template` order by device_type,report_type"
@@ -414,8 +515,6 @@ class HistoryReportBll(object):
             tp = cursor.fetchall()
             di = {}
             li = []
-            make_list = lambda x: [
-                " - " if i == None or i == '' else str(i) for i in x]
             for t in tp:
                 if t[0] in di:
                     li = di[t[0]]
@@ -440,6 +539,13 @@ class HistoryReportBll(object):
 
     # get host data ie device name and host id
     def history_reporting_get_host_data(self, hostgroup_id, device_type_id, db_historical):
+        """
+
+        @param hostgroup_id:
+        @param device_type_id:
+        @param db_historical:
+        @return:
+        """
         try:
             conn = MySQLdb.connect(*SystemConfig.get_mysql_credentials())
             conn.select_db(db_historical)
@@ -461,10 +567,28 @@ class HistoryReportBll(object):
         finally:
             conn.close()
 
-    def get_and_form_data_default(self, res, host_index, values_length, time_index, key, data_length, values1_index, values2_index, val1, val2, val3, val4, default_value):
+    def get_and_form_data_default(self, res, host_index, values_length, time_index, key, data_length, values1_index,
+                                  values2_index, val1, val2, val3, val4, default_value):
+        """
+
+        @param res:
+        @param host_index:
+        @param values_length:
+        @param time_index:
+        @param key:
+        @param data_length:
+        @param values1_index:
+        @param values2_index:
+        @param val1:
+        @param val2:
+        @param val3:
+        @param val4:
+        @param default_value:
+        @return:
+        """
         try:
             total_list = []
-            if(len(res) == 0):
+            if (len(res) == 0):
                 result_dict = {"success": 0, "result": []}
                 return result_dict
             tr = []
@@ -473,22 +597,21 @@ class HistoryReportBll(object):
             # fill default values in the list
             for i in range(values_length):
                 values.append(default_value)
-            # find the first host
+                # find the first host
             host = res[0][host_index]
-            make_list = lambda x: [
-                " - " if i == None or i == '' else str(i) for i in x]
             for i in range(len(res)):
                 li = make_list(res[i])
                 # IF ITS THE LAST RECORD OF THE INPUT
-                if(i == len(res) - 1):
+                if (i == len(res) - 1):
                 # if host are same
-                    if str(res[i][host_index]) == str(res[i - 1][host_index]) and str(res[i][time_index])[:16] == str(res[i - 1][time_index])[:16]:
+                    if str(res[i][host_index]) == str(res[i - 1][host_index]) and str(res[i][time_index])[:16] == str(
+                            res[i - 1][time_index])[:16]:
                         # if time is same till same minute
                         # fill the first value in the value list
                         values[int(res[i][key]) *
                                val1 + val2] = int(res[i][values1_index])
                         # fill the second value in the value list
-                        if(int(values2_index) >= 0):
+                        if (int(values2_index) >= 0):
                             values[int(res[i][key])
                                    * val3 + val4] = int(res[i][values2_index])
                         temp = li[:data_length] + values
@@ -499,7 +622,7 @@ class HistoryReportBll(object):
                         values[int(res[i][key]) *
                                val1 + val2] = int(res[i][values1_index])
                         # fill the second value in the value list
-                        if(int(values2_index) >= 0):
+                        if (int(values2_index) >= 0):
                             values[int(res[i][key])
                                    * val3 + val4] = int(res[i][values2_index])
                         temp = li[:data_length] + values
@@ -513,7 +636,7 @@ class HistoryReportBll(object):
                         values[int(res[i][key]) *
                                val1 + val2] = int(res[i][values1_index])
                         # fill the second value in the value list
-                        if(int(values2_index) >= 0):
+                        if (int(values2_index) >= 0):
                             values[int(res[i][key])
                                    * val3 + val4] = int(res[i][values2_index])
                     else:
@@ -521,7 +644,7 @@ class HistoryReportBll(object):
                         values[int(res[i][key]) *
                                val1 + val2] = int(res[i][values1_index])
                         # fill the second value in the value list
-                        if(int(values2_index) >= 0):
+                        if (int(values2_index) >= 0):
                             values[int(res[i][key])
                                    * val3 + val4] = int(res[i][values2_index])
                         temp = li[:data_length] + values
@@ -536,7 +659,7 @@ class HistoryReportBll(object):
                     values[int(
                         res[i][key]) * val1 + val2] = int(res[i][values1_index])
                     # fill the second value in the value list
-                    if(int(values2_index) >= 0):
+                    if (int(values2_index) >= 0):
                         values[int(res[i][key]) *
                                val3 + val4] = int(res[i][values2_index])
                     temp = li[:data_length] + values
@@ -556,7 +679,20 @@ class HistoryReportBll(object):
             result_dict["result"] = str(e)
             return result_dict
 
-    def get_delta_for_values(self, inpt, host_index, data_length, values_length, default_value, is_append, off_value, port_index=-1):
+    def get_delta_for_values(self, inpt, host_index, data_length, values_length, default_value, is_append, off_value,
+                             port_index=-1):
+        """
+
+        @param inpt:
+        @param host_index:
+        @param data_length:
+        @param values_length:
+        @param default_value:
+        @param is_append:
+        @param off_value:
+        @param port_index:
+        @return:
+        """
         try:
             li = []
             result_list = []
@@ -568,7 +704,7 @@ class HistoryReportBll(object):
                 # make a deepcopy of the list
                 li = deepcopy(inpt[i])
                 # for first value ie i=0
-                if(i == 0):
+                if (i == 0):
                     # fill with 0 in li
                     for j in range(data_length, data_length + values_length):
                         if is_append == 1:
@@ -578,18 +714,18 @@ class HistoryReportBll(object):
                 # else if hosts are same
                 else:
                     if port_index != -1 and port_index != 0:
-                        if(inpt[i][port_index] == inpt[i - 1][port_index]):
+                        if (inpt[i][port_index] == inpt[i - 1][port_index]):
                             flag = 1
                         else:
                             flag = 0
                     else:
                         flag = 1
-                    if(inpt[i][host_index] == inpt[i - 1][host_index]) and flag == 1:
+                    if (inpt[i][host_index] == inpt[i - 1][host_index]) and flag == 1:
                     # fill with difference
                         for j in range(data_length, data_length + values_length):
-                            if(str(inpt[i][j]) == str(default_value)):
+                            if (str(inpt[i][j]) == str(default_value)):
                                 tmp = int(default_value)
-                            elif(str(inpt[i][j]) == str(off_value)):
+                            elif (str(inpt[i][j]) == str(off_value)):
                                 tmp = int(off_value)
                             elif (str(inpt[i - 1][j]) == str(default_value) or str(inpt[i - 1][j]) == str(off_value)):
                                 tmp = 0
@@ -601,16 +737,16 @@ class HistoryReportBll(object):
                                 li.append(int(tmp))
                             else:
                                 li[j] = int(tmp)
-                        # append to final result
+                                # append to final result
                     else:
                         for j in range(data_length, data_length + values_length):
                             if is_append == 1:
                                 li.append(int(default_value))
                             else:
                                 li[j] = int(default_value)
-                            # append to final result
+                                # append to final result
                 result_list.append(li)
-            # return result
+                # return result
             result_dict = {}
             result_dict["success"] = 0
             if port_index != -1:
@@ -625,6 +761,15 @@ class HistoryReportBll(object):
             return result_dict
 
     def form_the_default_data(self, inpt, start_index, end_index, default_value, do_repeat):
+        """
+
+        @param inpt:
+        @param start_index:
+        @param end_index:
+        @param default_value:
+        @param do_repeat:
+        @return:
+        """
         try:
             li = []
             result_list = []
@@ -635,10 +780,10 @@ class HistoryReportBll(object):
                 li = deepcopy(inpt[i])
                 count = 0
                 for j in range(start_index, end_index):
-                    if(str(li[j]) == str(default_value)):
+                    if (str(li[j]) == str(default_value)):
                         count = count + 1
                     if count == (end_index - start_index):
-                        if(do_repeat == 1):
+                        if (do_repeat == 1):
                             for k in range(start_index, end_index):
                                 li[k] = "DEVICE WAS UNREACHABLE"
                             break
@@ -656,6 +801,12 @@ class HistoryReportBll(object):
             return result_dict
 
     def get_description(self, all_host, db_historical):
+        """
+
+        @param all_host:
+        @param db_historical:
+        @return:
+        """
         try:
             db = MySQLdb.connect(*SystemConfig.get_mysql_credentials())
             db.select_db(db_historical)
@@ -685,8 +836,32 @@ class HistoryReportBll(object):
     # view_type,i_display_start,i_display_length,s_search,sEcho,sSortDir_0,iSortCol_0,new_user_report_dict,db_historical,username):
     # common function for all reports
     def history_reporting_get_excel(
-        self, date1, date2, time1, time2, all_host, report_type, column_user, device_type, all_group,
-            view_type, i_display_start, i_display_length, s_search, sEcho, sSortDir_0, iSortCol_0, new_user_report_dict, db_historical, username):
+            self, date1, date2, time1, time2, all_host, report_type, column_user, device_type, all_group,
+            view_type, i_display_start, i_display_length, s_search, sEcho, sSortDir_0, iSortCol_0, new_user_report_dict,
+            db_historical, username):
+        """
+
+        @param date1:
+        @param date2:
+        @param time1:
+        @param time2:
+        @param all_host:
+        @param report_type:
+        @param column_user:
+        @param device_type:
+        @param all_group:
+        @param view_type:
+        @param i_display_start:
+        @param i_display_length:
+        @param s_search:
+        @param sEcho:
+        @param sSortDir_0:
+        @param iSortCol_0:
+        @param new_user_report_dict:
+        @param db_historical:
+        @param username:
+        @return:
+        """
         try:
             direct = ""
             dat1 = date1.replace("/", "-")
@@ -699,8 +874,6 @@ class HistoryReportBll(object):
             date_temp_1 = str(d1)
             date_temp_2 = str(d2)
             aaData = []
-            nms_instance = __file__.split(
-                "/")[3]       # it gives instance name of nagios system
             # creating the object
             re = HistoryReportBll()
             #	   getting values column_selected,column_non_selected,mapping_selected,mapping_non_selected
@@ -712,7 +885,7 @@ class HistoryReportBll(object):
             key_user = []
             data_report = {}
             data_report["success"] = "0"
-            if(result_columns["success"] == 0 or result_columns["success"] == "0"):
+            if (result_columns["success"] == 0 or result_columns["success"] == "0"):
                 # get columns name for both selected & non selected
                 column_value = result_columns["result"][0].split(",")
                 column_value += result_columns["result"][1].split(",")
@@ -722,29 +895,29 @@ class HistoryReportBll(object):
                 # for i in range column in table if user selected the column
                 # then add in key_user
                 for i in range(len(column_user)):
-                    if(column_value.count(column_user[i]) >= 1):
+                    if (column_value.count(column_user[i]) >= 1):
                         index = column_value.index(column_user[i])
                         key_user.append(column_key[index])
-                # we use key_user for generating sql query only
+                    # we use key_user for generating sql query only
                 # but we use column_user for generating report headings
                 if (str(result_columns["result"][8]) == '1'):
                     different_report = 1
                     # generate method for network outage
-                    if(report_type.upper() == "NETWORK OUTAGE" or report_type.upper() == "DEVICE REACHABILITY"):
+                    if (report_type.upper() == "NETWORK OUTAGE" or report_type.upper() == "DEVICE REACHABILITY"):
                         # outage_data=report_obj.get_total_data_network_outage(3000,date1,date2,time1,time2,all_group,all_host)
                         outage_data = get_outage(3000, date1, date2, time1,
                                                  time2, all_group, all_host, db_historical)
-                        if(str(outage_data["success"]) == "0"):
+                        if (str(outage_data["success"]) == "0"):
                             inpt = deepcopy(outage_data["result"])
                         else:
                             return outage_data
-                    elif(report_type.upper() == "TRAP" or report_type.upper() == "EVENTS"):
+                    elif (report_type.upper() == "TRAP" or report_type.upper() == "EVENTS"):
                         # report_obj=UbrReportBll()
                         # trap_data=report_obj.get_total_data_trap(3000,date1,date2,time1,time2,all_group,all_host)
                         trap_data = get_total_data_trap(
                             3000, date1, date2, time1,
                             time2, all_group, all_host, db_historical)
-                        if(str(trap_data["success"]) == "0"):
+                        if (str(trap_data["success"]) == "0"):
                             inpt = deepcopy(trap_data["result"])
                         else:
                             return trap_data
@@ -754,16 +927,18 @@ class HistoryReportBll(object):
                     # 1 . find the query dict corresponding to this report
                     query_dict = re.get_query_dict(device_type, report_type,
                                                    date_temp_1, date_temp_2, all_host, db_historical)
-                    if(str(query_dict["success"]) == "0"):
+                    if (str(query_dict["success"]) == "0"):
                         # 2 . get the data for the report
                         # res_sql=re.get_sql_data(query_dict["result"])
-                        if(view_type == "data_table"):
+                        if (view_type == "data_table"):
                             dict_shelve = shelve.open(
                                 '/omd/sites/%s/share/check_mk/web/htdocs/download/%s.db' % (nms_instance,
-                                                                                            new_user_report_dict["user_id"]))
-                            dict_shelve_data = shelve.open('/omd/sites/%s/share/check_mk/web/htdocs/download/%s_data.db' %
-                                                           (nms_instance, new_user_report_dict["user_id"]))
-                            if("user_info_dict" in dict_shelve):
+                                                                                            new_user_report_dict[
+                                                                                                "user_id"]))
+                            dict_shelve_data = shelve.open(
+                                '/omd/sites/%s/share/check_mk/web/htdocs/download/%s_data.db' %
+                                (nms_instance, new_user_report_dict["user_id"]))
+                            if ("user_info_dict" in dict_shelve):
                                 user_report_dict = dict_shelve[
                                     "user_info_dict"]
                             else:
@@ -786,11 +961,11 @@ class HistoryReportBll(object):
                             res_sql = re.get_sql_data(
                                 query_dict["result"], date_temp_1, date_temp_2, db_historical)
                         query_dict = query_dict["result"]
-                        if(str(res_sql["success"]) == "0"):
-                            if(view_type == "data_table"):
-                                if(res_sql["result"] == []):
-                                    # status={"success":0,"aaData":[],
-                                            #"sEcho":int(sEcho),"iTotalRecords":res_sql["iTotalRecords"],"iTotalDisplayRecords":res_sql["iTotalDisplayRecords"]}
+                        if (str(res_sql["success"]) == "0"):
+                            if (view_type == "data_table"):
+                                if (res_sql["result"] == []):
+                                # status={"success":0,"aaData":[],
+                                #"sEcho":int(sEcho),"iTotalRecords":res_sql["iTotalRecords"],"iTotalDisplayRecords":res_sql["iTotalDisplayRecords"]}
                                     status = {"success": 0, "aaData": [],
                                               "sEcho": 1, "iTotalRecords": 0, "iTotalDisplayRecords": 0}
                                     return status
@@ -803,53 +978,58 @@ class HistoryReportBll(object):
                                 data_report = res_sql["result"]
                         else:
                             return res_sql  # for exception
-                        # should we group the data like in RSSI
+                            # should we group the data like in RSSI
                         #######################################-----GROUP THE DATA
-                        if(str(query_dict["group_the_data"]) == "1"):
+                        if (str(query_dict["group_the_data"]) == "1"):
                             # get required variables for grouping
                             var = str(query_dict[
-                                      "group_the_data_variables"]).split(",")
+                                "group_the_data_variables"]).split(",")
                             # get_and_form_data_default(self,res,host_index,values_length,time_index,key,data_length,values1_index,values2_index):
-                            if(len(var) == 12):
+                            if (len(var) == 12):
                                 # 3. call function to group the data
                                 res_group = re.get_and_form_data_default(data_report, int(var[0]), int(
-                                    var[1]), int(var[2]), int(var[3]), int(var[4]), int(var[5]), int(var[6]), int(var[7]), int(var[8]), int(var[9]), int(var[10]), int(var[11]))
-                                if(str(res_group["success"]) == "0"):
+                                    var[1]), int(var[2]), int(var[3]), int(var[4]), int(var[5]), int(var[6]),
+                                                                         int(var[7]), int(var[8]), int(var[9]),
+                                                                         int(var[10]), int(var[11]))
+                                if (str(res_group["success"]) == "0"):
                                     data_report = res_group["result"]
                                 else:
                                     return res_group  # for exception
-                        #######################################-----END GROUPING THE DATA
+                            #######################################-----END GROUPING THE DATA
                         #######################################-----FIND THE DELTA
                         if str(query_dict["find_delta"]) == "1":
                             # get_delta_for_values(self,inpt,host_index,data_length,values_length):
                             var_delta = str(
                                 query_dict["find_delta_variables"]).split(",")
-                            if(len(var_delta) == 7):
+                            if (len(var_delta) == 7):
                                 # 4 . find the delta
                                 res_delta = re.get_delta_for_values(data_report, int(
-                                    var_delta[0]), int(var_delta[1]), int(var_delta[2]), int(var_delta[3]), int(var_delta[4]), int(var_delta[5]), int(var_delta[6]))
-                                if(str(res_delta["success"]) == "0"):
+                                    var_delta[0]), int(var_delta[1]), int(var_delta[2]), int(var_delta[3]),
+                                                                    int(var_delta[4]), int(var_delta[5]),
+                                                                    int(var_delta[6]))
+                                if (str(res_delta["success"]) == "0"):
                                     data_report = res_delta["result"]
                                 else:
                                     return res_delta  # for exception
-                        #######################################-----END DELTA
+                            #######################################-----END DELTA
                         #######################################-----FORM THE DEFAULT DATA
                         if str(query_dict["default_data"]) == "1":
                             # get_delta_for_values(self,inpt,host_index,data_length,values_length):
                             var_default = str(
                                 query_dict["default_data_variables"]).split(",")
-                            if(len(var_default) == 4):
+                            if (len(var_default) == 4):
                                 # 4 . find the delta
                                 res_default = re.form_the_default_data(
-                                    data_report, int(var_default[0]), int(var_default[1]), int(var_default[2]), int(var_default[3]))
-                                if(str(res_default["success"]) == "0"):
+                                    data_report, int(var_default[0]), int(var_default[1]), int(var_default[2]),
+                                    int(var_default[3]))
+                                if (str(res_default["success"]) == "0"):
                                     data_report = res_default["result"]
                                 else:
                                     return res_default  # for exception
-                        #######################################-----END DELTA
+                                    #######################################-----END DELTA
                     else:
                         return query_dict  # for exception
-                    # common algo for all special reports
+                        # common algo for all special reports
                     inpt = data_report
                 given = deepcopy(column_value)
                 req = deepcopy(key_user)
@@ -859,7 +1039,7 @@ class HistoryReportBll(object):
                     for k in req:
                         li.append("0")
                     for j in given:
-                        if(req.count(j) >= 1):
+                        if (req.count(j) >= 1):
                             loc = given.index(j)
                             wloc = req.index(j)
                             temp = i[loc]
@@ -869,14 +1049,14 @@ class HistoryReportBll(object):
                 report_data_list = outdata
 
                 # if(data_report["success"]=="0"):
-                if(view_type == "data_table"):
-                    if(different_report == 0):
-                        if(str(sSortDir_0) == "asc"):
+                if (view_type == "data_table"):
+                    if (different_report == 0):
+                        if (str(sSortDir_0) == "asc"):
                             report_data_list2 = sorted(report_data_list, key=lambda report_data_list: report_data_list[
-                                                       int(iSortCol_0)], reverse=False)
+                                int(iSortCol_0)], reverse=False)
                         else:
                             report_data_list2 = sorted(report_data_list, key=lambda report_data_list:
-                                                       report_data_list[int(iSortCol_0)], reverse=True)
+                            report_data_list[int(iSortCol_0)], reverse=True)
                         if (str(s_search) != "" and s_search != "None" and s_search != "Null"):
                             report_data_list3 = []
                             for i in report_data_list2:
@@ -885,21 +1065,24 @@ class HistoryReportBll(object):
                                         report_data_list3.append(i)
                                         break
                             report_data_list2 = report_data_list3
-                        status = {"success": 0, "aaData": report_data_list2[int(i_display_start):int(i_display_start) + int(i_display_length)],
+                        status = {"success": 0, "aaData": report_data_list2[
+                                                          int(i_display_start):int(i_display_start) + int(
+                                                              i_display_length)],
                                   #"datstart":i_display_start,"dataend":int(i_display_start)+int(i_display_length),
-                                  "sEcho": int(sEcho), "iTotalRecords": len(report_data_list2), "iTotalDisplayRecords": len(report_data_list2)}
+                                  "sEcho": int(sEcho), "iTotalRecords": len(report_data_list2),
+                                  "iTotalDisplayRecords": len(report_data_list2)}
                         return status
                     else:
                         # report_data_list=inpt
                         # status={"success":0,"aaData":report_data_list2[int(i_display_start):int(i_display_start)+int(i_display_length)],
                         #		"sEcho":int(sEcho),"iTotalRecords":len(report_data_list2),"iTotalDisplayRecords":len(report_data_list2)}
                         # return status
-                        if(str(sSortDir_0) == "asc"):
+                        if (str(sSortDir_0) == "asc"):
                             report_data_list2 = sorted(report_data_list, key=lambda report_data_list: report_data_list[
-                                                       int(iSortCol_0)], reverse=False)
+                                int(iSortCol_0)], reverse=False)
                         else:
                             report_data_list2 = sorted(report_data_list, key=lambda report_data_list:
-                                                       report_data_list[int(iSortCol_0)], reverse=True)
+                            report_data_list[int(iSortCol_0)], reverse=True)
                         if (str(s_search) != "" and s_search != "None" and s_search != "Null"):
                             report_data_list3 = []
                             for i in report_data_list2:
@@ -908,14 +1091,17 @@ class HistoryReportBll(object):
                                         report_data_list3.append(i)
                                         break
                             report_data_list2 = report_data_list3
-                        status = {"success": 0, "aaData": report_data_list2[int(i_display_start):int(i_display_start) + int(i_display_length)],
+                        status = {"success": 0, "aaData": report_data_list2[
+                                                          int(i_display_start):int(i_display_start) + int(
+                                                              i_display_length)],
                                   #"datstart":i_display_start,"dataend":int(i_display_start)+int(i_display_length),
-                                  "sEcho": int(sEcho), "iTotalRecords": len(report_data_list2), "iTotalDisplayRecords": len(report_data_list2)}
+                                  "sEcho": int(sEcho), "iTotalRecords": len(report_data_list2),
+                                  "iTotalDisplayRecords": len(report_data_list2)}
                         return status
-                    # else:
-                    #    status={"success":0,"aaData":report_data_list,
-                    #			"sEcho":int(sEcho),"iTotalRecords":len(report_data_list),"iTotalDisplayRecords":len(report_data_list)}
-                    # return status
+                        # else:
+                        #    status={"success":0,"aaData":report_data_list,
+                        #			"sEcho":int(sEcho),"iTotalRecords":len(report_data_list),"iTotalDisplayRecords":len(report_data_list)}
+                        # return status
                 if view_type == "excel":
                     sheet_dict = {
                         "sheet_name": result_columns["result"][4],
@@ -967,6 +1153,11 @@ class HistoryReportBll(object):
             return result_dict
 
     def get_excel_sheet(self, *params):
+        """
+
+        @param params:
+        @return:
+        """
         try:
             i = 4
             flag = 0
@@ -1008,7 +1199,7 @@ class HistoryReportBll(object):
             alignment.horz = xlwt.Alignment.HORZ_CENTER
             alignment.vert = xlwt.Alignment.VERT_CENTER
             style1.alignment = alignment  # Add Alignment to Style
-            xls_book = Workbook(encoding='ascii')
+            xls_book = xlwt.Workbook(encoding='ascii')
             for par in params:
                 sheet_dict = par
                 i = 4
@@ -1071,6 +1262,11 @@ class HistoryReportBll(object):
             return result_dict
 
     def get_csv_file(self, *params):
+        """
+
+        @param params:
+        @return:
+        """
         try:
             for par in params:
                 sheet_dict = par
@@ -1128,9 +1324,9 @@ class HistoryReportBll(object):
             if flag == 0:
                 result_dict = {"success": "1", "result": "data not available"}
                 return result_dict
-            # xls_book.save(path_report+name_report)
+                # xls_book.save(path_report+name_report)
             result_dict = {"success": "0", "result": "report successfully generated", "file":
-                           name_report, "filename": name_report, "path_report": path_report + "/" + name_report}
+                name_report, "filename": name_report, "path_report": path_report + "/" + name_report}
             return result_dict
         except Exception, e:
             result_dict = {"success": "1", "result": str(e)}
@@ -1138,6 +1334,12 @@ class HistoryReportBll(object):
 
 
 def main_outage(result_tuple, end_date):
+    """
+
+    @param result_tuple:
+    @param end_date:
+    @return:
+    """
     try:
         is_date = 0
         main_date = ''
@@ -1161,20 +1363,20 @@ def main_outage(result_tuple, end_date):
                             leftout_date = main_date + timedelta(days=i)
                             if prev_value == '50002':
                                 main_list.append([leftout_date, tpl_temp[4],
-                                                 tpl_temp[5], tpl_temp[6], timedelta(0, 86399), None])
+                                                  tpl_temp[5], tpl_temp[6], timedelta(0, 86399), None])
                             elif prev_value == '50001':
                                 main_list.append([leftout_date, tpl_temp[4],
-                                                 tpl_temp[5], tpl_temp[6], None, timedelta(0, 86399)])
+                                                  tpl_temp[5], tpl_temp[6], None, timedelta(0, 86399)])
 
                 else:
                     if temp_value == '50002':
-                        if uptime == None:
+                        if uptime is None:
                             uptime = (temp_date - main_date)
                         else:
                             uptime += (temp_date - main_date)
 
                     elif temp_value == '50001':
-                        if downtime == None:
+                        if downtime is None:
                             downtime = (temp_date - main_date)
                         else:
                             downtime += (temp_date - main_date)
@@ -1190,7 +1392,7 @@ def main_outage(result_tuple, end_date):
                 is_new = 0
 
             if is_date:
-                if uptime == None or downtime == None:
+                if uptime is None or downtime is None:
                     mid_date = datetime(main_date.year,
                                         main_date.month, main_date.day, 23, 59, 59)
                     delta = mid_date - main_date
@@ -1199,7 +1401,7 @@ def main_outage(result_tuple, end_date):
                     elif prev_value == '50001':
                         downtime = delta
                 main_list.append([main_date, tpl_temp[4],
-                                 tpl_temp[5], tpl_temp[6], uptime, downtime])
+                                  tpl_temp[5], tpl_temp[6], uptime, downtime])
                 main_date = temp_date
                 uptime = None
                 downtime = None
@@ -1207,7 +1409,7 @@ def main_outage(result_tuple, end_date):
 
             prev_value = temp_value
 
-        if uptime == None or downtime == None:
+        if uptime is None or downtime is None:
             mid_date = datetime(
                 main_date.year, main_date.month, main_date.day, 23, 59, 59)
             delta = mid_date - main_date
@@ -1216,7 +1418,7 @@ def main_outage(result_tuple, end_date):
             elif prev_value == '50001':
                 downtime = delta
         main_list.append([main_date, tpl_temp[4], tpl_temp[5],
-                         tpl_temp[6], uptime, downtime])
+                          tpl_temp[6], uptime, downtime])
 
         day_diff = (end_date - main_date).days
         if day_diff > 1:
@@ -1224,10 +1426,10 @@ def main_outage(result_tuple, end_date):
                 leftout_date = main_date + timedelta(days=i)
                 if prev_value == '50002':
                     main_list.append([leftout_date, tpl_temp[4],
-                                     tpl_temp[5], tpl_temp[6], timedelta(0, 86399), None])
+                                      tpl_temp[5], tpl_temp[6], timedelta(0, 86399), None])
                 elif prev_value == '50001':
                     main_list.append([leftout_date, tpl_temp[4],
-                                     tpl_temp[5], tpl_temp[6], None, timedelta(0, 86399)])
+                                      tpl_temp[5], tpl_temp[6], None, timedelta(0, 86399)])
         main_dict = {}
         main_dict['success'] = 0
         main_dict['result'] = main_list
@@ -1241,6 +1443,18 @@ def main_outage(result_tuple, end_date):
 
 
 def get_outage(no_of_devices, date1, date2, time1, time2, all_group, all_host, db_historical):
+    """
+
+    @param no_of_devices:
+    @param date1:
+    @param date2:
+    @param time1:
+    @param time2:
+    @param all_group:
+    @param all_host:
+    @param db_historical:
+    @return:
+    """
     try:
         conn = MySQLdb.connect(*SystemConfig.get_mysql_credentials())
         conn.select_db(db_historical)
@@ -1264,7 +1478,8 @@ def get_outage(no_of_devices, date1, date2, time1, time2, all_group, all_host, d
 		join ( select host_id,host_name,ip_address,host_alias from hosts ) as host on go16.agent_id=host.ip_address \
 		INNER JOIN (select host_id,hostgroup_id from hosts_hostgroups) as  hosts_hostgroups ON hosts_hostgroups.host_id = host.host_id  \
 		INNER JOIN (select hostgroup_id , hostgroup_name from hostgroups) as  hostgroups ON hostgroups.hostgroup_id = hosts_hostgroups.hostgroup_id \
-		where host.host_id='%s' and go16.timestamp>='%s' and go16.timestamp<='%s' order by timestamp" % (j, start_date, end_date)
+		where host.host_id='%s' and go16.timestamp>='%s' and go16.timestamp<='%s' order by timestamp" % (
+            j, start_date, end_date)
             cursor.execute(sel_query)
             result = cursor.fetchall()
 
@@ -1279,11 +1494,11 @@ def get_outage(no_of_devices, date1, date2, time1, time2, all_group, all_host, d
                 t_date = result[0][2]
                 t_date = t_date.replace(hour=0, minute=0, second=0)
                 t_list = ((status_result[0][0], status_result[0][1], t_date, status_result[0][3], status_result[0][
-                          4], status_result[0][5], status_result[0][6]),)
+                    4], status_result[0][5], status_result[0][6]),)
                 result = t_list + result
 
             m = MainOutage(result, datetime.strptime(end_date, "%Y-%m-%d %H:%M:%S"), datetime.strptime(
-                    start_date, "%Y-%m-%d %H:%M:%S"))
+                start_date, "%Y-%m-%d %H:%M:%S"))
             temp_res = m.get_outage()
 
             # temp_res = main_outage(
@@ -1292,11 +1507,11 @@ def get_outage(no_of_devices, date1, date2, time1, time2, all_group, all_host, d
                 li_res = temp_res['result']
                 tr = []
                 for i in li_res:
-                    if i[-2] == None:
+                    if i[-2] is None:
                         uptime = 0
                     else:
                         uptime = i[-2].seconds
-                    if i[-1] == None:
+                    if i[-1] is None:
                         downtime = 0
                     else:
                         downtime = i[-1].seconds
@@ -1327,6 +1542,18 @@ def get_outage(no_of_devices, date1, date2, time1, time2, all_group, all_host, d
 
 
 def get_total_data_trap(no_of_devices, date1, date2, time1, time2, all_group, all_host, db_historical):
+    """
+
+    @param no_of_devices:
+    @param date1:
+    @param date2:
+    @param time1:
+    @param time2:
+    @param all_group:
+    @param all_host:
+    @param db_historical:
+    @return:
+    """
     try:
         conn = MySQLdb.connect(*SystemConfig.get_mysql_credentials())
         conn.select_db(db_historical)
@@ -1355,7 +1582,7 @@ def get_total_data_trap(no_of_devices, date1, date2, time1, time2, all_group, al
 			 order by  ta.timestamp,hosts.host_name,ta.serevity " % (date_temp1, date_temp2, host_data)
         cursor.execute(query)
         res = cursor.fetchall()
-        if(len(res) == 0):
+        if (len(res) == 0):
             return result_dict
         length = len(res) - 1
         ls = []
@@ -1369,7 +1596,7 @@ def get_total_data_trap(no_of_devices, date1, date2, time1, time2, all_group, al
             ls.append(str(res[i][2]))
             group_name = res[i][5]
             lst = [0, 0, 0, 0, 0, 0]
-            while(str(res[i][1]) == str(res[i + 1][1]) and str(res[i][0]) == str(res[i + 1][0]) and (i < length - 1)):
+            while (str(res[i][1]) == str(res[i + 1][1]) and str(res[i][0]) == str(res[i + 1][0]) and (i < length - 1)):
                 lst[int(res[i][4])] = int(res[i][3])
                 i = i + 1
             lst[int(res[i][4])] = int(res[i][3])

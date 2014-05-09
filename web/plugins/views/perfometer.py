@@ -73,7 +73,7 @@ for fn in os.listdir(perfometer_plugins_dir):
         execfile(perfometer_plugins_dir + "/" + fn)
 if defaults.omd_root:
     local_perfometer_plugins_dir = defaults.omd_root + \
-        "/local/share/check_mk/web/plugins/perfometer"
+                                   "/local/share/check_mk/web/plugins/perfometer"
     if os.path.exists(local_perfometer_plugins_dir):
         for fn in os.listdir(local_perfometer_plugins_dir):
             if fn.endswith(".py"):
@@ -137,6 +137,7 @@ def paint_perfometer(row):
         if config.debug:
             raise
         return "perfometer", ("invalid data: %s" % e)
+
 
 multisite_painters["perfometer"] = {
     "title": "Service Perf-O-Meter",

@@ -1,23 +1,14 @@
 #!/usr/bin/python2.6
-import config
+from datetime import datetime, timedelta
 import time
-import cgi
+
 import MySQLdb
-import sys
-import csv
-import time
 from common_controller import *
+from error_message import ErrorMessageClass
+from mysql_collection import mysql_connection
 from nms_config import *
 from odu_controller import *
-from datetime import datetime, timedelta
-from mysql_collection import mysql_connection
 from unmp_dashboard_config import DashboardConfig
-from operator import itemgetter
-from utility import Validation
-from error_message import ErrorMessageClass
-import time
-from operator import itemgetter
-
 
 global err_obj
 err_obj = ErrorMessageClass()
@@ -35,12 +26,12 @@ class SelfException(Exception):
     @organisation: Code Scape Consultants Pvt. Ltd.
     @copyright: 2011 Code Scape Consultants Pvt. Ltd.
     """
+
     def __init__(self, msg):
         pass
 
 
 class DashboardBll(object):
-
     def get_dashboard_data(self):
         devcie_type_attr = ['id', 'refresh_time', 'time_diffrence']
         get_data = DashboardConfig.get_config_attributes(
@@ -66,9 +57,9 @@ class DashboardBll(object):
         critical = []
         table_html = ""
         image_dic = {0: "images/gr.png", 1: "images/lb.png", 2: "images/gr.png", 3:
-                     "images/yel.png", 4: "images/or.png", 5: "images/red.png"}
+            "images/yel.png", 4: "images/or.png", 5: "images/red.png"}
         image_title_name = {0: "Normal", 1: "Informationl", 2:
-                            "Normal", 3: "Minor", 4: "Major", 5: "Critical"}
+            "Normal", 3: "Minor", 4: "Major", 5: "Critical"}
 
         try:
             conn, cursor = mysql_connection()
@@ -77,7 +68,7 @@ class DashboardBll(object):
             display_type = "graph"
 
             default_value = {'y': 0, 'marker': {'symbol':
-                                                'url(images/ab.png)'}}
+                                                    'url(images/ab.png)'}}
             if display_type == 'table' or display_type == 'excel' or display_type == 'csv':
                 default_value = 'Device Unreachable'
             elif display_type == 'pdf':
@@ -110,7 +101,8 @@ class DashboardBll(object):
                         major1 = 0
                         critical1 = 0
                         for row in trap_result:
-                            if row[1] >= datetime.now() + timedelta(minutes=-(i + 1) * 30) and row[1] <= datetime.now() + timedelta(minutes=-i * 30):
+                            if row[1] >= datetime.now() + timedelta(minutes=-(i + 1) * 30) and row[
+                                1] <= datetime.now() + timedelta(minutes=-i * 30):
                                 if int(row[2]) == 0:
                                     normal1 += int(row[0])
                                 elif int(row[2]) == 2:
@@ -183,13 +175,14 @@ class DashboardBll(object):
                             duration = str(
                                 hour) + " Hr " + str(minute) + " Min"
                         img = "<img src=\"%s\" alt=\"%s\" title=\"%s\" class=\"imgbutton\" style=\"width:12px\" onclick=\"alarmDetail(\'%s\',1)\"/>" % (
-                            image_dic[int(row[0])], image_title_name[int(row[0])], image_title_name[int(row[0])], int(row[4]))
+                            image_dic[int(row[0])], image_title_name[int(row[0])], image_title_name[int(row[0])],
+                            int(row[4]))
                         reachable_table += "\
 				<tr>\
 				    <td >" + img + "</td>\
 				    <td >" + row[1] + "</td>\
 				    <td >" + row[2] + "</td>\
-				    <td >" + str(paint_age(time.mktime(row[3].timetuple()), True, 60 )) + "</td>\
+				    <td >" + str(paint_age(time.mktime(row[3].timetuple()), True, 60)) + "</td>\
 				    <td >" + str(row[3].strftime("%c")) + "</td>\
 				</tr>"
                 else:
@@ -232,7 +225,8 @@ class DashboardBll(object):
                 if len(unreachable_device) > 0:
                     for row in unreachable_device:
                         img = "<img src=\"%s\" alt=\"%s\" title=\"%s\" class=\"imgbutton\" style=\"width:12px\" onclick=\"alarmDetail(\'%s\',1)\"/>" % (
-                            image_dic[int(row[0])], image_title_name[int(row[0])], image_title_name[int(row[0])], int(row[6]))
+                            image_dic[int(row[0])], image_title_name[int(row[0])], image_title_name[int(row[0])],
+                            int(row[6]))
                         reachable_table += "\
 				<tr>\
 				    <td >" + img + "</td>\
@@ -296,10 +290,11 @@ def paint_age(timestamp, has_been_checked, bold_if_younger_than):
         return age_text(age)
 
 
-#    if age >= 48 * 3600 or age < -48 * 3600:
-#        return time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(timestamp))
+    #    if age >= 48 * 3600 or age < -48 * 3600:
+    #        return time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(timestamp))
 
     # Time delta less than two days => make relative time
+
 #    if age < 0:
 #        age = -age
 #        prefix = "in "

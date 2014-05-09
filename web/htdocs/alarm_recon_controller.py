@@ -1,10 +1,10 @@
+#! /usr/bin/python2.6
+from json import JSONEncoder
+
 import alarm_recon  # view
 import alarm_recon_bll  # bll
 from common_bll import Essential
-import htmllib
 from lib import *
-from cgitb import html
-from json import JSONEncoder
 
 
 def recon_display(h):
@@ -45,12 +45,12 @@ def recon_display(h):
 
                 if success == 0:
                     # html.new_header("Alarm
-                    # Reconciliation","recon_display.py","",[],["js/alarm_recon.js"])
+                    # Reconciliation","recon_display.py","",[],["js/unmp/main/alarm_recon.js"])
                     html.write(view_str)
                     # html.new_footer()
                 else:
                     # html.new_header("Alarm
-                    # Reconciliation","recon_display.py","",[],["js/alarm_recon.js"])
+                    # Reconciliation","recon_display.py","",[],["js/unmp/main/alarm_recon.js"])
                     html.write("<div class=\"error\" > %s </div>" % (view_str))
                     # html.new_footer()
             else:
@@ -59,14 +59,14 @@ def recon_display(h):
 
         else:
             # html.new_header("Alarm
-            # Reconciliation","recon_display.py","",[],["js/alarm_recon.js"])
+            # Reconciliation","recon_display.py","",[],["js/unmp/main/alarm_recon.js"])
             html.write(alarm_recon.view() + str(html.live))
             # html.new_footer()
     except Exception, e:
         html.write(
             "<div class=\"error\" > %s </div>" % (" Encounterd an Error "))
         # import traceback
-        # html.new_header("Alarm Reconciliation","recon_display.py","",[],["js/alarm_recon.js"])
+        # html.new_header("Alarm Reconciliation","recon_display.py","",[],["js/unmp/main/alarm_recon.js"])
         # html.write("<div class=\"error\" > %s </div>"%(str(traceback.format_exc())))
         # html.new_footer()
 
@@ -81,7 +81,7 @@ def get_uptime_details(host_ip):
             # description = SNMP UPTIME \nFilter host_address = 172.22.0.120 \n
             # And: 2"
             query_service = "GET services\nColumns: state description service_plugin_output service_long_plugin_output \nFilter: host_address = " + \
-                host_ip
+                            host_ip
             html.live.set_prepend_site(True)
             services = html.live.query(query_service)
             services.sort()
@@ -101,7 +101,7 @@ def get_uptime_details(host_ip):
                     find_str = "Host Uptime -"
                     if s.find(find_str) != -1:
                         result['output'] = s[
-                            s.find(find_str) + len(find_str):s.find(")") - 1]
+                                           s.find(find_str) + len(find_str):s.find(")") - 1]
                 if description == 'SNMP UPTIME':
                     break
 
@@ -141,7 +141,7 @@ def start_alarm(h):
                 result_dict['result'] = " Alarm Reconciliation Process encounter an error, \n Please try later"
         else:
             result_dict = {'success': 1, 'result':
-                           'No such host exists : Access Restricted', }
+                'No such host exists : Access Restricted', }
     else:
         result_dict = {'success': 1, 'result': 'No such host found', }
 
@@ -178,7 +178,7 @@ def update_alarmview(h):
                 result_dict = {'success': 1, 'result': 'No such host found', }
         else:
             result_dict = {'success': 1, 'result':
-                           'No such host exists : Access Restricted', }
+                'No such host exists : Access Restricted', }
     else:
         result_dict = {'success': 1, 'result': 'No such host found', }
 

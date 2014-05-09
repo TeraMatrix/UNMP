@@ -1,23 +1,26 @@
 #!/usr/bin/python2.6
 
 ####################### import the packages ###################################
+from datetime import datetime
 import time
-from unmp_model import *
-from nms_config import *
-from nms_snmp import *
+import traceback
+
 from sqlalchemy.exc import *
 from sqlalchemy.orm.exc import *
+
+from common_bll import EventLog, Essential, agent_start
 from common_controller import *
-from pysnmp_ap import pysnmp_seter as pysnmp_seter_ap
+from nms_config import *
+from nms_snmp import *
+from py_module import pysnmp_setAcl, pysnmp_geter, snmp_ping, pysnmp_acl_reconcile, pysnmp_get_table, pysnmp_set1
 from pysnmp_ap import pysnmp_get, odubulk as bulktable
 from pysnmp_ap import pysnmp_get_table as pysnmp_get_table_ap
+from pysnmp_ap import pysnmp_seter as pysnmp_seter_ap
 from pysnmp_module import pysnmp_set
-from py_module import pysnmp_setAcl, pysnmp_geter, snmp_ping, pysnmp_acl_reconcile, pysnmp_get_table, pysnmp_set1
 from unmp_config import SystemConfig
-from common_bll import EventLog, Essential, agent_start
-from datetime import datetime
+from unmp_model import *
 from utility import UNMPDeviceType
-import traceback
+
 
 
 # from create_class_structure import  rename_tablename
@@ -57,6 +60,11 @@ global sqlalche_obj
 
 
 def check_connection():
+    """
+
+
+    @return:
+    """
     global sqlalche_obj
     return sqlalche_obj.error
 
@@ -66,10 +74,20 @@ def check_connection():
 
 
 class Set_exception(Exception):
+    """
+    Defining Exception Classs and Exception function
+    """
     pass
 
 
 def error_odu16(result, param, err1):
+    """
+
+    @param result:
+    @param param:
+    @param err1:
+    @return:
+    """
     err = ''
     for i in range(len(param)):
         val = result.find(param[i])
@@ -85,18 +103,23 @@ def error_odu16(result, param, err1):
 essential_obj = Essential()
 # Oid name declare with its numerical values##########
 oid_name = {'RU.OMCConfTable.omcIPAddress': '.1.3.6.1.4.1.26149.2.2.7.1.2.1',
-            'RU.OMCConfTable.periodicStatisticsTimer': '.1.3.6.1.4.1.26149.2.2.7.1.3.1', 'RU.RUConfTable.channelBandwidth': '.1.3.6.1.4.1.26149.2.2.1.1.7.1',
-            'RU.RUConfTable.synchSource': '.1.3.6.1.4.1.26149.2.2.1.1.8.1', 'RU.RUConfTable.countryCode': '.1.3.6.1.4.1.26149.2.2.1.1.9.1',
+            'RU.OMCConfTable.periodicStatisticsTimer': '.1.3.6.1.4.1.26149.2.2.7.1.3.1',
+            'RU.RUConfTable.channelBandwidth': '.1.3.6.1.4.1.26149.2.2.1.1.7.1',
+            'RU.RUConfTable.synchSource': '.1.3.6.1.4.1.26149.2.2.1.1.8.1',
+            'RU.RUConfTable.countryCode': '.1.3.6.1.4.1.26149.2.2.1.1.9.1',
             'RU.RUConfTable.adminState': '.1.3.6.1.4.1.26149.2.2.9.1.2.1',
-            'RU.RUDateTimeTable.Year': '.1.3.6.1.4.1.26149.2.2.2.1.2.1', 'RU.RUDateTimeTable.Month': '.1.3.6.1.4.1.26149.2.2.2.1.3.1',
+            'RU.RUDateTimeTable.Year': '.1.3.6.1.4.1.26149.2.2.2.1.2.1',
+            'RU.RUDateTimeTable.Month': '.1.3.6.1.4.1.26149.2.2.2.1.3.1',
             'RU.RUDateTimeTable.Day': '.1.3.6.1.4.1.26149.2.2.2.1.4.1',
-            'RU.RUDateTimeTable.Hour': '1.3.6.1.4.1.26149.2.2.2.1.5.1', 'RU.RUDateTimeTable.Minutes': '1.3.6.1.4.1.26149.2.2.2.1.6.1',
+            'RU.RUDateTimeTable.Hour': '1.3.6.1.4.1.26149.2.2.2.1.5.1',
+            'RU.RUDateTimeTable.Minutes': '1.3.6.1.4.1.26149.2.2.2.1.6.1',
             'RU.RUDateTimeTable.Seconds': '1.3.6.1.4.1.26149.2.2.2.1.7.1',
             'RU.NetworkInterface.1.NetworkInterfaceConfigTable.ssId': '.1.3.6.1.4.1.26149.2.2.12.1.1.3.1',
             'RU.NetworkInterface.2.NetworkInterfaceConfigTable.ssId': '.1.3.6.1.4.1.26149.2.2.12.1.1.3.2',
             'ru.np.ra.1.tddmac.rfChannel': '.1.3.6.1.4.1.26149.2.2.13.7.1.1.1.1',
             'RU.RA.1.TddMac.RATDDMACConfigTable.passPhrase': '.1.3.6.1.4.1.26149.2.2.13.7.1.1.2.1',
-            'ru.np.ra.1.tddmac.rfCoding': '.1.3.6.1.4.1.26149.2.2.13.7.1.1.3.1', 'ru.np.ra.1.tddmac.txPower': '.1.3.6.1.4.1.26149.2.2.13.7.1.1.4.1',
+            'ru.np.ra.1.tddmac.rfCoding': '.1.3.6.1.4.1.26149.2.2.13.7.1.1.3.1',
+            'ru.np.ra.1.tddmac.txPower': '.1.3.6.1.4.1.26149.2.2.13.7.1.1.4.1',
             'RU.RA.1.TddMac.RATDDMACConfigTable.maxCrcErrors': '.1.3.6.1.4.1.26149.2.2.13.7.1.1.6.1',
             'RU.RA.1.TddMac.RATDDMACConfigTable.leakyBucketTimer': '.1.3.6.1.4.1.26149.2.2.13.7.1.1.7.1',
             'RU.RA.1.LLC.RALLCConfTable.llcArqEnable': '.1.3.6.1.4.1.26149.2.2.13.6.1.1.1.1',
@@ -116,7 +139,8 @@ oid_name = {'RU.OMCConfTable.omcIPAddress': '.1.3.6.1.4.1.26149.2.2.7.1.2.1',
             'RU.SyncClock.SyncConfigTable.syncLostTimeout': '.1.3.6.1.4.1.26149.2.2.11.1.1.8.1',
             'RU.SyncClock.SyncConfigTable.timerAdjust': '.1.3.6.1.4.1.26149.2.2.11.1.1.9.1',
             'RU.SyncClock.SyncConfigTable.broadcastEnable': '.1.3.6.1.4.1.26149.2.2.11.1.1.10.1',
-            'RU.RA.1.RAConfTable.aclMode': '.1.3.6.1.4.1.26149.2.2.13.1.1.4.1', 'RU.RA.1.RAConfTable.ssId': '.1.3.6.1.4.1.26149.2.2.13.1.1.5.1',
+            'RU.RA.1.RAConfTable.aclMode': '.1.3.6.1.4.1.26149.2.2.13.1.1.4.1',
+            'RU.RA.1.RAConfTable.ssId': '.1.3.6.1.4.1.26149.2.2.13.1.1.5.1',
             'ru.np.ra.1.peer.1.config.macAddress': '.1.3.6.1.4.1.26149.2.2.13.9.1.1.2.1.1',
             'ru.np.ra.1.peer.2.config.macAddress': '.1.3.6.1.4.1.26149.2.2.13.9.1.1.2.1.2',
             'ru.np.ra.1.peer.3.config.macAddress': '.1.3.6.1.4.1.26149.2.2.13.9.1.1.2.1.3',
@@ -126,91 +150,81 @@ oid_name = {'RU.OMCConfTable.omcIPAddress': '.1.3.6.1.4.1.26149.2.2.7.1.2.1',
             'ru.np.ra.1.peer.7.config.macAddress': '.1.3.6.1.4.1.26149.2.2.13.9.1.1.2.1.7',
             'ru.np.ra.1.peer.8.config.macAddress': '.1.3.6.1.4.1.26149.2.2.13.9.1.1.2.1.8',
             'RU.RA.1.RAACLConfig.1.macAddress': '.1.3.6.1.4.1.26149.2.2.13.5.1.2.1.1',
-'RU.RA.1.RAACLConfig.2.macAddress': '.1.3.6.1.4.1.26149.2.2.13.5.1.2.1.2',
-'RU.RA.1.RAACLConfig.3.macAddress': '.1.3.6.1.4.1.26149.2.2.13.5.1.2.1.3',
-'RU.RA.1.RAACLConfig.4.macAddress': '.1.3.6.1.4.1.26149.2.2.13.5.1.2.1.4',
-'RU.RA.1.RAACLConfig.5.macAddress': '.1.3.6.1.4.1.26149.2.2.13.5.1.2.1.5',
-'RU.RA.1.RAACLConfig.6.macAddress': '.1.3.6.1.4.1.26149.2.2.13.5.1.2.1.6',
-'RU.RA.1.RAACLConfig.7.macAddress': '.1.3.6.1.4.1.26149.2.2.13.5.1.2.1.7',
-'RU.RA.1.RAACLConfig.8.macAddress': '.1.3.6.1.4.1.26149.2.2.13.5.1.2.1.8',
-'RU.RA.1.RAACLConfig.9.macAddress': '.1.3.6.1.4.1.26149.2.2.13.5.1.2.1.9',
-'RU.RA.1.RAACLConfig.10.macAddress': '.1.3.6.1.4.1.26149.2.2.13.5.1.2.1.10',
-'RU.RA.1.RAACLConfig.#.macAddress': '.1.3.6.1.4.1.26149.2.2.13.5.1.2.1.#',
-'RU.RUOMOperationsTable.omOperationsReq': '.1.3.6.1.4.1.26149.2.2.5.1.2.1'
+            'RU.RA.1.RAACLConfig.2.macAddress': '.1.3.6.1.4.1.26149.2.2.13.5.1.2.1.2',
+            'RU.RA.1.RAACLConfig.3.macAddress': '.1.3.6.1.4.1.26149.2.2.13.5.1.2.1.3',
+            'RU.RA.1.RAACLConfig.4.macAddress': '.1.3.6.1.4.1.26149.2.2.13.5.1.2.1.4',
+            'RU.RA.1.RAACLConfig.5.macAddress': '.1.3.6.1.4.1.26149.2.2.13.5.1.2.1.5',
+            'RU.RA.1.RAACLConfig.6.macAddress': '.1.3.6.1.4.1.26149.2.2.13.5.1.2.1.6',
+            'RU.RA.1.RAACLConfig.7.macAddress': '.1.3.6.1.4.1.26149.2.2.13.5.1.2.1.7',
+            'RU.RA.1.RAACLConfig.8.macAddress': '.1.3.6.1.4.1.26149.2.2.13.5.1.2.1.8',
+            'RU.RA.1.RAACLConfig.9.macAddress': '.1.3.6.1.4.1.26149.2.2.13.5.1.2.1.9',
+            'RU.RA.1.RAACLConfig.10.macAddress': '.1.3.6.1.4.1.26149.2.2.13.5.1.2.1.10',
+            'RU.RA.1.RAACLConfig.#.macAddress': '.1.3.6.1.4.1.26149.2.2.13.5.1.2.1.#',
+            'RU.RUOMOperationsTable.omOperationsReq': '.1.3.6.1.4.1.26149.2.2.5.1.2.1'
 }
 ###############################################################################
 
 # Oid Name declare with its type####################
 
-oid_type = {
-    'RU.OMCConfTable.omcIPAddress': 'a', 'RU.OMCConfTable.periodicStatisticsTimer': 'u',
-'RU.RUConfTable.channelBandwidth': 'i', 'RU.RUConfTable.synchSource': 'i', 'RU.RUConfTable.countryCode': 'u', 'RU.RUConfTable.adminState': 'i',
-'RU.RUDateTimeTable.Year': 'i', 'RU.RUDateTimeTable.Month': 'i', 'RU.RUDateTimeTable.Day': 'i', 'RU.RUDateTimeTable.Hour': 'i', 'RU.RUDateTimeTable.Minutes': 'i',
-'RU.RUDateTimeTable.Seconds': 'i', 'RU.NetworkInterface.1.NetworkInterfaceConfigTable.ssId': 's', 'RU.NetworkInterface.2.NetworkInterfaceConfigTable.ssId': 's',
-'ru.np.ra.1.tddmac.rfChannel': 'i', 'RU.RA.1.TddMac.RATDDMACConfigTable.passPhrase': 's', 'ru.np.ra.1.tddmac.rfCoding': 'i', 'ru.np.ra.1.tddmac.txPower': 'u',
-'RU.RA.1.TddMac.RATDDMACConfigTable.maxCrcErrors': 'u', 'RU.RA.1.TddMac.RATDDMACConfigTable.leakyBucketTimer': 'u',
-'RU.RA.1.LLC.RALLCConfTable.llcArqEnable': 'i', 'RU.RA.1.LLC.RALLCConfTable.arqWin': 'u', 'RU.RA.1.LLC.RALLCConfTable.frameLossThreshold': 'u',
-'RU.RA.1.LLC.RALLCConfTable.leakyBucketTimer': 'u', 'RU.RA.1.LLC.RALLCConfTable.frameLossTimeout': 'i',
-'RU.SysOmcRegistrationTable.sysOmcRegistercontactAddr': 's', 'RU.SysOmcRegistrationTable.sysOmcRegistercontactPerson': 's',
-'RU.SysOmcRegistrationTable.sysOmcRegistercontactMobile': 's', 'RU.SysOmcRegistrationTable.sysOmcRegisteralternateCont': 's',
-'RU.SysOmcRegistrationTable.sysOmcRegistercontactEmail': 's',
-'RU.SyncClock.SyncConfigTable.rasterTime': 'i', 'RU.SyncClock.SyncConfigTable.numSlaves': 'i',
-'RU.SyncClock.SyncConfigTable.syncLossThreshold': 'u', 'RU.SyncClock.SyncConfigTable.leakyBucketTimer': 'u',
-'RU.SyncClock.SyncConfigTable.syncLostTimeout': 'u', 'RU.SyncClock.SyncConfigTable.timerAdjust': 'i',
-'RU.SyncClock.SyncConfigTable.broadcastEnable': 'i',
-'RU.RA.1.RAConfTable.aclMode': 'i', 'RU.RA.1.RAConfTable.ssId': 's',
-'ru.np.ra.1.peer.1.config.macAddress': 's',
-'ru.np.ra.1.peer.2.config.macAddress': 's',
-'ru.np.ra.1.peer.3.config.macAddress': 's',
-'ru.np.ra.1.peer.4.config.macAddress': 's',
-'ru.np.ra.1.peer.5.config.macAddress': 's',
-'ru.np.ra.1.peer.6.config.macAddress': 's',
-'ru.np.ra.1.peer.7.config.macAddress': 's',
-'ru.np.ra.1.peer.8.config.macAddress': 's',
-'RU.RA.1.RAACLConfig.1.macAddress': 's',
-'RU.RA.1.RAACLConfig.2.macAddress': 's',
-'RU.RA.1.RAACLConfig.3.macAddress': 's',
-'RU.RA.1.RAACLConfig.4.macAddress': 's',
-'RU.RA.1.RAACLConfig.5.macAddress': 's',
-'RU.RA.1.RAACLConfig.6.macAddress': 's',
-'RU.RA.1.RAACLConfig.7.macAddress': 's',
-'RU.RA.1.RAACLConfig.8.macAddress': 's',
-'RU.RA.1.RAACLConfig.9.macAddress': 's',
-'RU.RA.1.RAACLConfig.10.macAddress': 's',
-'RU.RA.1.RAACLConfig.#.macAddress': '#'
+oid_type = {'RU.OMCConfTable.omcIPAddress': 'a',
+            'RU.OMCConfTable.periodicStatisticsTimer': 'u',
+            'RU.RUConfTable.channelBandwidth': 'i',
+            'RU.RUConfTable.synchSource': 'i',
+            'RU.RUConfTable.countryCode': 'u',
+            'RU.RUConfTable.adminState': 'i',
+            'RU.RUDateTimeTable.Year': 'i',
+            'RU.RUDateTimeTable.Month': 'i',
+            'RU.RUDateTimeTable.Day': 'i',
+            'RU.RUDateTimeTable.Hour': 'i',
+            'RU.RUDateTimeTable.Minutes': 'i',
+            'RU.RUDateTimeTable.Seconds': 'i',
+            'RU.NetworkInterface.1.NetworkInterfaceConfigTable.ssId': 's',
+            'RU.NetworkInterface.2.NetworkInterfaceConfigTable.ssId': 's',
+            'ru.np.ra.1.tddmac.rfChannel': 'i',
+            'RU.RA.1.TddMac.RATDDMACConfigTable.passPhrase': 's',
+            'ru.np.ra.1.tddmac.rfCoding': 'i',
+            'ru.np.ra.1.tddmac.txPower': 'u',
+            'RU.RA.1.TddMac.RATDDMACConfigTable.maxCrcErrors': 'u',
+            'RU.RA.1.TddMac.RATDDMACConfigTable.leakyBucketTimer': 'u',
+            'RU.RA.1.LLC.RALLCConfTable.llcArqEnable': 'i',
+            'RU.RA.1.LLC.RALLCConfTable.arqWin': 'u',
+            'RU.RA.1.LLC.RALLCConfTable.frameLossThreshold': 'u',
+            'RU.RA.1.LLC.RALLCConfTable.leakyBucketTimer': 'u',
+            'RU.RA.1.LLC.RALLCConfTable.frameLossTimeout': 'i',
+            'RU.SysOmcRegistrationTable.sysOmcRegistercontactAddr': 's',
+            'RU.SysOmcRegistrationTable.sysOmcRegistercontactPerson': 's',
+            'RU.SysOmcRegistrationTable.sysOmcRegistercontactMobile': 's',
+            'RU.SysOmcRegistrationTable.sysOmcRegisteralternateCont': 's',
+            'RU.SysOmcRegistrationTable.sysOmcRegistercontactEmail': 's',
+            'RU.SyncClock.SyncConfigTable.rasterTime': 'i',
+            'RU.SyncClock.SyncConfigTable.numSlaves': 'i',
+            'RU.SyncClock.SyncConfigTable.syncLossThreshold': 'u',
+            'RU.SyncClock.SyncConfigTable.leakyBucketTimer': 'u',
+            'RU.SyncClock.SyncConfigTable.syncLostTimeout': 'u',
+            'RU.SyncClock.SyncConfigTable.timerAdjust': 'i',
+            'RU.SyncClock.SyncConfigTable.broadcastEnable': 'i',
+            'RU.RA.1.RAConfTable.aclMode': 'i',
+            'RU.RA.1.RAConfTable.ssId': 's',
+            'ru.np.ra.1.peer.1.config.macAddress': 's',
+            'ru.np.ra.1.peer.2.config.macAddress': 's',
+            'ru.np.ra.1.peer.3.config.macAddress': 's',
+            'ru.np.ra.1.peer.4.config.macAddress': 's',
+            'ru.np.ra.1.peer.5.config.macAddress': 's',
+            'ru.np.ra.1.peer.6.config.macAddress': 's',
+            'ru.np.ra.1.peer.7.config.macAddress': 's',
+            'ru.np.ra.1.peer.8.config.macAddress': 's',
+            'RU.RA.1.RAACLConfig.1.macAddress': 's',
+            'RU.RA.1.RAACLConfig.2.macAddress': 's',
+            'RU.RA.1.RAACLConfig.3.macAddress': 's',
+            'RU.RA.1.RAACLConfig.4.macAddress': 's',
+            'RU.RA.1.RAACLConfig.5.macAddress': 's',
+            'RU.RA.1.RAACLConfig.6.macAddress': 's',
+            'RU.RA.1.RAACLConfig.7.macAddress': 's',
+            'RU.RA.1.RAACLConfig.8.macAddress': 's',
+            'RU.RA.1.RAACLConfig.9.macAddress': 's',
+            'RU.RA.1.RAACLConfig.10.macAddress': 's',
+            'RU.RA.1.RAACLConfig.#.macAddress': '#'
 }
-
-# errorStatus = {0:'noError',
-##                       1:'tooBig',
-##                       2:'noSuchName',
-##                       3:'badValue',
-##                       4:'readOnly',
-##                       5:'genErr',
-##                       6:'noAccess',
-##                       7:'wrongType',
-##                       8:'wrongLength',
-##                       9:'wrongEncoding',
-##                       10:'wrongValue',
-##                       11:'noCreation',
-##                       12:'inconsistentValue',
-##                       13:'resourceUnavailable',
-##                       14:'commitFailed',
-##                       15:'undoFailed',
-##                       16:'authorizationError',
-##                       17:'notWritable',
-##                       18:'inconsistentName',
-##                       50:'unKnown',
-##                       551:'networkUnreachable',
-##                       52:'typeError',
-##                       553:'Request Timeout.Please Wait and Retry Again',
-##                       54:'0active_state_notAble_to_lock',
-##                       55:'1active_state_notAble_to_Unlock',
-##                       91:'Arguments are not proper',
-##                       96:'InternalError',
-##                       97:'ip-port-community_not_passed',
-##                       98:'otherException',
-##                       99:'pysnmpException',
-##                       102:'Unkown Error Occured'}
 
 errorStatus = {0: 'noError',
                1: 'Device Unresponsive',
@@ -286,6 +300,7 @@ def get_device_param(host_id):
     Author - Anuj Samariya
     This function is used to get the data of device list
     host_id -this id is used to get the specific device parameters e.g ipaddress,macaddressmdevcietypeid,configprofileid
+    @param host_id:
     """
     global sqlalche_obj
     sqlalche_obj.sql_alchemy_db_connection_open()
@@ -309,6 +324,7 @@ def omc_conf_table_get(host_id):
     This function is used to get the data of omc configuration table
     host_id -this id is used to get the specific config profile id i.e. config_profile_id
     return the omc configuration table data and config profile id
+    @param host_id:
     """
     global sqlalche_obj
     sqlalche_obj.sql_alchemy_db_connection_open()
@@ -334,6 +350,10 @@ def omc_conf_set(host_id, omc_fields, omc_config, user_name):
     omc_fields - these are the collection of form fields which are going to set on the device and store in the database
     omc_config- these are the collection of values of form fields which is set in the form and store in the database
     return the dictionary to odu_view which calues are set and which are not e.g 1 for set and 0 for not set
+    @param host_id:
+    @param omc_fields:
+    @param omc_config:
+    @param user_name:
     """
     global sqlalche_obj
     sqlalche_obj.sql_alchemy_db_connection_open()
@@ -399,6 +419,7 @@ def ru_config_table_get(host_id):
     This function is used to get the data of ru configuration table
     host_id -this id is used to get the specific config profile id i.e. config_profile_id
     return the ru configuration table data and config profile id
+    @param host_id:
     """
     global sqlalche_obj
     sqlalche_obj.sql_alchemy_db_connection_open()
@@ -423,6 +444,10 @@ def ru_config_table_set(host_id, ru_config_fields, ru_config_param, user_name):
     ru_config_fields - these are the collection of form fields which are going to set on the device and store in the database
     ru_config_param - these are the collection of values of form fields which is set in the form and store in the database
     return the dictionary to odu_view which calues are set and which are not
+    @param host_id:
+    @param ru_config_fields:
+    @param ru_config_param:
+    @param user_name:
     """
     global sqlalche_obj
     sqlalche_obj.sql_alchemy_db_connection_open()
@@ -535,6 +560,7 @@ def ru_date_time_table_get(host_id):
     This function is used to get the data of ru date time configuration table
     host_id -this id is used to get the specific config profile id i.e. config_profile_id
     return the ru date time configuration table data and config profile id
+    @param host_id:
     """
     global sqlalche_obj
     sqlalche_obj.sql_alchemy_db_connection_open()
@@ -561,6 +587,10 @@ def ru_date_time_table_set(host_id, date_time_fields, date_time_param, user_name
     date_time_fields - these are the collection of form fields which are going to set on the device and store in the database
     date_time_param - these are the collection of values of form fields which is set in the form and store in the database
     return the dictionary to odu_view which calues are set and which are not e.g 1 for set and 0 for not set
+    @param host_id:
+    @param date_time_fields:
+    @param date_time_param:
+    @param user_name:
     """
     global sqlalche_obj
     sqlalche_obj.sql_alchemy_db_connection_open()
@@ -627,6 +657,11 @@ def ru_date_time_table_set(host_id, date_time_fields, date_time_param, user_name
 
 
 def network_interface_config_get():
+    """
+
+
+    @return:
+    """
     global sqlalche_obj
     sqlalche_obj.sql_alchemy_db_connection_open()
     odu16_profile_id = sqlalche_obj.session.query(
@@ -638,6 +673,14 @@ def network_interface_config_get():
 
 
 def network_interface_config_set(host_id, network_interface_config_fields, network_interface_config_param, user_name):
+    """
+
+    @param host_id:
+    @param network_interface_config_fields:
+    @param network_interface_config_param:
+    @param user_name:
+    @return: @raise:
+    """
     global sqlalche_obj
     sqlalche_obj.sql_alchemy_db_connection_open()
     network_interface_config_table = []
@@ -691,6 +734,7 @@ def ra_acl_config_table_get(host_id):
     This function is used to get the data of ra acl configuration table
     host_id -this id is used to get the specific config profile id i.e. config_profile_id
     return the ra acl configuration table configuration table data and config profile id
+    @param host_id:
     """
     global sqlalche_obj
     sqlalche_obj.sql_alchemy_db_connection_open()
@@ -715,6 +759,7 @@ def sync_config_table_get(host_id):
     This function is used to get the data of syn configuration table
     host_id - this id is used to get the specific config profile id i.e. config_profile_id
     return the syn configuration table configuration table data and config profile id
+    @param host_id:
     """
     global sqlalche_obj
     sqlalche_obj.sql_alchemy_db_connection_open()
@@ -738,6 +783,7 @@ def ra_llc_conf_table_get(host_id):
     This function is used to get the data of ra llc configuration table
     host_id -this id is used to get the specific config profile id i.e. config_profile_id
     return the ra llc configuration table configuration table data and config profile id
+    @param host_id:
     """
     global sqlalche_obj
     sqlalche_obj.sql_alchemy_db_connection_open()
@@ -763,6 +809,10 @@ def ra_llc_configuration_set(host_id, llc_configuration_fields, llc_configuratio
     date_time_fields - these are the collection of form fields which are going to set on the device and store in the database
     date_time_param - these are the collection of values of form fields which is set in the form and store in the database
     return the dictionary to odu_view which calues are set and which are not e.g 1 for set and 0 for not set
+    @param host_id:
+    @param llc_configuration_fields:
+    @param llc_configuration_param:
+    @param user_name:
     """
     global sqlalche_obj
     sqlalche_obj.sql_alchemy_db_connection_open()
@@ -837,6 +887,7 @@ def ra_tdd_mac_config_get(host_id):
     This function is used to get the data of ra tdd mac configuration table
     host_id -this id is used to get the specific config profile id i.e. config_profile_id
     return the ra tdd mac configuration table configuration table data and config profile id
+    @param host_id:
     """
     global sqlalche_obj
     sqlalche_obj.sql_alchemy_db_connection_open()
@@ -865,6 +916,10 @@ def ra_tdd_mac_config_set(host_id, tdd_mac_fields, tdd_mac_param, user_name):
     tdd_mac_fields - these are the collection of form fields which are going to set on the device and store in the database
     tdd_mac_param - these are the collection of values of form fields which is set in the form and store in the database
     return the dictionary to odu_view which calues are set and which are not e.g 1 for set and 0 for not set
+    @param host_id:
+    @param tdd_mac_fields:
+    @param tdd_mac_param:
+    @param user_name:
     """
     global sqlalche_obj
     sqlalche_obj.sql_alchemy_db_connection_open()
@@ -972,6 +1027,7 @@ def peer_config_table_get(host_id):
     This function is used to get the data of peer config table
     host_id -this id is used to get the specific config profile id i.e. config_profile_id
     return the peer config table data and config profile id
+    @param host_id:
     """
     global sqlalche_obj
     sqlalche_obj.sql_alchemy_db_connection_open()
@@ -995,6 +1051,7 @@ def ra_conf_table_get(host_id):
     This function is used to get the data of ra conf table
     host_id -this id is used to get the specific config profile id i.e. config_profile_id
     return the ra conf table data and config profile id
+    @param host_id:
     """
     global sqlalche_obj
     sqlalche_obj.sql_alchemy_db_connection_open()
@@ -1018,6 +1075,7 @@ def sys_omc_registration_table_get(host_id):
     This function is used to get the data of sys omc registration table
     host_id -this id is used to get the specific config profile id i.e. config_profile_id
     return the sys omc registration table data and config profile id
+    @param host_id:
     """
     global sqlalche_obj
     sqlalche_obj.sql_alchemy_db_connection_open()
@@ -1044,6 +1102,10 @@ def omc_registration_configuration_set(host_id, omc_registration_fields, omc_reg
     omc_registration_fields - these are the collection of form fields which are going to set on the device and store in the database
     omc_registration_param - these are the collection of values of form fields which is set in the form and store in the database
     return the dictionary to odu_view which calues are set and which are not e.g 1 for set and 0 for not set
+    @param host_id:
+    @param omc_registration_fields:
+    @param omc_registration_param:
+    @param user_name:
     """
     global sqlalche_obj
     sqlalche_obj.sql_alchemy_db_connection_open()
@@ -1123,6 +1185,10 @@ def syn_configuration_set(host_id, syn_configuration_fields, syn_configuration_p
     syn_configuration_fields - these are the collection of form fields which are going to set on the device and store in the database
     syn_configuration_param - these are the collection of values of form fields which is set in the form and store in the database
     return the dictionary to odu_view which calues are set and which are not e.g 1 for set and 0 for not set
+    @param host_id:
+    @param syn_configuration_fields:
+    @param syn_configuration_param:
+    @param user_name:
     """
     global sqlalche_obj
     sqlalche_obj.sql_alchemy_db_connection_open()
@@ -1238,6 +1304,10 @@ def ra_config_set(host_id, ra_config_fields, ra_config_param, user_name):
     ra_config_fields - these are the collection of form fields which are going to set on the device and store in the database
     ra_config_param- these are the collection of values of form fields which is set in the form and store in the database
     return the dictionary to odu_view which calues are set and which are not e.g 1 for set and 0 for not set
+    @param host_id:
+    @param ra_config_fields:
+    @param ra_config_param:
+    @param user_name:
     """
     global sqlalche_obj
     sqlalche_obj.sql_alchemy_db_connection_open()
@@ -1277,6 +1347,18 @@ def ra_config_set(host_id, ra_config_fields, ra_config_param, user_name):
 
 def peer_config_set(host_id, status, peer_config_fields, peer_config_param, time_slot_param, user_name):
     """
+
+
+
+
+
+
+    @param host_id:
+    @param status:
+    @param peer_config_fields:
+    @param peer_config_param:
+    @param time_slot_param:
+    @param user_name:
     @author - Anuj Samariya
     host_id - this id is used to get the specific details of device  i.e. snmp version,snmp write community,snmp read community,snmp port,config profile id
     peer_config_fields - these are the collection of form fields which are going to set on the device and store in the database
@@ -1399,6 +1481,14 @@ def peer_config_set(host_id, status, peer_config_fields, peer_config_param, time
 
 
 def peer_slaves(host_id, peermac, syn_configuration_fields, syn_configuration_param):
+    """
+
+    @param host_id:
+    @param peermac:
+    @param syn_configuration_fields:
+    @param syn_configuration_param:
+    @return: @raise:
+    """
     global sqlalche_obj
     sqlalche_obj.sql_alchemy_db_connection_open()
     syn_configuration = []
@@ -1508,6 +1598,12 @@ def acl_config_set(host_id, acl_field, acl_param, acl_config_fields, acl_config_
     acl_config_fields - these are the collection of form fields which are going to set on the device and store in the database
     acl_config_param- these are the collection of values of form fields which is set in the form and store in the database
     return the dictionary to odu_view which calues are set and which are not e.g 1 for set and 0 for not set
+    @param host_id:
+    @param acl_field:
+    @param acl_param:
+    @param acl_config_fields:
+    @param acl_config_param:
+    @param user_name:
     """
     global sqlalche_obj
     global html
@@ -1712,6 +1808,13 @@ def retry_set_one(host_id, table_name, textbox, textbox_value, textbox_field, in
     textbox_value - it defines the oid name
     textbox_field - it defines the field name of database
     index_value - it defines the index parameters if exist otherwise it is empty
+    @param host_id:
+    @param table_name:
+    @param textbox:
+    @param textbox_value:
+    @param textbox_field:
+    @param index_value:
+    @param user_name:
     """
     global sqlalche_obj
     sqlalche_obj.sql_alchemy_db_connection_open()
@@ -1892,6 +1995,13 @@ def retry_set_one(host_id, table_name, textbox, textbox_value, textbox_field, in
 
 
 def commit_to_flash(host_id, field, user_name):
+    """
+
+    @param host_id:
+    @param field:
+    @param user_name:
+    @return:
+    """
     try:
         global sqlalche_obj
         sqlalche_obj.sql_alchemy_db_connection_open()
@@ -1925,6 +2035,13 @@ def retry_set_for_all_odu16(host_id, table_name_list, textbox_list, textbox_fiel
     textbox_value - it defines the collection of oid name
     textbox_field - it defines the collection of field name of database
     index_value - it defines the index parameters if exist otherwise it is empty
+    @param host_id:
+    @param table_name_list:
+    @param textbox_list:
+    @param textbox_field_list:
+    @param textbox_value_list:
+    @param index_value_list:
+    @param user_name:
     """
     global sqlalche_obj
     sqlalche_obj.sql_alchemy_db_connection_open()
@@ -2202,6 +2319,17 @@ def get_device_list(ip_address, mac_address, selected_device, i_display_start, i
     mac_address - This is the Mac Address of device e.g aa:bb:cc:dd:ee:ff
     selected_device - This is the selected device types from the drop down menu of devices e.g "odu16"
     return List of Devices in two dimensional list format
+    @param ip_address:
+    @param mac_address:
+    @param selected_device:
+    @param i_display_start:
+    @param i_display_length:
+    @param s_search:
+    @param sEcho:
+    @param sSortDir_0:
+    @param iSortCol_0:
+    @param userid:
+    @param html_var:
     """
     # This is a empty list variable used for storing the device list
     device_list = []
@@ -2386,8 +2514,7 @@ def get_device_list(ip_address, mac_address, selected_device, i_display_start, i
                         else:
                             if host_alias != "" and host_alias != None:
                                 slave_data = str(host_alias) + "(-)"
-##                    else:
-##                        slave_data = "(-)"
+
                         master_slave = "RM (S)"
                 else:
                     master_slave = "RM (-)"
@@ -2397,16 +2524,6 @@ def get_device_list(ip_address, mac_address, selected_device, i_display_start, i
                     outerjoin(Odu100SyncConfigTable, Odu100RuConfTable.config_profile_id == Odu100SyncConfigTable.config_profile_id).\
                     filter(
                         Odu100RuConfTable.config_profile_id == device_tuple[i][8]).all()
-
-#                ru_data = sqlalche_obj.session.query(Odu100RuConfTable.adminstate).filter(Odu100RuConfTable.config_profile_id==device_tuple[i][8]).all()
-#                ra_data = sqlalche_obj.session.query(Odu100RaConfTable.raAdminState).filter(Odu100RaConfTable.config_profile_id==device_tuple[i][8]).all()
-# sync_data =
-# sqlalche_obj.session.query(Odu100SyncConfigTable.adminStatus).filter(Odu100SyncConfigTable.config_profile_id==device_tuple[i][8]).all()
-
-            # host_count =
-            # session.query(Hosts).filter(and_(or_(Hosts.host_alias ==
-            # host_alias,Hosts.ip_address == ip_address, Hosts.mac_address ==
-            # mac_address),Hosts.is_deleted == 0)).count()
 
                 ru_status = sqlalche_obj.session.query(Odu100RuStatusTable.ruoperationalState).filter(
                     Odu100RuStatusTable.host_id == device_tuple[i][0]).all()
@@ -2711,6 +2828,17 @@ def get_device_list_old(ip_address, mac_address, selected_device, i_display_star
     mac_address - This is the Mac Address of device e.g aa:bb:cc:dd:ee:ff
     selected_device - This is the selected device types from the drop down menu of devices e.g "odu16"
     return List of Devices in two dimensional list format
+    @param ip_address:
+    @param mac_address:
+    @param selected_device:
+    @param i_display_start:
+    @param i_display_length:
+    @param s_search:
+    @param sEcho:
+    @param sSortDir_0:
+    @param iSortCol_0:
+    @param userid:
+    @param html_var:
     """
     # This is a empty list variable used for storing the device list
     device_list = []
@@ -3132,6 +3260,17 @@ def get_device_list_guest(ip_address, mac_address, selected_device, i_display_st
     mac_address - This is the Mac Address of device e.g aa:bb:cc:dd:ee:ff
     selected_device - This is the selected device types from the drop down menu of devices e.g "odu16"
     return List of Devices in two dimensional list format
+    @param ip_address:
+    @param mac_address:
+    @param selected_device:
+    @param i_display_start:
+    @param i_display_length:
+    @param s_search:
+    @param sEcho:
+    @param sSortDir_0:
+    @param iSortCol_0:
+    @param userid:
+    @param html_var:
     """
     # This is a empty list variable used for storing the device list
     device_list = []
@@ -3441,6 +3580,9 @@ def get_device_list_odu_profiling(ip_address, mac_address, selected_device):
     ip_address - This is the IP Address of device e.g 192.168.0.1
     mac_address - This is the Mac Address of device e.g aa:bb:cc:dd:ee:ff
     selected_device - This is the selected device types from the drop down menu of devices e.g "odu16"
+    @param ip_address:
+    @param mac_address:
+    @param selected_device:
     """
     # This is a empty list variable used for storing the device list
     device_list = []
@@ -3491,6 +3633,7 @@ def odu100_get_ipconfigtable(host_id):
     This function is used to get the data of omc configuration table
     host_id - this id is used to get the specific config profile id i.e. config_profile_id
     return the omc configuration table data and config profile id
+    @param host_id:
     """
     global sqlalche_obj
     try:
@@ -3551,6 +3694,7 @@ def odu100_get_omcconfigtable(host_id):
     This function is used to get the data of omc configuration table
     host_id - this id is used to get the specific config profile id i.e. config_profile_id
     return the omc configuration table data and config profile id
+    @param host_id:
     """
     global sqlalche_obj
     try:
@@ -3611,6 +3755,7 @@ def odu100_get_peerconfigtable(host_id):
     This function is used to get the data of omc configuration table
     host_id - this id is used to get the specific config profile id i.e. config_profile_id
     return the omc configuration table data and config profile id
+    @param host_id:
     """
     try:
         global sqlalche_obj
@@ -3672,6 +3817,7 @@ def odu100_get_aclconfigtable(host_id):
     This function is used to get the data of omc configuration table
     host_id - this id is used to get the specific config profile id i.e. config_profile_id
     return the omc configuration table data and config profile id
+    @param host_id:
     """
     try:
         global sqlalche_obj
@@ -3733,6 +3879,7 @@ def odu100_get_raconfigtable(host_id):
     This function is used to get the data of omc configuration table
     host_id - this id is used to get the specific config profile id i.e. config_profile_id
     return the omc configuration table data and config profile id
+    @param host_id:
     """
     try:
         global sqlalche_obj
@@ -3795,6 +3942,7 @@ def odu100_get_tddmacconfigtable(host_id):
     This function is used to get the data of omc configuration table
     host_id - this id is used to get the specific config profile id i.e. config_profile_id
     return the omc configuration table data and config profile id
+    @param host_id:
     """
     try:
         global sqlalche_obj
@@ -3856,6 +4004,7 @@ def odu100_get_ruconfigtable(host_id):
     This function is used to get the data of omc configuration table
     host_id - this id is used to get the specific config profile id i.e. config_profile_id
     return the omc configuration table data and config profile id
+    @param host_id:
     """
     try:
         global sqlalche_obj
@@ -3916,6 +4065,7 @@ def odu100_get_llcconfigtable(host_id):
     This function is used to get the data of omc configuration table
     host_id - this id is used to get the specific config profile id i.e. config_profile_id
     return the omc configuration table data and config profile id
+    @param host_id:
     """
     try:
         global sqlalche_obj
@@ -3971,6 +4121,7 @@ def odu100_ip_packet_table(host_id):
     This function is used to get the data of omc configuration table
     host_id - this id is used to get the specific config profile id i.e. config_profile_id
     return the omc configuration table data and config profile id
+    @param host_id:
     """
     try:
         global sqlalche_obj
@@ -4015,6 +4166,7 @@ def totalPacketIpMAC(host_id):
     This function is used to get the data of omc configuration table
     host_id - this id is used to get the specific config profile id i.e. config_profile_id
     return the omc configuration table data and config profile id
+    @param host_id:
     """
     try:
         global sqlalche_obj
@@ -4061,6 +4213,7 @@ def odu100_mac_packet_table(host_id):
     This function is used to get the data of omc configuration table
     host_id - this id is used to get the specific config profile id i.e. config_profile_id
     return the omc configuration table data and config profile id
+    @param host_id:
     """
     try:
         global sqlalche_obj
@@ -4105,6 +4258,7 @@ def odu100_get_sysconfigtable(host_id):
     This function is used to get the data of omc configuration table
     host_id - this id is used to get the specific config profile id i.e. config_profile_id
     return the omc configuration table data and config profile id
+    @param host_id:
     """
     try:
         global sqlalche_obj
@@ -4164,6 +4318,7 @@ def odu100_get_syncconfigtable(host_id):
     This function is used to get the data of omc configuration table
     host_id - this id is used to get the specific config profile id i.e. config_profile_id
     return the omc configuration table data and config profile id
+    @param host_id:
     """
     try:
         global sqlalche_obj
@@ -4220,6 +4375,7 @@ def odu100_get_channelConfig(host_id):
     This function is used to get the data of omc configuration table
     host_id - this id is used to get the specific config profile id i.e. config_profile_id
     return the omc configuration table data and config profile id
+    @param host_id:
     """
     try:
         global sqlalche_obj
@@ -4271,6 +4427,13 @@ def odu100_get_channelConfig(host_id):
 
 
 def odu100_get_status(host_id, class_name, time_stamp=0):
+    """
+
+    @param host_id:
+    @param class_name:
+    @param time_stamp:
+    @return:
+    """
     try:
         global sqlalche_obj
         sqlalche_obj.sql_alchemy_db_connection_open()
@@ -4297,6 +4460,11 @@ def odu100_get_status(host_id, class_name, time_stamp=0):
 
 
 def acl_edit_bind(uuid):
+    """
+
+    @param uuid:
+    @return:
+    """
     try:
         global sqlalche_obj
         dic_result = {"success": 0, "result": {}}
@@ -4320,6 +4488,11 @@ def acl_edit_bind(uuid):
 
 
 def select_table_prefix(device_type_id):
+    """
+
+    @param device_type_id:
+    @return:
+    """
     try:
         global sqlalche_obj
         sqlalche_obj.sql_alchemy_db_connection_open()
@@ -4366,6 +4539,11 @@ class MakeOdu100SelectListWithDic(object):
         is_readonly - This denotes that the select list value is only readable not writable [type - Boolean]
         select_list_initial_msg - This denotes the initial msg show on select list when the list is view means which msg is shown on list when no element is selected initially [type - string]
         return the select list string in html format
+        @param selected_field:
+        @param selected_list_state:
+        @param selected_list_id:
+        @param is_readonly:
+        @param select_list_initial_msg:
         """
 
         # this dictionary is used to store the name and value of select list
@@ -4396,6 +4574,11 @@ class MakeOdu100SelectListWithDic(object):
         is_readonly - This denotes that the select list value is only readable not writable [type - Boolean]
         select_list_initial_msg - This denotes the initial msg show on select list when the list is view means which msg is shown on list when no element is selected initially [type - string]
         return the select list string in html format
+        @param selected_field:
+        @param selected_list_state:
+        @param selected_list_id:
+        @param is_readonly:
+        @param select_list_initial_msg:
         """
 
         # this dictionary is used to store the name and value of select list
@@ -4429,6 +4612,11 @@ class MakeOdu100SelectListWithDic(object):
         is_readonly - This denotes that the select list value is only readable not writable [type - Boolean]
         select_list_initial_msg - This denotes the initial msg show on select list when the list is view means which msg is shown on list when no element is selected initially [type - string]
         return the select list string in html format
+        @param selected_field:
+        @param selected_list_state:
+        @param selected_list_id:
+        @param is_readonly:
+        @param select_list_initial_msg:
         """
         # this dictionary is used to store the name and value of select list
 
@@ -4459,6 +4647,11 @@ class MakeOdu100SelectListWithDic(object):
         is_readonly - This denotes that the select list value is only readable not writable [type - Boolean]
         select_list_initial_msg - This denotes the initial msg show on select list when the list is view means which msg is shown on list when no element is selected initially [type - string]
         return the select list string in html format
+        @param selected_field:
+        @param selected_list_state:
+        @param selected_list_id:
+        @param is_readonly:
+        @param select_list_initial_msg:
         """
         # this dictionary is used to store the name and value of select list
 
@@ -4491,6 +4684,11 @@ class MakeOdu100SelectListWithDic(object):
         is_readonly - This denotes that the select list value is only readable not writable [type - boolean]
         select_list_initial_msg - This denotes the initial msg show on select list when the list is view means which msg is shown on list when no element is selected initially [type - string]
         return the select list string in html format
+        @param selected_field:
+        @param selected_list_state:
+        @param selected_list_id:
+        @param is_readonly:
+        @param select_list_initial_msg:
         """
         # this dictionary is used to store the name and value of select list
 
@@ -4512,6 +4710,11 @@ class MakeOdu100SelectListWithDic(object):
         is_readonly - This denotes that the select list value is only readable not writable [type - boolean]
         select_list_initial_msg - This denotes the initial msg show on select list when the list is view means which msg is shown on list when no element is selected initially [type - string]
         return the select list string in html format
+        @param selected_field:
+        @param selected_list_state:
+        @param selected_list_id:
+        @param is_readonly:
+        @param select_list_initial_msg:
         """
         # this dictionary is used to store the name and value of select list
 
@@ -4542,6 +4745,11 @@ class MakeOdu100SelectListWithDic(object):
         is_readonly - This denotes that the select list value is only readable not writable [type - boolean]
         select_list_initial_msg - This denotes the initial msg show on select list when the list is view means which msg is shown on list when no element is selected initially [type - string]
         return the select list string in html format
+        @param selected_field:
+        @param selected_list_state:
+        @param selected_list_id:
+        @param is_readonly:
+        @param select_list_initial_msg:
         """
 
         timeslot_total_select_name_value = 16
@@ -4584,6 +4792,11 @@ class MakeOdu100SelectListWithDic(object):
         is_readonly - This denotes that the select list value is only readable not writable [type - boolean]
         select_list_initial_msg - This denotes the initial msg show on select list when the list is view means which msg is shown on list when no element is selected initially [type - string]
         return the select list string in html format
+        @param selected_field:
+        @param selected_list_state:
+        @param selected_list_id:
+        @param is_readonly:
+        @param select_list_initial_msg:
         """
 
         # this dictionary is used to store the name and value of select list
@@ -4615,6 +4828,11 @@ class MakeOdu100SelectListWithDic(object):
         is_readonly - This denotes that the select list value is only readable not writable [type - boolean]
         select_list_initial_msg - This denotes the initial msg show on select list when the list is view means which msg is shown on list when no element is selected initially [type - string]
         return the select list string in html format
+        @param selected_field:
+        @param selected_list_state:
+        @param selected_list_id:
+        @param is_readonly:
+        @param select_list_initial_msg:
         """
 
         acm_state_select_list_name_value_dic = {'name': ['Disable',
@@ -4645,6 +4863,11 @@ class MakeOdu100SelectListWithDic(object):
         is_readonly - This denotes that the select list value is only readable not writable [type - boolean]
         select_list_initial_msg - This denotes the initial msg show on select list when the list is view means which msg is shown on list when no element is selected initially [type - string]
         return the select list string in html format
+        @param selected_field:
+        @param selected_list_state:
+        @param selected_list_id:
+        @param is_readonly:
+        @param select_list_initial_msg:
         """
 
         acm_state_select_list_name_value_dic = {'name': ['Disable',
@@ -4665,6 +4888,11 @@ class MakeOdu100SelectListWithDic(object):
         is_readonly - This denotes that the select list value is only readable not writable [type - boolean]
         select_list_initial_msg - This denotes the initial msg show on select list when the list is view means which msg is shown on list when no element is selected initially [type - string]
         return the select list string in html format
+        @param selected_field:
+        @param selected_list_state:
+        @param selected_list_id:
+        @param is_readonly:
+        @param select_list_initial_msg:
         """
 
         forcemimo_state_select_list_name_value_dic = {'name': [
@@ -4695,6 +4923,11 @@ class MakeOdu100SelectListWithDic(object):
         is_readonly - This denotes that the select list value is only readable not writable [type - boolean]
         select_list_initial_msg - This denotes the initial msg show on select list when the list is view means which msg is shown on list when no element is selected initially [type - string]
         return the select list string in html format
+        @param selected_field:
+        @param selected_list_state:
+        @param selected_list_id:
+        @param is_readonly:
+        @param select_list_initial_msg:
         """
 
         dba_state_select_list_name_value_dic = {'name': ['Disable',
@@ -4725,6 +4958,11 @@ class MakeOdu100SelectListWithDic(object):
         is_readonly - This denotes that the select list value is only readable not writable [type - boolean]
         select_list_initial_msg - This denotes the initial msg show on select list when the list is view means which msg is shown on list when no element is selected initially [type - string]
         return the select list string in html format
+        @param selected_field:
+        @param selected_list_state:
+        @param selected_list_id:
+        @param is_readonly:
+        @param select_list_initial_msg:
         """
 
         acs_state_select_list_name_value_dic = {'name': ['Disable',
@@ -4755,6 +4993,11 @@ class MakeOdu100SelectListWithDic(object):
         is_readonly - This denotes that the select list value is only readable not writable [type - boolean]
         select_list_initial_msg - This denotes the initial msg show on select list when the list is view means which msg is shown on list when no element is selected initially [type - string]
         return the select list string in html format
+        @param selected_field:
+        @param selected_list_state:
+        @param selected_list_id:
+        @param is_readonly:
+        @param select_list_initial_msg:
         """
 
         ans_state_select_list_name_value_dic = {'name': ['Disable',
@@ -4784,6 +5027,11 @@ class MakeOdu100SelectListWithDic(object):
         is_readonly - This denotes that the select list value is only readable not writable [type - boolean]
         select_list_initial_msg - This denotes the initial msg show on select list when the list is view means which msg is shown on list when no element is selected initially [type - string]
         return the select list string in html format
+        @param selected_field:
+        @param selected_list_state:
+        @param selected_list_id:
+        @param is_readonly:
+        @param select_list_initial_msg:
         """
 
         dfs_state_select_list_name_value_dic = {'name': ['Disable',
@@ -4814,6 +5062,11 @@ class MakeOdu100SelectListWithDic(object):
         is_readonly - This denotes that the select list value is only readable not writable [type - boolean]
         select_list_initial_msg - This denotes the initial msg show on select list when the list is view means which msg is shown on list when no element is selected initially [type - string]
         return the select list string in html format
+        @param selected_field:
+        @param selected_list_state:
+        @param selected_list_id:
+        @param is_readonly:
+        @param select_list_initial_msg:
         """
 
         # this dictionary is used to store the name and value of select list
@@ -4839,6 +5092,11 @@ class MakeOdu100SelectListWithDic(object):
         is_readonly - This denotes that the select list value is only readable not writable [type - boolean]
         select_list_initial_msg - This denotes the initial msg show on select list when the list is view means which msg is shown on list when no element is selected initially [type - string]
         return the select list string in html format
+        @param selected_field:
+        @param selected_list_state:
+        @param selected_list_id:
+        @param is_readonly:
+        @param select_list_initial_msg:
         """
 
         # this dictionary is used to store the name and value of select list
@@ -4874,6 +5132,11 @@ class MakeOdu100SelectListWithDic(object):
         is_readonly - This denotes that the select list value is only readable not writable [type - boolean]
         select_list_initial_msg - This denotes the initial msg show on select list when the list is view means which msg is shown on list when no element is selected initially [type - string]
         return the select list string in html format
+        @param selected_field:
+        @param selected_list_state:
+        @param selected_list_id:
+        @param is_readonly:
+        @param select_list_initial_msg:
         """
 
         # this dictionary is used to store the name and value of select list
@@ -4909,6 +5172,11 @@ class MakeOdu100SelectListWithDic(object):
         is_readonly - This denotes that the select list value is only readable not writable [type - boolean]
         select_list_initial_msg - This denotes the initial msg show on select list when the list is view means which msg is shown on list when no element is selected initially [type - string]
         return the select list string in html format
+        @param selected_field:
+        @param selected_list_state:
+        @param selected_list_id:
+        @param is_readonly:
+        @param select_list_initial_msg:
         """
 
         # this dictionary is used to store the name and value of select list
@@ -4953,6 +5221,11 @@ class MakeOdu100SelectListWithDic(object):
         is_readonly - This denotes that the select list value is only readable not writable [type - boolean]
         select_list_initial_msg - This denotes the initial msg show on select list when the list is view means which msg is shown on list when no element is selected initially [type - string]
         return the select list string in html format
+        @param selected_field:
+        @param selected_list_state:
+        @param selected_list_id:
+        @param is_readonly:
+        @param select_list_initial_msg:
         """
 
         # this dictionary is used to store the name and value of select list
@@ -4992,6 +5265,11 @@ class MakeOdu100SelectListWithDic(object):
         is_readonly - This denotes that the select list value is only readable not writable [type - boolean]
         select_list_initial_msg - This denotes the initial msg show on select list when the list is view means which msg is shown on list when no element is selected initially [type - string]
         return the select list string in html format
+        @param selected_field:
+        @param selected_list_state:
+        @param selected_list_id:
+        @param is_readonly:
+        @param select_list_initial_msg:
         """
 
         # this dictionary is used to store the name and value of select list
@@ -5027,6 +5305,11 @@ class MakeOdu100SelectListWithDic(object):
         is_readonly - This denotes that the select list value is only readable not writable [type - boolean]
         select_list_initial_msg - This denotes the initial msg show on select list when the list is view means which msg is shown on list when no element is selected initially [type - string]
         return the select list string in html format
+        @param selected_field:
+        @param selected_list_state:
+        @param selected_list_id:
+        @param is_readonly:
+        @param select_list_initial_msg:
         """
         global preferred_channel_dic
         # this dictionary is used to store the name and value of select list
@@ -5044,6 +5327,13 @@ class MakeOdu100SelectListWithDic(object):
         is_readonly - This denotes that the select list value is only readable not writable [type - boolean]
         select_list_initial_msg - This denotes the initial msg show on select list when the list is view means which msg is shown on list when no element is selected initially [type - string]
         return the select list string in html format
+        @param selected_field:
+        @param selected_list_state:
+        @param selected_list_id:
+        @param is_readonly:
+        @param select_list_initial_msg:
+        @param host_id:
+        @param selected_device:
         """
 
         # this dictionary is used to store the name and value of select list
@@ -5097,6 +5387,11 @@ class MakeOdu100SelectListWithDic(object):
         is_readonly - This denotes that the select list value is only readable not writable [type - boolean]
         select_list_initial_msg - This denotes the initial msg show on select list when the list is view means which msg is shown on list when no element is selected initially [type - string]
         return the select list string in html format
+        @param selected_field:
+        @param selected_list_state:
+        @param selected_list_id:
+        @param is_readonly:
+        @param select_list_initial_msg:
         """
 
         dhcp_select_list_using_dictionary = {'name': ['DISABLE',
@@ -5125,6 +5420,11 @@ class MakeOdu100SelectListWithDic(object):
         is_readonly - This denotes that the select list value is only readable not writable [type - boolean]
         select_list_initial_msg - This denotes the initial msg show on select list when the list is view means which msg is shown on list when no element is selected initially [type - string]
         return the select list string in html format
+        @param selected_field:
+        @param selected_list_state:
+        @param selected_list_id:
+        @param is_readonly:
+        @param select_list_initial_msg:
         """
 
         acl_select_list_using_dictionary = {'name': ['Disable',
@@ -5143,6 +5443,12 @@ class MakeOdu100SelectListWithDic(object):
         is_readonly - This denotes that the select list value is only readable not writable [type - boolean]
         select_list_initial_msg - This denotes the initial msg show on select list when the list is view means which msg is shown on list when no element is selected initially [type - string]
         return the select list string in html format
+        @param selected_field:
+        @param selected_list_state:
+        @param selected_list_id:
+        @param is_readonly:
+        @param select_list_initial_msg:
+        @param host_id:
         """
 
         global sqlalche_obj
@@ -5181,6 +5487,11 @@ class MakeOdu100SelectListWithDic(object):
         is_readonly - This denotes that the select list value is only readable not writable [type - boolean]
         select_list_initial_msg - This denotes the initial msg show on select list when the list is view means which msg is shown on list when no element is selected initially [type - string]
         return the select list string in html format
+        @param selected_field:
+        @param selected_list_state:
+        @param selected_list_id:
+        @param is_readonly:
+        @param select_list_initial_msg:
         """
 
         # this dictionary is used to store the name and value of select list
@@ -5201,6 +5512,11 @@ class MakeOdu100SelectListWithDic(object):
         is_readonly - This denotes that the select list value is only readable not writable [type - boolean]
         select_list_initial_msg - This denotes the initial msg show on select list when the list is view means which msg is shown on list when no element is selected initially [type - string]
         return the select list string in html format
+        @param selected_field:
+        @param selected_list_state:
+        @param selected_list_id:
+        @param is_readonly:
+        @param select_list_initial_msg:
         """
 
         raster_time_name_value_dic = {'name': ['2', '4'], 'value': ['2', '4']}
@@ -5217,6 +5533,12 @@ class MakeOdu100SelectListWithDic(object):
         is_readonly - This denotes that the select list value is only readable not writable [type - boolean]
         select_list_initial_msg - This denotes the initial msg show on select list when the list is view means which msg is shown on list when no element is selected initially [type - string]
         return the select list string in html format
+        @param selected_field:
+        @param selected_list_state:
+        @param selected_list_id:
+        @param is_readonly:
+        @param select_list_initial_msg:
+        @param attr:
         """
         mcs_index_name_value_dic = {}
         for i in range(0, 9):
@@ -5247,6 +5569,12 @@ class MakeOdu100SelectListWithDic(object):
         is_readonly - This denotes that the select list value is only readable not writable [type - boolean]
         select_list_initial_msg - This denotes the initial msg show on select list when the list is view means which msg is shown on list when no element is selected initially [type - string]
         return the select list string in html format
+        @param selected_field:
+        @param selected_list_state:
+        @param selected_list_id:
+        @param is_readonly:
+        @param select_list_initial_msg:
+        @param attr:
         """
         mcs_index_name_value_dic = {}
 
@@ -5278,6 +5606,11 @@ class MakeOdu100SelectListWithDic(object):
         is_readonly - This denotes that the select list value is only readable not writable [type - boolean]
         select_list_initial_msg - This denotes the initial msg show on select list when the list is view means which msg is shown on list when no element is selected initially [type - string]
         return the select list string in html format
+        @param selected_field:
+        @param selected_list_state:
+        @param selected_list_id:
+        @param is_readonly:
+        @param select_list_initial_msg:
         """
 
         link_distance_name_value_dic = {'name': ['UPTO 20',
@@ -5288,6 +5621,11 @@ class MakeOdu100SelectListWithDic(object):
 
 
 def rename_tablename(tablename):
+    """
+
+    @param tablename:
+    @return:
+    """
     try:
         ss = ""
         idx = tablename.index("_")
@@ -5301,6 +5639,11 @@ def rename_tablename(tablename):
 
 
 def get_firmware_version(host_id):
+    """
+
+    @param host_id:
+    @return:
+    """
     output_dict = {'success': 0}
     try:
         global sqlalche_obj
@@ -5322,6 +5665,13 @@ def odu100_set_config(host_id, device_type_id, dic_result):
     # dic_result =
     # {'success':0,'result':{'ru.omcConfTable.omcIpAddress':[1,'Not
     # Done'],'ru.omcConfTable.periodicStatsTimer':[1,'Not Done']}}
+    """
+
+    @param host_id:
+    @param device_type_id:
+    @param dic_result:
+    @return:
+    """
     try:
         global sqlalche_obj
         sqlalche_obj.sql_alchemy_db_connection_open()
@@ -5783,6 +6133,13 @@ def odu100_set_config(host_id, device_type_id, dic_result):
 
 
 def controller_validation(host_id, device_type_id, dic_result):
+    """
+
+    @param host_id:
+    @param device_type_id:
+    @param dic_result:
+    @return:
+    """
     oid_dic = []
     #logme('\n IN validation : '+ str(dic_result) + '\n')
     try:
@@ -5882,6 +6239,15 @@ def controller_validation(host_id, device_type_id, dic_result):
 
 
 def check_mac(host_id, macaddress, acl_mode, submit_btn_name, acl_index):
+    """
+
+    @param host_id:
+    @param macaddress:
+    @param acl_mode:
+    @param submit_btn_name:
+    @param acl_index:
+    @return:
+    """
     try:
         global sqlalche_obj
         sqlalche_obj.sql_alchemy_db_connection_open()
@@ -5953,6 +6319,13 @@ def check_mac(host_id, macaddress, acl_mode, submit_btn_name, acl_index):
 
 
 def check_acl_accept(host_id, macaddress, acl_mode):
+    """
+
+    @param host_id:
+    @param macaddress:
+    @param acl_mode:
+    @return:
+    """
     try:
         global sqlalche_obj
         sqlalche_obj.sql_alchemy_db_connection_open()
@@ -6019,6 +6392,13 @@ def check_acl_accept(host_id, macaddress, acl_mode):
 
 
 def check_acl_deny(host_id, macaddress, acl_mode):
+    """
+
+    @param host_id:
+    @param macaddress:
+    @param acl_mode:
+    @return:
+    """
     try:
         global sqlalche_obj
         sqlalche_obj.sql_alchemy_db_connection_open()
@@ -6087,6 +6467,12 @@ def check_acl_deny(host_id, macaddress, acl_mode):
 
 
 def mac_chk_accept(host_id, mac_list):
+    """
+
+    @param host_id:
+    @param mac_list:
+    @return:
+    """
     try:
         global sqlalche_obj
         sqlalche_obj.sql_alchemy_db_connection_open()
@@ -6155,6 +6541,12 @@ def mac_chk_accept(host_id, mac_list):
 
 
 def mac_chk_deny(host_id, mac_list):
+    """
+
+    @param host_id:
+    @param mac_list:
+    @return:
+    """
     try:
         global sqlalche_obj
         sqlalche_obj.sql_alchemy_db_connection_open()
@@ -6222,6 +6614,12 @@ def mac_chk_deny(host_id, mac_list):
 
 
 def check_acl_mac_accept(host_id, mac_address):
+    """
+
+    @param host_id:
+    @param mac_address:
+    @return:
+    """
     try:
         global sqlalche_obj
         sqlalche_obj.sql_alchemy_db_connection_open()
@@ -6288,6 +6686,12 @@ def check_acl_mac_accept(host_id, mac_address):
 
 
 def check_acl_mac_deny(host_id, mac_address):
+    """
+
+    @param host_id:
+    @param mac_address:
+    @return:
+    """
     try:
         global sqlalche_obj
         sqlalche_obj.sql_alchemy_db_connection_open()
@@ -6356,6 +6760,12 @@ def check_acl_mac_deny(host_id, mac_address):
 
 
 def chk_peer_mac(host_id, mac_address):
+    """
+
+    @param host_id:
+    @param mac_address:
+    @return:
+    """
     try:
         global sqlalche_obj
         sqlalche_obj.sql_alchemy_db_connection_open()
@@ -6415,6 +6825,12 @@ def chk_peer_mac(host_id, mac_address):
 
 
 def check_timeslot(host_id, timeslot):
+    """
+
+    @param host_id:
+    @param timeslot:
+    @return:
+    """
     try:
         global sqlalche_obj
         sqlalche_obj.sql_alchemy_db_connection_open()
@@ -6476,6 +6892,12 @@ def check_timeslot(host_id, timeslot):
 
 
 def check_acl_mac(host_id, mac_address):
+    """
+
+    @param host_id:
+    @param mac_address:
+    @return:
+    """
     try:
         global sqlalche_obj
         sqlalche_obj.sql_alchemy_db_connection_open()
@@ -6538,6 +6960,13 @@ def check_acl_mac(host_id, mac_address):
 
 
 def odu100_common_cancel(host_id, device_type_id, dic_result):
+    """
+
+    @param host_id:
+    @param device_type_id:
+    @param dic_result:
+    @return:
+    """
     try:
         flag = 0
         global sqlalche_obj
@@ -6586,6 +7015,12 @@ def odu100_common_cancel(host_id, device_type_id, dic_result):
 
 
 def acl_delete_bind(uuid, host_id):
+    """
+
+    @param uuid:
+    @param host_id:
+    @return:
+    """
     try:
         global sqlalche_obj, errorStatus
         sqlalche_obj.sql_alchemy_db_connection_open()
@@ -6654,6 +7089,13 @@ def acl_delete_bind(uuid, host_id):
 # rint
 # acl_delete_bind("ba52de08-ea94-11e0-8978-e069956899a4","9fad8c64-de92-11e0-b146-e069956899a4")
 def commit_reboot_flash(host_id, device_type_id, dic_result):
+    """
+
+    @param host_id:
+    @param device_type_id:
+    @param dic_result:
+    @return:
+    """
     global errorStatus
     dependent_oid = []
     global sqlalche_obj
@@ -6714,6 +7156,15 @@ def commit_reboot_flash(host_id, device_type_id, dic_result):
 
 def peer_set(host_id, device_type_id, timeslot_val, dic_result, save_retry):
     # {keys:[query_result[0][0].oid+query_result[0][0].indexes,query_result[0][0].oid_type,dic_result[keys]]}
+    """
+
+    @param host_id:
+    @param device_type_id:
+    @param timeslot_val:
+    @param dic_result:
+    @param save_retry:
+    @return:
+    """
     try:
         global sqlalche_obj
         global errorStatus
@@ -6941,6 +7392,11 @@ def peer_set(host_id, device_type_id, timeslot_val, dic_result, save_retry):
 
 
 def chk_list(select_list):
+    """
+
+    @param select_list:
+    @return:
+    """
     flag = 0
     duplicate = 1
     for i in range(0, len(select_list)):
@@ -6957,6 +7413,11 @@ def chk_list(select_list):
 
 
 def chk_mac_duplicacy(mac_list):
+    """
+
+    @param mac_list:
+    @return:
+    """
     flag = 0
     duplicate = 1
     if len(mac_list) > 0:
@@ -6979,6 +7440,13 @@ def chk_mac_duplicacy(mac_list):
 
 
 def channel_config_set(host_id, device_type_id, dic_result):
+    """
+
+    @param host_id:
+    @param device_type_id:
+    @param dic_result:
+    @return:
+    """
     try:
         global sqlalche_obj
         sqlalche_obj.sql_alchemy_db_connection_open()
@@ -7067,6 +7535,14 @@ def channel_config_set(host_id, device_type_id, dic_result):
 
 
 def packet_filter_set(host_id, device_type_id, ip_mac_statue, dic_result):  # raju
+    """
+
+    @param host_id:
+    @param device_type_id:
+    @param ip_mac_statue:
+    @param dic_result:
+    @return:
+    """
     try:
         global sqlalche_obj
         sqlalche_obj.sql_alchemy_db_connection_open()
@@ -7192,6 +7668,10 @@ def packet_filter_set(host_id, device_type_id, ip_mac_statue, dic_result):  # ra
 
 
 def delete_site_survey_list(host_id):
+    """
+
+    @param host_id:
+    """
     global sqlalche_obj
     sqlalche_obj.sql_alchemy_db_connection_open()
     sqlalche_obj.db.execute(
@@ -7201,7 +7681,16 @@ def delete_site_survey_list(host_id):
 
 
 class OduReconcilation(object):
+    """
+    ODU device reconciliation
+    """
     def odu100_acl_reconciliation(self, host_id, device_type):
+        """
+
+        @param host_id:
+        @param device_type:
+        @return:
+        """
         try:
             global errorStatus
             global sqlalche_obj
@@ -7259,6 +7748,14 @@ class OduReconcilation(object):
             sqlalche_obj.sql_alchemy_db_connection_close()
 
     def odu16_add_default_config_profile(self, host_id, device_type_id, table_prefix, insert_update):
+        """
+
+        @param host_id:
+        @param device_type_id:
+        @param table_prefix:
+        @param insert_update:
+        @return:
+        """
         global sqlalche_obj
         sqlalche_obj.sql_alchemy_db_connection_open()
         new_profile = Odu16ConfigProfiles(
@@ -7389,6 +7886,16 @@ class OduReconcilation(object):
 
     def odu100_add_default_config_profile(self, host_id, device_type_id, table_prefix, current_time, reconcile_chk, user_name):
         # global sqlalche_obj
+        """
+
+        @param host_id:
+        @param device_type_id:
+        @param table_prefix:
+        @param current_time:
+        @param reconcile_chk:
+        @param user_name:
+        @return:
+        """
         try:
 
             sqlalche_obj.sql_alchemy_db_connection_open()
@@ -7536,6 +8043,12 @@ class OduReconcilation(object):
             sqlalche_obj.sql_alchemy_db_connection_close()
 
     def time_diff_rec_table(self, table_oid_dic, current_time):
+        """
+
+        @param table_oid_dic:
+        @param current_time:
+        @return:
+        """
         table_dic = {}
         global time_diff
         time_diff = 0
@@ -7563,6 +8076,15 @@ class OduReconcilation(object):
 
     def update_reconcilation_controller(self, host_id, device_type, table_prefix, current_time, user_name):
         # return {'success':0,'result':'good'}
+        """
+
+        @param host_id:
+        @param device_type:
+        @param table_prefix:
+        @param current_time:
+        @param user_name:
+        @return: @raise:
+        """
         import common_controller
         from odu_mib_model import odu100_table_model
         global essential_obj, host_status_dic, errorStatus, sqlalche_obj
@@ -7882,6 +8404,16 @@ class OduReconcilation(object):
             return result
 
     def reconcilation_controller(self, host_id, device_type, table_prefix, current_time, is_reconcile, user_name):
+        """
+
+        @param host_id:
+        @param device_type:
+        @param table_prefix:
+        @param current_time:
+        @param is_reconcile:
+        @param user_name:
+        @return:
+        """
         global essential_obj, sqlalche_obj, host_status_dic, errorStatus
         host_status = 0
         host_data = []
@@ -8051,6 +8583,14 @@ class OduReconcilation(object):
             return result
 
     def odu16_add_current_config_profile(self, host_id, device_type_id, table_prefix, reconcile_chk=True):
+        """
+
+        @param host_id:
+        @param device_type_id:
+        @param table_prefix:
+        @param reconcile_chk:
+        @return:
+        """
         global sqlalche_obj
         sqlalche_obj.sql_alchemy_db_connection_open()
         profile_id = None
@@ -8461,6 +9001,15 @@ class OduReconcilation(object):
             return str(config_profile_id), reconcile_per
 
     def odu16_reconcilation_controller_update(self, host_id, device_type_id, table_prefix, insert_update, user_name):
+        """
+
+        @param host_id:
+        @param device_type_id:
+        @param table_prefix:
+        @param insert_update:
+        @param user_name:
+        @return:
+        """
         global sqlalche_obj
         sqlalche_obj.sql_alchemy_db_connection_open()
         if host_id != "" or host_id != None:
@@ -8966,6 +9515,11 @@ class OduReconcilation(object):
 # return "%s Reconcilation Done.Please Reconcile Again"%(reconcile_per)
 
     def reconcilation_chk_status(self, host_id):
+        """
+
+        @param host_id:
+        @return:
+        """
         try:
             global sqlalche_obj
             result = {}
@@ -8996,6 +9550,11 @@ class OduReconcilation(object):
             sqlalche_obj.sql_alchemy_db_connection_close()
 
     def list_reconciliation(self):
+        """
+
+
+        @return:
+        """
         try:
             global sqlalche_obj
             result = {}
@@ -9015,6 +9574,12 @@ class OduReconcilation(object):
             sqlalche_obj.sql_alchemy_db_connection_close()
 
     def reboot(self, host_id, device_type_id):
+        """
+
+        @param host_id:
+        @param device_type_id:
+        @return:
+        """
         global sqlalche_obj
         result = {}
         sqlalche_obj.sql_alchemy_db_connection_open()
@@ -9084,6 +9649,11 @@ class OduReconcilation(object):
             return {"success": 1, "result": "Host Data Not Exist"}
 
     def chk_ping(self, host_id):
+        """
+
+        @param host_id:
+        @return:
+        """
         global sqlalche_obj
         sqlalche_obj.sql_alchemy_db_connection_open()
         if host_id != "" or host_id != None:
@@ -9107,6 +9677,9 @@ class OduReconcilation(object):
 
 
 class SiteSurvey(object):
+    """
+    ODU device Site Survey functionality
+    """
 
 ##    def site_survey(self,host_id,node_type):
 ##        global sqlalche_obj
@@ -9296,6 +9869,13 @@ class SiteSurvey(object):
 ##            sqlalche_obj.sql_alchemy_db_connection_close()
 
     def site_survey(self, host_id, node_type, list_of_channels):
+        """
+
+        @param host_id:
+        @param node_type:
+        @param list_of_channels:
+        @return:
+        """
         global sqlalche_obj
         try:
             # print "hello"
@@ -9576,6 +10156,11 @@ class SiteSurvey(object):
             sqlalche_obj.sql_alchemy_db_connection_close()
 
     def chk_site_survey_status(self, host_id):
+        """
+
+        @param host_id:
+        @return:
+        """
         global sqlalche_obj
         try:
             sqlalche_obj.sql_alchemy_db_connection_open()
@@ -9611,6 +10196,14 @@ class SiteSurvey(object):
 
 
 def acl_reconcile(host_id, device_type_id, table_prefix, insert_update):
+    """
+
+    @param host_id:
+    @param device_type_id:
+    @param table_prefix:
+    @param insert_update:
+    @return:
+    """
     global sqlalche_obj
     sqlalche_obj.sql_alchemy_db_connection_open()
     if host_id != "" or host_id != None:
@@ -9679,6 +10272,14 @@ def acl_reconcile(host_id, device_type_id, table_prefix, insert_update):
 
 
 def acl_controller_add_edit(host_id, device_type_id, dic_result, raindex):
+    """
+
+    @param host_id:
+    @param device_type_id:
+    @param dic_result:
+    @param raindex:
+    @return:
+    """
     try:
         global sqlalche_obj
         sqlalche_obj.sql_alchemy_db_connection_open()
@@ -9959,6 +10560,10 @@ def acl_controller_add_edit(host_id, device_type_id, dic_result, raindex):
 # print obj.odu16_add_default_config_profile(28,'odu16','odu16_',False)
 # print obj.update_reconcilation_controller(63,'odu100','odu100_',True,"")
 def get_ip_mac_selected_device(h):
+    """
+
+    @param h:
+    """
     global html
     obj = IpMacSearch()
     html = h
@@ -9971,8 +10576,16 @@ def get_ip_mac_selected_device(h):
 
 
 class OduStatus(object):
-
+    """
+    Get the current ODUC device stauts
+    """
     def hw_sw_frequecy_status_chk(self, host_id, device_type):
+        """
+
+        @param host_id:
+        @param device_type:
+        @return:
+        """
         global sqlalche_obj
         hw_sw_freq_status_dic = {'success': 0, 'result': {}}
         try:
@@ -10025,6 +10638,12 @@ class OduStatus(object):
             return hw_sw_freq_status_dic
 
     def peer_status_chk(self, host_id, device_type):
+        """
+
+        @param host_id:
+        @param device_type:
+        @return:
+        """
         peer_final_dic = {'success': 0, 'result': {}}
         global sqlalche_obj
         try:
@@ -10065,6 +10684,12 @@ class OduStatus(object):
             return peer_final_dic
 
     def admin_states_data(self, host_id, device_type):
+        """
+
+        @param host_id:
+        @param device_type:
+        @return:
+        """
         global sqlalche_obj
         try:
             admin_dic = {}
@@ -10187,6 +10812,14 @@ class OduStatus(object):
     ##            sqlalche_obj.sql_alchemy_db_connection_close()
     ##            return snmp_result
     def admin_state_change(self, host_id, device_type, admin_state_name, state):
+        """
+
+        @param host_id:
+        @param device_type:
+        @param admin_state_name:
+        @param state:
+        @return:
+        """
         global sqlalche_obj
         global errorStatus
         try:
@@ -10349,6 +10982,14 @@ class OduStatus(object):
             return snmp_result
 
     def all_lock_unlocked(self, host_id, device_type, admin_state_name, state):
+        """
+
+        @param host_id:
+        @param device_type:
+        @param admin_state_name:
+        @param state:
+        @return:
+        """
         global sqlalche_obj
         global errorStatus
         ru_admin = 0
@@ -10483,6 +11124,11 @@ class OduStatus(object):
             return snmp_result
 
     def global_admin_request(self, host_id):
+        """
+
+        @param host_id:
+        @return:
+        """
         try:
             global sqlalche_obj
             global essential_obj
@@ -10578,8 +11224,7 @@ class OduStatus(object):
                                 ra_op_state = 1
                             else:
                                 ra_op_state = ra_status[0].raoperationalState
-                                # print
-                                # ra_op_state,"%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%ra"
+
                         else:
                             ra_op_state = 1
 
@@ -10589,8 +11234,7 @@ class OduStatus(object):
                             else:
                                 sync_op_state = sync_status[
                                     0].syncoperationalState
-                                # print
-                                # sync_op_state,"%%%%%%%%%%%%%%%%%%%%%,sync"
+
                         else:
                             sync_op_state = 1
                         if int(ru_admin_data[0].defaultNodeType) == 1 or int(ru_admin_data[0].defaultNodeType) == 3:
@@ -10657,7 +11301,6 @@ class OduStatus(object):
                         else:
                             temp_list.append("")
                     op_status = essential_obj.get_hoststatus(host_id_list[i])
-                    # print op_status
                     if op_status == None:
                         op_img = "images/host_status0.png"
                     elif op_status == 0:
@@ -10667,12 +11310,9 @@ class OduStatus(object):
                     temp_list.append(op_img)
                     temp_list.append(0 if op_status == None else op_status)
 
-                    # print "\n\n\n",temp_list,"\n\n\n"
                     temp_list.append(int(ru_op_state))
                     temp_list.append(int(sync_op_state))
                     temp_list.append(int(ra_op_state))
-                    # print "\n\n\n",temp_list,"\n\n\n"
-                    # print host_id_list[i]
                     admin_data_dic.update({host_id_list[i]: temp_list})
             result['result'] = admin_data_dic
         except Exception as e:
@@ -10688,6 +11328,11 @@ class OduStatus(object):
 
 
 def get_modulation_rate(host_id):
+    """
+
+    @param host_id:
+    @return:
+    """
     global errorStatus
     global sqlalche_obj
     sqlalche_obj.sql_alchemy_db_connection_open()
@@ -10705,6 +11350,12 @@ def get_modulation_rate(host_id):
 
 
 def refresh_channel_freq_list_table(host_id, device_type):
+    """
+
+    @param host_id:
+    @param device_type:
+    @return:
+    """
     global sqlalche_obj
     global errorStatus
     result = {'success': 0, 'result': {}}
@@ -10766,6 +11417,12 @@ def refresh_channel_freq_list_table(host_id, device_type):
 
 
 def channel_list_refresh(host_id, selected_device):
+    """
+
+    @param host_id:
+    @param selected_device:
+    @return:
+    """
     global sqlalche_obj
     global errorStatus
     result = {'success': 0, 'result': {}}
@@ -10813,6 +11470,12 @@ def channel_list_refresh(host_id, selected_device):
 
 
 def bw_get_value(host_id, device_type):
+    """
+
+    @param host_id:
+    @param device_type:
+    @return:
+    """
     global errorStatus
     global sqlalche_obj
     result = {'success': 0, 'result': {}}
@@ -10824,9 +11487,6 @@ def bw_get_value(host_id, device_type):
             '1.3.6.1.4.1.26149.2.2.5.1.10.1', 'tx_bw': '1.3.6.1.4.1.26149.2.2.5.1.12.1'}
         snmp_get = pysnmp_geter(get_dic, device_param_list[0].ip_address, int(
             device_param_list[0].snmp_port), device_param_list[0].snmp_read_community)
-
-        # print
-        # snmp_get,"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
         if int(snmp_get['success']) == 0:
             for i in snmp_get['result']:
                 result['result'].update({i: snmp_get['result'][i]})
@@ -10847,6 +11507,13 @@ def bw_get_value(host_id, device_type):
 
 
 def bw_calc(host_id, device_type, dic_result):
+    """
+
+    @param host_id:
+    @param device_type:
+    @param dic_result:
+    @return:
+    """
     global sqlalche_obj
     global errorStatus
     result = {'success': 0, 'result': {}}
@@ -10860,8 +11527,6 @@ def bw_calc(host_id, device_type, dic_result):
         if len(device_param_list) > 0:
             snmp_get_result = pysnmp_get('1.3.6.1.4.1.26149.2.2.5.1.7', device_param_list[0].ip_address, int(
                 device_param_list[0].snmp_port), device_param_list[0].snmp_read_community)
-            # print
-            # snmp_get_result,"*************************************************************************"
             if snmp_get_result['success'] == 0:
                 for i in snmp_get_result['result']:
                     if int(snmp_get_result['result'][i]) == 1:
@@ -10880,8 +11545,6 @@ def bw_calc(host_id, device_type, dic_result):
                                                '1.3.6.1.4.1.26149.2.2.5.1.10.1', 'Integer32', dic_result[i]]})
                         snmp_set_result = pysnmp_set(oid_dic, device_param_list[0].ip_address, int(
                             device_param_list[0].snmp_port), device_param_list[0].snmp_write_community)
-                        # print
-                        # snmp_set_result,"&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&"
                         if int(snmp_set_result['success']) == 0:
                             for i in snmp_set_result['result']:
                                 if snmp_set_result['result'][i] != 0:
@@ -10892,13 +11555,9 @@ def bw_calc(host_id, device_type, dic_result):
                                     continue
                             snmp_om_set_result = pysnmp_set({'om_operation': ['1.3.6.1.4.1.26149.2.2.5.1.2.1', 'Integer32', 7]}, device_param_list[0]
                                                              .ip_address, device_param_list[0].snmp_port, device_param_list[0].snmp_write_community)
-                            # print
-                            # snmp_om_set_result,"^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
                             if int(snmp_om_set_result['success']) == 0:
                                 snmp_get = pysnmp_geter(get_dic, device_param_list[0].ip_address, int(
                                     device_param_list[0].snmp_port), device_param_list[0].snmp_read_community)
-                                # print
-                                # snmp_get,"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
                                 if int(snmp_get['success']) == 0:
                                     for i in snmp_get['result']:
                                         result['result'].update(
@@ -10923,7 +11582,6 @@ def bw_calc(host_id, device_type, dic_result):
                                 return
 
             else:
-                # print "######################################"
                 for i in snmp_get_result['result']:
                     if int(i) == 553:
                         result['result'] = errorStatus.get(
@@ -10952,6 +11610,10 @@ def bw_calc(host_id, device_type, dic_result):
 
 
 def delete_ra_channel_list(host_id):
+    """
+
+    @param host_id:
+    """
     global sqlalche_obj
     sqlalche_obj.sql_alchemy_db_connection_open()
     sqlalche_obj.db.execute(
@@ -10960,6 +11622,11 @@ def delete_ra_channel_list(host_id):
 
 
 def get_site_survey_bll(host_id):
+    """
+
+    @param host_id:
+    @return:
+    """
     global sqlalche_obj, errorStatus
     result = {'success': 0, 'result': ""}
     try:
@@ -10970,18 +11637,12 @@ def get_site_survey_bll(host_id):
 
         result = bulktable('1.3.6.1.4.1.26149.2.2.13.11.1', device_param_list[0].ip_address, int(
             device_param_list[0].snmp_port), device_param_list[0].snmp_read_community)
-        # print result
-        # result = {'result': {1: ['1', '1', '1', '5180', '0', '-115', '0',
-        # '-115', '-115', '36', '-115']}, 'success': 0}
         if result['success'] == 0:
             sqlalche_obj.db.execute(
                 "delete from odu100_raSiteSurveyResultTable where host_id='%s'" % (host_id))
             sqlalche_obj.session.commit()
             time.sleep(1)
             for i in range(0, len(result["result"])):
-                # print str(result["result"][i+1])[1:-1]
-                # print "Insert into %s values
-                # (NULL,%s,%s)"%('odu100_raSiteSurveyResultTable',host_id,str(result["result"][i+1])[1:-1])
                 sqlalche_obj.db.execute("Insert into %s values (NULL,%s,%s)" % (
                     'odu100_raSiteSurveyResultTable', host_id, str(result["result"][i + 1])[1:-1]))
             sqlalche_obj.session.commit()

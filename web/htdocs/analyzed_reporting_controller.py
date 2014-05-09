@@ -11,13 +11,13 @@
 '''
 
 # Import modules that contain the function and libraries
-from analyzed_reporting_bll import AnalyzedReportBll
-from analyzed_reporting import Report
-import json
 from json import JSONEncoder
-from datetime import datetime, timedelta
-from common_bll import Essential
+
 from mod_python import util
+
+from analyzed_reporting import Report
+from analyzed_reporting_bll import AnalyzedReportBll
+from common_bll import Essential
 
 
 def analyzed_report(h):
@@ -25,15 +25,16 @@ def analyzed_report(h):
     user_report_dict = {}
     device_type_user_selected_id = html.var("device_type_user_selected_id")
     device_type_user_selected_name = html.var("device_type_user_selected_name")
-#    device_type_user_selected_id="odu16"
-#    device_type_user_selected_name="UBR"
+    #    device_type_user_selected_id="odu16"
+    #    device_type_user_selected_name="UBR"
     css_list = [
-        "css/demo_table_jui.css", "css/calendrical.css", "css/fcbkcomplete.css", "css/style12.css", "css/jquery.multiselect.css", "css/jquery.multiselect.filter.css",
+        "css/demo_table_jui.css", "css/calendrical.css", "css/fcbkcomplete.css", "css/style12.css",
+        "css/jquery.multiselect.css", "css/jquery.multiselect.filter.css",
         "css/jquery-ui-1.8.4.custom.css"]  # ,"css/jquery.multiselect.filter.css"]
     js_list = [
-        "js/calendrical.js", "js/jquery-ui-1.8.6.custom.min.js", "js/pages/jquery.multiselect.min.js",
-        "js/pages/jquery.multiselect.filter.js", "js/jquery.dataTables.min.js", "js/pages/analyzed_reporting.js"]  # ,
-    if(device_type_user_selected_name == None):
+        "js/lib/main/calendrical.js", "js/lib/main/jquery-ui-1.8.6.custom.min.js", "js/lib/main/jquery.multiselect.min.js",
+        "js/lib/main/jquery.multiselect.filter.js", "js/lib/main/jquery.dataTables.min.js", "js/unmp/main/analyzed_reporting.js"]  # ,
+    if (device_type_user_selected_name == None):
         html.new_header(
             "Analyzed Report", "analyzed_report.py", "", css_list, js_list)
     else:
@@ -45,14 +46,14 @@ def analyzed_report(h):
     user_id = html.req.session["user_id"]
     es = Essential()
     hostgroup_id_list = es.get_hostgroup_ids(user_id)
-    if(hostgroup_id_list == []):
+    if (hostgroup_id_list == []):
         html.write(Report.list_form([], [], device_type_user_selected_id,
-                   device_type_user_selected_name))
+                                            device_type_user_selected_name))
     else:
         result = r.get_hostgroup_device(user_id, hostgroup_id_list)
         if (result["success"] == 0):
             html.write(Report.list_form(result["result"], result["host_data"],
-                       device_type_user_selected_id, device_type_user_selected_name))
+                                        device_type_user_selected_id, device_type_user_selected_name))
         else:
             pass
     html.new_footer()
@@ -118,7 +119,7 @@ def analyzed_reporting_get_excel(h):
     username = html.req.session["username"]
     form = util.FieldStorage(html.req)
     html_var = form.list.table_dict()
-#    no_of_devices=str(html.var("no_of_devices"))
+    #    no_of_devices=str(html.var("no_of_devices"))
     html_var = form.list.table_dict()
     date_start = str(html_var.get("start_date"))
     date_end = str(html_var.get("end_date"))
@@ -143,34 +144,35 @@ def analyzed_reporting_get_excel(h):
     i_display_start = html_var.get("iDisplayStart", None)
     # html_req=html.req.vars
     r = AnalyzedReportBll()
-    if(str(range_duration) == "1"):
+    if (str(range_duration) == "1"):
         range_duration = "HOURLY"
-    elif(str(range_duration) == "2"):
+    elif (str(range_duration) == "2"):
         range_duration = "DAILY"
-    elif(str(range_duration) == "3"):
+    elif (str(range_duration) == "3"):
         range_duration = "WEEKLY"
-    elif(str(range_duration) == "4"):
+    elif (str(range_duration) == "4"):
         range_duration = "MONTHLY"
 
-    if(str(range_type) == "1"):
+    if (str(range_type) == "1"):
         range_type = "Minimum"
-    elif(str(range_type) == "2"):
+    elif (str(range_type) == "2"):
         range_type = "Maximum"
-    elif(str(range_type) == "3"):
+    elif (str(range_type) == "3"):
         range_type = "Average"
-    elif(str(range_type) == "4"):
+    elif (str(range_type) == "4"):
         range_type = "Total"
-    elif(str(range_type) == "5"):
+    elif (str(range_type) == "5"):
         range_type = "All"
-    # if(report_type=="RSSI" and range_type=="Average"):
+        # if(report_type=="RSSI" and range_type=="Average"):
     #	range_type="Range"
     result = r.analyzed_reporting_get_excel(
-        date_start, date_end, time_start, time_end, all_host, report_type, column_value, device_type, hostgroup, view_type, range_type, range_duration, i_display_start,
+        date_start, date_end, time_start, time_end, all_host, report_type, column_value, device_type, hostgroup,
+        view_type, range_type, range_duration, i_display_start,
         i_display_length, s_search, sEcho, sSortDir_0, iSortCol_0, html_var, username)
     html.write(JSONEncoder().encode(result))
 
 
-def view_page_tip_analyzed_reporting(h):
-    global html
-    html = h
-    html.write(Report.page_tip_analyzed_reporting())
+# def view_page_tip_analyzed_reporting(h):
+#     global html
+#     html = h
+#     html.write(Report.page_tip_analyzed_reporting())

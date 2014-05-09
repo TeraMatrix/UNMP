@@ -23,13 +23,15 @@ def pysnmp_get_table_ap(oid, ip_address, port, community):
     err_dict = {}
     success = 1
     try:
-        if isinstance(ip_address, str) and isinstance(oid, str) and isinstance(community, str) and isinstance(port, int):
+        if isinstance(ip_address, str) and isinstance(oid, str) and isinstance(community, str) and isinstance(port,
+                                                                                                              int):
             try:
                 make_tuple = lambda x: tuple(int(i) for i in x.split('.'))
 
                 errorIndication, errorStatus, errorIndex, \
-                    varBindTable = cmdgen.CommandGenerator().nextCmd(
-                        cmdgen.CommunityData('table-agent', community), cmdgen.UdpTransportTarget((ip_address, port)), make_tuple(oid))
+                varBindTable = cmdgen.CommandGenerator().nextCmd(
+                    cmdgen.CommunityData('table-agent', community), cmdgen.UdpTransportTarget((ip_address, port)),
+                    make_tuple(oid))
 
                 var_dict = {}
                 if errorIndication and len(varBindTable) < 1:
@@ -115,6 +117,7 @@ def pysnmp_get_table_ap(oid, ip_address, port, community):
             result_dict['success'] = success
             result_dict['result'] = err_dict
         return result_dict
+
 # print pysnmp_get_table_ap('1.3.6.1.4.1.26149.2.1.2.2', '172.22.0.104',
 # 8001, 'public')
 
@@ -152,7 +155,8 @@ def pysnmp_get_table_ap(oid, ip_address, port, community):
 #               99:'pysnmpException'}
 
 
-def pysnmp_set(received_dict={}, ip_address=None, port=None, community=None, admin_state={}, prev_str=None, response_dict={}, temp_dict={}, error_dict={}, state=0):
+def pysnmp_set(received_dict={}, ip_address=None, port=None, community=None, admin_state={}, prev_str=None,
+               response_dict={}, temp_dict={}, error_dict={}, state=0):
     """
     @requires: {'fullName_of_field':(oid_as_string,oid_datatype,oid_value_to_be_set)} , ip address, port, community, if admin_state dependency present then pass admin_state as dictionary 		{'admin_state':(oid_str)}
 
@@ -207,7 +211,7 @@ def pysnmp_set(received_dict={}, ip_address=None, port=None, community=None, adm
                     oid_str = admin_state.values()[0][0]
                     aoid_tuple = make_tuple(oid_str)
                     set_str = set_str + \
-                        ",(%s,v2c.%s(%s))" % (aoid_tuple, 'Integer32', '0')
+                              ",(%s,v2c.%s(%s))" % (aoid_tuple, 'Integer32', '0')
 
                 for i in received_dict.keys():
                     oid_str, datatype, value = received_dict[i]
@@ -220,7 +224,7 @@ def pysnmp_set(received_dict={}, ip_address=None, port=None, community=None, adm
 
                 if state_present == 1 and state == 0:
                     set_str = set_str + \
-                        ",(%s,v2c.%s(%s))" % (aoid_tuple, 'Integer32', '1')
+                              ",(%s,v2c.%s(%s))" % (aoid_tuple, 'Integer32', '1')
                 elif admin_name is not None:
                     temp_dict[aoid_tuple] = admin_name
                 set_str = set_str + ')'
@@ -261,7 +265,8 @@ def pysnmp_set(received_dict={}, ip_address=None, port=None, community=None, adm
                                 success = 1
                                 return
                             else:
-                                return pysnmp_set(received_dict, None, None, None, admin_state, prev_str, response_dict, temp_dict, error_dict, state)
+                                return pysnmp_set(received_dict, None, None, None, admin_state, prev_str, response_dict,
+                                                  temp_dict, error_dict, state)
 
                         elif errorStatus == 0:
                             for name, val in varBinds:
@@ -307,17 +312,17 @@ def pysnmp_set(received_dict={}, ip_address=None, port=None, community=None, adm
                     aoid_tuple = make_tuple(oid_str)
                     temp_dict[aoid_tuple] = admin_name
                     set_str = set_str + \
-                        ",(%s,v2c.%s(%s))" % (aoid_tuple, 'Integer32', '0')
+                              ",(%s,v2c.%s(%s))" % (aoid_tuple, 'Integer32', '0')
 
                 for i in received_dict.keys():
                     oid_str, datatype, value = received_dict[i]
                     oid_tuple = make_tuple(oid_str)
                     temp_dict[oid_tuple] = i
                     set_str = set_str + \
-                        ",(%s,v2c.%s('%s'))" % (oid_tuple, datatype, value)
+                              ",(%s,v2c.%s('%s'))" % (oid_tuple, datatype, value)
                 if state_present == 1:
                     set_str = set_str + \
-                        ",(%s,v2c.%s(%s))" % (aoid_tuple, 'Integer32', '1')
+                              ",(%s,v2c.%s(%s))" % (aoid_tuple, 'Integer32', '1')
                     temp_dict[aoid_tuple] = admin_name + '1'
                 set_str = set_str + ')'
                 print " ###   PYSNMP SET PACKET   #### ", set_str
@@ -345,7 +350,8 @@ def pysnmp_set(received_dict={}, ip_address=None, port=None, community=None, adm
                                 print "    ok ", response_dict
                                 response_dict[admin_name + '1'] = 55
                                 state = 1
-                                return pysnmp_set(received_dict, None, None, None, admin_state, prev_str, response_dict, temp_dict, error_dict, state)
+                                return pysnmp_set(received_dict, None, None, None, admin_state, prev_str, response_dict,
+                                                  temp_dict, error_dict, state)
 
                             else:
                                 print " >>>>>>>>>>>>>>>> YE LE RAHA HAI MERI JAN BHAI ", varBinds[int(errorIndex) - 1]
@@ -360,7 +366,8 @@ def pysnmp_set(received_dict={}, ip_address=None, port=None, community=None, adm
                                     success = 1
                                     return
                                 else:
-                                    return pysnmp_set(received_dict, None, None, None, admin_state, prev_str, response_dict, temp_dict, error_dict)
+                                    return pysnmp_set(received_dict, None, None, None, admin_state, prev_str,
+                                                      response_dict, temp_dict, error_dict)
 
                             return
 

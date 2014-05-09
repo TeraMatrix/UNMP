@@ -1,40 +1,13 @@
 #!/usr/bin/python2.6
 # import the packeges
-import config
-import htmllib
-import time
-import cgi
-import MySQLdb
-import sys
+from json import JSONEncoder
+
+#@TODO: all * should be removed
 from common_controller import *
-
-import config
-import htmllib
-import pprint
-import sidebar
-import views
-import time
-import defaults
-import os
-import cgi
-import xml.dom.minidom
-import subprocess
-import commands
 from lib import *
-
 from nms_config import *
 from odu_controller import *
-from datetime import datetime, timedelta
-from mysql_collection import mysql_connection
-from unmp_dashboard_config import DashboardConfig
-from utility import Validation
-from operator import itemgetter
-from unmp_dashboard_view import DashboardView
 from unmp_dashboard_bll import DashboardBll
-import json
-from json import JSONEncoder
-from encodings import undefined
-import ap_advanced_graph_controller
 from error_message import ErrorMessageClass
 from nagios_livestatus import Nagios
 
@@ -50,14 +23,14 @@ def unmp_common_graph_creation(h):
     html = h
     graph_id = html.var("graph_id")
     device_type = html.var("device_type")
-    if graph_id != None and graph_id.strip() == 'mouReachablity':
+    if graph_id is not None and graph_id.strip() == 'mouReachablity':
         tactical_list = Nagios.tactical_overview(html)
         json_data = []
         json_data.append(
             {'Ok': tactical_list['hosts'][1], 'Warning': tactical_list['hosts'][2],
              'Critical': tactical_list['hosts'][3], 'Unknown': tactical_list['hosts'][4]})
         result_dict = {'success': 0, 'timestamp': [], 'data':
-                       json_data, 'graph_title': "", 'graph_sub_title': ""}
+            json_data, 'graph_title': "", 'graph_sub_title': ""}
     else:
         result_dict = sp_bll_obj.common_graph_json(device_type, graph_id)
     h.req.content_type = 'application/json'
@@ -89,7 +62,7 @@ def dashlet_hoststats(h):
         (_("Unknown"), "#0af",
          "searchhost&search=1&is_host_scheduled_downtime_depth=1",
          "Stats: scheduled_downtime_depth > 0\n"
-         )
+        )
     ]
     filter = "Filter: custom_variable_names < _REALNAME\n"
     render_statistics("hoststats", "hosts", table, filter)
@@ -114,7 +87,7 @@ def render_statistics(pie_id, what, table, filter):
         table_entries = pies
         while len(table_entries) < 4:
             table_entries = table_entries + [(("", "#95BBCD",
-                                              "", ""), "&nbsp;")]
+                                               "", ""), "&nbsp;")]
         table_entries.append(((_("Total"), "", "all%s" % what, ""), total))
         for (name, color, viewurl, query), count in table_entries:
             url = "#"

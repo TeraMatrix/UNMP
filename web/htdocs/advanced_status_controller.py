@@ -1,35 +1,27 @@
 #!/usr/bin/python2.6
-import config
-import htmllib
-import time
-import cgi
-import MySQLdb
-import sys
-from common_controller import *
-from nms_config import *
-from odu_controller import *
 from datetime import datetime
 from datetime import timedelta
-import time
-from mysql_collection import mysql_connection
-from utility import Validation
-from operator import itemgetter
-from advanced_status_view import AdvancedStatusView
-from advanced_status_bll import AdvancedStatusBll
-import json
 from json import JSONEncoder
-from encodings import undefined
 
+from advanced_status_bll import AdvancedStatusBll
+from advanced_status_view import AdvancedStatusView
+# from common_controller import *
+# from nms_config import *
+# from odu_controller import *
 
 global bll_obj
 bll_obj = AdvancedStatusBll()
 
 
 def get_advanced_status_value(h):
+    """
+
+    @param h:
+    """
     global html, bll_obj
     html = h
     device_type_dict = {'ap25': 'AP25', 'odu16': 'RM18', 'odu100':
-                        'RM', 'idu4': 'IDU'}
+        'RM', 'idu4': 'IDU'}
     ip_address = html.var('ip_address')
     device_type_id = html.var('device_type_id')
     user_id = html.req.session["user_id"]
@@ -46,8 +38,8 @@ def get_advanced_status_value(h):
     css_list = [
         "css/style.css", "css/custom.css", "calendrical/calendrical.css",
         "css/demo_table_jui.css", "css/jquery-ui-1.8.4.custom.css"]
-    javascript_list = ["js/highcharts.js", "js/advanced_status.js",
-                       "calendrical/calendrical.js", "js/jquery.dataTables.min.js"]
+    javascript_list = ["js/lib/main/highcharts.js", "js/unmp/main/advanced_status.js",
+                       "calendrical/calendrical.js", "js/lib/main/jquery.dataTables.min.js"]
     html.new_header(
         '%s %s Historical Status' % (device_type_dict[device_type_id],
                                      ip_address.replace("'", "")), selected_listing, "", css_list, javascript_list)
@@ -58,6 +50,10 @@ def get_advanced_status_value(h):
 
 
 def ap_total_status_name(h):
+    """
+
+    @param h:
+    """
     global html, bll_obj
     html = h
     user_id = html.req.session["user_id"]
@@ -71,6 +67,10 @@ def ap_total_status_name(h):
 
 
 def advanced_status_json_creation(h):
+    """
+
+    @param h:
+    """
     global html, bll_obj
     html = h
     graph_id = html.var('graph_id')
@@ -84,6 +84,10 @@ def advanced_status_json_creation(h):
 
 
 def advanced_status_update_date_time(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     try:
@@ -100,6 +104,10 @@ def advanced_status_update_date_time(h):
 
 
 def advanced_status_creation(h):
+    """
+
+    @param h:
+    """
     global html, bll_obj
     html = h
     graph_type = html.var('graph_type')
@@ -128,14 +136,18 @@ def advanced_status_creation(h):
     else:
         update_field_name = update_field
     controller_dict = bll_obj.advanced_graph_data(
-        'graph', user_id, table_name[0], table_name[1], table_name[-2], table_name[-
-                                                                                   1], start, limit, flag, start_date, end_date, ip_address,
+        'graph', user_id, table_name[0], table_name[1], table_name[-2],
+        table_name[-1], start, limit, flag, start_date, end_date, ip_address,
         graph_type, update_field_name, interface_value, cal_type, column_name)
     html.req.content_type = 'application/json'
     html.req.write(str(JSONEncoder().encode(controller_dict)))
 
 
 def status_data_table_creation(h):
+    """
+
+    @param h:
+    """
     global html, bll_obj
     html = h
     result1 = ''
@@ -157,6 +169,10 @@ def status_data_table_creation(h):
 
 
 def advanced_status_excel_creating(h):
+    """
+
+    @param h:
+    """
     global html, bll_obj
     html = h
     result1 = ''
@@ -199,34 +215,16 @@ def advanced_status_excel_creating(h):
     controller_dict = bll_obj.advaeced_excel_report(
         report_type, device_type, user_id, ip_address, start_date,
         end_date, graph_id, select_option)
-#    html.req.content_type = 'application/json'
-#    html.req.write(str(JSONEncoder().encode(controller_dict)))
+    #    html.req.content_type = 'application/json'
+    #    html.req.write(str(JSONEncoder().encode(controller_dict)))
     html.write(str(controller_dict))
 
 
-def page_tip_advanced_status(h):
-        global html
-        html = h
-        html_view = ""
-        html_view = ""\
-            "<div id=\"help_container\">"\
-            "<h1>Dashboard</h1>"\
-            "<div>This <strong>Dashboard</strong> show all device silver statistics information by graph.</div>"\
-            "<br/>"\
-            "<br/>"\
-            "<div class=\"action-tip\"><div class=\"img-div\"><img style=\"width:16px;height:16px;\" src=\"images/back.jpeg\"/></div><div class=\"txt-div\">Back to current status page.</div></div>"\
-            "<br/>"\
-            "<div><input class=\"yo-button yo-small\" type=\"button\" style=\"width: 30px;\" value=\"Historical Status\" name=\"odu_graph_show\"> This button open a window on self click and show more information by historical status.</div>"\
-            "<div><input class=\"yo-button yo-small\" type=\"button\" style=\"width: 30px;\" value=\"Search\" name=\"odu_graph_show\"> Search the devices.</div>"\
-            "<div><input class=\"yo-button yo-small\" type=\"button\" style=\"width: 50px;\" value=\"Configuration\" name=\"odu_graph_show\"> This is open a window for customize the graph according to User.</div>"\
-            "<br/>"\
-            "<div><button id=\"odu_report_btn\" class=\"yo-button\" style=\"margin-top: 5px;\" type=\"submit\"><span class=\"report\">Report</span></button>Download the Excel report.</div>"\
-            "<br/>"\
-            "<div><button id=\"odu_report_btn\" class=\"yo-button\" style=\"margin-top: 5px;\" type=\"submit\"><span class=\"report\">CSV Report</span></button>Download the CSV report.</div>"\
-            "<br/>\
-        <br/>\
-        <div><strong>Note:</strong>This page show real time information of device and it page refresh on 5 min time interval.\
-        Search button search device by MAC address and IP address and show information by table.\
-        </div>"\
-        "</div>"
-        html.write(str(html_view))
+# def page_tip_advanced_status(h):
+#         global html
+#         html = h
+#         import defaults
+#         f = open(defaults.web_dir + "/htdocs/locale/page_tip_advanced_status.html", "r")
+#         html_view = f.read()
+#         f.close()
+#         html.write(str(html_view))

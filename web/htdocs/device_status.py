@@ -14,9 +14,7 @@ try:
     # import mySQL module
     import MySQLdb
     from copy import deepcopy
-    import traceback
-    #from unmp_config import SystemConfig
-    #from commom_controller import logme
+    import traceback    #from unmp_config import SystemConfig    #from commom_controller import logme
     # from unmp_config import SystemConfig
 except ImportError as e:
     print str(e[-1])
@@ -40,7 +38,7 @@ idu4_table_dict = {'idu_linkStatusTable': '.1.3.6.1.4.1.26149.2.1.3.1.1',
                    'idu_portstatisticsTable': '.1.3.6.1.4.1.26149.2.1.6.9.1',
                    'idu_swPrimaryPortStatisticsTable': '.1.3.6.1.4.1.26149.2.1.4.4.1',
                    'idu_portSecondaryStatisticsTable': '.1.3.6.1.4.1.26149.2.1.4.5.1'
-                   }
+}
 
 odu100_table_dict = {
     'odu100_peerNodeStatusTable': '.1.3.6.1.4.1.26149.2.2.13.9.2.1',
@@ -55,21 +53,31 @@ odu100_table_dict = {
     'odu100_synchStatusTable': '1.3.6.1.4.1.26149.2.2.11.3.1',
 }
 
-
 main_dict = {'odu16': odu16_table_dict,
              'odu100': odu100_table_dict,
              'idu4': idu4_table_dict
-             }
+}
 ############################ Please read NOTE before addition of new table
 
 
 class DeviceStatus():
+    """
+    Get the Device Status
+    """
+
     def __init__(self):
         self.db = 1
         self.host_id = None
         self.error = ''
 
     def defult_data_insert(self, table_name, ip_address, is_disable=1):
+        """
+
+        @param table_name:
+        @param ip_address:
+        @param is_disable:
+        @raise:
+        """
         try:
             exit_status = 1
             timestamp = datetime.now()
@@ -92,7 +100,7 @@ class DeviceStatus():
             indexid, bytesTransmitted, bytesReceived, framesTransmittedOk, framesReceivedOk, goodClassifiedFramesRx, checksumErrorPackets = 0, 1111111, 1111111, 1111111, 1111111, 1111111, 1111111
             ## idu_iduNetworkStatisticsTable
             interfaceName, rxPackets, txPackets, rxBytes, txBytes, rxErrors, txErrors, rxDropped, txDropped, multicasts, collisions = 0, 1111111, 1111111, 1111111, 1111111, 1111111, 1111111, 1111111, 1111111, 1111111, 1111111
-                # nwStatsIndex, rx_packets, tx_packets, rx_bytes, tx_bytes, rx_err, tx_err, rx_drop, tx_drop, rx_multicast, colisions, rx_crc_err, rx_phy_err, sig_strength, sync_lost = 123456789, 123456789, 123456789, 123456789, 123456789, 123456789, 123456789, 123456789, 123456789, 123456789, 123456789, 123456789, 123456789, -110, 123456789
+            # nwStatsIndex, rx_packets, tx_packets, rx_bytes, tx_bytes, rx_err, tx_err, rx_drop, tx_drop, rx_multicast, colisions, rx_crc_err, rx_phy_err, sig_strength, sync_lost = 123456789, 123456789, 123456789, 123456789, 123456789, 123456789, 123456789, 123456789, 123456789, 123456789, 123456789, 123456789, 123456789, -110, 123456789
 
             if self.db == 1:
                 raise SelfCreatedException(' can not connect to database ')
@@ -101,7 +109,8 @@ class DeviceStatus():
             if table_name.strip() == 'get_odu16_nw_interface_statistics_table':
                 for j in range(3):
                     ins_query = "INSERT INTO `get_odu16_nw_interface_statistics_table`(`host_id`,`index`,`rx_packets`,`tx_packets`,`rx_bytes`,`tx_bytes`,`rx_errors`,`tx_errors`,`rx_dropped`,`tx_dropped`,`rx_multicast`,`colisions`,`timestamp`) values('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')" % (
-                        result, j + 1, rx_packets, tx_packets, rx_bytes, tx_bytes, rx_err, tx_err, rx_drop, tx_drop, rx_multicast, colisions, datetime.now())
+                        result, j + 1, rx_packets, tx_packets, rx_bytes, tx_bytes, rx_err, tx_err, rx_drop, tx_drop,
+                        rx_multicast, colisions, datetime.now())
                     cursor.execute(ins_query)
                     self.db.commit()
             elif table_name.strip() == 'get_odu16_synch_statistics_table':
@@ -111,7 +120,8 @@ class DeviceStatus():
                 self.db.commit()
             elif table_name.strip() == 'get_odu16_ra_tdd_mac_statistics_entry':
                 ins_query = "INSERT INTO `get_odu16_ra_tdd_mac_statistics_entry`(`host_id`,`index`,`rx_packets`,`tx_packets`,`rx_bytes`,`tx_bytes`,`rx_errors`,`tx_errors`,`rx_dropped`,`tx_dropped`,`rx_crc_errors`,`rx_phy_error`,`timestamp`) values('%s','1','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')" % (
-                    result, rx_packets, tx_packets, rx_bytes, tx_bytes, rx_err, tx_err, rx_drop, tx_drop, rx_crc_err, rx_phy_err, datetime.now())
+                    result, rx_packets, tx_packets, rx_bytes, tx_bytes, rx_err, tx_err, rx_drop, tx_drop, rx_crc_err,
+                    rx_phy_err, datetime.now())
                 cursor.execute(ins_query)
                 self.db.commit()
             elif table_name.strip() == 'get_odu16_peer_node_status_table':
@@ -122,12 +132,14 @@ class DeviceStatus():
             elif table_name.strip() == 'odu100_nwInterfaceStatisticsTable':
                 for j in range(2):
                     ins_query = "INSERT INTO `odu100_nwInterfaceStatisticsTable`(`host_id`,`nwStatsIndex`,`rxPackets`,`txPackets`,`rxBytes`,`txBytes`,`rxErrors`,`txErrors`,`rxDropped`,`txDropped`,`timestamp`) values('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')" % (
-                        result, j + 1, rx_packets, tx_packets, rx_bytes, tx_bytes, rx_err, tx_err, rx_drop, tx_drop, datetime.now())
+                        result, j + 1, rx_packets, tx_packets, rx_bytes, tx_bytes, rx_err, tx_err, rx_drop, tx_drop,
+                        datetime.now())
                     cursor.execute(ins_query)
                     self.db.commit()
             elif table_name.strip() == 'odu100_raTddMacStatisticsTable':
                 ins_query = "INSERT INTO `odu100_raTddMacStatisticsTable`(`host_id`, `raIndex`, `rxpackets`, `txpackets`, `rxerrors`, `txerrors`, `rxdropped`, `txdropped`, `rxCrcErrors`, `rxPhyError`, `timestamp`) values('%s','1','%s','%s','%s','%s','%s','%s','%s','%s','%s')" % (
-                    result, rx_packets, tx_packets, rx_err, tx_err, rx_drop, tx_drop, rx_crc_err, rx_phy_err, datetime.now())
+                    result, rx_packets, tx_packets, rx_err, tx_err, rx_drop, tx_drop, rx_crc_err, rx_phy_err,
+                    datetime.now())
                 cursor.execute(ins_query)
                 self.db.commit()
             elif table_name.strip() == 'odu100_synchStatisticsTable':
@@ -147,7 +159,8 @@ class DeviceStatus():
                 cursor.execute(ins_query)
                 self.db.commit()
             elif table_name.strip() == 'odu100_peerLinkStatisticsTable':
-                ins_query = "INSERT INTO `odu100_peerLinkStatisticsTable` (`host_id`, `raIndex`, `timeslotindex`, `txdroped`, `rxDataSubFrames`, `txDataSubFrames`, `signalstrength1`, `txRetransmissions5`, `txRetransmissions4`, `txRetransmissions3`, `txRetransmissions2`, `txRetransmissions1`, `txRetransmissions0`, `rxRetransmissions5`, `rxRetransmissions4`, `rxRetransmissions3`, `rxRetransmissions2`, `rxRetransmissions1`, `rxRetransmissions0`, `rxBroadcastDataSubFrames`, `rateIncreases`, `rateDecreases`, `emptyRasters`, `rxDroppedTpPkts`, `rxDroppedRadioPkts`, `signalstrength2`, `timestamp`) VALUES ('%s', 1, 1111111, 1111111, 1111111, 1111111, 1111111, 1111111, 1111111, 1111111, 1111111, 1111111, 1111111, 1111111, 1111111, 1111111, 1111111, 1111111, 1111111, 1111111, 1111111, 1111111, 1111111, 1111111, 1111111, 1111111, '%s')" % (result, datetime.now())
+                ins_query = "INSERT INTO `odu100_peerLinkStatisticsTable` (`host_id`, `raIndex`, `timeslotindex`, `txdroped`, `rxDataSubFrames`, `txDataSubFrames`, `signalstrength1`, `txRetransmissions5`, `txRetransmissions4`, `txRetransmissions3`, `txRetransmissions2`, `txRetransmissions1`, `txRetransmissions0`, `rxRetransmissions5`, `rxRetransmissions4`, `rxRetransmissions3`, `rxRetransmissions2`, `rxRetransmissions1`, `rxRetransmissions0`, `rxBroadcastDataSubFrames`, `rateIncreases`, `rateDecreases`, `emptyRasters`, `rxDroppedTpPkts`, `rxDroppedRadioPkts`, `signalstrength2`, `timestamp`) VALUES ('%s', 1, 1111111, 1111111, 1111111, 1111111, 1111111, 1111111, 1111111, 1111111, 1111111, 1111111, 1111111, 1111111, 1111111, 1111111, 1111111, 1111111, 1111111, 1111111, 1111111, 1111111, 1111111, 1111111, 1111111, 1111111, '%s')" % (
+                result, datetime.now())
                 cursor.execute(ins_query)
                 self.db.commit()
 
@@ -164,53 +177,66 @@ class DeviceStatus():
                 self.db.commit()
 
             elif table_name.strip() == 'odu100_raStatusTable':
-                ins_query = "INSERT INTO `odu100_raStatusTable` (`host_id`, `raIndex`, `currentTimeSlot`,`raMacAddress`,`unusedTxTimeUL`,`unusedTxTimeDL`, `raoperationalState`,  `timestamp`) VALUES ('%s', '1', '1111111', '1111111', '1111111', '1111111','1111111','%s')" % (result, timestamp)
+                ins_query = "INSERT INTO `odu100_raStatusTable` (`host_id`, `raIndex`, `currentTimeSlot`,`raMacAddress`,`unusedTxTimeUL`,`unusedTxTimeDL`, `raoperationalState`,  `timestamp`) VALUES ('%s', '1', '1111111', '1111111', '1111111', '1111111','1111111','%s')" % (
+                result, timestamp)
                 cursor.execute(ins_query)
                 self.db.commit()
 
-            # elif table_name.strip()=='':
-            #    ins_query=""
+                # elif table_name.strip()=='':
+                #    ins_query=""
 
                 ###################### idu
             elif table_name.strip() == 'idu_e1PortStatusTable':
                 ins_query = "INSERT INTO `idu_e1PortStatusTable` ( `host_id`, `portNum`, `opStatus`, `los`, `lof`, `ais`, `rai`, `rxFrameSlip`, `txFrameSlip`, `bpv`, `adptClkState`, `holdOverStatus`, `timestamp`) VALUES \
-    ( %s, %s,  %s  ,  %s  ,  %s  ,  %s  ,  %s  ,  %s ,  %s  ,  %s  ,  %s  ,  %s  , '%s' );" % (result, portNum, opstate, los, lof, ais, rai, rxFrameSlip, txFrameSlip, bpv, adptClkState, holdOverStatus, timestamp)
+    ( %s, %s,  %s  ,  %s  ,  %s  ,  %s  ,  %s  ,  %s ,  %s  ,  %s  ,  %s  ,  %s  , '%s' );" % (
+                result, portNum, opstate, los, lof, ais, rai, rxFrameSlip, txFrameSlip, bpv, adptClkState,
+                holdOverStatus, timestamp)
                 cursor.execute(ins_query)
                 self.db.commit()
             elif table_name.strip() == 'idu_linkStatusTable':
                 ins_query = "INSERT INTO `idu_linkStatusTable` (`host_id`, `bundleNum`, `portNum`, `operationalStatus`, `minJBLevel`, `maxJBLevel`, `underrunOccured`, `overrunOccured`, `timestamp`) VALUES ( %s, %s,  %s  ,  %s  ,  %s  ,  %s  ,  %s  ,  %s ,  '%s' );" % (
-                    result, bundleNum, portNum, operationalStatus, minJBLevel, maxJBLevel, underrunOccured, overrunOccured, timestamp)
+                    result, bundleNum, portNum, operationalStatus, minJBLevel, maxJBLevel, underrunOccured,
+                    overrunOccured, timestamp)
                 cursor.execute(ins_query)
                 self.db.commit()
 
             elif table_name.strip() == 'idu_portstatisticsTable':
                 ins_query = " INSERT INTO `idu_portstatisticsTable` (`host_id`, `softwarestatportnum`, `framerx`, `frametx`, `indiscards`, `ingoodoctets`, `inbadoctet`, `outoctets`, `timestamp`) VALUES ( %s, %s,  %s  ,  %s  ,  %s  ,  %s  ,  %s  ,  %s ,  '%s' );" % (
-                    result, softwarestatportnum, framerx, frametx, indiscards, ingoodoctets, inbadoctet, outoctets, timestamp)
+                    result, softwarestatportnum, framerx, frametx, indiscards, ingoodoctets, inbadoctet, outoctets,
+                    timestamp)
                 cursor.execute(ins_query)
                 self.db.commit()
             elif table_name.strip() == 'idu_swPrimaryPortStatisticsTable':
                 ins_query = "INSERT INTO `idu_swPrimaryPortStatisticsTable` (`host_id`, `swportnumber`, `framesRx`, `framesTx`, `inDiscard`, `inGoodOctets`, `inBadOctets`, `outOctets`, `timestamp`) VALUES ( %s, %s,  %s  ,  %s  ,  %s  ,  %s  ,  %s  ,  %s ,  '%s' );" % (
-                    result, swportnumber, framesRx, framesTx, inDiscard, inGoodOctets, inBadOctets, outOctets, timestamp)
+                    result, swportnumber, framesRx, framesTx, inDiscard, inGoodOctets, inBadOctets, outOctets,
+                    timestamp)
                 cursor.execute(ins_query)
                 self.db.commit()
             elif table_name.strip() == 'idu_portSecondaryStatisticsTable':
                 ins_query = "INSERT INTO `idu_portSecondaryStatisticsTable` ( `host_id`, `switchPortNum`, `inUnicast`, `outUnicast`, `inBroadcast`, `outBroadcast`, `inMulticast`, `outMulricast`, `inUndersizeRx`, `inFragmentsRx`, `inOversizeRx`, `inJabberRx`, `inMacRcvErrorRx`, `inFCSErrorRx`, `outFCSErrorTx`, `deferedTx`, `collisionTx`, `lateTx`, `exessiveTx`, `singleTx`, `multipleTx`, `timestamp`) VALUES ( %s,%s , %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, '%s' );" % (
-                    result, switchPortNum, inUnicast, outUnicast, inBroadcast, outBroadcast, inMulticast, outMulricast, inUndersizeRx, inFragmentsRx, inOversizeRx, inJabberRx, inMacRcvErrorRx, inFCSErrorRx, outFCSErrorTx, deferedTx, collisionTx, lateTx, exessiveTx, singleTx, multipleTx, timestamp)
+                    result, switchPortNum, inUnicast, outUnicast, inBroadcast, outBroadcast, inMulticast, outMulricast,
+                    inUndersizeRx, inFragmentsRx, inOversizeRx, inJabberRx, inMacRcvErrorRx, inFCSErrorRx,
+                    outFCSErrorTx, deferedTx, collisionTx, lateTx, exessiveTx, singleTx, multipleTx, timestamp)
                 cursor.execute(ins_query)
                 self.db.commit()
             elif table_name.strip() == 'idu_linkStatisticsTable':
                 ins_query = "INSERT INTO `idu_linkStatisticsTable` (`host_id`, `bundlenumber`, `portNum`, `goodFramesToEth`, `goodFramesRx`, `lostPacketsAtRx`, `discardedPackets`, `reorderedPackets`, `underrunEvents`, `timestamp`) VALUES \
-    ( %s,  %s , %s , %s,  %s,  %s,  %s , %s , %s ,'%s');" % (result, bundlenumber, portNum, goodFramesToEth, goodFramesRx, lostPacketsAtRx, discardedPackets, reorderedPackets, underrunEvents, timestamp)
+    ( %s,  %s , %s , %s,  %s,  %s,  %s , %s , %s ,'%s');" % (
+                result, bundlenumber, portNum, goodFramesToEth, goodFramesRx, lostPacketsAtRx, discardedPackets,
+                reorderedPackets, underrunEvents, timestamp)
                 cursor.execute(ins_query)
                 self.db.commit()
             elif table_name.strip() == 'idu_tdmoipNetworkInterfaceStatisticsTable':
                 ins_query = "INSERT INTO `idu_tdmoipNetworkInterfaceStatisticsTable` (`host_id`, `indexid`, `bytesTransmitted`, `bytesReceived`, `framesTransmittedOk`, `framesReceivedOk`, `goodClassifiedFramesRx`, `checksumErrorPackets`, `timestamp`) VALUES \
-    ( %s, %s ,%s ,%s ,%s ,%s ,%s ,%s,'%s');" % (result, indexid, bytesTransmitted, bytesReceived, framesTransmittedOk, framesReceivedOk, goodClassifiedFramesRx, checksumErrorPackets, timestamp)
+    ( %s, %s ,%s ,%s ,%s ,%s ,%s ,%s,'%s');" % (
+                result, indexid, bytesTransmitted, bytesReceived, framesTransmittedOk, framesReceivedOk,
+                goodClassifiedFramesRx, checksumErrorPackets, timestamp)
                 cursor.execute(ins_query)
                 self.db.commit()
             elif table_name.strip() == 'idu_iduNetworkStatisticsTable':
                 ins_query = "INSERT INTO `idu_iduNetworkStatisticsTable` (`host_id`, `interfaceName`, `rxPackets`, `txPackets`, `rxBytes`, `txBytes`, `rxErrors`, `txErrors`, `rxDropped`, `txDropped`, `multicasts`, `collisions`, `timestamp`) VALUES ( %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,'%s');" % (
-                    result, interfaceName, rxPackets, txPackets, rxBytes, txBytes, rxErrors, txErrors, rxDropped, txDropped, multicasts, collisions, timestamp)
+                    result, interfaceName, rxPackets, txPackets, rxBytes, txBytes, rxErrors, txErrors, rxDropped,
+                    txDropped, multicasts, collisions, timestamp)
                 cursor.execute(ins_query)
                 self.db.commit()
 
@@ -232,6 +258,11 @@ class DeviceStatus():
 
     # --     default data insert close
     def is_filled(self, table_list=[]):
+        """
+
+        @param table_list:
+        @return: @raise:
+        """
         try:
             return_value = 0
             if self.db == 1:
@@ -265,7 +296,8 @@ class DeviceStatus():
                             result)
 
                     elif table_name.strip() == 'odu100_raTddMacStatisticsTable':
-                        sel_query = "SELECT `txpackets`, `rxpackets` FROM `odu100_raTddMacStatisticsTable` where `odu100_raTddMacStatisticsTable_id` = (SELECT max(`odu100_raTddMacStatisticsTable_id`) FROM `odu100_raTddMacStatisticsTable` where `host_id` = '%s')" % (result)
+                        sel_query = "SELECT `txpackets`, `rxpackets` FROM `odu100_raTddMacStatisticsTable` where `odu100_raTddMacStatisticsTable_id` = (SELECT max(`odu100_raTddMacStatisticsTable_id`) FROM `odu100_raTddMacStatisticsTable` where `host_id` = '%s')" % (
+                        result)
 
                     elif table_name.strip() == 'odu100_synchStatisticsTable':
                         sel_query = "SELECT `syncLostCounter` FROM odu100_synchStatisticsTable WHERE odu100_synchStatisticsTable_id = (SELECT max(odu100_synchStatisticsTable_id) FROM odu100_synchStatisticsTable WHERE host_id='%s')" % (
@@ -276,14 +308,16 @@ class DeviceStatus():
                             result)
 
                     elif table_name.strip() == 'odu100_peerLinkStatisticsTable':
-                        sel_query = "SELECT `timeslotindex`, `txdroped`, `rxDataSubFrames`, `txDataSubFrames`, `signalstrength1` FROM odu100_peerLinkStatisticsTable WHERE odu100_peerLinkStatisticsTable_id = (SELECT max(odu100_peerLinkStatisticsTable_id) FROM odu100_peerLinkStatisticsTable WHERE host_id='%s')" % (result)
+                        sel_query = "SELECT `timeslotindex`, `txdroped`, `rxDataSubFrames`, `txDataSubFrames`, `signalstrength1` FROM odu100_peerLinkStatisticsTable WHERE odu100_peerLinkStatisticsTable_id = (SELECT max(odu100_peerLinkStatisticsTable_id) FROM odu100_peerLinkStatisticsTable WHERE host_id='%s')" % (
+                        result)
 
                     elif table_name.strip() == 'odu100_nwInterfaceStatusTable':
                         sel_query = "SELECT `operationalState` ,`macAddress` from `odu100_nwInterfaceStatusTable` where `odu100_nwInterfaceStatusTable_id` = (select max(`odu100_nwInterfaceStatusTable_id`) from `odu100_nwInterfaceStatusTable` WHERE host_id = '%s')" % (
                             result)
 
                     elif table_name.strip() == 'odu100_synchStatusTable':
-                        sel_query = "SELECT   `syncoperationalState`, `syncpercentageDownlinkTransmitTime`,syncrasterTime from `odu100_synchStatusTable` where `odu100_synchStatusTable_id` = ( select max(`odu100_synchStatusTable_id`) from `odu100_synchStatusTable` WHERE host_id = '%s')" % (result)
+                        sel_query = "SELECT   `syncoperationalState`, `syncpercentageDownlinkTransmitTime`,syncrasterTime from `odu100_synchStatusTable` where `odu100_synchStatusTable_id` = ( select max(`odu100_synchStatusTable_id`) from `odu100_synchStatusTable` WHERE host_id = '%s')" % (
+                        result)
 
                     elif table_name.strip() == 'odu100_raStatusTable':
                         sel_query = "SELECT  `currentTimeSlot`, `unusedTxTimeUL`,`unusedTxTimeDL` from `odu100_raStatusTable` where `odu100_raStatusTable_id` = ( SELECT max(`odu100_raStatusTable_id`) from `odu100_raStatusTable` WHERE host_id = '%s')" % (
@@ -303,7 +337,8 @@ class DeviceStatus():
                         sel_query = "SELECT `framerx` FROM idu_portstatisticsTable WHERE idu_portstatisticsTable_id = (SELECT max(idu_portstatisticsTable_id) FROM idu_portstatisticsTable WHERE host_id='%s')" % (
                             result)
                     elif table_name.strip() == 'idu_swPrimaryPortStatisticsTable':
-                        sel_query = "SELECT `framesRx` FROM idu_swPrimaryPortStatisticsTable WHERE idu_swPrimaryPortStatisticsTable_id = (SELECT max(idu_swPrimaryPortStatisticsTable_id) FROM idu_swPrimaryPortStatisticsTable WHERE host_id='%s')" % (result)
+                        sel_query = "SELECT `framesRx` FROM idu_swPrimaryPortStatisticsTable WHERE idu_swPrimaryPortStatisticsTable_id = (SELECT max(idu_swPrimaryPortStatisticsTable_id) FROM idu_swPrimaryPortStatisticsTable WHERE host_id='%s')" % (
+                        result)
                     elif table_name.strip() == 'idu_portSecondaryStatisticsTable':
                         sel_query = "SELECT `inUnicast` FROM idu_portSecondaryStatisticsTable WHERE idu_portSecondaryStatisticsTable_id = (SELECT max(idu_portSecondaryStatisticsTable_id) FROM idu_portSecondaryStatisticsTable WHERE host_id='%s')" % (
                             result)
@@ -344,18 +379,29 @@ class DeviceStatus():
             return table_list
 
     def bulktable(self, oid, ip_address, port, community, max_value=15):
+        """
+
+        @param oid:
+        @param ip_address:
+        @param port:
+        @param community:
+        @param max_value:
+        @return:
+        """
         err_dict = {}
         success = 1
         try:
-            if isinstance(ip_address, str) and isinstance(oid, str) and isinstance(community, str) and isinstance(port, int):
+            if isinstance(ip_address, str) and isinstance(oid, str) and isinstance(community, str) and isinstance(port,
+                                                                                                                  int):
                 try:
                     make_tuple = lambda x: tuple(int(i) for i in x.split('.'))
                     oid = oid.strip('.')
                     # print oid
                     first_value = 0
                     errorIndication, errorStatus, errorIndex, \
-                        varBindTable = cmdgen.CommandGenerator().bulkCmd(
-                            cmdgen.CommunityData('device-agent', community), cmdgen.UdpTransportTarget((ip_address, port)), first_value, max_value, make_tuple(oid))
+                    varBindTable = cmdgen.CommandGenerator().bulkCmd(
+                        cmdgen.CommunityData('device-agent', community), cmdgen.UdpTransportTarget((ip_address, port)),
+                        first_value, max_value, make_tuple(oid))
 
                     var_dict = {}
 
@@ -387,7 +433,7 @@ class DeviceStatus():
                                         pass
                                     else:
                                         return
-                                    # print name.prettyPrint()
+                                        # print name.prettyPrint()
                                     oid_values_list = name.prettyPrint(
                                     ).split(oid)[1].strip('.').split('.')
                                     # print oid_values_list
@@ -415,7 +461,7 @@ class DeviceStatus():
                                         # print oid_values_list
                                         for i in oid_values_list:
                                             li.append(i)
-                                        # print " li ",li
+                                            # print " li ",li
                                         li.append(value)
                                         # print " li 2",li
                                         var_dict[count] = li
@@ -425,8 +471,8 @@ class DeviceStatus():
                                         li = var_dict[count]
                                         li.append(value)
                                         var_dict[count] = li
-                                    # print li,count
-                                    # print "li,count",li,count,var_dict,oid_li
+                                        # print li,count
+                                        # print "li,count",li,count,var_dict,oid_li
 
                 except socket.error as sock_err:
                     success = 1
@@ -444,7 +490,8 @@ class DeviceStatus():
 
             else:
                 success = 1
-                err_dict[96] = "Arguments_are_not_proper : oid as str ( don't include first dot as .1.3 must be 1.3),ip_address as str ,port as int,community as str"
+                err_dict[
+                    96] = "Arguments_are_not_proper : oid as str ( don't include first dot as .1.3 must be 1.3),ip_address as str ,port as int,community as str"
         except Exception as e:
             success = 1
             err_dict[98] = 'outer Exception ' + str(e)
@@ -465,7 +512,7 @@ class DeviceStatus():
         self.db = 1
         try:
             #self.db = MySQLdb.connect(*SystemConfig.get_mysql_credentials())
-            self.db = MySQLdb.connect("localhost","root","root","nms")
+            self.db = MySQLdb.connect("localhost", "root", "root", "nms")
         except MySQLdb.Error as e:
             print str(e)
         except Exception as e:
@@ -473,6 +520,12 @@ class DeviceStatus():
 
     def host_status(self, status, host_ip=None, prev_status=0):
         """
+
+
+
+        @param status:
+        @param host_ip:
+        @param prev_status:
         @note: Used to update host operation status and varify it
         @dict: {0:'No operation', 1:'Firmware download', 2:'Firmware upgrade', 3:'Restore default config', 4:'Flash commit', 5:'Reboot', 6:'Site survey', 7:'Calculate BW', 8:'Uptime service', 9:'Statistics gathering', 10:'Reconciliation', 11:'Table reconciliation', 12:'Set operation', 13:'Live monitoring', 14:'Status capturing'}
         """
@@ -521,8 +574,15 @@ class DeviceStatus():
     ###### @@@ device_status program starts from here
 
     def get_columns(self, firmware_id, table_name):
+        """
+
+        @param firmware_id:
+        @param table_name:
+        @return:
+        """
         result = ''
-        query = """SELECT indexes_name, coloumn_name FROM odu100_%s_oids WHERE table_name = '%s'""" % (firmware_id.replace('.', '_'), table_name.split('_')[-1])
+        query = """SELECT indexes_name, coloumn_name FROM odu100_%s_oids WHERE table_name = '%s'""" % (
+        firmware_id.replace('.', '_'), table_name.split('_')[-1])
         #print query
         try:
             cur = self.db.cursor()
@@ -537,11 +597,20 @@ class DeviceStatus():
             cur.close()
         except Exception:
             import traceback
+
             print traceback.format_exc()
         finally:
             return result
 
     def insert_db(self, result_dict, table_name, device_type_id=None, firmware_id=None):
+        """
+
+        @param result_dict:
+        @param table_name:
+        @param device_type_id:
+        @param firmware_id:
+        @return:
+        """
         success = 1
         if device_type_id == 'odu100':
             ins_query = "INSERT INTO %s %s values " % (
@@ -564,7 +633,7 @@ class DeviceStatus():
 
             ins_query += ins_str % tuple(result_dict[i])
             ins_query += ", '%s')" % (date_time)
-        #logme(table_name + ' ' + ins_query)
+            #logme(table_name + ' ' + ins_query)
         #print ins_query
 
         cursor = self.db.cursor()
@@ -572,14 +641,26 @@ class DeviceStatus():
             cursor.execute(ins_query)  # execute the query
             self.db.commit()                # save the value in data base
         except Exception, e:
-            self.error = " insert_db %s %s" %(table_name, traceback.format_exc())
+            self.error = " insert_db %s %s" % (table_name, traceback.format_exc())
             #print str(e)
             success = 0
             #print table_name, ":", e[1]
         cursor.close()
         return success
 
-    def insert_status(self, host_id, ip_address, port_no, community, device_type, single_table_name=None, firmware_id=None):
+    def insert_status(self, host_id, ip_address, port_no, community, device_type, single_table_name=None,
+                      firmware_id=None):
+        """
+
+        @param host_id:
+        @param ip_address:
+        @param port_no:
+        @param community:
+        @param device_type:
+        @param single_table_name:
+        @param firmware_id:
+        @return: @raise:
+        """
         try:
             # Open database connection
             self.db = 1
@@ -604,7 +685,7 @@ class DeviceStatus():
                 table_list.append(single_table)
             else:
                 table_list = table_dict.keys()
-            # print table_list
+                # print table_list
             host_state = self.host_status(14)
 
             if host_state == 0:
@@ -661,13 +742,13 @@ class DeviceStatus():
                 exit_status = host_state
 
         except MySQLdb.Error:
-            self.error = "MySQLdb Exception   %s "%(traceback.format_exc())
+            self.error = "MySQLdb Exception   %s " % (traceback.format_exc())
             exit_status = 22
         except SelfCreatedException:
-            self.error = " self %s "%(traceback.format_exc())
+            self.error = " self %s " % (traceback.format_exc())
             exit_status = 22
         except Exception as e:
-            self.error = "IN MAIN :  "%(traceback.format_exc())
+            self.error = "IN MAIN :  " % (traceback.format_exc())
             exit_status = 22
         finally:
             self.host_status(0, None, 14)
@@ -677,10 +758,16 @@ class DeviceStatus():
                         cursor.close()
                     self.db.close()
             return exit_status
+
 # Exception class
 
 
 class SelfCreatedException(Exception):
+    """
+
+    @param msg:
+    """
+
     def __init__(self, msg):
         print msg
 

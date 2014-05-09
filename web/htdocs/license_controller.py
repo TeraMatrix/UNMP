@@ -2,14 +2,14 @@
 
 from license_bll import LicenseBll
 from license import License
-from mod_python import apache, util
+from mod_python import util
 
 
 def manage_license(h):
     global html
     html = h
     css_list = []
-    js_list = ["js/pages/manage_license.js", "js/jquery.colorbox-min.js"]
+    js_list = ["js/unmp/main/manage_license.js"]
     header_btn = ""
     html.new_header(
         "Manage License", "manage_license.py", header_btn, css_list, js_list)
@@ -48,7 +48,7 @@ def license_upload(h):
     filedata = upfile.value
 
     css_list = []
-    js_list = ["js/pages/manage_license.js"]
+    js_list = ["js/unmp/main/manage_license.js"]
     header_btn = ""
     html.new_header(
         "Manage License", "manage_license.py", header_btn, css_list, js_list)
@@ -91,7 +91,7 @@ def license_upload(h):
     html.new_footer()
 
 
-def page_tip_license(h):
-    global html
-    html = h
-    html.write(License.page_tip_license())
+# def page_tip_license(h):
+#     global html
+#     html = h
+#     html.write(License.page_tip_license())

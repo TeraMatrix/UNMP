@@ -1,21 +1,19 @@
 #!/usr/bin/python2.6
 
-from unmp_model import *
-from utility import ErrorMessages, Validation
-from unmp_config import SystemConfig
-from sqlalchemy import and_, or_, desc, asc
-from common_controller import *
-from sqlalchemy.exc import *
-from sqlalchemy.orm.exc import *
-from py_module import snmp_ping, pysnmp_geter, pysnmp_get_table, pysnmp_set1
-from pysnmp_module import pysnmp_set, pysnmp_get_table_ap
-from pysnmp_ap import pysnmp_seter, pysnmp_get, odubulk as bulktable
-from common_bll import EventLog
-from datetime import datetime
-from unmp_config import SystemConfig
 from datetime import datetime
 import time
 
+from sqlalchemy import and_, or_, desc, asc
+from sqlalchemy.exc import *
+from sqlalchemy.orm.exc import *
+
+from common_bll import EventLog
+from common_controller import *
+from py_module import snmp_ping, pysnmp_geter, pysnmp_set1  # ,pysnmp_get_table
+from pysnmp_ap import pysnmp_seter, pysnmp_get, odubulk as bulktable
+from pysnmp_module import pysnmp_set  # , pysnmp_get_table_ap
+from unmp_config import SystemConfig
+from unmp_model import *
 
 errorStatus = {0: 'noError',
                1: 'Configuration failed.Please try again later',
@@ -51,14 +49,24 @@ errorStatus = {0: 'noError',
 
 
 class DeviceParameters(object):
+    """
+    Sqlalchemy interface to get the device related parameters
+    based on host_id of the device
+    """
     def get_device_parameter(self, host_id):
+        """
+
+        @param host_id:
+        @return:
+        """
         global sqlalche_obj
         try:
             sqlalche_obj.sql_alchemy_db_connection_open()
             device_list_param = []
             device_list_param = sqlalche_obj.session.query(
-                Hosts.ip_address, Hosts.mac_address, Hosts.device_type_id, Hosts.config_profile_id).filter(Hosts.host_id == host_id).all()
-            if device_list_param == None:
+                Hosts.ip_address, Hosts.mac_address, Hosts.device_type_id, Hosts.config_profile_id).filter(
+                Hosts.host_id == host_id).all()
+            if device_list_param is None:
                 device_list_param = []
             return device_list_param
         except Exception as e:
@@ -69,8 +77,12 @@ class DeviceParameters(object):
 
 
 class IduDeviceList(object):
-
-    def idu_device_list(self, ip_address, mac_address, selected_device, i_display_start, i_display_length, s_search, sEcho, sSortDir_0, iSortCol_0, userid=None, html_req={}):
+    """
+    This function is used to get the list of IDU Devices based
+    on IPaddress,Macaddress,DeviceTypes
+    """
+    def idu_device_list(self, ip_address, mac_address, selected_device, i_display_start, i_display_length, s_search,
+                        sEcho, sSortDir_0, iSortCol_0, userid=None, html_req={}):
         """
         Author- Anuj Samariya
         This function is used to get the list of Devices based on IPaddress,Macaddress,DeviceTypes
@@ -78,6 +90,17 @@ class IduDeviceList(object):
         mac_address - This is the Mac Address of device e.g aa:bb:cc:dd:ee:ff
         selected_device - This is the selected device types from the drop down menu of devices e.g "odu16"
         return List of Devices in two dimensional list format
+        @param ip_address:
+        @param mac_address:
+        @param selected_device:
+        @param i_display_start:
+        @param i_display_length:
+        @param s_search:
+        @param sEcho:
+        @param sSortDir_0:
+        @param iSortCol_0:
+        @param userid:
+        @param html_req:
         """
 
         # try block starts
@@ -87,13 +110,13 @@ class IduDeviceList(object):
                 ip_address, mac_address, selected_device, i_display_start, i_display_length,
                 s_search, sEcho, sSortDir_0, iSortCol_0, userid, html_req)
             # this is the query which returns the multidimensional array of hosts table and store in device_list
-##            device_list = sqlalche_obj.session.query(Hosts.host_id,Hosts.host_alias,Hosts.ip_address,Hosts.mac_address,Hosts.device_type_id,Hosts.reconcile_health).\
-##            filter(and_(Hosts.is_deleted == 0,Hosts.ip_address.like('%s%%'%(ip_address)),\
-##            Hosts.mac_address.like('%s%%'%(mac_address)),Hosts.device_type_id.like('%s%%'%(selected_device)),UsersGroups.user_id=='%s'%(userid),\
-##            UsersGroups.group_id==HostgroupsGroups.group_id,HostsHostgroups.hostgroup_id==HostgroupsGroups.hostgroup_id,Hosts.host_id==HostsHostgroups.host_id))\
-##            .order_by(Hosts.host_alias).order_by(Hosts.ip_address).all()
-##
-##            sqlalche_obj.sql_alchemy_db_connection_close()
+            ##            device_list = sqlalche_obj.session.query(Hosts.host_id,Hosts.host_alias,Hosts.ip_address,Hosts.mac_address,Hosts.device_type_id,Hosts.reconcile_health).\
+            ##            filter(and_(Hosts.is_deleted == 0,Hosts.ip_address.like('%s%%'%(ip_address)),\
+            ##            Hosts.mac_address.like('%s%%'%(mac_address)),Hosts.device_type_id.like('%s%%'%(selected_device)),UsersGroups.user_id=='%s'%(userid),\
+            ##            UsersGroups.group_id==HostgroupsGroups.group_id,HostsHostgroups.hostgroup_id==HostgroupsGroups.hostgroup_id,Hosts.host_id==HostsHostgroups.host_id))\
+            ##            .order_by(Hosts.host_alias).order_by(Hosts.ip_address).all()
+            ##
+            ##            sqlalche_obj.sql_alchemy_db_connection_close()
             return device_dict
         # try block ends
 
@@ -111,6 +134,13 @@ class IduDeviceList(object):
             sqlalche_obj.sql_alchemy_db_connection_close()
 
     def idu_device_list_profiling(self, ip_address, mac_address, selected_device):
+        """
+
+        @param ip_address:
+        @param mac_address:
+        @param selected_device:
+        @return:
+        """
         global sqlalche_obj
         device_list = []
         device_type = selected_device
@@ -122,8 +152,10 @@ class IduDeviceList(object):
             # this is the query which returns the multidimensional array of
             # hosts table and store in device_tuple
             device_list = sqlalche_obj.session.query(
-                Hosts.host_id, Hosts.host_alias, Hosts.ip_address, Hosts.mac_address).filter(and_(Hosts.is_deleted == 0, Hosts.ip_address.like('%s%%' % (ip_address)),
-                                                                                                  Hosts.mac_address.like('%s%%' % (mac_address)), Hosts.device_type_id == device_type)).order_by(Hosts.host_alias).order_by(Hosts.ip_address).all()
+                Hosts.host_id, Hosts.host_alias, Hosts.ip_address, Hosts.mac_address).filter(
+                and_(Hosts.is_deleted == 0, Hosts.ip_address.like('%s%%' % (ip_address)),
+                     Hosts.mac_address.like('%s%%' % (mac_address)), Hosts.device_type_id == device_type)).order_by(
+                Hosts.host_alias).order_by(Hosts.ip_address).all()
             return device_list
         except Exception as e:
             sqlalche_obj.sql_alchemy_db_connection_close()
@@ -137,21 +169,33 @@ class IduDeviceList(object):
 
 
 class IduGetDatabase(object):
-
+    """
+    get IDU related data from SQL
+    """
     def common_get_data_by_id(self, id_value, host_id, id_name, class_name):
+        """
+
+        @param id_value:
+        @param host_id:
+        @param id_name:
+        @param class_name:
+        @return:
+        """
         try:
             global sqlalche_obj
             get_data = []
             sqlalche_obj.sql_alchemy_db_connection_open()
-            if host_id == "" or host_id == None:
+            if host_id == "" or host_id is None:
                 return []
             config_id = sqlalche_obj.session.query(
                 Hosts.config_profile_id).filter(Hosts.host_id == host_id).all()
             if len(config_id) > 0:
-                query = "get_data = sqlalche_obj.session.query(%s).filter(and_(%s.%s=='%s',%s.config_profile_id=='%s')).all()" % (class_name, class_name,
-                                                                                                                                  id_name, id_value, class_name, config_id[0].config_profile_id)
-                exec "get_data = sqlalche_obj.session.query(%s).filter(and_(%s.%s=='%s',%s.config_profile_id=='%s')).all()" % (class_name, class_name,
-                                                                                                                               id_name, id_value, class_name, config_id[0].config_profile_id)
+                query = "get_data = sqlalche_obj.session.query(%s).filter(and_(%s.%s=='%s',%s.config_profile_id=='%s')).all()" % (
+                class_name, class_name,
+                id_name, id_value, class_name, config_id[0].config_profile_id)
+                exec "get_data = sqlalche_obj.session.query(%s).filter(and_(%s.%s=='%s',%s.config_profile_id=='%s')).all()" % (
+                class_name, class_name,
+                id_name, id_value, class_name, config_id[0].config_profile_id)
                 if len(get_data) > 0:
                     return get_data
                 else:
@@ -159,7 +203,6 @@ class IduGetDatabase(object):
             else:
                 return []
         except Exception as e:
-            sqlalche_obj.sql_alchemy_db_connection_close()
             return 0
         finally:
             sqlalche_obj.sql_alchemy_db_connection_close()
@@ -170,12 +213,17 @@ class IduGetDatabase(object):
 
 
 def rename_tablename(tablename):
+    """
+
+    @param tablename:
+    @return:
+    """
     try:
         ss = ""
         idx = tablename.index("_")
         ss = tablename[0:idx] + tablename[idx + 1].upper() + \
-            tablename[
-                idx + 1 + 1:]
+             tablename[
+             idx + 1 + 1:]
         ss = ss[0].upper() + ss[1:]
         return ss
     except Exception as e:
@@ -183,19 +231,30 @@ def rename_tablename(tablename):
 
 
 class IduReconcilation(object):
-
+    """
+    Device IDU reconciliation
+    """
     def default_reconciliation_controller(self, host_id, device_type_id, table_prefix, insert_update):
+        """
+
+        @param host_id:
+        @param device_type_id:
+        @param table_prefix:
+        @param insert_update:
+        @return:
+        """
         global sqlalche_obj
         sqlalche_obj.sql_alchemy_db_connection_open()
         new_profile = Odu16ConfigProfiles(
             device_type_id, "IduProfile", "Master",
-                                          None, datetime.now(), None, datetime.now(), None, 0)
+            None, datetime.now(), None, datetime.now(), None, 0)
         sqlalche_obj.session.add(new_profile)
         sqlalche_obj.session.flush()
         sqlalche_obj.session.refresh(new_profile)
         new_profile_id = new_profile.config_profile_id
-        default_profile_id = sqlalche_obj.session.query(Odu16ConfigProfiles.config_profile_id)\
-            .filter(and_(Odu16ConfigProfiles.device_type_id == device_type_id, Odu16ConfigProfiles.config_profile_type_id == "default")).all()
+        default_profile_id = sqlalche_obj.session.query(Odu16ConfigProfiles.config_profile_id) \
+            .filter(and_(Odu16ConfigProfiles.device_type_id == device_type_id,
+                         Odu16ConfigProfiles.config_profile_type_id == "default")).all()
         default_id = default_profile_id[0].config_profile_id
         idu_poe_data = sqlalche_obj.session.query(IduPoeConfigurationTable).filter(
             IduPoeConfigurationTable.config_profile_id == default_id).all()
@@ -209,8 +268,9 @@ class IduReconcilation(object):
             IduE1PortConfigurationTable.config_profile_id == default_id).all()
         if len(idu_e1_port_data) > 0:
             for i in range(0, len(idu_e1_port_data)):
-                idu_e1_port_data_add = IduE1PortConfigurationTable(new_profile_id, idu_e1_port_data[i].portNumber, idu_e1_port_data[i].adminState, idu_e1_port_data[
-                                                                   i].clockSource, idu_e1_port_data[i].lineType, idu_e1_port_data[i].lineCode)
+                idu_e1_port_data_add = IduE1PortConfigurationTable(new_profile_id, idu_e1_port_data[i].portNumber,
+                                                                   idu_e1_port_data[i].adminState, idu_e1_port_data[
+                        i].clockSource, idu_e1_port_data[i].lineType, idu_e1_port_data[i].lineCode)
                 sqlalche_obj.session.add(idu_e1_port_data_add)
 
         idu_switch_port_data = sqlalche_obj.session.query(IduSwitchPortconfigTable).filter(
@@ -222,15 +282,18 @@ class IduReconcilation(object):
                         i].switchportNum, idu_switch_port_data[i].swadminState,
                     idu_switch_port_data[
                         i].swlinkMode, idu_switch_port_data[
-                            i].portvid, idu_switch_port_data[i].macauthState,
-                    idu_switch_port_data[i].mirroringdirection, idu_switch_port_data[i].portdotqmode, idu_switch_port_data[i].macflowcontrol)
+                        i].portvid, idu_switch_port_data[i].macauthState,
+                    idu_switch_port_data[i].mirroringdirection, idu_switch_port_data[i].portdotqmode,
+                    idu_switch_port_data[i].macflowcontrol)
                 sqlalche_obj.session.add(idu_swtch_port_data_add)
 
         idu_temperature_data = sqlalche_obj.session.query(IduTemperatureSensorConfigurationTable).filter(
             IduTemperatureSensorConfigurationTable.config_profile_id == default_id).all()
         if len(idu_temperature_data) > 0:
             for i in range(0, len(idu_temperature_data)):
-                idu_temperature_data_add = IduTemperatureSensorConfigurationTable(new_profile_id, idu_temperature_data[i].tempIndex, idu_temperature_data[i].tempMax,
+                idu_temperature_data_add = IduTemperatureSensorConfigurationTable(new_profile_id,
+                                                                                  idu_temperature_data[i].tempIndex,
+                                                                                  idu_temperature_data[i].tempMax,
                                                                                   idu_temperature_data[i].tempMin)
                 sqlalche_obj.session.add(idu_temperature_data_add)
 
@@ -247,7 +310,8 @@ class IduReconcilation(object):
         if len(idu_qinq_data) > 0:
             for i in range(0, len(idu_qinq_data)):
                 idu_qinq_data_add = IduPortqinqTable(
-                    new_profile_id, idu_qinq_data[i].switchportnumber, idu_qinq_data[i].portqinqstate, idu_qinq_data[i].providertag)
+                    new_profile_id, idu_qinq_data[i].switchportnumber, idu_qinq_data[i].portqinqstate,
+                    idu_qinq_data[i].providertag)
                 sqlalche_obj.session.add(idu_qinq_data_add)
 
         idu_bandwidth_data = sqlalche_obj.session.query(IduPortBwTable).filter(
@@ -255,7 +319,8 @@ class IduReconcilation(object):
         if len(idu_bandwidth_data) > 0:
             for i in range(0, len(idu_bandwidth_data)):
                 idu_bandwidth_data_add = IduPortBwTable(
-                    new_profile_id, idu_bandwidth_data[i].switchportnum, idu_bandwidth_data[i].egressbwvalue, idu_bandwidth_data[i].ingressbwvalue)
+                    new_profile_id, idu_bandwidth_data[i].switchportnum, idu_bandwidth_data[i].egressbwvalue,
+                    idu_bandwidth_data[i].ingressbwvalue)
                 sqlalche_obj.session.add(idu_bandwidth_data_add)
 
         idu_rtc_data = sqlalche_obj.session.query(IduRtcConfigurationTable).filter(
@@ -265,7 +330,7 @@ class IduReconcilation(object):
                 idu_rtc_data_add = IduRtcConfigurationTable(
                     new_profile_id, idu_rtc_data[
                         i].rtcIndex, idu_rtc_data[
-                            i].year, idu_rtc_data[i].month,
+                        i].year, idu_rtc_data[i].month,
                     idu_rtc_data[
                         i].day, idu_rtc_data[i].hour,
                     idu_rtc_data[i].min, idu_rtc_data[i].sec)
@@ -276,7 +341,8 @@ class IduReconcilation(object):
         if len(idu_omc_data) > 0:
             for i in range(0, len(idu_omc_data)):
                 idu_omc_data_add = IduOmcConfigurationTable(
-                    new_profile_id, idu_omc_data[i].omcIndex, idu_omc_data[i].omcIpAddress, idu_omc_data[i].periodicStatsTimer)
+                    new_profile_id, idu_omc_data[i].omcIndex, idu_omc_data[i].omcIpAddress,
+                    idu_omc_data[i].periodicStatsTimer)
                 sqlalche_obj.session.add(idu_omc_data_add)
 
         idu_admin_data = sqlalche_obj.session.query(IduIduAdminStateTable).filter(
@@ -300,6 +366,15 @@ class IduReconcilation(object):
         return str(new_profile_id), 0
 
     def update_device_reconcilation_controller(self, host_id, device_type_id, table_prefix, insert_update, user_name):
+        """
+
+        @param host_id:
+        @param device_type_id:
+        @param table_prefix:
+        @param insert_update:
+        @param user_name:
+        @return:
+        """
         try:
             global sqlalche_obj, errorStatus
             i = 0
@@ -329,7 +404,7 @@ class IduReconcilation(object):
             else:
                 try:
 
-                    device_param_list = sqlalche_obj.session.query(Hosts).\
+                    device_param_list = sqlalche_obj.session.query(Hosts). \
                         filter(Hosts.host_id == host_id).all()
                 except:
                     return {"succes": 1, "result": "No host Exist"}
@@ -352,10 +427,12 @@ class IduReconcilation(object):
                             fill_not_table.append(tables_not_fill[i][0])
 
                     query_result = sqlalche_obj.session.query(
-                        IduOidTable.table_name, IduOidTable.table_oid).distinct().filter(not_(IduOidTable.table_name.in_((fill_not_table)))).all()
+                        IduOidTable.table_name, IduOidTable.table_oid).distinct().filter(
+                        not_(IduOidTable.table_name.in_((fill_not_table)))).all()
                     var_bind = sqlalche_obj.session.query(IduOidTable.table_name, IduOidTable.varbinds).distinct(
                     ).filter(not_(IduOidTable.table_name.in_((fill_not_table)))).all()
-                    if snmp_ping(device_param_list[0].ip_address, device_param_list[0].snmp_read_community, int(device_param_list[0].snmp_port)) == 0:
+                    if snmp_ping(device_param_list[0].ip_address, device_param_list[0].snmp_read_community,
+                                 int(device_param_list[0].snmp_port)) == 0:
                         if len(query_result) > 0:
                             oid_table_dict = {}
                             result = {}
@@ -370,16 +447,18 @@ class IduReconcilation(object):
                                 database_name = obj_system_config.get_sqlalchemy_credentials(
                                 )
                                 result_db = sqlalche_obj.db.execute(
-                                    "SELECT COLUMN_NAME FROM information_schema.COLUMNS WHERE table_name = '%s' and table_schema = '%s'" % (tablename, database_name[4]))
+                                    "SELECT COLUMN_NAME FROM information_schema.COLUMNS WHERE table_name = '%s' and table_schema = '%s'" % (
+                                    tablename, database_name[4]))
                                 for row in result_db:
                                     column_list.append(row["column_name"])
-##                                if i=="linkConfigurationTable":
-##                                    result = bulktable(str(oid_table_dict[i])+".1",device_param_list[0].ip_address,int(device_param_list[0].snmp_port),device_param_list[0].snmp_read_community)
-##                                    print result,"%%%%%%%%%%%%%%%%%%%%%%%%%%%"
-##                                else:
+                                    # if i=="linkConfigurationTable":
+                                    #     result = bulktable(str(oid_table_dict[i])+".1",device_param_list[0].ip_address,int(device_param_list[0].snmp_port),device_param_list[0].snmp_read_community)
+                                    #     print result,"%%%%%%%%%%%%%%%%%%%%%%%%%%%"
+                                    # else:
                                 time.sleep(1)
                                 result = bulktable(str(oid_table_dict[i]) + ".1", device_param_list[0].ip_address, int(
-                                    device_param_list[0].snmp_port), device_param_list[0].snmp_read_community, var_bind_dic[i])
+                                    device_param_list[0].snmp_port), device_param_list[0].snmp_read_community,
+                                                   var_bind_dic[i])
                                 sql_table_name = rename_tablename(tablename)
 
                                 if result["success"] == 1:
@@ -420,68 +499,73 @@ class IduReconcilation(object):
                                         for row in result['result']:
                                             for val in range(0, len(result['result'][row])):
                                                 setattr(sqlalche_table_result[row -
-                                                        1], column_list[val], str(result['result'][row][val]))
+                                                                              1], column_list[val],
+                                                        str(result['result'][row][val]))
                                                 if timestamp == 1:
                                                     setattr(sqlalche_table_result[
-                                                            row - 1], "timestamp", time_stamp[:time_stamp.find('.') - 1])
+                                                                row - 1], "timestamp",
+                                                            time_stamp[:time_stamp.find('.') - 1])
                                     else:
                                         for row in result['result']:
                                             if config_type == 1:
                                                 sqlalche_obj.db.execute("Insert into %s values(NULL,%s,%s)" % (
-                                                    tablename, device_param_list[0].config_profile_id, str(result["result"][row])[1:-1]))
+                                                    tablename, device_param_list[0].config_profile_id,
+                                                    str(result["result"][row])[1:-1]))
                                             else:
                                                 if timestamp == 0:
                                                     sqlalche_obj.db.execute("Insert into %s values(NULL,%s,%s)" %
-                                                                            (tablename, host_id, str(result["result"][row])[1:-1]))
+                                                                            (tablename, host_id,
+                                                                             str(result["result"][row])[1:-1]))
                                                 else:
                                                     sqlalche_obj.db.execute("Insert into %s values(NULL,%s,%s,'%s')" % (
-                                                        tablename, host_id, str(result["result"][row])[1:-1], time_stamp[:time_stamp.find('.') - 1]))
-##                                    if len(sqlalche_table_result)>0:
-##                                        if i=="linkConfigurationTable":
-##                                            if config_type == 1:
-##                                                for i in result["result"]:
-##                                                    for k in range(0,len(column_list)):
-##                                                        exec "sqlalche_table_result[%s].%s = '%s'"%(i-1,column_list[k],str(result["result"][i][k]))
-##                                        else:
-##                                            for i in result["result"]:
-##                                                for j in range(0,len(result["result"][i])):
-##                                                    if config_type == 1:
-##                                                        for k in range(0,len(column_list)):
-##                                                            if k == 0:
-##                                                                exec "sqlalche_table_result[m].%s='%s'"%(column_list[k],i)
-##                                                            else:
-##                                                                exec "sqlalche_table_result[%s].%s='%s'"%(m,column_list[k],result["result"][i][k-1])
-##                                                            if timestamp == 1:
-##                                                                exec "sqlalche_table_result[%s].timestamp='%s'"%(m,datetime.now())
-##
-##                                                    else:
-##                                                        for k in range(0,len(column_list)):
-##                                                            if k == 0:
-##                                                                exec "sqlalche_table_result[m].%s='%s'"%(column_list[k],i)
-##                                                            else:
-##                                                                exec "sqlalche_table_result[%s].%s='%s'"%(m,column_list[k],result["result"][i][k-1])
-##                                                            if timestamp == 1:
-##                                                                exec "sqlalche_table_result[%s].timestamp='%s'"%(m,datetime.now())
-##                                                    sqlalche_obj.session.commit()
-##                                                m = m+1
-##                                    else:
-##                                        if i=="linkConfigurationTable":
-##                                            for i in range(0,len(result["result"])):
-##                                                if config_type == 1:
-##                                                    sqlalche_obj.db.execute("Insert into %s values (NULL,%s,%s)"%(tablename,device_param_list[0].config_profile_id,str(result["result"][i+1])[1:-1]))
-##                                                else:
-##                                                    sqlalche_obj.db.execute("Insert into %s values (NULL,%s,%s)"%(tablename,host_id,str(result["result"][i+1])[1:-1]))
-##                                        else:
-##                                            for i in result["result"]:
-##                                                result["result"][i].insert(0,str(i))
-##                                                if config_type ==1:
-##                                                    sqlalche_obj.db.execute("Insert into %s values(NULL,%s,%s)"%(tablename,device_param_list[0].config_profile_id,str(result["result"][i])[1:-1]))
-##                                                else:
-##                                                    if timestamp == 0:
-##                                                        sqlalche_obj.db.execute("Insert into %s values(NULL,%s,%s)"%(tablename,host_id,str(result["result"][i])[1:-1]))
-##                                                    else:
-# sqlalche_obj.db.execute("Insert into %s
-# values(NULL,%s,%s,'%s')"%(tablename,host_id,str(result["result"][i])[1:-1],datetime.now()))
+                                                        tablename, host_id, str(result["result"][row])[1:-1],
+                                                        time_stamp[:time_stamp.find('.') - 1]))
+                                                    # if len(sqlalche_table_result)>0:
+                                                    #     if i=="linkConfigurationTable":
+                                                    #         if config_type == 1:
+                                                    #             for i in result["result"]:
+                                                    #                 for k in range(0,len(column_list)):
+                                                    #                     exec "sqlalche_table_result[%s].%s = '%s'"%(i-1,column_list[k],str(result["result"][i][k]))
+                                                    #     else:
+                                                    #         for i in result["result"]:
+                                                    #             for j in range(0,len(result["result"][i])):
+                                                    #                 if config_type == 1:
+                                                    #                     for k in range(0,len(column_list)):
+                                                    #                         if k == 0:
+                                                    #                             exec "sqlalche_table_result[m].%s='%s'"%(column_list[k],i)
+                                                    #                         else:
+                                                    #                             exec "sqlalche_table_result[%s].%s='%s'"%(m,column_list[k],result["result"][i][k-1])
+                                                    #                         if timestamp == 1:
+                                                    #                             exec "sqlalche_table_result[%s].timestamp='%s'"%(m,datetime.now())
+
+                                                    #                 else:
+                                                    #                     for k in range(0,len(column_list)):
+                                                    #                         if k == 0:
+                                                    #                             exec "sqlalche_table_result[m].%s='%s'"%(column_list[k],i)
+                                                    #                         else:
+                                                    #                             exec "sqlalche_table_result[%s].%s='%s'"%(m,column_list[k],result["result"][i][k-1])
+                                                    #                         if timestamp == 1:
+                                                    #                             exec "sqlalche_table_result[%s].timestamp='%s'"%(m,datetime.now())
+                                                    #                 sqlalche_obj.session.commit()
+                                                    #             m = m+1
+                                                    # else:
+                                                    #     if i=="linkConfigurationTable":
+                                                    #         for i in range(0,len(result["result"])):
+                                                    #             if config_type == 1:
+                                                    #                 sqlalche_obj.db.execute("Insert into %s values (NULL,%s,%s)"%(tablename,device_param_list[0].config_profile_id,str(result["result"][i+1])[1:-1]))
+                                                    #             else:
+                                                    #                 sqlalche_obj.db.execute("Insert into %s values (NULL,%s,%s)"%(tablename,host_id,str(result["result"][i+1])[1:-1]))
+                                                    #     else:
+                                                    #         for i in result["result"]:
+                                                    #             result["result"][i].insert(0,str(i))
+                                                    #             if config_type ==1:
+                                                    #                 sqlalche_obj.db.execute("Insert into %s values(NULL,%s,%s)"%(tablename,device_param_list[0].config_profile_id,str(result["result"][i])[1:-1]))
+                                                    #             else:
+                                                    #                 if timestamp == 0:
+                                                    #                     sqlalche_obj.db.execute("Insert into %s values(NULL,%s,%s)"%(tablename,host_id,str(result["result"][i])[1:-1]))
+                                                    #                 else:
+                                                # sqlalche_obj.db.execute("Insert into %s
+                                                # values(NULL,%s,%s,'%s')"%(tablename,host_id,str(result["result"][i])[1:-1],datetime.now()))
 
                             reconcile_per = (float(rec) / float(total_per))
                             reconcile_per = int(reconcile_per * 100)
@@ -500,7 +584,7 @@ class IduReconcilation(object):
                             return result
                         else:
                             result = {"success": 1, "result":
-                                      "UNMP has shut down.Please contact UNMP vendor"}
+                                "UNMP has shut down.Please contact UNMP vendor"}
                             device_param_list[0].reconcile_status = 0
                             sqlalche_obj.session.commit()
                             return result
@@ -543,7 +627,17 @@ class IduReconcilation(object):
             sqlalche_obj.sql_alchemy_db_connection_close()
 
     ####################### Device Reconciliation with isReconciliation reconc
-    def new_device_reconcilation_controller(self, host_id, device_type_id, table_prefix, reconcile_chk=True, user_name=""):
+    def new_device_reconcilation_controller(self, host_id, device_type_id, table_prefix, reconcile_chk=True,
+                                            user_name=""):
+        """
+
+        @param host_id:
+        @param device_type_id:
+        @param table_prefix:
+        @param reconcile_chk:
+        @param user_name:
+        @return:
+        """
         try:
             global sqlalche_obj, errorStatus
             i = 0
@@ -565,13 +659,15 @@ class IduReconcilation(object):
             else:
                 if reconcile_chk == True:
                     try:
-                        device_param_list = sqlalche_obj.session.query(Hosts).\
+                        device_param_list = sqlalche_obj.session.query(Hosts). \
                             filter(Hosts.host_id == host_id).all()
                     except:
                         return {"succes": 1, "result": "No host Exist"}
-                    if snmp_ping(device_param_list[0].ip_address, device_param_list[0].snmp_read_community, int(device_param_list[0].snmp_port)) == 0:
+                    if snmp_ping(device_param_list[0].ip_address, device_param_list[0].snmp_read_community,
+                                 int(device_param_list[0].snmp_port)) == 0:
                         if len(device_param_list) == 0:
-                            if device_param_list[0].config_profile_id == None or device_param_list[0].config_profile_id == "":
+                            if device_param_list[0].config_profile_id == None or device_param_list[
+                                0].config_profile_id == "":
                                 result = {"success": 1,
                                           "result": "Configuration Not Exist For This Host"}
                                 return result
@@ -590,8 +686,10 @@ class IduReconcilation(object):
                                         tables_not_fill[i][0])
 
                             query_result = sqlalche_obj.session.query(
-                                IduOidTable.table_name, IduOidTable.table_oid).distinct().filter(not_(IduOidTable.table_name.in_((fill_not_table)))).all()
-                            var_bind = sqlalche_obj.session.query(IduOidTable.table_name, IduOidTable.varbinds).distinct(
+                                IduOidTable.table_name, IduOidTable.table_oid).distinct().filter(
+                                not_(IduOidTable.table_name.in_((fill_not_table)))).all()
+                            var_bind = sqlalche_obj.session.query(IduOidTable.table_name,
+                                                                  IduOidTable.varbinds).distinct(
                             ).filter(not_(IduOidTable.table_name.in_((fill_not_table)))).all()
                             if len(query_result) > 0:
                                 profile_id = Odu16ConfigProfiles(
@@ -610,17 +708,20 @@ class IduReconcilation(object):
                                     column_list = []
                                     tablename = table_prefix + i
                                     result_db = sqlalche_obj.db.execute(
-                                        "SELECT COLUMN_NAME FROM information_schema.COLUMNS WHERE table_name = '%s'" % (tablename))
+                                        "SELECT COLUMN_NAME FROM information_schema.COLUMNS WHERE table_name = '%s'" % (
+                                        tablename))
                                     for row in result_db:
                                         column_list.append(row['column_name'])
-##                                    if i=="linkConfigurationTable":
-##                                        result = pysnmp_get_table_ap(oid_table_dict[i],device_param_list[0].ip_address,int(device_param_list[0].snmp_port),device_param_list[0].snmp_read_community)
-##                                    else:
-# result =
-# pysnmp_get_table(oid_table_dict[i],device_param_list[0].ip_address,int(device_param_list[0].snmp_port),device_param_list[0].snmp_read_community)
+                                    ##                                    if i=="linkConfigurationTable":
+                                    ##                                        result = pysnmp_get_table_ap(oid_table_dict[i],device_param_list[0].ip_address,int(device_param_list[0].snmp_port),device_param_list[0].snmp_read_community)
+                                    ##                                    else:
+                                    # result =
+                                    # pysnmp_get_table(oid_table_dict[i],device_param_list[0].ip_address,int(device_param_list[0].snmp_port),device_param_list[0].snmp_read_community)
                                     time.sleep(2)
-                                    result = bulktable(str(oid_table_dict[i]) + ".1", device_param_list[0].ip_address, int(
-                                        device_param_list[0].snmp_port), device_param_list[0].snmp_read_community, var_bind_dic[i])
+                                    result = bulktable(str(oid_table_dict[i]) + ".1", device_param_list[0].ip_address,
+                                                       int(
+                                                           device_param_list[0].snmp_port),
+                                                       device_param_list[0].snmp_read_community, var_bind_dic[i])
                                     if result["success"] == 1:
                                         if int(rec) > 0:
                                             rec = rec - 1
@@ -631,38 +732,43 @@ class IduReconcilation(object):
 
                                     for row in result['result']:
                                         if "config_profile_id" in column_list:
-                                            print "Insert into %s values(NULL,%s,%s)" % (tablename, config_profile_id, str(result["result"][row])[1:-1])
+                                            print "Insert into %s values(NULL,%s,%s)" % (
+                                            tablename, config_profile_id, str(result["result"][row])[1:-1])
                                             sqlalche_obj.db.execute("Insert into %s values(NULL,%s,%s)" %
-                                                                    (tablename, config_profile_id, str(result["result"][row])[1:-1]))
+                                                                    (tablename, config_profile_id,
+                                                                     str(result["result"][row])[1:-1]))
                                         else:
                                             if "timestamp" not in column_list:
                                                 sqlalche_obj.db.execute("Insert into %s values(NULL,%s,%s)" %
-                                                                        (tablename, host_id, str(result["result"][row])[1:-1]))
+                                                                        (tablename, host_id,
+                                                                         str(result["result"][row])[1:-1]))
                                             else:
                                                 sqlalche_obj.db.execute("Insert into %s values(NULL,%s,%s,'%s')" %
-                                                                        (tablename, host_id, str(result["result"][row])[1:-1], time_stamp[:time_stamp.find('.') - 1]))
-##                                        if i=="linkConfigurationTable":
-##                                            for i in range(0,len(result["result"])):
-##                                                if "config_profile_id" in column_list :
-##                                                    sqlalche_obj.db.execute("Insert into %s values (NULL,%s,%s)"%(tablename,config_profile_id,str(result["result"][i+1])[1:-1]))
-##                                                else:
-##                                                    sqlalche_obj.db.execute("Insert into %s values (NULL,%s,%s)"%(tablename,host_id,str(result["result"][i+1])[1:-1]))
-##                                        else:
-##                                            for j in result["result"]:
-##                                                result_db  = sqlalche_obj.db.execute("SELECT COLUMN_NAME FROM information_schema.COLUMNS WHERE table_name = '%s'"%(tablename))
-##                                                for row in result_db:
-##                                                    column_list.append(row['column_name'])
-##                                                if "config_profile_id" in column_list :
-##                                                    if "timestamp" in column_list:
-##                                                        sqlalche_obj.db.execute("insert into %s values(NULL,%s,%s,%s,'%s')"%(tablename,config_profile_id,j,str(result["result"][j])[1:-1],datetime.now()))
-##                                                    else:
-##                                                        sqlalche_obj.db.execute("insert into %s values(NULL,%s,%s,%s)"%(tablename,config_profile_id,j,str(result["result"][j])[1:-1]))
-##                                                else:
-##                                                    if "timestamp" in column_list:
-##                                                        sqlalche_obj.db.execute("insert into %s values(NULL,%s,%s,%s,'%s')"%(tablename,host_id,j,str(result["result"][j])[1:-1],datetime.now()))
-##                                                    else:
-# sqlalche_obj.db.execute("insert into %s
-# values(NULL,%s,%s,%s)"%(tablename,host_id,j,str(result["result"][j])[1:-1]))
+                                                                        (tablename, host_id,
+                                                                         str(result["result"][row])[1:-1],
+                                                                         time_stamp[:time_stamp.find('.') - 1]))
+                                            ##                                        if i=="linkConfigurationTable":
+                                            ##                                            for i in range(0,len(result["result"])):
+                                            ##                                                if "config_profile_id" in column_list :
+                                            ##                                                    sqlalche_obj.db.execute("Insert into %s values (NULL,%s,%s)"%(tablename,config_profile_id,str(result["result"][i+1])[1:-1]))
+                                            ##                                                else:
+                                            ##                                                    sqlalche_obj.db.execute("Insert into %s values (NULL,%s,%s)"%(tablename,host_id,str(result["result"][i+1])[1:-1]))
+                                            ##                                        else:
+                                            ##                                            for j in result["result"]:
+                                            ##                                                result_db  = sqlalche_obj.db.execute("SELECT COLUMN_NAME FROM information_schema.COLUMNS WHERE table_name = '%s'"%(tablename))
+                                            ##                                                for row in result_db:
+                                            ##                                                    column_list.append(row['column_name'])
+                                            ##                                                if "config_profile_id" in column_list :
+                                            ##                                                    if "timestamp" in column_list:
+                                            ##                                                        sqlalche_obj.db.execute("insert into %s values(NULL,%s,%s,%s,'%s')"%(tablename,config_profile_id,j,str(result["result"][j])[1:-1],datetime.now()))
+                                            ##                                                    else:
+                                            ##                                                        sqlalche_obj.db.execute("insert into %s values(NULL,%s,%s,%s)"%(tablename,config_profile_id,j,str(result["result"][j])[1:-1]))
+                                            ##                                                else:
+                                            ##                                                    if "timestamp" in column_list:
+                                            ##                                                        sqlalche_obj.db.execute("insert into %s values(NULL,%s,%s,%s,'%s')"%(tablename,host_id,j,str(result["result"][j])[1:-1],datetime.now()))
+                                            ##                                                    else:
+                                            # sqlalche_obj.db.execute("insert into %s
+                                            # values(NULL,%s,%s,%s)"%(tablename,host_id,j,str(result["result"][j])[1:-1]))
 
                                 reconcile_per = (float(rec) / float(total_per))
                                 reconcile_per = int(reconcile_per * 100)
@@ -678,7 +784,7 @@ class IduReconcilation(object):
                                 return str(config_profile_id), reconcile_per
                             else:
                                 result = {"success": 1, "result":
-                                          "UNMP has shut down.Please contact UNMP vendor"}
+                                    "UNMP has shut down.Please contact UNMP vendor"}
                                 device_param_list[0].reconcile_status = 1
                                 sqlalche_obj.session.commit()
                                 return result
@@ -723,12 +829,18 @@ class IduReconcilation(object):
             sqlalche_obj.sql_alchemy_db_connection_close()
 
     def reconciliation_status(self):
+        """
+
+
+        @return:
+        """
         global sqlalche_obj
         result = {}
         rec_dir = {}
         sqlalche_obj.sql_alchemy_db_connection_open()
         rec_list = sqlalche_obj.session.query(
-            Hosts.host_id, Hosts.reconcile_status, Hosts.reconcile_health).filter(and_(Hosts.device_type_id.like("idu4%"))).all()
+            Hosts.host_id, Hosts.reconcile_status, Hosts.reconcile_health).filter(
+            and_(Hosts.device_type_id.like("idu4%"))).all()
         sqlalche_obj.sql_alchemy_db_connection_close()
         if len(rec_list) > 0:
             for i in range(0, len(rec_list)):
@@ -737,6 +849,12 @@ class IduReconcilation(object):
             return result
 
     def commit_to_flash(self, host_id, device_type_id):
+        """
+
+        @param host_id:
+        @param device_type_id:
+        @return:
+        """
         global sqlalche_obj
         result = {}
         sqlalche_obj.sql_alchemy_db_connection_open()
@@ -753,6 +871,12 @@ class IduReconcilation(object):
             return {"success": 1, "result": "Host Data Not Exist"}
 
     def reboot(self, host_id, device_type_id):
+        """
+
+        @param host_id:
+        @param device_type_id:
+        @return:
+        """
         global sqlalche_obj
         result = {}
         sqlalche_obj.sql_alchemy_db_connection_open()
@@ -763,7 +887,7 @@ class IduReconcilation(object):
         sqlalche_obj.sql_alchemy_db_connection_close()
         if len(host_param) > 0:
             snmp_get_result = pysnmp_get('1.3.6.1.4.1.26149.2.1.5.1.1.7', host_param[0].ip_address, int(host_param[0]
-                                         .snmp_port), host_param[0].snmp_read_community)
+            .snmp_port), host_param[0].snmp_read_community)
             if snmp_get_result['success'] == 0:
                 if int(snmp_get_result['result'].values()[0]) == 1:
                     snmp_get_om_operation = pysnmp_get('1.3.6.1.4.1.26149.2.1.5.1.1.2', host_param[0].ip_address, int(
@@ -788,13 +912,13 @@ class IduReconcilation(object):
                     else:
                         if 53 in snmp_get_om_operation["result"]:
                             result = {"success": 1, "result":
-                                      "No Response From Device.Please Try Again", "flag": "1"}
+                                "No Response From Device.Please Try Again", "flag": "1"}
                         elif 51 in snmp_get_om_operation["result"]:
                             result = {"success": 1,
                                       "result": "Network is unreachable", "flag": "1"}
                         elif 99 in snmp_get_om_operation["result"]:
                             result = {"success": 1, "result":
-                                      "UNMP Server is busy.Please Retry again", "flag": "1"}
+                                "UNMP Server is busy.Please Retry again", "flag": "1"}
                         else:
                             return snmp_get_om_operation
                         return result
@@ -807,13 +931,13 @@ class IduReconcilation(object):
             else:
                 if 53 in snmp_get_result["result"]:
                     result = {"success": 1, "result":
-                              "No Response From Device.Please Try Again", "flag": "1"}
+                        "No Response From Device.Please Try Again", "flag": "1"}
                 elif 51 in snmp_get_result["result"]:
                     result = {"success": 1, "result":
-                              "Network is unreachable", "flag": "1"}
+                        "Network is unreachable", "flag": "1"}
                 elif 99 in snmp_get_result["result"]:
                     result = {"success": 1, "result":
-                              "UNMP Server is busy.Please Retry again", "flag": "1"}
+                        "UNMP Server is busy.Please Retry again", "flag": "1"}
                 else:
                     return snmp_get_result
                 return result
@@ -821,23 +945,40 @@ class IduReconcilation(object):
             return {"success": 1, "result": "Host Data Not Exist"}
 
     def chk_ping(self, host_id):
+        """
+
+        @param host_id:
+        @return:
+        """
         global sqlalche_obj
         sqlalche_obj.sql_alchemy_db_connection_open()
         if host_id != "" or host_id != None:
-            device_param_list = sqlalche_obj.session.query(Hosts.ip_address, Hosts.snmp_port, Hosts.snmp_read_community, Hosts.config_profile_id).\
+            device_param_list = sqlalche_obj.session.query(Hosts.ip_address, Hosts.snmp_port, Hosts.snmp_read_community,
+                                                           Hosts.config_profile_id). \
                 filter(Hosts.host_id == host_id).one()
         sqlalche_obj.sql_alchemy_db_connection_close()
         if snmp_ping(device_param_list[0], device_param_list[2], int(device_param_list[1])) == 0:
             return 0
         else:
             return 1
+
 # obj = IduReconcilation()
 # print obj.reboot(4,'idu4')
 # print obj.default_reconciliation_controller(111,'idu4','idu_',True)
 
 
 class IduGetData(object):
+    """
+    IDU device data fetch
+    """
     def common_get_data(self, class_name, host_id, config=True):
+        """
+
+        @param class_name:
+        @param host_id:
+        @param config:
+        @return:
+        """
         try:
             global sqlalche_obj
             get_data = []
@@ -869,7 +1010,13 @@ class IduGetData(object):
             sqlalche_obj.sql_alchemy_db_connection_close()
 
     def convert_time(self, value):
+        """
+
+        @param value:
+        @return:
+        """
         from datetime import datetime, timedelta
+
         try:
             sec = timedelta(seconds=int(int(value) / 100))
             d = datetime(1, 1, 1) + sec
@@ -878,30 +1025,45 @@ class IduGetData(object):
             return "0:0:0:0"
 
     def common_get_multivalue(self, device_type, oid_name, field_value):
+        """
+
+        @param device_type:
+        @param oid_name:
+        @param field_value:
+        @return:
+        """
         try:
             global sqlalche_obj
             get_data = []
             sqlalche_obj.sql_alchemy_db_connection_open()
 
             val_dict = {'device_type': device_type, 'oid_name':
-                        oid_name, 'field_value': field_value}
+                oid_name, 'field_value': field_value}
 
             get_data = sqlalche_obj.db.execute("SELECT %(device_type)s_oids_multivalues.value FROM  %(device_type)s_oids_multivalues join \
             %(device_type)s_oids on \
              %(device_type)s_oids.oid_id = %(device_type)s_oids_multivalues.oid_id and \
-              %(device_type)s_oids.oid_name =  '%(oid_name)s' AND  %(device_type)s_oids_multivalues.name =  '%(field_value)s'" % (val_dict))
+              %(device_type)s_oids.oid_name =  '%(oid_name)s' AND  %(device_type)s_oids_multivalues.name =  '%(field_value)s'" % (
+            val_dict))
 
             for i in get_data:
                 return str(i[0])
 
         except Exception as e:
             import traceback
+
             return traceback.format_exc()
             return ''
         finally:
             sqlalche_obj.sql_alchemy_db_connection_close()
 
     def common_get_data_by_host(self, class_name, host_id):
+        """
+
+        @param class_name:
+        @param host_id:
+        @return:
+        """
         try:
             global sqlalche_obj
             sqlalche_obj.sql_alchemy_db_connection_open()
@@ -921,13 +1083,19 @@ class IduGetData(object):
             sqlalche_obj.sql_alchemy_db_connection_close()
 
     def get_e1_op_status(self, host_id):
+        """
+
+        @param host_id:
+        @return:
+        """
         try:
             global sqlalche_obj
             sqlalche_obj.sql_alchemy_db_connection_open()
             if host_id == "" or host_id == None:
                 return []
             get_data = sqlalche_obj.session.query(IduE1PortStatusTable).filter(
-                IduE1PortStatusTable.host_id == host_id).order_by(desc(IduE1PortStatusTable.timestamp)).order_by(asc(IduE1PortStatusTable.portNum)).limit(4).all()
+                IduE1PortStatusTable.host_id == host_id).order_by(desc(IduE1PortStatusTable.timestamp)).order_by(
+                asc(IduE1PortStatusTable.portNum)).limit(4).all()
             if len(get_data) > 0:
                 return get_data
             else:
@@ -943,10 +1111,22 @@ class IduGetData(object):
 # print obj.common_get_data('Odu100RuConfTable',28)
 # print obj.common_get_data_by_host("Odu100RaSiteSurveyResultTable",63)
 class IduCommonSetValidation(object):
-
+    """
+    IDU device related validation fucntion
+    """
     def common_set_config(self, host_id, device_type_id, dic_result, id=None, index=0, special_case=0):
     # dic_result = {'success':0,'result':{'ru.omcConfTable.omcIpAddress':[1,'Not Done'],'ru.omcConfTable.periodicStatsTimer':[1,'Not Done']}}
     # return dic_result
+        """
+
+        @param host_id:
+        @param device_type_id:
+        @param dic_result:
+        @param id:
+        @param index:
+        @param special_case:
+        @return:
+        """
         try:
             global sqlalche_obj
             sqlalche_obj.sql_alchemy_db_connection_open()
@@ -970,11 +1150,12 @@ class IduCommonSetValidation(object):
                     continue
                 else:
                     query_result = sqlalche_obj.session.query(o2, o1.oid_name, o1.oid, o1.indexes).outerjoin(
-                        o1, o1.oid_id == o2.dependent_id).filter(and_(o2.oid_name == keys, o2.device_type_id == device_type_id)).all()
+                        o1, o1.oid_id == o2.dependent_id).filter(
+                        and_(o2.oid_name == keys, o2.device_type_id == device_type_id)).all()
                     if len(query_result) > 0:
                         if query_result[0][0].dependent_id == "" or query_result[0][0].dependent_id == None:
                             independent_oid.append({keys: [query_result[0][0].oid + query_result[0][
-                                                   0].indexes, query_result[0][0].oid_type, dic_result[keys]]})
+                                0].indexes, query_result[0][0].oid_type, dic_result[keys]]})
 
                         else:
                             if len(dependent_oid) > 0:
@@ -992,7 +1173,8 @@ class IduCommonSetValidation(object):
                                         pos = i
                                         if len(depend_oid_value) > 0:
                                             depend_oid_value[pos][keys] = [
-                                                query_result[0][0].oid + "." + str(id), query_result[0][0].oid_type, dic_result[keys]]
+                                                query_result[0][0].oid + "." + str(id), query_result[0][0].oid_type,
+                                                dic_result[keys]]
                                             break
                                         else:
 
@@ -1006,18 +1188,21 @@ class IduCommonSetValidation(object):
                                             if query_result[0][1] == 'ru.ruConfTable.adminstate':
                                                 dependent_oid.append({query_result[0][1] + str(
                                                     -1): [query_result[0][2] + query_result[0][3]]})
-                                                depend_oid_value.append({keys: [query_result[0][0].oid + query_result[0][0]
-                                                                        .indexes, query_result[0][0].oid_type, dic_result[keys]]})
+                                                depend_oid_value.append(
+                                                    {keys: [query_result[0][0].oid + query_result[0][0]
+                                                    .indexes, query_result[0][0].oid_type, dic_result[keys]]})
                                             elif query_result[0][1] == 'ru.ipConfigTable.adminState':
                                                 dependent_oid.append({query_result[0][1] + str(
                                                     -1): [query_result[0][2] + query_result[0][3]]})
-                                                depend_oid_value.append({keys: [query_result[0][0].oid + query_result[0][0]
-                                                                        .indexes, query_result[0][0].oid_type, dic_result[keys]]})
+                                                depend_oid_value.append(
+                                                    {keys: [query_result[0][0].oid + query_result[0][0]
+                                                    .indexes, query_result[0][0].oid_type, dic_result[keys]]})
                                             elif query_result[0][1] == 'ru.ra.raConfTable.raAdminState':
                                                 dependent_oid.append({query_result[0][1] + str(
                                                     -1): [query_result[0][2] + query_result[0][3]]})
-                                                depend_oid_value.append({keys: [query_result[0][0].oid + query_result[0][0]
-                                                                        .indexes, query_result[0][0].oid_type, dic_result[keys]]})
+                                                depend_oid_value.append(
+                                                    {keys: [query_result[0][0].oid + query_result[0][0]
+                                                    .indexes, query_result[0][0].oid_type, dic_result[keys]]})
                                             else:
                                                 dependent_oid.append(
                                                     {query_result[0][1]: [query_result[0][2] + query_result[0][3]]})
@@ -1031,17 +1216,20 @@ class IduCommonSetValidation(object):
                                     dependent_oid.append({query_result[0][1] + str(
                                         -1): [query_result[0][2] + query_result[0][3]]})
                                     depend_oid_value.append({keys: [query_result[0][0].oid +
-                                                            query_result[0][0].indexes, query_result[0][0].oid_type, dic_result[keys]]})
+                                                                    query_result[0][0].indexes,
+                                                                    query_result[0][0].oid_type, dic_result[keys]]})
                                 elif query_result[0][1] == 'ru.ipConfigTable.adminState':
                                     dependent_oid.append({query_result[0][1] + str(
                                         -1): [query_result[0][2] + query_result[0][3]]})
                                     depend_oid_value.append({keys: [query_result[0][0].oid +
-                                                            query_result[0][0].indexes, query_result[0][0].oid_type, dic_result[keys]]})
+                                                                    query_result[0][0].indexes,
+                                                                    query_result[0][0].oid_type, dic_result[keys]]})
                                 elif query_result[0][1] == 'ru.ra.raConfTable.raAdminState':
                                     dependent_oid.append({query_result[0][1] + str(
                                         -1): [query_result[0][2] + query_result[0][3]]})
                                     depend_oid_value.append({keys: [query_result[0][0].oid +
-                                                            query_result[0][0].indexes, query_result[0][0].oid_type, dic_result[keys]]})
+                                                                    query_result[0][0].indexes,
+                                                                    query_result[0][0].oid_type, dic_result[keys]]})
                                 else:
                                     dependent_oid.append(
                                         {query_result[0][1]: [query_result[0][2] + "." + str(id)]})
@@ -1059,7 +1247,8 @@ class IduCommonSetValidation(object):
             else:
                 for i in range(0, len(independent_oid)):
                     depend_oid_value.append(independent_oid[i])
-            device_param_list = sqlalche_obj.session.query(Hosts.ip_address, Hosts.snmp_port, Hosts.snmp_write_community, Hosts.config_profile_id).\
+            device_param_list = sqlalche_obj.session.query(Hosts.ip_address, Hosts.snmp_port,
+                                                           Hosts.snmp_write_community, Hosts.config_profile_id). \
                 filter(Hosts.host_id == host_id).one()
             j = -1
             if len(dependent_oid) > 0:
@@ -1092,14 +1281,15 @@ class IduCommonSetValidation(object):
                                     i] = errorStatus[result["result"][i]]
                             else:
                                 oid_list_table_field_value = sqlalche_obj.session.query(
-                                    IduOids.table_name, IduOids.coloumn_name).filter(and_(IduOids.oid_name == i, IduOids.device_type_id == device_type_id)).all()
+                                    IduOids.table_name, IduOids.coloumn_name).filter(
+                                    and_(IduOids.oid_name == i, IduOids.device_type_id == device_type_id)).all()
                                 if len(oid_list_table_field_value) == 0:
                                     continue
                                 else:
 
                                     if i in dic_result:
                                         table_name = "idu_" + \
-                                            oid_list_table_field_value[0][0]
+                                                     oid_list_table_field_value[0][0]
                                         table_name = rename_tablename(
                                             table_name)
                                         exec "table_result = sqlalche_obj.session.query(%s).filter(%s.config_profile_id == \"%s\").all()" % (
@@ -1129,13 +1319,16 @@ class IduCommonSetValidation(object):
             if len(dependent_oid) > 0:
                 for i in range(0, len(dependent_oid)):
                     query_admin_result = sqlalche_obj.session.query(
-                        IduOids.oid, IduOids.oid_type, IduOids.indexes).filter(IduOids.oid_name == "ru.ra.raConfTable.raAdminState").one()
+                        IduOids.oid, IduOids.oid_type, IduOids.indexes).filter(
+                        IduOids.oid_name == "ru.ra.raConfTable.raAdminState").one()
                     if 'ru.ruConfTable.adminstate-1' in dependent_oid[i]:
                         admin_state = "ru.ruConfTable.adminstate"
                         query_admin_result = sqlalche_obj.session.query(
-                            IduOids.oid, IduOids.oid_type, IduOids.indexes).filter(IduOids.oid_name == "ru.ruConfTable.adminstate").one()
+                            IduOids.oid, IduOids.oid_type, IduOids.indexes).filter(
+                            IduOids.oid_name == "ru.ruConfTable.adminstate").one()
                         dic_admin_value = {"ru.ruConfTable.adminstate": [query_admin_result[0] +
-                                                                         query_admin_result[2], query_admin_result[1], '1']}
+                                                                         query_admin_result[2], query_admin_result[1],
+                                                                         '1']}
                         if len(query_admin_result) > 0:
                             result = pysnmp_set(
                                 dic_admin_value, device_param_list[0],
@@ -1148,14 +1341,15 @@ class IduCommonSetValidation(object):
                                             "result"][i] = errorStatus[result["result"][i]]
                                     else:
                                         oid_list_table_field_value = sqlalche_obj.session.query(
-                                            IduOids.table_name, IduOids.coloumn_name).filter(and_(IduOids.oid_name == i, IduOids.device_type_id == device_type_id)).all()
+                                            IduOids.table_name, IduOids.coloumn_name).filter(
+                                            and_(IduOids.oid_name == i, IduOids.device_type_id == device_type_id)).all()
                                         if len(oid_list_table_field_value) == 0:
                                             continue
                                         else:
                                             if i in dic_result:
                                                 table_name = "idu_" + \
-                                                    oid_list_table_field_value[
-                                                        0][0]
+                                                             oid_list_table_field_value[
+                                                                 0][0]
                                                 table_name = rename_tablename(
                                                     table_name)
                                                 exec "table_result = sqlalche_obj.session.query(%s).filter(%s.config_profile_id == \"%s\").all()" % (
@@ -1164,7 +1358,7 @@ class IduCommonSetValidation(object):
                                                 exec "table_result[0].%s = '%s'" % (
                                                     oid_list_table_field_value[0][1], dic_result[i])
                                             sqlalche_obj.session.commit()
-                                # success_result["result"].update(result["result"])
+                                            # success_result["result"].update(result["result"])
                             else:
                                 # success_result["success"] = 1
                                 for i in result["result"]:
@@ -1174,9 +1368,11 @@ class IduCommonSetValidation(object):
 
                     elif 'ru.ipConfigTable.adminState-1' in dependent_oid[i]:
                         query_admin_result = sqlalche_obj.session.query(
-                            IduOids.oid, IduOids.oid_type, IduOids.indexes).filter(IduOids.oid_name == "ru.ipConfigTable.adminState").one()
+                            IduOids.oid, IduOids.oid_type, IduOids.indexes).filter(
+                            IduOids.oid_name == "ru.ipConfigTable.adminState").one()
                         dic_admin_value = {"ru.ipConfigTable.adminState": [query_admin_result[0] +
-                                                                           query_admin_result[2], query_admin_result[1], '1']}
+                                                                           query_admin_result[2], query_admin_result[1],
+                                                                           '1']}
                         if len(query_admin_result) > 0:
                             result = pysnmp_set(
                                 dic_admin_value, device_param_list[0],
@@ -1189,23 +1385,23 @@ class IduCommonSetValidation(object):
                                             "result"][i] = errorStatus[result["result"][i]]
                                     else:
                                         oid_list_table_field_value = sqlalche_obj.session.query(
-                                            IduOids.table_name, IduOids.coloumn_name).filter(and_(IduOids.oid_name == i, IduOids.device_type_id == device_type_id)).all()
+                                            IduOids.table_name, IduOids.coloumn_name).filter(
+                                            and_(IduOids.oid_name == i, IduOids.device_type_id == device_type_id)).all()
                                         if len(oid_list_table_field_value) == 0:
                                             continue
                                         else:
                                             if i in dic_result:
-
                                                 table_name = "idu_" + \
-                                                    oid_list_table_field_value[
-                                                        0][0]
+                                                             oid_list_table_field_value[
+                                                                 0][0]
                                                 table_name = rename_tablename(
                                                     table_name)
                                                 exec "table_result = sqlalche_obj.session.query(%s).filter(%s.config_profile_id == \"%s\").all()" % (
                                                     table_name, table_name, device_param_list[3])
                                                 exec "table_result[0].%s = '%s'" % (
                                                     oid_list_table_field_value[0][1], dic_result[i])
-                                # success_result["result"] =
-                                # errorStatus[result["result"][i]]
+                                                # success_result["result"] =
+                                                # errorStatus[result["result"][i]]
                             else:
                                 # success_result["success"] = 1
                                 for i in result["result"]:
@@ -1214,9 +1410,11 @@ class IduCommonSetValidation(object):
                                     # errorStatus[result["result"][i]]
                     elif 'ru.ra.raConfTable.raAdminState-1' in dependent_oid[i]:
                         query_admin_result = sqlalche_obj.session.query(
-                            IduOids.oid, IduOids.oid_type, IduOids.indexes).filter(IduOids.oid_name == "ru.ra.raConfTable.raAdminState").one()
+                            IduOids.oid, IduOids.oid_type, IduOids.indexes).filter(
+                            IduOids.oid_name == "ru.ra.raConfTable.raAdminState").one()
                         dic_admin_value = {"ru.ra.raConfTable.raAdminState": [query_admin_result[0]
-                                                                              + query_admin_result[2], query_admin_result[1], '1']}
+                                                                              + query_admin_result[2],
+                                                                              query_admin_result[1], '1']}
                         if len(query_admin_result) > 0:
                             result = pysnmp_set(
                                 dic_admin_value, device_param_list[0],
@@ -1229,21 +1427,22 @@ class IduCommonSetValidation(object):
                                             "result"][i] = errorStatus[result["result"][i]]
                                     else:
                                         oid_list_table_field_value = sqlalche_obj.session.query(
-                                            IduOids.table_name, IduOids.coloumn_name).filter(and_(IduOids.oid_name == i, IduOids.device_type_id == device_type_id)).all()
+                                            IduOids.table_name, IduOids.coloumn_name).filter(
+                                            and_(IduOids.oid_name == i, IduOids.device_type_id == device_type_id)).all()
                                         if len(oid_list_table_field_value) == 0:
                                             continue
                                         else:
                                             if i in dic_result:
                                                 table_name = "idu_" + \
-                                                    oid_list_table_field_value[
-                                                        0][0]
+                                                             oid_list_table_field_value[
+                                                                 0][0]
                                                 table_name = rename_tablename(
                                                     table_name)
                                                 exec "table_result = sqlalche_obj.session.query(%s).filter(%s.config_profile_id == \"%s\").all()" % (
                                                     table_name, table_name, device_param_list[3])
                                                 exec "table_result[0].%s = '%s'" % (
                                                     oid_list_table_field_value[0][1], dic_result[i])
-                                # success_result["result"].update(result["result"])
+                                                # success_result["result"].update(result["result"])
                             else:
                                 for i in result["result"]:
                                     result["result"][i] in errorStatus
@@ -1252,7 +1451,7 @@ class IduCommonSetValidation(object):
                         break
                     else:
                         continue
-            if(j == -1):
+            if (j == -1):
                 if len(depend_oid_value) > 0:
                     for i in range(0, len(depend_oid_value)):
                         if id != None:
@@ -1261,7 +1460,7 @@ class IduCommonSetValidation(object):
                                 depend_oid_value[
                                     i][key][0] = str(oid) + str(id)
                         result = pysnmp_set(depend_oid_value[i], device_param_list[
-                                            0], device_param_list[1], device_param_list[2])
+                            0], device_param_list[1], device_param_list[2])
                         if result["success"] == 0 or result["success"] == '0':
                             success_result["success"] = result["success"]
                             for i in result["result"]:
@@ -1270,27 +1469,30 @@ class IduCommonSetValidation(object):
                                         i] = errorStatus[result["result"][i]]
                                 else:
                                     oid_list_table_field_value = sqlalche_obj.session.query(
-                                        IduOids.table_name, IduOids.coloumn_name).filter(and_(IduOids.oid_name == i, IduOids.device_type_id == device_type_id)).all()
+                                        IduOids.table_name, IduOids.coloumn_name).filter(
+                                        and_(IduOids.oid_name == i, IduOids.device_type_id == device_type_id)).all()
                                     if len(oid_list_table_field_value) == 0:
                                         continue
                                     else:
                                         if i in dic_result:
                                             sql_table_name = "idu_" + \
-                                                oid_list_table_field_value[
-                                                    0][0]
+                                                             oid_list_table_field_value[
+                                                                 0][0]
                                             tableName = sql_table_name + "_id"
                                             table_name = rename_tablename(
                                                 sql_table_name)
                                             if int(index) != 0:
                                                 exec "table_result = sqlalche_obj.session.query(%s).filter(and_(%s.%s==%s,%s.config_profile_id == \"%s\")).all()" % (
-                                                    table_name, table_name, tableName, index, table_name, device_param_list[3])
+                                                    table_name, table_name, tableName, index, table_name,
+                                                    device_param_list[3])
                                             else:
                                                 exec "table_result = sqlalche_obj.session.query(%s).filter(%s.config_profile_id == \"%s\").all()" % (
                                                     table_name, table_name, device_param_list[3])
                                             if len(table_result) > 0:
                                                 if int(special_case) != 0 and special_case != '0':
                                                     exec "sqlalche_obj.session.query(%s).filter(%s.config_profile_id == \"%s\").update({'%s':%s})" % (
-                                                        table_name, table_name, device_param_list[3], oid_list_table_field_value[0][1], dic_result[i])
+                                                        table_name, table_name, device_param_list[3],
+                                                        oid_list_table_field_value[0][1], dic_result[i])
                                                 else:
                                                     exec "table_result[0].%s = '%s'" % (
                                                         oid_list_table_field_value[0][1], dic_result[i])
@@ -1310,12 +1512,13 @@ class IduCommonSetValidation(object):
                             elif 51 in result["result"]:
                                 return {"success": 1, "result": "Network is unreachable"}
                             elif 99 in result["result"]:
-                                return {"success": 1, "result": "UNMP has encountered an unexpected error. Please Retry"}
-##                            if i==len(depend_oid_value)-1:
-##                                success_result["success"] = 1
-##                                for i in result["result"]:
-##                                    errorStatus.has_key(i)
-# success_result["result"] = errorStatus[result["result"][i]]
+                                return {"success": 1,
+                                        "result": "UNMP has encountered an unexpected error. Please Retry"}
+                            ##                            if i==len(depend_oid_value)-1:
+                            ##                                success_result["success"] = 1
+                            ##                                for i in result["result"]:
+                            ##                                    errorStatus.has_key(i)
+                            # success_result["result"] = errorStatus[result["result"][i]]
                             else:
                                 success_result["success"] = 0
                                 for i in result["result"]:
@@ -1362,6 +1565,16 @@ class IduCommonSetValidation(object):
             sqlalche_obj.sql_alchemy_db_connection_close()
 
     def common_validation(self, host_id, device_type_id, dic_result, id=None, index=0, special_case=0):
+        """
+
+        @param host_id:
+        @param device_type_id:
+        @param dic_result:
+        @param id:
+        @param index:
+        @param special_case:
+        @return:
+        """
         try:
             obj_set = IduCommonSetValidation()
             flag = 0
@@ -1373,12 +1586,14 @@ class IduCommonSetValidation(object):
                         continue
                     else:
                         oid_list_min_max_value = sqlalche_obj.session.query(
-                            IduOids.min_value, IduOids.max_value).filter(and_(IduOids.oid_name == keys, IduOids.device_type_id == device_type_id)).all()
+                            IduOids.min_value, IduOids.max_value).filter(
+                            and_(IduOids.oid_name == keys, IduOids.device_type_id == device_type_id)).all()
                         if len(oid_list_min_max_value) == 0:
                             flag = 1
                             continue
                         else:
-                            if (oid_list_min_max_value[0][0] == "" or oid_list_min_max_value[0][0] == None) and (oid_list_min_max_value[0][1] != "" and oid_list_min_max_value[0][1] != None):
+                            if (oid_list_min_max_value[0][0] == "" or oid_list_min_max_value[0][0] == None) and (
+                                    oid_list_min_max_value[0][1] != "" and oid_list_min_max_value[0][1] != None):
                                 if int(dic_result[keys]) <= int(oid_list_min_max_value[0][1]):
                                     dic_result[
                                         "%s" % (keys)] = dic_result[keys]
@@ -1388,7 +1603,8 @@ class IduCommonSetValidation(object):
                                     dic_result["result"] = "The value is large than %s" % (
                                         oid_list_min_max_value[1])
                                     break
-                            elif (oid_list_min_max_value[0][0] != "" or oid_list_min_max_value[0][0] != None) and (oid_list_min_max_value[0][1] == "" and oid_list_min_max_value[0][1] == None):
+                            elif (oid_list_min_max_value[0][0] != "" or oid_list_min_max_value[0][0] != None) and (
+                                    oid_list_min_max_value[0][1] == "" and oid_list_min_max_value[0][1] == None):
                                 if int(dic_result[keys]) >= int(oid_list_min_max_value[0][0]):
                                     dic_result[
                                         "%s" % (keys)] = dic_result[keys]
@@ -1398,12 +1614,15 @@ class IduCommonSetValidation(object):
                                     dic_result["result"] = "The value is smaller than %s" % (
                                         oid_list_min_max_value[0][0])
                                     break
-                            elif (oid_list_min_max_value[0][0] == "" or oid_list_min_max_value[0][0] == None) and (oid_list_min_max_value[0][1] == "" or oid_list_min_max_value[0][1] == None):
+                            elif (oid_list_min_max_value[0][0] == "" or oid_list_min_max_value[0][0] == None) and (
+                                    oid_list_min_max_value[0][1] == "" or oid_list_min_max_value[0][1] == None):
                                 dic_result["%s" % (keys)] = dic_result[keys]
-                            elif (oid_list_min_max_value[0][0] == "" or oid_list_min_max_value[0][0] == 'NULL') and (oid_list_min_max_value[0][1] == "" or oid_list_min_max_value[0][1] == 'NULL'):
+                            elif (oid_list_min_max_value[0][0] == "" or oid_list_min_max_value[0][0] == 'NULL') and (
+                                    oid_list_min_max_value[0][1] == "" or oid_list_min_max_value[0][1] == 'NULL'):
                                 dic_result["%s" % (keys)] = dic_result[keys]
                             else:
-                                if (int(dic_result[keys]) >= int(oid_list_min_max_value[0][0])) and (int(dic_result[keys]) <= int(oid_list_min_max_value[0][1])):
+                                if (int(dic_result[keys]) >= int(oid_list_min_max_value[0][0])) and (
+                                    int(dic_result[keys]) <= int(oid_list_min_max_value[0][1])):
                                     dic_result[
                                         "%s" % (keys)] = dic_result[keys]
                                 else:
@@ -1431,6 +1650,15 @@ class IduCommonSetValidation(object):
             return str(e)
 
     def idu_cancel_form(self, host_id, device_type_id, dic_result, id=None, primary_key_id=None):
+        """
+
+        @param host_id:
+        @param device_type_id:
+        @param dic_result:
+        @param id:
+        @param primary_key_id:
+        @return:
+        """
         try:
             flag = 0
             global sqlalche_obj
@@ -1444,7 +1672,8 @@ class IduCommonSetValidation(object):
                         continue
                     else:
                         oid_list_table_field_value = sqlalche_obj.session.query(
-                            IduOids.table_name, IduOids.coloumn_name).filter(and_(IduOids.oid_name == keys, IduOids.device_type_id == device_type_id)).all()
+                            IduOids.table_name, IduOids.coloumn_name).filter(
+                            and_(IduOids.oid_name == keys, IduOids.device_type_id == device_type_id)).all()
                         print oid_list_table_field_value
                         table_name = "idu_" + oid_list_table_field_value[0][0]
                         table_name = rename_tablename(table_name)
@@ -1453,7 +1682,8 @@ class IduCommonSetValidation(object):
                                 table_name, oid_list_table_field_value[0][1], table_name, profile_id[0])
                         else:
                             str_table_obj = "table_result = sqlalche_obj.session.query(%s.%s).filter(and_(%s.config_profile_id == \"%s\",%s.%s == \"%s\")).all()" % (
-                                table_name, oid_list_table_field_value[0][1], table_name, profile_id[0], table_name, primary_key_id, id)
+                                table_name, oid_list_table_field_value[0][1], table_name, profile_id[0], table_name,
+                                primary_key_id, id)
                         exec str_table_obj
                         print table_result
                         if len(table_result) > 0:
@@ -1472,6 +1702,16 @@ class IduCommonSetValidation(object):
             return dic_result
 
     def vlan_set(self, host_id, device_type_id, dic_result, addEdit, id, index=None):
+        """
+
+        @param host_id:
+        @param device_type_id:
+        @param dic_result:
+        @param addEdit:
+        @param id:
+        @param index:
+        @return:
+        """
         try:
             global errorStatus
             if int(addEdit) == 0:
@@ -1480,7 +1720,7 @@ class IduCommonSetValidation(object):
             else:
                 row_status_val = 1
             dic_result.update({'switch.vlanconfigTable.vlantype': 1,
-                              'switch.vlanconfigTable.vlanrowstatus': row_status_val})
+                               'switch.vlanconfigTable.vlanrowstatus': row_status_val})
             global sqlalche_obj
             sqlalche_obj.sql_alchemy_db_connection_open()
             result = {}
@@ -1497,20 +1737,21 @@ class IduCommonSetValidation(object):
                     continue
                 else:
                     query_result = sqlalche_obj.session.query(o2, o1.oid_name, o1.oid, o1.indexes).outerjoin(
-                        o1, o1.oid_id == o2.dependent_id).filter(and_(o2.oid_name == keys, o2.device_type_id == device_type_id)).all()
+                        o1, o1.oid_id == o2.dependent_id).filter(
+                        and_(o2.oid_name == keys, o2.device_type_id == device_type_id)).all()
                     if len(query_result) > 0:
                         try:
                             key = int(dic_result[keys])
                         except:
                             key = dic_result[keys]
                         independent_oid.append({keys: [query_result[0][0].oid + "." +
-                                               str(id), query_result[0][0].oid_type, key]})
+                                                       str(id), query_result[0][0].oid_type, key]})
 
             for i in independent_oid:
                 for keys in i.iterkeys():
                     vlan_data.update(i)
             result = pysnmp_set(vlan_data, host_data[0].ip_address, host_data[
-                                0].snmp_port, host_data[0].snmp_write_community)
+                0].snmp_port, host_data[0].snmp_write_community)
             if result["success"] == 0 or result["success"] == '0':
                 if int(addEdit) == 0:
                     vlan_add_data = IduVlanconfigTable(
@@ -1520,7 +1761,8 @@ class IduCommonSetValidation(object):
                             'switch.vlanconfigTable.vlantype'],
                         dic_result[
                             'switch.vlanconfigTable.vlantag'],
-                        dic_result['switch.vlanconfigTable.memberports'], dic_result['switch.vlanconfigTable.vlanrowstatus'])
+                        dic_result['switch.vlanconfigTable.memberports'],
+                        dic_result['switch.vlanconfigTable.vlanrowstatus'])
                     sqlalche_obj.session.add(vlan_add_data)
                 else:
                     for i in result["result"]:
@@ -1530,11 +1772,12 @@ class IduCommonSetValidation(object):
                         else:
                             if i in dic_result:
                                 oid_list_table_field_value = sqlalche_obj.session.query(
-                                    IduOids.table_name, IduOids.coloumn_name).filter(and_(IduOids.oid_name == i, IduOids.device_type_id == device_type_id)).all()
+                                    IduOids.table_name, IduOids.coloumn_name).filter(
+                                    and_(IduOids.oid_name == i, IduOids.device_type_id == device_type_id)).all()
                                 if len(oid_list_table_field_value) == 0:
                                     continue
                                 tablename = "idu_" + \
-                                    oid_list_table_field_value[0].table_name
+                                            oid_list_table_field_value[0].table_name
                                 sql_table_name = rename_tablename(tablename)
                                 exec "table_result=sqlalche_obj.session.query(%s).filter(and_(%s.config_profile_id=='%s',%s.vlanid=='%s')).all()" % (
                                     sql_table_name, sql_table_name, host_data[0].config_profile_id, sql_table_name, id)
@@ -1547,13 +1790,13 @@ class IduCommonSetValidation(object):
 
                 if 53 in result["result"]:
                     result = {"success": 1, "result":
-                              "No Response From Device.Please Try Again"}
+                        "No Response From Device.Please Try Again"}
                 elif 51 in result["result"]:
                     result = {"success": 1, "result":
-                              "Network is unreachable"}
+                        "Network is unreachable"}
                 elif 99 in result["result"]:
                     result = {"success": 1, "result":
-                              "UNMP has encountered an unexpected error. Please Retry"}
+                        "UNMP has encountered an unexpected error. Please Retry"}
                 else:
                     result = {"success": 1, "result": result["result"]}
             return result
@@ -1589,10 +1832,16 @@ class IduCommonSetValidation(object):
             sqlalche_obj.sql_alchemy_db_connection_close()
 
     def delete_vlan_port(self, host_id, id):
+        """
+
+        @param host_id:
+        @param id:
+        @return:
+        """
         try:
             if host_id == None:
                 result = {"success": 1, "result":
-                          "No Host Exist.Please Reconcile or add the host properly"}
+                    "No Host Exist.Please Reconcile or add the host properly"}
             else:
                 global errorStatus
                 global sqlalche_obj
@@ -1605,18 +1854,19 @@ class IduCommonSetValidation(object):
                     int(host_data[0].snmp_port), host_data[0].snmp_write_community)
                 if result["success"] == 0 or result["success"] == '0':
                     vlan_delete = sqlalche_obj.session.query(IduVlanconfigTable).filter(
-                        and_(IduVlanconfigTable.config_profile_id == host_data[0].config_profile_id, IduVlanconfigTable.vlanid == id)).delete()
+                        and_(IduVlanconfigTable.config_profile_id == host_data[0].config_profile_id,
+                             IduVlanconfigTable.vlanid == id)).delete()
                     sqlalche_obj.session.commit()
                 else:
                     if 53 in result["result"]:
                         result = {"success": 1, "result":
-                                  "No Response From Device.Please Try Again"}
+                            "No Response From Device.Please Try Again"}
                     elif 51 in result["result"]:
                         result = {"success": 1,
                                   "result": "Network is unreachable"}
                     elif 99 in result["result"]:
                         result = {"success": 1, "result":
-                                  "UNMP has encountered an unexpected error. Please Retry"}
+                            "UNMP has encountered an unexpected error. Please Retry"}
                     else:
                         for i in result["result"]:
                             error_result = errorStatus[result["result"][i]]
@@ -1627,6 +1877,15 @@ class IduCommonSetValidation(object):
             return {"success": 1, "result": str(e)}
 
     def e1_port_set(self, host_id, device_type_id, dic_result, id, index):
+        """
+
+        @param host_id:
+        @param device_type_id:
+        @param dic_result:
+        @param id:
+        @param index:
+        @return:
+        """
         try:
             global errorStatus
             global sqlalche_obj
@@ -1645,20 +1904,22 @@ class IduCommonSetValidation(object):
                     continue
                 else:
                     query_result = sqlalche_obj.session.query(o2, o1.oid_name, o1.oid, o1.indexes).outerjoin(
-                        o1, o1.oid_id == o2.dependent_id).filter(and_(o2.oid_name == keys, o2.device_type_id == device_type_id)).all()
+                        o1, o1.oid_id == o2.dependent_id).filter(
+                        and_(o2.oid_name == keys, o2.device_type_id == device_type_id)).all()
                     if len(query_result) > 0:
                         try:
                             key = int(dic_result[keys])
                         except:
                             key = dic_result[keys]
                         independent_oid.append({keys: [query_result[0][0].oid + "." +
-                                               str(id), query_result[0][0].oid_type, key]})
+                                                       str(id), query_result[0][0].oid_type, key]})
 
             for i in independent_oid:
                 for keys in i.iterkeys():
                     e1_port_data.update(i)
-            result = pysnmp_set(e1_port_data, host_data[0].ip_address, host_data[0].snmp_port, host_data[0].snmp_write_community, {'adminState': [
-                                '1.3.6.1.4.1.26149.2.1.2.3.1.2.%s' % (id), 'Integer32', 0]})
+            result = pysnmp_set(e1_port_data, host_data[0].ip_address, host_data[0].snmp_port,
+                                host_data[0].snmp_write_community, {'adminState': [
+                    '1.3.6.1.4.1.26149.2.1.2.3.1.2.%s' % (id), 'Integer32', 0]})
             if result["success"] == 0 or result["success"] == '0':
                 for i in result["result"]:
                     if result["result"][i] != 0:
@@ -1667,11 +1928,12 @@ class IduCommonSetValidation(object):
                         if i == "adminState1":
                             i = "iduConfiguration.e1PortConfigurationTable.adminState"
                             oid_list_table_field_value = sqlalche_obj.session.query(
-                                IduOids.table_name, IduOids.coloumn_name).filter(and_(IduOids.oid_name == i, IduOids.device_type_id == device_type_id)).all()
+                                IduOids.table_name, IduOids.coloumn_name).filter(
+                                and_(IduOids.oid_name == i, IduOids.device_type_id == device_type_id)).all()
                             if len(oid_list_table_field_value) == 0:
                                 continue
                             tablename = "idu_" + \
-                                oid_list_table_field_value[0].table_name
+                                        oid_list_table_field_value[0].table_name
                             sql_table_name = rename_tablename(tablename)
                             exec "table_result=sqlalche_obj.session.query(%s).filter(and_(%s.config_profile_id=='%s',%s.portNumber=='%s')).all()" % (
                                 sql_table_name, sql_table_name, host_data[0].config_profile_id, sql_table_name, id)
@@ -1680,11 +1942,12 @@ class IduCommonSetValidation(object):
                                     oid_list_table_field_value[0].coloumn_name, 1)
                         elif i in dic_result:
                             oid_list_table_field_value = sqlalche_obj.session.query(
-                                IduOids.table_name, IduOids.coloumn_name).filter(and_(IduOids.oid_name == i, IduOids.device_type_id == device_type_id)).all()
+                                IduOids.table_name, IduOids.coloumn_name).filter(
+                                and_(IduOids.oid_name == i, IduOids.device_type_id == device_type_id)).all()
                             if len(oid_list_table_field_value) == 0:
                                 continue
                             tablename = "idu_" + \
-                                oid_list_table_field_value[0].table_name
+                                        oid_list_table_field_value[0].table_name
                             sql_table_name = rename_tablename(tablename)
                             exec "table_result=sqlalche_obj.session.query(%s).filter(and_(%s.config_profile_id=='%s',%s.portNumber=='%s')).all()" % (
                                 sql_table_name, sql_table_name, host_data[0].config_profile_id, sql_table_name, id)
@@ -1697,13 +1960,13 @@ class IduCommonSetValidation(object):
 
                 if 53 in result["result"]:
                     result = {"success": 1, "result":
-                              "No Response From Device.Please Try Again"}
+                        "No Response From Device.Please Try Again"}
                 elif 51 in result["result"]:
                     result = {"success": 1, "result":
-                              "Network is unreachable"}
+                        "Network is unreachable"}
                 elif 99 in result["result"]:
                     result = {"success": 1, "result":
-                              "UNMP has encountered an unexpected error. Please Retry"}
+                        "UNMP has encountered an unexpected error. Please Retry"}
                 else:
                     result = {"success": 1, "result": result["result"]}
             return result
@@ -1739,6 +2002,12 @@ class IduCommonSetValidation(object):
             sqlalche_obj.sql_alchemy_db_connection_close()
 
     def check_vlan_tag(self, vlan_tag, host_id):
+        """
+
+        @param vlan_tag:
+        @param host_id:
+        @return:
+        """
         global sqlalche_obj
         sqlalche_obj.sql_alchemy_db_connection_open()
         host_data = sqlalche_obj.session.query(
@@ -1762,6 +2031,12 @@ class IduCommonSetValidation(object):
             return 0
 
     def check_vlan_name(self, vlan_name, host_id):
+        """
+
+        @param vlan_name:
+        @param host_id:
+        @return:
+        """
         global sqlalche_obj
         sqlalche_obj.sql_alchemy_db_connection_open()
         host_data = sqlalche_obj.session.query(
@@ -1784,12 +2059,19 @@ class IduCommonSetValidation(object):
             return 0
 
     def chk_link_e1_port(self, host_id, port_id):
+        """
+
+        @param host_id:
+        @param port_id:
+        @return:
+        """
         global sqlalche_obj
         sqlalche_obj.sql_alchemy_db_connection_open()
         host_data = sqlalche_obj.session.query(
             Hosts.config_profile_id).filter(Hosts.host_id == host_id).all()
         e1_port_data = sqlalche_obj.session.query(IduLinkConfigurationTable).filter(
-            and_(IduLinkConfigurationTable.config_profile_id == host_data[0].config_profile_id, IduLinkConfigurationTable.portNumber == port_id)).all()
+            and_(IduLinkConfigurationTable.config_profile_id == host_data[0].config_profile_id,
+                 IduLinkConfigurationTable.portNumber == port_id)).all()
         sqlalche_obj.sql_alchemy_db_connection_close()
         if len(e1_port_data) > 0:
             return 1
@@ -1797,6 +2079,16 @@ class IduCommonSetValidation(object):
             return 0
 
     def set_link_port(self, host_id, device_type_id, dic_result, id, index, addEdit):
+        """
+
+        @param host_id:
+        @param device_type_id:
+        @param dic_result:
+        @param id:
+        @param index:
+        @param addEdit:
+        @return:
+        """
         try:
             global errorStatus
             global sqlalche_obj
@@ -1815,7 +2107,8 @@ class IduCommonSetValidation(object):
                     continue
                 else:
                     query_result = sqlalche_obj.session.query(o2, o1.oid_name, o1.oid, o1.indexes).outerjoin(
-                        o1, o1.oid_id == o2.dependent_id).filter(and_(o2.oid_name == keys, o2.device_type_id == device_type_id)).all()
+                        o1, o1.oid_id == o2.dependent_id).filter(
+                        and_(o2.oid_name == keys, o2.device_type_id == device_type_id)).all()
                     if len(query_result) > 0:
                         if keys == "iduConfiguration_linkConfigurationTable_tsaAssign":
                             key = dic_result[keys]
@@ -1831,11 +2124,14 @@ class IduCommonSetValidation(object):
                 for keys in i.iterkeys():
                     link_port_data.update(i)
             if int(addEdit) == 1:
-                result = pysnmp_set(link_port_data, host_data[0].ip_address, host_data[0].snmp_port, host_data[0].snmp_write_community, {'adminState': [
-                                    '1.3.6.1.4.1.26149.2.1.2.2.1.3.%s.%s' % (index, id), 'Integer32', 0]})
+                result = pysnmp_set(link_port_data, host_data[0].ip_address, host_data[0].snmp_port,
+                                    host_data[0].snmp_write_community, {'adminState': [
+                        '1.3.6.1.4.1.26149.2.1.2.2.1.3.%s.%s' % (index, id), 'Integer32', 0]})
             else:
-                result = pysnmp_seter(link_port_data, host_data[0].ip_address, host_data[0].snmp_port, host_data[0].snmp_write_community, {
-                                      'iduConfiguration.linkConfigurationTable.rowStatus': ['1.3.6.1.4.1.26149.2.1.2.2.1.11.%s.%s' % (index, id), 'Integer32', 4]})
+                result = pysnmp_seter(link_port_data, host_data[0].ip_address, host_data[0].snmp_port,
+                                      host_data[0].snmp_write_community, {
+                        'iduConfiguration.linkConfigurationTable.rowStatus': [
+                            '1.3.6.1.4.1.26149.2.1.2.2.1.11.%s.%s' % (index, id), 'Integer32', 4]})
             if result["success"] == 0 or result["success"] == '0':
                 if int(addEdit) == 1:
                     for i in result["result"]:
@@ -1846,11 +2142,12 @@ class IduCommonSetValidation(object):
                             if i == "adminState1":
                                 i = "iduConfiguration.linkConfigurationTable.adminStatus"
                                 oid_list_table_field_value = sqlalche_obj.session.query(
-                                    IduOids.table_name, IduOids.coloumn_name).filter(and_(IduOids.oid_name == i, IduOids.device_type_id == device_type_id)).all()
+                                    IduOids.table_name, IduOids.coloumn_name).filter(
+                                    and_(IduOids.oid_name == i, IduOids.device_type_id == device_type_id)).all()
                                 if len(oid_list_table_field_value) == 0:
                                     continue
                                 tablename = "idu_" + \
-                                    oid_list_table_field_value[0].table_name
+                                            oid_list_table_field_value[0].table_name
                                 sql_table_name = rename_tablename(tablename)
                                 exec "table_result=sqlalche_obj.session.query(%s).filter(and_(%s.config_profile_id=='%s',%s.portNumber=='%s')).all()" % (
                                     sql_table_name, sql_table_name, host_data[0].config_profile_id, sql_table_name, id)
@@ -1859,11 +2156,12 @@ class IduCommonSetValidation(object):
                                         oid_list_table_field_value[0].coloumn_name, 1)
                             elif i in dic_result:
                                 oid_list_table_field_value = sqlalche_obj.session.query(
-                                    IduOids.table_name, IduOids.coloumn_name).filter(and_(IduOids.oid_name == i, IduOids.device_type_id == device_type_id)).all()
+                                    IduOids.table_name, IduOids.coloumn_name).filter(
+                                    and_(IduOids.oid_name == i, IduOids.device_type_id == device_type_id)).all()
                                 if len(oid_list_table_field_value) == 0:
                                     continue
                                 tablename = "idu_" + \
-                                    oid_list_table_field_value[0].table_name
+                                            oid_list_table_field_value[0].table_name
                                 sql_table_name = rename_tablename(tablename)
                                 exec "table_result=sqlalche_obj.session.query(%s).filter(and_(%s.config_profile_id=='%s',%s.portNumber=='%s')).all()" % (
                                     sql_table_name, sql_table_name, host_data[0].config_profile_id, sql_table_name, id)
@@ -1878,13 +2176,13 @@ class IduCommonSetValidation(object):
                         dic_result[
                             'iduConfiguration.linkConfigurationTable.dstBundleID'],
                         dic_result[
-                                                                 'iduConfiguration.linkConfigurationTable.dstIPAddr'],
-                                                             dic_result[
-                                                                 'iduConfiguration_linkConfigurationTable_tsaAssign'],
-                                                             dic_result['iduConfiguration_linkConfigurationTable_clockRecovery'],
-                                                             dic_result['iduConfiguration.linkConfigurationTable.bundleSize'],
-                                                             dic_result['iduConfiguration.linkConfigurationTable.bufferSize'],
-                                                             1)
+                            'iduConfiguration.linkConfigurationTable.dstIPAddr'],
+                        dic_result[
+                            'iduConfiguration_linkConfigurationTable_tsaAssign'],
+                        dic_result['iduConfiguration_linkConfigurationTable_clockRecovery'],
+                        dic_result['iduConfiguration.linkConfigurationTable.bundleSize'],
+                        dic_result['iduConfiguration.linkConfigurationTable.bufferSize'],
+                        1)
                     sqlalche_obj.session.add(add_link_row)
             else:
                 if 53 in result["result"]:
@@ -1935,8 +2233,18 @@ class IduCommonSetValidation(object):
 
 
 class LinkConfiguration(object):
-
+    """
+    IDU link configuration related class
+    """
     def delete_link_port(self, host_id, id, port_number, link_number):
+        """
+
+        @param host_id:
+        @param id:
+        @param port_number:
+        @param link_number:
+        @return:
+        """
         try:
             if host_id == None:
                 result = {"success": 1, "result":
@@ -1947,7 +2255,8 @@ class LinkConfiguration(object):
                 sqlalche_obj.sql_alchemy_db_connection_open()
                 host_data = sqlalche_obj.session.query(
                     Hosts).filter(Hosts.host_id == host_id).all()
-                result = pysnmp_set({'row_stats': ['1.3.6.1.4.1.26149.2.1.2.2.1.11.%s.%s' % (port_number, link_number), 'Integer32', 6]}, host_data[0]
+                result = pysnmp_set({'row_stats': ['1.3.6.1.4.1.26149.2.1.2.2.1.11.%s.%s' % (port_number, link_number),
+                                                   'Integer32', 6]}, host_data[0]
                                     .ip_address, int(host_data[0].snmp_port), host_data[0].snmp_write_community)
                 if result["success"] == 0 or result["success"] == '0':
                     link_delete = sqlalche_obj.session.query(IduLinkConfigurationTable).filter(
@@ -1959,7 +2268,7 @@ class LinkConfiguration(object):
                             "No Response From Device.Please Try Again"}
                     elif 51 in result["result"]:
                         result = {"success": 1,
-                            "result": "Network is unreachable"}
+                                  "result": "Network is unreachable"}
                     elif 99 in result["result"]:
                         result = {"success": 1, "result":
                             "UNMP has encountered an unexpected error. Please Retry"}
@@ -1973,12 +2282,19 @@ class LinkConfiguration(object):
             return {"success": 1, "result": str(e)}
 
     def selected_timeslot(self, host_id, port_num):
+        """
+
+        @param host_id:
+        @param port_num:
+        @return:
+        """
         global sqlalche_obj
         sqlalche_obj.sql_alchemy_db_connection_open()
         host_data = sqlalche_obj.session.query(
             Hosts).filter(Hosts.host_id == host_id).all()
         timeslot = sqlalche_obj.session.query(IduLinkConfigurationTable).filter(
-            and_(IduLinkConfigurationTable.config_profile_id == host_data[0].config_profile_id, IduLinkConfigurationTable.portNumber == port_num)).all()
+            and_(IduLinkConfigurationTable.config_profile_id == host_data[0].config_profile_id,
+                 IduLinkConfigurationTable.portNumber == port_num)).all()
         sqlalche_obj.sql_alchemy_db_connection_close()
         if len(timeslot) > 0:
             return timeslot[0].tsaAssign
@@ -1986,13 +2302,20 @@ class LinkConfiguration(object):
             return []
 
     def link_chk(self, host_id, link_num):
+        """
+
+        @param host_id:
+        @param link_num:
+        @return:
+        """
         global sqlalche_obj
         sqlalche_obj.sql_alchemy_db_connection_open()
         link_data = []
         host_data = sqlalche_obj.session.query(
             Hosts).filter(Hosts.host_id == host_id).all()
         link_data = sqlalche_obj.session.query(IduLinkConfigurationTable).filter(
-            and_(IduLinkConfigurationTable.config_profile_id == host_data[0].config_profile_id, IduLinkConfigurationTable.bundleNumber == link_num)).all()
+            and_(IduLinkConfigurationTable.config_profile_id == host_data[0].config_profile_id,
+                 IduLinkConfigurationTable.bundleNumber == link_num)).all()
         sqlalche_obj.sql_alchemy_db_connection_close()
         if link_data == []:
             return 0
@@ -2000,6 +2323,14 @@ class LinkConfiguration(object):
             return 1
 
     def src_bundle_chk(self, host_id, src_bundle_id, link, port):
+        """
+
+        @param host_id:
+        @param src_bundle_id:
+        @param link:
+        @param port:
+        @return:
+        """
         global sqlalche_obj
         sqlalche_obj.sql_alchemy_db_connection_open()
         flag = 0
@@ -2009,10 +2340,10 @@ class LinkConfiguration(object):
             IduLinkConfigurationTable.config_profile_id == host_data[0].config_profile_id).all()
         src_bundle_set = sqlalche_obj.session.query(
             IduLinkConfigurationTable.srcBundleID).filter(
-                and_(
-                    IduLinkConfigurationTable.config_profile_id == host_data[
-                        0].config_profile_id,
-                                                                                                       IduLinkConfigurationTable.bundleNumber == link, IduLinkConfigurationTable.portNumber == port)).all()
+            and_(
+                IduLinkConfigurationTable.config_profile_id == host_data[
+                    0].config_profile_id,
+                IduLinkConfigurationTable.bundleNumber == link, IduLinkConfigurationTable.portNumber == port)).all()
         if src_bundle_set != []:
             print src_bundle_set[0].srcBundleID
             if src_bundle_set[0].srcBundleID == src_bundle_id:
@@ -2040,6 +2371,14 @@ class LinkConfiguration(object):
         sqlalche_obj.sql_alchemy_db_connection_close()
 
     def destination_bundle_chk(self, host_id, dst_bundle_id, link, port):
+        """
+
+        @param host_id:
+        @param dst_bundle_id:
+        @param link:
+        @param port:
+        @return:
+        """
         global sqlalche_obj
         flag = 0
         sqlalche_obj.sql_alchemy_db_connection_open()
@@ -2049,10 +2388,10 @@ class LinkConfiguration(object):
             IduLinkConfigurationTable.config_profile_id == host_data[0].config_profile_id).all()
         dst_bundle_set = sqlalche_obj.session.query(
             IduLinkConfigurationTable.dstBundleID).filter(
-                and_(
-                    IduLinkConfigurationTable.config_profile_id == host_data[
-                        0].config_profile_id,
-                                                                                                       IduLinkConfigurationTable.bundleNumber == link, IduLinkConfigurationTable.portNumber == port)).all()
+            and_(
+                IduLinkConfigurationTable.config_profile_id == host_data[
+                    0].config_profile_id,
+                IduLinkConfigurationTable.bundleNumber == link, IduLinkConfigurationTable.portNumber == port)).all()
 
         if dst_bundle_set != []:
             if dst_bundle_set[0].dstBundleID == dst_bundle_id:
@@ -2081,19 +2420,28 @@ class LinkConfiguration(object):
 
 
 class IduLinkCount(object):
+    """
+    IDU link related class
+    """
     def link_count(self, host_id):
+        """
+
+        @param host_id:
+        @return:
+        """
         try:
             global sqlalchemy
             sqlalche_obj.sql_alchemy_db_connection_open()
             host_data = sqlalche_obj.session.query(
                 Hosts.config_profile_id).filter(Hosts.host_id == host_id).all()
-            all_link_count = sqlalche_obj.session.query(IduLinkConfigurationTable).\
+            all_link_count = sqlalche_obj.session.query(IduLinkConfigurationTable). \
                 filter(IduLinkConfigurationTable.config_profile_id == host_data[0]
-                       .config_profile_id).count()
+            .config_profile_id).count()
             if all_link_count > 0:
-                link_data_count = sqlalche_obj.session.query(IduLinkConfigurationTable).\
+                link_data_count = sqlalche_obj.session.query(IduLinkConfigurationTable). \
                     filter(and_
-                           (IduLinkConfigurationTable.config_profile_id == host_data[0].config_profile_id, IduLinkConfigurationTable.adminStatus == 1)).count()
+                    (IduLinkConfigurationTable.config_profile_id == host_data[0].config_profile_id,
+                     IduLinkConfigurationTable.adminStatus == 1)).count()
 
                 total_link_unlocked = float(
                     link_data_count) / float(all_link_count)
@@ -2109,6 +2457,11 @@ class IduLinkCount(object):
             return result
 
     def global_admin_change(self, host_ids):
+        """
+
+        @param host_ids:
+        @return:
+        """
         try:
             global sqlalchemy
             admin_data_dic = {}
@@ -2122,9 +2475,11 @@ class IduLinkCount(object):
                         Hosts.config_profile_id).filter(Hosts.host_id == host_ids_list[i]).all()
                     if len(host_data_list) > 0:
                         e1_admin_data_list = sqlalche_obj.session.query(
-                            IduE1PortConfigurationTable.adminState).filter(IduE1PortConfigurationTable.config_profile_id == host_data_list[0][0]).all()
+                            IduE1PortConfigurationTable.adminState).filter(
+                            IduE1PortConfigurationTable.config_profile_id == host_data_list[0][0]).all()
                         main_admin_data_list = sqlalche_obj.session.query(
-                            IduIduAdminStateTable.adminstate).filter(IduIduAdminStateTable.config_profile_id == host_data_list[0][0]).all()
+                            IduIduAdminStateTable.adminstate).filter(
+                            IduIduAdminStateTable.config_profile_id == host_data_list[0][0]).all()
                         total_link_unlocked = self.link_count(host_ids_list[i])
                         if total_link_unlocked['success'] == 0:
                             link_title = total_link_unlocked['result']
@@ -2137,7 +2492,7 @@ class IduLinkCount(object):
                                 temp_list.append(
                                     int(e1_admin_data_list[j].adminState))
                             admin_data_dic.update({host_ids_list[i]: [temp_list, main_admin_data_list[0]
-                                                  .adminstate if len(main_admin_data_list) > 0 else 0, link_title]})
+                            .adminstate if len(main_admin_data_list) > 0 else 0, link_title]})
 
                     else:
                         admin_data_dic.update(
@@ -2152,6 +2507,11 @@ class IduLinkCount(object):
             return result
 
     def global_admin_request(self, host_ids):
+        """
+
+        @param host_ids:
+        @return:
+        """
         try:
             global sqlalchemy
             admin_data_dic = {}
@@ -2168,11 +2528,15 @@ class IduLinkCount(object):
                         Hosts.config_profile_id).filter(Hosts.host_id == host_ids_list[i]).all()
                     if len(host_data_list) > 0:
                         e1_status_data = sqlalche_obj.session.query(IduE1PortStatusTable).filter(
-                            IduE1PortStatusTable.host_id == host_ids_list[i]).order_by(desc(IduE1PortStatusTable.timestamp)).order_by(asc(IduE1PortStatusTable.portNum)).limit(4).all()
+                            IduE1PortStatusTable.host_id == host_ids_list[i]).order_by(
+                            desc(IduE1PortStatusTable.timestamp)).order_by(asc(IduE1PortStatusTable.portNum)).limit(
+                            4).all()
                         e1_admin_data_list = sqlalche_obj.session.query(
-                            IduE1PortConfigurationTable.adminState).filter(IduE1PortConfigurationTable.config_profile_id == host_data_list[0][0]).all()
+                            IduE1PortConfigurationTable.adminState).filter(
+                            IduE1PortConfigurationTable.config_profile_id == host_data_list[0][0]).all()
                         main_admin_data_list = sqlalche_obj.session.query(
-                            IduIduAdminStateTable.adminstate).filter(IduIduAdminStateTable.config_profile_id == host_data_list[0][0]).all()
+                            IduIduAdminStateTable.adminstate).filter(
+                            IduIduAdminStateTable.config_profile_id == host_data_list[0][0]).all()
                         total_link_data = obj_get_data.common_get_data(
                             "IduLinkConfigurationTable", host_ids_list[i])
                         if len(total_link_data) > 0:
@@ -2202,24 +2566,35 @@ class IduLinkCount(object):
         finally:
             sqlalche_obj.sql_alchemy_db_connection_close()
             return result
+
 # obj = IduLinkCount()
 # print obj.link_count(80)
 # print obj.global_admin_request("35")
 
 
 class IduAdminStateChange(object):
+    """
+    Fetch the IDU admin states for ports and links
+    """
     #{"result": {"iduConfiguration.e1PortConfigurationTable.adminState": 14}, "success": 1}
 
     def get_admin_op_state(self, host_id):
+        """
+
+        @param host_id:
+        @return:
+        """
         global sqlalche_obj
         global errorStatus
         snmp_get = {}
         try:
             # sqlalche_obj.sql_alchemy_db_connection_open()
             get_dic_operation = {
-                'e1': '1.3.6.1.4.1.26149.2.1.2.3.1.2.1', 'e2': '1.3.6.1.4.1.26149.2.1.2.3.1.2.2', 'e3': '1.3.6.1.4.1.26149.2.1.2.3.1.2.3', 'e4': '1.3.6.1.4.1.26149.2.1.2.3.1.2.4',
-                                 'admin': '1.3.6.1.4.1.26149.2.1.1.1.1.2.1', 'e1op': '1.3.6.1.4.1.26149.2.1.3.2.1.2.1', 'e2op': '1.3.6.1.4.1.26149.2.1.3.2.1.2.2',
-                                 'e3op': '1.3.6.1.4.1.26149.2.1.3.2.1.2.3', 'e4op': '1.3.6.1.4.1.26149.2.1.3.2.1.2.4'}
+                'e1': '1.3.6.1.4.1.26149.2.1.2.3.1.2.1', 'e2': '1.3.6.1.4.1.26149.2.1.2.3.1.2.2',
+                'e3': '1.3.6.1.4.1.26149.2.1.2.3.1.2.3', 'e4': '1.3.6.1.4.1.26149.2.1.2.3.1.2.4',
+                'admin': '1.3.6.1.4.1.26149.2.1.1.1.1.2.1', 'e1op': '1.3.6.1.4.1.26149.2.1.3.2.1.2.1',
+                'e2op': '1.3.6.1.4.1.26149.2.1.3.2.1.2.2',
+                'e3op': '1.3.6.1.4.1.26149.2.1.3.2.1.2.3', 'e4op': '1.3.6.1.4.1.26149.2.1.3.2.1.2.4'}
             obj_get_data = IduGetData()
             sqlalche_obj.sql_alchemy_db_connection_open()
             host_data = sqlalche_obj.session.query(
@@ -2229,7 +2604,8 @@ class IduAdminStateChange(object):
             admin_data = sqlalche_obj.session.query(IduIduAdminStateTable).filter(
                 IduIduAdminStateTable.config_profile_id == host_data[0].config_profile_id).all()
             e1_status_data = sqlalche_obj.session.query(IduE1PortStatusTable).filter(
-                IduE1PortStatusTable.host_id == host_id).order_by(desc(IduE1PortStatusTable.timestamp)).order_by(asc(IduE1PortStatusTable.portNum)).limit(4).all()
+                IduE1PortStatusTable.host_id == host_id).order_by(desc(IduE1PortStatusTable.timestamp)).order_by(
+                asc(IduE1PortStatusTable.portNum)).limit(4).all()
 
             k = 0
             snmp_get = pysnmp_geter(get_dic_operation, host_data[0].ip_address, int(
@@ -2275,13 +2651,14 @@ class IduAdminStateChange(object):
                 for i in snmp_get["result"]:
                     if i == 553:
                         snmp_get["result"] = str(host_data[0].host_alias) + " (" + str(host_data[0]
-                                                 .ip_address) + ") " + str(errorStatus.get(i, "Device is not resposive"))
+                        .ip_address) + ") " + str(errorStatus.get(i, "Device is not resposive"))
                     elif i == 551:
                         snmp_get["result"] = str(host_data[0].host_alias) + " (" + str(host_data[0]
-                                                 .ip_address) + ") " + str(errorStatus.get(i, "Device is not resposive"))
+                        .ip_address) + ") " + str(errorStatus.get(i, "Device is not resposive"))
                     elif snmp_result["result"][i] != 0:
                         snmp_get["result"] = str(host_data[0].host_alias) + " (" + str(
-                            host_data[0].ip_address) + ") " + str(errorStatus.get(snmp_get["result"][i], "Device is not resposive"))
+                            host_data[0].ip_address) + ") " + str(
+                            errorStatus.get(snmp_get["result"][i], "Device is not resposive"))
         except Exception as e:
             snmp_get['success'] = 1
             snmp_get['result'] = str(e)
@@ -2291,6 +2668,15 @@ class IduAdminStateChange(object):
             return snmp_get
 
     def e1_port_admin_change(self, host_id, primary_id, port_number, admin_state_name, state):
+        """
+
+        @param host_id:
+        @param primary_id:
+        @param port_number:
+        @param admin_state_name:
+        @param state:
+        @return:
+        """
         global sqlalche_obj
         global errorStatus
         try:
@@ -2311,7 +2697,7 @@ class IduAdminStateChange(object):
                         self.get_admin_op_state(host_id)
                         # e1_port_data = sqlalche_obj.session.query(IduE1PortConfigurationTable).filter(IduE1PortConfigurationTable.idu_e1PortConfigurationTable_id==primary_id).all()
                         # e1_port_data[0].adminState = state
-                    # sqlalche_obj.session.commit()
+                        # sqlalche_obj.session.commit()
             else:
                 if 53 in snmp_result["result"]:
                     snmp_result["result"] = errorStatus[53]
@@ -2331,6 +2717,16 @@ class IduAdminStateChange(object):
             return snmp_result
 
     def link_port_admin_change(self, host_id, primary_id, port_number, bundle_number, admin_state_name, state):
+        """
+
+        @param host_id:
+        @param primary_id:
+        @param port_number:
+        @param bundle_number:
+        @param admin_state_name:
+        @param state:
+        @return:
+        """
         global sqlalche_obj
         global errorStatus
         try:
@@ -2375,6 +2771,13 @@ class IduAdminStateChange(object):
             return snmp_result
 
     def main_admin_change(self, host_id, admin_state_name, state):
+        """
+
+        @param host_id:
+        @param admin_state_name:
+        @param state:
+        @return:
+        """
         global sqlalche_obj
         global errorStatus
         try:
@@ -2392,9 +2795,9 @@ class IduAdminStateChange(object):
                 for i in snmp_result['result']:
                     if snmp_result['result'][i] == 0:
                         self.get_admin_op_state(host_id)
-##                        main_admin_data = sqlalche_obj.session.query(IduIduAdminStateTable).filter(IduIduAdminStateTable.config_profile_id==host_data[0].config_profile_id).all()
-##                        main_admin_data[0].adminstate = state
-##                    sqlalche_obj.session.commit()
+                    ##                        main_admin_data = sqlalche_obj.session.query(IduIduAdminStateTable).filter(IduIduAdminStateTable.config_profile_id==host_data[0].config_profile_id).all()
+                    ##                        main_admin_data[0].adminstate = state
+                    ##                    sqlalche_obj.session.commit()
             else:
                 if 53 in snmp_result["result"]:
                     snmp_result["result"] = errorStatus[53]
@@ -2414,6 +2817,15 @@ class IduAdminStateChange(object):
             return snmp_result
 
     def locked_unlocked_all(self, host_id, port_num, primary_ids, admin_state_name, state):
+        """
+
+        @param host_id:
+        @param port_num:
+        @param primary_ids:
+        @param admin_state_name:
+        @param state:
+        @return:
+        """
         global sqlalche_obj
         global errorStatus
         try:
@@ -2466,6 +2878,16 @@ class IduAdminStateChange(object):
             return snmp_result
 
     def link_locked_unlocked_all(self, host_id, port_num, primary_ids, bundle_num, admin_state_name, state):
+        """
+
+        @param host_id:
+        @param port_num:
+        @param primary_ids:
+        @param bundle_num:
+        @param admin_state_name:
+        @param state:
+        @return:
+        """
         global sqlalche_obj
         global errorStatus
         try:
@@ -2521,9 +2943,6 @@ class IduAdminStateChange(object):
         finally:
             sqlalche_obj.sql_alchemy_db_connection_close()
             return snmp_result
-
-
-
 
 
 # obj = IduAdminStateChange()

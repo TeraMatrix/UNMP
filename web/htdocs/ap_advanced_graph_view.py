@@ -34,7 +34,9 @@ class APAdvancedView(object):
                     <div id=\"apAdvancedDataTable\"></table></div>\
                     <input type=\"hidden\" id='advaced_device_type'  name='advaced_device_type'  value=%s />\
                     <input type=\"hidden\" id='advaced_ip_address'  name='advaced_ip_address'  value=%s />\
-                    <input type=\"hidden\" id='user_id'  name='user_id'  value=%s />" % (odu_start_date, odu_start_time, odu_end_date, odu_end_time, host_id, device_type_id, device_type_id, ip_address, user_id)
+                    <input type=\"hidden\" id='user_id'  name='user_id'  value=%s />" % (
+        odu_start_date, odu_start_time, odu_end_date, odu_end_time, host_id, device_type_id, device_type_id, ip_address,
+        user_id)
         html_data += '</div><div id=\"report_button_div\" class=\"form-div-footer\">\
             <table cellspacing="9px" cellpadding="0">\
             <tr>\
@@ -79,24 +81,32 @@ class APAdvancedView(object):
                     if graph[1] == 'odu100synclost':
                         pass
                     else:
-#                        graph_json.append(graph_dict)
+                    #                        graph_json.append(graph_dict)
                         if i % 2 == 0:
                             graph_detail += '\
-                        <td colspan="2" class="cell-label" style="text-align:left"><a href=\'#\'  value=\'%s\'><strong>%s</strong></a></td>' % (('--' if graph[1] == None or graph[1] == "" else graph[1]), ('--' if graph[0] == None or graph[0] == "" else graph[0]))
+                        <td colspan="2" class="cell-label" style="text-align:left"><a href=\'#\'  value=\'%s\'><strong>%s</strong></a></td>' % (
+                            ('--' if graph[1] == None or graph[1] == "" else graph[1]),
+                            ('--' if graph[0] == None or graph[0] == "" else graph[0]))
                             graph_detail += '</tr>'
                             graph_detail += '<tr class="tr-graph">'
                         else:
                             graph_detail += '\
-                        <td class="cell-label" style="text-align:left"><a href=\'#\'  value=\'%s\'><strong>%s</strong></a></td>' % (('--' if graph[1] == None or graph[1] == "" else graph[1]), ('--' if graph[0] == None or graph[0] == "" else graph[0]))
+                        <td class="cell-label" style="text-align:left"><a href=\'#\'  value=\'%s\'><strong>%s</strong></a></td>' % (
+                            ('--' if graph[1] == None or graph[1] == "" else graph[1]),
+                            ('--' if graph[0] == None or graph[0] == "" else graph[0]))
                 else:
                     if i % 2 == 0:
                         graph_detail += '\
-			<td colspan="2" class="cell-label" style="text-align:left"><a href=\'#\'  value=\'%s\'><strong>%s</strong></a></td>' % (('--' if graph[1] == None or graph[1] == "" else graph[1]), ('--' if graph[0] == None or graph[0] == "" else graph[0]))
+			<td colspan="2" class="cell-label" style="text-align:left"><a href=\'#\'  value=\'%s\'><strong>%s</strong></a></td>' % (
+                        ('--' if graph[1] == None or graph[1] == "" else graph[1]),
+                        ('--' if graph[0] == None or graph[0] == "" else graph[0]))
                         graph_detail += '</tr>'
                         graph_detail += '<tr class="tr-graph">'
                     else:
                         graph_detail += '\
-			<td class="cell-label" style="text-align:left"><a href=\'#\'  value=\'%s\'><strong>%s</strong></a></td>' % (('--' if graph[1] == None or graph[1] == "" else graph[1]), ('--' if graph[0] == None or graph[0] == "" else graph[0]))
+			<td class="cell-label" style="text-align:left"><a href=\'#\'  value=\'%s\'><strong>%s</strong></a></td>' % (
+                        ('--' if graph[1] == None or graph[1] == "" else graph[1]),
+                        ('--' if graph[0] == None or graph[0] == "" else graph[0]))
                 i += 1
             graph_detail += '</tr><tbody></table>'
             output_dict = {'success': 0, 'result': graph_detail}

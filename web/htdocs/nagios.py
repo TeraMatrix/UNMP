@@ -14,8 +14,16 @@ from datetime import datetime, timedelta
 
 
 class Nagios(object):
+    """
+    UNMP Core related class
+    """
     @staticmethod
     def advanced_host_settings(result={}):
+        """
+
+        @param result:
+        @return:
+        """
         try:
 
             service_dict = {}
@@ -27,12 +35,14 @@ class Nagios(object):
 			<div class=\"row-elem\"><h3>Uptime service(Heartbeat Rate):</h3></div>\
 			<div class=\"row-elem\">\
 				<label class=\"lbl lbl-big\" for=\"advanced_max_check_attempts_snmp_uptime\">max check attempts</label>\
-				<input type=\"text\" id=\"advanced_max_check_attempts_snmp_uptime\" name=\"advanced_max_check_attempts_snmp_uptime\" value=\"%s\" />' % (str(service_dict["snmp_uptime"][0]))]
+				<input type=\"text\" id=\"advanced_max_check_attempts_snmp_uptime\" name=\"advanced_max_check_attempts_snmp_uptime\" value=\"%s\" />' % (
+            str(service_dict["snmp_uptime"][0]))]
             html_view.append('</div>\
 			<div class=\"row-elem\">\
 			   	<label class=\"lbl lbl-big\" style="width:100px;margin-right:57px" >service check time:</label>\
 			   	<select name="advanced_check_interval_snmp_uptime" id="advanced_check_interval_snmp_uptime" class="multiselect" title="Click to select an option">')
-            html_view.append('<option value=' + str(service_dict["snmp_uptime"][1]) + '>' + str(service_dict["snmp_uptime"][1]) + ' mins</option>\
+            html_view.append(
+                '<option value=' + str(service_dict["snmp_uptime"][1]) + '>' + str(service_dict["snmp_uptime"][1]) + ' mins</option>\
 					<option value=1>1 mins</option>\
 					<option value=5>5 mins</option>\
 					<option value=10>10 mins</option>\
@@ -49,7 +59,8 @@ class Nagios(object):
 			<div class=\"row-elem\">\
 			   	<label class=\"lbl lbl-big\" style="width:100px;margin-right:57px" >service retry time:</label>\
 			   	<select name="advanced_retry_interval_snmp_uptime" id="advanced_retry_interval_snmp_uptime" class="multiselect" title="Click to select an option">')
-            html_view.append('<option value=' + str(service_dict["snmp_uptime"][2]) + '>' + str(service_dict["snmp_uptime"][2]) + ' mins</option>\
+            html_view.append(
+                '<option value=' + str(service_dict["snmp_uptime"][2]) + '>' + str(service_dict["snmp_uptime"][2]) + ' mins</option>\
 					<option value=1>1 mins</option>\
 					<option value=5>5 mins</option>\
 					<option value=10>10 mins</option>\
@@ -67,13 +78,16 @@ class Nagios(object):
 			<div class=\"row-elem\">\
 				<label class=\"lbl lbl-big\" for=\"advanced_max_check_attempts_statistics_service\">max check attempts</label>')
 
-            html_view.append('<input type=\"text\" id=\"advanced_max_check_attempts_statistics_service\" name=\"advanced_max_check_attempts_statistics_service\" value=\"%s\" />' % (str(service_dict["statistics_service"][0])))
+            html_view.append(
+                '<input type=\"text\" id=\"advanced_max_check_attempts_statistics_service\" name=\"advanced_max_check_attempts_statistics_service\" value=\"%s\" />' % (
+                str(service_dict["statistics_service"][0])))
             html_view.append('</div>\
 			<div class=\"row-elem\">\
 			   	<label class=\"lbl lbl-big\" style="width:100px;margin-right:57px" >service check time:</label>\
 			   	<select name="advanced_check_interval_statistics_service" id="advanced_check_interval_statistics_service" class="multiselect" title="Click to select an option">')
 
-            html_view.append('<option value=' + str(service_dict["statistics_service"][1]) + '>' + str(service_dict["statistics_service"][1]) + ' mins</option>\
+            html_view.append('<option value=' + str(service_dict["statistics_service"][1]) + '>' + str(
+                service_dict["statistics_service"][1]) + ' mins</option>\
 					<option value=5>5 mins</option>\
 					<option value=10>10 mins</option>\
 					<option value=15>15 mins</option>\
@@ -90,7 +104,8 @@ class Nagios(object):
 			   	<label class=\"lbl lbl-big\" style="width:100px;margin-right:57px" >service retry time:</label>\
 			   	<select name="advanced_retry_interval_statistics_service" id="advanced_retry_interval_statistics_service" class="multiselect" title="Click to select an option">')
 
-            html_view.append('<option value=' + str(service_dict["statistics_service"][2]) + '>' + str(service_dict["statistics_service"][2]) + ' mins</option>\
+            html_view.append('<option value=' + str(service_dict["statistics_service"][2]) + '>' + str(
+                service_dict["statistics_service"][2]) + ' mins</option>\
 					<option value=5>5 mins</option>\
 					<option value=10>10 mins</option>\
 					<option value=15>15 mins</option>\
@@ -112,6 +127,11 @@ class Nagios(object):
 
     @staticmethod
     def main_menu():
+        """
+
+
+        @return:
+        """
         html_view = '\
  	     <input type=\"text\" id=\"nagios_module\" value=\"nagios_hosts\" style=\"display:none\"/>\
 	     <div id="div_table_paginate">\
@@ -308,6 +328,11 @@ class Nagios(object):
 
     @staticmethod
     def main_menu_host_inventory():
+        """
+
+
+        @return:
+        """
         html_view = '\
  	     <input type=\"text\" id=\"nagios_module\" value=\"nagios_hosts\" style=\"display:none\"/>\
 	     <form  action=\"save_nagios_edit_host.py\" method=\"get\" id=\"edit_nagios_host_form\" name=\"edit_nagios_host_form\" >\
@@ -470,6 +495,11 @@ class Nagios(object):
 
     @staticmethod
     def main_menu_host_template():
+        """
+
+
+        @return:
+        """
         html_view = '\
  	     <input type=\"text\" id=\"nagios_module\" value=\"nagios_host_template\" style=\"display:none\"/>\
 	     <div id="div_table_paginate">\
@@ -663,6 +693,11 @@ class Nagios(object):
 
     @staticmethod
     def main_menu_service():
+        """
+
+
+        @return:
+        """
         html_view = '\
  	     <input type=\"text\" id=\"nagios_module\" value=\"nagios_service\" style=\"display:none\"/>\
 	     <div id="div_table_paginate">\
@@ -890,6 +925,11 @@ class Nagios(object):
 
     @staticmethod
     def main_menu_service_template():
+        """
+
+
+        @return:
+        """
         html_view = '\
  	     <input type=\"text\" id=\"nagios_module\" value=\"nagios_service_template\" style=\"display:none\"/>\
 	     <div id="div_table_paginate">\
@@ -1117,6 +1157,11 @@ class Nagios(object):
 
     @staticmethod
     def main_menu_hostgroup():
+        """
+
+
+        @return:
+        """
         html_view = '\
  	     <input type=\"text\" id=\"nagios_module\" value=\"nagios_hostgroup\" style=\"display:none\"/>\
 	     <div id="div_table_paginate">\
@@ -1179,6 +1224,11 @@ class Nagios(object):
 
     @staticmethod
     def main_menu_hostgroup_inventory():
+        """
+
+
+        @return:
+        """
         html_view = '\
  	     <input type=\"text\" id=\"nagios_module\" value=\"nagios_hostgroup\" style=\"display:none\"/>\
 	     <form action=\"save_nagios_hostgroup_inventory.py\" method=\"get\" id=\"edit_nagios_hostgroup_inventory_form\" name=\"edit_nagios_hostgroup_inventory_form\" >\
@@ -1335,6 +1385,11 @@ class Nagios(object):
 
     @staticmethod
     def main_menu_servicegroup():
+        """
+
+
+        @return:
+        """
         html_view = '\
  	     <input type=\"text\" id=\"nagios_module\" value=\"nagios_servicegroup\" style=\"display:none\"/>\
 	     <div id="div_table_paginate">\
@@ -1401,6 +1456,11 @@ class Nagios(object):
 
     @staticmethod
     def main_menu_command():
+        """
+
+
+        @return:
+        """
         html_view = '\
  	     <input type=\"text\" id=\"nagios_module\" value=\"nagios_command\" style=\"display:none\"/>\
 	     <div id="div_table_paginate">\
@@ -1447,6 +1507,11 @@ class Nagios(object):
 
     @staticmethod
     def main_menu_hostdependency():
+        """
+
+
+        @return:
+        """
         html_view = '\
  	     <input type=\"text\" id=\"nagios_module\" value=\"nagios_hostdependency\" style=\"display:none\"/>\
 	     <div id="div_table_paginate">\
@@ -1521,6 +1586,11 @@ class Nagios(object):
 
     @staticmethod
     def main_menu_servicedependency():
+        """
+
+
+        @return:
+        """
         html_view = '\
  	     <input type=\"text\" id=\"nagios_module\" value=\"nagios_servicedependency\" style=\"display:none\"/>\
 	     <div id="div_table_paginate">\
@@ -1609,19 +1679,27 @@ class Nagios(object):
 
     @staticmethod
     def get_columns(selected_columns, non_selected_columns, heading):
+        """
+
+        @param selected_columns:
+        @param non_selected_columns:
+        @param heading:
+        @return:
+        """
         liList = ""
         plusList = ""
-        if(non_selected_columns != [""]):
+        if (non_selected_columns != [""]):
             for row in non_selected_columns:
                 plusList += "<li>" + row + "<img src=\"images/add16.png\" class=\"plus plus\" alt=\"+\" title=\"Add\" id=\"" + \
-                    row + "\" name=\"" + row + "\"/></li>"
+                            row + "\" name=\"" + row + "\"/></li>"
         minusList = ""
-        if(selected_columns != [""]):
+        if (selected_columns != [""]):
             for row in selected_columns:
                 minusList += "<li>" + row + "<img src=\"images/minus16.png\" class=\"minus minus\" alt=\"-\" title=\"Remove\" id=\"" + row + \
-                    "\" name=\"" + row + "\"/></li>"
+                             "\" name=\"" + row + "\"/></li>"
         selectList = []
-        selectList.append('<div style="vertical-align: middle; width: 30px; text-align: center; padding-top: 45.5px;margin-left: 120px;"><span id="moveable_vertical"><img onclick="moveElementsUpDown(\'0\', \'top\')" src="images/new_icons/icon_top_24.gif" style="cursor: pointer;" ><img onclick="moveElementsUpDown(\'0\', \'up\')" src="images/new_icons/icon_up_24.gif" style="cursor: pointer;"><img onclick="moveElementsUpDown(\'0\', \'down\')" src="images/new_icons/icon_down_24.gif" style="cursor: pointer;" ><img onclick="moveElementsUpDown(\'0\', \'bottom\')" src="images/new_icons/icon_bottom_24.gif" style="cursor: pointer;"></span></div>')
+        selectList.append(
+            '<div style="vertical-align: middle; width: 30px; text-align: center; padding-top: 45.5px;margin-left: 120px;"><span id="moveable_vertical"><img onclick="moveElementsUpDown(\'0\', \'top\')" src="images/new_icons/icon_top_24.gif" style="cursor: pointer;" ><img onclick="moveElementsUpDown(\'0\', \'up\')" src="images/new_icons/icon_up_24.gif" style="cursor: pointer;"><img onclick="moveElementsUpDown(\'0\', \'down\')" src="images/new_icons/icon_down_24.gif" style="cursor: pointer;" ><img onclick="moveElementsUpDown(\'0\', \'bottom\')" src="images/new_icons/icon_bottom_24.gif" style="cursor: pointer;"></span></div>')
         selectList.append(
             "<div class=\"multiSelectList\" id=\"multiSelectList\" style=\"margin-left:165px;margin-top:-150px;\" multiple="" >")
         selectList.append("<input type=\"hidden\" id=\"hd\" name=\"hd\" value=\"%s\"/>" % (
@@ -1629,12 +1707,14 @@ class Nagios(object):
         selectList.append(
             "<input type=\"hidden\" id=\"hdTemp\" name=\"hdTemp\" />")
         selectList.append("<div class=\"selected\">")
-        selectList.append("<div class=\"shead\"><span id=\"count\">%s</span><span>%s</span><a href=\"#\" id=\"rm\">Remove all</a>" % (len(
-            selected_columns), heading))
+        selectList.append(
+            "<div class=\"shead\"><span id=\"count\">%s</span><span>%s</span><a href=\"#\" id=\"rm\">Remove all</a>" % (
+            len(
+                selected_columns), heading))
         selectList.append("</div>")
         selectList.append("<ul>" + minusList)
         selectList.append("</ul></div>")
-#        selectList.append("</div>"
+        #        selectList.append("</div>"
         selectList.append("<div class=\"nonSelected\">")
         selectList.append(
             "<div class=\"shead\"><a href=\"#\" id=\"add\">Add all</a>")
@@ -1648,6 +1728,11 @@ class Nagios(object):
 
     @staticmethod
     def settings_nagios(result):
+        """
+
+        @param result:
+        @return:
+        """
         try:
             s = '<table class="yo-table" width="100%" cellpadding="0" cellspacing="0" style="text-align:left">\
 	       <colgroup width="35%"></colgroup>\
@@ -1713,6 +1798,11 @@ class Nagios(object):
 
     @staticmethod
     def restore_config_nagios(backup_di):
+        """
+
+        @param backup_di:
+        @return:
+        """
         try:
             s = ['<div style="height:92%; overflow:auto">\
             <table class="yo-table display" width="100%" cellpadding="0" cellspacing="0" style="text-align:left" id="backup_table">\
@@ -1731,7 +1821,7 @@ class Nagios(object):
                 for i in range(len(log_data_li)):
                     log_data = log_data_li[i].split('::')
                     time_var = log_data[0].strip()
-                    if(time_var + ".tar.bz2") in file_name_li:
+                    if (time_var + ".tar.bz2") in file_name_li:
                         s.append('<tr><td class=" vertline" style="text-align:left"><input type="radio" value="%s" name="option" id="option%s" class="table_option"/></td>\
 		   <td style="text-align:left"><font style="font-size:13px">%s</font></td>\
 		   <td style="text-align:left"><font style="font-size:13px">%s</font></td>\
@@ -1745,224 +1835,90 @@ class Nagios(object):
         except Exception, e:
             return str(e)
 
-    @staticmethod
-    def view_page_tip_nagios_host():
-        html_view = "\
-        <div id=\"help_container\">\
-        <h1>Nagios Configuration</h1>\
-        <br/>\
-        <div>On this page you can view and configure different nagios parameters of hosts.</div>\
-        <br/>\
-	<div>set different parameters and click on save button to save the parameters.</div>\
-        <br/>\
-        <div><strong>Actions</strong></div>\
-    <div class=\"action-tip\"><div class=\"img-div\"><img style=\"width:16px;height:16px;\" src=\"images/{0}/doc_edit.png\"/></div><div class=\"txt-div\">Edit host.</div></div>\
-        <div class=\"action-tip\"><div class=\"img-div\"><img style=\"width:16px;height:16px;\" src=\"images/{0}/wrench.png\"/></div><div class=\"txt-div\">Nagios settings</div></div>\
-        <div class=\"action-tip\"><div class=\"img-div\"><img style=\"width:16px;height:16px;\" src=\"images/{0}/checkbox_checked.png\"/></div><div class=\"txt-div\">Verify configuration</div></div>\
-        <div class=\"action-tip\"><div class=\"img-div\"><img style=\"width:16px;height:16px;\" src=\"images/{0}/mail.png\"/></div><div class=\"txt-div\">Restore configuration</div></div>\
-        </div>".format(theme)
-        return html_view
-
-    @staticmethod
-    def view_page_tip_nagios_host_template():
-        html_view = "\
-        <div id=\"help_container\">\
-        <h1>Nagios Configuration</h1>\
-        <br/>\
-        <div>On this page you can view and configure different nagios parameters of host templates.</div>\
-        <br/>\
-        <div>click 'Edit' button to view & edit parameters of host templates.</div>\
-        <br/>\
-	<div>set different parameters and click on save button to save the parameters.</div>\
-        <br/>\
-        <div><strong>Actions</strong></div>\
-    <div class=\"action-tip\"><div class=\"img-div\"><img style=\"width:16px;height:16px;\" src=\"images/{0}/round_plus.png\"/></div><div class=\"txt-div\">Add new host template</div></div>\
-    <div class=\"action-tip\"><div class=\"img-div\"><img style=\"width:16px;height:16px;\" src=\"images/{0}/doc_edit.png\"/></div><div class=\"txt-div\">Edit host template</div></div>\
-        <div class=\"action-tip\"><div class=\"img-div\"><img style=\"width:16px;height:16px;\" src=\"images/{0}/round_minus.png\"/></div><div class=\"txt-div\">Delete host templates</div></div>\
-        <div class=\"action-tip\"><div class=\"img-div\"><img style=\"width:16px;height:16px;\" src=\"images/{0}/wrench.png\"/></div><div class=\"txt-div\">Nagios settings</div></div>\
-        <div class=\"action-tip\"><div class=\"img-div\"><img style=\"width:16px;height:16px;\" src=\"images/{0}/checkbox_checked.png\"/></div><div class=\"txt-div\">Verify configuration</div></div>\
-        <div class=\"action-tip\"><div class=\"img-div\"><img style=\"width:16px;height:16px;\" src=\"images/{0}/mail.png\"/></div><div class=\"txt-div\">Restore configuration</div></div>\
-        </div>".format(theme)
-        return html_view
-
-    @staticmethod
-    def view_page_tip_nagios_service():
-        html_view = "\
-        <div id=\"help_container\">\
-        <h1>Nagios Configuration</h1>\
-        <br/>\
-        <div>On this page you can view and configure different nagios parameters of service.</div>\
-        <br/>\
-        <div>click 'Edit' button to view & edit parameters of service.</div>\
-        <br/>\
-	<div>set different parameters and click on save button to save the parameters.</div>\
-        <br/>\
-        <div><strong>Actions</strong></div>\
-    <div class=\"action-tip\"><div class=\"img-div\"><img style=\"width:16px;height:16px;\" src=\"images/{0}/round_plus.png\"/></div><div class=\"txt-div\">Add new service</div></div>\
-    <div class=\"action-tip\"><div class=\"img-div\"><img style=\"width:16px;height:16px;\" src=\"images/{0}/doc_edit.png\"/></div><div class=\"txt-div\">Edit service</div></div>\
-        <div class=\"action-tip\"><div class=\"img-div\"><img style=\"width:16px;height:16px;\" src=\"images/{0}/round_minus.png\"/></div><div class=\"txt-div\">Delete service</div></div>\
-        <div class=\"action-tip\"><div class=\"img-div\"><img style=\"width:16px;height:16px;\" src=\"images/{0}/wrench.png\"/></div><div class=\"txt-div\">Nagios settings</div></div>\
-        <div class=\"action-tip\"><div class=\"img-div\"><img style=\"width:16px;height:16px;\" src=\"images/{0}/checkbox_checked.png\"/></div><div class=\"txt-div\">Verify configuration</div></div>\
-        <div class=\"action-tip\"><div class=\"img-div\"><img style=\"width:16px;height:16px;\" src=\"images/{0}/mail.png\"/></div><div class=\"txt-div\">Restore configuration</div></div>\
-        </div>".format(theme)
-        return html_view
-
-    @staticmethod
-    def view_page_tip_nagios_service_template():
-        html_view = "\
-        <div id=\"help_container\">\
-        <h1>Nagios Configuration</h1>\
-        <br/>\
-        <div>On this page you can view and configure different nagios parameters of service templates.</div>\
-        <br/>\
-        <div>click 'Edit' button to view & edit parameters of service templates.</div>\
-        <br/>\
-	<div>set different parameters and click on save button to save the parameters.</div>\
-        <br/>\
-        <div><strong>Actions</strong></div>\
-    <div class=\"action-tip\"><div class=\"img-div\"><img style=\"width:16px;height:16px;\" src=\"images/{0}/round_plus.png\"/></div><div class=\"txt-div\">Add new service template</div></div>\
-    <div class=\"action-tip\"><div class=\"img-div\"><img style=\"width:16px;height:16px;\" src=\"images/{0}/doc_edit.png\"/></div><div class=\"txt-div\">Edit service template</div></div>\
-        <div class=\"action-tip\"><div class=\"img-div\"><img style=\"width:16px;height:16px;\" src=\"images/{0}/round_minus.png\"/></div><div class=\"txt-div\">Delete service template</div></div>\
-        <div class=\"action-tip\"><div class=\"img-div\"><img style=\"width:16px;height:16px;\" src=\"images/{0}/wrench.png\"/></div><div class=\"txt-div\">Nagios settings</div></div>\
-        <div class=\"action-tip\"><div class=\"img-div\"><img style=\"width:16px;height:16px;\" src=\"images/{0}/checkbox_checked.png\"/></div><div class=\"txt-div\">Verify configuration</div></div>\
-        <div class=\"action-tip\"><div class=\"img-div\"><img style=\"width:16px;height:16px;\" src=\"images/{0}/mail.png\"/></div><div class=\"txt-div\">Restore configuration</div></div>\
-        </div>".format(theme)
-        return html_view
-
-    @staticmethod
-    def view_page_tip_nagios_hostgroup():
-        html_view = "\
-        <div id=\"help_container\">\
-        <h1>Nagios Configuration</h1>\
-        <br/>\
-        <div>On this page you can view and configure different nagios parameters of hostgroup.</div>\
-        <br/>\
-        <div>click 'Edit' button to view & edit parameters of hostgroup.</div>\
-        <br/>\
-	<div>set different parameters and click on save button to save the parameters.</div>\
-        <br/>\
-        <div><strong>Actions</strong></div>\
-        <div class=\"action-tip\"><div class=\"img-div\"><img style=\"width:16px;height:16px;\" src=\"images/{0}/doc_edit.png\"/></div><div class=\"txt-div\">Edit hostgroup</div></div>\
-        <div class=\"action-tip\"><div class=\"img-div\"><img style=\"width:16px;height:16px;\" src=\"images/{0}/wrench.png\"/></div><div class=\"txt-div\">Nagios settings</div></div>\
-        <div class=\"action-tip\"><div class=\"img-div\"><img style=\"width:16px;height:16px;\" src=\"images/{0}/checkbox_checked.png\"/></div><div class=\"txt-div\">Verify configuration</div></div>\
-        <div class=\"action-tip\"><div class=\"img-div\"><img style=\"width:16px;height:16px;\" src=\"images/{0}/mail.png\"/></div><div class=\"txt-div\">Restore configuration</div></div>\
-        </div>".format(theme)
-        return html_view
-
-    @staticmethod
-    def view_page_tip_nagios_servicegroup():
-        html_view = "\
-        <div id=\"help_container\">\
-        <h1>Nagios Configuration</h1>\
-        <br/>\
-        <div>On this page you can view and configure different nagios parameters of servicegroup.</div>\
-        <br/>\
-        <div>click 'Edit' button to view & edit parameters of servicegroup.</div>\
-        <br/>\
-	<div>set different parameters and click on save button to save the parameters.</div>\
-        <br/>\
-        <div><strong>Actions</strong></div>\
-    <div class=\"action-tip\"><div class=\"img-div\"><img style=\"width:16px;height:16px;\" src=\"images/{0}/round_plus.png\"/></div><div class=\"txt-div\">Add new servicegroup</div></div>\
-    <div class=\"action-tip\"><div class=\"img-div\"><img style=\"width:16px;height:16px;\" src=\"images/{0}/doc_edit.png\"/></div><div class=\"txt-div\">Edit servicegroup</div></div>\
-        <div class=\"action-tip\"><div class=\"img-div\"><img style=\"width:16px;height:16px;\" src=\"images/{0}/round_minus.png\"/></div><div class=\"txt-div\">Delete servicegroup</div></div>\
-        <div class=\"action-tip\"><div class=\"img-div\"><img style=\"width:16px;height:16px;\" src=\"images/{0}/wrench.png\"/></div><div class=\"txt-div\">Nagios settings</div></div>\
-        <div class=\"action-tip\"><div class=\"img-div\"><img style=\"width:16px;height:16px;\" src=\"images/{0}/checkbox_checked.png\"/></div><div class=\"txt-div\">Verify configuration</div></div>\
-        <div class=\"action-tip\"><div class=\"img-div\"><img style=\"width:16px;height:16px;\" src=\"images/{0}/mail.png\"/></div><div class=\"txt-div\">Restore configuration</div></div>\
-        </div>".format(theme)
-        return html_view
-
-    @staticmethod
-    def view_page_tip_nagios_hostdependency():
-        html_view = "\
-        <div id=\"help_container\">\
-        <h1>Nagios Configuration</h1>\
-        <br/>\
-        <div>On this page you can view and configure different nagios parameters of host dependencies.</div>\
-        <br/>\
-        <div>click 'Edit' button to view & edit parameters of host dependency.</div>\
-        <br/>\
-	<div>set different parameters and click on save button to save the parameters.</div>\
-        <br/>\
-        <div><strong>Actions</strong></div>\
-    <div class=\"action-tip\"><div class=\"img-div\"><img style=\"width:16px;height:16px;\" src=\"images/{0}/round_plus.png\"/></div><div class=\"txt-div\">Add new host dependency</div></div>\
-    <div class=\"action-tip\"><div class=\"img-div\"><img style=\"width:16px;height:16px;\" src=\"images/{0}/doc_edit.png\"/></div><div class=\"txt-div\">Edit host dependency</div></div>\
-        <div class=\"action-tip\"><div class=\"img-div\"><img style=\"width:16px;height:16px;\" src=\"images/{0}/round_minus.png\"/></div><div class=\"txt-div\">Delete host dependency</div></div>\
-        <div class=\"action-tip\"><div class=\"img-div\"><img style=\"width:16px;height:16px;\" src=\"images/{0}/wrench.png\"/></div><div class=\"txt-div\">Nagios settings</div></div>\
-        <div class=\"action-tip\"><div class=\"img-div\"><img style=\"width:16px;height:16px;\" src=\"images/{0}/checkbox_checked.png\"/></div><div class=\"txt-div\">Verify configuration</div></div>\
-        <div class=\"action-tip\"><div class=\"img-div\"><img style=\"width:16px;height:16px;\" src=\"images/{0}/mail.png\"/></div><div class=\"txt-div\">Restore configuration</div></div>\
-        </div>".format(theme)
-        return html_view
-
-    @staticmethod
-    def view_page_tip_nagios_servicedependency():
-        html_view = "\
-        <div id=\"help_container\">\
-        <h1>Nagios Configuration</h1>\
-        <br/>\
-        <div>On this page you can view and configure different nagios parameters of service dependencies.</div>\
-        <br/>\
-        <div>Click 'Edit' button to view & edit parameters of service dependency.</div>\
-        <br/>\
-	<div>Set different parameters and click on save button to save the parameters.</div>\
-        <br/>\
-    <div><strong>Actions</strong></div>\
-    <div class=\"action-tip\"><div class=\"img-div\"><img style=\"width:16px;height:16px;\" src=\"images/{0}/round_plus.png\"/></div><div class=\"txt-div\">Add new service dependency</div></div>\
-    <div class=\"action-tip\"><div class=\"img-div\"><img style=\"width:16px;height:16px;\" src=\"images/{0}/doc_edit.png\"/></div><div class=\"txt-div\">Edit service dependency</div></div>\
-        <div class=\"action-tip\"><div class=\"img-div\"><img style=\"width:16px;height:16px;\" src=\"images/{0}/round_minus.png\"/></div><div class=\"txt-div\">Delete service dependency</div></div>\
-        <div class=\"action-tip\"><div class=\"img-div\"><img style=\"width:16px;height:16px;\" src=\"images/{0}/wrench.png\"/></div><div class=\"txt-div\">Nagios settings</div></div>\
-        <div class=\"action-tip\"><div class=\"img-div\"><img style=\"width:16px;height:16px;\" src=\"images/{0}/checkbox_checked.png\"/></div><div class=\"txt-div\">Verify configuration</div></div>\
-        <div class=\"action-tip\"><div class=\"img-div\"><img style=\"width:16px;height:16px;\" src=\"images/{0}/mail.png\"/></div><div class=\"txt-div\">Restore configuration</div></div>\
-        </div>".format(theme)
-        return html_view
-
-    @staticmethod
-    def view_page_tip_nagios_command():
-        html_view = "\
-        <div id=\"help_container\">\
-        <h1>Nagios Configuration</h1>\
-        <br/>\
-        <div>On this page you can view and configure different nagios parameters of commands.</div>\
-        <br/>\
-        <div>click 'Edit' button to view & edit parameters of commands.</div>\
-        <br/>\
-	<div>set different parameters and click on save button to save the parameters.</div>\
-        <br/>\
-        <div><strong>Actions</strong></div>\
-    <div class=\"action-tip\"><div class=\"img-div\"><img style=\"width:16px;height:16px;\" src=\"images/{0}/round_plus.png\"/></div><div class=\"txt-div\">Add new command</div></div>\
-    <div class=\"action-tip\"><div class=\"img-div\"><img style=\"width:16px;height:16px;\" src=\"images/{0}/doc_edit.png\"/></div><div class=\"txt-div\">Edit command</div></div>\
-        <div class=\"action-tip\"><div class=\"img-div\"><img style=\"width:16px;height:16px;\" src=\"images/{0}/round_minus.png\"/></div><div class=\"txt-div\">Delete command</div></div>\
-        <div class=\"action-tip\"><div class=\"img-div\"><img style=\"width:16px;height:16px;\" src=\"images/{0}/wrench.png\"/></div><div class=\"txt-div\">Nagios settings</div></div>\
-        <div class=\"action-tip\"><div class=\"img-div\"><img style=\"width:16px;height:16px;\" src=\"images/{0}/checkbox_checked.png\"/></div><div class=\"txt-div\">Verify configuration</div></div>\
-        <div class=\"action-tip\"><div class=\"img-div\"><img style=\"width:16px;height:16px;\" src=\"images/{0}/mail.png\"/></div><div class=\"txt-div\">Restore configuration</div></div>\
-        </div>".format(theme)
-        return html_view
-
-    @staticmethod
-    def view_page_tip_nagios_inventory_hosts():
-        html_view = ""\
-            "<div id=\"help_container\">"\
-            "<h1>Advanced Settings</h1>"\
-            "<br/>"\
-            "<div>On this page you can view and configure different nagios parameters of hosts.</div>"\
-            "<br/>"\
-            "<div>There are various advanced parameters available to configure a host.</div>"\
-            "<br/>"\
-            "<div>After modifying the settings click on 'Save' to save them in the system, or press 'Cancel' to return.</div>"\
-            "<br/>"\
-            "</div>"
-        return html_view
-
-    @staticmethod
-    def view_page_tip_nagios_inventory_hostgroups():
-        html_view = ""\
-            "<div id=\"help_container\">"\
-            "<h1>Advanced Settings</h1>"\
-            "<br/>"\
-            "<div>On this page you can view and configure different nagios parameters of hostgroups.</div>"\
-            "<br/>"\
-            "<div>There are various advanced parameters available to configure a hostgroup.</div>"\
-            "<br/>"\
-            "<div>After modifying the settings click on 'Save' to save them in the system, or press 'Cancel' to return.</div>"\
-            "<br/>"\
-            "</div>"
-        return html_view
+            # @staticmethod
+            # def view_page_tip_nagios_host():
+            #     import defaults
+            #     f = open(defaults.web_dir + "/htdocs/locale/view_page_tip_nagios_host.html", "r")
+            #     html_view = f.read()
+            #     f.close()
+            #     return str(html_view)
+            #
+            # @staticmethod
+            # def view_page_tip_nagios_host_template():
+            #     import defaults
+            #     f = open(defaults.web_dir + "/htdocs/locale/view_page_tip_nagios_host_template.html", "r")
+            #     html_view = f.read()
+            #     f.close()
+            #     return str(html_view)
+            #
+            # @staticmethod
+            # def view_page_tip_nagios_service():
+            #     import defaults
+            #     f = open(defaults.web_dir + "/htdocs/locale/view_page_tip_nagios_service.html", "r")
+            #     html_view = f.read()
+            #     f.close()
+            #     return str(html_view)
+            #
+            # @staticmethod
+            # def view_page_tip_nagios_service_template():
+            #     import defaults
+            #     f = open(defaults.web_dir + "/htdocs/locale/view_page_tip_nagios_service_template.html", "r")
+            #     html_view = f.read()
+            #     f.close()
+            #     return str(html_view)
+            #
+            # @staticmethod
+            # def view_page_tip_nagios_hostgroup():
+            #     import defaults
+            #     f = open(defaults.web_dir + "/htdocs/locale/view_page_tip_nagios_hostgroup.html", "r")
+            #     html_view = f.read()
+            #     f.close()
+            #     return str(html_view)
+            #
+            # @staticmethod
+            # def view_page_tip_nagios_servicegroup():
+            #     import defaults
+            #     f = open(defaults.web_dir + "/htdocs/locale/view_page_tip_nagios_servicegroup.html", "r")
+            #     html_view = f.read()
+            #     f.close()
+            #     return str(html_view)
+            #
+            # @staticmethod
+            # def view_page_tip_nagios_hostdependency():
+            #     import defaults
+            #     f = open(defaults.web_dir + "/htdocs/locale/view_page_tip_nagios_hostdependency.html", "r")
+            #     html_view = f.read()
+            #     f.close()
+            #     return str(html_view)
+            #
+            # @staticmethod
+            # def view_page_tip_nagios_servicedependency():
+            #     import defaults
+            #     f = open(defaults.web_dir + "/htdocs/locale/view_page_tip_nagios_servicedependency.html", "r")
+            #     html_view = f.read()
+            #     f.close()
+            #     return str(html_view)
+            #
+            # @staticmethod
+            # def view_page_tip_nagios_command():
+            #     import defaults
+            #     f = open(defaults.web_dir + "/htdocs/locale/view_page_tip_nagios_command.html", "r")
+            #     html_view = f.read()
+            #     f.close()
+            #     return str(html_view)
+            #
+            # @staticmethod
+            # def view_page_tip_nagios_inventory_hosts():
+            #     import defaults
+            #     f = open(defaults.web_dir + "/htdocs/locale/view_page_tip_nagios_inventory_hosts.html", "r")
+            #     html_view = f.read()
+            #     f.close()
+            #     return str(html_view)
+            #
+            # @staticmethod
+            # def view_page_tip_nagios_inventory_hostgroups():
+            #     import defaults
+            #     f = open(defaults.web_dir + "/htdocs/locale/view_page_tip_nagios_inventory_hostgroups.html", "r")
+            #     html_view = f.read()
+            #     f.close()
+            #     return str(html_view)

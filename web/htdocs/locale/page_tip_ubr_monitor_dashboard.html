@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Help: UBR Dashboard</title>
+    <link href="css/example.css"/>
+</head>
+<body>
+
+<div id="help_container">
+    <h1>UBR Dashboard</h1>
+
+    <div>This <strong>Dashboard</strong> show all device silver statistics by graph.</div>
+    <br/>
+
+    <div>On this page you can see network bandwidth graph, signal strength graph, sync loss graph, outage graph , Crc/Phy
+        Error graph ,Latest trap and latest alarm etc.
+    </div>
+    <br/>
+
+    <div><input class="yo-button yo-small" type="button" style="width: 30px;" value="Advanced Graph"
+                name="odu_graph_show"> This button open a window on self click event and show more information according
+        to data and time.
+    </div>
+    <div><input class="yo-button yo-small" type="button" style="width: 30px;" value="Search" name="odu_graph_show">
+        Search the devices.
+    </div>
+    <div>
+        <button id="odu_report_btn" class="yo-button" style="margin-top: 5px;" type="submit"><span
+                class="save">Report</span></button>
+        Download the PDF report.
+    </div>
+    <br/>
+
+    <div>
+        <button id="odu_report_btn" class="yo-button" style="margin-top: 5px;" type="submit"><span
+                class="report">Report</span></button>
+        Download the Excel report.
+    </div>
+    <br/>
+    <br/>
+
+    <div><strong>Note:</strong>This page show real time information of UBR device and it page refresh on 5 min time
+        interval.
+        Search button search device by MAC address and IP address and show information by graph.
+        Graph button display the graph according to time interval show, this time interval also change by user.
+        report button provide PDF of all display information by graph
+    </div>
+</div>
+</body>
+</html>

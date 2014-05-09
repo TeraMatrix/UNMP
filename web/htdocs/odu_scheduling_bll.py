@@ -8,14 +8,56 @@ from operator import itemgetter
 
 
 class OduSchedulingBll(object):
+    """
+    Scheduling Page
+    """
 # AVERAGE DATA FOR GIVEN DATE PERIOD
-    def create_scheduler(self, odu_list, event, startDate, endDate, startTime, endTime, repeat, repeatType, daysun, daymon, daytue, daywed, daythu, dayfri, daysat, monthjan, monthfeb, monthmar, monthapr, monthmay, monthjun, monthjul, monthaug, monthsep, monthoct, monthnov, monthdec, dates, firmware_file_name=""):
+    def create_scheduler(self, odu_list, event, startDate, endDate, startTime, endTime, repeat, repeatType, daysun,
+                         daymon, daytue, daywed, daythu, dayfri, daysat, monthjan, monthfeb, monthmar, monthapr,
+                         monthmay, monthjun, monthjul, monthaug, monthsep, monthoct, monthnov, monthdec, dates,
+                         firmware_file_name=""):
+        """
+
+        @param odu_list:
+        @param event:
+        @param startDate:
+        @param endDate:
+        @param startTime:
+        @param endTime:
+        @param repeat:
+        @param repeatType:
+        @param daysun:
+        @param daymon:
+        @param daytue:
+        @param daywed:
+        @param daythu:
+        @param dayfri:
+        @param daysat:
+        @param monthjan:
+        @param monthfeb:
+        @param monthmar:
+        @param monthapr:
+        @param monthmay:
+        @param monthjun:
+        @param monthjul:
+        @param monthaug:
+        @param monthsep:
+        @param monthoct:
+        @param monthnov:
+        @param monthdec:
+        @param dates:
+        @param firmware_file_name:
+        @return:
+        """
         try:
             conn = MySQLdb.connect(*SystemConfig.get_mysql_credentials())
             cursor = conn.cursor()
             sql = "INSERT INTO odu_schedule (event, start_date, end_date, start_time, end_time, is_repeated, repeat_type, sun, mon, tue, wed, thu,\
                              fri, sat, jan, feb, mar, apr, may, jun, jul, aug, sept, oct, nov, dece, day , is_deleted , is_success , update_time) VALUES ('%s','%s','%s','%s','%s',%s,'%s', %s, %s,\
-                             %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, '%s', 1 , 1, NULL ) " % (event, startDate, endDate, startTime, endTime, repeat, repeatType, daysun, daymon, daytue, daywed, daythu, dayfri, daysat, monthjan, monthfeb, monthmar, monthapr, monthmay, monthjun, monthjul, monthaug, monthsep, monthoct, monthnov, monthdec, dates)
+                             %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, '%s', 1 , 1, NULL ) " % (
+            event, startDate, endDate, startTime, endTime, repeat, repeatType, daysun, daymon, daytue, daywed, daythu,
+            dayfri, daysat, monthjan, monthfeb, monthmar, monthapr, monthmay, monthjun, monthjul, monthaug, monthsep,
+            monthoct, monthnov, monthdec, dates)
             cursor.execute(sql)
             newId = cursor.lastrowid
             for oduId in odu_list:
@@ -25,7 +67,8 @@ class OduSchedulingBll(object):
                             newId, oduId, firmware_file_name)
                         cursor.execute(sql)  # continue from here
                     else:
-                        sql = "INSERT INTO odu_host_schedule(schedule_id,host_id,is_success) VALUES(%s,%s,1)" % (newId, oduId)
+                        sql = "INSERT INTO odu_host_schedule(schedule_id,host_id,is_success) VALUES(%s,%s,1)" % (
+                        newId, oduId)
                         cursor.execute(sql)
 
             conn.commit()
@@ -37,6 +80,12 @@ class OduSchedulingBll(object):
             conn.close()
 
     def get_hostgroup_device(self, user_id, hostgroup_id_list):
+        """
+
+        @param user_id:
+        @param hostgroup_id_list:
+        @return:
+        """
         try:
             conn = MySQLdb.connect(*SystemConfig.get_mysql_credentials())
             cursor = conn.cursor()
@@ -44,7 +93,8 @@ class OduSchedulingBll(object):
 			join (select hostgroup_id,host_id from hosts_hostgroups)  as hhg on hhg.hostgroup_id=hg.hostgroup_id \
 			join (select host_id,device_type_id from hosts ) as h on h.host_id=hhg.host_id \
 			join (select device_type_id,device_name,is_deleted from device_type) as dt on dt.device_type_id=h.device_type_id \
-			where hhg.hostgroup_id IN (%s) and dt.is_deleted<>1 group  by hg.hostgroup_id ,dt.device_type_id order by dt.device_name" % ','.join(hostgroup_id_list)
+			where hhg.hostgroup_id IN (%s) and dt.is_deleted<>1 group  by hg.hostgroup_id ,dt.device_type_id order by dt.device_name" % ','.join(
+                hostgroup_id_list)
             cursor.execute(query)
             result = cursor.fetchall()
             result_dict = {}
@@ -60,6 +110,13 @@ class OduSchedulingBll(object):
             conn.close()
 
     def odu_multiple_select_list(self, odu_list, selectListId, device_type):
+        """
+
+        @param odu_list:
+        @param selectListId:
+        @param device_type:
+        @return:
+        """
         try:
             conn = MySQLdb.connect(*SystemConfig.get_mysql_credentials())
             cursor = conn.cursor()
@@ -75,6 +132,11 @@ class OduSchedulingBll(object):
             conn.close()
 
     def view_Scheduling_Details(self):
+        """
+
+
+        @return:
+        """
         try:
             conn = MySQLdb.connect(*SystemConfig.get_mysql_credentials())
             cursor = conn.cursor()
@@ -82,9 +144,9 @@ class OduSchedulingBll(object):
 		join (select schedule_id,host_id,is_success,message from odu_host_schedule) as ohs on ohs.schedule_id=os.schedule_id \
 		join (select host_name ,host_alias,host_id from hosts) as h on h.host_id=ohs.host_id where os.update_time<now() order by os.schedule_id desc,os.update_time desc "
             cursor.execute(sql)
-    # 0 success
-    # 1 part
-    # 2 failed
+            # 0 success
+            # 1 part
+            # 2 failed
             tp = cursor.fetchall()
             di = {}
             li = []
@@ -126,7 +188,7 @@ class OduSchedulingBll(object):
                             grp += ' ( failed )'
                         else:
                             grp += ' ( ' + str(t[4]) + ' ) '
-                        # grp += ' ( failed )'
+                            # grp += ' ( failed )'
                         status = "2"
                     else:
                         grp += ' ( success )'
@@ -155,6 +217,11 @@ class OduSchedulingBll(object):
             conn.close()
 
     def load_non_repeative_events(self):
+        """
+
+
+        @return:
+        """
         try:
             conn = MySQLdb.connect(*SystemConfig.get_mysql_credentials())
             cursor = conn.cursor()
@@ -168,6 +235,11 @@ class OduSchedulingBll(object):
             conn.close()
 
     def load_repeative_events(self):
+        """
+
+
+        @return:
+        """
         try:
             conn = MySQLdb.connect(*SystemConfig.get_mysql_credentials())
             cursor = conn.cursor()
@@ -181,6 +253,11 @@ class OduSchedulingBll(object):
             conn.close()
 
     def event_resize(self, scheduleId):
+        """
+
+        @param scheduleId:
+        @return:
+        """
         try:
             conn = MySQLdb.connect(*SystemConfig.get_mysql_credentials())
             cursor = conn.cursor()
@@ -195,13 +272,20 @@ class OduSchedulingBll(object):
             conn.close()
 
     def event_resize_update(self, scheduleId, eDateObj):
+        """
+
+        @param scheduleId:
+        @param eDateObj:
+        @return:
+        """
         try:
             conn = MySQLdb.connect(*SystemConfig.get_mysql_credentials())
             cursor = conn.cursor()
             sql = "UPDATE odu_schedule SET \
                  end_date = '%s', \
                  end_time = '%s' \
-                 WHERE schedule_id = %s" % ((str(eDateObj.year) + "-" + str(eDateObj.month) + "-" + str(eDateObj.day)), (str(eDateObj.hour) + ":" + str(eDateObj.minute) + ":00"), scheduleId)
+                 WHERE schedule_id = %s" % ((str(eDateObj.year) + "-" + str(eDateObj.month) + "-" + str(eDateObj.day)),
+                                            (str(eDateObj.hour) + ":" + str(eDateObj.minute) + ":00"), scheduleId)
             cursor.execute(sql)
             conn.commit()
             return 0
@@ -211,6 +295,11 @@ class OduSchedulingBll(object):
             conn.close()
 
     def event_drop(self, scheduleId):
+        """
+
+        @param scheduleId:
+        @return:
+        """
         try:
             conn = MySQLdb.connect(*SystemConfig.get_mysql_credentials())
             cursor = conn.cursor()
@@ -224,7 +313,25 @@ class OduSchedulingBll(object):
         finally:
             conn.close()
 
-    def event_drop_update(self, scheduleId, start_date, start_time, end_date, end_time, sun, mon, tue, wed, thu, fri, sat, dates):
+    def event_drop_update(self, scheduleId, start_date, start_time, end_date, end_time, sun, mon, tue, wed, thu, fri,
+                          sat, dates):
+        """
+
+        @param scheduleId:
+        @param start_date:
+        @param start_time:
+        @param end_date:
+        @param end_time:
+        @param sun:
+        @param mon:
+        @param tue:
+        @param wed:
+        @param thu:
+        @param fri:
+        @param sat:
+        @param dates:
+        @return:
+        """
         try:
             conn = MySQLdb.connect(*SystemConfig.get_mysql_credentials())
             cursor = conn.cursor()
@@ -241,7 +348,8 @@ class OduSchedulingBll(object):
                  fri = %s, \
                  sat = %s, \
                  day = %s \
-                 WHERE schedule_id = %s" % (start_date, start_time, end_date, end_time, sun, mon, tue, wed, thu, fri, sat, dates, scheduleId)
+                 WHERE schedule_id = %s" % (
+            start_date, start_time, end_date, end_time, sun, mon, tue, wed, thu, fri, sat, dates, scheduleId)
             cursor.execute(sql)
             conn.commit()
             return 0
@@ -251,6 +359,11 @@ class OduSchedulingBll(object):
             conn.close()
 
     def delete_odu_scheduler(self, scheduleId):
+        """
+
+        @param scheduleId:
+        @return:
+        """
         try:
             conn = MySQLdb.connect(*SystemConfig.get_mysql_credentials())
             cursor = conn.cursor()
@@ -268,6 +381,11 @@ class OduSchedulingBll(object):
             conn.close()
 
     def view_odu_list(self, scheduleId):
+        """
+
+        @param scheduleId:
+        @return:
+        """
         try:
             conn = MySQLdb.connect(*SystemConfig.get_mysql_credentials())
             cursor = conn.cursor()
@@ -284,6 +402,11 @@ class OduSchedulingBll(object):
             conn.close()
 
     def get_odu_schedule_details(self, scheduleId):
+        """
+
+        @param scheduleId:
+        @return:
+        """
         try:
             conn = MySQLdb.connect(*SystemConfig.get_mysql_credentials())
             cursor = conn.cursor()
@@ -305,6 +428,11 @@ class OduSchedulingBll(object):
             conn.close()
 
     def get_odu_schedule_details_odu(self, scheduleId):
+        """
+
+        @param scheduleId:
+        @return:
+        """
         try:
             conn = MySQLdb.connect(*SystemConfig.get_mysql_credentials())
             cursor = conn.cursor()
@@ -319,6 +447,11 @@ class OduSchedulingBll(object):
             conn.close()
 
     def get_odu_schedule_details_make_list(self, scheduleId):
+        """
+
+        @param scheduleId:
+        @return:
+        """
         try:
             conn = MySQLdb.connect(*SystemConfig.get_mysql_credentials())
             cursor = conn.cursor()
@@ -333,14 +466,51 @@ class OduSchedulingBll(object):
         finally:
             conn.close()
 
-    def update_odu_scheduler(self, event, startDate, endDate, startTime, endTime, repeat, repeatType, daysun, daymon, daytue, daywed, daythu, dayfri, daysat, monthjan, monthfeb, monthmar, monthapr, monthmay, monthjun, monthjul, monthaug, monthsep, monthoct, monthnov, monthdec, dates, scheduleId):
+    def update_odu_scheduler(self, event, startDate, endDate, startTime, endTime, repeat, repeatType, daysun, daymon,
+                             daytue, daywed, daythu, dayfri, daysat, monthjan, monthfeb, monthmar, monthapr, monthmay,
+                             monthjun, monthjul, monthaug, monthsep, monthoct, monthnov, monthdec, dates, scheduleId):
+        """
+
+        @param event:
+        @param startDate:
+        @param endDate:
+        @param startTime:
+        @param endTime:
+        @param repeat:
+        @param repeatType:
+        @param daysun:
+        @param daymon:
+        @param daytue:
+        @param daywed:
+        @param daythu:
+        @param dayfri:
+        @param daysat:
+        @param monthjan:
+        @param monthfeb:
+        @param monthmar:
+        @param monthapr:
+        @param monthmay:
+        @param monthjun:
+        @param monthjul:
+        @param monthaug:
+        @param monthsep:
+        @param monthoct:
+        @param monthnov:
+        @param monthdec:
+        @param dates:
+        @param scheduleId:
+        @return:
+        """
         try:
             conn = MySQLdb.connect(*SystemConfig.get_mysql_credentials())
             cursor = conn.cursor()
             sql = "UPDATE odu_schedule SET event = '%s', start_date = '%s', end_date = '%s', start_time = '%s', end_time = '%s', is_repeated = %s, repeat_type = '%s', \
             sun = %s, mon = %s, tue = %s, wed = %s, thu = %s, fri = %s, sat = %s, jan = %s, feb = %s, mar = %s, apr = %s, may = %s, jun = %s, jul = %s, aug = %s, sept = %s, \
             oct = %s, nov = %s, dece = %s, day = '%s' , is_deleted=1 , is_success=1 , update_time=NULL WHERE schedule_id =\
-             %s" % (event, startDate, endDate, startTime, endTime, repeat, repeatType, daysun, daymon, daytue, daywed, daythu, dayfri, daysat, monthjan, monthfeb, monthmar, monthapr, monthmay, monthjun, monthjul, monthaug, monthsep, monthoct, monthnov, monthdec, dates, scheduleId)
+             %s" % (
+            event, startDate, endDate, startTime, endTime, repeat, repeatType, daysun, daymon, daytue, daywed, daythu,
+            dayfri, daysat, monthjan, monthfeb, monthmar, monthapr, monthmay, monthjun, monthjul, monthaug, monthsep,
+            monthoct, monthnov, monthdec, dates, scheduleId)
             cursor.execute(sql)
             conn.commit()
             return 0
@@ -351,6 +521,11 @@ class OduSchedulingBll(object):
             conn.close()
 
     def update_odu_scheduler_delete(self, scheduleId):
+        """
+
+        @param scheduleId:
+        @return:
+        """
         try:
             conn = MySQLdb.connect(*SystemConfig.get_mysql_credentials())
             cursor = conn.cursor()
@@ -366,6 +541,14 @@ class OduSchedulingBll(object):
             conn.close()
 
     def update_odu_scheduler_insert(self, scheduleId, oduId, event="Up", firmware_file_name=""):
+        """
+
+        @param scheduleId:
+        @param oduId:
+        @param event:
+        @param firmware_file_name:
+        @return:
+        """
         try:
             conn = MySQLdb.connect(*SystemConfig.get_mysql_credentials())
             cursor = conn.cursor()
@@ -380,7 +563,7 @@ class OduSchedulingBll(object):
                 sql = "INSERT INTO odu_host_schedule(schedule_id,host_id,is_success) VALUES(%s,%s,1)" % (
                     scheduleId, oduId)
                 cursor.execute(sql)
-            # cursor.execute(sql)
+                # cursor.execute(sql)
             conn.commit()
             return 0
         except Exception, e:
@@ -390,6 +573,11 @@ class OduSchedulingBll(object):
             conn.close()
 
     def crontab_select_schedule(self):
+        """
+
+
+        @return:
+        """
         try:
             conn = MySQLdb.connect(*SystemConfig.get_mysql_credentials())
             cursor = conn.cursor()
@@ -401,9 +589,14 @@ class OduSchedulingBll(object):
             return str(e)
         finally:
             conn.close()
-####
+        ####
 
     def crontab_details(self, scheduleId):
+        """
+
+        @param scheduleId:
+        @return:
+        """
         try:
             conn = MySQLdb.connect(*SystemConfig.get_mysql_credentials())
             cursor = conn.cursor()
@@ -420,8 +613,14 @@ class OduSchedulingBll(object):
         finally:
             conn.close()
 
-###
+        ###
+
     def crontab_repeat_schedule(self):
+        """
+
+
+        @return:
+        """
         try:
             conn = MySQLdb.connect(*SystemConfig.get_mysql_credentials())
             cursor = conn.cursor()
@@ -436,6 +635,11 @@ class OduSchedulingBll(object):
             conn.close()
 
     def radio_status(self):
+        """
+
+
+        @return:
+        """
         try:
             conn = MySQLdb.connect(*SystemConfig.get_mysql_credentials())
             cursor = conn.cursor()
@@ -449,6 +653,11 @@ class OduSchedulingBll(object):
             conn.close()
 
     def radio_status_repeat(self, host_id):
+        """
+
+        @param host_id:
+        @return:
+        """
         try:
             conn = MySQLdb.connect(*SystemConfig.get_mysql_credentials())
             cursor = conn.cursor()

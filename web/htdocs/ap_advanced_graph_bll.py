@@ -37,8 +37,17 @@ class SelfException(Exception):
 
 
 class APAdvancedGraph(object):
+    """
+    AP device related advanced graph class
+    """
 
     def get_host_id(self, ip_address, device_type):
+        """
+
+        @param ip_address:
+        @param device_type:
+        @return: @raise:
+        """
         try:
             host_id = 1  # Default value
             conn, cursor = mysql_connection()
@@ -70,6 +79,12 @@ class APAdvancedGraph(object):
                 conn.close()
 
     def total_graph_name_display(self, device_type_id, user_id):
+        """
+
+        @param device_type_id:
+        @param user_id:
+        @return: @raise:
+        """
         try:
             db, cursor = mysql_connection()
             if db == 1:
@@ -97,6 +112,14 @@ class APAdvancedGraph(object):
                 db.close()
 
     def advanced_graph_json(self, graph_id, device_type_id, user_id, ip_address):
+        """
+
+        @param graph_id:
+        @param device_type_id:
+        @param user_id:
+        @param ip_address:
+        @return: @raise:
+        """
         try:
             conn, cursor = mysql_connection()
             if conn == 1:
@@ -237,6 +260,27 @@ class APAdvancedGraph(object):
                 conn.close()
 
     def advanced_graph_data(self, display_type, user_id, table_name, x_axis_value, index_name, graph_id, start, limit, flag, start_date, end_date, ip_address, graph, update_field_name, interface=1, value_cal=1, *column_name):
+        """
+
+        @param display_type:
+        @param user_id:
+        @param table_name:
+        @param x_axis_value:
+        @param index_name:
+        @param graph_id:
+        @param start:
+        @param limit:
+        @param flag:
+        @param start_date:
+        @param end_date:
+        @param ip_address:
+        @param graph:
+        @param update_field_name:
+        @param interface:
+        @param value_cal:
+        @param column_name:
+        @return: @raise:
+        """
         data_list = []
         time_list = []
         calculation = ['normal', 'delta']
@@ -446,6 +490,17 @@ class APAdvancedGraph(object):
                 conn.close()
 
     def sp_signal_strength_graph(self, display_type, graph_id, ip_address, start_time, end_time, table_name, column_list):
+        """
+
+        @param display_type:
+        @param graph_id:
+        @param ip_address:
+        @param start_time:
+        @param end_time:
+        @param table_name:
+        @param column_list:
+        @return: @raise:
+        """
         min_value = 0
         max_value = 0
         signal_flag = 1
@@ -639,6 +694,25 @@ class APAdvancedGraph(object):
                 db.close()
 
     def advaeced_excel_report(self, report_type, device_type_id, user_id, ip_address, cal1, tab1, field1, table_name1, graph_name1, start_date, end_date, limitFlag, graph1, start1, limit1):
+        """
+
+        @param report_type:
+        @param device_type_id:
+        @param user_id:
+        @param ip_address:
+        @param cal1:
+        @param tab1:
+        @param field1:
+        @param table_name1:
+        @param graph_name1:
+        @param start_date:
+        @param end_date:
+        @param limitFlag:
+        @param graph1:
+        @param start1:
+        @param limit1:
+        @return: @raise:
+        """
         try:
             import csv
             import xlwt
@@ -870,6 +944,23 @@ class APAdvancedGraph(object):
                 conn.close()
 
     def ap_data_table(self, user_id, ip_address, cal1, tab1, field1, table_name1, graph_name1, start_date, end_date, limitFlag, graph1, start1, limit1):
+        """
+
+        @param user_id:
+        @param ip_address:
+        @param cal1:
+        @param tab1:
+        @param field1:
+        @param table_name1:
+        @param graph_name1:
+        @param start_date:
+        @param end_date:
+        @param limitFlag:
+        @param graph1:
+        @param start1:
+        @param limit1:
+        @return: @raise:
+        """
         try:
             datatable_column_list = []
             table_split_result = table_name1.split(',')
@@ -952,6 +1043,11 @@ class APAdvancedGraph(object):
 
 
 def merge_list(arg):
+    """
+
+    @param arg:
+    @return:
+    """
     total = len(arg)
     flag = True
     d2 = []

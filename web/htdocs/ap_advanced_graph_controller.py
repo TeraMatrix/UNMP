@@ -1,31 +1,24 @@
 #!/usr/bin/python2.6
-import config
-import htmllib
-import time
-import cgi
-import MySQLdb
-import sys
-from common_controller import *
-from nms_config import *
-from odu_controller import *
 from datetime import datetime
 from datetime import timedelta
-import time
-from mysql_collection import mysql_connection
-from utility import Validation
-from operator import itemgetter
-from ap_advanced_graph_view import APAdvancedView
-from ap_advanced_graph_bll import APAdvancedGraph
-import json
 from json import JSONEncoder
-from encodings import undefined
+
+from ap_advanced_graph_bll import APAdvancedGraph
+from ap_advanced_graph_view import APAdvancedView
+# from common_controller import *
+# from nms_config import *
+# from odu_controller import *
 
 
 def get_ap_advanced_graph_value(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     device_type_dict = {'ap25': 'AP25', 'odu16': 'RM18', 'odu100':
-                        'RM', 'idu4': 'IDU', 'ccu': 'CCU'}
+        'RM', 'idu4': 'IDU', 'ccu': 'CCU'}
     ip_address = html.var('ip_address')
     device_type_id = html.var('device_type_id')
     selected_listing = ""
@@ -41,8 +34,8 @@ def get_ap_advanced_graph_value(h):
     css_list = [
         "css/style.css", "css/custom.css", "calendrical/calendrical.css",
         "css/demo_table_jui.css", "css/jquery-ui-1.8.4.custom.css"]
-    javascript_list = ["js/highcharts.js", "js/apAdvancedGraph.js",
-                       "calendrical/calendrical.js", "js/jquery.dataTables.min.js"]
+    javascript_list = ["js/lib/main/highcharts.js", "js/unmp/main/apAdvancedGraph.js",
+                       "calendrical/calendrical.js", "js/lib/main/jquery.dataTables.min.js"]
     html.new_header(
         '%s %s Historical Graphs' % (device_type_dict[device_type_id],
                                      ip_address.replace("'", "")), selected_listing, "", css_list, javascript_list)
@@ -53,6 +46,10 @@ def get_ap_advanced_graph_value(h):
 
 
 def ap_total_graph_name(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     user_id = html.req.session["user_id"]
@@ -67,6 +64,10 @@ def ap_total_graph_name(h):
 
 
 def advanced_graph_json_creation(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     graph_id = html.var('graph_id')
@@ -81,6 +82,10 @@ def advanced_graph_json_creation(h):
 
 
 def advanced_update_date_time(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     try:
@@ -97,6 +102,10 @@ def advanced_update_date_time(h):
 
 
 def advanced_graph_creation(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     graph_type = html.var('graph_type')
@@ -127,13 +136,17 @@ def advanced_graph_creation(h):
     bll_obj = APAdvancedGraph()
     controller_dict = bll_obj.advanced_graph_data(
         'graph', user_id, table_name[0], table_name[1], table_name[-2], table_name[-
-                                                                                   1], start, limit, flag, start_date, end_date, ip_address,
+        1], start, limit, flag, start_date, end_date, ip_address,
         graph_type, update_field_name, interface_value, cal_type, column_name)
     html.req.content_type = 'application/json'
     html.req.write(str(JSONEncoder().encode(controller_dict)))
 
 
 def ap_data_table_creation(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     result1 = ''
@@ -157,12 +170,17 @@ def ap_data_table_creation(h):
     user_id = html.req.session["user_id"]
     bll_obj = APAdvancedGraph()
     controller_dict = bll_obj.ap_data_table(
-        user_id, ip_address, cal1, tab1, field1, table_name1, graph_name1, start_date, end_date, limitFlag, graph1, start1, limit1)
+        user_id, ip_address, cal1, tab1, field1, table_name1, graph_name1, start_date, end_date, limitFlag, graph1,
+        start1, limit1)
     html.req.content_type = 'application/json'
     html.req.write(str(JSONEncoder().encode(controller_dict)))
 
 
 def ap_advanced_excel_creating(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     result1 = ''
@@ -212,38 +230,17 @@ def ap_advanced_excel_creating(h):
     user_id = html.req.session["user_id"]
     bll_obj = APAdvancedGraph()
     controller_dict = bll_obj.advaeced_excel_report(
-        report_type, device_type, user_id, ip_address, cal1, tab1, field1, table_name1, graph_name1, start_date, end_date,
+        report_type, device_type, user_id, ip_address, cal1, tab1, field1, table_name1, graph_name1, start_date,
+        end_date,
         limitFlag, graph1, start1, limit1)
     html.write(str(controller_dict))
 
 
-def page_tip_advanced_dashboard(h):
-    global html
-    html = h
-    html_view = ""
-    html_view = ""\
-        "<div id=\"help_container\">"\
-        "<h1>Historical Graph</h1>"\
-        "<div>This <strong>Dashboard</strong> show all device statistics historical information by graph and table.</div>"\
-        "<br/>"\
-        "<div class=\"action-tip\"><div class=\"img-div\"><img style=\"width:16px;height:16px;\" src=\"images/{0}/round_plus.png\"/></div><div class=\"txt-div\">Show device satistics name.</div></div>"\
-        "<br/>"\
-        "<div class=\"action-tip\"><div class=\"img-div\"><img style=\"width:16px;height:16px;\" src=\"images/{0}/round_minus.png\"/></div><div class=\"txt-div\">Hide device satistics name.</div></div>"\
-        "<br/>"\
-        "<div class=\"action-tip\"><div class=\"img-div img-div2\"><img style=\"width:16px;height:16px;\" src=\"images/device-down.gif\"/></div><div class=\"txt-div\">Device Unreachable.</div></div>"\
-        "<br/>"\
-        "<div class=\"action-tip\"><div class=\"img-div\"><img style=\"width:16px;height:16px;\" src=\"images/back.jpeg\"/></div><div class=\"txt-div\">Back to device dashboard page.</div></div>"\
-        "<br/>"\
-        "<div><button id=\"advancedSrh\" class=\"yo-button yo-small\" style=\"margin-top: 5px;\" type=\"submit\">\
-	<span>Go</span>\
-	</button>This button show the device information by graph on click event correspondence to data and time. </div>"\
-        "<div><button id=\"odu_report_btn\" class=\"yo-button\" style=\"margin-top: 5px;\" type=\"submit\"><span class=\"report\">Report</span></button>Download the Excel report.</div>"\
-        "<br/>"\
-        "<div><button id=\"odu_report_btn\" class=\"yo-button\" style=\"margin-top: 5px;\" type=\"submit\"><span class=\"report\">CSV Report</span></button>Download the CSV report.</div>"\
-        "<br/>\
-        <br/>\
-        <div><strong>Note:</strong>This page show real time information of device and this page refresh itself on 5 min time interval.\
-        report button provide Excel of all display information by graph \
-        </div>"\
-        "</div>".format(theme)
-    html.write(str(html_view))
+# def page_tip_advanced_dashboard(h):
+#     global html
+#     html = h
+#     import defaults
+#     f = open(defaults.web_dir + "/htdocs/locale/page_tip_advanced_dashboard.html", "r")
+#     html_view = f.read()
+#     f.close()
+#     html.write(str(html_view))

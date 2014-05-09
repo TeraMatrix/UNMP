@@ -1,24 +1,11 @@
 #!/usr/bin/python2.6
 
-import config
-import htmllib
-import pprint
-import sidebar
-import views
-import time
-import defaults
-import os
-import cgi
-import xml.dom.minidom
-import subprocess
 import datetime
+
 import MySQLdb
-from xml.dom.minidom import parse, Node
+
 from lib import *
 from nms_config import *
-import datetime
-import time
-
 
 now = datetime.datetime.now()
 end_date = now.strftime("%d/%m/%Y")
@@ -32,7 +19,7 @@ def performance_history(h):
     global start_date
     global end_date
     css_list = ["css/style.css", "calendrical/calendrical.css"]
-    js_list = ["js/performance.js", "calendrical/calendrical.js"]
+    js_list = ["js/unmp/main/performance.js", "calendrical/calendrical.js"]
     html.new_header("Performance History", "", "", css_list, js_list)
     html.write("<div id=\"host_list_start\">")
     html.write("<table class=addform>")
@@ -42,7 +29,8 @@ def performance_history(h):
     html.write("<td> Date Range")
     html.write("</td>")
     html.write(
-        "<td> <input type=\"text\" id=\"start_date\" value=\"%s\"/>&nbsp;To&nbsp; <input type=\"text\" id=\"end_date\" value=\"%s\"/>&nbsp; <input type=\"button\" id =\"submit_date\" class=\"dated\" value=\"submit\"/>" % (start_date, end_date))
+        "<td> <input type=\"text\" id=\"start_date\" value=\"%s\"/>&nbsp;To&nbsp; <input type=\"text\" id=\"end_date\" value=\"%s\"/>&nbsp; <input type=\"button\" id =\"submit_date\" class=\"dated\" value=\"submit\"/>" % (
+        start_date, end_date))
     html.write("</td>")
     html.write("</tr>")
     html.write("</table>")
@@ -78,21 +66,22 @@ def service_status(h):
     # SQL Query for Fething data
     if (html.var("start_date") and html.var("end_date")) != None:
         start_date_list = html.var("start_date").split("/")
-        start_date_val =     start_date_list[2] + "-" + \
-            start_date_list[1] + "-" + start_date_list[0] + " 00:00:00"
+        start_date_val = start_date_list[2] + "-" + \
+                         start_date_list[1] + "-" + start_date_list[0] + " 00:00:00"
 
         end_date_list = html.var("end_date").split("/")
         end_date_val = end_date_list[2] + "-" + end_date_list[1] + "-" + \
-            end_date_list[0] + " 23:59:59"
+                       end_date_list[0] + " 23:59:59"
     else:
         start_date_list = (start_date).split("/")
         start_date_val = start_date_list[2] + "-" + start_date_list[
             1] + "-" + start_date_list[0] + " 00:00:00"
         end_date_list = (end_date).split("/")
         end_date_val = end_date_list[2] + "-" + end_date_list[1] + "-" + \
-            end_date_list[0] + " 23:59:59"
+                       end_date_list[0] + " 23:59:59"
 
-    sql_service = "SELECT nagios_services.display_name As Service,nagios_hosts.display_name AS Host,nagios_statehistory.state_time,nagios_statehistory.state,nagios_statehistory.output FROM nagios_services INNER JOIN nagios_hosts ON nagios_services.host_object_id=nagios_hosts.host_object_id INNER JOIN nagios_statehistory ON nagios_services.service_object_id=nagios_statehistory.object_id where((nagios_hosts.display_name= '%s') and (nagios_statehistory.state_time between '%s' and '%s'))  ORDER BY nagios_hosts.display_name,nagios_services.display_name, nagios_statehistory.state_time desc " % (host_name, start_date_val, end_date_val)
+    sql_service = "SELECT nagios_services.display_name As Service,nagios_hosts.display_name AS Host,nagios_statehistory.state_time,nagios_statehistory.state,nagios_statehistory.output FROM nagios_services INNER JOIN nagios_hosts ON nagios_services.host_object_id=nagios_hosts.host_object_id INNER JOIN nagios_statehistory ON nagios_services.service_object_id=nagios_statehistory.object_id where((nagios_hosts.display_name= '%s') and (nagios_statehistory.state_time between '%s' and '%s'))  ORDER BY nagios_hosts.display_name,nagios_services.display_name, nagios_statehistory.state_time desc " % (
+    host_name, start_date_val, end_date_val)
     # Execute Query
     cursor.execute(sql_service)
     result = cursor.fetchall()
@@ -129,12 +118,14 @@ def service_status(h):
                 html.write(
                     "<div class=\"bar-first\" style=\"width:%.2f%%;\">" % (ok_time_per))
                 html.write(
-                    "<div class=\"bar-second\">%.2f%% OK</div></div><div class=\"bar-second\"></div></div>" % (ok_time_per))
+                    "<div class=\"bar-second\">%.2f%% OK</div></div><div class=\"bar-second\"></div></div>" % (
+                    ok_time_per))
             elif crt_time_per >= 15 and crt_time_per <= 30:
                 html.write(
                     "<div class=\"bar-first\" style=\"width:%.2f%%;\">" % (ok_time_per))
-                html.write("<div class=\"bar-second\">%.2f%% OK</div></div><div class=\"bar-second\">%.2f%%</div></div>" % (
-                    ok_time_per, crt_time_per))
+                html.write(
+                    "<div class=\"bar-second\">%.2f%% OK</div></div><div class=\"bar-second\">%.2f%%</div></div>" % (
+                        ok_time_per, crt_time_per))
             else:
                 if ok_time_per < 15:
                     if ok_time_per == 0:
@@ -142,17 +133,20 @@ def service_status(h):
                     html.write(
                         "<div class=\"bar-first\" style=\"width:%.2f%%;\">" % (ok_time_per))
                     html.write(
-                        "<div class=\"bar-second\"></div></div><div class=\"bar-second\">%.2f%% Critical</div></div>" % (crt_time_per))
+                        "<div class=\"bar-second\"></div></div><div class=\"bar-second\">%.2f%% Critical</div></div>" % (
+                        crt_time_per))
                 elif ok_time_per >= 15 and ok_time_per <= 30:
                     html.write(
                         "<div class=\"bar-first\" style=\"width:%.2f%%;\">" % (ok_time_per))
-                    html.write("<div class=\"bar-second\">%.2f%%</div></div><div class=\"bar-second\">%.2f%% Critical</div></div>" % (
-                        ok_time_per, crt_time_per))
+                    html.write(
+                        "<div class=\"bar-second\">%.2f%%</div></div><div class=\"bar-second\">%.2f%% Critical</div></div>" % (
+                            ok_time_per, crt_time_per))
                 else:
                     html.write(
                         "<div class=\"bar-first\" style=\"width:%.2f%%;\">" % (ok_time_per))
-                    html.write("<div class=\"bar-second\">%.2f%% OK</div></div><div class=\"bar-second\">%.2f%% Critical</div></div>" % (
-                        ok_time_per, crt_time_per))
+                    html.write(
+                        "<div class=\"bar-second\">%.2f%% OK</div></div><div class=\"bar-second\">%.2f%% Critical</div></div>" % (
+                            ok_time_per, crt_time_per))
 
             html.write("</td>")
             html.write("</tr>")
@@ -203,17 +197,21 @@ def service_status(h):
                     crt_time_per = 100
                 html.write(
                     "<div class=\"bar-first\" style=\"width:%.2f%%;\">" % (ok_time_per))
-                html.write("<div class=\"bar-second\"></div></div><div class=\"bar-second\">%.2f%% Critical</div></div>" % (crt_time_per))
+                html.write(
+                    "<div class=\"bar-second\"></div></div><div class=\"bar-second\">%.2f%% Critical</div></div>" % (
+                    crt_time_per))
             elif ok_time_per >= 15 and ok_time_per <= 30:
                 html.write(
                     "<div class=\"bar-first\" style=\"width:%.2f%%;\">" % (ok_time_per))
-                html.write("<div class=\"bar-second\">%.2f%%</div></div><div class=\"bar-second\">%.2f%% Critical</div></div>" % (
-                    ok_time_per, crt_time_per))
+                html.write(
+                    "<div class=\"bar-second\">%.2f%%</div></div><div class=\"bar-second\">%.2f%% Critical</div></div>" % (
+                        ok_time_per, crt_time_per))
             else:
                 html.write(
                     "<div class=\"bar-first\" style=\"width:%.2f%%;\">" % (ok_time_per))
-                html.write("<div class=\"bar-second\">%.2f%% OK</div></div><div class=\"bar-second\">%.2f%% Critical</div></div>" % (
-                    ok_time_per, crt_time_per))
+                html.write(
+                    "<div class=\"bar-second\">%.2f%% OK</div></div><div class=\"bar-second\">%.2f%% Critical</div></div>" % (
+                        ok_time_per, crt_time_per))
         html.write("</td>")
         html.write("</tr>")
     else:
@@ -244,20 +242,20 @@ def host_history(h):
     current_host_list = ""
     history_host_list = ""
     # SQL Query for Fething data
-##    sql_host_list = "SELECT DISTINCT host_object_id FROM nagios_hoststatus"
-##    sql_hiostory_host_list = "SELECT DISTINCT object_id FROM `nagios_statehistory"
-##    cursor.execute(sql_host_list)
-##    history_host_list=cursor.fetchall()
-##    cursor.close()
-##    cursor=db.cursor()
-##    cursor.execute(sql_hiostory_host_list)
-##    current_host_list=cursor.fetchall()
-##    cursor.close()
-##    for i in current_host_list:
-##        if i in history_host_list:
-##            html.write(str(i)+' Exists<br/>')
-##        else:
-##            html.write(str(i)+'<br/>')
+    ##    sql_host_list = "SELECT DISTINCT host_object_id FROM nagios_hoststatus"
+    ##    sql_hiostory_host_list = "SELECT DISTINCT object_id FROM `nagios_statehistory"
+    ##    cursor.execute(sql_host_list)
+    ##    history_host_list=cursor.fetchall()
+    ##    cursor.close()
+    ##    cursor=db.cursor()
+    ##    cursor.execute(sql_hiostory_host_list)
+    ##    current_host_list=cursor.fetchall()
+    ##    cursor.close()
+    ##    for i in current_host_list:
+    ##        if i in history_host_list:
+    ##            html.write(str(i)+' Exists<br/>')
+    ##        else:
+    ##            html.write(str(i)+'<br/>')
     if (html.var("start_date") and html.var("end_date")) != None:
         start_date_list = html.var("start_date").split("/")
         start_date_val = start_date_list[2] + "-" + start_date_list[
@@ -265,7 +263,7 @@ def host_history(h):
 
         end_date_list = html.var("end_date").split("/")
         end_date_val = end_date_list[2] + "-" + end_date_list[1] + "-" + \
-            end_date_list[0] + " 23:59:59"
+                       end_date_list[0] + " 23:59:59"
 
     else:
         start_date_list = (start_date).split("/")
@@ -273,13 +271,13 @@ def host_history(h):
             1] + "-" + start_date_list[0] + " 00:00:00"
         end_date_list = (end_date).split("/")
         end_date_val = end_date_list[2] + "-" + end_date_list[1] + "-" + \
-            end_date_list[0] + " 23:59:59"
+                       end_date_list[0] + " 23:59:59"
     sql = "SELECT nagios_hosts.display_name, nagios_statehistory.output, nagios_statehistory.state_time ,nagios_statehistory.state \
     FROM nagios_hosts INNER JOIN nagios_hoststatus ON nagios_hosts.host_object_id = nagios_hoststatus.host_object_id \
     INNER JOIN nagios_statehistory ON nagios_statehistory.object_id = nagios_hosts.host_object_id \
     where nagios_statehistory.state_time between '%s' and '%s'\
     order by nagios_hosts.display_name,nagios_statehistory.state_time desc " % (start_date_val, end_date_val)
-##    cursor=db.cursor()
+    ##    cursor=db.cursor()
     # Execute Query
     cursor.execute(sql)
 
@@ -318,30 +316,36 @@ def host_history(h):
                     ok_time_per = 100
                 html.write(
                     "<div class=\"bar-first\" style=\"width:%.2f%%;\">" % (ok_time_per))
-                html.write("<div class=\"bar-second\">%.2f%% Up</div></div><div class=\"bar-second\" title=\"%s%% Down\"></div></div>" %
-                           (ok_time_per, crt_time_per))
+                html.write(
+                    "<div class=\"bar-second\">%.2f%% Up</div></div><div class=\"bar-second\" title=\"%s%% Down\"></div></div>" %
+                    (ok_time_per, crt_time_per))
             elif crt_time_per >= 15 and crt_time_per <= 30:
                 html.write(
                     "<div class=\"bar-first\" style=\"width:%.2f%%;\">" % (ok_time_per))
-                html.write("<div class=\"bar-second\">%.2f%% Up</div></div><div class=\"bar-second\">%.2f%%</div></div>" % (
-                    ok_time_per, crt_time_per))
+                html.write(
+                    "<div class=\"bar-second\">%.2f%% Up</div></div><div class=\"bar-second\">%.2f%%</div></div>" % (
+                        ok_time_per, crt_time_per))
             else:
                 if ok_time_per < 15:
                     if ok_time_per == 0:
                         crt_time_per = 100
                     html.write(
                         "<div class=\"bar-first\" style=\"width:%.2f%%;\">" % (ok_time_per))
-                    html.write("<div class=\"bar-second\"></div></div><div class=\"bar-second\">%.2f%% Down</div></div>" % (crt_time_per))
+                    html.write(
+                        "<div class=\"bar-second\"></div></div><div class=\"bar-second\">%.2f%% Down</div></div>" % (
+                        crt_time_per))
                 elif ok_time_per >= 15 and ok_time_per <= 30:
                     html.write(
                         "<div class=\"bar-first\" style=\"width:%.2f%%;\">" % (ok_time_per))
-                    html.write("<div class=\"bar-second\">%.2f%%</div></div><div class=\"bar-second\">%.2f%% Down</div></div>" % (
-                        ok_time_per, crt_time_per))
+                    html.write(
+                        "<div class=\"bar-second\">%.2f%%</div></div><div class=\"bar-second\">%.2f%% Down</div></div>" % (
+                            ok_time_per, crt_time_per))
                 else:
                     html.write(
                         "<div class=\"bar-first\" style=\"width:%.2f%%;\">" % (ok_time_per))
-                    html.write("<div class=\"bar-second\">%.2f%% Up</div></div><div class=\"bar-second\">%.2f%% Down</div></div>" % (
-                        ok_time_per, crt_time_per))
+                    html.write(
+                        "<div class=\"bar-second\">%.2f%% Up</div></div><div class=\"bar-second\">%.2f%% Down</div></div>" % (
+                            ok_time_per, crt_time_per))
 
             html.write("</td>")
             html.write("</tr>")
@@ -392,17 +396,20 @@ def host_history(h):
                 html.write(
                     "<div class=\"bar-first\" style=\"width:%.2f%%;\">" % (ok_time_per))
                 html.write(
-                    "<div class=\"bar-second\"></div></div><div class=\"bar-second\">%.2f%% Down</div></div>" % (crt_time_per))
+                    "<div class=\"bar-second\"></div></div><div class=\"bar-second\">%.2f%% Down</div></div>" % (
+                    crt_time_per))
             elif ok_time_per >= 15 and ok_time_per <= 30:
                 html.write(
                     "<div class=\"bar-first\" style=\"width:%.2f%%;\">" % (ok_time_per))
-                html.write("<div class=\"bar-second\">%.2f%%</div></div><div class=\"bar-second\">%.2f%% Down</div></div>" %
-                           (ok_time_per, crt_time_per))
+                html.write(
+                    "<div class=\"bar-second\">%.2f%%</div></div><div class=\"bar-second\">%.2f%% Down</div></div>" %
+                    (ok_time_per, crt_time_per))
             else:
                 html.write(
                     "<div class=\"bar-first\" style=\"width:%.2f%%;\">" % (ok_time_per))
-                html.write("<div class=\"bar-second\">%.2f%% Up</div></div><div class=\"bar-second\">%.2f%% Down</div></div>" %
-                           (ok_time_per, crt_time_per))
+                html.write(
+                    "<div class=\"bar-second\">%.2f%% Up</div></div><div class=\"bar-second\">%.2f%% Down</div></div>" %
+                    (ok_time_per, crt_time_per))
         html.write("</td>")
         html.write("</tr>")
     else:

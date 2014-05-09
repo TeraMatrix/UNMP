@@ -1,0 +1,48 @@
+<html>
+<head>
+    <title>Help: Advanced Dashboard</title>
+    <link href="css/example.css" />
+</head>
+<body>
+<div id="help_container">
+    <h1>Device Dashboard</h1>
+
+    <div>For visualization of Performance parameters of the selected host.</div>
+    <br/>
+    <br/>
+    <h3>Symbols & Meanings</h3>
+    <div class="action-tip">
+        <div class="img-div"><img style="width:16px;height:16px;" src="images/back.jpeg"/></div>
+        <div class="txt-div">Back to current status page.</div>
+    </div>
+    <br/>
+    <h3>Action Buttons & Usage</h3>
+    <div><input class="yo-button yo-small" type="button" style="width: 30px;" value="Search" name="odu_graph_show">
+        Search the Desired Host to view the Performance Parameters.
+    </div>
+    <div><input class="yo-button yo-small" type="button" style="width: 50px;" value="Configuration"
+                name="odu_graph_show"> Customize the Performance Dashboard by adding or removing parameters as desired.
+    </div>
+    <br/>
+        <div><input class="yo-button yo-small" type="button" style="width: 30px;" value="Historical Status"
+                name="odu_graph_show"> Go to the Historic performance data of the Host.
+    </div>
+    <br/>
+    <div>
+        <button id="odu_report_btn" class="yo-button" style="margin-top: 5px;" type="button"><span
+                class="report">Report</span></button>: Use for Downloading the Excel report for the Performance parameters displayed on the dashboard.
+    </div>
+    <br/>
+    <div>
+        <button id="odu_report_btn" class="yo-button" style="margin-top: 5px;" type="button"><span class="report">CSV Report</span>
+        </button>: Use for Downloading the CSV report for the Performance parameters displayed on the dashboard.
+    </div>
+    <br/>
+    <br/>
+    <div><strong>Note:</strong>This page show real time information of the Host. The refresh interval by default is 5 minutes.
+        <br/>
+        <strong>Note:</strong>Search button search Host by MAC address and IP address and show information by table.
+    </div>
+</div>
+</body>
+</html>

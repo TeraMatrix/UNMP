@@ -1,7 +1,7 @@
 #!/usr/bin/python2.6
 
 from unmp_model import *
-from utility import ErrorMessages, Validation, UNMPDeviceType
+from utility import UNMPDeviceType
 from unmp_config import SystemConfig
 from sqlalchemy import and_, or_, desc, asc
 from common_controller import *
@@ -9,12 +9,7 @@ from sqlalchemy.exc import *
 from sqlalchemy.orm.exc import *
 from pysnmp_ap import pysnmp_get_table
 from py_module import snmp_ping
-from common_bll import EventLog
-from datetime import datetime
-from utility import UNMPDeviceType
-from unmp_config import SystemConfig
 from ap_profiling_bll import errorStatus
-from unmp_config import SystemConfig
 import ftplib
 
 oid_dict = {'peerNodeStatus': '1.3.6.1.4.1.26149.2.2.13.9.2.1',
@@ -22,14 +17,14 @@ oid_dict = {'peerNodeStatus': '1.3.6.1.4.1.26149.2.2.13.9.2.1',
 
 
 class DeviceParameters(object):
-
     def get_device_parameter(self, host_id):
         global sqlalche_obj
         try:
             sqlalche_obj.sql_alchemy_db_connection_open()
             device_list_param = []
             device_list_param = sqlalche_obj.session.query(
-                Hosts.ip_address, Hosts.mac_address, Hosts.device_type_id, Hosts.config_profile_id).filter(Hosts.host_id == host_id).all()
+                Hosts.ip_address, Hosts.mac_address, Hosts.device_type_id, Hosts.config_profile_id).filter(
+                Hosts.host_id == host_id).all()
             if device_list_param == None:
                 device_list_param = []
             return device_list_param
@@ -51,8 +46,10 @@ class DeviceParameters(object):
             # this is the query which returns the multidimensional array of
             # hosts table and store in device_tuple
             device_list = sqlalche_obj.session.query(
-                Hosts.host_id, Hosts.host_alias, Hosts.ip_address, Hosts.mac_address).filter(and_(Hosts.is_deleted == 0, Hosts.ip_address.like('%s%%' % (ip_address)),
-                                                                                                  Hosts.mac_address.like('%s%%' % (mac_address)), Hosts.device_type_id == device_type)).order_by(Hosts.host_alias).order_by(Hosts.ip_address).all()
+                Hosts.host_id, Hosts.host_alias, Hosts.ip_address, Hosts.mac_address).filter(
+                and_(Hosts.is_deleted == 0, Hosts.ip_address.like('%s%%' % (ip_address)),
+                     Hosts.mac_address.like('%s%%' % (mac_address)), Hosts.device_type_id == device_type)).order_by(
+                Hosts.host_alias).order_by(Hosts.ip_address).all()
             return device_list
         except Exception as e:
             sqlalche_obj.sql_alchemy_db_connection_close()
@@ -62,7 +59,6 @@ class DeviceParameters(object):
 
 
 class FirmwareUpdate(object):
-
     def get_node_type(self, host_id, device_type):
         global sqlalche_obj
         sqlalche_obj.sql_alchemy_db_connection_open()
@@ -71,7 +67,7 @@ class FirmwareUpdate(object):
             Hosts.config_profile_id).filter(Hosts.host_id == host_id).all()
         if len(host_data) > 0:
             config_profile_id = "" if host_data[
-                0].config_profile_id == None else host_data[0].config_profile_id
+                                          0].config_profile_id == None else host_data[0].config_profile_id
         if device_type == UNMPDeviceType.odu16:
             default_node_type = sqlalche_obj.session.query(
                 GetOdu16_ru_conf_table.default_node_type).filter(GetOdu16_ru_conf_table.host_id == host_id).all()
@@ -101,27 +97,34 @@ class FirmwareUpdate(object):
         if len(master_slave_linking) > 0:
             for i in range(0, len(master_slave_linking)):
                 slave_host_data = sqlalche_obj.session.query(
-                    Hosts.ip_address, Hosts.mac_address, Hosts.host_name, Hosts.host_asset_id).filter(Hosts.host_id == master_slave_linking[i][0]).all()
+                    Hosts.ip_address, Hosts.mac_address, Hosts.host_name, Hosts.host_asset_id).filter(
+                    Hosts.host_id == master_slave_linking[i][0]).all()
                 slave_firmware_data = sqlalche_obj.session.query(
                     HostAssets.firmware_status, HostAssets.firmware_type, HostAssets.firmware_file_name,
-                    HostAssets.firmware_file_path).filter(HostAssets.host_asset_id == slave_host_data[0].host_asset_id).all()
+                    HostAssets.firmware_file_path).filter(
+                    HostAssets.host_asset_id == slave_host_data[0].host_asset_id).all()
                 master_slave_list.append(
                     {'node_type': 1, 'ip_address': slave_host_data[0].ip_address if len(slave_host_data) > 0 else "--",
                      'mac_address': slave_host_data[0].mac_address if len(slave_host_data) > 0 else "--",
                      'link_status': 0,
                      'tunnel_status': 2,
-                     'firmware_status': "--" if slave_firmware_data[0].firmware_status == None else slave_firmware_data[0].firmware_status if len(slave_firmware_data) > 0 else "--",
-                                        'firmware_type': "--" if slave_firmware_data[0].firmware_type == None else slave_firmware_data[0].firmware_type if len(slave_firmware_data) > 0 else "--",
-                                        'firmware_status': "--" if slave_firmware_data[0].firmware_status == None else slave_firmware_data[0].firmware_status if len(slave_firmware_data) > 0 else "--",
-                                        'firmware_file_name': "--" if slave_firmware_data[0].firmware_file_name == None else slave_firmware_data[0].firmware_file_name if len(slave_firmware_data) > 0 else "--",
-                                        'firmware_file_path': "--" if slave_firmware_data[0].firmware_file_path == None else slave_firmware_data[0].firmware_file_path if len(slave_firmware_data) > 0 else "--",
-                                        'host_id': str(master_slave_linking[i][0]), 'found': 0})
+                     'firmware_status': "--" if slave_firmware_data[0].firmware_status == None else slave_firmware_data[
+                         0].firmware_status if len(slave_firmware_data) > 0 else "--",
+                     'firmware_type': "--" if slave_firmware_data[0].firmware_type == None else slave_firmware_data[
+                         0].firmware_type if len(slave_firmware_data) > 0 else "--",
+                     'firmware_status': "--" if slave_firmware_data[0].firmware_status == None else slave_firmware_data[
+                         0].firmware_status if len(slave_firmware_data) > 0 else "--",
+                     'firmware_file_name': "--" if slave_firmware_data[0].firmware_file_name == None else
+                     slave_firmware_data[0].firmware_file_name if len(slave_firmware_data) > 0 else "--",
+                     'firmware_file_path': "--" if slave_firmware_data[0].firmware_file_path == None else
+                     slave_firmware_data[0].firmware_file_path if len(slave_firmware_data) > 0 else "--",
+                     'host_id': str(master_slave_linking[i][0]), 'found': 0})
 
         host_data = sqlalche_obj.session.query(
             Hosts.ip_address, Hosts.snmp_port, Hosts.snmp_read_community, Hosts.mac_address,
             Hosts.host_name).filter(Hosts.host_id == master_host_id).all()
         request_ping = snmp_ping(host_data[0].ip_address, host_data[0]
-                                 .snmp_read_community, int(host_data[0].snmp_port))
+        .snmp_read_community, int(host_data[0].snmp_port))
         if int(request_ping) == 0:
             tunnel_status = 1
             link_status = 2
@@ -130,20 +133,28 @@ class FirmwareUpdate(object):
             link_status = 0
 
         master_host_data = sqlalche_obj.session.query(
-            Hosts.ip_address, Hosts.mac_address, Hosts.host_name, Hosts.host_asset_id).filter(Hosts.host_id == master_host_id).all()
-        master_firmware_data = sqlalche_obj.session.query(HostAssets.firmware_status, HostAssets.firmware_type, HostAssets.firmware_file_name, HostAssets.firmware_file_path).filter(
+            Hosts.ip_address, Hosts.mac_address, Hosts.host_name, Hosts.host_asset_id).filter(
+            Hosts.host_id == master_host_id).all()
+        master_firmware_data = sqlalche_obj.session.query(HostAssets.firmware_status, HostAssets.firmware_type,
+                                                          HostAssets.firmware_file_name,
+                                                          HostAssets.firmware_file_path).filter(
             HostAssets.host_asset_id == master_host_data[0].host_asset_id).all()
         master_slave_list.append(
             {'node_type': 0, 'ip_address': master_host_data[0].ip_address if len(master_host_data) > 0 else "--",
              'mac_address': master_host_data[0].mac_address if len(master_host_data) > 0 else "--",
              'link_status': link_status,
              'tunnel_status': tunnel_status,
-             'firmware_status': "--" if master_firmware_data[0].firmware_status == None else master_firmware_data[0].firmware_status if len(master_firmware_data) > 0 else "--",
-                                'firmware_type': "--" if master_firmware_data[0].firmware_type == None else master_firmware_data[0].firmware_type if len(master_firmware_data) > 0 else "--",
-                                'firmware_status': "--" if master_firmware_data[0].firmware_status == None else master_firmware_data[0].firmware_status if len(master_firmware_data) > 0 else "--",
-                                'firmware_file_name': "--" if master_firmware_data[0].firmware_file_name == None else master_firmware_data[0].firmware_file_name if len(master_firmware_data) > 0 else "--",
-                                'firmware_file_path': "--" if master_firmware_data[0].firmware_file_path == None else master_firmware_data[0].firmware_file_path if len(master_firmware_data) > 0 else "--",
-                                'host_id': master_host_id, 'found': 0})
+             'firmware_status': "--" if master_firmware_data[0].firmware_status == None else master_firmware_data[
+                 0].firmware_status if len(master_firmware_data) > 0 else "--",
+             'firmware_type': "--" if master_firmware_data[0].firmware_type == None else master_firmware_data[
+                 0].firmware_type if len(master_firmware_data) > 0 else "--",
+             'firmware_status': "--" if master_firmware_data[0].firmware_status == None else master_firmware_data[
+                 0].firmware_status if len(master_firmware_data) > 0 else "--",
+             'firmware_file_name': "--" if master_firmware_data[0].firmware_file_name == None else master_firmware_data[
+                 0].firmware_file_name if len(master_firmware_data) > 0 else "--",
+             'firmware_file_path': "--" if master_firmware_data[0].firmware_file_path == None else master_firmware_data[
+                 0].firmware_file_path if len(master_firmware_data) > 0 else "--",
+             'host_id': master_host_id, 'found': 0})
         return master_slave_list
 
     def get_master_slave_linking(self, master_id):
@@ -193,7 +204,7 @@ class FirmwareUpdate(object):
             Hosts.mac_address).filter(Hosts.host_id == master_host_id).all()
         if len(host_data) > 0:
             request_ping = snmp_ping(host_data[0].ip_address, host_data[0]
-                                     .snmp_read_community, int(host_data[0].snmp_port))
+            .snmp_read_community, int(host_data[0].snmp_port))
             if request_ping == 0:
                 result = 1
             elif request_ping == 1:
@@ -213,7 +224,8 @@ class FirmwareUpdate(object):
                                         macAddress = j["mac_address"] + ","
                                         if macAddress in result_peer_node_status["result"][i]:
                                             mac_address_dic[j["mac_address"]] = [
-                                                result_peer_node_status["result"][i][2], result_peer_node_status["result"][i][3]]
+                                                result_peer_node_status["result"][i][2],
+                                                result_peer_node_status["result"][i][3]]
                                         else:
                                             continue
                     if len(mac_address_dic) == 0:
@@ -224,25 +236,45 @@ class FirmwareUpdate(object):
                                 if i["mac_address"] in mac_address_dic:
                                     if device_type == UNMPDeviceType.odu16:
                                         slave_host_id = sqlalche_obj.session.query(
-                                            GetOdu16RaStatusTable.host_id).filter(GetOdu16RaStatusTable.ra_mac_address == '%s' % (i["mac_address"])).all()
+                                            GetOdu16RaStatusTable.host_id).filter(
+                                            GetOdu16RaStatusTable.ra_mac_address == '%s' % (i["mac_address"])).all()
                                     else:
                                         slave_host_id = sqlalche_obj.session.query(
-                                            Odu100RaStatusTable.host_id).filter(Odu100RaStatusTable.raMacAddress == '%s' % (i["mac_address"])).all()
+                                            Odu100RaStatusTable.host_id).filter(
+                                            Odu100RaStatusTable.raMacAddress == '%s' % (i["mac_address"])).all()
                                 if len(slave_host_id) > 0:
-                                    slave_host_data = sqlalche_obj.session.query(Hosts.ip_address, Hosts.mac_address, Hosts.host_name, Hosts.host_asset_id).filter(
+                                    slave_host_data = sqlalche_obj.session.query(Hosts.ip_address, Hosts.mac_address,
+                                                                                 Hosts.host_name,
+                                                                                 Hosts.host_asset_id).filter(
                                         Hosts.host_id == slave_host_id[0].host_id).all()
-                                    slave_firmware_data = sqlalche_obj.session.query(HostAssets.firmware_status, HostAssets.firmware_type, HostAssets.firmware_file_name,
-                                                                                     HostAssets.firmware_file_path).filter(HostAssets.host_asset_id == slave_host_data[0].host_asset_id).all()
+                                    slave_firmware_data = sqlalche_obj.session.query(HostAssets.firmware_status,
+                                                                                     HostAssets.firmware_type,
+                                                                                     HostAssets.firmware_file_name,
+                                                                                     HostAssets.firmware_file_path).filter(
+                                        HostAssets.host_asset_id == slave_host_data[0].host_asset_id).all()
                                     slave_list.append(
-                                        {'node_type': 1, 'ip_address': slave_host_data[0].ip_address if len(slave_host_data) > 0 else "--",
-                                         'mac_address': slave_host_data[0].mac_address if len(slave_host_data) > 0 else "--",
+                                        {'node_type': 1, 'ip_address': slave_host_data[0].ip_address if len(
+                                            slave_host_data) > 0 else "--",
+                                         'mac_address': slave_host_data[0].mac_address if len(
+                                             slave_host_data) > 0 else "--",
                                          'link_status': mac_address_dic[i["mac_address"]][0],
                                          'tunnel_status': mac_address_dic[i["mac_address"]][1],
-                                         'firmware_status': "--" if slave_firmware_data[0].firmware_status == None else slave_firmware_data[0].firmware_status if len(slave_firmware_data) > 0 else "--",
-                                         'firmware_type': "--" if slave_firmware_data[0].firmware_type == None else slave_firmware_data[0].firmware_type if len(slave_firmware_data) > 0 else "--",
-                                         'firmware_status': "--" if slave_firmware_data[0].firmware_status == None else slave_firmware_data[0].firmware_status if len(slave_firmware_data) > 0 else "--",
-                                         'firmware_file_name': "--" if slave_firmware_data[0].firmware_file_name == None else slave_firmware_data[0].firmware_file_name if len(slave_firmware_data) > 0 else "--",
-                                         'firmware_file_path': "--" if slave_firmware_data[0].firmware_file_path == None else slave_firmware_data[0].firmware_file_path if len(slave_firmware_data) > 0 else "--",
+                                         'firmware_status': "--" if slave_firmware_data[0].firmware_status == None else
+                                         slave_firmware_data[0].firmware_status if len(
+                                             slave_firmware_data) > 0 else "--",
+                                         'firmware_type': "--" if slave_firmware_data[0].firmware_type == None else
+                                         slave_firmware_data[0].firmware_type if len(slave_firmware_data) > 0 else "--",
+                                         'firmware_status': "--" if slave_firmware_data[0].firmware_status == None else
+                                         slave_firmware_data[0].firmware_status if len(
+                                             slave_firmware_data) > 0 else "--",
+                                         'firmware_file_name': "--" if slave_firmware_data[
+                                                                           0].firmware_file_name == None else
+                                         slave_firmware_data[0].firmware_file_name if len(
+                                             slave_firmware_data) > 0 else "--",
+                                         'firmware_file_path': "--" if slave_firmware_data[
+                                                                           0].firmware_file_path == None else
+                                         slave_firmware_data[0].firmware_file_path if len(
+                                             slave_firmware_data) > 0 else "--",
                                          'host_id': str(slave_host_id[0].host_id), 'found': found})
                                 else:
                                     discovered_host_exist = sqlalche_obj.session.query(DiscoveredHosts).filter(
@@ -291,7 +323,8 @@ class FirmwareUpdate(object):
         sqlalche_obj.sql_alchemy_db_connection_open()
         firmware_table = []
         firmware_table = sqlalche_obj.session.query(
-            FirmwareListTable.firmware_file_name, FirmwareListTable.firmware_file_path).filter(FirmwareListTable.device_type == device_type).all()
+            FirmwareListTable.firmware_file_name, FirmwareListTable.firmware_file_path).filter(
+            FirmwareListTable.device_type == device_type).all()
         sqlalche_obj.sql_alchemy_db_connection_close()
         return firmware_table
 
@@ -311,7 +344,7 @@ class FirmwareUpdate(object):
             except ftplib.all_errors, e:
                 errorcode_string = str(e).split(None, 1)
                 final_result = {"success": 1, "result":
-                                errorcode_string[1] + " Please Retry Again"}
+                    errorcode_string[1] + " Please Retry Again"}
             else:
                 try:
                     f.cwd("/unmp-ftp/%s" % (device_type))
@@ -323,14 +356,14 @@ class FirmwareUpdate(object):
                         'STOR /unmp-ftp/%s/%s' % (device_type, filename), fp)
                 except ftplib.all_errors, e:
                     final_result = {"success": 1, "result":
-                                    "File not uploaded successfully.Please retry again"}
+                        "File not uploaded successfully.Please retry again"}
                 if result == "226 Transfer complete.":
                     final_result = {"success": 0,
                                     "result": "File Uploaded SuccessFully"}
                     ftp_table = sqlalche_obj.session.query(
                         FirmwareListTable).filter(
-                            and_(FirmwareListTable.device_type == device_type,
-                                 FirmwareListTable.firmware_file_name == filename)).all()
+                        and_(FirmwareListTable.device_type == device_type,
+                             FirmwareListTable.firmware_file_name == filename)).all()
                     if len(ftp_table) == 0:
                         table_insert = FirmwareListTable(
                             device_type, filename, file_path)
@@ -340,7 +373,7 @@ class FirmwareUpdate(object):
                     sqlalche_obj.session.commit()
                 else:
                     final_result = {"success": 1, "result":
-                                    "File not uploaded successfully.Please retry again"}
+                        "File not uploaded successfully.Please retry again"}
             return final_result
         except Exception as e:
             return str(e)

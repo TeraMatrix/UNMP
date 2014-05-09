@@ -1,16 +1,12 @@
 #!/usr/bin/python2.6
 
-from utility import ErrorMessages
-from common_controller import page_header_search, make_select_list_using_dictionary
-from firmware_view import *
-from firmware_bll import *
-from json import JSONEncoder
-from utility import Validation, ErrorMessages
-from time import sleep
-from json import JSONEncoder
-import pycurl
-from mod_python import apache, util
 from datetime import datetime
+from json import JSONEncoder
+
+from mod_python import util
+from common_controller import page_header_search
+from firmware_bll import *
+from firmware_view import *
 from utility import UNMPDeviceType
 
 
@@ -46,8 +42,8 @@ def firmware_update_device_show(h):
     # Define the page header e.g Odu Profiling
     css_list = ['css/ie7.css', 'css/custom.css',
                 'css/demo_table_jui.css', 'css/jquery-ui-1.8.4.custom.css']
-    jss_list = ['js/jquery.dataTables.min.js',
-                'js/firmware_updates.js', 'js/jquery-ui-personalized-1.6rc2.min.js']
+    jss_list = ['js/lib/main/jquery.dataTables.min.js',
+                'js/unmp/main/firmware_updates.js', 'js/lib/main/jquery-ui-personalized-1.6rc2.min.js']
 
     html.new_header("Firmware Update", "", "", css_list, jss_list)
     # Variable declaration#########################
@@ -79,12 +75,12 @@ def firmware_update_device_show(h):
         if host_param == [] or host_param == None:
             html.write(page_header_search(
                 "", "", "UBR,UBRe", None, "enabled", "device_type"))
-                       # call the function of common_controller , it is used
-                       # for listing the Devices based on
-                       # IPaddress,Macaddress,DeviceTy
+            # call the function of common_controller , it is used
+            # for listing the Devices based on
+            # IPaddress,Macaddress,DeviceTy
         else:
             html.write(page_header_search(host_param[0][0], host_param[0][1],
-                       "UBR,UBRe", device_type, device_list_state, "device_type"))
+                                          "UBR,UBRe", device_type, device_list_state, "device_type"))
         html.write((FirmwareUpdateView.firmware_div(host_id, device_type)))
     elif isinstance(host_param, Exception):
         html.write("DataBase Error Occured")
@@ -115,7 +111,7 @@ def firmware_master_slave_list(h):
         mac_address = ""
     else:
         mac_address = html.var("mac_address")
-    # take value of SelectedDevice from the page through html.var
+        # take value of SelectedDevice from the page through html.var
     # check that value is None Then It takes the empty string
     if html.var("selected_device_type") == None:
         selected_device = "odu"
@@ -239,7 +235,8 @@ def firmware_file_upload(h):
         html.write(
             "<p style=\"font-size:10px;\">Please select a file for Upload<br/><a href=\"javascript:history.go(-1);;\">back</a><p/>")
     elif flag == 2:
-        html.write("<p style=\"font-size:10px;\">Only img files are uploaded.Please Choose the correct file<br/><a href=\"javascript:history.go(-1);\">back</a><p/>")
+        html.write(
+            "<p style=\"font-size:10px;\">Only img files are uploaded.Please Choose the correct file<br/><a href=\"javascript:history.go(-1);\">back</a><p/>")
     elif flag == 3:
         html.write(
             "<p style=\"font-size:10px;\">Path not exist for uploading the file.Please contact your administrator<br/></p>")
@@ -247,4 +244,4 @@ def firmware_file_upload(h):
         html.write(
             "<p style=\"font-size:10px;\">Firmware Uploading....<br/>Please Wait....<p/>")
         html.write("<p style=\"font-size:10px;\">" + str(upload_file[
-                   "result"]) + "<br/><p/>")
+            "result"]) + "<br/><p/>")

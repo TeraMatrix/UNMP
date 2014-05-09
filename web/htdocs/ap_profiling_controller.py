@@ -13,7 +13,7 @@
 @copyright: 2011 Anuj Samariya from Codescape Consultants Pvt. Ltd.
 """
 from utility import ErrorMessages
-from common_controller import page_header_search, make_select_list_using_dictionary, DeviceStatus
+from common_controller import page_header_search, DeviceStatus
 from common_bll import EventLog, Essential, agent_start
 from idu_profiling_bll import IduGetData
 from ap_profiling import *
@@ -21,7 +21,6 @@ from ap_profiling_bll import *
 from json import JSONEncoder
 from utility import Validation
 from time import sleep
-from json import JSONEncoder
 import traceback
 import time
 
@@ -29,6 +28,10 @@ essential_obj = Essential()
 
 
 def ap_listing(h):
+    """
+
+    @param h:
+    """
     try:
         """
         @requires : ap_profiling_controller,utility,from common_controller import page_header_search function
@@ -56,8 +59,8 @@ def ap_listing(h):
         sitename = __file__.split("/")[3]
         css_list = ["css/demo_table_jui.css",
                     "css/jquery-ui-1.8.4.custom.css", 'css/ccpl_jquery_combobox.css']
-        javascript_list = ["js/jquery.dataTables.min.js",
-                           'js/ccpl_jquery_autocomplete.js', "js/ap_listing.js"]
+        javascript_list = ["js/lib/main/jquery.dataTables.min.js",
+                           'js/unmp/main/ccpl_jquery_autocomplete.js', "js/unmp/main/ap_listing.js"]
 
         # This we import the javascript
         ip_address = ""
@@ -98,7 +101,8 @@ def ap_listing(h):
         # we pass parameters
         # ipaddress,macaddress,devicelist,selectedDevice,devicestate,selectdeviceid
         html.write(str(page_header_search(ip_address, mac_address,
-                   "RM18,RM,IDU,Access Point,CCU", selected_device_type, "enabled", "device_type")))
+                                          "RM18,RM,IDU,Access Point,CCU", selected_device_type, "enabled",
+                                          "device_type")))
 
         # Here we make a div to show the result in datatable
 
@@ -175,8 +179,8 @@ def ap_profiling(h):
     css_list = ['css/demo_table_jui.css',
                 'css/jquery-ui-1.8.4.custom.css', 'css/ccpl_jquery_combobox.css']
     jss_list = [
-        'js/jquery.dataTables.min.js', 'js/ccpl_jquery_autocomplete.js',
-        'js/ap_controller.js', 'js/jquery-ui-personalized-1.6rc2.min.js']
+        'js/lib/main/jquery.dataTables.min.js', 'js/unmp/main/ccpl_jquery_autocomplete.js',
+        'js/unmp/main/ap_controller.js', 'js/lib/main/jquery-ui-personalized-1.6rc2.min.js']
     snapin_list = ["reports", "views", "Alarm", "Inventory",
                    "Settings", "NetworkMaps", "user_management", "schedule", "Listing"]
     # Variable declaration#########################
@@ -206,31 +210,35 @@ def ap_profiling(h):
         host_id)  # call the idu_profiling_controller function get_device_param returns the list.List Contains ipaddress,macaddress,devicetypeid,config_profile_id
     if isinstance(device_list_parameter, list):
         html.new_header("%s %s Configuration" % ("AP", device_list_parameter[0]
-                        .ip_address), "ap_listing.py", "", css_list, jss_list, snapin_list)
+        .ip_address), "ap_listing.py", "", css_list, jss_list, snapin_list)
         if device_list_parameter == [] or device_list_parameter == None:
             html.write(page_header_search(
                 "", "", "RM18,RM,IDU,Access Point,CCU", None, "enabled", "device_type"))
-                       # call the function of common_controller , it is used
-                       # for listing the Devices based on
-                       # IPaddress,Macaddress,DeviceTy
+            # call the function of common_controller , it is used
+            # for listing the Devices based on
+            # IPaddress,Macaddress,DeviceTy
         else:
             html.write(page_header_search(device_list_parameter[0][0], device_list_parameter[0][
-                       1], "RM18,RM,IDU,Access Point,CCU", device_type, device_list_state, "device_type"))
+                1], "RM18,RM,IDU,Access Point,CCU", device_type, device_list_state, "device_type"))
             html.write(APProfiling.ap_div(device_list_parameter[0][0],
-                       device_list_parameter[0][1], host_id))
+                                          device_list_parameter[0][1], host_id))
 
     elif isinstance(device_list_parameter, Exception):
         html.write("DataBase Error Occured")
     html.new_footer()
 
 
-def page_tip_ap_listing(h):
-    global html
-    html = h
-    html.write(str(APProfiling.page_tip_ap_listing()))
+# def page_tip_ap_listing(h):
+#     global html
+#     html = h
+#     html.write(str(APProfiling.page_tip_ap_listing()))
 
 
 def edit_ap_client(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     client_id = html.var("client_id")
@@ -243,6 +251,10 @@ def edit_ap_client(h):
 
 
 def edit_ap_client_details(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     client_id = html.var("client_id")
@@ -297,7 +309,7 @@ def ap_device_listing_table(h):
         obj_status = APRadioState()
         ###########################
         ap_mode = {0: 'Standard', 1: 'Root AP', 2: 'Repeater', 3:
-                   'Client', 4: 'Multi AP', 5: 'Multi VLAN', 6: 'Dynamic VLAN'}
+            'Client', 4: 'Multi AP', 5: 'Multi VLAN', 6: 'Dynamic VLAN'}
         # take value of IPaddress from the page through html.var
         # check that value is None Then It takes the empty string
         if html.var("ip_address") == None:
@@ -318,12 +330,13 @@ def ap_device_listing_table(h):
             selected_device = "ap25"
         else:
             selected_device = html.var("device_type")
-        # call the function get_odu_list of odu-controller which return us the
+            # call the function get_odu_list of odu-controller which return us the
         # list of devices in two dimensional list according to
         # IPAddress,MACaddress,SelectedDevice
 
         device_dict = ap_device_list_bll_obj.ap_device_list(
-            ip_address, mac_address, selected_device, i_display_start, i_display_length, s_search, sEcho, sSortDir_0, iSortCol_0, userid, html_req)
+            ip_address, mac_address, selected_device, i_display_start, i_display_length, s_search, sEcho, sSortDir_0,
+            iSortCol_0, userid, html_req)
 
         # display the result on page
         # This is a empty list variable used for storing the device list
@@ -405,80 +418,94 @@ def ap_device_listing_table(h):
                 # Status\" class=\"imgbutton n-reconcile\"/>"
                 monitoring_status = ""
                 if html.req.session["role"] == "admin" or html.req.session["role"] == "user":
-                    result_device_list.append(["<center><a href=\"#\"onclick=\"viewServiceDetails(%s)\"> <img id=\"ap_device_status\" name=\"ap_device_status\" src=\"%s\" title=\"%s\" style=\"width:8px;height:8px;\" class=\"imgbutton n-reconcile imgEditodu16\" /></a></center>"
-                                               % (device_list[i][0], device_status_image_path, device_status), device_list[i][1], device_list[i][2], device_list[i][3], device_list[i][4], connected_clients, ap_mode[radio_ap_mode],
-                                               "<ul class=\"button_group\" style=\"width:30px\"><li><a class=\"%s n-reconcile imgEditodu16\" state=\"%s\" title=\"%s\" onclick=\"radio_enable_disable(event,this,'%s','radioSetup.radioState');\"/>AP</a></li></ul>"
-                                               % (image_class, state, title, device_list[i][0]),
-                                               "<div class=\"listing-icon\"><img src=\"images/new/wifi.png\" title=\"Wireless\" style=\"width:16px;height:16px;display:none;\" class=\"imgbutton n-reconcile imgEditodu16\" onclick=\"wirelessStatus(event,this,'%s','%s');\"/></div>&nbsp;\
-                    <a target=\"main\" href=\"ap_profiling.py?host_id=%s&device_type=%s&device_list_state=%s\"><img id=\"%s\" src=\"images/new/edit.png\" title=\"Edit Profile\" style=\"width:16px;height:16px;\" class=\"imgbutton n-reconcile\"/></a>&nbsp;&nbsp;\
-                    <a target=\"main\" href=\"%s?host_id=%s&device_type=%s&device_list_state=%s\"><img src=\"images/new/graph.png\" style=\"width:16px;height:16px;\" title=\"Performance Monitoring\" class=\"imgbutton n-reconcile\"/></a>&nbsp;&nbsp;\
-                    <a target=\"main\" href=\"status_snmptt.py?ip_address=%s-\"><img src=\"images/new/alert.png\" style=\"width:16px;height:16px;\" title=\"Device Alarms\" class=\"imgbutton n-reconcile\"/></a>&nbsp;&nbsp;\
-                    <a target=\"main\" href=\"javascript:apFormwareUpdate('%s','%s','%s');\"><img src=\"images/new/update.png\" title=\"Firmware Upgrade\" class=\"imgbutton imgEditodu16 n-reconcile\"/></a>&nbsp;&nbsp;\
-                    <img src=\"%s\" title=\"Reconciliation %s%% Done\" style=\"width:16px;height:16px;\" class=\"imgbutton n-reconcile imgEditodu16\" onclick=\"imgReconcile(this,'%s','%s'); state_rec=0\"/>\
-                    %s&nbsp;&nbsp;%s\
-                    %s"
-                                               % (
-                                               device_list[
-                        i][0], device_list[i][5],
-                                                   device_list[i][0], device_list[
-                                                       i][
-                                                           5], device_list_state,
-                                                   device_list[i][0], 'sp_dashboard_profiling.py' if device_list[i][
-                                                       5] == "ap25" else 'sp_dashboard_profiling.py', device_list[i][0], device_list[i][5], device_list_state,
-                                                   device_list[i][3],
-                                                   device_list[i][0], device_list[
-                                                       i][
-                                                           5], device_list_state,
-                                                   images, device_list[i][6], device_list[i][
-                                                       0], device_list[
-                                                           i][
-                                                               5], live_monitoring, monitoring_status,
-                                                   "<input type=\"hidden\" value=\"%s\" name=\"host_id\" id=\"host_id\" />" % (device_status_host_id) if i == len(device_list) - 1 else ""), "<center><img id=\"operation_status\" name=\"operation_status\" src=\"%s\" title=\"%s\" style=\"width:12px;height:12px;\" class=\"n-reconcile\"/></center>&nbsp;&nbsp;" % (op_img, op_title)])
+                    result_device_list.append([
+                        "<center><a href=\"#\"onclick=\"viewServiceDetails(%s)\"> <img id=\"ap_device_status\" name=\"ap_device_status\" src=\"%s\" title=\"%s\" style=\"width:8px;height:8px;\" class=\"imgbutton n-reconcile imgEditodu16\" /></a></center>"
+                        % (device_list[i][0], device_status_image_path, device_status), device_list[i][1],
+                        device_list[i][2], device_list[i][3], device_list[i][4], connected_clients,
+                        ap_mode[radio_ap_mode],
+                        "<ul class=\"button_group\" style=\"width:30px\"><li><a class=\"%s n-reconcile imgEditodu16\" state=\"%s\" title=\"%s\" onclick=\"radio_enable_disable(event,this,'%s','radioSetup.radioState');\"/>AP</a></li></ul>"
+                        % (image_class, state, title, device_list[i][0]),
+                        "<div class=\"listing-icon\"><img src=\"images/new/wifi.png\" title=\"Wireless\" style=\"width:16px;height:16px;display:none;\" class=\"imgbutton n-reconcile imgEditodu16\" onclick=\"wirelessStatus(event,this,'%s','%s');\"/></div>&nbsp;\
+<a target=\"main\" href=\"ap_profiling.py?host_id=%s&device_type=%s&device_list_state=%s\"><img id=\"%s\" src=\"images/new/edit.png\" title=\"Edit Profile\" style=\"width:16px;height:16px;\" class=\"imgbutton n-reconcile\"/></a>&nbsp;&nbsp;\
+<a target=\"main\" href=\"%s?host_id=%s&device_type=%s&device_list_state=%s\"><img src=\"images/new/graph.png\" style=\"width:16px;height:16px;\" title=\"Performance Monitoring\" class=\"imgbutton n-reconcile\"/></a>&nbsp;&nbsp;\
+<a target=\"main\" href=\"status_snmptt.py?ip_address=%s-\"><img src=\"images/new/alert.png\" style=\"width:16px;height:16px;\" title=\"Device Alarms\" class=\"imgbutton n-reconcile\"/></a>&nbsp;&nbsp;\
+<a target=\"main\" href=\"javascript:apFormwareUpdate('%s','%s','%s');\"><img src=\"images/new/update.png\" title=\"Firmware Upgrade\" class=\"imgbutton imgEditodu16 n-reconcile\"/></a>&nbsp;&nbsp;\
+<img src=\"%s\" title=\"Reconciliation %s%% Done\" style=\"width:16px;height:16px;\" class=\"imgbutton n-reconcile imgEditodu16\" onclick=\"imgReconcile(this,'%s','%s'); state_rec=0\"/>\
+%s&nbsp;&nbsp;%s\
+%s"
+                        % (
+                            device_list[
+                                i][0], device_list[i][5],
+                            device_list[i][0], device_list[
+                                i][
+                                5], device_list_state,
+                            device_list[i][0], 'sp_dashboard_profiling.py' if device_list[i][
+                                                                                  5] == "ap25" else 'sp_dashboard_profiling.py',
+                            device_list[i][0], device_list[i][5], device_list_state,
+                            device_list[i][3],
+                            device_list[i][0], device_list[
+                                i][
+                                5], device_list_state,
+                            images, device_list[i][6], device_list[i][
+                                0], device_list[
+                                i][
+                                5], live_monitoring, monitoring_status,
+                            "<input type=\"hidden\" value=\"%s\" name=\"host_id\" id=\"host_id\" />" % (
+                            device_status_host_id) if i == len(device_list) - 1 else ""),
+                        "<center><img id=\"operation_status\" name=\"operation_status\" src=\"%s\" title=\"%s\" style=\"width:12px;height:12px;\" class=\"n-reconcile\"/></center>&nbsp;&nbsp;" % (
+                        op_img, op_title)])
                 else:
-                    result_device_list.append(["<center><a href=\"#\"onclick=\"viewServiceDetails(%s)\"> <img id=\"ap_device_status\" name=\"ap_device_status\" src=\"%s\" title=\"%s\" style=\"width:8px;height:8px;\" class=\"imgbutton n-reconcile imgEditodu16\" /></a></center>"
-                                               % (device_list[i][0], device_status_image_path, device_status), device_list[i][1], device_list[i][2], device_list[i][3], device_list[i][4], connected_clients, ap_mode[radio_ap_mode],
-                                               "<ul class=\"button_group\" style=\"width:30px\"><li><a class=\"%s n-reconcile imgEditodu16\" state=\"%s\" title=\"%s\"/>AP</a></li></ul>"
-                                               % (image_class, state, title),
-                                               "<div class=\"listing-icon\"><img src=\"images/new/wifi.png\" title=\"Wireless\" style=\"width:16px;height:16px;display:none;\" class=\"imgbutton n-reconcile imgEditodu16\" onclick=\"wirelessStatus(event,this,'%s','%s');\"/></div>&nbsp;\
-                    <a target=\"main\" href=\"ap_profiling.py?host_id=%s&device_type=%s&device_list_state=%s\"><img id=\"%s\" src=\"images/new/edit.png\" title=\"Edit Profile\" style=\"width:16px;height:16px;\" class=\"imgbutton n-reconcile\"/></a>&nbsp;&nbsp;\
-                    <a target=\"main\" href=\"%s?host_id=%s&device_type=%s&device_list_state=%s\"><img src=\"images/new/graph.png\" style=\"width:16px;height:16px;\" title=\"Performance Monitoring\" class=\"imgbutton n-reconcile\"/></a>&nbsp;&nbsp;\
-                    <a target=\"main\" href=\"status_snmptt.py?ip_address=%s-\"><img src=\"images/new/alert.png\" style=\"width:16px;height:16px;\" title=\"Device Alarms\" class=\"imgbutton n-reconcile\"/></a>&nbsp;&nbsp;\
-                    <a target=\"main\"><img src=\"images/new/update.png\" title=\"Firmware Upgrade\" class=\"imgbutton imgEditodu16 n-reconcile\"/></a>&nbsp;&nbsp;\
-                    <img src=\"%s\" title=\"Reconciliation %s%% Done\" style=\"width:16px;height:16px;\" class=\"imgbutton n-reconcile imgEditodu16\" state_rec=0\"/>\
-                    %s&nbsp;&nbsp;%s\
-                    %s"
-                                               % (
-                                               device_list[
-                        i][0], device_list[i][5],
-                                                   device_list[i][0], device_list[
-                                                       i][
-                                                           5], device_list_state,
-                                                   device_list[i][0], 'sp_dashboard_profiling.py' if device_list[i][
-                                                       5] == "ap25" else 'sp_dashboard_profiling.py', device_list[i][0], device_list[i][5], device_list_state,
-                                                   device_list[i][3],
-                                                   images, device_list[i][
-                                                       6], live_monitoring, monitoring_status,
-                                                   "<input type=\"hidden\" value=\"%s\" name=\"host_id\" id=\"host_id\" />" % (device_status_host_id) if i == len(device_list) - 1 else ""), "<center><img id=\"operation_status\" name=\"operation_status\" src=\"%s\" title=\"%s\" style=\"width:12px;height:12px;\" class=\"n-reconcile\"/></center>&nbsp;&nbsp;" % (op_img, op_title)])
+                    result_device_list.append([
+                        "<center><a href=\"#\"onclick=\"viewServiceDetails(%s)\"> <img id=\"ap_device_status\" name=\"ap_device_status\" src=\"%s\" title=\"%s\" style=\"width:8px;height:8px;\" class=\"imgbutton n-reconcile imgEditodu16\" /></a></center>"
+                        % (device_list[i][0], device_status_image_path, device_status), device_list[i][1],
+                        device_list[i][2], device_list[i][3], device_list[i][4], connected_clients,
+                        ap_mode[radio_ap_mode],
+                        "<ul class=\"button_group\" style=\"width:30px\"><li><a class=\"%s n-reconcile imgEditodu16\" state=\"%s\" title=\"%s\"/>AP</a></li></ul>"
+                        % (image_class, state, title),
+                        "<div class=\"listing-icon\"><img src=\"images/new/wifi.png\" title=\"Wireless\" style=\"width:16px;height:16px;display:none;\" class=\"imgbutton n-reconcile imgEditodu16\" onclick=\"wirelessStatus(event,this,'%s','%s');\"/></div>&nbsp;\
+<a target=\"main\" href=\"ap_profiling.py?host_id=%s&device_type=%s&device_list_state=%s\"><img id=\"%s\" src=\"images/new/edit.png\" title=\"Edit Profile\" style=\"width:16px;height:16px;\" class=\"imgbutton n-reconcile\"/></a>&nbsp;&nbsp;\
+<a target=\"main\" href=\"%s?host_id=%s&device_type=%s&device_list_state=%s\"><img src=\"images/new/graph.png\" style=\"width:16px;height:16px;\" title=\"Performance Monitoring\" class=\"imgbutton n-reconcile\"/></a>&nbsp;&nbsp;\
+<a target=\"main\" href=\"status_snmptt.py?ip_address=%s-\"><img src=\"images/new/alert.png\" style=\"width:16px;height:16px;\" title=\"Device Alarms\" class=\"imgbutton n-reconcile\"/></a>&nbsp;&nbsp;\
+<a target=\"main\"><img src=\"images/new/update.png\" title=\"Firmware Upgrade\" class=\"imgbutton imgEditodu16 n-reconcile\"/></a>&nbsp;&nbsp;\
+<img src=\"%s\" title=\"Reconciliation %s%% Done\" style=\"width:16px;height:16px;\" class=\"imgbutton n-reconcile imgEditodu16\" state_rec=0\"/>\
+%s&nbsp;&nbsp;%s\
+%s"
+                        % (
+                            device_list[
+                                i][0], device_list[i][5],
+                            device_list[i][0], device_list[
+                                i][
+                                5], device_list_state,
+                            device_list[i][0], 'sp_dashboard_profiling.py' if device_list[i][
+                                                                                  5] == "ap25" else 'sp_dashboard_profiling.py',
+                            device_list[i][0], device_list[i][5], device_list_state,
+                            device_list[i][3],
+                            images, device_list[i][
+                                6], live_monitoring, monitoring_status,
+                            "<input type=\"hidden\" value=\"%s\" name=\"host_id\" id=\"host_id\" />" % (
+                            device_status_host_id) if i == len(device_list) - 1 else ""),
+                        "<center><img id=\"operation_status\" name=\"operation_status\" src=\"%s\" title=\"%s\" style=\"width:12px;height:12px;\" class=\"n-reconcile\"/></center>&nbsp;&nbsp;" % (
+                        op_img, op_title)])
 
-#                    result_device_list.append(["<center><a href=\"#\"onclick=\"viewServiceDetails(%s)\"> <img id=\"ap_device_status\" name=\"ap_device_status\" src=\"%s\" title=\"%s\" style=\"width:8px;height:8px;\" class=\"imgbutton n-reconcile imgEditodu16\" /></a></center>"\
-#                    %((device_status_host_id) if i==len(device_list)-1 else "",device_status_image_path,device_status)\
-#                    ,device_list[i][1],device_list[i][2],device_list[i][3],device_list[i][4],ap_mode[int(device_list[i][8])],\
-#                    "<ul class=\"button_group\" style=\"width:30px\"><li><a class=\"%s n-reconcile imgEditodu16\" state=\"%s\" title=\"%s\" onclick=\"radio_enable_disable(event,this,'%s','radioSetup.radioState');\"/>AP</a></li></ul>"
-#                    %(image_class,state,title,device_list[i][0]),\
-#                    "<div class=\"listing-icon\"><img src=\"images/new/wifi.png\" title=\"Wireless\" style=\"width:16px;height:16px;\" class=\"imgbutton n-reconcile\" onclick=\"wirelessStatus(event,this,'%s','%s');\"/></div>&nbsp;\
-#                    <a target=\"main\" ><img id=\"%s\" src=\"images/new/edit.png\" title=\"Edit Profile\" style=\"width:16px;height:16px;\" class=\"imgbutton n-reconcile\"/></a>&nbsp;&nbsp;\
-#                    <a target=\"main\" href=\"%s?host_id=%s&device_type=%s&device_list_state=%s\"><img src=\"images/new/graph.png\" style=\"width:16px;height:16px;\" title=\"Performance Monitoring\" class=\"imgbutton n-reconcile\"/></a>&nbsp;&nbsp;\
-#                    <a target=\"main\" href=\"status_snmptt.py?ip_address=%s-\"><img src=\"images/new/alert.png\" style=\"width:16px;height:16px;\" title=\"Device Alarms\" class=\"imgbutton  n-reconcile\"/></a>&nbsp;&nbsp;\
-#                    <a target=\"main\" ><img src=\"images/new/update.png\" title=\"Firmware Upgrade\" class=\"imgbutton n-reconcile\"/></a>&nbsp;&nbsp;\
-#                    <img src=\"%s\" title=\"Reconciliation %s%% Done\" style=\"width:16px;height:16px;\" class=\"imgbutton n-reconcile imgEditodu16\" state_rec=0\"/>\
-#                    &nbsp;&nbsp;%s\
- #                   %s"
- #                   %(device_list[i][0],device_list[i][5],\
- #                   device_list[i][0],'sp_dashboard_profiling.py' if device_list[i][5] == "ap25" else 'sp_dashboard_profiling.py',device_list[i][0],device_list[i][5],device_list_state,\
- #                   device_list[i][3],\
- #                   images,device_list[i][6],monitoring_status,\
- #                   "<input type=\"hidden\" value=\"%s\" name=\"host_id\" id=\"host_id\" />"%(device_status_host_id) if i==len(device_list)-1 else ""),"<center><img id=\"operation_status\" name=\"operation_status\" src=\"%s\" title=\"%s\" style=\"width:12px;height:12px;\" class=\"imgbutton n-reconcile\"/></center>&nbsp;&nbsp;"%(op_img,op_title)
- #                   ])
+                #                    result_device_list.append(["<center><a href=\"#\"onclick=\"viewServiceDetails(%s)\"> <img id=\"ap_device_status\" name=\"ap_device_status\" src=\"%s\" title=\"%s\" style=\"width:8px;height:8px;\" class=\"imgbutton n-reconcile imgEditodu16\" /></a></center>"\
+                #                    %((device_status_host_id) if i==len(device_list)-1 else "",device_status_image_path,device_status)\
+                #                    ,device_list[i][1],device_list[i][2],device_list[i][3],device_list[i][4],ap_mode[int(device_list[i][8])],\
+                #                    "<ul class=\"button_group\" style=\"width:30px\"><li><a class=\"%s n-reconcile imgEditodu16\" state=\"%s\" title=\"%s\" onclick=\"radio_enable_disable(event,this,'%s','radioSetup.radioState');\"/>AP</a></li></ul>"
+                #                    %(image_class,state,title,device_list[i][0]),\
+                #                    "<div class=\"listing-icon\"><img src=\"images/new/wifi.png\" title=\"Wireless\" style=\"width:16px;height:16px;\" class=\"imgbutton n-reconcile\" onclick=\"wirelessStatus(event,this,'%s','%s');\"/></div>&nbsp;\
+                #                    <a target=\"main\" ><img id=\"%s\" src=\"images/new/edit.png\" title=\"Edit Profile\" style=\"width:16px;height:16px;\" class=\"imgbutton n-reconcile\"/></a>&nbsp;&nbsp;\
+                #                    <a target=\"main\" href=\"%s?host_id=%s&device_type=%s&device_list_state=%s\"><img src=\"images/new/graph.png\" style=\"width:16px;height:16px;\" title=\"Performance Monitoring\" class=\"imgbutton n-reconcile\"/></a>&nbsp;&nbsp;\
+                #                    <a target=\"main\" href=\"status_snmptt.py?ip_address=%s-\"><img src=\"images/new/alert.png\" style=\"width:16px;height:16px;\" title=\"Device Alarms\" class=\"imgbutton  n-reconcile\"/></a>&nbsp;&nbsp;\
+                #                    <a target=\"main\" ><img src=\"images/new/update.png\" title=\"Firmware Upgrade\" class=\"imgbutton n-reconcile\"/></a>&nbsp;&nbsp;\
+                #                    <img src=\"%s\" title=\"Reconciliation %s%% Done\" style=\"width:16px;height:16px;\" class=\"imgbutton n-reconcile imgEditodu16\" state_rec=0\"/>\
+                #                    &nbsp;&nbsp;%s\
+                #                   %s"
+                #                   %(device_list[i][0],device_list[i][5],\
+                #                   device_list[i][0],'sp_dashboard_profiling.py' if device_list[i][5] == "ap25" else 'sp_dashboard_profiling.py',device_list[i][0],device_list[i][5],device_list_state,\
+                #                   device_list[i][3],\
+                #                   images,device_list[i][6],monitoring_status,\
+                #                   "<input type=\"hidden\" value=\"%s\" name=\"host_id\" id=\"host_id\" />"%(device_status_host_id) if i==len(device_list)-1 else ""),"<center><img id=\"operation_status\" name=\"operation_status\" src=\"%s\" title=\"%s\" style=\"width:12px;height:12px;\" class=\"imgbutton n-reconcile\"/></center>&nbsp;&nbsp;"%(op_img,op_title)
+                #                   ])
             html.req.content_type = 'application/json'
             device_dict["aaData"] = result_device_list
             html.req.write(str(JSONEncoder().encode(device_dict)))
@@ -494,6 +521,10 @@ def ap_device_listing_table(h):
 
 
 def get_device_list_ap_profiling(h):
+    """
+
+    @param h:
+    """
     try:
         global html
         html = h
@@ -516,7 +547,7 @@ def get_device_list_ap_profiling(h):
             mac_address = ""
         else:
             mac_address = html.var("mac_address")
-        # take value of SelectedDevice from the page through html.var
+            # take value of SelectedDevice from the page through html.var
         # check that value is None Then It takes the empty string
         if html.var("selected_device_type") == None:
             selected_device = "ap25"
@@ -556,6 +587,10 @@ def get_device_list_ap_profiling(h):
 
 
 def commit_to_flash(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     host_id = html.var("host_id")
@@ -568,18 +603,30 @@ def commit_to_flash(h):
 
 
 def acl_add_form(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     html.write(str(APForms.acl_add_form()))
 
 
 def acl_upload_form(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     html.write(str(APForms.acl_upload_form()))
 
 
 def update_reconciliation(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     host_id = html.var("host_id")
@@ -597,6 +644,10 @@ def update_reconciliation(h):
 
 
 def reconciliation_status(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     bll_rec_obj = Reconciliation()
@@ -608,6 +659,10 @@ def reconciliation_status(h):
 
 
 def chk_reconciliation_status(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     host_id = html.var("host_id")
@@ -618,6 +673,10 @@ def chk_reconciliation_status(h):
 
 
 def ap25_reconcilation(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     host_id = html.var("host_id")
@@ -635,6 +694,10 @@ def ap25_reconcilation(h):
 
 
 def ap25_reboot(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     host_id = html.var("host_id")
@@ -645,6 +708,10 @@ def ap25_reboot(h):
 
 
 def ap_dhcp_client_information(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     host_id = html.var('host_id')
@@ -691,6 +758,10 @@ def ap_dhcp_client_information(h):
 
 
 def ap_scan(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     host_id = html.var('host_id')
@@ -745,6 +816,10 @@ def ap_scan(h):
 
 
 def ap_radio_form_action(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     dic_result = {"success": 0}
@@ -764,7 +839,8 @@ def ap_radio_form_action(h):
         html.req.content_type = 'application/json'
         html.req.write(str(JSONEncoder().encode(dic_result)))
 
-    elif html.var("ap_common_submit") == "Save" or html.var("ap_common_submit") == "Retry" or html.var("ap_common_submit") == "":
+    elif html.var("ap_common_submit") == "Save" or html.var("ap_common_submit") == "Retry" or html.var(
+            "ap_common_submit") == "":
         if html.var("radioSetup.radioState") != None:
             if Validation.is_required(html.var("radioSetup.radioState")):
                 dic_result["radioSetup.radioState"] = html.var(
@@ -1007,6 +1083,10 @@ def ap_radio_form_action(h):
 
 
 def ap_service_form_action(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     dic_result = {"success": 0}
@@ -1026,7 +1106,8 @@ def ap_service_form_action(h):
         html.req.content_type = 'application/json'
         html.req.write(str(JSONEncoder().encode(dic_result)))
 
-    elif html.var("ap_common_submit") == "Save" or html.var("ap_common_submit") == "Retry" or html.var("ap_common_submit") == "":
+    elif html.var("ap_common_submit") == "Save" or html.var("ap_common_submit") == "Retry" or html.var(
+            "ap_common_submit") == "":
         if html.var("services.upnpServerStatus") != None:
             if Validation.is_required(html.var("services.upnpServerStatus")):
                 dic_result["services.upnpServerStatus"] = html.var(
@@ -1047,7 +1128,9 @@ def ap_service_form_action(h):
 
         if html.var("services.systemLogIP") != None:
             if Validation.is_required(html.var("services.systemLogIP")):
-                if Validation.is_valid_ip(html.var("services.systemLogIP")) and int(html.var("services.systemLogIP").split('.')[0]) not in [0, 255] and int(html.var("services.systemLogIP").split('.')[-1]) not in [0, 255]:
+                if Validation.is_valid_ip(html.var("services.systemLogIP")) and int(
+                        html.var("services.systemLogIP").split('.')[0]) not in [0, 255] and int(
+                        html.var("services.systemLogIP").split('.')[-1]) not in [0, 255]:
                     dic_result["services.systemLogIP"] = html.var(
                         "services.systemLogIP")
                 else:
@@ -1062,7 +1145,8 @@ def ap_service_form_action(h):
         if html.var("services.systemLogPort") != None:
             if Validation.is_required(html.var("services.systemLogPort")):
                 if Validation.is_number(html.var("services.systemLogPort")):
-                    if int(html.var("services.systemLogPort")) >= 1 and int(html.var("services.systemLogPort")) <= 65535:
+                    if int(html.var("services.systemLogPort")) >= 1 and int(
+                            html.var("services.systemLogPort")) <= 65535:
                         dic_result["services.systemLogPort"] = html.var(
                             "services.systemLogPort")
                     else:
@@ -1110,6 +1194,10 @@ def ap_service_form_action(h):
 
 
 def ap_dhcp_form_action(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     dic_result = {"success": 0}
@@ -1129,7 +1217,8 @@ def ap_dhcp_form_action(h):
         html.req.content_type = 'application/json'
         html.req.write(str(JSONEncoder().encode(dic_result)))
 
-    elif html.var("ap_common_submit") == "Save" or html.var("ap_common_submit") == "Retry" or html.var("ap_common_submit") == "":
+    elif html.var("ap_common_submit") == "Save" or html.var("ap_common_submit") == "Retry" or html.var(
+            "ap_common_submit") == "":
         device_obj = DeviceParameters()
         ip_address_result = device_obj.get_device_parameter(host_id)
         if len(ip_address_result) > 0:
@@ -1145,7 +1234,9 @@ def ap_dhcp_form_action(h):
 
         if html.var("dhcpServer.dhcpStartIPaddress") != None:
             if Validation.is_required(html.var("dhcpServer.dhcpStartIPaddress")):
-                if Validation.is_valid_ip(html.var("dhcpServer.dhcpStartIPaddress")) and int(html.var("dhcpServer.dhcpStartIPaddress").split('.')[0]) not in [0, 255] and int(html.var("dhcpServer.dhcpStartIPaddress").split('.')[-1]) not in [0, 255]:
+                if Validation.is_valid_ip(html.var("dhcpServer.dhcpStartIPaddress")) and int(
+                        html.var("dhcpServer.dhcpStartIPaddress").split('.')[0]) not in [0, 255] and int(
+                        html.var("dhcpServer.dhcpStartIPaddress").split('.')[-1]) not in [0, 255]:
                     dic_result["dhcpServer.dhcpStartIPaddress"] = html.var(
                         "dhcpServer.dhcpStartIPaddress")
                 else:
@@ -1160,7 +1251,9 @@ def ap_dhcp_form_action(h):
 
         if html.var("dhcpServer.dhcpEndIPaddress") != None:
             if Validation.is_required(html.var("dhcpServer.dhcpEndIPaddress")):
-                if Validation.is_valid_ip(html.var("dhcpServer.dhcpEndIPaddress")) and int(html.var("dhcpServer.dhcpEndIPaddress").split('.')[0]) not in [0, 255] and int(html.var("dhcpServer.dhcpEndIPaddress").split('.')[-1]) not in [0, 255]:
+                if Validation.is_valid_ip(html.var("dhcpServer.dhcpEndIPaddress")) and int(
+                        html.var("dhcpServer.dhcpEndIPaddress").split('.')[0]) not in [0, 255] and int(
+                        html.var("dhcpServer.dhcpEndIPaddress").split('.')[-1]) not in [0, 255]:
                     dic_result["dhcpServer.dhcpEndIPaddress"] = html.var(
                         "dhcpServer.dhcpEndIPaddress")
                 else:
@@ -1173,7 +1266,8 @@ def ap_dhcp_form_action(h):
                 dic_result["success"] = 1
                 dic_result["result"] = "DHCP End IP Address is required"
 
-        if dic_result["success"] == 0 and html.var("dhcpServer.dhcpStartIPaddress") != None and html.var("dhcpServer.dhcpEndIPaddress") != None:
+        if dic_result["success"] == 0 and html.var("dhcpServer.dhcpStartIPaddress") != None and html.var(
+                "dhcpServer.dhcpEndIPaddress") != None:
             if dic_result["dhcpServer.dhcpStartIPaddress"] > dic_result["dhcpServer.dhcpEndIPaddress"]:
                 flag = 1
                 dic_result["success"] = 1
@@ -1189,7 +1283,8 @@ def ap_dhcp_form_action(h):
                 dic_result["success"] = 1
                 dic_result[
                     "result"] = "Please check the domain of end DHCP IP Address"
-            elif dic_result["dhcpServer.dhcpStartIPaddress"] <= ip_address and ip_address <= dic_result["dhcpServer.dhcpEndIPaddress"]:
+            elif dic_result["dhcpServer.dhcpStartIPaddress"] <= ip_address and ip_address <= dic_result[
+                "dhcpServer.dhcpEndIPaddress"]:
                 flag = 1
                 dic_result["success"] = 1
                 dic_result[
@@ -1197,7 +1292,8 @@ def ap_dhcp_form_action(h):
 
         if html.var("dhcpServer.dhcpSubnetMask") != None:
             if Validation.is_required(html.var("dhcpServer.dhcpSubnetMask")):
-                if Validation.is_valid_ip(html.var("dhcpServer.dhcpSubnetMask")) and int(html.var("dhcpServer.dhcpSubnetMask").split('.')[0]) not in [0]:
+                if Validation.is_valid_ip(html.var("dhcpServer.dhcpSubnetMask")) and int(
+                        html.var("dhcpServer.dhcpSubnetMask").split('.')[0]) not in [0]:
                     dic_result["dhcpServer.dhcpSubnetMask"] = html.var(
                         "dhcpServer.dhcpSubnetMask")
                 else:
@@ -1214,7 +1310,8 @@ def ap_dhcp_form_action(h):
         if html.var("dhcpServer.dhcpClientLeaseTime") != None:
             if Validation.is_required(html.var("dhcpServer.dhcpClientLeaseTime")):
                 if Validation.is_positive_number(html.var("dhcpServer.dhcpClientLeaseTime")):
-                    if int(html.var("dhcpServer.dhcpClientLeaseTime")) >= 10 and int(html.var("dhcpServer.dhcpClientLeaseTime")) <= 6000:
+                    if int(html.var("dhcpServer.dhcpClientLeaseTime")) >= 10 and int(
+                            html.var("dhcpServer.dhcpClientLeaseTime")) <= 6000:
                         dic_result["dhcpServer.dhcpClientLeaseTime"] = html.var(
                             "dhcpServer.dhcpClientLeaseTime")
                     else:
@@ -1265,6 +1362,10 @@ def ap_dhcp_form_action(h):
 
 
 def selectVap(h):
+    """
+
+    @param h:
+    """
     global html
     obj_bll_select_vap = SelectVap()
     html = h
@@ -1275,6 +1376,10 @@ def selectVap(h):
 
 
 def vap_vap_select(h):
+    """
+
+    @param h:
+    """
     global html
     obj_bll_select_vap = SelectVap()
     html = h
@@ -1285,6 +1390,10 @@ def vap_vap_select(h):
 
 
 def select_vap_acl(h):
+    """
+
+    @param h:
+    """
     global html
     obj_bll_select_vap = SelectVap()
     html = h
@@ -1311,6 +1420,10 @@ def select_vap_acl(h):
 
 
 def ap_acl_form_action(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     dic_result = {"success": 0}
@@ -1331,7 +1444,8 @@ def ap_acl_form_action(h):
         html.req.content_type = 'application/json'
         html.req.write(str(JSONEncoder().encode(dic_result)))
 
-    elif html.var("ap_common_submit") == "Save" or html.var("ap_common_submit") == "Retry" or html.var("ap_common_submit") == "":
+    elif html.var("ap_common_submit") == "Save" or html.var("ap_common_submit") == "Retry" or html.var(
+            "ap_common_submit") == "":
         if html.var("vapSelection.selectVap") != None:
             if Validation.is_required(html.var("vapSelection.selectVap")):
                 dic_result["vapSelection.selectVap"] = html.var(
@@ -1393,6 +1507,10 @@ def ap_acl_form_action(h):
 
 
 def acl_add_form_action(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     obj_bll_mac_operations = MacOperations()
@@ -1463,7 +1581,8 @@ def acl_add_form_action(h):
                                     duplicate_mac = 1
                                 else:
                                     mac_duplicate.append(mac_add[i])
-                                    if obj_bll_mac_operations.chk_mac_duplicate(mac_add[i].strip(), vap_selection_id) == 0:
+                                    if obj_bll_mac_operations.chk_mac_duplicate(mac_add[i].strip(),
+                                                                                vap_selection_id) == 0:
                                         final_mac_list.append(
                                             mac_add[i].strip())
                                     else:
@@ -1516,6 +1635,10 @@ def acl_add_form_action(h):
 
 
 def delete_all_mac(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     obj_bll_mac_operations = MacOperations()
@@ -1561,6 +1684,10 @@ def delete_all_mac(h):
 
 
 def delete_single_mac(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     obj_bll_mac_operations = MacOperations()
@@ -1622,6 +1749,10 @@ def delete_single_mac(h):
 
 
 def ap_vap_form_action(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     host_id = html.var("host_id")
@@ -1644,7 +1775,8 @@ def ap_vap_form_action(h):
         html.req.content_type = 'application/json'
         html.req.write(str(JSONEncoder().encode(dic_result)))
 
-    elif html.var("ap_common_submit") == "Save" or html.var("ap_common_submit") == "Retry" or html.var("ap_common_submit") == "":
+    elif html.var("ap_common_submit") == "Save" or html.var("ap_common_submit") == "Retry" or html.var(
+            "ap_common_submit") == "":
 
         if html.var("vapselectionid") != None:
             if Validation.is_required(html.var("vapselectionid")):
@@ -1668,7 +1800,8 @@ def ap_vap_form_action(h):
 
         if html.var("basicVAPconfigTable.vapESSID") != None:
             if Validation.is_required(html.var("basicVAPconfigTable.vapESSID")):
-                if len(html.var("basicVAPconfigTable.vapESSID")) >= 0 and len(html.var("basicVAPconfigTable.vapESSID")) < 33:
+                if len(html.var("basicVAPconfigTable.vapESSID")) >= 0 and len(
+                        html.var("basicVAPconfigTable.vapESSID")) < 33:
                     dic_result["basicVAPconfigTable.vapESSID"] = html.var(
                         "basicVAPconfigTable.vapESSID")
                 else:
@@ -1687,7 +1820,8 @@ def ap_vap_form_action(h):
         if html.var("basicVAPconfigTable.vlanId") != None:
             if Validation.is_required(html.var("basicVAPconfigTable.vlanId")):
                 if Validation.is_number(html.var("basicVAPconfigTable.vlanId")):
-                    if int(html.var("basicVAPconfigTable.vlanId")) > 0 and int(html.var("basicVAPconfigTable.vlanId")) < 4096:
+                    if int(html.var("basicVAPconfigTable.vlanId")) > 0 and int(
+                            html.var("basicVAPconfigTable.vlanId")) < 4096:
                         dic_result["basicVAPconfigTable.vlanId"] = html.var(
                             "basicVAPconfigTable.vlanId")
                     else:
@@ -1706,7 +1840,8 @@ def ap_vap_form_action(h):
         if html.var("basicVAPconfigTable.vlanPriority") != None:
             if Validation.is_required(html.var("basicVAPconfigTable.vlanPriority")):
                 if Validation.is_number(html.var("basicVAPconfigTable.vlanPriority")):
-                    if int(html.var("basicVAPconfigTable.vlanPriority")) >= 0 and int(html.var("basicVAPconfigTable.vlanPriority")) < 8:
+                    if int(html.var("basicVAPconfigTable.vlanPriority")) >= 0 and int(
+                            html.var("basicVAPconfigTable.vlanPriority")) < 8:
                         dic_result["basicVAPconfigTable.vlanPriority"] = html.var(
                             "basicVAPconfigTable.vlanPriority")
                     else:
@@ -1748,7 +1883,8 @@ def ap_vap_form_action(h):
                     if html.var("basicVAPconfigTable.vapRTSthresholdValue") != None:
                         if Validation.is_required(html.var("basicVAPconfigTable.vapRTSthresholdValue")):
                             if Validation.is_number(html.var("basicVAPconfigTable.vapRTSthresholdValue")):
-                                if int(html.var("basicVAPconfigTable.vapRTSthresholdValue")) >= 256 and int(html.var("basicVAPconfigTable.vapRTSthresholdValue")) <= 2346:
+                                if int(html.var("basicVAPconfigTable.vapRTSthresholdValue")) >= 256 and int(
+                                        html.var("basicVAPconfigTable.vapRTSthresholdValue")) <= 2346:
                                     dic_result["basicVAPconfigTable.vapRTSthresholdValue"] = html.var(
                                         "basicVAPconfigTable.vapRTSthresholdValue")
                                 else:
@@ -1778,7 +1914,8 @@ def ap_vap_form_action(h):
                     if html.var("basicVAPconfigTable.vapFragmentationThresholdValue") != None:
                         if Validation.is_required(html.var("basicVAPconfigTable.vapFragmentationThresholdValue")):
                             if Validation.is_number(html.var("basicVAPconfigTable.vapFragmentationThresholdValue")):
-                                if int(html.var("basicVAPconfigTable.vapFragmentationThresholdValue")) >= 256 and int(html.var("basicVAPconfigTable.vapFragmentationThresholdValue")) <= 2346:
+                                if int(html.var("basicVAPconfigTable.vapFragmentationThresholdValue")) >= 256 and int(
+                                        html.var("basicVAPconfigTable.vapFragmentationThresholdValue")) <= 2346:
                                     dic_result["basicVAPconfigTable.vapFragmentationThresholdValue"] = html.var(
                                         "basicVAPconfigTable.vapFragmentationThresholdValue")
                                 else:
@@ -1805,7 +1942,8 @@ def ap_vap_form_action(h):
         if html.var("basicVAPconfigTable.vapBeaconInterval") != None:
             if Validation.is_required(html.var("basicVAPconfigTable.vapBeaconInterval")):
                 if Validation.is_number(html.var("basicVAPconfigTable.vapBeaconInterval")):
-                    if int(html.var("basicVAPconfigTable.vapBeaconInterval")) >= 40 and int(html.var("basicVAPconfigTable.vapBeaconInterval")) <= 1000:
+                    if int(html.var("basicVAPconfigTable.vapBeaconInterval")) >= 40 and int(
+                            html.var("basicVAPconfigTable.vapBeaconInterval")) <= 1000:
                         dic_result["basicVAPconfigTable.vapBeaconInterval"] = html.var(
                             "basicVAPconfigTable.vapBeaconInterval")
                     else:
@@ -1839,11 +1977,16 @@ def ap_vap_form_action(h):
                     if int(html.var("vapWEPsecurityConfigTable.vapWEPprimaryKey")) == 1:
                         if html.var("vapWEPsecurityConfigTable.vapWEPkey1") != None:
                             if Validation.is_required(html.var("vapWEPsecurityConfigTable.vapWEPkey1")):
-                                if (len(html.var("vapWEPsecurityConfigTable.vapWEPkey1")) == 5 or len(html.var("vapWEPsecurityConfigTable.vapWEPkey1")) == 13 or len(html.var("vapWEPsecurityConfigTable.vapWEPkey1")) == 16):
+                                if (len(html.var("vapWEPsecurityConfigTable.vapWEPkey1")) == 5 or len(
+                                        html.var("vapWEPsecurityConfigTable.vapWEPkey1")) == 13 or len(
+                                        html.var("vapWEPsecurityConfigTable.vapWEPkey1")) == 16):
                                     dic_result["vapWEPsecurityConfigTable.vapWEPkey1"] = html.var(
                                         "vapWEPsecurityConfigTable.vapWEPkey1")
                                     wep_flag = 1
-                                elif (len(html.var("vapWEPsecurityConfigTable.vapWEPkey1")) == 10 or len(html.var("vapWEPsecurityConfigTable.vapWEPkey1")) == 26 or len(html.var("vapWEPsecurityConfigTable.vapWEPkey1")) == 32) and Validation.is_hex_number(html.var("vapWEPsecurityConfigTable.vapWEPkey1")):
+                                elif (len(html.var("vapWEPsecurityConfigTable.vapWEPkey1")) == 10 or len(
+                                        html.var("vapWEPsecurityConfigTable.vapWEPkey1")) == 26 or len(html.var(
+                                        "vapWEPsecurityConfigTable.vapWEPkey1")) == 32) and Validation.is_hex_number(
+                                        html.var("vapWEPsecurityConfigTable.vapWEPkey1")):
                                     dic_result["vapWEPsecurityConfigTable.vapWEPkey1"] = html.var(
                                         "vapWEPsecurityConfigTable.vapWEPkey1")
                                     wep_flag = 1
@@ -1862,11 +2005,16 @@ def ap_vap_form_action(h):
                     elif int(html.var("vapWEPsecurityConfigTable.vapWEPprimaryKey")) == 2:
                         if html.var("vapWEPsecurityConfigTable.vapWEPkey2") != None:
                             if Validation.is_required(html.var("vapWEPsecurityConfigTable.vapWEPkey2")):
-                                if len(html.var("vapWEPsecurityConfigTable.vapWEPkey2")) == 5 or len(html.var("vapWEPsecurityConfigTable.vapWEPkey2")) == 13 or len(html.var("vapWEPsecurityConfigTable.vapWEPkey2")) == 16:
+                                if len(html.var("vapWEPsecurityConfigTable.vapWEPkey2")) == 5 or len(
+                                        html.var("vapWEPsecurityConfigTable.vapWEPkey2")) == 13 or len(
+                                        html.var("vapWEPsecurityConfigTable.vapWEPkey2")) == 16:
                                     dic_result["vapWEPsecurityConfigTable.vapWEPkey2"] = html.var(
                                         "vapWEPsecurityConfigTable.vapWEPkey2")
                                     wep_flag = 2
-                                elif (len(html.var("vapWEPsecurityConfigTable.vapWEPkey2")) == 10 or len(html.var("vapWEPsecurityConfigTable.vapWEPkey2")) == 26 or len(html.var("vapWEPsecurityConfigTable.vapWEPkey2")) == 32) and Validation.is_hex_number(html.var("vapWEPsecurityConfigTable.vapWEPkey2")):
+                                elif (len(html.var("vapWEPsecurityConfigTable.vapWEPkey2")) == 10 or len(
+                                        html.var("vapWEPsecurityConfigTable.vapWEPkey2")) == 26 or len(html.var(
+                                        "vapWEPsecurityConfigTable.vapWEPkey2")) == 32) and Validation.is_hex_number(
+                                        html.var("vapWEPsecurityConfigTable.vapWEPkey2")):
                                     dic_result["vapWEPsecurityConfigTable.vapWEPkey2"] = html.var(
                                         "vapWEPsecurityConfigTable.vapWEPkey2")
                                     wep_flag = 1
@@ -1885,11 +2033,16 @@ def ap_vap_form_action(h):
                     elif int(html.var("vapWEPsecurityConfigTable.vapWEPprimaryKey")) == 3:
                         if html.var("vapWEPsecurityConfigTable.vapWEPkey3") != None:
                             if Validation.is_required(html.var("vapWEPsecurityConfigTable.vapWEPkey3")):
-                                if len(html.var("vapWEPsecurityConfigTable.vapWEPkey3")) == 5 or len(html.var("vapWEPsecurityConfigTable.vapWEPkey3")) == 13 or len(html.var("vapWEPsecurityConfigTable.vapWEPkey3")) == 16:
+                                if len(html.var("vapWEPsecurityConfigTable.vapWEPkey3")) == 5 or len(
+                                        html.var("vapWEPsecurityConfigTable.vapWEPkey3")) == 13 or len(
+                                        html.var("vapWEPsecurityConfigTable.vapWEPkey3")) == 16:
                                     dic_result["vapWEPsecurityConfigTable.vapWEPkey3"] = html.var(
                                         "vapWEPsecurityConfigTable.vapWEPkey3")
                                     wep_flag = 3
-                                elif (len(html.var("vapWEPsecurityConfigTable.vapWEPkey3")) == 10 or len(html.var("vapWEPsecurityConfigTable.vapWEPkey3")) == 26 or len(html.var("vapWEPsecurityConfigTable.vapWEPkey3")) == 32) and Validation.is_hex_number(html.var("vapWEPsecurityConfigTable.vapWEPkey3")):
+                                elif (len(html.var("vapWEPsecurityConfigTable.vapWEPkey3")) == 10 or len(
+                                        html.var("vapWEPsecurityConfigTable.vapWEPkey3")) == 26 or len(html.var(
+                                        "vapWEPsecurityConfigTable.vapWEPkey3")) == 32) and Validation.is_hex_number(
+                                        html.var("vapWEPsecurityConfigTable.vapWEPkey3")):
                                     dic_result["vapWEPsecurityConfigTable.vapWEPkey3"] = html.var(
                                         "vapWEPsecurityConfigTable.vapWEPkey3")
                                     wep_flag = 1
@@ -1908,11 +2061,16 @@ def ap_vap_form_action(h):
                     else:
                         if html.var("vapWEPsecurityConfigTable.vapWEPkey4") != None:
                             if Validation.is_required(html.var("vapWEPsecurityConfigTable.vapWEPkey4")):
-                                if len(html.var("vapWEPsecurityConfigTable.vapWEPkey4")) == 5 or len(html.var("vapWEPsecurityConfigTable.vapWEPkey4")) == 13 or len(html.var("vapWEPsecurityConfigTable.vapWEPkey4")) == 16:
+                                if len(html.var("vapWEPsecurityConfigTable.vapWEPkey4")) == 5 or len(
+                                        html.var("vapWEPsecurityConfigTable.vapWEPkey4")) == 13 or len(
+                                        html.var("vapWEPsecurityConfigTable.vapWEPkey4")) == 16:
                                     dic_result["vapWEPsecurityConfigTable.vapWEPkey4"] = html.var(
                                         "vapWEPsecurityConfigTable.vapWEPkey4")
                                     wep_flag = 4
-                                elif (len(html.var("vapWEPsecurityConfigTable.vapWEPkey4")) == 10 or len(html.var("vapWEPsecurityConfigTable.vapWEPkey4")) == 26 or len(html.var("vapWEPsecurityConfigTable.vapWEPkey4")) == 32) and Validation.is_hex_number(html.var("vapWEPsecurityConfigTable.vapWEPkey4")):
+                                elif (len(html.var("vapWEPsecurityConfigTable.vapWEPkey4")) == 10 or len(
+                                        html.var("vapWEPsecurityConfigTable.vapWEPkey4")) == 26 or len(html.var(
+                                        "vapWEPsecurityConfigTable.vapWEPkey4")) == 32) and Validation.is_hex_number(
+                                        html.var("vapWEPsecurityConfigTable.vapWEPkey4")):
                                     dic_result["vapWEPsecurityConfigTable.vapWEPkey4"] = html.var(
                                         "vapWEPsecurityConfigTable.vapWEPkey4")
                                     wep_flag = 1
@@ -1928,54 +2086,78 @@ def ap_vap_form_action(h):
                                 # dic_result["success"] = 1
                                 # dic_result["result"]="WEP Key4 is required"
 
-                    if html.var("vapWEPsecurityConfigTable.vapWEPkey1") != None and len(html.var("vapWEPsecurityConfigTable.vapWEPkey1")) == 0:
+                    if html.var("vapWEPsecurityConfigTable.vapWEPkey1") != None and len(
+                            html.var("vapWEPsecurityConfigTable.vapWEPkey1")) == 0:
                         dic_result["vapWEPsecurityConfigTable.vapWEPkey1"] = ""
                     else:
-                        if (len(html.var("vapWEPsecurityConfigTable.vapWEPkey1")) == 5 or len(html.var("vapWEPsecurityConfigTable.vapWEPkey1")) == 13 or len(html.var("vapWEPsecurityConfigTable.vapWEPkey1")) == 16):
+                        if (len(html.var("vapWEPsecurityConfigTable.vapWEPkey1")) == 5 or len(
+                                html.var("vapWEPsecurityConfigTable.vapWEPkey1")) == 13 or len(
+                                html.var("vapWEPsecurityConfigTable.vapWEPkey1")) == 16):
                             dic_result["vapWEPsecurityConfigTable.vapWEPkey1"] = html.var(
                                 "vapWEPsecurityConfigTable.vapWEPkey1")
                             wep_flag = 1
-                        elif (len(html.var("vapWEPsecurityConfigTable.vapWEPkey1")) == 10 or len(html.var("vapWEPsecurityConfigTable.vapWEPkey1")) == 26 or len(html.var("vapWEPsecurityConfigTable.vapWEPkey1")) == 32) and Validation.is_hex_number(html.var("vapWEPsecurityConfigTable.vapWEPkey1")):
+                        elif (len(html.var("vapWEPsecurityConfigTable.vapWEPkey1")) == 10 or len(
+                                html.var("vapWEPsecurityConfigTable.vapWEPkey1")) == 26 or len(
+                                html.var("vapWEPsecurityConfigTable.vapWEPkey1")) == 32) and Validation.is_hex_number(
+                                html.var("vapWEPsecurityConfigTable.vapWEPkey1")):
                             dic_result["vapWEPsecurityConfigTable.vapWEPkey1"] = html.var(
                                 "vapWEPsecurityConfigTable.vapWEPkey1")
                             wep_flag = 1
                         else:
                             wep_field_flag = 1
-                    if html.var("vapWEPsecurityConfigTable.vapWEPkey2") != None and len(html.var("vapWEPsecurityConfigTable.vapWEPkey2")) == 0:
+                    if html.var("vapWEPsecurityConfigTable.vapWEPkey2") != None and len(
+                            html.var("vapWEPsecurityConfigTable.vapWEPkey2")) == 0:
                         dic_result["vapWEPsecurityConfigTable.vapWEPkey2"] = ""
                     else:
-                        if (len(html.var("vapWEPsecurityConfigTable.vapWEPkey2")) == 5 or len(html.var("vapWEPsecurityConfigTable.vapWEPkey2")) == 13 or len(html.var("vapWEPsecurityConfigTable.vapWEPkey2")) == 16):
+                        if (len(html.var("vapWEPsecurityConfigTable.vapWEPkey2")) == 5 or len(
+                                html.var("vapWEPsecurityConfigTable.vapWEPkey2")) == 13 or len(
+                                html.var("vapWEPsecurityConfigTable.vapWEPkey2")) == 16):
                             dic_result["vapWEPsecurityConfigTable.vapWEPkey2"] = html.var(
                                 "vapWEPsecurityConfigTable.vapWEPkey2")
                             wep_flag = 2
-                        elif (len(html.var("vapWEPsecurityConfigTable.vapWEPkey2")) == 10 or len(html.var("vapWEPsecurityConfigTable.vapWEPkey2")) == 26 or len(html.var("vapWEPsecurityConfigTable.vapWEPkey2")) == 32) and Validation.is_hex_number(html.var("vapWEPsecurityConfigTable.vapWEPkey2")):
+                        elif (len(html.var("vapWEPsecurityConfigTable.vapWEPkey2")) == 10 or len(
+                                html.var("vapWEPsecurityConfigTable.vapWEPkey2")) == 26 or len(
+                                html.var("vapWEPsecurityConfigTable.vapWEPkey2")) == 32) and Validation.is_hex_number(
+                                html.var("vapWEPsecurityConfigTable.vapWEPkey2")):
                             dic_result["vapWEPsecurityConfigTable.vapWEPkey2"] = html.var(
                                 "vapWEPsecurityConfigTable.vapWEPkey2")
                             wep_flag = 1
                         else:
                             wep_field_flag = 2
 
-                    if html.var("vapWEPsecurityConfigTable.vapWEPkey3") != None and len(html.var("vapWEPsecurityConfigTable.vapWEPkey3")) == 0:
+                    if html.var("vapWEPsecurityConfigTable.vapWEPkey3") != None and len(
+                            html.var("vapWEPsecurityConfigTable.vapWEPkey3")) == 0:
                         dic_result["vapWEPsecurityConfigTable.vapWEPkey3"] = ""
                     else:
-                        if (len(html.var("vapWEPsecurityConfigTable.vapWEPkey3")) == 5 or len(html.var("vapWEPsecurityConfigTable.vapWEPkey3")) == 13 or len(html.var("vapWEPsecurityConfigTable.vapWEPkey3")) == 16):
+                        if (len(html.var("vapWEPsecurityConfigTable.vapWEPkey3")) == 5 or len(
+                                html.var("vapWEPsecurityConfigTable.vapWEPkey3")) == 13 or len(
+                                html.var("vapWEPsecurityConfigTable.vapWEPkey3")) == 16):
                             dic_result["vapWEPsecurityConfigTable.vapWEPkey3"] = html.var(
                                 "vapWEPsecurityConfigTable.vapWEPkey3")
                             wep_flag = 3
-                        elif (len(html.var("vapWEPsecurityConfigTable.vapWEPkey3")) == 10 or len(html.var("vapWEPsecurityConfigTable.vapWEPkey3")) == 26 or len(html.var("vapWEPsecurityConfigTable.vapWEPkey3")) == 32) and Validation.is_hex_number(html.var("vapWEPsecurityConfigTable.vapWEPkey3")):
+                        elif (len(html.var("vapWEPsecurityConfigTable.vapWEPkey3")) == 10 or len(
+                                html.var("vapWEPsecurityConfigTable.vapWEPkey3")) == 26 or len(
+                                html.var("vapWEPsecurityConfigTable.vapWEPkey3")) == 32) and Validation.is_hex_number(
+                                html.var("vapWEPsecurityConfigTable.vapWEPkey3")):
                             dic_result["vapWEPsecurityConfigTable.vapWEPkey3"] = html.var(
                                 "vapWEPsecurityConfigTable.vapWEPkey3")
                             wep_flag = 1
                         else:
                             wep_field_flag = 3
-                    if html.var("vapWEPsecurityConfigTable.vapWEPkey4") != None and len(html.var("vapWEPsecurityConfigTable.vapWEPkey4")) == 0:
+                    if html.var("vapWEPsecurityConfigTable.vapWEPkey4") != None and len(
+                            html.var("vapWEPsecurityConfigTable.vapWEPkey4")) == 0:
                         dic_result["vapWEPsecurityConfigTable.vapWEPkey4"] = ""
                     else:
-                        if (len(html.var("vapWEPsecurityConfigTable.vapWEPkey4")) == 5 or len(html.var("vapWEPsecurityConfigTable.vapWEPkey4")) == 13 or len(html.var("vapWEPsecurityConfigTable.vapWEPkey4")) == 16):
+                        if (len(html.var("vapWEPsecurityConfigTable.vapWEPkey4")) == 5 or len(
+                                html.var("vapWEPsecurityConfigTable.vapWEPkey4")) == 13 or len(
+                                html.var("vapWEPsecurityConfigTable.vapWEPkey4")) == 16):
                             dic_result["vapWEPsecurityConfigTable.vapWEPkey4"] = html.var(
                                 "vapWEPsecurityConfigTable.vapWEPkey4")
                             wep_flag = 4
-                        elif (len(html.var("vapWEPsecurityConfigTable.vapWEPkey4")) == 10 or len(html.var("vapWEPsecurityConfigTable.vapWEPkey4")) == 26 or len(html.var("vapWEPsecurityConfigTable.vapWEPkey4")) == 32) and Validation.is_hex_number(html.var("vapWEPsecurityConfigTable.vapWEPkey4")):
+                        elif (len(html.var("vapWEPsecurityConfigTable.vapWEPkey4")) == 10 or len(
+                                html.var("vapWEPsecurityConfigTable.vapWEPkey4")) == 26 or len(
+                                html.var("vapWEPsecurityConfigTable.vapWEPkey4")) == 32) and Validation.is_hex_number(
+                                html.var("vapWEPsecurityConfigTable.vapWEPkey4")):
                             dic_result["vapWEPsecurityConfigTable.vapWEPkey4"] = html.var(
                                 "vapWEPsecurityConfigTable.vapWEPkey4")
                             wep_flag = 1
@@ -2046,7 +2228,8 @@ def ap_vap_form_action(h):
                         dic_result[
                             "result"] = "WPA Master Rekey Interval is required"
 
-                if html.var("vapWPAsecurityConfigTable.vapWPAmode") == '0' or int(html.var("vapWPAsecurityConfigTable.vapWPAmode") == 0):
+                if html.var("vapWPAsecurityConfigTable.vapWPAmode") == '0' or int(
+                                html.var("vapWPAsecurityConfigTable.vapWPAmode") == 0):
                     if html.var("vapWPAsecurityConfigTable.vapWEPrekeyInt") != None:
                         if Validation.is_required(html.var("vapWPAsecurityConfigTable.vapWEPrekeyInt")):
                             if Validation.is_number(html.var("vapWPAsecurityConfigTable.vapWEPrekeyInt")):
@@ -2082,7 +2265,8 @@ def ap_vap_form_action(h):
                         dic_result["vapWPAsecurityConfigTable.vapWPAkeyMode"] = html.var(
                             "vapWPAsecurityConfigTable.vapWPAkeyMode")
                         if Validation.is_required(html.var("vapWPAsecurityConfigTable.vapWPAkeyMode")):
-                            if int(len(html.var("vapWPAsecurityConfigTable.vapWPAconfigPSKPassPhrase"))) >= 8 and int(len(html.var("vapWPAsecurityConfigTable.vapWPAconfigPSKPassPhrase"))) <= 32:
+                            if int(len(html.var("vapWPAsecurityConfigTable.vapWPAconfigPSKPassPhrase"))) >= 8 and int(
+                                    len(html.var("vapWPAsecurityConfigTable.vapWPAconfigPSKPassPhrase"))) <= 32:
                                 dic_result["vapWPAsecurityConfigTable.vapWPAconfigPSKPassPhrase"] = html.var(
                                     "vapWPAsecurityConfigTable.vapWPAconfigPSKPassPhrase")
                             else:
@@ -2122,7 +2306,11 @@ def ap_vap_form_action(h):
 
                     if html.var("vapWPAsecurityConfigTable.vapWPAserverIP") != None:
                         if Validation.is_required(html.var("vapWPAsecurityConfigTable.vapWPAserverIP")):
-                            if Validation.is_valid_ip(html.var("vapWPAsecurityConfigTable.vapWPAserverIP")) and html.var("vapWPAsecurityConfigTable.vapWPAserverIP") not in ["0.0.0.0"] and int(html.var("vapWPAsecurityConfigTable.vapWPAserverIP").split('.')[-1]) not in [0, 255]:
+                            if Validation.is_valid_ip(
+                                    html.var("vapWPAsecurityConfigTable.vapWPAserverIP")) and html.var(
+                                    "vapWPAsecurityConfigTable.vapWPAserverIP") not in ["0.0.0.0"] and int(
+                                    html.var("vapWPAsecurityConfigTable.vapWPAserverIP").split('.')[-1]) not in [0,
+                                                                                                                 255]:
                                 dic_result["vapWPAsecurityConfigTable.vapWPAserverIP"] = html.var(
                                     "vapWPAsecurityConfigTable.vapWPAserverIP")
                             else:
@@ -2194,6 +2382,10 @@ def ap_vap_form_action(h):
 
 def ip_mac_search(h):
     # pass
+    """
+
+    @param h:
+    """
     global html
     html = h
     ip_mac_list = []
@@ -2201,9 +2393,9 @@ def ip_mac_search(h):
     search_value = html.var("s")
     total_records = html.var("totalRecord")
     obj = IpMacSearch()
-##    device_type = html.var("device_type")
-##    if device_type == "None":
-##        device_type = ""
+    ##    device_type = html.var("device_type")
+    ##    if device_type == "None":
+    ##        device_type = ""
     device_type = ""
     user_id = html.req.session['user_id']
     ip_mac_search = html.var("ip_mac_search")
@@ -2217,10 +2409,14 @@ def ip_mac_search(h):
 
 
 def show_wireless_status(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     wifi_mode = {0: 'wifi11g', 1: 'wifi11gnHT20', 2:
-                 'wifi11gnHT40plus', 3: 'wifi11gnHT40minus'}
+        'wifi11gnHT40plus', 3: 'wifi11gnHT40minus'}
     wap_security = {0: 'Open', 1: 'WEP', 2: 'WPA'}
     host_id = html.var("host_id")
     device_type = html.var("device_type_id")
@@ -2236,13 +2432,14 @@ def show_wireless_status(h):
     html_str = ""
     if len(wireless_data) > 0:
         result_dic['result'].update({'channel': "-" if wireless_data[0]
-                                    .radioChannel == None else wireless_data[0].radioChannel})
+                                                       .radioChannel == None else wireless_data[0].radioChannel})
         result_dic['result'].update(
             {'wifimode': "-" if wireless_data[0].wifiMode == None else wifi_mode[int(wireless_data[0].wifiMode)]})
         result_dic['result'].update({'txpower': "-" if wireless_data[0]
-                                    .radioTxPower == None else wireless_data[0].radioTxPower})
-        result_dic['result'].update({'txrxchain': "-" if wireless_data[0].radioTXChainMask == None and wireless_data[0].radioRXChainMask == None else str(wireless_data[
-                                    0].radioTXChainMask) + "x" + str(wireless_data[0].radioRXChainMask)})
+                                                       .radioTxPower == None else wireless_data[0].radioTxPower})
+        result_dic['result'].update({'txrxchain': "-" if wireless_data[0].radioTXChainMask == None and wireless_data[
+            0].radioRXChainMask == None else str(wireless_data[
+            0].radioTXChainMask) + "x" + str(wireless_data[0].radioRXChainMask)})
 
         if wireless_data[0].radioAPmode != None:
             if int(wireless_data[0].radioAPmode) == 1 or int(wireless_data[0].radioAPmode) == 3:
@@ -2251,7 +2448,7 @@ def show_wireless_status(h):
                 activevap = 2
             else:
                 activevap = 0 if wireless_data[
-                    0].numberOfVAPs == None else wireless_data[0].numberOfVAPs
+                                     0].numberOfVAPs == None else wireless_data[0].numberOfVAPs
         else:
             activevap = 0
 
@@ -2259,31 +2456,37 @@ def show_wireless_status(h):
             if len(basic_vap_data) > 0 and len(basic_vap_security_data) > 0:
                 vap_data.update(
                     {'ssid%s' % (i): "-" if basic_vap_data[i].vapESSID == None else basic_vap_data[i].vapESSID,
-                     'security%s' % (i): "-" if basic_vap_security_data[i].vapSecurityMode == None else wap_security[int(basic_vap_security_data[i].vapSecurityMode)]})
+                     'security%s' % (i): "-" if basic_vap_security_data[i].vapSecurityMode == None else wap_security[
+                         int(basic_vap_security_data[i].vapSecurityMode)]})
         result_dic['result'].update({'vapstats': vap_data})
 
     html_str += "<table id=\"table_status\" name=\"table_status\" class=\"yo-table\"  style=\"border:2px;border-style:solid;border-color:#6b6969;z-index:1px\">"
-##    #html_str+="<tr><th>Channel</th>\
-##    #            <td>%s</td></tr>"%(result_dic['result']['channel'])
-##    html_str+="<tr><th>Wifimode</th>\
-##                <td>%s</td></tr>"%(result_dic['result']['wifimode'])
-##    html_str+="<tr><th>Tx Power</th>\
-##                <td>%s</td></tr>"%(result_dic['result']['txpower'])
-##    html_str+="<tr><th>Tx & Rx Chain</th>\
-##                <td>%s</td></tr>"%(result_dic['result']['txrxchain'])
+    ##    #html_str+="<tr><th>Channel</th>\
+    ##    #            <td>%s</td></tr>"%(result_dic['result']['channel'])
+    ##    html_str+="<tr><th>Wifimode</th>\
+    ##                <td>%s</td></tr>"%(result_dic['result']['wifimode'])
+    ##    html_str+="<tr><th>Tx Power</th>\
+    ##                <td>%s</td></tr>"%(result_dic['result']['txpower'])
+    ##    html_str+="<tr><th>Tx & Rx Chain</th>\
+    ##                <td>%s</td></tr>"%(result_dic['result']['txrxchain'])
 
     html_str += "<tr><th colspan=2>Active VAPs</th></tr>"
     html_str += "<tr><th>SSID</th>\
                 <th>Security</th></tr>"
     for i in range(0, activevap):
         html_str += "<tr><td>%s</td>\
-                <td>%s</td></tr>" % (result_dic['result']['vapstats']['ssid%s' % i], result_dic['result']['vapstats']['security%s' % i])
+                <td>%s</td></tr>" % (
+        result_dic['result']['vapstats']['ssid%s' % i], result_dic['result']['vapstats']['security%s' % i])
 
     html_str += "</table>"
     html.write(str(html_str))
 
 
 def service_status(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     status = {0: 'Disabled', 1: 'Enabled'}
@@ -2296,12 +2499,15 @@ def service_status(h):
     html_str += "<table id=\"table_status\" name=\"table_status\" class=\"yo-table\"  style=\"border:2px;border-style:solid;border-color:#6b6969;z-index:1px\">"
     if len(dhcp_data) > 0:
         html_str += "<tr><th>DHCP Server</th>\
-                <td>%s</td></tr>" % ("-" if dhcp_data[0].dhcpServerStatus == None else status[dhcp_data[0].dhcpServerStatus])
+                <td>%s</td></tr>" % (
+        "-" if dhcp_data[0].dhcpServerStatus == None else status[dhcp_data[0].dhcpServerStatus])
     if len(service_data) > 0:
         html_str += "<tr><th>UPnP Server</th>\
-                <td>%s</td></tr>" % ("-" if service_data[0].upnpServerStatus == None else status[service_data[0].upnpServerStatus])
+                <td>%s</td></tr>" % (
+        "-" if service_data[0].upnpServerStatus == None else status[service_data[0].upnpServerStatus])
         html_str += "<tr><th>System Log</th>\
-                <td>%s</td></tr>" % ("-" if service_data[0].systemLogStatus == None else status[service_data[0].systemLogStatus])
+                <td>%s</td></tr>" % (
+        "-" if service_data[0].systemLogStatus == None else status[service_data[0].systemLogStatus])
     else:
         html_str += "<tr><td>No Data Available</td></tr>"
 
@@ -2309,6 +2515,10 @@ def service_status(h):
 
 
 def system_info(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     host_id = html.var("host_id")
@@ -2321,14 +2531,22 @@ def system_info(h):
     html_str += "<table id=\"table_status\" name=\"table_status\" class=\"yo-table\"  style=\"border:2px;border-style:solid;border-color:#6b6969;z-index:1px\">"
     if len(system_data) > 0:
         html_str += "<tr><th>Hardware Version</th>\
-                <td>%s</td></tr>" % ("-" if system_data[0].hardwareVersion == None or system_data[0].hardwareVersion == "" else system_data[0].hardwareVersion)
+                <td>%s</td></tr>" % (
+        "-" if system_data[0].hardwareVersion == None or system_data[0].hardwareVersion == "" else system_data[
+            0].hardwareVersion)
         html_str += "<tr><th>Software Version</th>\
-                <td>%s</td></tr>" % ("-" if system_data[0].softwareVersion == None or system_data[0].softwareVersion == "" else system_data[0].softwareVersion)
+                <td>%s</td></tr>" % (
+        "-" if system_data[0].softwareVersion == None or system_data[0].softwareVersion == "" else system_data[
+            0].softwareVersion)
     if len(ip_setting_data) > 0:
         html_str += "<tr><th>Primary DNS</th>\
-        <td>%s</td></tr>" % ("-" if ip_setting_data[0].lanPrimaryDNS == None or ip_setting_data[0].lanPrimaryDNS == "" else ip_setting_data[0].lanPrimaryDNS)
+        <td>%s</td></tr>" % (
+        "-" if ip_setting_data[0].lanPrimaryDNS == None or ip_setting_data[0].lanPrimaryDNS == "" else ip_setting_data[
+            0].lanPrimaryDNS)
         html_str += "<tr><th>Secondary DNS</th>\
-                <td>%s</td></tr>" % ("-" if ip_setting_data[0].lanSecondaryDNS == None or ip_setting_data[0].lanSecondaryDNS == "" else ip_setting_data[0].lanSecondaryDNS)
+                <td>%s</td></tr>" % (
+        "-" if ip_setting_data[0].lanSecondaryDNS == None or ip_setting_data[0].lanSecondaryDNS == "" else
+        ip_setting_data[0].lanSecondaryDNS)
 
     else:
         html_str += "<tr><td>No Data Available</td></tr>"
@@ -2336,6 +2554,10 @@ def system_info(h):
 
 
 def show_radio_admin(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     html_str = ""
@@ -2348,16 +2570,16 @@ def show_radio_admin(h):
     html_str += "<th>Radio State</th>"
     if len(main_admin_list) > 0:
         for i in range(0, len(main_admin_list)):
-            html_str += "<td><img src=\"%s\" class=\"n-reconcile\" title=\"%s\" id=\"main_admin\" name=\"main_admin\" style=\"width:10px;height:10px;\" state=\"%s\" onClick=\"radio_enable_disable(event,this,'%s','radioSetup.radioState');\"/></td></tr>"\
-                % (
-                    "images/temp/green_dot.png" if int(
+            html_str += "<td><img src=\"%s\" class=\"n-reconcile\" title=\"%s\" id=\"main_admin\" name=\"main_admin\" style=\"width:10px;height:10px;\" state=\"%s\" onClick=\"radio_enable_disable(event,this,'%s','radioSetup.radioState');\"/></td></tr>" \
+                        % (
+                "images/temp/green_dot.png" if int(
                     main_admin_list[
                         i].radioState) == 1 else "images/temp/red_dot.png",
-                    "Radio Enable" if int(
-                        main_admin_list[
-                            i].radioState) == 1 else "Radio Disable",
-                    1 if int(main_admin_list[i].radioState) == 1 else 0,
-                    host_id)
+                "Radio Enable" if int(
+                    main_admin_list[
+                        i].radioState) == 1 else "Radio Disable",
+                1 if int(main_admin_list[i].radioState) == 1 else 0,
+                host_id)
     else:
         html_str += "<tr><td colspan=2>No Data Available</td></tr>"
     html_str += "</table>"
@@ -2365,6 +2587,10 @@ def show_radio_admin(h):
 
 
 def disable_enable_radio(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     host_id = html.var("host_id")
@@ -2378,6 +2604,10 @@ def disable_enable_radio(h):
 
 
 def chk_radio_state(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     host_id = html.var("host_id")
@@ -2388,6 +2618,10 @@ def chk_radio_state(h):
 
 
 def connected_clients(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     host_id = html.var("host_id")
@@ -2398,6 +2632,10 @@ def connected_clients(h):
 
 
 def ap_form_reconcile(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     if html.var("host_id") != None:
@@ -2406,6 +2644,6 @@ def ap_form_reconcile(h):
         formname = html.var("formName")
     if html.var("device_type") != None:
         device_type = html.var("device_type")
-    # obj_form = OduConfiguration()
+        # obj_form = OduConfiguration()
     result = eval("APForms.%s(%s,'%s')" % (formname, host_id, device_type))
     html.write(str(result))

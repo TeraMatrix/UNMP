@@ -44,7 +44,7 @@ class DashboardConfig(object):
             "/")[3]                           # it gives instance name of nagios system
         xml_config_file = "/omd/sites/%s/share/check_mk/web/htdocs/xml/dashboard_config.xml" % nms_instance                        # config.xml file path
         try:
-            if(os.path.isfile(xml_config_file)):                        # check config.xml file exist or not
+            if (os.path.isfile(xml_config_file)):                        # check config.xml file exist or not
                 dom = xml.dom.minidom.parse(
                     xml_config_file)            # create xml dom object of config.xml file
                 return dom
@@ -75,17 +75,17 @@ class DashboardConfig(object):
         dom_element = dom.getElementsByTagName(
             tag_name)            # get the element by tag name
         attribute_value = []
-            # declare attribute value list    (2D)
+        # declare attribute value list    (2D)
         text_value = []
-            # declare text value list        (1D)
+        # declare text value list        (1D)
         for elem in dom_element:                                    # iterate selected elements
             attr_value = []
-                # declare attr_value list        (2D)
+            # declare attr_value list        (2D)
             for attr in attribute_name:                                # iterate attributes
                 attr_value.append(elem.getAttribute(
                     attr))            # append attribute_value in attr_value
             attribute_value.append(attr_value)
-                                   # append attr_value in attribute_value
+            # append attr_value in attribute_value
             if get_text == True:
                 text_value.append(DashboardConfig.get_tag_text(
                     elem.childNodes))    # append text value in text_value if get_text is True

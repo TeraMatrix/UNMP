@@ -12,11 +12,12 @@
 
 
 # Import modules that contain the function and libraries
-from log_bll import Log_bll
-from log import Log
 from json import JSONEncoder
-from common_bll import Essential
 import os
+
+from common_bll import Essential
+from log import Log
+from log_bll import Log_bll
 
 
 def main_log(h):
@@ -25,8 +26,8 @@ def main_log(h):
     css_list = ["css/demo_table_jui.css", "css/jquery.multiselect.css",
                 "css/jquery.multiselect.filter.css", "css/jquery-ui-1.8.4.custom.css", "css/calendrical.css"]
     js_list = [
-        "js/jquery-ui-1.8.6.custom.min.js", "js/jquery.dataTables.min.js", "js/pages/jquery.multiselect.min.js",
-        "js/pages/jquery.multiselect.filter.js", "js/calendrical.js", "js/pages/log.js"]
+        "js/lib/main/jquery-ui-1.8.6.custom.min.js", "js/lib/main/jquery.dataTables.min.js", "js/lib/main/jquery.multiselect.min.js",
+        "js/lib/main/jquery.multiselect.filter.js", "js/lib/main/calendrical.js", "js/unmp/main/log.js"]
 
     group = html.req.session["group"].lower()
     user_details = []
@@ -72,7 +73,8 @@ def get_data(h):
         time_start = str(html.var("start_time"))
         time_end = str(html.var("end_time"))
     result = l.get_log_data_bll(
-        sEcho, iColumns, iDisplayLength, iDisplayStart, sColumns, sSearch, iSortCol_0, sSortDir_0, month, log_type, selected_user,
+        sEcho, iColumns, iDisplayLength, iDisplayStart, sColumns, sSearch, iSortCol_0, sSortDir_0, month, log_type,
+        selected_user,
         group, date_start, date_end, time_start, time_end)
     html.write(JSONEncoder().encode(result))
 
@@ -134,10 +136,10 @@ def clear_old_logs(h):
     html.write(JSONEncoder().encode(result))
 
 
-def view_page_tip_log_user(h):
-    global html
-    html = h
-    html.write(Log.view_page_tip_log_user())
+# def view_page_tip_log_user(h):
+#     global html
+#     html = h
+#     html.write(Log.view_page_tip_log_user())
 
 
 def edit_log_settings(h):
@@ -169,7 +171,8 @@ def edit_log_settings(h):
 		<select name=\"user_trail_state\" id=\"user_trail_state\" class=\"multiselect\" title=\"Click to select an option\">\
 		%s</select></div>\
 		<button class=\"yo-small yo-button\" id=\"apply_log_settings\" type=\"button\">Apply Changes</button>\
-		<button class=\"yo-small yo-button\" id=\"clear_old_logs\" type=\"button\">Clear old logs</button>" % (html_selected)
+		<button class=\"yo-small yo-button\" id=\"clear_old_logs\" type=\"button\">Clear old logs</button>" % (
+        html_selected)
         html.write(html_view)
     except Exception, e:
         html.write(str(e))

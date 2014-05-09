@@ -26,11 +26,11 @@ from signal import SIGTERM
 dict_port = {1: "-", 2: "6790", 3: "-", 4: "-"}
 dict_id = {1: "unmp-alarm", 2: "unmp-ds", 3: "unmp-local", 4: "nagios"}
 dict_name = {1: "Alarm Parser", 2: "Auto Discovery server", 3:
-             "UNMP System Monitor", 4: "Nagios"}
+    "UNMP System Monitor", 4: "Nagios"}
 dict_pid = {1: "/omd/daemon/tmp/unmp-trap.pid", 2: "/omd/daemon/tmp/unmp-ds.pid", 3:
-            "/omd/daemon/tmp/unmp-local.pid", 4: "nagios"}
+    "/omd/daemon/tmp/unmp-local.pid", 4: "nagios"}
 dict_details = {1: "UNMP Core Process to Capture & Log Traps, Alarms & Alerts.", 2:
-                "UNMP Device Discovery Server.", 3: "UNMP Core Process for UNMP System Monitor", 4: "Nagios core process"}
+    "UNMP Device Discovery Server.", 3: "UNMP Core Process for UNMP System Monitor", 4: "Nagios core process"}
 
 
 # dict_pidfile={"unmp-alarm":"/omd/daemon/tmp/unmp-trap.pid","unmp-
@@ -46,7 +46,7 @@ def mahipal_daemons(h):
     global html
     html = h
     html.new_header("Daemons Management", "daemons_controller.py", "",
-                    [], ["js/pages/daemon.js"])
+        [], ["js/unmp/main/daemon.js"])
     html.write(
         daemons.index(dict_id, dict_name, dict_pid, dict_port, dict_details))
     html.new_footer()
@@ -77,7 +77,7 @@ def get_status_daemon(h):
     html.write(str(daemons_bll.get_status(pid)))
 
 
-def page_tip_daemons(h):
-    global html
-    html = h
-    html.write(daemons.page_tip_daemons())
+# def page_tip_daemons(h):
+#     global html
+#     html = h
+#     html.write(daemons.page_tip_daemons())

@@ -1,12 +1,8 @@
-import time
-import urllib2
-import base64
-import socket
-import MySQLdb
-import pycurl
-import urllib
-import re
+#! /usr/bin/python2.6
+
 from copy import deepcopy
+import socket
+import urllib2
 
 
 url_dict = {}
@@ -43,6 +39,11 @@ url_dict['odu100_peerConfigTable'] = 'peerconfig.shtml'
 ############################################################## monitoring
 
 def odu100_peerNodeStatusTable(data):
+    """
+
+    @param data:
+    @return:
+    """
     success = 1
     # print data
     dict_data = {}
@@ -58,8 +59,10 @@ def odu100_peerNodeStatusTable(data):
         index = s.find(function_str)
         given = find_string.split(', ')
         req = [
-            'linkStatus', 'tunnelStatus', 'sigStrength1', 'macAddress', 'ssid', 'numSlaves', 'rxRate', 'txRate', 'allocatedTxBW', 'allocatedRxBW', 'usedTxBW',
-            'usedRxBW', 'txBasicRate', 'sigStrength2', 'rxBasicRate', 'txLinkQuality', 'txTime', 'rxTime', 'negotiatedMaxUplinkBW', 'negotiatedMaxDownlinkBW', 'linkDistance']
+            'linkStatus', 'tunnelStatus', 'sigStrength1', 'macAddress', 'ssid', 'numSlaves', 'rxRate', 'txRate',
+            'allocatedTxBW', 'allocatedRxBW', 'usedTxBW',
+            'usedRxBW', 'txBasicRate', 'sigStrength2', 'rxBasicRate', 'txLinkQuality', 'txTime', 'rxTime',
+            'negotiatedMaxUplinkBW', 'negotiatedMaxDownlinkBW', 'linkDistance']
         while 1:
             to_be_matched = "case %s:" % (list_index + 1)
             index_data = s.find(to_be_matched, index + 1)
@@ -97,6 +100,11 @@ def odu100_peerNodeStatusTable(data):
 
 
 def odu100_synchStatisticsTable(data):
+    """
+
+    @param data:
+    @return:
+    """
     success = 1
     try:
         s = data
@@ -118,6 +126,11 @@ def odu100_synchStatisticsTable(data):
 
 
 def odu100_nwInterfaceStatisticsTable(data):
+    """
+
+    @param data:
+    @return:
+    """
     success = 1
     try:
         num = 'num'
@@ -143,7 +156,7 @@ def odu100_nwInterfaceStatisticsTable(data):
                 'txBytes'], i['rxErrors'], i['txErrors'], i['rxDropped'], i['txDropped']]
             interface_statistics[count] = temp_statistics
             count = count + 1
-        # return
+            # return
         # {'interface_statistics':interface_statistics,"interface_status":interface_status}
         success = 0
     except:
@@ -156,6 +169,11 @@ def odu100_nwInterfaceStatisticsTable(data):
 
 
 def odu100_raTddMacStatisticsTable(data):
+    """
+
+    @param data:
+    @return:
+    """
     success = 1
     try:
         num = 'num'
@@ -190,6 +208,11 @@ def odu100_raTddMacStatisticsTable(data):
 ############################################ Status tables
 
 def odu100_raStatusTable(data):
+    """
+
+    @param data:
+    @return:
+    """
     success = 1
     try:
         s = data
@@ -221,13 +244,19 @@ def odu100_raStatusTable(data):
 
 
 def odu100_synchStatusTable(data):
+    """
+
+    @param data:
+    @return:
+    """
     success = 0
     try:
         s = data
         main_str_list = ["Sync Operational State", "Raster Time",
                          "Time Adjust", "Percentage Downlink Transmit Time"]
         find_string_list = [
-            '<td align="left"><div id="operationalstate">', '<td align="left"><div id="rastertime">', '<td align="left">',
+            '<td align="left"><div id="operationalstate">', '<td align="left"><div id="rastertime">',
+            '<td align="left">',
             '<td align="left"><div id="percentagedownlinktransmittime">']
         end_string_list = ["</td>", "</div></td>", "</div></td>",
                            "</div></td>"]
@@ -252,6 +281,11 @@ def odu100_synchStatusTable(data):
 
 
 def odu100_nwInterfaceStatusTable(data):
+    """
+
+    @param data:
+    @return:
+    """
     success = 1
     try:
         num = 'num'
@@ -294,6 +328,11 @@ def odu100_nwInterfaceStatusTable(data):
 ############################################ Status tables
 
 def odu100_raStatusTable(data):
+    """
+
+    @param data:
+    @return:
+    """
     success = 1
     try:
         s = data
@@ -324,13 +363,19 @@ def odu100_raStatusTable(data):
 
 
 def odu100_synchStatusTable(data):
+    """
+
+    @param data:
+    @return:
+    """
     success = 1
     try:
         s = data
         main_str_list = ["Sync Operational State", "Raster Time",
                          "Time Adjust", "Percentage Downlink Transmit Time"]
         find_string_list = [
-            '<td align="left"><div id="operationalstate">', '<td align="left"><div id="rastertime">', '<td align="left">',
+            '<td align="left"><div id="operationalstate">', '<td align="left"><div id="rastertime">',
+            '<td align="left">',
             '<td align="left"><div id="percentagedownlinktransmittime">']
         end_string_list = ["</td>", "</div></td>", "</div></td>",
                            "</div></td>"]
@@ -356,6 +401,11 @@ def odu100_synchStatusTable(data):
 
 
 def odu100_nwInterfaceStatusTable(data):
+    """
+
+    @param data:
+    @return:
+    """
     success = 1
     try:
         num = 'num'
@@ -396,11 +446,18 @@ def odu100_nwInterfaceStatusTable(data):
 
 ####################################### reconcilation Tables
 def odu100_ruConfTable(data):
+    """
+
+    @param data:
+    @return:
+    """
     try:
         s = data
         main_str_list = [
-            '** Update RU admin state drop-down listbox.', '** Update Tier drop-down listbox.', '** Update channel bandwidth drop-down listbox.',
-            '** Update synchSource drop-down listbox.', 'm** Update country code drop-down listbox.', '** Update poe state drop-down listbox.',
+            '** Update RU admin state drop-down listbox.', '** Update Tier drop-down listbox.',
+            '** Update channel bandwidth drop-down listbox.',
+            '** Update synchSource drop-down listbox.', 'm** Update country code drop-down listbox.',
+            '** Update poe state drop-down listbox.',
             'RU.RUConfTable.alignmentControl']
 
         find_string_list = [
@@ -427,10 +484,16 @@ def odu100_ruConfTable(data):
             return {'success': success, 'result': {1: list_data}}
         else:
             return {'success': success, 'result': {}}
-    # return {1:[list_data]}
+            # return {1:[list_data]}
 
 
 def odu100_ruStatusTable(data_ru_op_state, data):  # view-source:http://172.22.0.120/eweb_index.shtml
+    """
+
+    @param data_ru_op_state:
+    @param data:
+    @return:
+    """
     try:
         s = data_ru_op_state
         find_str = '<div id="opstate">'
@@ -461,7 +524,7 @@ def odu100_ruStatusTable(data_ru_op_state, data):  # view-source:http://172.22.0
             data = s[data_index_start:data_index_end]
             list_data.append(data.strip())
         list_data.insert(6, ru_op_state)
-            # list_data.append(data.strip())
+        # list_data.append(data.strip())
         # return {1:[list_data]}
         success = 0
     except:
@@ -474,6 +537,11 @@ def odu100_ruStatusTable(data_ru_op_state, data):  # view-source:http://172.22.0
 
 
 def odu100_swStatusTable(data):
+    """
+
+    @param data:
+    @return:
+    """
     success = 1
     try:
         s = data
@@ -502,10 +570,15 @@ def odu100_swStatusTable(data):
             return {'success': success, 'result': {1: list_data}}
         else:
             return {'success': success, 'result': {}}
-    # return {1:[list_data]}
+            # return {1:[list_data]}
 
 
 def odu100_omcConfTable(data):
+    """
+
+    @param data:
+    @return:
+    """
     success = 1
     try:
         s = data
@@ -533,16 +606,23 @@ def odu100_omcConfTable(data):
             return {'success': success, 'result': {1: list_data}}
         else:
             return {'success': success, 'result': {}}
-    # return {1:[list_data]}
+            # return {1:[list_data]}
 
 
 def odu100_ipConfigTable(data):
+    """
+
+    @param data:
+    @return:
+    """
     success = 1
     try:
         s = data
         main_str_list = [
-            '** Update IP admin state drop-down listbox.', '<td align="left">IP Address<br/>', '<td align="left">IP Netmask</td>',
-            '<td align="left">IP Default Gateway</td>', '** Update DHCP state drop-down listbox.', 'var manState', 'name="RU.IPConfigTable.managementVlanTag" onBlur="checkField(this)" id="managementVlanTag']
+            '** Update IP admin state drop-down listbox.', '<td align="left">IP Address<br/>',
+            '<td align="left">IP Netmask</td>',
+            '<td align="left">IP Default Gateway</td>', '** Update DHCP state drop-down listbox.', 'var manState',
+            'name="RU.IPConfigTable.managementVlanTag" onBlur="checkField(this)" id="managementVlanTag']
         find_string_list = [
             'var ipAdminState = ', 'id="ru.np.ip.ipAddress" value="', 'id="ru.np.ip.ipNetworkMask" value="',
             'id="ru.np.ip.ipDefaultGateway" value="', 'var dhcpState = ', '=', 'value="']
@@ -568,10 +648,15 @@ def odu100_ipConfigTable(data):
             return {'success': success, 'result': {1: list_data}}
         else:
             return {'success': success, 'result': {}}
-    # return {1:[list_data]}
+            # return {1:[list_data]}
 
 
 def odu100_hwDescTable(data):
+    """
+
+    @param data:
+    @return:
+    """
     success = 1
     try:
         s = data
@@ -598,18 +683,29 @@ def odu100_hwDescTable(data):
             return {'success': success, 'result': {1: list_data}}
         else:
             return {'success': success, 'result': {}}
-    # return {1:[list_data]}
+            # return {1:[list_data]}
 
 
 def odu100_syncConfigTable(data):
+    """
+
+    @param data:
+    @return:
+    """
     success = 1
     try:
         s = data
-        main_str_list = ['** Update sync admin state drop-down listbox.', 'Raster Time (RW_LO:SYNC)', 'Sync Loss Threshold',
-                         'Leaky bucket Timer', 'Sync loss Timeout', 'Sync Timer Adjust (RW_LO:SYNC)', 'Percentage Downlink Transmit Time (RW_LO:SYNC)']
-        find_string_list = ['var syncAdminState = ', 'name="RU.SyncClock.SyncConfigTable.rasterTime" onBlur="checkField(this)" value="', 'name="RU.SyncClock.SyncConfigTable.syncLossThreshold" onBlur="checkField(this)" value="',
-                            'name="RU.SyncClock.SyncConfigTable.leakyBucketTimer" onBlur="checkField(this)" value="', 'name="RU.SyncClock.SyncConfigTable.syncLostTimeout" onBlur="checkField(this)" value="',
-                            'name="RU.SyncClock.SyncConfigTable.timerAdjust" onBlur="checkField(this)" id="ru.np.synch.timerAdjust" value="', 'name="RU.SyncClock.SyncConfigTable.percentageDownlinkTransmitTime" onBlur="checkField(this)" value="']
+        main_str_list = ['** Update sync admin state drop-down listbox.', 'Raster Time (RW_LO:SYNC)',
+                         'Sync Loss Threshold',
+                         'Leaky bucket Timer', 'Sync loss Timeout', 'Sync Timer Adjust (RW_LO:SYNC)',
+                         'Percentage Downlink Transmit Time (RW_LO:SYNC)']
+        find_string_list = ['var syncAdminState = ',
+                            'name="RU.SyncClock.SyncConfigTable.rasterTime" onBlur="checkField(this)" value="',
+                            'name="RU.SyncClock.SyncConfigTable.syncLossThreshold" onBlur="checkField(this)" value="',
+                            'name="RU.SyncClock.SyncConfigTable.leakyBucketTimer" onBlur="checkField(this)" value="',
+                            'name="RU.SyncClock.SyncConfigTable.syncLostTimeout" onBlur="checkField(this)" value="',
+                            'name="RU.SyncClock.SyncConfigTable.timerAdjust" onBlur="checkField(this)" id="ru.np.synch.timerAdjust" value="',
+                            'name="RU.SyncClock.SyncConfigTable.percentageDownlinkTransmitTime" onBlur="checkField(this)" value="']
         end_string_list = [';', '" size="15"', '" size="15">', '" size="15">',
                            '" size="15"></td>', '" size="3">', '" size="15">']
         list_data = [1]
@@ -634,10 +730,16 @@ def odu100_syncConfigTable(data):
             return {'success': success, 'result': {1: list_data}}
         else:
             return {'success': success, 'result': {}}
-    # return {1:[list_data]}
+            # return {1:[list_data]}
 
 
 def odu100_raConfTable(data_acl, data_ra_config):
+    """
+
+    @param data_acl:
+    @param data_ra_config:
+    @return:
+    """
     success = 1
     try:
         s = data_acl
@@ -648,10 +750,14 @@ def odu100_raConfTable(data_acl, data_ra_config):
         # print acl_mode
         s = data_ra_config
         main_str_list = ['** Update radio admin state drop-down listbox.', '<td align="left">SSID (RW_LO:RA)</td>',
-                         'Guaranteed Broadcast BW(RW_LO:RA)', '** Update dba state drop-down listbox.', '** Update acm state drop-down listbox.',
-                         '** Update acs state drop-down listbox.', '** Update dfs state drop-down listbox', '** Update numSlaves drop-down listbox.', '/*** Update dfs state drop-down listbox */', 'var linkdistance']
+                         'Guaranteed Broadcast BW(RW_LO:RA)', '** Update dba state drop-down listbox.',
+                         '** Update acm state drop-down listbox.',
+                         '** Update acs state drop-down listbox.', '** Update dfs state drop-down listbox',
+                         '** Update numSlaves drop-down listbox.', '/*** Update dfs state drop-down listbox */',
+                         'var linkdistance']
         find_string_list = ['var raAdminState = ', 'name="RU.RA.1.RAConfTable.ssId" onBlur="checkField(this)" value="',
-                            'name="RU.RA.1.RAConfTable.guaranteedBroadcastBW" onBlur="checkField(this)" value="', 'var raDba = ', 'var raAcm = ',
+                            'name="RU.RA.1.RAConfTable.guaranteedBroadcastBW" onBlur="checkField(this)" value="',
+                            'var raDba = ', 'var raAcm = ',
                             'var raAcs = ', 'var raDfs = ', 'var numSlaves = ', 'var raantennaport = ', '=']
         end_string_list = [';', '" size="15"></td>',
                            '" size="15"></td>', ';', ';', ';', ';', ';', ';', ';']
@@ -677,17 +783,26 @@ def odu100_raConfTable(data_acl, data_ra_config):
             return {'success': success, 'result': {1: list_data}}
         else:
             return {'success': success, 'result': {}}
-    # return {1:[list_data]}
+            # return {1:[list_data]}
 
 
 def odu100_raLlcConfTable(data):
+    """
+
+    @param data:
+    @return:
+    """
     success = 1
     try:
         s = data
-        main_str_list = ['<td align="left">Retransmit Window Size(Low)</td>', '<td align="left">Retransmit Window Size(High)</td>',
-                         '<td align="left">Frame Loss Threshold</td>', '<td align="left">Leaky Bucket Timer</td>', '<td align="left">Frame Loss Timeout</td>']
-        find_string_list = ['name="RU.RA.1.LLC.RALLCConfTable.arqWinLow" onBlur="checkField(this)" value="', 'name="RU.RA.1.LLC.RALLCConfTable.arqWinHigh" onBlur="checkField(this)" value="',
-                            'name="RU.RA.1.LLC.RALLCConfTable.frameLossThreshold" onBlur="checkField(this)" value="', 'name="RU.RA.1.LLC.RALLCConfTable.leakyBucketTimer" onBlur="checkField(this)" value="',
+        main_str_list = ['<td align="left">Retransmit Window Size(Low)</td>',
+                         '<td align="left">Retransmit Window Size(High)</td>',
+                         '<td align="left">Frame Loss Threshold</td>', '<td align="left">Leaky Bucket Timer</td>',
+                         '<td align="left">Frame Loss Timeout</td>']
+        find_string_list = ['name="RU.RA.1.LLC.RALLCConfTable.arqWinLow" onBlur="checkField(this)" value="',
+                            'name="RU.RA.1.LLC.RALLCConfTable.arqWinHigh" onBlur="checkField(this)" value="',
+                            'name="RU.RA.1.LLC.RALLCConfTable.frameLossThreshold" onBlur="checkField(this)" value="',
+                            'name="RU.RA.1.LLC.RALLCConfTable.leakyBucketTimer" onBlur="checkField(this)" value="',
                             'name="RU.RA.1.LLC.RALLCConfTable.frameLossTimeout" onBlur="checkField(this)" value="']
         end_string_list = ['" size="15"></td>', '" size="15"></td>',
                            '" size="15"></td>', '" size="15"></td>', '" size="15"></td>']
@@ -711,19 +826,28 @@ def odu100_raLlcConfTable(data):
             return {'success': success, 'result': {1: list_data}}
         else:
             return {'success': success, 'result': {}}
-    # return {1:list_data}
+            # return {1:list_data}
 
 
 def odu100_raTddMacConfigTable(data):
+    """
+
+    @param data:
+    @return:
+    """
     success = 1
     try:
         s = data
         main_str_list = ['<td align="left">Pass Phrase (RW_LO:RA)</td>', '** Update numSlaves drop-down listbox.',
                          "var oSelect = document.getElementById('txPower');", '<td align="left">Max CRC Errors</td>',
-                         '<td align="left">Leaky Bucket Timer</td>', '** Update radio encryptionType drop-down listbox.']
-        find_string_list = ['name="RU.RA.1.TddMac.RATDDMACConfigTable.passPhrase" onBlur="checkField(this)" value="', 'var x ="',
-                            'var max_Power= "', 'name="RU.RA.1.TddMac.RATDDMACConfigTable.maxCrcErrors" onBlur="checkField(this)" value="',
-                            'name="RU.RA.1.TddMac.RATDDMACConfigTable.leakyBucketTimer" onBlur="checkField(this)" value="', 'var raEncryptionType =']
+                         '<td align="left">Leaky Bucket Timer</td>',
+                         '** Update radio encryptionType drop-down listbox.']
+        find_string_list = ['name="RU.RA.1.TddMac.RATDDMACConfigTable.passPhrase" onBlur="checkField(this)" value="',
+                            'var x ="',
+                            'var max_Power= "',
+                            'name="RU.RA.1.TddMac.RATDDMACConfigTable.maxCrcErrors" onBlur="checkField(this)" value="',
+                            'name="RU.RA.1.TddMac.RATDDMACConfigTable.leakyBucketTimer" onBlur="checkField(this)" value="',
+                            'var raEncryptionType =']
         end_string_list = ['" size="15"></td>', '";', '";',
                            '" size="15"></td>', '" size="15"></td>', ';']
         list_data = []
@@ -746,10 +870,15 @@ def odu100_raTddMacConfigTable(data):
             return {'success': success, 'result': {1: list_data}}
         else:
             return {'success': success, 'result': {}}
-    # return {1:list_data}
+            # return {1:list_data}
 
 
 def odu100_raTddMacStatusTable(data):
+    """
+
+    @param data:
+    @return:
+    """
     success = 1
     try:
         s = data
@@ -775,14 +904,20 @@ def odu100_raTddMacStatusTable(data):
             return {'success': success, 'result': {1: list_data}}
         else:
             return {'success': success, 'result': {}}
-    # return {1:list_data}
+            # return {1:list_data}
 
 
 def odu100_raPreferredRFChannelTable(data):
+    """
+
+    @param data:
+    @return:
+    """
     success = 1
     try:
         s = data
-        main_str_list = ['function selectFreq()', '$("#Freq1").val(rfChannel);', '$("#Freq2").val(rfChannel);', '$("#Freq3").val(rfChannel);',
+        main_str_list = ['function selectFreq()', '$("#Freq1").val(rfChannel);', '$("#Freq2").val(rfChannel);',
+                         '$("#Freq3").val(rfChannel);',
                          '$("#Freq4").val(rfChannel);', '$("#Freq5").val(rfChannel);', '$("#Freq6").val(rfChannel);',
                          '$("#Freq7").val(rfChannel);', '$("#Freq8").val(rfChannel);', '$("#Freq9").val(rfChannel);']
         find_string_list = [
@@ -815,10 +950,15 @@ def odu100_raPreferredRFChannelTable(data):
         else:
             return {'success': success, 'result': {}}
 
-    # return dict_data
+            # return dict_data
 
 
 def odu100_raChannelListTable(data):
+    """
+
+    @param data:
+    @return:
+    """
     success = 1
     try:
         s = data
@@ -849,10 +989,15 @@ def odu100_raChannelListTable(data):
         else:
             return {'success': success, 'result': {}}
 
-    # return dict_data
+            # return dict_data
 
 
 def odu100_raAclConfigTable(data):
+    """
+
+    @param data:
+    @return:
+    """
     success = 1
     try:
         s = data
@@ -884,18 +1029,23 @@ def odu100_raAclConfigTable(data):
 
 
 def odu100_peerConfigTable1(data):
+    """
+
+    @param data:
+    @return:
+    """
     success = 1
     try:
         s = data
         main_str_list = ['function convertIntoArray(checkOrNot)', ' peerConfigArray[0] =',
                          'peerConfigArray[1] = ', 'peerConfigArray[2] =', 'peerConfigArray[3] =',
                          'peerConfigArray[4] =', 'peerConfigArray[5] =', 'peerConfigArray[6] =',
-                                                   'peerConfigArray[7] =', 'peerConfigArray[8] =', 'peerConfigArray[9] =',
-                       'peerConfigArray[10] =', 'peerConfigArray[11] =', 'peerConfigArray[12] =',
-                       'peerConfigArray[13] =', 'peerConfigArray[14] =']
+                         'peerConfigArray[7] =', 'peerConfigArray[8] =', 'peerConfigArray[9] =',
+                         'peerConfigArray[10] =', 'peerConfigArray[11] =', 'peerConfigArray[12] =',
+                         'peerConfigArray[13] =', 'peerConfigArray[14] =']
         find_string_list = [
             'mac= "', 'guaranteedDownlinkBW= "', 'guaranteedUplinkBW= "', 'maxDownlinkBW= "',
-                          'maxUplinkBW= "', 'basicRateMCSIndex= "']
+            'maxUplinkBW= "', 'basicRateMCSIndex= "']
         end_string_list = ['";', '";', '";', '";', '";', '";']
         list_data = []
         dict_data = {}
@@ -915,7 +1065,7 @@ def odu100_peerConfigTable1(data):
                 # if j==0 and data.strip()=='':
                 #   data="new empty"
                 temp_list.append(data.strip())
-            # list_data.append(temp_list)
+                # list_data.append(temp_list)
             dict_data[count] = temp_list
             count = count + 1
         success = 0
@@ -926,27 +1076,33 @@ def odu100_peerConfigTable1(data):
             return {'success': success, 'result': dict_data}
         else:
             return {'success': success, 'result': {}}
-    # return dict_data
+            # return dict_data
 
 
 def odu100_peerConfigTable(data):
+    """
+
+    @param data:
+    @return:
+    """
     success = 1
     try:
         s = data
         main_str_list = [
             '<td align ="left"><b>1</b></td>', '<td align ="left"><b>2</b></td>',
-                       '<td align ="left"><b>3</b></td>', '<td align ="left"><b>4</b></td>',
-                       '<td align ="left"><b>5</b></td>', '<td align ="left"><b>6</b></td>',
-                       '<td align ="left"><b>7</b></td>', '<td align ="left"><b>8</b></td>',
-                       '<td align ="left"><b>9</b></td>', '<td align ="left"><b>10</b></td>',
-                       '<td align ="left"><b>11</b></td>', '<td align ="left"><b>12</b></td>',
-                       '<td align ="left"><b>13</b></td>', '<td align ="left"><b>14</b></td>',
-                       '<td align ="left"><b>15</b></td>', '<td align ="left"><b>16</b></td>']
+            '<td align ="left"><b>3</b></td>', '<td align ="left"><b>4</b></td>',
+            '<td align ="left"><b>5</b></td>', '<td align ="left"><b>6</b></td>',
+            '<td align ="left"><b>7</b></td>', '<td align ="left"><b>8</b></td>',
+            '<td align ="left"><b>9</b></td>', '<td align ="left"><b>10</b></td>',
+            '<td align ="left"><b>11</b></td>', '<td align ="left"><b>12</b></td>',
+            '<td align ="left"><b>13</b></td>', '<td align ="left"><b>14</b></td>',
+            '<td align ="left"><b>15</b></td>', '<td align ="left"><b>16</b></td>']
         find_string_list = [
-            'PEER1MAC" value="', 'guaranteedDownlinkBW" value="', 'guaranteedUplinkBW" value="', 'maxDownlinkBW" value="',
-                          'maxUplinkBW" value="', 'basicRateMCSIndex" value="']
+            'PEER1MAC" value="', 'guaranteedDownlinkBW" value="', 'guaranteedUplinkBW" value="',
+            'maxDownlinkBW" value="',
+            'maxUplinkBW" value="', 'basicRateMCSIndex" value="']
         end_string_list = ['" size="', '" size="', '" size="',
-            '" size="', '" size="', '" size="']
+                           '" size="', '" size="', '" size="']
         list_data = []
         dict_data = {}
         count = 1
@@ -1017,6 +1173,14 @@ function_dict['odu100_peerConfigTable'] = odu100_peerConfigTable
 
 
 def cgi_opener(ip, username, password, table_list):
+    """
+
+    @param ip:
+    @param username:
+    @param password:
+    @param table_list:
+    @return:
+    """
     try:
         success = 1
         url = "http://" + ip + "/"
@@ -1033,7 +1197,7 @@ def cgi_opener(ip, username, password, table_list):
                         if table == "odu100_raConfTable":  # special case for odu100_raConfTable
                             # data_acl=url+"aclconfig.shtml"
                             password_mgr = urllib2.HTTPPasswordMgrWithDefaultRealm(
-                                )
+                            )
                             top_level_url = url
                             password_mgr.add_password(
                                 None, top_level_url, username, password)
@@ -1050,7 +1214,7 @@ def cgi_opener(ip, username, password, table_list):
                                 table](data_acl, data_ra_access)
                         elif table == 'odu100_ruStatusTable':
                             password_mgr = urllib2.HTTPPasswordMgrWithDefaultRealm(
-                                )
+                            )
                             top_level_url = url
                             password_mgr.add_password(
                                 None, top_level_url, username, password)
@@ -1067,7 +1231,7 @@ def cgi_opener(ip, username, password, table_list):
                                 table](data_acl, data_ra_access)
                         else:
                             password_mgr = urllib2.HTTPPasswordMgrWithDefaultRealm(
-                                )
+                            )
                             top_level_url = url
                             password_mgr.add_password(
                                 None, top_level_url, username, password)
@@ -1150,35 +1314,43 @@ def cgi_opener(ip, username, password, table_list):
 
 table_oid_dict = {
     '1.3.6.1.4.1.26149.2.2.11.2.1': 'odu100_synchStatisticsTable',
-                  '1.3.6.1.4.1.26149.2.2.12.3.1': 'odu100_nwInterfaceStatisticsTable',
-                  '1.3.6.1.4.1.26149.2.2.13.7.3.1': 'odu100_raTddMacStatisticsTable',
-                  '1.3.6.1.4.1.26149.2.2.13.9.2.1': 'odu100_peerNodeStatusTable',
-                  '1.3.6.1.4.1.26149.2.2.1.1': 'odu100_ruConfTable',
-                  '1.3.6.1.4.1.26149.2.2.10.1': 'odu100_hwDescTable',
-                  '1.3.6.1.4.1.26149.2.2.11.1': 'odu100_syncConfigTable',
-                  '1.3.6.1.4.1.26149.2.2.11.3.1': 'odu100_synchStatusTable',
-                  '1.3.6.1.4.1.26149.2.2.12.2.1': 'odu100_nwInterfaceStatusTable',
-                  '1.3.6.1.4.1.26149.2.2.13.1.1': 'odu100_raConfTable',
-                  '1.3.6.1.4.1.26149.2.2.13.2.1': 'odu100_raStatusTable',
-                  '1.3.6.1.4.1.26149.2.2.13.3.1': 'odu100_raChannelListTable',
-                  '1.3.6.1.4.1.26149.2.2.13.5.1': 'odu100_raAclConfigTable',
-                  '1.3.6.1.4.1.26149.2.2.13.6.1': 'odu100_raLlcConfTable',
-                  '1.3.6.1.4.1.26149.2.2.13.7.1': 'odu100_raTddMacConfigTable',
-                  '1.3.6.1.4.1.26149.2.2.13.7.2': 'odu100_raTddMacStatusTable',
-                  '1.3.6.1.4.1.26149.2.2.13.7.4': 'odu100_raPreferredRFChannelTable',
-                  '1.3.6.1.4.1.26149.2.2.13.9.1': 'odu100_peerConfigTable',
-                  '1.3.6.1.4.1.26149.2.2.3.1': 'odu100_ruStatusTable',
-                  '1.3.6.1.4.1.26149.2.2.6.1': 'odu100_swStatusTable',
-                  '1.3.6.1.4.1.26149.2.2.7.1': 'odu100_omcConfTable',
-                  '1.3.6.1.4.1.26149.2.2.9.1': 'odu100_ipConfigTable'}
+    '1.3.6.1.4.1.26149.2.2.12.3.1': 'odu100_nwInterfaceStatisticsTable',
+    '1.3.6.1.4.1.26149.2.2.13.7.3.1': 'odu100_raTddMacStatisticsTable',
+    '1.3.6.1.4.1.26149.2.2.13.9.2.1': 'odu100_peerNodeStatusTable',
+    '1.3.6.1.4.1.26149.2.2.1.1': 'odu100_ruConfTable',
+    '1.3.6.1.4.1.26149.2.2.10.1': 'odu100_hwDescTable',
+    '1.3.6.1.4.1.26149.2.2.11.1': 'odu100_syncConfigTable',
+    '1.3.6.1.4.1.26149.2.2.11.3.1': 'odu100_synchStatusTable',
+    '1.3.6.1.4.1.26149.2.2.12.2.1': 'odu100_nwInterfaceStatusTable',
+    '1.3.6.1.4.1.26149.2.2.13.1.1': 'odu100_raConfTable',
+    '1.3.6.1.4.1.26149.2.2.13.2.1': 'odu100_raStatusTable',
+    '1.3.6.1.4.1.26149.2.2.13.3.1': 'odu100_raChannelListTable',
+    '1.3.6.1.4.1.26149.2.2.13.5.1': 'odu100_raAclConfigTable',
+    '1.3.6.1.4.1.26149.2.2.13.6.1': 'odu100_raLlcConfTable',
+    '1.3.6.1.4.1.26149.2.2.13.7.1': 'odu100_raTddMacConfigTable',
+    '1.3.6.1.4.1.26149.2.2.13.7.2': 'odu100_raTddMacStatusTable',
+    '1.3.6.1.4.1.26149.2.2.13.7.4': 'odu100_raPreferredRFChannelTable',
+    '1.3.6.1.4.1.26149.2.2.13.9.1': 'odu100_peerConfigTable',
+    '1.3.6.1.4.1.26149.2.2.3.1': 'odu100_ruStatusTable',
+    '1.3.6.1.4.1.26149.2.2.6.1': 'odu100_swStatusTable',
+    '1.3.6.1.4.1.26149.2.2.7.1': 'odu100_omcConfTable',
+    '1.3.6.1.4.1.26149.2.2.9.1': 'odu100_ipConfigTable'}
 
 
 def cgi_recon(ip, table_oid, username='root', password='public'):
+    """
+
+    @param ip:
+    @param table_oid:
+    @param username:
+    @param password:
+    @return:
+    """
     try:
         success = 1
         result_dict = {}
         table_list = [table_oid_dict[table_oid]
-            ] if table_oid in table_oid_dict else []
+        ] if table_oid in table_oid_dict else []
         url = "http://" + ip + "/"
         if isinstance(url, str) and isinstance(username, str) and isinstance(password, str):
             loop = len(table_list)
@@ -1192,7 +1364,7 @@ def cgi_recon(ip, table_oid, username='root', password='public'):
                         if table == "odu100_raConfTable":  # special case for odu100_raConfTable
                             # data_acl=url+"aclconfig.shtml"
                             password_mgr = urllib2.HTTPPasswordMgrWithDefaultRealm(
-                                )
+                            )
                             top_level_url = url
                             password_mgr.add_password(
                                 None, top_level_url, username, password)
@@ -1209,7 +1381,7 @@ def cgi_recon(ip, table_oid, username='root', password='public'):
                                 table](data_acl, data_ra_access)
                         elif table == 'odu100_ruStatusTable':
                             password_mgr = urllib2.HTTPPasswordMgrWithDefaultRealm(
-                                )
+                            )
                             top_level_url = url
                             password_mgr.add_password(
                                 None, top_level_url, username, password)
@@ -1226,7 +1398,7 @@ def cgi_recon(ip, table_oid, username='root', password='public'):
                                 table](data_acl, data_ra_access)
                         else:
                             password_mgr = urllib2.HTTPPasswordMgrWithDefaultRealm(
-                                )
+                            )
                             top_level_url = url
                             password_mgr.add_password(
                                 None, top_level_url, username, password)

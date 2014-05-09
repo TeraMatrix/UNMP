@@ -10,13 +10,12 @@
 @ Copyright (c) 2011 Codescape Consultant Private Limited
 """
 # import the packeges
-import htmllib
-import config
-import lib
-import MySQLdb
-from mysql_collection import mysql_connection
+
 from datetime import datetime
 from datetime import timedelta
+
+import MySQLdb
+from mysql_collection import mysql_connection
 from nms_config import get_refresh_time
 
 
@@ -33,6 +32,7 @@ class SelfException(Exception):
     @organisation: Code Scape Consultants Pvt. Ltd.
     @copyright: 2011 Code Scape Consultants Pvt. Ltd.
     """
+
     def __init__(self, msg):
         output_dict = {'success': 2, 'output': str(msg)}
         html.write(str(output_dict))
@@ -40,6 +40,8 @@ class SelfException(Exception):
 
 def idu_dashboard_page(h):
     """
+
+    @param h:
     @return: this class return the html page.
     @rtype: html code as a string
     @requires: html object
@@ -51,10 +53,8 @@ def idu_dashboard_page(h):
     host_id = html.var('host_id')
     ip_address = html.var('ip_address')
     html_page = ""
-    html_page += "<script type=\"text/javascript\" src=\"js/jquery-1.4.4.min.js\"></script>\
-             <script type=\"text/javascript\" src=\"js/highcharts.js\"></script>\
-             <script type=\"text/javascript\" src=\"js/jquery.validate.min.js\"></script>\
-             <script type=\"text/javascript\" src=\"js/iduDashboard.js\"></script>\
+    html_page += "<script type=\"text/javascript\" src=\"js/lib/main/highcharts.js\"></script>\
+             <script type=\"text/javascript\" src=\"js/unmp/main/iduDashboard.js\"></script>\
              <link type=\"text/css\" href=\"css/style.css\" rel=\"stylesheet\"></link>\
              <div class=\"main_div\">\
                   <div class=\"header_div\">\
@@ -84,6 +84,8 @@ def idu_dashboard_page(h):
 
 def idu_network_interface_graph(h):
     """
+
+    @param h:
     @return: this class return the dictionary rxBytes,txBytes of IDU network interface.
     @rtype: dictionary
     @requires: html object
@@ -120,10 +122,10 @@ def idu_network_interface_graph(h):
                     rxBytes.append(int(row[1]) / 1024)
                     txBytes.append(int(row[2]) / 1024)
                     timestamp.append(row[3].strftime('%H:%M'))
-            # clsoe the database connection
+                # clsoe the database connection
             db.close()
         output_dict = {'success': 0, 'rxBytes': rxBytes, 'txBytes':
-                       txBytes, 'timestamp': timestamp, 'idu_ip_address': idu_ip_address}
+            txBytes, 'timestamp': timestamp, 'idu_ip_address': idu_ip_address}
         html.write(str(output_dict))
     except MySQLdb.Error, e:
         output_dict = {'success': 1, 'output': str(e[-1])}
@@ -146,6 +148,8 @@ def idu_network_interface_graph(h):
 
 def idu_device_information(h):
     """
+
+    @param h:
     @return: this class return the dictionary of idu device information.
     @rtype: dictionary
     @requires: html object
@@ -226,6 +230,8 @@ def idu_device_information(h):
 
 def idu_tdmoip_network_interface_graph(h):
     """
+
+    @param h:
     @return: this class return the dictionary of idu tdmoip network interface information.
     @rtype: dictionary
     @requires: html object
@@ -282,6 +288,8 @@ def idu_tdmoip_network_interface_graph(h):
 
 def idu_port_status_graph(h):
     """
+
+    @param h:
     @return: this class return the dictionary of idu port status information.
     @rtype: dictionary
     @requires: html object
@@ -313,7 +321,7 @@ def idu_port_status_graph(h):
                     'na' if row[0] == 1 or row[0].strip() == '1' else row[0])
 
         output_dict = {'success': 0, 'operation_state':
-                       operation_state, 'link_speed': link_speed, 'port_name': port_name}
+            operation_state, 'link_speed': link_speed, 'port_name': port_name}
         html.write(str(output_dict))
 
     except MySQLdb.Error, e:
@@ -337,6 +345,8 @@ def idu_port_status_graph(h):
 
 def idu_trap_information(h):
     """
+
+    @param h:
     @return: This function provide the latest  5 current trap and alarm of idu.
     @rtype: dictionary
     @requires: html object
@@ -347,7 +357,7 @@ def idu_trap_information(h):
     image_title_name = {0: "Normal", 1: "Informational", 2: "Normal",
                         3: "Minor", 4: "Major", 5: "Critical"}
     image_dic = {0: "images/status-0.png", 1: "images/status-0.png", 2: "images/status-0.png", 3:
-                 "images/minor.png", 4: "images/status-1.png", 5: "images/critical.png"}
+        "images/minor.png", 4: "images/status-1.png", 5: "images/critical.png"}
     length = 5
     host_id = html.var("host_id")  # take host_id from js side
     ip_address = html.var('ip_address')  # take ip_address from js side
@@ -374,7 +384,8 @@ def idu_trap_information(h):
             else:
                 tr_css = "even"
             history_trap += "<tr class=\"%s\"><td><img src=\"%s\" alt=\"%s\" title=\"%s\" class=\"imgbutton\" style=\"width:13px\" /></td>" % (
-                tr_css, image_dic[all_traps[i][0]], image_title_name[all_traps[i][0]], image_title_name[all_traps[i][0]])
+                tr_css, image_dic[all_traps[i][0]], image_title_name[all_traps[i][0]],
+                image_title_name[all_traps[i][0]])
             history_trap += "<td>%s</td>" % all_traps[i][1]
             history_trap += "<td>%s</td>" % all_traps[i][2]
             history_trap += "<td>%s</td></tr>" % all_traps[i][3]
@@ -384,8 +395,10 @@ def idu_trap_information(h):
             tr_css = "even"
         if len(all_traps) < 1:
             history_trap += "<tr class='odd'><td colspan='4'><b>Trap does not exists.</b></td></tr>"
-        history_trap += "<tr class=\"%s\"><td></td><td></td><td></td><td style=\"text-align:right\">%s</td></tr></table>" % (tr_css, (
-            "<a href=\"status_snmptt.py?trap_status=history&ip_address=" + ip_address + "\">more>></a>" if len(all_traps) > 5 else ""))
+        history_trap += "<tr class=\"%s\"><td></td><td></td><td></td><td style=\"text-align:right\">%s</td></tr></table>" % (
+        tr_css, (
+            "<a href=\"status_snmptt.py?trap_status=history&ip_address=" + ip_address + "\">more>></a>" if len(
+                all_traps) > 5 else ""))
 
         # This query return the latest five entry of current alarm
         sql = "SELECT ta.serevity,ta.trap_event_id,ta.trap_event_type,ta.trap_receive_date FROM trap_alarm_current as ta WHERE ta.agent_id='%s' order by ta.timestamp limit 7 " % ip_address
@@ -406,7 +419,8 @@ def idu_trap_information(h):
             else:
                 tr_css = "even"
             current_alarm_html += "<tr class=\"%s\"><td><img src=\"%s\" alt=\"%s\" title=\"%s\" class=\"imgbutton\" style=\"width:13px\" /></td>" % (
-                tr_css, image_dic[current_alarm[i][0]], image_title_name[current_alarm[i][0]], image_title_name[current_alarm[i][0]])
+                tr_css, image_dic[current_alarm[i][0]], image_title_name[current_alarm[i][0]],
+                image_title_name[current_alarm[i][0]])
             current_alarm_html += "<td>%s</td>" % current_alarm[i][1]
             current_alarm_html += "<td>%s</td>" % current_alarm[i][2]
             current_alarm_html += "<td>%s</td></tr>" % current_alarm[i][3]
@@ -419,13 +433,15 @@ def idu_trap_information(h):
             current_alarm_html += "<tr class='odd'><td colspan='4'><b>Alarm does not exists.</b></td></tr>"
 
         current_alarm_html += "<tr class=\"%s\"><td></td><td></td><td></td><td style=\"text-align:right\">%s</td></tr></table>" % (
-            tr_css, "<a href=\"status_snmptt.py?trap_status=current&ip_address" + ip_address + "\" id=\"status_id\">more>></a>" if len(current_alarm) > 5 else "")
+            tr_css,
+            "<a href=\"status_snmptt.py?trap_status=current&ip_address" + ip_address + "\" id=\"status_id\">more>></a>" if len(
+                current_alarm) > 5 else "")
         # close database connection and cursor.
         cursor.close()
         db.close()
 
         history_trap_detail = {'success': 0, 'trap_output':
-                               history_trap, 'alarm_output': current_alarm_html}
+            history_trap, 'alarm_output': current_alarm_html}
         html.write(str(history_trap_detail))
 
     # Exception Handling
@@ -447,6 +463,8 @@ def idu_trap_information(h):
 
 def idu_trap_graph(h):
     """
+
+    @param h:
     @return: This function provide the  5 day trap information of idu device.
     @rtype: dictionary
     @requires: html object
@@ -505,6 +523,8 @@ def idu_trap_graph(h):
 
 def idu_outage_graph(h):
     """
+
+    @param h:
     @return: This function return the idu outage graph information.
     @rtype: dictionary
     @requires: html object
@@ -515,7 +535,7 @@ def idu_outage_graph(h):
     date_days = []  # this list store the days information with date.
     up_state = []  # Its store the total up state of each day in percentage.
     down_state = []
-        # Its store the total down state of each day in percentage.
+    # Its store the total down state of each day in percentage.
     output_dict = {}  # its store the actual output for display in graph.
     ip_address = None  # default value of ip address
     host_id = html.var("host_id")  # take host id from js side
@@ -555,13 +575,13 @@ def idu_outage_graph(h):
                             temp_down_time = row[1]
                         else:
                             total_down_time += (temp_down_time - row[1]
-                                                ).days * 1440 + (temp_down_time - row[1]).seconds / 60
+                                               ).days * 1440 + (temp_down_time - row[1]).seconds / 60
                     else:
                         if temp_up_time == '':
                             temp_up_time = row[1]
                         else:
                             total_up_time += (temp_up_time - row[1]
-                                              ).days * 1440 + (temp_up_time - row[1]).seconds / 60
+                                             ).days * 1440 + (temp_up_time - row[1]).seconds / 60
 
             date_days.append(
                 (temp_date + timedelta(days=-(i))).strftime("%d %B %Y"))
@@ -574,7 +594,7 @@ def idu_outage_graph(h):
             else:
                 up_state.append(0)
                 down_state.append(0)
-        # close the database and cursor connection.
+            # close the database and cursor connection.
         cursor.close()
         db.close()
         output_dict = {'success': 0, 'up_state': up_state,

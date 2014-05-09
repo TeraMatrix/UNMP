@@ -12,12 +12,15 @@
 
 
 # Import modules that contain the function and libraries
-from live_monitoring_bll import LiveMonitoringBll
-from live_monitoring import LiveMonitoring
-from inventory_bll import HostBll
 from json import JSONEncoder
+
 from rrd import RRDGraph
+
 from common import Common
+from inventory_bll import HostBll
+from live_monitoring import LiveMonitoring
+from live_monitoring_bll import LiveMonitoringBll
+
 
 # Live Monitoring
 
@@ -26,8 +29,8 @@ def live_monitoring_page(h):
     global html
     html = h
     css_list = ["css/demo_table_jui.css", "css/jquery-ui-1.8.4.custom.css"]
-    js_list = ["js/highcharts.js", "js/jquery.dataTables.min.js",
-               "js/pages/live_monitoring.js"]
+    js_list = ["js/lib/main/highcharts.js", "js/lib/main/jquery.dataTables.min.js",
+               "js/unmp/main/live_monitoring.js"]
     header_btn = LiveMonitoring.header_buttons()
 
     selected_listing = "live_monitoring.py"
@@ -80,7 +83,7 @@ def live_graph_action(h):
     global html
     html = h
     lm_bll = LiveMonitoringBll()
-    action = html.var("action")		# start/stop
+    action = html.var("action")        # start/stop
     device_type = html.var("device_type")
     ip_address = html.var("ip_address")
     host_id = html.var("host_id")
@@ -93,10 +96,10 @@ def live_graph_action(h):
     html.write("0")
 
 
-def page_tip_live_monitoring(h):
-    global html
-    html = h
-    html.write(LiveMonitoring.page_tip_live_monitoring())
+# def page_tip_live_monitoring(h):
+#     global html
+#     html = h
+#     html.write(LiveMonitoring.page_tip_live_monitoring())
 
 
 def settings_live_monitoring(h):

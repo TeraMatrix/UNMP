@@ -37,19 +37,34 @@ var oldValue = "";
 // Register an input field to be a search field and add eventhandlers
 function mkSearchAddField(field, targetFrame) {
     var oField = document.getElementById(field);
-    if(oField) {
-        if(typeof targetFrame != 'undefined') {
+    if (oField) {
+        if (typeof targetFrame != 'undefined') {
             mkSearchTargetFrame = targetFrame;
         }
 
-        oField.onkeydown = function(e) { if (!e) e = window.event; return mkSearchKeyDown(e, oField); }
-        oField.onkeyup   = function(e) { if (!e) e = window.event; return mkSearchKeyUp(e, oField);}
-        oField.onclick   = function(e) { mkSearchClose(); return true; }
+        oField.onkeydown = function (e) {
+            if (!e) e = window.event;
+            return mkSearchKeyDown(e, oField);
+        }
+        oField.onkeyup = function (e) {
+            if (!e) e = window.event;
+            return mkSearchKeyUp(e, oField);
+        }
+        oField.onclick = function (e) {
+            mkSearchClose();
+            return true;
+        }
         // keypress is needed for key-repeation for cursor up/down
-        oField.onkeypress  = function(e) { if (!e) e = window.event; return mkSearchKeyRepeat(e, oField);}
+        oField.onkeypress = function (e) {
+            if (!e) e = window.event;
+            return mkSearchKeyRepeat(e, oField);
+        }
 
         // On doubleclick toggle the list
-        oField.ondblclick  = function(e) { if (!e) e = window.event; mkSearchToggle(e, oField); }
+        oField.ondblclick = function (e) {
+            if (!e) e = window.event;
+            mkSearchToggle(e, oField);
+        }
     }
 }
 
@@ -68,13 +83,13 @@ function mkSearchKeyUp(e, oField) {
             mkSearchClose();
             e.returnValue = false;
             e.cancelBubble = true;
-        break;
-        
+            break;
+
         // Up/Down
         case 38:
         case 40:
             return false;
-        break;
+            break;
 
         // Other keys
         default:
@@ -82,11 +97,11 @@ function mkSearchKeyUp(e, oField) {
                 e.returnValue = false;
                 e.cancelBubble = true;
                 mkSearchClose();
-            } 
+            }
             else {
                 mkSearch(e, oField);
             }
-        break;
+            break;
     }
 }
 
@@ -98,10 +113,10 @@ function mkSearchFindUrl(aSearchObjects, objType, oField) {
     var selected_obj = null;
     var found = 0;
     for (var i in aSearchObjects) {
-        var objSite  = aSearchObjects[i][0];
-        var objName  = aSearchObjects[i][1];
+        var objSite = aSearchObjects[i][0];
+        var objName = aSearchObjects[i][1];
         if (mkSearchMatch(objName, namepart)) {
-            found ++;
+            found++;
             if (url != null) { // found second match -> not unique
                 url = null;
                 break; // abort
@@ -111,7 +126,7 @@ function mkSearchFindUrl(aSearchObjects, objType, oField) {
         }
     }
     if (url != null) {
-        if(objType == 'h')
+        if (objType == 'h')
             oField.value = selected_obj;
         else
             oField.value = objType + ':' + selected_obj;
@@ -126,24 +141,24 @@ function mkSearchKeyRepeat(e, oField) {
     var keyCode = e.which || e.keyCode;
 
     switch (keyCode) {
-            // Up arrow
-            case 38:
-                if(!mkSearchResultShown()) {
-                    mkSearch(e, oField);
-                }
-                
-                mkSearchMoveElement(-1);
-                return false;
+        // Up arrow
+        case 38:
+            if (!mkSearchResultShown()) {
+                mkSearch(e, oField);
+            }
+
+            mkSearchMoveElement(-1);
+            return false;
             break;
-            
-            // Down arrow
-            case 40:
-                if(!mkSearchResultShown()) {
-                    mkSearch(e, oField);
-                }
-                
-                mkSearchMoveElement(1);
-                return false;
+
+        // Down arrow
+        case 40:
+            if (!mkSearchResultShown()) {
+                mkSearch(e, oField);
+            }
+
+            mkSearchMoveElement(1);
+            return false;
             break;
     }
 }
@@ -154,64 +169,65 @@ function mkSearchKeyDown(e, oField) {
     var keyCode = e.which || e.keyCode;
 
     switch (keyCode) {
-            // Return/Enter
-            case 13:
-                if (iCurrent != null) {
-                    mkSearchNavigate();
-                    if(aSearchResults[iCurrent].type == 'h')
-	                      oField.value = aSearchResults[iCurrent].name;
-                    else
-	                      oField.value = aSearchResults[iCurrent].type + ':' + aSearchResults[iCurrent].name;
-                    mkSearchClose();
-                } else {
-                    if (oField.value == "")
-                        return; /* search field empty, rather not show all services! */
-                    // When nothing selected, navigate with the current contents of the field
-                    var objType = mkSearchGetTypePrefix(oField.value);
-                    var aSearchObjects = mkSearchGetSearchObjects(objType);
-                    var url = mkSearchFindUrl(aSearchObjects, objType, oField);
-                    top.frames[mkSearchTargetFrame].location.href = url;
-                    mkSearchClose();
-                }
-                
-                e.returnValue = false;
-                e.cancelBubble = true;
-            break;
-            
-            // Escape
-            case 27:
+        // Return/Enter
+        case 13:
+            if (iCurrent != null) {
+                mkSearchNavigate();
+                if (aSearchResults[iCurrent].type == 'h')
+                    oField.value = aSearchResults[iCurrent].name;
+                else
+                    oField.value = aSearchResults[iCurrent].type + ':' + aSearchResults[iCurrent].name;
                 mkSearchClose();
-                e.returnValue = false;
-                e.cancelBubble = true;
+            } else {
+                if (oField.value == "")
+                    return;
+                /* search field empty, rather not show all services! */
+                // When nothing selected, navigate with the current contents of the field
+                var objType = mkSearchGetTypePrefix(oField.value);
+                var aSearchObjects = mkSearchGetSearchObjects(objType);
+                var url = mkSearchFindUrl(aSearchObjects, objType, oField);
+                top.frames[mkSearchTargetFrame].location.href = url;
+                mkSearchClose();
+            }
+
+            e.returnValue = false;
+            e.cancelBubble = true;
             break;
-            
-            // Tab
-            case 9:
-                if(mkSearchResultShown()) {
-                    mkSearchClose();
-                }
-                return;
+
+        // Escape
+        case 27:
+            mkSearchClose();
+            e.returnValue = false;
+            e.cancelBubble = true;
             break;
-            
-            // Up arrow
-            // case 38:
-            //     if(!mkSearchResultShown()) {
-            //         mkSearch(e, oField);
-            //     }
-            //     
-            //     mkSearchMoveElement(-1);
-            //     return false;
-            // break;
-            
-            // Down arrow
-            // case 40:
-            //     if(!mkSearchResultShown()) {
-            //         mkSearch(e, oField);
-            //     }
-            //     
-            //     mkSearchMoveElement(1);
-            //     return false;
-            // break;
+
+        // Tab
+        case 9:
+            if (mkSearchResultShown()) {
+                mkSearchClose();
+            }
+            return;
+            break;
+
+        // Up arrow
+        // case 38:
+        //     if(!mkSearchResultShown()) {
+        //         mkSearch(e, oField);
+        //     }
+        //
+        //     mkSearchMoveElement(-1);
+        //     return false;
+        // break;
+
+        // Down arrow
+        // case 40:
+        //     if(!mkSearchResultShown()) {
+        //         mkSearch(e, oField);
+        //     }
+        //
+        //     mkSearchMoveElement(1);
+        //     return false;
+        // break;
     }
     oldValue = oField.value;
 }
@@ -224,16 +240,16 @@ function mkSearchNavigate() {
 
 // Move one step of given size in the result list
 function mkSearchMoveElement(step) {
-    if(iCurrent == null) {
+    if (iCurrent == null) {
         iCurrent = -1;
     }
 
     iCurrent += step;
 
-    if(iCurrent < 0)
-        iCurrent = aSearchResults.length-1;
-    
-    if(iCurrent > aSearchResults.length-1)
+    if (iCurrent < 0)
+        iCurrent = aSearchResults.length - 1;
+
+    if (iCurrent > aSearchResults.length - 1)
         iCurrent = 0;
 
     var oResults = document.getElementById('mk_search_results');
@@ -242,9 +258,9 @@ function mkSearchMoveElement(step) {
     oResults = oResults.childNodes;
 
     var a = 0;
-    for(var i in oResults) {
-        if(oResults[i].nodeName == 'A') {
-            if(a == iCurrent) {
+    for (var i in oResults) {
+        if (oResults[i].nodeName == 'A') {
+            if (a == iCurrent) {
                 oResults[i].setAttribute('class', 'active');
                 oResults[i].setAttribute('className', 'active');
             } else {
@@ -260,7 +276,7 @@ function mkSearchMoveElement(step) {
 // Is the result list shown at the moment?
 function mkSearchResultShown() {
     var oContainer = document.getElementById('mk_search_results');
-    if(oContainer) {
+    if (oContainer) {
         oContainer = null;
         return true;
     } else
@@ -269,7 +285,7 @@ function mkSearchResultShown() {
 
 // Toggle the result list
 function mkSearchToggle(e, oField) {
-    if(mkSearchResultShown()) {
+    if (mkSearchResultShown()) {
         mkSearchClose();
     } else {
         mkSearch(e, oField);
@@ -279,38 +295,38 @@ function mkSearchToggle(e, oField) {
 // Close the result list
 function mkSearchClose() {
     var oContainer = document.getElementById('mk_search_results');
-    if(oContainer) {
+    if (oContainer) {
         oContainer.parentNode.removeChild(oContainer);
         oContainer = null;
     }
-    
+
     aSearchResults = [];
     iCurrent = null;
 }
 
 function mkSearchGetTypePrefix(s) {
-    if(s.indexOf('hg:') == 0)
+    if (s.indexOf('hg:') == 0)
         return 'hg';
-    else if(s.indexOf('s:') == 0)
+    else if (s.indexOf('s:') == 0)
         return 's';
-    else if(s.indexOf('sg:') == 0)
+    else if (s.indexOf('sg:') == 0)
         return 'sg';
     else
         return 'h';
 }
 
 function mkSearchCleanupString(s, objType) {
-    return s.replace(RegExp('^'+objType+':', 'i'), '');
+    return s.replace(RegExp('^' + objType + ':', 'i'), '');
 }
 
 function mkSearchGetSearchObjects(objType) {
-    if(objType == 'h' && typeof aSearchHosts !== 'undefined')
+    if (objType == 'h' && typeof aSearchHosts !== 'undefined')
         return aSearchHosts;
-    else if(objType == 'hg' && typeof aSearchHostgroups !== 'undefined')
+    else if (objType == 'hg' && typeof aSearchHostgroups !== 'undefined')
         return aSearchHostgroups;
-    else if(objType == 's' && typeof aSearchServices !== 'undefined')
+    else if (objType == 's' && typeof aSearchServices !== 'undefined')
         return aSearchServices;
-    else if(objType == 'sg' && typeof aSearchServicegroups !== 'undefined')
+    else if (objType == 'sg' && typeof aSearchServicegroups !== 'undefined')
         return aSearchServicegroups;
     else
         return [];
@@ -320,37 +336,37 @@ function mkSearchGetUrl(objType, objName, objSite, numMatches) {
     if (numMatches == null)
         numMatches = 0;
 
-    if(objType == 'h')
-        if(numMatches == 1)
+    if (objType == 'h')
+        if (numMatches == 1)
             return 'view.py?view_name=host&host=' + objName + '&site=' + objSite;
-        else if(numMatches > 1)
+        else if (numMatches > 1)
             return 'view.py?view_name=hosts&host=' + objName;
         else
             return 'view.py?view_name=searchsvc&search=Search&filled_in=on&service=' + objName;
-    else if(objType == 'hg')
-        if(numMatches == 1)
+    else if (objType == 'hg')
+        if (numMatches == 1)
             return 'view.py?view_name=hostgroup&hostgroup=' + objName + '&site=' + objSite;
         else
-            // FIXME: not correct. Need a page where the name parameter can be a part match
+        // FIXME: not correct. Need a page where the name parameter can be a part match
             return 'view.py?view_name=hostgroup&hostgroup=' + objName + '&site=' + objSite;
-    else if(objType == 'sg')
-        if(numMatches == 1)
+    else if (objType == 'sg')
+        if (numMatches == 1)
             return 'view.py?view_name=servicegroup&servicegroup=' + objName + '&site=' + objSite;
         else
-            // FIXME: not correct. Need a page where the name parameter can be a part match
+        // FIXME: not correct. Need a page where the name parameter can be a part match
             return 'view.py?view_name=servicegroup&servicegroup=' + objName + '&site=' + objSite;
-    else if(objType == 's')
-        if(numMatches == 1)
+    else if (objType == 's')
+        if (numMatches == 1)
             return 'view.py?view_name=servicedesc&service=' + objName + '&site=' + objSite;
         else
-            // FIXME: not correct. Need a page where the name parameter can be a part match
+        // FIXME: not correct. Need a page where the name parameter can be a part match
             return 'view.py?view_name=servicedesc&service=' + objName + '&site=' + objSite;
 }
 
 // This performs a case insensitive search of a substring in a string
 // Returns true if found and false if not
 function mkSearchMatch(base, search) {
-	return base.toLowerCase().indexOf(search.toLowerCase()) > -1;
+    return base.toLowerCase().indexOf(search.toLowerCase()) > -1;
 }
 
 function mkSearchAddSearchResults(aSearchObjects, objType, val) {
@@ -365,13 +381,13 @@ function mkSearchAddSearchResults(aSearchObjects, objType, val) {
     var objName, objSite;
     aSearchContents = '';
     var numHits = 0;
-    for(var i in aSearchObjects){
-        objSite  = aSearchObjects[i][0];
-        objName  = aSearchObjects[i][1];
+    for (var i in aSearchObjects) {
+        objSite = aSearchObjects[i][0];
+        objName = aSearchObjects[i][1];
 
         // if(objName.match(oMatch)) {
-				// case insensitive search!
-        if(mkSearchMatch(objName, val)) {
+        // case insensitive search!
+        if (mkSearchMatch(objName, val)) {
             var url = mkSearchGetUrl(objType, objName, objSite, 1);
             var oResult = {
                 'id': 'result_' + objName,
@@ -380,28 +396,28 @@ function mkSearchAddSearchResults(aSearchObjects, objType, val) {
                 'type': objType,
                 'url': url
             };
-            
+
             // limit the number of search hits
-            numHits ++;
+            numHits++;
             if (numHits > aSearchLimit)
                 break;
 
             // Add id to search result array
             aSearchResults.push(oResult);
-            aSearchContents += '<a id="' + oResult.id + '" class="' + oResult.type 
-                + '" href="' + oResult.url 
-                + '" onclick="mkSearchClose()" target="' + mkSearchTargetFrame 
-                + '">'+ objName + "</a>\n";
+            aSearchContents += '<a id="' + oResult.id + '" class="' + oResult.type
+                + '" href="' + oResult.url
+                + '" onclick="mkSearchClose()" target="' + mkSearchTargetFrame
+                + '">' + objName + "</a>\n";
         }
     }
 }
 
 // Build a new result list and show it up
 function mkSearch(e, oField) {
-    if(oField == null) {
+    if (oField == null) {
         return;
     }
-    
+
     var val = oField.value;
     if (val == oldValue)
         return;
@@ -418,12 +434,12 @@ function mkSearch(e, oField) {
         // alert("No objects to search for");
         return;
     }
-    
+
     mkSearchAddSearchResults(aSearchObjects, objType, val);
 
-    if(aSearchContents != '') {
+    if (aSearchContents != '') {
         var oContainer = document.getElementById('mk_search_results');
-        if(!oContainer) {
+        if (!oContainer) {
             var oContainer = document.createElement('div');
             oContainer.setAttribute('id', 'mk_search_results');
         }
@@ -433,6 +449,6 @@ function mkSearch(e, oField) {
     } else {
         mkSearchClose();
     }
-    
+
     oField = null;
 }

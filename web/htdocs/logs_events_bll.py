@@ -12,8 +12,6 @@
 
 # Import modules that contain the function and libraries
 from unmp_model import *
-from utility import ErrorMessages, Validation, HostState, NagiosConfiguration, SystemSetting, DiscoveryName, PingDiscovery, SnmpDiscovery, UpnpDiscovery, UNMPDeviceType
-from json import JSONEncoder
 from time import time
 
 

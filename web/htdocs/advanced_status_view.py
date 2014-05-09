@@ -1,13 +1,24 @@
 #!/usr/bin/python2.6
 from datetime import datetime
 from datetime import timedelta
+
 from advanced_status_bll import AdvancedStatusBll
 from advanced_status_bll import get_master_slave_value
 
 
 class AdvancedStatusView(object):
+    """
+    Device specific Status page
+    """
     @staticmethod
     def ap_set_variable(ip_address, device_type_id, user_id):
+        """
+
+        @param ip_address:
+        @param device_type_id:
+        @param user_id:
+        @return:
+        """
         now = datetime.now()
         odu_end_date = now.strftime("%d/%m/%Y")
         odu_end_time = now.strftime("%H:%M")
@@ -34,7 +45,9 @@ class AdvancedStatusView(object):
                     <div id=\"apAdvancedDataTable\"></table></div>\
                     <input type=\"hidden\" id='advaced_device_type'  name='advaced_device_type'  value=%s />\
                     <input type=\"hidden\" id='advaced_ip_address'  name='advaced_ip_address'  value=%s />\
-                    <input type=\"hidden\" id='user_id'  name='user_id'  value=%s />" % (odu_start_date, odu_start_time, odu_end_date, odu_end_time, host_id, device_type_id, device_type_id, ip_address, user_id)
+                    <input type=\"hidden\" id='user_id'  name='user_id'  value=%s />" % (
+        odu_start_date, odu_start_time, odu_end_date, odu_end_time, host_id, device_type_id, device_type_id, ip_address,
+        user_id)
         html_data += '</div><div id=\"report_button_div\" class=\"form-div-footer\">\
             <table cellspacing="9px" cellpadding="0">\
             <tr>\
@@ -56,6 +69,12 @@ class AdvancedStatusView(object):
 
     @staticmethod
     def graph_name_listing(result_dict, ip_address):
+        """
+
+        @param result_dict:
+        @param ip_address:
+        @return:
+        """
         if int(result_dict['success']) == 0:
             graph_detail = '<table class="tt-table" cellspacing="0" cellpadding="0" width="100%"><colgroup><col width="50%" style="width:50%;"/><col width="49%" style="width:49%;"/><col width="1%" style="width:1%;"/></colgroup>'
             graph_detail += '<tbody>\
@@ -79,24 +98,32 @@ class AdvancedStatusView(object):
                     if graph[1] == 'odu100synclost123':
                         pass
                     else:
-#                        graph_json.append(graph_dict)
+                    #                        graph_json.append(graph_dict)
                         if i % 2 == 0:
                             graph_detail += '\
-                        <td colspan="2" class="cell-label" style="text-align:left"><a href=\'#\'  value=\'%s\'><strong>%s</strong></a></td>' % (('--' if graph[1] == None or graph[1] == "" else graph[1]), ('--' if graph[0] == None or graph[0] == "" else graph[0]))
+                        <td colspan="2" class="cell-label" style="text-align:left"><a href=\'#\'  value=\'%s\'><strong>%s</strong></a></td>' % (
+                            ('--' if graph[1] == None or graph[1] == "" else graph[1]),
+                            ('--' if graph[0] == None or graph[0] == "" else graph[0]))
                             graph_detail += '</tr>'
                             graph_detail += '<tr class="tr-graph">'
                         else:
                             graph_detail += '\
-                        <td class="cell-label" style="text-align:left"><a href=\'#\'  value=\'%s\'><strong>%s</strong></a></td>' % (('--' if graph[1] == None or graph[1] == "" else graph[1]), ('--' if graph[0] == None or graph[0] == "" else graph[0]))
+                        <td class="cell-label" style="text-align:left"><a href=\'#\'  value=\'%s\'><strong>%s</strong></a></td>' % (
+                            ('--' if graph[1] == None or graph[1] == "" else graph[1]),
+                            ('--' if graph[0] == None or graph[0] == "" else graph[0]))
                 else:
                     if i % 2 == 0:
                         graph_detail += '\
-			<td colspan="2" class="cell-label" style="text-align:left"><a href=\'#\'  value=\'%s\'><strong>%s</strong></a></td>' % (('--' if graph[1] == None or graph[1] == "" else graph[1]), ('--' if graph[0] == None or graph[0] == "" else graph[0]))
+			<td colspan="2" class="cell-label" style="text-align:left"><a href=\'#\'  value=\'%s\'><strong>%s</strong></a></td>' % (
+                        ('--' if graph[1] == None or graph[1] == "" else graph[1]),
+                        ('--' if graph[0] == None or graph[0] == "" else graph[0]))
                         graph_detail += '</tr>'
                         graph_detail += '<tr class="tr-graph">'
                     else:
                         graph_detail += '\
-			<td class="cell-label" style="text-align:left"><a href=\'#\'  value=\'%s\'><strong>%s</strong></a></td>' % (('--' if graph[1] == None or graph[1] == "" else graph[1]), ('--' if graph[0] == None or graph[0] == "" else graph[0]))
+			<td class="cell-label" style="text-align:left"><a href=\'#\'  value=\'%s\'><strong>%s</strong></a></td>' % (
+                        ('--' if graph[1] == None or graph[1] == "" else graph[1]),
+                        ('--' if graph[0] == None or graph[0] == "" else graph[0]))
                 i += 1
             graph_detail += '</tr><tbody></table>'
             output_dict = {'success': 0, 'result': graph_detail}
@@ -106,6 +133,12 @@ class AdvancedStatusView(object):
 
     @staticmethod
     def graph_name_listing123(result_dict, ip_address):
+        """
+
+        @param result_dict:
+        @param ip_address:
+        @return:
+        """
         if int(result_dict['success']) == 0:
             graph_detail = '<table class="tt-table" cellspacing="0" cellpadding="0" width="100%">'
             graph_detail += '<tbody>\
@@ -126,18 +159,22 @@ class AdvancedStatusView(object):
                     if graph[1] == 'odu100synclost':
                         pass
                     else:
-#                        graph_json.append(graph_dict)
+                    #                        graph_json.append(graph_dict)
                         if i % 2 == 0 and i != 0:
                             graph_detail += '</tr>'
                             graph_detail += '<tr>'
                         graph_detail += '\
-                        <td class="cell-label" style="text-align:left"><a href=\'#\'  value=\'%s\'><strong>%s</strong></a></td>' % (('--' if graph[1] == None or graph[1] == "" else graph[1]), ('--' if graph[0] == None or graph[0] == "" else graph[0]))
+                        <td class="cell-label" style="text-align:left"><a href=\'#\'  value=\'%s\'><strong>%s</strong></a></td>' % (
+                        ('--' if graph[1] == None or graph[1] == "" else graph[1]),
+                        ('--' if graph[0] == None or graph[0] == "" else graph[0]))
                 else:
                     if i % 2 == 0 and i != 0:
                         graph_detail += '</tr>'
                         graph_detail += '<tr>'
                     graph_detail += '\
-			<td class="cell-label" style="text-align:left"><a href=\'#\'  value=\'%s\'><strong>%s</strong></a></td>' % (('--' if graph[1] == None or graph[1] == "" else graph[1]), ('--' if graph[0] == None or graph[0] == "" else graph[0]))
+			<td class="cell-label" style="text-align:left"><a href=\'#\'  value=\'%s\'><strong>%s</strong></a></td>' % (
+                    ('--' if graph[1] == None or graph[1] == "" else graph[1]),
+                    ('--' if graph[0] == None or graph[0] == "" else graph[0]))
 
                 i += 1
             graph_detail += '</tr><tbody></table>'

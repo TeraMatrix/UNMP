@@ -1,26 +1,14 @@
 #!/usr/bin/python2.6
 # import the packeges
-import config
-import htmllib
-import time
-import cgi
-import MySQLdb
-import sys
 from common_controller import *
 from nms_config import *
 from odu_controller import *
 from datetime import datetime
 from datetime import timedelta
-import time
 from mysql_collection import mysql_connection
-from unmp_dashboard_config import DashboardConfig
-from utility import Validation
-from operator import itemgetter
 from ap_dashboard_view import APView
 from ap_dashboard_bll import APDashboard
-import json
 from json import JSONEncoder
-from encodings import undefined
 
 
 def ap_dashboard_profiling(h):
@@ -29,44 +17,38 @@ def ap_dashboard_profiling(h):
     flag = 0
     css_list = ["css/style.css", "css/custom.css",
                 "calendrical/calendrical.css"]
-    javascript_list = ["js/highcharts.js", "js/apDashboard.js",
+    javascript_list = ["js/lib/main/highcharts.js", "js/unmp/main/apDashboard.js",
                        "calendrical/calendrical.js"]
     html.new_header("AP Dashboard", "", "", css_list, javascript_list)
     html.write('<div class=\"form-div\" >')
-    host_id = ""
-    host_id = html.var("host_id")
-    extr_button = {'tag': 'button', 'id': 'adSrhAP', 'value':
-                   'Advance Graph', 'name': 'adSrhAP'}
-    # this is used for storing DeviceTypeList e.g "odu16,odu100"
-    device_type = ""
-    # this is used for storing DeviceListState e.g "enabled"
-    device_list_state = ""
+    host_id = html.var("host_id", "")
+    extr_button = [{'tag': 'button', 'id': 'adSrhAP', 'value':
+        'Advance Graph', 'name': 'adSrhAP'}]
+    # # this is used for storing DeviceTypeList e.g "odu16,odu100"
+    # device_type = ""
+    # # this is used for storing DeviceListState e.g "enabled"
+    # device_list_state = ""
     device_list_param = []
-    if html.var("device_type") != None:  # we get the variable of page through html.var
-        device_type = html.var("device_type")
-    if html.var("device_list_state") != None:
-        device_list_state = html.var("device_list_state")
-    if host_id == None:
-        host_id = ""
+    device_type = html.var("device_type", "")
+    device_list_state = html.var("device_list_state", "")
     device_list_param = get_device_param(host_id)
     html.header("AP Monitoring")
-    if device_list_param == [] or device_list_param == None:
+    if device_list_param == [] or device_list_param is None:
         flag = 1
-        output, mac_address = get_device_field(host_id)
+        output, mac_address = get_device_field(host_id=host_id, field='mac_address')
         if int(output) == 1:
             html.write(page_header_search("", "", "Access Point", None,
-                       "enabled", "device_type", extr_button))
+                                          "enabled", "device_type", extr_button))
             # html.write(page_header_search("","","UBR,UBRe",device_type,"enabled","device_type",extr_button))
         else:
             html.write(page_header_search(host_id, mac_address, "Access Point",
-                       device_type, "enabled", "device_type", extr_button))
+                                          device_type, "enabled", "device_type", extr_button))
     else:
         html.write(
             page_header_search(
                 device_list_param[0][0], device_list_param[0][1],
                 "Access Point", device_list_param[0][2], device_list_state, "device_type", extr_button))
-    if host_id == "" or host_id == "None":
-        val = ""
+    if host_id == "" or host_id is None:
         flag = 1
         html.write("<div id=\"ap_show_msg\"></div><div id=\"tab_yo\">There is no profile selected</div>")
     else:
@@ -76,37 +58,6 @@ def ap_dashboard_profiling(h):
         html.write("</div>")
     html.write(str(APView.ap_footer_tab(flag)))
     html.new_footer()
-
-
-def get_device_field(ip_address):
-    try:
-        mac_address = ''
-        db, cursor = mysql_connection()  # create the connection
-        if db == 1:
-            raise SelfException(cursor)
-        if Validation.is_valid_ip(ip_address):
-            sel_query = "select mac_address from hosts where ip_address='%s'" % (
-                ip_address)
-            cursor.execute(sel_query)
-            mac_result = cursor.fetchall()
-            if len(mac_result) > 0:
-                mac_address = mac_result[0][0]
-        else:
-            sel_query = "select mac_address from hosts where host_id='%s'" % (
-                ip_address)
-            cursor.execute(sel_query)
-            mac_result = cursor.fetchall()
-            if len(mac_result) > 0:
-                mac_address = mac_result[0][0]
-        return 0, mac_address
-    except SelfException:
-        return 1, str(e[-1])
-        pass
-    except Exception as e:
-        return 1, str(e[-1])
-    finally:
-        if db.open:
-            db.close()
 
 
 # listing function
@@ -218,30 +169,14 @@ def ap_network_interface_graph(h):
     html.write(str(output_result))
 
 
-def page_tip_ap_monitor_dashboard(h):
-    global html
-    html = h
-    html_view = ""\
-        "<div id=\"help_container\">"\
-        "<h1>Dashboard</h1>"\
-        "<div>This <strong>Dashboard</strong> show all device silver statistics information by graph.</div>"\
-        "<br/>"\
-        "<div>On this page you can see network bandwidth graph etc.</div>"\
-        "<br/>"\
-        "<div><input class=\"yo-button yo-small\" type=\"button\" style=\"width: 30px;\" value=\"Advaced Graph\" name=\"odu_graph_show\"> This button open a window on self click event and show more information according to data and time.</div>"\
-        "<div><input class=\"yo-button yo-small\" type=\"button\" style=\"width: 30px;\" value=\"Search\" name=\"odu_graph_show\"> Search the devices.</div>"\
-        "<div><button id=\"odu_report_btn\" class=\"yo-button\" style=\"margin-top: 5px;\" type=\"submit\"><span class=\"save\">Report</span></button>Download the PDF report.</div>"\
-        "<br/>"\
-        "<div><button id=\"odu_report_btn\" class=\"yo-button\" style=\"margin-top: 5px;\" type=\"submit\"><span class=\"report\">Report</span></button>Download the Excel report.</div>"\
-        "<br/>\
-	<br/>\
-        <div><strong>Note:</strong>This page show real time information of device and it page refresh on 5 min time interval.\
-	Search button search device by MAC address and IP address and show information by graph.\
-	Graph button display the graph according to time interval show,this time interval also change by user.\
-	report button provide PDF of all display information by graph \
-        </div>"\
-        "</div>"
-    html.write(str(html_view))
+# def page_tip_ap_monitor_dashboard(h):
+#     global html
+#     html = h
+#     import defaults
+#     f = open(defaults.web_dir + "/htdocs/locale/page_tip_ap_monitor_dashboard.html", "r")
+#     html_view = f.read()
+#     f.close()
+#     html.write(str(html_view))
 
 
 def ap_add_date_time_on_slide(h):

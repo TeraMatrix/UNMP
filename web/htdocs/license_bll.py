@@ -1,6 +1,6 @@
 #!/usr/bin/python2.6
 
-'''
+"""
 @author: Yogesh Kumar
 @since: 03-Nov-2011
 @version: 0.1
@@ -13,23 +13,24 @@
 @date: 21-Jan-2011
 @version: 1.1
 @note: Add new function that validate license file.
-'''
+"""
 
 # Import modules that contain the function and libraries
-from unmp_model import *
-from sqlalchemy.orm import sessionmaker
-import xml.dom.minidom
-import os
-import sys
-import random
-import datetime
 from datetime import datetime
 import logging
+import os
+import random
 import traceback
-# logging.basicConfig(filename='/omd/daemon/log/error_log',format='%(levelname)s: %(asctime)s : %(module)s >> %(message)s', level=logging.DEBUG)
-# log = logging.getLogger('License')
+
+import xml.dom.minidom
 
 from license import License
+from sqlalchemy.orm import sessionmaker
+from unmp_model import *
+
+
+# logging.basicConfig(filename='/omd/daemon/log/error_log',format='%(levelname)s: %(asctime)s : %(module)s >> %(message)s', level=logging.DEBUG)
+# log = logging.getLogger('License')
 
 
 class LicenseBll(object):
@@ -42,19 +43,25 @@ class LicenseBll(object):
     @copyright: 2011 Yogesh for Codescape Consultants Pvt. Ltd.
     @see: http://www.codescape.in
     """
+
     def __init__(self):
         pass
 
     def get_license(self, salt_word):
         # nms_instance = __file__.split("/")[3]       # it gives instance name
         # of nagios system
+        """
+
+        @param salt_word:
+        @return:
+        """
         nms_instance = 'UNMP'
         try:
             license_file = "/omd/sites/%s/share/check_mk/web/htdocs/xml/license" % nms_instance
-            if(os.path.isfile(license_file)):						# check config.xml file exist or not
+            if (os.path.isfile(license_file)):                        # check config.xml file exist or not
                 license_text = self.decoder(license_file, "123456")
                 dom = xml.dom.minidom.parseString(
-                    license_text)			# create xml dom object of license.xml file
+                    license_text)            # create xml dom object of license.xml file
                 return dom
             else:
                 return 0
@@ -62,6 +69,11 @@ class LicenseBll(object):
             return str(e)
 
     def allowed_license(self):
+        """
+
+
+        @return:
+        """
         nms_instance = __file__.split(
             "/")[3]       # it gives instance name of nagios system
         try:
@@ -69,14 +81,14 @@ class LicenseBll(object):
                 bind=engine)     # making session of our current database
             session = Session()                 # creating new session object
             license_file = "/omd/sites/%s/share/check_mk/web/htdocs/xml/license" % nms_instance
-            if(os.path.isfile(license_file)):						# check config.xml file exist or not
+            if (os.path.isfile(license_file)):                        # check config.xml file exist or not
                 license_text = self.decoder(license_file, "123456")
                 dom = xml.dom.minidom.parseString(
-                    license_text)			# create xml dom object of license.xml file
+                    license_text)            # create xml dom object of license.xml file
                 company = ""
                 date = ""
                 dom_element = dom.getElementsByTagName(
-                    "licensedto")			# get the element by tag name
+                    "licensedto")            # get the element by tag name
                 for elem in dom_element:
                     company = elem.getAttribute("name")
                     date = elem.getAttribute("expiredate")
@@ -162,6 +174,10 @@ class LicenseBll(object):
             return e
 
     def update_license_details(self):
+        """
+        License related controller
+
+        """
         try:
             Session = sessionmaker(
                 bind=engine)     # making session of our current database
@@ -190,8 +206,15 @@ class LicenseBll(object):
             session.close()                     # close the session object
 
     def get_allowed_object(self, dom, tagname, attrname=None):
+        """
+
+        @param dom:
+        @param tagname:
+        @param attrname:
+        @return:
+        """
         dom_element = dom.getElementsByTagName(
-            tagname)			# get the element by tag name
+            tagname)            # get the element by tag name
         value = []
         for elem in dom_element:
             value.append(str(elem.getAttribute("allow")))
@@ -203,16 +226,29 @@ class LicenseBll(object):
             return value[0] if len(value) > 0 else ""
 
     def get_tag_value(self, dom, tagname, attribute):
+        """
+
+        @param dom:
+        @param tagname:
+        @param attribute:
+        @return:
+        """
         dom_element = dom.getElementsByTagName(
-            tagname)			# get the element by tag name
+            tagname)            # get the element by tag name
         value = ""
         for elem in dom_element:
             value = elem.getAttribute(attribute)
         return value
 
     def get_tag_attributes(self, dom, tagname):
+        """
+
+        @param dom:
+        @param tagname:
+        @return:
+        """
         dom_element = dom.getElementsByTagName(
-            tagname)			# get the element by tag name
+            tagname)            # get the element by tag name
         atr_dict = {}
         for elem in dom_element:
             for (atr, val) in elem.attributes.items():
@@ -220,14 +256,19 @@ class LicenseBll(object):
         return atr_dict
 
     def get_allowed_host(self, device_type=None):
+        """
+
+        @param device_type:
+        @return:
+        """
         nms_instance = __file__.split(
             "/")[3]       # it gives instance name of nagios system
         try:
             license_file = "/omd/sites/%s/share/check_mk/web/htdocs/xml/license" % nms_instance
-            if(os.path.isfile(license_file)):						# check config.xml file exist or not
+            if (os.path.isfile(license_file)):                        # check config.xml file exist or not
                 license_text = self.decoder(license_file, "123456")
                 dom = xml.dom.minidom.parseString(
-                    license_text)			# create xml dom object of license.xml file
+                    license_text)            # create xml dom object of license.xml file
                 host = 0
                 host = self.get_allowed_object(dom, "host")
                 if device_type:
@@ -239,6 +280,10 @@ class LicenseBll(object):
             return e
 
     def update_device_type(self):
+        """
+        License related function
+
+        """
         try:
             Session = sessionmaker(
                 bind=engine)     # making session of our current database
@@ -258,14 +303,19 @@ class LicenseBll(object):
             session.close()                     # close the session object
 
     def get_allowed_hostgroup(self):
+        """
+
+
+        @return:
+        """
         nms_instance = __file__.split(
             "/")[3]       # it gives instance name of nagios system
         try:
             license_file = "/omd/sites/%s/share/check_mk/web/htdocs/xml/license" % nms_instance
-            if(os.path.isfile(license_file)):						# check config.xml file exist or not
+            if (os.path.isfile(license_file)):                        # check config.xml file exist or not
                 license_text = self.decoder(license_file, "123456")
                 dom = xml.dom.minidom.parseString(
-                    license_text)			# create xml dom object of license.xml file
+                    license_text)            # create xml dom object of license.xml file
                 hostgroup = 0
                 hostgroup = self.get_allowed_object(dom, "hostgroup")
                 return hostgroup
@@ -275,14 +325,19 @@ class LicenseBll(object):
             return e
 
     def get_allowed_user(self, user_group=None):
+        """
+
+        @param user_group:
+        @return:
+        """
         nms_instance = __file__.split(
             "/")[3]       # it gives instance name of nagios system
         try:
             license_file = "/omd/sites/%s/share/check_mk/web/htdocs/xml/license" % nms_instance
-            if(os.path.isfile(license_file)):						# check config.xml file exist or not
+            if (os.path.isfile(license_file)):                        # check config.xml file exist or not
                 license_text = self.decoder(license_file, "123456")
                 dom = xml.dom.minidom.parseString(
-                    license_text)			# create xml dom object of license.xml file
+                    license_text)            # create xml dom object of license.xml file
                 user = 0
                 user = self.get_allowed_object(dom, "user")
                 if user_group:
@@ -294,14 +349,19 @@ class LicenseBll(object):
             return e
 
     def get_allowed_usergroup(self):
+        """
+
+
+        @return:
+        """
         nms_instance = __file__.split(
             "/")[3]       # it gives instance name of nagios system
         try:
             license_file = "/omd/sites/%s/share/check_mk/web/htdocs/xml/license" % nms_instance
-            if(os.path.isfile(license_file)):						# check config.xml file exist or not
+            if (os.path.isfile(license_file)):                        # check config.xml file exist or not
                 license_text = self.decoder(license_file, "123456")
                 dom = xml.dom.minidom.parseString(
-                    license_text)			# create xml dom object of license.xml file
+                    license_text)            # create xml dom object of license.xml file
                 usergroup = 0
                 usergroup = self.get_allowed_object(dom, "usergroup")
                 return usergroup
@@ -311,6 +371,11 @@ class LicenseBll(object):
             return e
 
     def get_total_host(self, device_type=None):
+        """
+
+        @param device_type:
+        @return:
+        """
         Session = sessionmaker(
             bind=engine)     # making session of our current database
         try:
@@ -321,7 +386,7 @@ class LicenseBll(object):
             if device_type:
                 hosts.append(session.query(Hosts).filter(
                     Hosts.device_type_id == device_type).count())
-                             # execute query and fetch data
+                # execute query and fetch data
             if device_type:
                 return hosts
             else:
@@ -333,6 +398,11 @@ class LicenseBll(object):
             session.close()                     # close the session object
 
     def get_pretty_devicename(self):
+        """
+
+
+        @return:
+        """
         Session = sessionmaker(
             bind=engine)     # making session of our current database
         try:
@@ -348,6 +418,11 @@ class LicenseBll(object):
             session.close()
 
     def get_total_hostgroup(self):
+        """
+
+
+        @return:
+        """
         Session = sessionmaker(
             bind=engine)     # making session of our current database
         try:
@@ -361,6 +436,11 @@ class LicenseBll(object):
             session.close()                     # close the session object
 
     def get_total_user(self, user_group=None):
+        """
+
+        @param user_group:
+        @return:
+        """
         Session = sessionmaker(
             bind=engine)     # making session of our current database
         try:
@@ -370,7 +450,8 @@ class LicenseBll(object):
                 Users).count())          # execute query and fetch data
             if user_group:
                 users.append(session.query(UsersGroups.group_id).filter(
-                    and_(UsersGroups.group_id == Groups.group_id, Groups.group_name == user_group)).count())          # execute query and fetch data
+                    and_(UsersGroups.group_id == Groups.group_id,
+                         Groups.group_name == user_group)).count())          # execute query and fetch data
             if user_group:
                 return users
             else:
@@ -381,6 +462,11 @@ class LicenseBll(object):
             session.close()                     # close the session object
 
     def get_total_usergroup(self):
+        """
+
+
+        @return:
+        """
         Session = sessionmaker(
             bind=engine)     # making session of our current database
         try:
@@ -394,6 +480,11 @@ class LicenseBll(object):
             session.close()                     # close the session object
 
     def check_license_for_host(self, device_type=None):
+        """
+
+        @param device_type:
+        @return:
+        """
         try:
             if device_type:
                 allowed_host_li = self.get_allowed_host(device_type)
@@ -403,7 +494,7 @@ class LicenseBll(object):
             else:
                 host = int(
                     self.get_allowed_host()) - int(self.get_total_host())
-            # return " eeeeeee %s,%s"%(str(allowed_host_li),str(total_host_li))
+                # return " eeeeeee %s,%s"%(str(allowed_host_li),str(total_host_li))
             if host > 0:
                 if device_type:
                     if host_co > 0:
@@ -418,6 +509,11 @@ class LicenseBll(object):
             return e
 
     def get_device_type(self, host_id):
+        """
+
+        @param host_id:
+        @return:
+        """
         Session = sessionmaker(
             bind=engine)     # making session of our current database
         try:
@@ -431,6 +527,12 @@ class LicenseBll(object):
             session.close()
 
     def check_license_for_host_edit(self, device_type=None, host_id=None):
+        """
+
+        @param device_type:
+        @param host_id:
+        @return:
+        """
         try:
             if device_type != self.get_device_type(host_id):
                 allowed_host_li = self.get_allowed_host(device_type)
@@ -449,6 +551,11 @@ class LicenseBll(object):
             return e
 
     def check_license_for_hostgroup(self):
+        """
+
+
+        @return:
+        """
         try:
             hostgroup = int(self.get_allowed_hostgroup(
             )) - int(self.get_total_hostgroup())
@@ -460,12 +567,18 @@ class LicenseBll(object):
             return False
 
     def get_group_name(self, user_id):
+        """
+
+        @param user_id:
+        @return:
+        """
         Session = sessionmaker(
             bind=engine)     # making session of our current database
         try:
             session = Session()                 # creating new session object
             usergroups = session.query(Groups.group_name).filter(
-                and_(Groups.group_id == UsersGroups.group_id, UsersGroups.user_id == user_id)).all()         # execute query and fetch data
+                and_(Groups.group_id == UsersGroups.group_id,
+                     UsersGroups.user_id == user_id)).all()         # execute query and fetch data
             return usergroups[0][0] if len(usergroups) > 0 else "default"
         except Exception, e:
             return str(e)
@@ -473,6 +586,11 @@ class LicenseBll(object):
             session.close()
 
     def check_license_for_user(self, user_group=None):
+        """
+
+        @param user_group:
+        @return:
+        """
         try:
             if user_group:
                 allowed_user_li = self.get_allowed_user(user_group)
@@ -482,8 +600,8 @@ class LicenseBll(object):
             else:
                 user = int(
                     self.get_allowed_user()) - int(self.get_total_user())
-# return " dddddddd %s,%s eeeeeee
-# %s,%s"%(user,user_co,str(allowed_user_li),str(total_user_li))
+            # return " dddddddd %s,%s eeeeeee
+            # %s,%s"%(user,user_co,str(allowed_user_li),str(total_user_li))
             if user > 0:
                 if user_group:
                     if user_co > 0:
@@ -498,6 +616,12 @@ class LicenseBll(object):
             return False
 
     def check_license_for_group(self, user_group=None, user_id=None):
+        """
+
+        @param user_group:
+        @param user_id:
+        @return:
+        """
         try:
             # f = open('/omd/daemon/abc.txt','w+')
             # f.write(user_group)
@@ -507,28 +631,33 @@ class LicenseBll(object):
                 allowed_user_li = self.get_allowed_user(user_group)
                 total_user_li = self.get_total_user(user_group)
                 user_co = int(allowed_user_li[1]) - int(total_user_li[1])
-    # return " dddddddd %s eeeeeee
-    # %s,%s"%(user_co,str(allowed_user_li),str(total_user_li))
+                # return " dddddddd %s eeeeeee
+                # %s,%s"%(user_co,str(allowed_user_li),str(total_user_li))
                 if user_co > 0:
                     return True
                 else:
                     return False
             else:
                 return True
-            # f.close()
+                # f.close()
         except Exception, e:
             # f.write("sssss"+str(e))
             # f.close()
             return False
 
     def check_license_for_useringroup(self, user_group=None):
+        """
+
+        @param user_group:
+        @return:
+        """
         try:
 
             allowed_user_li = self.get_allowed_user(user_group)
             total_user_li = self.get_total_user(user_group)
             user_co = int(allowed_user_li[1]) - int(total_user_li[1])
-# return " dddddddd %s eeeeeee
-# %s,%s"%(user_co,str(allowed_user_li),str(total_user_li))
+            # return " dddddddd %s eeeeeee
+            # %s,%s"%(user_co,str(allowed_user_li),str(total_user_li))
 
             if user_co > 0:
                 return user_co
@@ -539,6 +668,11 @@ class LicenseBll(object):
             return 0
 
     def check_license_for_usergroup(self):
+        """
+
+
+        @return:
+        """
         try:
             usergroup = int(self.get_allowed_usergroup(
             )) - int(self.get_total_usergroup())
@@ -550,6 +684,12 @@ class LicenseBll(object):
             return False
 
     def encoder(self, path, pwd, topath):
+        """
+
+        @param path:
+        @param pwd:
+        @param topath:
+        """
         k = long(pwd)  # key   # password in int
         f1 = open(path, "rb")  # xml file path
         bytearr = map(ord, f1.read())
@@ -563,6 +703,12 @@ class LicenseBll(object):
         f2.close()
 
     def decoder(self, path, pwd):
+        """
+
+        @param path:
+        @param pwd:
+        @return:
+        """
         k = long(pwd)  # key
         f1 = open(path, "rb")
         bytearr = map(ord, f1.read())
@@ -575,6 +721,11 @@ class LicenseBll(object):
         return x_str
 
     def validate_license(self, file_data):
+        """
+
+        @param file_data:
+        @return:
+        """
         session = None
         try:
             Session = sessionmaker(

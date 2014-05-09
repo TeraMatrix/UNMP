@@ -1,25 +1,21 @@
 #!/usr/bin/python2.6
 # import the packeges
-import config
-import time
-import cgi
-import MySQLdb
-import sys
-import csv
-from common_controller import *
-from nms_config import *
-from odu_controller import *
 from datetime import datetime, timedelta
-from mysql_collection import mysql_connection
-from unmp_dashboard_config import DashboardConfig
-from operator import itemgetter
-from utility import Validation
-from error_message import ErrorMessageClass
 import time
-from operator import itemgetter
-from specific_dashboard_bll import get_master_slave_value
-#from main_reporting_bll import MainOutage
+
+import MySQLdb
+
+from common_controller import *
+from error_message import ErrorMessageClass
+from mysql_collection import mysql_connection
+from nms_config import *
 from odu100_common_dashboard import MainOutage
+from odu_controller import *
+from specific_dashboard_bll import get_master_slave_value
+from unmp_dashboard_config import DashboardConfig
+from utility import Validation
+
+
 
 global err_obj
 err_obj = ErrorMessageClass()
@@ -42,8 +38,13 @@ class SelfException(Exception):
 
 
 class ClientDashboardBll(object):
+    """
+    AP device Connected client dashboard modal class
+    """
     def sp_dashboard(self, host_id):
         """
+
+        @param host_id:
         @return: This function return the ip_address.
         @rtype: dictionary
         @author: Rajendra Sharma
@@ -107,6 +108,11 @@ class ClientDashboardBll(object):
                 db.close()
 
     def get_dashboard_data(self):
+        """
+
+
+        @return:
+        """
         devcie_type_attr = ['id', 'refresh_time', 'time_diffrence']
         get_data = DashboardConfig.get_config_attributes(
             'odu_dashboard', devcie_type_attr)
@@ -119,6 +125,11 @@ class ClientDashboardBll(object):
         return str(odu_refresh_time), str(total_count)
 
     def client_device_information(self, mac_address):
+        """
+
+        @param mac_address:
+        @return: @raise:
+        """
         output_dict = {}
         try:
             db, cursor = mysql_connection()
@@ -151,6 +162,13 @@ class ClientDashboardBll(object):
 
     # generic graph json data
     def client_all_graph_json(self, device_type_id, user_id, ip_address):
+        """
+
+        @param device_type_id:
+        @param user_id:
+        @param ip_address:
+        @return: @raise:
+        """
         data_list = []
         time_list = []
         output_dic = {}
@@ -281,7 +299,6 @@ class ClientDashboardBll(object):
                         graph_json.append(graph_dict)
                 else:
                     graph_json.append(graph_dict)
-#		graph_json.append(graph_dict)
 
             output_dic = {'success': 0, 'graphs': graph_json, 'cde': check_var}
             return output_dic
@@ -302,6 +319,27 @@ class ClientDashboardBll(object):
                 conn.close()
 
     def client_graph_json(self, display_type, user_id, table_name, x_axis_value, index_name, graph_id, flag, start_date, end_date, start, limit, mac_address, graph, update_field_name, interface=1, value_cal=1, *column_name):
+        """
+
+        @param display_type:
+        @param user_id:
+        @param table_name:
+        @param x_axis_value:
+        @param index_name:
+        @param graph_id:
+        @param flag:
+        @param start_date:
+        @param end_date:
+        @param start:
+        @param limit:
+        @param mac_address:
+        @param graph:
+        @param update_field_name:
+        @param interface:
+        @param value_cal:
+        @param column_name:
+        @return: @raise:
+        """
         data_list = []
         time_list = []
         calculation = ['normal', 'delta']
@@ -479,6 +517,13 @@ class ClientDashboardBll(object):
                 conn.close()
 
     def update_show_graph_table(self, device_type_id, user_id, show_graph):
+        """
+
+        @param device_type_id:
+        @param user_id:
+        @param show_graph:
+        @return: @raise:
+        """
         try:
             db, cursor = mysql_connection()
             if db == 1:
@@ -514,6 +559,12 @@ class ClientDashboardBll(object):
                 db.close()
 
     def client_dashboard_get_graph_name(self, user_id, device_type):
+        """
+
+        @param user_id:
+        @param device_type:
+        @return:
+        """
         try:
             make_list = lambda x: [
                 " - " if i == None or i == '' else str(i) for i in x]
@@ -554,6 +605,12 @@ class ClientDashboardBll(object):
                 db.close()
 
     def client_total_display_graph(self, device_type_id, user_id):
+        """
+
+        @param device_type_id:
+        @param user_id:
+        @return:
+        """
         try:
             db = MySQLdb.connect(*SystemConfig.get_mysql_credentials())
             cursor = db.cursor()
@@ -586,6 +643,11 @@ class ClientDashboardBll(object):
                 db.close()
 
     def client_state_data(self, mac_address):
+        """
+
+        @param mac_address:
+        @return:
+        """
         try:
             # check the deivce is master or not.
             db = MySQLdb.connect(*SystemConfig.get_mysql_credentials())
@@ -623,6 +685,25 @@ order by ap.client_id" % (mac_address)
 #        if mac_address=='' or mac_address==None or mac_address=='undefined' or str(mac_address)=='None':    # if ip_address not received so excel not created
 #            raise SelfException('This Client not exists so excel report can not be generated.')  # Check msg
 #        check_var=''
+        """
+
+        @param device_type:
+        @param user_id:
+        @param mac_address:
+        @param cal_list:
+        @param tab_list:
+        @param field_list:
+        @param table_name_list:
+        @param graph_name_list:
+        @param start_date:
+        @param end_date:
+        @param select_option:
+        @param limitFlag:
+        @param graph_list:
+        @param start_list:
+        @param limit_list:
+        @return: @raise:
+        """
         try:
             device_name = {'ap25': 'AP25', 'odu16': 'RM18',
                            'odu100': 'RM', 'idu4': 'IDU'}
@@ -852,6 +933,25 @@ order by ap.client_id" % (mac_address)
 #        if ip_address=='' or ip_address==None or ip_address=='undefined' or str(ip_address)=='None':    # if ip_address not received so excel not created
 #            raise SelfException('This devices not exists so excel report can not be generated.')  # Check msg
         # check_var=''
+        """
+
+@param device_type:
+@param user_id:
+@param mac_address:
+@param cal_list:
+@param tab_list:
+@param field_list:
+@param table_name_list:
+@param graph_name_list:
+@param start_date:
+@param end_date:
+@param select_option:
+@param limitFlag:
+@param graph_list:
+@param start_list:
+@param limit_list:
+@return: @raise:
+"""
         try:
             display_type = 'csv'
             table_output = []
@@ -1016,6 +1116,25 @@ order by ap.client_id" % (mac_address)
                 db.close()
 
     def sp_pdf_report(self, device_type, user_id, ip_address, cal_list, tab_list, field_list, table_name_list, graph_name_list, start_date, end_date, select_option, limitFlag, graph_list, start_list, limit_list):
+        """
+
+        @param device_type:
+        @param user_id:
+        @param ip_address:
+        @param cal_list:
+        @param tab_list:
+        @param field_list:
+        @param table_name_list:
+        @param graph_name_list:
+        @param start_date:
+        @param end_date:
+        @param select_option:
+        @param limitFlag:
+        @param graph_list:
+        @param start_list:
+        @param limit_list:
+        @return: @raise:
+        """
         if ip_address == '' or ip_address == None or ip_address == 'undefined' or str(ip_address) == 'None':    # if ip_address not received so excel not created
             raise SelfException(
                 'This devices not exists so excel report can not be generated.')  # Check msg
@@ -1770,6 +1889,11 @@ order by ap.client_id" % (mac_address)
 
 
 def merge_list(arg):
+    """
+
+    @param arg:
+    @return:
+    """
     total = len(arg)
     flag = True
     d2 = []
@@ -1792,6 +1916,12 @@ def merge_list(arg):
 
 
 def main_outage(result_tuple, end_date):
+    """
+
+    @param result_tuple:
+    @param end_date:
+    @return:
+    """
     try:
         is_date = 0
         main_date = ''
@@ -1905,6 +2035,13 @@ def main_outage(result_tuple, end_date):
 
 
 def get_outage(d1, d2, ip_address):
+    """
+
+    @param d1:
+    @param d2:
+    @param ip_address:
+    @return: @raise:
+    """
     try:
         conn, cursor = mysql_connection()
         if conn == 1:

@@ -9,6 +9,9 @@
 import MySQLdb
 import uuid
 from unmp_config import SystemConfig
+from unmp_login import is_account_locked
+from datetime import datetime
+import traceback
 
 global global_db
 
@@ -39,12 +42,23 @@ def db_close():
     except Exception as e:
         pass  # print "/*/*/* Database Exception ( db close ) : "+str(e)
 
+
 def getGroupsData():
+    """
+    To get the hostgroups related data
+
+    """
     db_connect()
     global global_db
     db_close()
 
+
 def ap_add_default_data_new_user(user_id):
+    """
+
+    @param user_id:
+    @return:
+    """
     try:
         global global_db
         if global_db.open != 1:
@@ -53,45 +67,47 @@ def ap_add_default_data_new_user(user_id):
         cursor = global_db.cursor()
 
         default_temp_list = [
-                ['apNWBandwidth', 
-                 'Network Bandwidth Statistics', 
-                 0, 'ap25', 1, 1, 0, 0, 0, 5, 
-                 180, 250, 1, 1, 1, 1, 1, 
-                 'Network Bandwidth Statistics',
-                 'Statistics', 600, 0
-                ],[
-                 'ap25outage', 
-                 'Device Reachability Statistics', 
-                 0, 'ap25', 2, 1, 0, 0, 0, 5,
-                 180, 250, 1, 1, 1, 1, 0, 
-                 'Reachability Statistics', 
-                 '', 600, 0
-                ],[
-                 'vapConnectedClient', 
-                 'Connected Client', 
-                 0, 'ap25', 1, 1, 0, 0, 0, 5,
-                 180, 250, 1, 1, 1, 1, 1, 
-                 'Connected Client', 
-                 '', 600, 0
-                ],[
-                 'totalConnectedClient', 
-                 'Total Connected Client', 
-                 0, 'ap25', 1, 1, 0, 0, 0, 5, 
-                 180, 250, 1, 1, 1, 1, 1, 
-                 'Total Connected Client', 
-                 '', 600, 0
-                ]
+            ['apNWBandwidth',
+             'Network Bandwidth Statistics',
+             0, 'ap25', 1, 1, 0, 0, 0, 5,
+             180, 250, 1, 1, 1, 1, 1,
+             'Network Bandwidth Statistics',
+             'Statistics', 600, 0
+            ], [
+                'ap25outage',
+                'Device Reachability Statistics',
+                0, 'ap25', 2, 1, 0, 0, 0, 5,
+                180, 250, 1, 1, 1, 1, 0,
+                'Reachability Statistics',
+                '', 600, 0
+            ], [
+                'vapConnectedClient',
+                'Connected Client',
+                0, 'ap25', 1, 1, 0, 0, 0, 5,
+                180, 250, 1, 1, 1, 1, 1,
+                'Connected Client',
+                '', 600, 0
+            ], [
+                'totalConnectedClient',
+                'Total Connected Client',
+                0, 'ap25', 1, 1, 0, 0, 0, 5,
+                180, 250, 1, 1, 1, 1, 1,
+                'Total Connected Client',
+                '', 600, 0
             ]
+        ]
         for default_temp in default_temp_list:
             ins_temp_query = "INSERT INTO  `graph_templet_table` \
             (`graph_display_id` ,`graph_display_name` ,`user_id` ,`is_disabled` ,`device_type_id` ,`graph_id` ,`graph_tab_option` \
             ,`refresh_button` , `next_pre_option` ,`start_value` ,`end_value` ,`graph_width` ,`graph_height` ,`graph_cal_id` ,`show_type` \
             ,`show_field` ,`show_cal_type` ,`show_tab_option`,`graph_title`,`graph_subtitle`,`auto_refresh_time_second`,`is_deleted`)\
             VALUES ('%s', '%s', '%s', '%s', '%s', %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,'%s','%s' ,'%s',%s,%s)\
-            " % (default_temp[0], default_temp[1], user_id, default_temp[2], default_temp[3], default_temp[4], default_temp[5], default_temp[6],
+            " % (default_temp[0], default_temp[1], user_id, default_temp[2], default_temp[3], default_temp[4],
+                 default_temp[5], default_temp[6],
                  default_temp[7], default_temp[8], default_temp[9], default_temp[
-                 10], default_temp[11], default_temp[12], default_temp[13],
-                 default_temp[14], default_temp[15], default_temp[16], default_temp[17], default_temp[18], default_temp[19], default_temp[20])
+                10], default_temp[11], default_temp[12], default_temp[13],
+                 default_temp[14], default_temp[15], default_temp[16], default_temp[17], default_temp[18],
+                 default_temp[19], default_temp[20])
             cursor.execute(ins_temp_query)
         global_db.commit()
 
@@ -125,8 +141,10 @@ def ap_add_default_data_new_user(user_id):
         global_db.commit()
 
         # interface value
-        graph_field = {'apNWBandwidth': ['statisticsRxPackets', 'statisticsTxPackets', 'statisticsRxError', 'statisticsTxError'],
-                       'ap25outage': ['Reachable', 'Unreachable'], 'vapConnectedClient': ['1', '2', '3', '4', '5', '6', '7', '8'], 'totalConnectedClient': ['1']}
+        graph_field = {
+        'apNWBandwidth': ['statisticsRxPackets', 'statisticsTxPackets', 'statisticsRxError', 'statisticsTxError'],
+        'ap25outage': ['Reachable', 'Unreachable'], 'vapConnectedClient': ['1', '2', '3', '4', '5', '6', '7', '8'],
+        'totalConnectedClient': ['1']}
 
         graph_display_name = {'apNWBandwidth': ['Rx Packets', 'Tx Packets', 'Rx Error', 'Tx Error'],
                               'ap25outage': ['Reachable', 'Unreachable'],
@@ -135,7 +153,8 @@ def ap_add_default_data_new_user(user_id):
 
         tool_tip_name = {'apNWBandwidth': ['(packet)', '(packet)', '(count)', '(count)'],
                          'ap25outage': ['(%)', '(%)'],
-                         'vapConnectedClient': ['(count)', '(count)', '(count)', '(count)', '(count)', '(count)', '(count)', '(count)'],
+                         'vapConnectedClient': ['(count)', '(count)', '(count)', '(count)', '(count)', '(count)',
+                                                '(count)', '(count)'],
                          'totalConnectedClient': ['(count)']}
 
         for field in graph_field:
@@ -144,30 +163,37 @@ def ap_add_default_data_new_user(user_id):
                 if i < 2:
                     ins_query = "insert into graph_field_table \
                     (user_id,graph_name,graph_field_value,graph_field_display_name,is_checked,tool_tip_title) \
-                    values ('%s','%s','%s','%s',%s,'%s')" % (user_id, field, name, graph_display_name[field][i], 1, tool_tip_name[field][i])
+                    values ('%s','%s','%s','%s',%s,'%s')" % (
+                    user_id, field, name, graph_display_name[field][i], 1, tool_tip_name[field][i])
                 else:
                     ins_query = "insert into graph_field_table \
                     (user_id,graph_name,graph_field_value,graph_field_display_name,is_checked,tool_tip_title) \
-                    values ('%s','%s','%s','%s',%s,'%s')" % (user_id, field, name, graph_display_name[field][i], 0, tool_tip_name[field][i])
+                    values ('%s','%s','%s','%s',%s,'%s')" % (
+                    user_id, field, name, graph_display_name[field][i], 0, tool_tip_name[field][i])
                 i += 1
                 cursor.execute(ins_query)
         global_db.commit()
 
-        ajax_data = {'apNWBandwidth': ['apNWBandwidth', 'sp_common_graph_creation.py', 'post', 'ap25_statisticsTable,timestamp,index,apNWBandwidth'],
-                     'ap25outage': ['ap25outage', 'sp_common_graph_creation.py', 'post', 'outage,timestamp,noIndexName,ap25outage'],
+        ajax_data = {'apNWBandwidth': ['apNWBandwidth', 'sp_common_graph_creation.py', 'post',
+                                       'ap25_statisticsTable,timestamp,index,apNWBandwidth'],
+                     'ap25outage': ['ap25outage', 'sp_common_graph_creation.py', 'post',
+                                    'outage,timestamp,noIndexName,ap25outage'],
                      'vapConnectedClient': ['vapConnectedClient', 'sp_common_graph_creation.py', 'post', 'ap25_vapClientStatisticsTable,\
                    timestamp,vap_id,vapConnectedClient'],
                      'totalConnectedClient': ['totalConnectedClient', 'sp_common_graph_creation.py', 'post',
                                               'ap25_vapClientStatisticsTable,timestamp,vap_id,totalConnectedClient']}
         for data in ajax_data:
             sql = "insert into graph_ajax_call_information (user_id,graph_id,url,method,other_data) \
-            values('%s','%s','%s','%s','%s')" % (user_id, ajax_data[data][0], ajax_data[data][1], ajax_data[data][2], ajax_data[data][3])
+            values('%s','%s','%s','%s','%s')" % (
+            user_id, ajax_data[data][0], ajax_data[data][1], ajax_data[data][2], ajax_data[data][3])
             cursor.execute(sql)
         global_db.commit()
         total_data = {}
         for count_data in total_data:
             sql = "insert into total_count_item (user_id,graph_id,url,method,other_data) \
-            values('%s','%s','%s','%s','%s')" % (user_id, total_data[count_data][0], total_data[count_data][1], total_data[count_data][2], total_data[count_data][3])
+            values('%s','%s','%s','%s','%s')" % (
+            user_id, total_data[count_data][0], total_data[count_data][1], total_data[count_data][2],
+            total_data[count_data][3])
             cursor.execute(sql)
         global_db.commit()
     except Exception, e:
@@ -177,6 +203,11 @@ def ap_add_default_data_new_user(user_id):
 
 ##
 def odu16_add_graph_info_new_user(user_id):
+    """
+
+    @param user_id:
+    @return:
+    """
     try:
         global global_db
         if global_db.open != 1:
@@ -185,19 +216,20 @@ def odu16_add_graph_info_new_user(user_id):
         cursor = global_db.cursor()
         # first graph_id and second value is table name#
 
-#	global_db=MySQLdb.connect('localhost','root','root','midnms')
-#        cursor=global_db.cursor()
+        #	global_db=MySQLdb.connect('localhost','root','root','midnms')
+        #        cursor=global_db.cursor()
 
         default_temp_list = [
             ['odu16rssi', 'RSL Statistics', 0, 'odu16', 2, 1, 0, 0, 0, 5, 180,
-                250, 1, 1, 1, 1, 0, 'RSL Statistics', '', 600, 0],
+             250, 1, 1, 1, 1, 0, 'RSL Statistics', '', 600, 0],
             ['odu16outage', 'Device Reachability Statistics', 0, 'odu16', 2, 1, 0, 0, 0, 5,
-                            180, 250, 1, 1, 1, 1, 0, 'Reachability Statistics', '', 600, 0],
+             180, 250, 1, 1, 1, 1, 0, 'Reachability Statistics', '', 600, 0],
             ['odu16NWBandwidth', 'Network Bandwidth Statistics', 1, 'odu16', 1, 1, 0, 0, 0, 5, 180, 250, 1, 1, 1, 1, 1,
              'Network Bandwidth Statistics', 'Statistics', 600, 0],
             ['odu16synclost', 'Sync Lost', 1, 'odu16', 0, 1, 0, 0, 0, 5,
              180, 250, 1, 1, 1, 1, 0, 'Sync Lost', '', 600, 0],
-            ['odu16crcphy', 'Crc Phy Error Count', 1, 'odu16', 0, 1, 0, 0, 0, 5, 180, 250, 1, 1, 1, 1, 0, 'CRC PHY Error', '', 600, 0]]
+            ['odu16crcphy', 'Crc Phy Error Count', 1, 'odu16', 0, 1, 0, 0, 0, 5, 180, 250, 1, 1, 1, 1, 0,
+             'CRC PHY Error', '', 600, 0]]
         for default_temp in default_temp_list:
             ins_temp_query = "INSERT INTO  `graph_templet_table` \
             (`graph_display_id` ,`graph_display_name` ,`user_id` ,`is_disabled` ,`device_type_id` ,`graph_id` ,\
@@ -207,9 +239,9 @@ def odu16_add_graph_info_new_user(user_id):
             VALUES ('%s', '%s', '%s', '%s', '%s', %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,'%s','%s' ,'%s',%s,%s)\
             " % (default_temp[0], default_temp[1], user_id, default_temp[2], default_temp[3], default_temp[4],
                  default_temp[5], default_temp[6], default_temp[
-                 7], default_temp[8], default_temp[9], default_temp[10],
+                7], default_temp[8], default_temp[9], default_temp[10],
                  default_temp[11], default_temp[
-                 12], default_temp[13], default_temp[14], default_temp[15],
+                12], default_temp[13], default_temp[14], default_temp[15],
                  default_temp[16], default_temp[17], default_temp[18], default_temp[19], default_temp[20])
             cursor.execute(ins_temp_query)
         global_db.commit()
@@ -248,46 +280,52 @@ def odu16_add_graph_info_new_user(user_id):
                 cursor.execute(ins_query)
         global_db.commit()
 
-#        get_coloum="SELECT graph_field_value,graph_field_display_name,tool_tip_title FROM graph_field_table WHERE graph_name='%s' AND user_id='%s'"%('ap25_statisticsTable',user_id)
-#        cursor.execute(get_coloum)
-#        coloum_result=cursor.fetchall()
-#        table_field_dict=dict((field[0],field[1]) for field in coloum_result)
+        #        get_coloum="SELECT graph_field_value,graph_field_display_name,tool_tip_title FROM graph_field_table WHERE graph_name='%s' AND user_id='%s'"%('ap25_statisticsTable',user_id)
+        #        cursor.execute(get_coloum)
+        #        coloum_result=cursor.fetchall()
+        #        table_field_dict=dict((field[0],field[1]) for field in coloum_result)
         # interface value
-        graph_field = {'odu16NWBandwidth': ['rx_packets', 'tx_packets', 'rx_bytes', 'tx_bytes', 'rx_errors', 'tx_errors'],
-                       'odu16synclost': ['sysc_lost_counter'], 'odu16crcphy': ['rx_crc_errors', 'rx_phy_error'],
-                       'odu16outage': ['Reachable', 'Unreachable'], 'odu16rssi': ['1', '2', '3', '4', '5', '6', '7', '8']}
-        graph_display_name = {'odu16NWBandwidth': ['Rx Packets', 'Tx Packets', 'Rx Bytes', 'Tx Bytes', 'Rx Error', 'Tx Error'],
-                              'odu16synclost': ['SyncLoss'], 'odu16crcphy': ['CRC Error', 'PHY Error'],
-                              'odu16outage': ['Reachable', 'Unreachable'],
-                              'odu16rssi': ["Link1", "Link2", "Link3", "Link4", "Link5", "Link6", "Link7", "Link8"]}
+        graph_field = {
+        'odu16NWBandwidth': ['rx_packets', 'tx_packets', 'rx_bytes', 'tx_bytes', 'rx_errors', 'tx_errors'],
+        'odu16synclost': ['sysc_lost_counter'], 'odu16crcphy': ['rx_crc_errors', 'rx_phy_error'],
+        'odu16outage': ['Reachable', 'Unreachable'], 'odu16rssi': ['1', '2', '3', '4', '5', '6', '7', '8']}
+        graph_display_name = {
+        'odu16NWBandwidth': ['Rx Packets', 'Tx Packets', 'Rx Bytes', 'Tx Bytes', 'Rx Error', 'Tx Error'],
+        'odu16synclost': ['SyncLoss'], 'odu16crcphy': ['CRC Error', 'PHY Error'],
+        'odu16outage': ['Reachable', 'Unreachable'],
+        'odu16rssi': ["Link1", "Link2", "Link3", "Link4", "Link5", "Link6", "Link7", "Link8"]}
         tool_tip_name = {'odu16NWBandwidth': ['(pps)', '(pps)', '(bps)', '(bps)', '(count)', '(count)'],
                          'odu16synclost': ['(count)'],
-                                               'odu16crcphy': ['(count)', '(count)'],
-                       'odu16outage': ['(%)', '(%)'],
-                       'odu16rssi': ['(dBm)', '(dBm)', '(dBm)', '(dBm)', '(dBm)', '(dBm)', '(dBm)', '(dBm)']}
+                         'odu16crcphy': ['(count)', '(count)'],
+                         'odu16outage': ['(%)', '(%)'],
+                         'odu16rssi': ['(dBm)', '(dBm)', '(dBm)', '(dBm)', '(dBm)', '(dBm)', '(dBm)', '(dBm)']}
         for field in graph_field:
             i = 0
             for name in graph_field[field]:
                 if i < 2:
                     ins_query = "insert into graph_field_table \
                     user_id,graph_name,graph_field_value,graph_field_display_name,is_checked,tool_tip_title) \
-                    values ('%s','%s','%s','%s',%s,'%s')" % (user_id, field, name, graph_display_name[field][i], 1, tool_tip_name[field][i])
+                    values ('%s','%s','%s','%s',%s,'%s')" % (
+                    user_id, field, name, graph_display_name[field][i], 1, tool_tip_name[field][i])
                 else:
                     ins_query = "insert into graph_field_table \
                     (user_id,graph_name,graph_field_value,graph_field_display_name,is_checked,tool_tip_title) \
-                    values ('%s','%s','%s','%s',%s,'%s')" % (user_id, field, name, graph_display_name[field][i], 0, tool_tip_name[field][i])
+                    values ('%s','%s','%s','%s',%s,'%s')" % (
+                    user_id, field, name, graph_display_name[field][i], 0, tool_tip_name[field][i])
                 i += 1
                 cursor.execute(ins_query)
         global_db.commit()
 
         ajax_data = {'odu16NWBandwidth': ['odu16NWBandwidth', 'sp_common_graph_creation.py', 'post',
-                                       'get_odu16_nw_interface_statistics_table,timestamp,index,odu16NWBandwidth'],
-                   'odu16synclost': ['odu16synclost', 'sp_common_graph_creation.py', 'post',
-                                    'get_odu16_synch_statistics_table,timestamp,index,odu16synclost'],
-                   'odu16crcphy': ['odu16crcphy', 'sp_common_graph_creation.py', 'post',
-                                  'get_odu16_ra_tdd_mac_statistics_entry,timestamp,index,odu16crcphy'],
-                   'odu16outage': ['odu16outage', 'sp_common_graph_creation.py', 'post', 'outage,timestamp,noIndexName,odu16outage'],
-                   'odu16rssi': ['odu16rssi', 'sp_common_graph_creation.py', 'post', 'get_odu16_peer_node_status_table,timestamp,timeslot_index,odu16rssi']}
+                                          'get_odu16_nw_interface_statistics_table,timestamp,index,odu16NWBandwidth'],
+                     'odu16synclost': ['odu16synclost', 'sp_common_graph_creation.py', 'post',
+                                       'get_odu16_synch_statistics_table,timestamp,index,odu16synclost'],
+                     'odu16crcphy': ['odu16crcphy', 'sp_common_graph_creation.py', 'post',
+                                     'get_odu16_ra_tdd_mac_statistics_entry,timestamp,index,odu16crcphy'],
+                     'odu16outage': ['odu16outage', 'sp_common_graph_creation.py', 'post',
+                                     'outage,timestamp,noIndexName,odu16outage'],
+                     'odu16rssi': ['odu16rssi', 'sp_common_graph_creation.py', 'post',
+                                   'get_odu16_peer_node_status_table,timestamp,timeslot_index,odu16rssi']}
         for data in ajax_data:
             sql = "insert into graph_ajax_call_information \
             (user_id,graph_id,url,method,other_data) \
@@ -296,13 +334,14 @@ def odu16_add_graph_info_new_user(user_id):
             cursor.execute(sql)
         global_db.commit()
 
-# total_data={'apVAPUserConnect':['apVAPUserConnect','ap_total_data_count.py','post','ap25_vapClientStatisticsTable,addressMAC']}
+        # total_data={'apVAPUserConnect':['apVAPUserConnect','ap_total_data_count.py','post','ap25_vapClientStatisticsTable,addressMAC']}
         total_data = {}
         for count_data in total_data:
             sql = "insert into total_count_item \
             (user_id,graph_id,url,method,other_data) \
             values('%s','%s','%s','%s','%s')\
-            " % (user_id, total_data[count_data][0], total_data[count_data][1], total_data[count_data][2], total_data[count_data][3])
+            " % (user_id, total_data[count_data][0], total_data[count_data][1], total_data[count_data][2],
+                 total_data[count_data][3])
             cursor.execute(sql)
         global_db.commit()
 
@@ -314,6 +353,11 @@ def odu16_add_graph_info_new_user(user_id):
 
 
 def odu100_add_graph_info_new_user(user_id):
+    """
+
+    @param user_id:
+    @return:
+    """
     try:
         global global_db
         if global_db.open != 1:
@@ -322,25 +366,27 @@ def odu100_add_graph_info_new_user(user_id):
         cursor = global_db.cursor()
         # first graph_id and second value is table name#
 
-#	global_db=MySQLdb.connect('localhost','root','root','midnms')
-#        cursor=global_db.cursor()
+        #	global_db=MySQLdb.connect('localhost','root','root','midnms')
+        #        cursor=global_db.cursor()
 
         default_temp_list = [
             ['odu100link', 'Link Quality Statistics', 0, 'odu100', 2, 1, 0, 0, 0, 5, 180, 250, 1, 1, 1, 1, 0,
-                            'Link Quality Statistics', '', 600, 0],
-                           ['odu100peernode', 'Link Bandwidth Statistics', 0, 'odu100', 1, 1, 0, 0, 0, 5, 180, 250, 1, 1, 1, 1, 1,
-                            'Link Bandwidth Statistics', '', 600, 0],
-                           ['odu100rssi', 'RSL1 Statistics', 0, 'odu100', 2, 1, 0, 0, 0, 5, 180, 250, 1, 1, 1, 1, 0,
-                            'RSL1 Statistics', '', 600, 0],
-                           ['odu100rssi2', 'RSL2 Statistics', 0, 'odu100', 2, 1, 0, 0, 0, 5, 180, 250, 1, 1, 1, 1, 0,
-                            'RSL2 Statistics', '', 600, 0],
-                           ['odu100outage', 'Device Reachability Statistics', 0, 'odu100', 2, 1, 0, 0, 0, 5, 180, 250, 1, 1, 1, 1, 0,
-                            'Reachability Statistics', '', 600, 0],
-                           ['odu100NWBandwidth', 'Network Bandwidth Statistics', 0, 'odu100', 1, 1, 0, 0, 0, 5, 180, 250, 1, 1, 1, 1, 1,
-                            'Network Bandwidth Statistics', 'Statistics', 600, 0],
-                           ['odu100synclost', 'Sync Lost', 1, 'odu100', 1, 1, 0, 0, 0,
-                               5, 180, 250, 1, 1, 1, 1, 0, 'Sync Lost', '', 600, 0],
-                           ['odu100crcphy', 'Crc Phy Error Count', 1, 'odu100', 1, 1, 0, 0, 0, 5, 180, 250, 1, 1, 1, 1, 0, 'CRC PHY Error', '', 600, 0]]
+             'Link Quality Statistics', '', 600, 0],
+            ['odu100peernode', 'Link Bandwidth Statistics', 0, 'odu100', 1, 1, 0, 0, 0, 5, 180, 250, 1, 1, 1, 1, 1,
+             'Link Bandwidth Statistics', '', 600, 0],
+            ['odu100rssi', 'RSL1 Statistics', 0, 'odu100', 2, 1, 0, 0, 0, 5, 180, 250, 1, 1, 1, 1, 0,
+             'RSL1 Statistics', '', 600, 0],
+            ['odu100rssi2', 'RSL2 Statistics', 0, 'odu100', 2, 1, 0, 0, 0, 5, 180, 250, 1, 1, 1, 1, 0,
+             'RSL2 Statistics', '', 600, 0],
+            ['odu100outage', 'Device Reachability Statistics', 0, 'odu100', 2, 1, 0, 0, 0, 5, 180, 250, 1, 1, 1, 1, 0,
+             'Reachability Statistics', '', 600, 0],
+            ['odu100NWBandwidth', 'Network Bandwidth Statistics', 0, 'odu100', 1, 1, 0, 0, 0, 5, 180, 250, 1, 1, 1, 1,
+             1,
+             'Network Bandwidth Statistics', 'Statistics', 600, 0],
+            ['odu100synclost', 'Sync Lost', 1, 'odu100', 1, 1, 0, 0, 0,
+             5, 180, 250, 1, 1, 1, 1, 0, 'Sync Lost', '', 600, 0],
+            ['odu100crcphy', 'Crc Phy Error Count', 1, 'odu100', 1, 1, 0, 0, 0, 5, 180, 250, 1, 1, 1, 1, 0,
+             'CRC PHY Error', '', 600, 0]]
 
         for default_temp in default_temp_list:
             ins_temp_query = "INSERT INTO  `graph_templet_table` \
@@ -349,24 +395,25 @@ def odu100_add_graph_info_new_user(user_id):
             `end_value` ,`graph_width` ,`graph_height` ,`graph_cal_id` ,`show_type` ,`show_field` ,\
             `show_cal_type` ,`show_tab_option`,`graph_title`,`graph_subtitle`,`auto_refresh_time_second`,`is_deleted`)\
             VALUES ('%s', '%s', '%s', '%s', '%s', %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,'%s','%s' ,'%s',%s,%s)\
-            " % (default_temp[0], default_temp[1], user_id, default_temp[2], default_temp[3], default_temp[4], default_temp[5],
-               default_temp[6], default_temp[7], default_temp[
-                   8], default_temp[9], default_temp[10], default_temp[11],
-               default_temp[12], default_temp[13], default_temp[
-                   14], default_temp[15], default_temp[16], default_temp[17],
-               default_temp[18], default_temp[19], default_temp[20])
+            " % (default_temp[0], default_temp[1], user_id, default_temp[2], default_temp[3], default_temp[4],
+                 default_temp[5],
+                 default_temp[6], default_temp[7], default_temp[
+                8], default_temp[9], default_temp[10], default_temp[11],
+                 default_temp[12], default_temp[13], default_temp[
+                14], default_temp[15], default_temp[16], default_temp[17],
+                 default_temp[18], default_temp[19], default_temp[20])
             cursor.execute(ins_temp_query)
         global_db.commit()
 
         # Entry for calculation type
         calculation_field = {'odu100NWBandwidth': ['Total', 'Delta'],
-                           'odu100synclost': ['Total', 'Delta'],
-                           'odu100crcphy': ['Total', 'Delta'],
-                           'odu100outage': ['Total'],
-                           'odu100rssi': ['Total'],
-                           'odu100rssi2': ['Total'],
-                           'odu100link': ['Total'],
-                           'odu100peernode': ['Total']}
+                             'odu100synclost': ['Total', 'Delta'],
+                             'odu100crcphy': ['Total', 'Delta'],
+                             'odu100outage': ['Total'],
+                             'odu100rssi': ['Total'],
+                             'odu100rssi2': ['Total'],
+                             'odu100link': ['Total'],
+                             'odu100peernode': ['Total']}
         for cal in calculation_field:
             i = 1
             for cal_val in calculation_field[cal]:
@@ -381,9 +428,9 @@ def odu100_add_graph_info_new_user(user_id):
         ap_intereface_name = ['eth0', 'eth1']
         peer_intereface_name = [
             "Link1", "Link2", "Link3", "Link4", "Link5", "Link6", "Link7", "Link8",
-                              "Link9", "Link10", "Link11", "Link12", "Link13", "Link14", "Link15", "Link16"]
+            "Link9", "Link10", "Link11", "Link12", "Link13", "Link14", "Link15", "Link16"]
         interface_field = {'odu100NWBandwidth': ap_intereface_name,
-            'odu100peernode': peer_intereface_name}
+                           'odu100peernode': peer_intereface_name}
         for table in interface_field:
             i = 0
             for interface in interface_field[table]:
@@ -401,45 +448,50 @@ def odu100_add_graph_info_new_user(user_id):
                 cursor.execute(ins_query)
         global_db.commit()
 
-#        get_coloum="SELECT graph_field_value,graph_field_display_name,tool_tip_title FROM graph_field_table WHERE graph_name='%s' AND user_id='%s'"%('ap25_statisticsTable',user_id)
-#        cursor.execute(get_coloum)
-#        coloum_result=cursor.fetchall()
-#        table_field_dict=dict((field[0],field[1]) for field in coloum_result)
+        #        get_coloum="SELECT graph_field_value,graph_field_display_name,tool_tip_title FROM graph_field_table WHERE graph_name='%s' AND user_id='%s'"%('ap25_statisticsTable',user_id)
+        #        cursor.execute(get_coloum)
+        #        coloum_result=cursor.fetchall()
+        #        table_field_dict=dict((field[0],field[1]) for field in coloum_result)
 
         # interface value
         graph_field = {'odu100NWBandwidth': ['rxPackets', 'txPackets', 'rxBytes', 'txBytes', 'rxErrors', 'txErrors'],
-                     'odu100synclost': ['syncLostCounter'],
-                     'odu100crcphy': ['rxCrcErrors', 'rxPhyError'],
-                     'odu100outage': ['Reachable', 'Unreachable'],
-                     'odu100rssi': ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16'],
-                     'odu100rssi2': ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16'],
-                     'odu100link': ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16'],
-                     'odu100peernode': ['allocatedTxBW', 'allocatedRxBW', 'usedTxBW', 'usedRxBW', 'negotiatedMaxUplinkBW', 'negotiatedMaxDownlinkBW']}
+                       'odu100synclost': ['syncLostCounter'],
+                       'odu100crcphy': ['rxCrcErrors', 'rxPhyError'],
+                       'odu100outage': ['Reachable', 'Unreachable'],
+                       'odu100rssi': ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15',
+                                      '16'],
+                       'odu100rssi2': ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15',
+                                       '16'],
+                       'odu100link': ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15',
+                                      '16'],
+                       'odu100peernode': ['allocatedTxBW', 'allocatedRxBW', 'usedTxBW', 'usedRxBW',
+                                          'negotiatedMaxUplinkBW', 'negotiatedMaxDownlinkBW']}
 
-        graph_display_name = {'odu100NWBandwidth': ['Rx Packets', 'Tx Packets', 'Rx Bytes', 'Tx Bytes', 'Rx Error', 'Tx Error'],
-                            'odu100synclost': ['SyncLoss'], 'odu100crcphy': ['CRC Error', 'PHY Error'],
-                            'odu100outage': ['Reachable', 'Unreachable'],
-                            'odu100rssi': ["Link1", "Link2", "Link3", "Link4", "Link5", "Link6", "Link7",
-                                          "Link8", "Link9", "Link10", "Link11", "Link12", "Link13", "Link14", "Link15", "Link16"],
-                            'odu100rssi2': ["Link1", "Link2", "Link3", "Link4", "Link5", "Link6", "Link7", "Link8", "Link9",
-                                           "Link10", "Link11", "Link12", "Link13", "Link14", "Link15", "Link16"],
-                            'odu100link': ["Link1", "Link2", "Link3", "Link4", "Link5", "Link6", "Link7", "Link8", "Link9",
-                                          "Link10", "Link11", "Link12", "Link13", "Link14", "Link15", "Link16"],
-                            'odu100peernode': ["Allocated Tx BW", "Allocated Rx BW", "Used Tx BW", "Used Rx BW",
-                                              "Negotiated Max Uplink BW", "Negotiated Max Downlink BW"]}
+        graph_display_name = {
+        'odu100NWBandwidth': ['Rx Packets', 'Tx Packets', 'Rx Bytes', 'Tx Bytes', 'Rx Error', 'Tx Error'],
+        'odu100synclost': ['SyncLoss'], 'odu100crcphy': ['CRC Error', 'PHY Error'],
+        'odu100outage': ['Reachable', 'Unreachable'],
+        'odu100rssi': ["Link1", "Link2", "Link3", "Link4", "Link5", "Link6", "Link7",
+                       "Link8", "Link9", "Link10", "Link11", "Link12", "Link13", "Link14", "Link15", "Link16"],
+        'odu100rssi2': ["Link1", "Link2", "Link3", "Link4", "Link5", "Link6", "Link7", "Link8", "Link9",
+                        "Link10", "Link11", "Link12", "Link13", "Link14", "Link15", "Link16"],
+        'odu100link': ["Link1", "Link2", "Link3", "Link4", "Link5", "Link6", "Link7", "Link8", "Link9",
+                       "Link10", "Link11", "Link12", "Link13", "Link14", "Link15", "Link16"],
+        'odu100peernode': ["Allocated Tx BW", "Allocated Rx BW", "Used Tx BW", "Used Rx BW",
+                           "Negotiated Max Uplink BW", "Negotiated Max Downlink BW"]}
 
         tool_tip_name = {'odu100NWBandwidth': ['(pps)', '(pps)', '(bps)', '(bps)', '(count)', '(count)'],
-                       'odu100synclost': ['(count)'], 'odu100crcphy': ['(count)', '(count)'],
-                       'odu100outage': ['(%)', '(%)'],
-                       'odu100rssi': ['(dBm)', '(dBm)', '(dBm)', '(dBm)', '(dBm)', '(dBm)',
-                                     '(dBm)', '(dBm)', '(dBm)', '(dBm)', '(dBm)', '(dBm)',
-                                     '(dBm)', '(dBm)', '(dBm)', '(dBm)'],
-                       'odu100rssi2': ['(dBm)', '(dBm)', '(dBm)', '(dBm)', '(dBm)', '(dBm)',
-                                      '(dBm)', '(dBm)', '(dBm)', '(dBm)', '(dBm)', '(dBm)',
-                                      '(dBm)', '(dBm)', '(dBm)', '(dBm)'],
-                       'odu100link': ['(%)', '(%)', '(%)', '(%)', '(%)', '(%)', '(%)', '(%)',
-                                     '(%)', '(%)', '(%)', '(%)', '(%)', '(%)', '(%)', '(%)'],
-                       'odu100peernode': ["(kbps)", "(kbps)", "(kbps)", "(kbps)", "(kbps)", "(kbps)"]}
+                         'odu100synclost': ['(count)'], 'odu100crcphy': ['(count)', '(count)'],
+                         'odu100outage': ['(%)', '(%)'],
+                         'odu100rssi': ['(dBm)', '(dBm)', '(dBm)', '(dBm)', '(dBm)', '(dBm)',
+                                        '(dBm)', '(dBm)', '(dBm)', '(dBm)', '(dBm)', '(dBm)',
+                                        '(dBm)', '(dBm)', '(dBm)', '(dBm)'],
+                         'odu100rssi2': ['(dBm)', '(dBm)', '(dBm)', '(dBm)', '(dBm)', '(dBm)',
+                                         '(dBm)', '(dBm)', '(dBm)', '(dBm)', '(dBm)', '(dBm)',
+                                         '(dBm)', '(dBm)', '(dBm)', '(dBm)'],
+                         'odu100link': ['(%)', '(%)', '(%)', '(%)', '(%)', '(%)', '(%)', '(%)',
+                                        '(%)', '(%)', '(%)', '(%)', '(%)', '(%)', '(%)', '(%)'],
+                         'odu100peernode': ["(kbps)", "(kbps)", "(kbps)", "(kbps)", "(kbps)", "(kbps)"]}
         for field in graph_field:
             i = 0
             for name in graph_field[field]:
@@ -458,21 +510,21 @@ def odu100_add_graph_info_new_user(user_id):
         global_db.commit()
 
         ajax_data = {'odu100NWBandwidth': ['odu100NWBandwidth', 'sp_common_graph_creation.py', 'post',
-                                        'odu100_nwInterfaceStatisticsTable,timestamp,nwStatsIndex,odu100NWBandwidth'],
-                   'odu100synclost': ['odu100synclost', 'sp_common_graph_creation.py', 'post', 'odu100_synchStatisticsTable,\
+                                           'odu100_nwInterfaceStatisticsTable,timestamp,nwStatsIndex,odu100NWBandwidth'],
+                     'odu100synclost': ['odu100synclost', 'sp_common_graph_creation.py', 'post', 'odu100_synchStatisticsTable,\
                    timestamp,syncConfigIndex,odu100synclost'],
-                   'odu100crcphy': ['odu100crcphy', 'sp_common_graph_creation.py', 'post',
-                                   'odu100_raTddMacStatisticsTable,timestamp,raIndex,odu100crcphy'],
-                   'odu100outage': ['odu100outage', 'sp_common_graph_creation.py', 'post', 'outage,timestamp,\
+                     'odu100crcphy': ['odu100crcphy', 'sp_common_graph_creation.py', 'post',
+                                      'odu100_raTddMacStatisticsTable,timestamp,raIndex,odu100crcphy'],
+                     'odu100outage': ['odu100outage', 'sp_common_graph_creation.py', 'post', 'outage,timestamp,\
                    noIndexName,odu100outage'],
-                   'odu100rssi': ['odu100rssi', 'sp_common_graph_creation.py', 'post',
-                                 'odu100_peerNodeStatusTable,timestamp,timeSlotIndex,odu100rssi'],
-                   'odu100rssi2': ['odu100rssi2', 'sp_common_graph_creation.py', 'post',
-                                  'odu100_peerNodeStatusTable,timestamp,timeSlotIndex,odu100rssi2'],
-                   'odu100link': ['odu100link', 'sp_common_graph_creation.py', 'post',
-                                 'odu100_peerNodeStatusTable,timestamp,timeSlotIndex,odu100link'],
-                   'odu100peernode': ['odu100peernode', 'sp_common_graph_creation.py', 'post',
-                                     'odu100_peerNodeStatusTable,timestamp,timeSlotIndex,odu100peernode']}
+                     'odu100rssi': ['odu100rssi', 'sp_common_graph_creation.py', 'post',
+                                    'odu100_peerNodeStatusTable,timestamp,timeSlotIndex,odu100rssi'],
+                     'odu100rssi2': ['odu100rssi2', 'sp_common_graph_creation.py', 'post',
+                                     'odu100_peerNodeStatusTable,timestamp,timeSlotIndex,odu100rssi2'],
+                     'odu100link': ['odu100link', 'sp_common_graph_creation.py', 'post',
+                                    'odu100_peerNodeStatusTable,timestamp,timeSlotIndex,odu100link'],
+                     'odu100peernode': ['odu100peernode', 'sp_common_graph_creation.py', 'post',
+                                        'odu100_peerNodeStatusTable,timestamp,timeSlotIndex,odu100peernode']}
         for data in ajax_data:
             sql = "insert into graph_ajax_call_information \
             (user_id,graph_id,url,method,other_data) \
@@ -480,22 +532,29 @@ def odu100_add_graph_info_new_user(user_id):
             " % (user_id, ajax_data[data][0], ajax_data[data][1], ajax_data[data][2], ajax_data[data][3])
             cursor.execute(sql)
         global_db.commit()
-# total_data={'apVAPUserConnect':['apVAPUserConnect','ap_total_data_count.py','post','ap25_vapClientStatisticsTable,addressMAC']}
+        # total_data={'apVAPUserConnect':['apVAPUserConnect','ap_total_data_count.py','post','ap25_vapClientStatisticsTable,addressMAC']}
         total_data = {}
         for count_data in total_data:
             sql = "insert into total_count_item \
             (user_id,graph_id,url,method,other_data)\
             values('%s','%s','%s','%s','%s')\
-            " % (user_id, total_data[count_data][0], total_data[count_data][1], total_data[count_data][2], total_data[count_data][3])
+            " % (user_id, total_data[count_data][0], total_data[count_data][1], total_data[count_data][2],
+                 total_data[count_data][3])
             cursor.execute(sql)
         global_db.commit()
     except Exception, e:
         output_dict = {'success': 1, 'result': str(e[-1])}
         return output_dict
+
 ##
 
 
 def idu4_add_graph_info_new_user(user_id):
+    """
+
+    @param user_id:
+    @return:
+    """
     try:
         global global_db
         if global_db.open != 1:
@@ -504,22 +563,23 @@ def idu4_add_graph_info_new_user(user_id):
         cursor = global_db.cursor()
         # first graph_id and second value is table name#
 
-#	global_db=MySQLdb.connect('localhost','root','root','midnms')
-#        cursor=global_db.cursor()
+        #	global_db=MySQLdb.connect('localhost','root','root','midnms')
+        #        cursor=global_db.cursor()
         default_temp_list = [
             ['idu4NWBandwidth', 'Network Bandwidth Statistics', 1, 'idu4', 1, 1, 0, 0, 0, 5, 180, 250, 1, 1, 1, 1, 1,
-                            'Network Bandwidth Statistics', 'Statistics', 600, 0],
-                           ['idu4TDMOIPBandwidth', 'TDMOIP Bandwidth Statistics', 1, 'idu4', 1, 1, 0, 0, 0, 5, 180, 250, 1, 1, 1, 1, 0,
-                            'TDMOIP Bandwidth Statistics', '', 600, 0],
-                           ['idu4PortStatistics', 'Port Statistics', 1, 'idu4', 1, 1, 0, 0, 0, 5, 180, 250, 1, 1, 1, 1, 1,
-                            'Port Statistics', '', 600, 0],
-                           ['idu4outage', 'Device Reachability Statistics', 0, 'idu4', 2, 1, 0, 0, 0, 5, 180, 250, 1, 1, 1, 1, 1,
-                            'Reachability Statistics', '', 600, 0],
-                           ['idu4e1port', 'E1 Port Statistics', 0, 'idu4', 1, 1, 0, 0, 0, 5, 180, 250, 1, 1, 1, 1, 1,
-                            'E1 Port Statistics', '', 600, 0],
-                           ['idu4swPrimary', 'Primary Port Statistics', 0, 'idu4', 1, 1, 0, 0, 0, 5, 180, 250, 1, 1, 1, 1, 1,
-                            'Primary Port Statistics', '', 600, 0],
-                           ['idu4swSecondary', 'Secondary Port Statistics', 1, 'idu4', 1, 1, 0, 0, 0, 5, 180, 250, 1, 1, 1, 1, 1, 'Secondary Port Statistics', '', 600, 0]]
+             'Network Bandwidth Statistics', 'Statistics', 600, 0],
+            ['idu4TDMOIPBandwidth', 'TDMOIP Bandwidth Statistics', 1, 'idu4', 1, 1, 0, 0, 0, 5, 180, 250, 1, 1, 1, 1, 0,
+             'TDMOIP Bandwidth Statistics', '', 600, 0],
+            ['idu4PortStatistics', 'Port Statistics', 1, 'idu4', 1, 1, 0, 0, 0, 5, 180, 250, 1, 1, 1, 1, 1,
+             'Port Statistics', '', 600, 0],
+            ['idu4outage', 'Device Reachability Statistics', 0, 'idu4', 2, 1, 0, 0, 0, 5, 180, 250, 1, 1, 1, 1, 1,
+             'Reachability Statistics', '', 600, 0],
+            ['idu4e1port', 'E1 Port Statistics', 0, 'idu4', 1, 1, 0, 0, 0, 5, 180, 250, 1, 1, 1, 1, 1,
+             'E1 Port Statistics', '', 600, 0],
+            ['idu4swPrimary', 'Primary Port Statistics', 0, 'idu4', 1, 1, 0, 0, 0, 5, 180, 250, 1, 1, 1, 1, 1,
+             'Primary Port Statistics', '', 600, 0],
+            ['idu4swSecondary', 'Secondary Port Statistics', 1, 'idu4', 1, 1, 0, 0, 0, 5, 180, 250, 1, 1, 1, 1, 1,
+             'Secondary Port Statistics', '', 600, 0]]
         for default_temp in default_temp_list:
             ins_temp_query = "INSERT INTO  `graph_templet_table` \
             (`graph_display_id` ,`graph_display_name` ,`user_id` ,`is_disabled` ,`device_type_id` ,`graph_id` ,\
@@ -529,22 +589,22 @@ def idu4_add_graph_info_new_user(user_id):
             VALUES ('%s', '%s', '%s', '%s', '%s', %s, %s, %s, %s, %s, %s, %s, %s, %s, \
             %s, %s, %s,'%s','%s' ,'%s',%s,%s)\
             " % (default_temp[0], default_temp[1], user_id, default_temp[2], default_temp[3], default_temp[4],
-               default_temp[5], default_temp[6], default_temp[
-                   7], default_temp[8], default_temp[9], default_temp[10],
-               default_temp[11], default_temp[
-                   12], default_temp[13], default_temp[14], default_temp[15],
-               default_temp[16], default_temp[17], default_temp[18], default_temp[19], default_temp[20])
+                 default_temp[5], default_temp[6], default_temp[
+                7], default_temp[8], default_temp[9], default_temp[10],
+                 default_temp[11], default_temp[
+                12], default_temp[13], default_temp[14], default_temp[15],
+                 default_temp[16], default_temp[17], default_temp[18], default_temp[19], default_temp[20])
             cursor.execute(ins_temp_query)
         global_db.commit()
 
         # Entry for calculation type
         calculation_field = {'idu4NWBandwidth': ['Total', 'delta'],
-                           'idu4TDMOIPBandwidth': ['Total', 'Delta'],
-                           'idu4PortStatistics': ['Total', 'Delta'],
-                           'idu4outage': ['Total'],
-                           'idu4e1port': ['Total', 'Delta'],
-                           'idu4swPrimary': ['Total', 'Delta'],
-                           'idu4swSecondary': ['Total', 'Delta']}
+                             'idu4TDMOIPBandwidth': ['Total', 'Delta'],
+                             'idu4PortStatistics': ['Total', 'Delta'],
+                             'idu4outage': ['Total'],
+                             'idu4e1port': ['Total', 'Delta'],
+                             'idu4swPrimary': ['Total', 'Delta'],
+                             'idu4swSecondary': ['Total', 'Delta']}
         for cal in calculation_field:
             i = 1
             for cal_val in calculation_field[cal]:
@@ -586,33 +646,37 @@ def idu4_add_graph_info_new_user(user_id):
                 cursor.execute(ins_query)
         global_db.commit()
 
-#        get_coloum="SELECT graph_field_value,graph_field_display_name,tool_tip_title FROM graph_field_table WHERE graph_name='%s' AND user_id='%s'"%('ap25_statisticsTable',user_id)
-#        cursor.execute(get_coloum)
-#        coloum_result=cursor.fetchall()
-#        table_field_dict=dict((field[0],field[1]) for field in coloum_result)
+        #        get_coloum="SELECT graph_field_value,graph_field_display_name,tool_tip_title FROM graph_field_table WHERE graph_name='%s' AND user_id='%s'"%('ap25_statisticsTable',user_id)
+        #        cursor.execute(get_coloum)
+        #        coloum_result=cursor.fetchall()
+        #        table_field_dict=dict((field[0],field[1]) for field in coloum_result)
 
         # interface value
         graph_field = {'idu4NWBandwidth': ['rxPackets', 'txPackets', 'rxBytes', 'txBytes', 'rxErrors', 'txErrors'],
-                     'idu4TDMOIPBandwidth': ['bytesTransmitted', 'bytesReceived'],
-                     'idu4PortStatistics': ['framerx', 'frametx'],
-                     'idu4outage': ['Reachable', 'Unreachable'],
-                     'idu4e1port': ['bpv'],
-                     'idu4swPrimary': ['framesRx', 'framesTx', 'inGoodOctets', 'inBadOctets'],
-                     'idu4swSecondary': ['inUnicast', 'outUnicast', 'inBroadcast', 'outBroadcast', 'inMulticast', 'outMulricast']}
+                       'idu4TDMOIPBandwidth': ['bytesTransmitted', 'bytesReceived'],
+                       'idu4PortStatistics': ['framerx', 'frametx'],
+                       'idu4outage': ['Reachable', 'Unreachable'],
+                       'idu4e1port': ['bpv'],
+                       'idu4swPrimary': ['framesRx', 'framesTx', 'inGoodOctets', 'inBadOctets'],
+                       'idu4swSecondary': ['inUnicast', 'outUnicast', 'inBroadcast', 'outBroadcast', 'inMulticast',
+                                           'outMulricast']}
 
-        graph_display_name = {'idu4NWBandwidth': ['Rx Packets', 'Tx Packets', 'Rx Bytes', 'Tx Bytes', 'Rx Error', 'Tx Error'],
-                            'idu4TDMOIPBandwidth': ['Tx Bytes', 'Rx Bytes'],
-                            'idu4PortStatistics': ['Rx Frame', 'Tx Frame'],
-                            'idu4outage': ['Reachable', 'Unreachable'],
-                            'idu4e1port': ['BPV Error Count'],
-                            'idu4swPrimary': ['Rx Frames', 'Tx Frames', 'Good In Octets', 'Bad In Octets'],
-                            'idu4swSecondary': ['In Unicast', 'Out Unicast', 'In Broadcast', 'Out Broadcast', 'In Multicast', 'Out Mulricast']}
+        graph_display_name = {
+        'idu4NWBandwidth': ['Rx Packets', 'Tx Packets', 'Rx Bytes', 'Tx Bytes', 'Rx Error', 'Tx Error'],
+        'idu4TDMOIPBandwidth': ['Tx Bytes', 'Rx Bytes'],
+        'idu4PortStatistics': ['Rx Frame', 'Tx Frame'],
+        'idu4outage': ['Reachable', 'Unreachable'],
+        'idu4e1port': ['BPV Error Count'],
+        'idu4swPrimary': ['Rx Frames', 'Tx Frames', 'Good In Octets', 'Bad In Octets'],
+        'idu4swSecondary': ['In Unicast', 'Out Unicast', 'In Broadcast', 'Out Broadcast', 'In Multicast',
+                            'Out Mulricast']}
 
         tool_tip_name = {'idu4NWBandwidth': ['(pps)', '(pps)', '(bps)', '(bps)', '(error)', '(error)'],
-                       'idu4TDMOIPBandwidth': ['(bps)', '(bps)'], 'idu4PortStatistics': ['(fps)', '(fps)'],
-                       'idu4outage': ['(%)', '(%)'], 'idu4e1port': ['(bpv)'],
-                       'idu4swPrimary': ['(frames)', '(frames)', '(octets)', '(octets)'],
-                       'idu4swSecondary': ['(packets)', '(packets)', '(packets)', '(packets)', '(packets)', '(packets)']}
+                         'idu4TDMOIPBandwidth': ['(bps)', '(bps)'], 'idu4PortStatistics': ['(fps)', '(fps)'],
+                         'idu4outage': ['(%)', '(%)'], 'idu4e1port': ['(bpv)'],
+                         'idu4swPrimary': ['(frames)', '(frames)', '(octets)', '(octets)'],
+                         'idu4swSecondary': ['(packets)', '(packets)', '(packets)', '(packets)', '(packets)',
+                                             '(packets)']}
 
         for field in graph_field:
             i = 0
@@ -620,7 +684,8 @@ def idu4_add_graph_info_new_user(user_id):
                 if i < 2:
                     ins_query = "insert into graph_field_table \
                     (user_id,graph_name,graph_field_value,graph_field_display_name,is_checked,tool_tip_title) \
-                    values ('%s','%s','%s','%s',%s,'%s')" % (user_id, field, name, graph_display_name[field][i], 1, tool_tip_name[field][i])
+                    values ('%s','%s','%s','%s',%s,'%s')" % (
+                    user_id, field, name, graph_display_name[field][i], 1, tool_tip_name[field][i])
                 else:
                     ins_query = "insert into graph_field_table \
                     (user_id,graph_name,graph_field_value,graph_field_display_name,is_checked,tool_tip_title) \
@@ -631,17 +696,19 @@ def idu4_add_graph_info_new_user(user_id):
         global_db.commit()
 
         ajax_data = {'idu4NWBandwidth': ['idu4NWBandwidth', 'sp_common_graph_creation.py', 'post',
-                                      'idu_iduNetworkStatisticsTable,timestamp,interfaceName,idu4NWBandwidth'],
-                   'idu4TDMOIPBandwidth': ['idu4TDMOIPBandwidth', 'sp_common_graph_creation.py', 'post',
-                                          'idu_tdmoipNetworkInterfaceStatisticsTable,timestamp,indexid,idu4TDMOIPBandwidth'],
-                   'idu4PortStatistics': ['idu4PortStatistics', 'sp_common_graph_creation.py', 'post',
-                                         'idu_portstatisticsTable,timestamp,softwarestatportnum,idu4PortStatistics'],
-                   'idu4outage': ['idu4outage', 'sp_common_graph_creation.py', 'post', 'outage,timestamp,noIndexName,idu4outage'],
-                   'idu4e1port': ['idu4e1port', 'sp_common_graph_creation.py', 'post', 'idu_e1PortStatusTable,timestamp,portNum,idu4e1port'],
-                   'idu4swPrimary': ['idu4swPrimary', 'sp_common_graph_creation.py', 'post',
-                                    'idu_swPrimaryPortStatisticsTable,timestamp,swportnumber,idu4swPrimary'],
-                   'idu4swSecondary': ['idu4swSecondary', 'sp_common_graph_creation.py', 'post',
-                                      'idu_portSecondaryStatisticsTable,timestamp,switchPortNum,idu4swSecondary']}
+                                         'idu_iduNetworkStatisticsTable,timestamp,interfaceName,idu4NWBandwidth'],
+                     'idu4TDMOIPBandwidth': ['idu4TDMOIPBandwidth', 'sp_common_graph_creation.py', 'post',
+                                             'idu_tdmoipNetworkInterfaceStatisticsTable,timestamp,indexid,idu4TDMOIPBandwidth'],
+                     'idu4PortStatistics': ['idu4PortStatistics', 'sp_common_graph_creation.py', 'post',
+                                            'idu_portstatisticsTable,timestamp,softwarestatportnum,idu4PortStatistics'],
+                     'idu4outage': ['idu4outage', 'sp_common_graph_creation.py', 'post',
+                                    'outage,timestamp,noIndexName,idu4outage'],
+                     'idu4e1port': ['idu4e1port', 'sp_common_graph_creation.py', 'post',
+                                    'idu_e1PortStatusTable,timestamp,portNum,idu4e1port'],
+                     'idu4swPrimary': ['idu4swPrimary', 'sp_common_graph_creation.py', 'post',
+                                       'idu_swPrimaryPortStatisticsTable,timestamp,swportnumber,idu4swPrimary'],
+                     'idu4swSecondary': ['idu4swSecondary', 'sp_common_graph_creation.py', 'post',
+                                         'idu_portSecondaryStatisticsTable,timestamp,switchPortNum,idu4swSecondary']}
         for data in ajax_data:
             sql = "insert into graph_ajax_call_information \
             (user_id,graph_id,url,method,other_data) \
@@ -650,13 +717,14 @@ def idu4_add_graph_info_new_user(user_id):
             cursor.execute(sql)
         global_db.commit()
 
-# total_data={'apVAPUserConnect':['apVAPUserConnect','ap_total_data_count.py','post','ap25_vapClientStatisticsTable,addressMAC']}
+        # total_data={'apVAPUserConnect':['apVAPUserConnect','ap_total_data_count.py','post','ap25_vapClientStatisticsTable,addressMAC']}
         total_data = {}
         for count_data in total_data:
             sql = "insert into total_count_item \
             (user_id,graph_id,url,method,other_data) \
             values('%s','%s','%s','%s','%s')\
-            " % (user_id, total_data[count_data][0], total_data[count_data][1], total_data[count_data][2], total_data[count_data][3])
+            " % (user_id, total_data[count_data][0], total_data[count_data][1], total_data[count_data][2],
+                 total_data[count_data][3])
             cursor.execute(sql)
         global_db.commit()
 
@@ -666,6 +734,11 @@ def idu4_add_graph_info_new_user(user_id):
 
 
 def idu_status_info_new_user(user_id):
+    """
+
+    @param user_id:
+    @return:
+    """
     try:
         global global_db
         if global_db.open != 1:
@@ -673,11 +746,12 @@ def idu_status_info_new_user(user_id):
 
         cursor = global_db.cursor()
 
-#['idu4linkstatustable','Link Status',0,'idu4',1,1,1,0,0,5,180,-1,1,1,1,1,1,'E1 Port Status','Status',300,0,1]
+        #['idu4linkstatustable','Link Status',0,'idu4',1,1,1,0,0,5,180,-1,1,1,1,1,1,'E1 Port Status','Status',300,0,1]
         default_temp_list = [
             ['idu4e1portstatus', 'E1 Port Status', 0, 'idu4', 1, 1, 1, 0, 0, 5, 180, -1, 1, 1, 1, 1, 1,
-                            'E1 Port Status', 'Status', 300, 0, 1],
-                           ['idu4linkstatustable', 'Link Status', 0, 'idu4', 1, 1, 1, 0, 0, 5, 180, -1, 1, 1, 1, 1, 1, 'Link Status', 'Status', 300, 0, 1]]
+             'E1 Port Status', 'Status', 300, 0, 1],
+            ['idu4linkstatustable', 'Link Status', 0, 'idu4', 1, 1, 1, 0, 0, 5, 180, -1, 1, 1, 1, 1, 1, 'Link Status',
+             'Status', 300, 0, 1]]
         for default_temp in default_temp_list:
             ins_temp_query = "INSERT INTO  `graph_templet_table` \
             (`graph_display_id` ,`graph_display_name` ,`user_id` ,`is_disabled` ,`device_type_id` ,\
@@ -687,11 +761,12 @@ def idu_status_info_new_user(user_id):
             VALUES ('%s', '%s', '%s', '%s', '%s', %s, %s, %s, %s, %s, %s, \
             %s, %s, %s, %s, %s, %s,'%s','%s' ,'%s',%s,%s,%s)\
             " % (default_temp[0], default_temp[1], user_id, default_temp[2], default_temp[3], default_temp[4],
-               default_temp[5], default_temp[6], default_temp[
-                   7], default_temp[8], default_temp[9], default_temp[10],
-               default_temp[11], default_temp[
-                   12], default_temp[13], default_temp[14], default_temp[15],
-               default_temp[16], default_temp[17], default_temp[18], default_temp[19], default_temp[20], default_temp[21])
+                 default_temp[5], default_temp[6], default_temp[
+                7], default_temp[8], default_temp[9], default_temp[10],
+                 default_temp[11], default_temp[
+                12], default_temp[13], default_temp[14], default_temp[15],
+                 default_temp[16], default_temp[17], default_temp[18], default_temp[19], default_temp[20],
+                 default_temp[21])
             cursor.execute(ins_temp_query)
         global_db.commit()
 
@@ -716,36 +791,40 @@ def idu_status_info_new_user(user_id):
                 cursor.execute(ins_query)
         global_db.commit()
 
-#,'idu4linkstatustable':['opStatus','los','lof','ais','rai','rxFrameSlip','txFrameSlip','bpv','adptClkState','holdOverStatus']
+        #,'idu4linkstatustable':['opStatus','los','lof','ais','rai','rxFrameSlip','txFrameSlip','bpv','adptClkState','holdOverStatus']
         graph_field = {'idu4e1portstatus': ['opStatus', 'lof', 'ais', 'rai', 'rxFrameSlip', 'txFrameSlip', 'bpv',
-                                         'adptClkState', 'holdOverStatus'],
-                     'idu4linkstatustable': ['operationalStatus', 'minJBLevel', 'maxJBLevel', 'underrunOccured', 'overrunOccured']}
+                                            'adptClkState', 'holdOverStatus'],
+                       'idu4linkstatustable': ['operationalStatus', 'minJBLevel', 'maxJBLevel', 'underrunOccured',
+                                               'overrunOccured']}
 
         graph_display_name = {'idu4e1portstatus': ['State', 'LOS', 'LOF', 'AIS', 'RAI', 'Rx Frame',
-                                                'Tx Frame', 'BPV', 'Adaptive State', 'Hold State'],
-                            'idu4linkstatustable': ['State', 'Min JBLevel', 'Max JBLevel', 'Under-Run Occured', 'Over-Run Occured']}
+                                                   'Tx Frame', 'BPV', 'Adaptive State', 'Hold State'],
+                              'idu4linkstatustable': ['State', 'Min JBLevel', 'Max JBLevel', 'Under-Run Occured',
+                                                      'Over-Run Occured']}
 
         tool_tip_name = {'idu4e1portstatus': ['', '', '', '', '', '', '', '', '', ''],
-                       'idu4linkstatustable': ['', '', '', '', '']}
+                         'idu4linkstatustable': ['', '', '', '', '']}
         for field in graph_field:
             i = 0
             for name in graph_field[field]:
                 if i < 2:
                     ins_query = "insert into graph_field_table \
                     (user_id,graph_name,graph_field_value,graph_field_display_name,is_checked,tool_tip_title) \
-                    values ('%s','%s','%s','%s',%s,'%s')" % (user_id, field, name, graph_display_name[field][i], 1, tool_tip_name[field][i])
+                    values ('%s','%s','%s','%s',%s,'%s')" % (
+                    user_id, field, name, graph_display_name[field][i], 1, tool_tip_name[field][i])
                 else:
                     ins_query = "insert into graph_field_table \
                     (user_id,graph_name,graph_field_value,graph_field_display_name,is_checked,tool_tip_title) \
-                    values ('%s','%s','%s','%s',%s,'%s')" % (user_id, field, name, graph_display_name[field][i], 1, tool_tip_name[field][i])
+                    values ('%s','%s','%s','%s',%s,'%s')" % (
+                    user_id, field, name, graph_display_name[field][i], 1, tool_tip_name[field][i])
                 i += 1
                 cursor.execute(ins_query)
         global_db.commit()
 
         ajax_data = {'idu4e1portstatus': ['idu4e1portstatus', 'sp_common_status_table_creation.py',
-                                       'post', 'idu_e1PortStatusTable,timestamp,portNum,idu4e1portstatus'],
-                   'idu4linkstatustable': ['idu4linkstatustable', 'sp_common_status_table_creation.py',
-                                          'post', 'idu_linkStatusTable,timestamp,portNum,idu4linkstatustable']}
+                                          'post', 'idu_e1PortStatusTable,timestamp,portNum,idu4e1portstatus'],
+                     'idu4linkstatustable': ['idu4linkstatustable', 'sp_common_status_table_creation.py',
+                                             'post', 'idu_linkStatusTable,timestamp,portNum,idu4linkstatustable']}
         for data in ajax_data:
             sql = "insert into graph_ajax_call_information \
             (user_id,graph_id,url,method,other_data) \
@@ -759,7 +838,8 @@ def idu_status_info_new_user(user_id):
             sql = "insert into total_count_item \
             (user_id,graph_id,url,method,other_data) \
             values('%s','%s','%s','%s','%s')\
-            " % (user_id, total_data[count_data][0], total_data[count_data][1], total_data[count_data][2], total_data[count_data][3])
+            " % (user_id, total_data[count_data][0], total_data[count_data][1], total_data[count_data][2],
+                 total_data[count_data][3])
             cursor.execute(sql)
         global_db.commit()
     except Exception, e:
@@ -768,6 +848,11 @@ def idu_status_info_new_user(user_id):
 
 
 def odu100_add_status_info__for_new_user(user_id):
+    """
+
+    @param user_id:
+    @return:
+    """
     try:
         db_connect()
         global global_db
@@ -775,10 +860,11 @@ def odu100_add_status_info__for_new_user(user_id):
 
         default_temp_list = [
             ['odu100NWstatus', 'Network Bandwidth Status', 0, 'odu100', 1, 1, 1, 0, 0, 5, 180, -1, 1, 1, 1, 1, 1,
-                            'Network Bandwidth Status', 'Status', 300, 0, 1],
-                           ['odu100syncstatus', 'Sync Status', 0, 'odu100', 1, 1, 1, 0, 0, 5, 180,
-                               -1, 1, 1, 1, 1, 1, 'Sync Status', 'Status', 300, 0, 1],
-                           ['odu100Rastatus', 'Radio Status', 0, 'odu100', 1, 1, 1, 0, 0, 5, 180, -1, 1, 1, 1, 1, 1, 'Radio Status', 'Status', 300, 0, 1]]
+             'Network Bandwidth Status', 'Status', 300, 0, 1],
+            ['odu100syncstatus', 'Sync Status', 0, 'odu100', 1, 1, 1, 0, 0, 5, 180,
+             -1, 1, 1, 1, 1, 1, 'Sync Status', 'Status', 300, 0, 1],
+            ['odu100Rastatus', 'Radio Status', 0, 'odu100', 1, 1, 1, 0, 0, 5, 180, -1, 1, 1, 1, 1, 1, 'Radio Status',
+             'Status', 300, 0, 1]]
         for default_temp in default_temp_list:
             ins_temp_query = "INSERT INTO  `graph_templet_table` \
             (`graph_display_id` ,`graph_display_name` ,`user_id` ,`is_disabled` ,`device_type_id` ,`graph_id` ,`graph_tab_option` ,\
@@ -788,28 +874,31 @@ def odu100_add_status_info__for_new_user(user_id):
             VALUES ('%s', '%s', '%s', '%s', '%s', %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, \
             %s, %s,'%s','%s' ,'%s',%s,%s,%s)\
             " % (default_temp[0], default_temp[1], user_id, default_temp[2], default_temp[3], default_temp[4],
-               default_temp[5], default_temp[
-                   6], default_temp[7], default_temp[8], default_temp[9],
-               default_temp[10], default_temp[
-                   11], default_temp[12], default_temp[13], default_temp[14],
-               default_temp[15], default_temp[
-                   16], default_temp[17], default_temp[18], default_temp[19],
-               default_temp[20], default_temp[21])
+                 default_temp[5], default_temp[
+                6], default_temp[7], default_temp[8], default_temp[9],
+                 default_temp[10], default_temp[
+                11], default_temp[12], default_temp[13], default_temp[14],
+                 default_temp[15], default_temp[
+                16], default_temp[17], default_temp[18], default_temp[19],
+                 default_temp[20], default_temp[21])
             cursor.execute(ins_temp_query)
         global_db.commit()
 
         # interface value
         graph_field = {'odu100NWstatus': ['nwInterfaceName', 'operationalState', 'macAddress'],
-                     'odu100syncstatus': ['syncoperationalState', 'syncrasterTime', 'timerAdjust',
-                                         'syncpercentageDownlinkTransmitTime'],
-                     'odu100Rastatus': ['currentTimeSlot', 'raMacAddress', 'raoperationalState', 'unusedTxTimeUL', 'unusedTxTimeDL']}
+                       'odu100syncstatus': ['syncoperationalState', 'syncrasterTime', 'timerAdjust',
+                                            'syncpercentageDownlinkTransmitTime'],
+                       'odu100Rastatus': ['currentTimeSlot', 'raMacAddress', 'raoperationalState', 'unusedTxTimeUL',
+                                          'unusedTxTimeDL']}
 
         graph_display_name = {'odu100NWstatus': ['Inteface Name', 'State', 'MAC Address'],
-                            'odu100syncstatus': ['State', 'Raster Time', 'Adjust Timer', 'DW Link TX'],
-                            'odu100Rastatus': ['Time Slot', 'RA MAC Address', 'State', 'Unused TX UL', 'Unused TX DL']}
+                              'odu100syncstatus': ['State', 'Raster Time', 'Adjust Timer', 'DW Link TX'],
+                              'odu100Rastatus': ['Time Slot', 'RA MAC Address', 'State', 'Unused TX UL',
+                                                 'Unused TX DL']}
 
         tool_tip_name = {'odu100NWstatus': ['', '', ''], 'odu100syncstatus': ['', '', '',
-            '(%)'], 'odu100Rastatus': ['', '', '', '(usec)', '(usec)']}
+                                                                              '(%)'],
+                         'odu100Rastatus': ['', '', '', '(usec)', '(usec)']}
 
         for field in graph_field:
             i = 0
@@ -817,21 +906,23 @@ def odu100_add_status_info__for_new_user(user_id):
                 if i < 2:
                     ins_query = "insert into graph_field_table \
                     (user_id,graph_name,graph_field_value,graph_field_display_name,is_checked,tool_tip_title) \
-                    values ('%s','%s','%s','%s',%s,'%s')" % (user_id, field, name, graph_display_name[field][i], 1, tool_tip_name[field][i])
+                    values ('%s','%s','%s','%s',%s,'%s')" % (
+                    user_id, field, name, graph_display_name[field][i], 1, tool_tip_name[field][i])
                 else:
                     ins_query = "insert into graph_field_table \
                     (user_id,graph_name,graph_field_value,graph_field_display_name,is_checked,tool_tip_title) \
-                    values ('%s','%s','%s','%s',%s,'%s')" % (user_id, field, name, graph_display_name[field][i], 1, tool_tip_name[field][i])
+                    values ('%s','%s','%s','%s',%s,'%s')" % (
+                    user_id, field, name, graph_display_name[field][i], 1, tool_tip_name[field][i])
                 i += 1
                 cursor.execute(ins_query)
         global_db.commit()
 
         ajax_data = {'odu100NWstatus': ['odu100NWstatus', 'sp_common_status_table_creation.py', 'post',
-                                     'odu100_nwInterfaceStatusTable,timestamp,nwStatusIndex,odu100NWstatus'],
-                   'odu100syncstatus': ['odu100syncstatus', 'sp_common_status_table_creation.py', 'post',
-                                       'odu100_synchStatusTable,timestamp,syncConfigIndex,odu100syncstatus'],
-                   'odu100Rastatus': ['odu100Rastatus', 'sp_common_status_table_creation.py', 'post',
-                                     'odu100_raStatusTable,timestamp,raIndex,odu100Rastatus']}
+                                        'odu100_nwInterfaceStatusTable,timestamp,nwStatusIndex,odu100NWstatus'],
+                     'odu100syncstatus': ['odu100syncstatus', 'sp_common_status_table_creation.py', 'post',
+                                          'odu100_synchStatusTable,timestamp,syncConfigIndex,odu100syncstatus'],
+                     'odu100Rastatus': ['odu100Rastatus', 'sp_common_status_table_creation.py', 'post',
+                                        'odu100_raStatusTable,timestamp,raIndex,odu100Rastatus']}
         for data in ajax_data:
             sql = "insert into graph_ajax_call_information \
             (user_id,graph_id,url,method,other_data) \
@@ -845,7 +936,8 @@ def odu100_add_status_info__for_new_user(user_id):
             sql = "insert into total_count_item \
             (user_id,graph_id,url,method,other_data) \
             values('%s','%s','%s','%s','%s')\
-            " % (user_id, total_data[count_data][0], total_data[count_data][1], total_data[count_data][2], total_data[count_data][3])
+            " % (user_id, total_data[count_data][0], total_data[count_data][1], total_data[count_data][2],
+                 total_data[count_data][3])
             cursor.execute(sql)
         global_db.commit()
     except Exception, e:
@@ -854,6 +946,10 @@ def odu100_add_status_info__for_new_user(user_id):
 
 
 def ap_client_data_new_user(user_id):
+    """
+
+    @param user_id:
+    """
     try:
 
         # first graph_id and second value is table name#
@@ -864,8 +960,9 @@ def ap_client_data_new_user(user_id):
 
         default_temp_list = [
             ['apClientBandwidth', 'Client Bandwidth Statistics', 0, 'ap25', 1, 1, 0, 0, 0, 5, 180, 250, 1, 1, 1, 1, 1,
-                            'Client Bandwidth Statistics', 'Statistics', 600, 0, 2],
-                           ['apClientRssi', 'Client RSSI', 0, 'ap25', 1, 1, 0, 0, 0, 5, 180, 250, 1, 1, 1, 1, 1, 'Client RSSI', '', 600, 0, 2]]
+             'Client Bandwidth Statistics', 'Statistics', 600, 0, 2],
+            ['apClientRssi', 'Client RSSI', 0, 'ap25', 1, 1, 0, 0, 0, 5, 180, 250, 1, 1, 1, 1, 1, 'Client RSSI', '',
+             600, 0, 2]]
         for default_temp in default_temp_list:
             ins_temp_query = "INSERT INTO  `graph_templet_table` \
             (`graph_display_id` ,`graph_display_name` ,`user_id` ,`is_disabled` ,\
@@ -875,21 +972,21 @@ def ap_client_data_new_user(user_id):
             `graph_title`,`graph_subtitle`,`auto_refresh_time_second`,`is_deleted`,`dashboard_type`)\
     VALUES ('%s', '%s', '%s', '%s', '%s', %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,'%s','%s' ,\
     '%s',%s,%s,%s)" % (default_temp[0], default_temp[1], user_id, default_temp[2],
-                     default_temp[3], default_temp[
-                         4], default_temp[5], default_temp[6],
-                     default_temp[7], default_temp[
-                         8], default_temp[9], default_temp[10],
-                     default_temp[11], default_temp[
-                         12], default_temp[13], default_temp[14],
-                     default_temp[15], default_temp[
-                         16], default_temp[17], default_temp[18],
-                     default_temp[19], default_temp[20], default_temp[21])
+                       default_temp[3], default_temp[
+                4], default_temp[5], default_temp[6],
+                       default_temp[7], default_temp[
+                8], default_temp[9], default_temp[10],
+                       default_temp[11], default_temp[
+                12], default_temp[13], default_temp[14],
+                       default_temp[15], default_temp[
+                16], default_temp[17], default_temp[18],
+                       default_temp[19], default_temp[20], default_temp[21])
             cursor.execute(ins_temp_query)
         global_db.commit()
 
         # Entry for calculation type
         calculation_field = {'apClientBandwidth': ['Total'],
-            'apClientRssi': ['Total']}
+                             'apClientRssi': ['Total']}
         for cal in calculation_field:
             i = 1
             for cal_val in calculation_field[cal]:
@@ -921,11 +1018,11 @@ def ap_client_data_new_user(user_id):
 
         # interface value
         graph_field = {'apClientBandwidth': ['txRate', 'rxRate'],
-            'apClientRssi': ['rssi']}
+                       'apClientRssi': ['rssi']}
         graph_display_name = {'apClientBandwidth': ['Tx Rate',
-            'Rx Rate'], 'apClientRssi': ['RSSI']}
+                                                    'Rx Rate'], 'apClientRssi': ['RSSI']}
         tool_tip_name = {'apClientBandwidth': ['(Mbps)', '(Mbps)'],
-                                                 'apClientRssi': ['(dBm)']}
+                         'apClientRssi': ['(dBm)']}
         for field in graph_field:
             i = 0
             for name in graph_field[field]:
@@ -944,9 +1041,9 @@ def ap_client_data_new_user(user_id):
         global_db.commit()
 
         ajax_data = {'apClientBandwidth': ['apClientBandwidth', 'client_graph_creation.py', 'post',
-                                        'ap25_vapClientStatisticsTable,timestamp,addressMAC,apClientBandwidth'],
-                   'apClientRssi': ['apClientRssi', 'client_graph_creation.py', 'post',
-                                   'ap25_vapClientStatisticsTable,timestamp,addressMAC,apClientRssi']}
+                                           'ap25_vapClientStatisticsTable,timestamp,addressMAC,apClientBandwidth'],
+                     'apClientRssi': ['apClientRssi', 'client_graph_creation.py', 'post',
+                                      'ap25_vapClientStatisticsTable,timestamp,addressMAC,apClientRssi']}
         for data in ajax_data:
             sql = "insert into graph_ajax_call_information \
             (user_id,graph_id,url,method,other_data) \
@@ -960,7 +1057,8 @@ def ap_client_data_new_user(user_id):
             sql = "insert into total_count_item \
             (user_id,graph_id,url,method,other_data) \
             values('%s','%s','%s','%s','%s')\
-            " % (user_id, total_data[count_data][0], total_data[count_data][1], total_data[count_data][2], total_data[count_data][3])
+            " % (user_id, total_data[count_data][0], total_data[count_data][1], total_data[count_data][2],
+                 total_data[count_data][3])
             cursor.execute(sql)
         global_db.commit()
 
@@ -970,6 +1068,10 @@ def ap_client_data_new_user(user_id):
 
 
 def ccu_add_graph_entry_for_new_user(user_id):
+    """
+
+    @param user_id:
+    """
     try:
         global global_db
         if global_db.open != 1:
@@ -979,13 +1081,13 @@ def ccu_add_graph_entry_for_new_user(user_id):
         # Template Entry
         default_temp_list = [
             ['ccutemp', 'Temperature Statistics', 1, 'ccu', 1, 1, 0, 0, 0, 5, 180, 250, 1, 1, 1, 1, 1,
-                            'Temperature Statistics', 'Statistics', 600, 0],
-                           ['ccuvolt', 'Voltage Statistics', 1, 'ccu', 0, 1, 0, 0, 0, 5, 180, 250, 1, 1, 1, 1, 0,
-                            'Voltage Statistics', '', 600, 0],
-                           ['ccucurrent', 'Current Statistics', 1, 'ccu', 0, 1, 0, 0, 0, 5, 180, 250, 1, 1, 1, 1, 0,
-                            'Current Statistics', '', 600, 0],
-                           ['ccuoutage', 'Device Reachability Statistics', 0, 'ccu', 2, 1, 0, 0, 0, 5, 180, 250, 1, 1, 1, 1, 0,
-                            'Reachability Statistics', '', 600, 0]]
+             'Temperature Statistics', 'Statistics', 600, 0],
+            ['ccuvolt', 'Voltage Statistics', 1, 'ccu', 0, 1, 0, 0, 0, 5, 180, 250, 1, 1, 1, 1, 0,
+             'Voltage Statistics', '', 600, 0],
+            ['ccucurrent', 'Current Statistics', 1, 'ccu', 0, 1, 0, 0, 0, 5, 180, 250, 1, 1, 1, 1, 0,
+             'Current Statistics', '', 600, 0],
+            ['ccuoutage', 'Device Reachability Statistics', 0, 'ccu', 2, 1, 0, 0, 0, 5, 180, 250, 1, 1, 1, 1, 0,
+             'Reachability Statistics', '', 600, 0]]
         for default_temp in default_temp_list:
             ins_temp_query = "INSERT INTO  `graph_templet_table` \
             (`graph_display_id` ,`graph_display_name` ,`user_id` ,`is_disabled` ,`device_type_id` ,`graph_id` ,\
@@ -995,13 +1097,14 @@ def ccu_add_graph_entry_for_new_user(user_id):
             VALUES ('%s', '%s', '%s', '%s', '%s', %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, \
             %s, %s,'%s','%s' ,'%s',%s,%s)\
             " % (default_temp[0], default_temp[1], user_id, default_temp[2],
-               default_temp[3], default_temp[
-                   4], default_temp[5], default_temp[6],
-               default_temp[7], default_temp[
-                   8], default_temp[9], default_temp[10],
-               default_temp[11], default_temp[
-                   12], default_temp[13], default_temp[14],
-               default_temp[15], default_temp[16], default_temp[17], default_temp[18], default_temp[19], default_temp[20])
+                 default_temp[3], default_temp[
+                4], default_temp[5], default_temp[6],
+                 default_temp[7], default_temp[
+                8], default_temp[9], default_temp[10],
+                 default_temp[11], default_temp[
+                12], default_temp[13], default_temp[14],
+                 default_temp[15], default_temp[16], default_temp[17], default_temp[18], default_temp[19],
+                 default_temp[20])
             cursor.execute(ins_temp_query)
         global_db.commit()
 
@@ -1038,19 +1141,22 @@ def ccu_add_graph_entry_for_new_user(user_id):
         global_db.commit()
 
         # Graph Field Entry
-        graph_field = {'ccutemp': ['ccuRTSInternalTemperature', 'ccuRTSBatteryAmbientTemperature', 'ccuRTSSMPSTemperature'],
-                     'ccuvolt': ['ccuRTSSystemVoltage', 'ccuRTSACVoltageReading'],
-                     'ccucurrent': ['ccuRTSSolarCurrent', 'ccuRTSSMPSCurrent', 'ccuRTSBatteryCurrent', 'ccuRTSLoadCurrent', 'ccuRTSBatterySOC'],
-                     'ccuoutage': ['Reachable', 'Unreachable']}
+        graph_field = {
+        'ccutemp': ['ccuRTSInternalTemperature', 'ccuRTSBatteryAmbientTemperature', 'ccuRTSSMPSTemperature'],
+        'ccuvolt': ['ccuRTSSystemVoltage', 'ccuRTSACVoltageReading'],
+        'ccucurrent': ['ccuRTSSolarCurrent', 'ccuRTSSMPSCurrent', 'ccuRTSBatteryCurrent', 'ccuRTSLoadCurrent',
+                       'ccuRTSBatterySOC'],
+        'ccuoutage': ['Reachable', 'Unreachable']}
         graph_display_name = {'ccutemp': ['Internal Temperature', 'Battery Temperature', 'SMPS Temperature'],
-                            'ccuvolt': ['System Voltage', 'AC Voltage Reading'],
-                            'ccucurrent': ['Solar Current', 'SMPS Current', 'Battery Current', 'Load Current', 'Battery SOC'],
-                            'ccuoutage': ['Reachable', 'Unreachable']}
+                              'ccuvolt': ['System Voltage', 'AC Voltage Reading'],
+                              'ccucurrent': ['Solar Current', 'SMPS Current', 'Battery Current', 'Load Current',
+                                             'Battery SOC'],
+                              'ccuoutage': ['Reachable', 'Unreachable']}
 
         tool_tip_name = {'ccutemp': ['*C', '*C', '*C'],
-                       'ccuvolt': ['mV', 'V'],
-                       'ccucurrent': ['mA', 'mA', 'mA', 'mA', '%%'],
-                       'ccuoutage': ['Reachable', 'Unreachable']}
+                         'ccuvolt': ['mV', 'V'],
+                         'ccucurrent': ['mA', 'mA', 'mA', 'mA', '%%'],
+                         'ccuoutage': ['Reachable', 'Unreachable']}
 
         for field in graph_field:
             i = 0
@@ -1071,12 +1177,13 @@ def ccu_add_graph_entry_for_new_user(user_id):
 
         # Ajax Call Entry
         ajax_data = {'ccutemp': ['ccutemp', 'sp_common_graph_creation.py', 'post',
-                              'ccu_ccuRealTimeStatusTable,timestamp,ccuRTSIndex,ccutemp'],
-                   'ccuvolt': ['ccuvolt', 'sp_common_graph_creation.py', 'post',
-                              'ccu_ccuRealTimeStatusTable,timestamp,ccuRTSIndex,ccuvolt'],
-                   'ccucurrent': ['ccucurrent', 'sp_common_graph_creation.py', 'post',
-                                 'ccu_ccuRealTimeStatusTable,timestamp,ccuRTSIndex,ccucurrent'],
-                   'ccuoutage': ['ccuoutage', 'sp_common_graph_creation.py', 'post', 'outage,timestamp,noIndexName,ccuoutage']}
+                                 'ccu_ccuRealTimeStatusTable,timestamp,ccuRTSIndex,ccutemp'],
+                     'ccuvolt': ['ccuvolt', 'sp_common_graph_creation.py', 'post',
+                                 'ccu_ccuRealTimeStatusTable,timestamp,ccuRTSIndex,ccuvolt'],
+                     'ccucurrent': ['ccucurrent', 'sp_common_graph_creation.py', 'post',
+                                    'ccu_ccuRealTimeStatusTable,timestamp,ccuRTSIndex,ccucurrent'],
+                     'ccuoutage': ['ccuoutage', 'sp_common_graph_creation.py', 'post',
+                                   'outage,timestamp,noIndexName,ccuoutage']}
         for data in ajax_data:
             sql = "insert into graph_ajax_call_information \
             (user_id,graph_id,url,method,other_data) \
@@ -1090,7 +1197,8 @@ def ccu_add_graph_entry_for_new_user(user_id):
             sql = "insert into total_count_item \
             (user_id,graph_id,url,method,other_data) \
             values('%s','%s','%s','%s','%s')\
-            " % (user_id, total_data[count_data][0], total_data[count_data][1], total_data[count_data][2], total_data[count_data][3])
+            " % (user_id, total_data[count_data][0], total_data[count_data][1], total_data[count_data][2],
+                 total_data[count_data][3])
             cursor.execute(sql)
         global_db.commit()
 
@@ -1100,6 +1208,11 @@ def ccu_add_graph_entry_for_new_user(user_id):
 
 
 def count_user():
+    """
+
+
+    @return:
+    """
     db_connect()
     global global_db
     try:
@@ -1125,6 +1238,11 @@ def count_user():
 
 
 def get_group_list():
+    """
+
+
+    @return:
+    """
     db_connect()
     global global_db
     try:
@@ -1151,6 +1269,12 @@ def get_group_list():
 
 
 def get_group_name(revieved_id, flag=0):
+    """
+
+    @param revieved_id:
+    @param flag:
+    @return:
+    """
     db_connect()
     global global_db
     try:
@@ -1160,7 +1284,8 @@ def get_group_name(revieved_id, flag=0):
             query = "SELECT group_name from groups where group_id = \"%s\" " % (
                 revieved_id)
         else:
-            query = "SELECT gp.group_name from groups as gp JOIN users_groups as ug ON gp.group_id = ug.group_id WHERE ug.user_id = \"%s\" " % (revieved_id)
+            query = "SELECT gp.group_name from groups as gp JOIN users_groups as ug ON gp.group_id = ug.group_id WHERE ug.user_id = \"%s\" " % (
+            revieved_id)
         cursor = global_db.cursor()
         group_name = ""
         if cursor.execute(query) != 0:
@@ -1180,6 +1305,11 @@ def get_group_name(revieved_id, flag=0):
 
 
 def get_group_users(groupID):
+    """
+
+    @param groupID:
+    @return:
+    """
     db_connect()
     global global_db
     try:
@@ -1199,10 +1329,10 @@ def get_group_users(groupID):
         if len(gpUsers_tuple) < 1:
             return 1
         else:
-           # make_list = lambda x: [" - " if i == None or i == '' else str(i) for i in x]
-           # gpUsers_list = []
-           # for gpUser in gpUsers_tuple:
-           #     gpUsers_list.append(make_list(gpUser))
+        # make_list = lambda x: [" - " if i == None or i == '' else str(i) for i in x]
+        # gpUsers_list = []
+        # for gpUser in gpUsers_tuple:
+        #     gpUsers_list.append(make_list(gpUser))
             return gpUsers_tuple
     except Exception as e:
         return 111
@@ -1215,6 +1345,11 @@ def get_group_users(groupID):
 # print "hi",get_group_users("a0564ece-f668-11e0-a835-f04da24c7c26")
 
 def get_group_info(groupID):
+    """
+
+    @param groupID:
+    @return:
+    """
     db_connect()
     global global_db
     try:
@@ -1234,8 +1369,8 @@ def get_group_info(groupID):
         if len(gpDetail_tuple) < 1:
             return 1
         else:
-#            make_list = lambda x: [" - " if i == None or i == '' else str(i) for i in x]
-#            return make_list(gpDetail_tuple)
+        #            make_list = lambda x: [" - " if i == None or i == '' else str(i) for i in x]
+        #            return make_list(gpDetail_tuple)
             return gpDetail_tuple
     except Exception as e:
         return 111
@@ -1246,6 +1381,12 @@ def get_group_info(groupID):
 
 
 def del_user_from_group(user_ids_list, flag=1):
+    """
+
+    @param user_ids_list:
+    @param flag:
+    @return:
+    """
     db_connect()
     global global_db
     flag2 = 1
@@ -1260,7 +1401,6 @@ def del_user_from_group(user_ids_list, flag=1):
                 delQuery += "`user_id` = \"%s\" OR" % user_id
 
         if flag == 1:
-
             selQuery = "SELECT group_id FROM groups WHERE group_name = 'Default'"
 
             insQuery = "INSERT INTO `users_groups` (`user_group_id`, `user_id`, `group_id`) values"
@@ -1326,6 +1466,12 @@ def del_user_from_group(user_ids_list, flag=1):
 
 
 def add_user_in_group(user_ids_list, newGroupID):
+    """
+
+    @param user_ids_list:
+    @param newGroupID:
+    @return:
+    """
     global global_db
     try:
         insQuery = "insert into users_groups  (`user_group_id`, `user_id`, `group_id`) values"
@@ -1364,19 +1510,27 @@ def add_user_in_group(user_ids_list, newGroupID):
             if global_db.open:
                 db_close()
 
-# print
-# addUserInGroup('bb347a54-f668-11e0-a835-f04da24c7c26','4c83a918-f668-11e0-a835-f04da24c7c26')
+            # print
+            # addUserInGroup('bb347a54-f668-11e0-a835-f04da24c7c26','4c83a918-f668-11e0-a835-f04da24c7c26')
 
-	# Edit start : 
-	# Redmine Issue: Features 
-	# 687: "User Management Password Complexity"
- 	# 730: "Password Storage in Encrypted Form"
- 	# Description:
-	# Password 2 num, 2 alpha, 2 special, 
-	# min 8 characters and Password SHA format
-	# By: Grijesh Chauhan, Date: 7, Feb 2013
+            # Edit start :
+            # Redmine Issue: Features
+            # 687: "User Management Password Complexity"
+            # 730: "Password Storage in Encrypted Form"
+            # Description:
+            # Password 2 num, 2 alpha, 2 special,
+            # min 8 characters and Password SHA format
+            # By: Grijesh Chauhan, Date: 7, Feb 2013
+
 
 def add_user(u_dict, ul_dict, ug_dict):
+    """
+
+    @param u_dict:
+    @param ul_dict:
+    @param ug_dict:
+    @return:
+    """
     db_connect()
     global global_db
     try:
@@ -1409,8 +1563,8 @@ def add_user(u_dict, ul_dict, ug_dict):
                                             NULL, 
                                             NULL, 
                                             \"%(email_id)s\")
-                    """%u_dict
-        
+                    """ % u_dict
+
         ul_dict['password'] = global_db.escape_string(ul_dict['password'])
         insQuery2 = """INSERT INTO `user_login`(`user_login_id`, 
                                                 `user_id`, 
@@ -1427,22 +1581,22 @@ def add_user(u_dict, ul_dict, ug_dict):
                                                 \"%(user_id)s\", 
                                                 \"%(user_name)s\", 
                                                 SHA('%(password)s'), 
-                                                '0000-00-00 00:00:00', 
-                                                'SuperAdmin', 
+                                                '0000-00-00 00:00:00',
+                                                \"%(created_by)s\",
                                                 CURRENT_TIMESTAMP, 
                                                 '0', 
                                                 NULL, 
                                                 NULL,
                                                 NOW() )
-                    """%ul_dict
-        
+                    """ % ul_dict
+
         insQuery3 = """INSERT INTO `users_groups` (`user_group_id`, 
                                                    `user_id`, 
                                                    `group_id`) 
                                         VALUES (UUID(), 
                                                 \"%(user_id)s\", 
                                                 \"%(groups)s\")
-                    """%ug_dict
+                    """ % ug_dict
 
         cursor = global_db.cursor()
 
@@ -1481,6 +1635,12 @@ def add_user(u_dict, ul_dict, ug_dict):
 # Edit end
 
 def check_name(name, type):
+    """
+
+    @param name:
+    @param type:
+    @return:
+    """
     db_connect()
     global global_db
     try:
@@ -1488,7 +1648,7 @@ def check_name(name, type):
             return 1
         if type == "user":
             selectQuery = "SELECT user_name FROM `user_login` WHERE `user_name` = \"%s\"" % name.strip(
-                )
+            )
         elif type == "group":
             selectQuery = "SELECT group_name FROM `groups` WHERE `group_name` = \"%s\"" % name.strip()
         else:
@@ -1516,13 +1676,18 @@ def check_name(name, type):
 
 
 def groupname_avail(gpname):
+    """
+
+    @param gpname:
+    @return:
+    """
     db_connect()
     global global_db
     try:
         if global_db.open != 1:
             return 1
         selectQuery = "SELECT group_name FROM `groups` WHERE `group_name` = \"%s\"" % gpname.strip(
-            )
+        )
         cursor = global_db.cursor()
         queryVal = cursor.execute(selectQuery)
         result = 1
@@ -1545,6 +1710,11 @@ def groupname_avail(gpname):
 
 
 def is_loggedin_users(user_list):
+    """
+
+    @param user_list:
+    @return:
+    """
     db_connect()
     global global_db
     try:
@@ -1573,6 +1743,12 @@ def is_loggedin_users(user_list):
 
 
 def del_user(user_ids_list, flag=1):
+    """
+
+    @param user_ids_list:
+    @param flag:
+    @return:
+    """
     db_flag = 1
     if flag != 0:
         db_connect()
@@ -1585,41 +1761,41 @@ def del_user(user_ids_list, flag=1):
             return 1
 
         delQuery = "delete from users where "
-#        del_query1 = "DELETE FROM total_count_item WHERE "
-#        del_query2 = "DELETE FROM graph_ajax_call_information WHERE "
-#        del_query3 = "DELETE FROM graph_calculation_table WHERE "
-#        del_query4 = "DELETE FROM graph_field_table WHERE "
-#        del_query5 = "DELETE FROM graph_interface_table WHERE "
-#        del_query6 = "DELETE FROM graph_templet_table WHERE "
-#
+        #        del_query1 = "DELETE FROM total_count_item WHERE "
+        #        del_query2 = "DELETE FROM graph_ajax_call_information WHERE "
+        #        del_query3 = "DELETE FROM graph_calculation_table WHERE "
+        #        del_query4 = "DELETE FROM graph_field_table WHERE "
+        #        del_query5 = "DELETE FROM graph_interface_table WHERE "
+        #        del_query6 = "DELETE FROM graph_templet_table WHERE "
+        #
         i = 0
         for user_id in user_ids_list:
             i += 1
             if len(user_ids_list) == i:
                 delQuery += "user_id = \"%s\" " % user_id
-#                del_query1 += "user_id = \"%s\" "%user_id
-#                del_query2 += "user_id = \"%s\" "%user_id
-#                del_query3 += "user_id = \"%s\" "%user_id
-#                del_query4 += "user_id = \"%s\" "%user_id
-#                del_query5 += "user_id = \"%s\" "%user_id
-#                del_query6 += "user_id = \"%s\" "%user_id
+            #                del_query1 += "user_id = \"%s\" "%user_id
+            #                del_query2 += "user_id = \"%s\" "%user_id
+            #                del_query3 += "user_id = \"%s\" "%user_id
+            #                del_query4 += "user_id = \"%s\" "%user_id
+            #                del_query5 += "user_id = \"%s\" "%user_id
+            #                del_query6 += "user_id = \"%s\" "%user_id
             else:
                 delQuery += "user_id = \"%s\" OR " % user_id
-#                del_query1 += "user_id = \"%s\" OR "%user_id
-#                del_query2 += "user_id = \"%s\" OR "%user_id
-#                del_query3 += "user_id = \"%s\" OR "%user_id
-#                del_query4 += "user_id = \"%s\" OR "%user_id
-#                del_query5 += "user_id = \"%s\" OR "%user_id
-#                del_query6 += "user_id = \"%s\" OR "%user_id
-#
+            #                del_query1 += "user_id = \"%s\" OR "%user_id
+            #                del_query2 += "user_id = \"%s\" OR "%user_id
+            #                del_query3 += "user_id = \"%s\" OR "%user_id
+            #                del_query4 += "user_id = \"%s\" OR "%user_id
+            #                del_query5 += "user_id = \"%s\" OR "%user_id
+            #                del_query6 += "user_id = \"%s\" OR "%user_id
+            #
         cursor = global_db.cursor()
         if cursor.execute(delQuery) >= 1:
-#            cursor.execute(del_query1)
-#            cursor.execute(del_query2)
-#            cursor.execute(del_query3)
-#            cursor.execute(del_query4)
-#            cursor.execute(del_query5)
-#            cursor.execute(del_query6)
+        #            cursor.execute(del_query1)
+        #            cursor.execute(del_query2)
+        #            cursor.execute(del_query3)
+        #            cursor.execute(del_query4)
+        #            cursor.execute(del_query5)
+        #            cursor.execute(del_query6)
             pass
         elif cursor.execute(delQuery) == 0:
             pass
@@ -1645,6 +1821,12 @@ def del_user(user_ids_list, flag=1):
 
 
 def del_enable_user(userID, value):
+    """
+
+    @param userID:
+    @param value:
+    @return:
+    """
     db_connect()
     global global_db
     if global_db.open != 1:
@@ -1662,8 +1844,37 @@ def del_enable_user(userID, value):
     db_close()
     pass
 
+def getStatus(user_list):
+    (login_attempts_enable, 
+            max_login_attempts, 
+            lock_duration, 
+            failure_interval,
+            notify_user_onlock,
+            notify_admin_onlock) = \
+                SystemConfig.get_login_attempts_details()
+
+    fail_attempts = user_list[-2]
+    last_failed_timediff= user_list[-1]
+    status = {
+        True: "Lock", 
+        False: "Unlock"
+        }.get(
+            is_account_locked( 
+                fail_attempts,
+                max_login_attempts,
+                last_failed_timediff,
+                lock_duration
+            ), "Lock")            
+    user_list[-2:]  =  (status,)
+    return user_list
+
 
 def edit_user_view(userID):
+    """
+
+    @param userID:
+    @return:
+    """
     db_connect()
     global global_db
     result = 1
@@ -1672,11 +1883,13 @@ def edit_user_view(userID):
             result = 1
         selectQuery = "SELECT ul.user_id,ul.`user_name`,g.`group_name`,u.`first_name`,u.`last_name`,\
         u.`designation`,u.`company_name`,u.`mobile_no`,u.`address`,u.`email_id` \
+        , `ul`.`failed_login_attempts`, \
+        TIMESTAMPDIFF(MINUTE, `ul`.`failed_login_time`, '%s' )\
         FROM users as u \
         INNER JOIN user_login as ul ON ul.user_id = u.user_id \
         INNER JOIN users_groups as ug ON ug.user_id = ul.user_id \
         INNER JOIN groups as g ON g.group_id = ug.group_id  \
-        WHERE ul.user_id = \"%s\"" % userID
+        WHERE ul.user_id = \"%s\"" % (datetime.now(), userID)
 
         cursor = global_db.cursor()
         if cursor.execute(selectQuery) != 0:
@@ -1689,26 +1902,73 @@ def edit_user_view(userID):
         db_close()
 
         make_list = lambda x: [" " if i == None or i == '' else i for i in x]
-
-        user_list = make_list(user_details)
+        user_list = getStatus(make_list(user_details))
+        user_list.append("red" if user_list[-1] == 'Lock' else "green")
 
         user_tuple = (
             'user_id', 'user_name', 'group_name', 'first_name', 'last_name',
-                      'designation', 'company', 'mobile', 'address', 'email_id')
+            'designation', 'company', 'mobile', 'address', 'email_id', 'status', 'status_color')
 
         user_dict = dict(zip(user_tuple, user_list))
 
         return user_dict
 
     except Exception as e:
-        return 111  # str(e)
+        return 111  # str(e) 
     finally:
         if isinstance(global_db, MySQLdb.connection):
             if global_db.open:
                 db_close()
 
 
+def lock_unlock_usr(user_id, status):
+    db_connect()
+    global global_db
+    try:
+        if global_db.open != 1:
+            return 1
+        (login_attempts_enable, 
+        max_login_attempts, 
+        lock_duration, 
+        failure_interval,
+        notify_user_onlock,
+        notify_admin_onlock) = SystemConfig.get_login_attempts_details()
+
+        query = """ UPDATE `user_login` 
+                    SET `failed_login_attempts` = {1}, 
+                    `failed_login_time` = '{2}'
+                    WHERE `user_id` = '{0}' 
+                """.format(user_id, 
+                        0 if status == 'Lock' else (max_login_attempts + 1),
+                        datetime.now())
+        message = 'Operation NOT successful'
+        cursor = global_db.cursor()
+        if cursor.execute(query):
+            global_db.commit()
+            if status == 'Lock':
+                message = 'User Unlocked successfully' 
+            else:
+                message = 'User Locked for %d hours' % lock_duration
+            return (True, message)
+        else:
+            return (False, message)
+        cursor.close()
+        db_close()
+    except Exception as e:
+        return (False, message)
+    finally:
+        if isinstance(global_db, MySQLdb.connection):
+            if global_db.open:
+                db_close()    
+
 def edit_user(u_dict, ug_dict, pwd_dict=None):
+    """
+
+    @param u_dict:
+    @param ug_dict:
+    @param pwd_dict:
+    @return:
+    """
     db_connect()
     global global_db
     try:
@@ -1748,6 +2008,11 @@ def edit_user(u_dict, ug_dict, pwd_dict=None):
 
 
 def get_group_details(flag=1):
+    """
+
+    @param flag:
+    @return:
+    """
     db_connect()
     global global_db
     try:
@@ -1770,10 +2035,10 @@ def get_group_details(flag=1):
         if len(group_details) < 1:
             return 1
         else:
-#            make_list = lambda x: [" - " if i == None or i == '' else i for i in x]
-#            group_details_list = []
-#            for group_detail in group_details:
-#                group_details_list.append(make_list(group_detail))
+        #            make_list = lambda x: [" - " if i == None or i == '' else i for i in x]
+        #            group_details_list = []
+        #            for group_detail in group_details:
+        #                group_details_list.append(make_list(group_detail))
             return group_details
     except Exception as e:
         return 111
@@ -1786,6 +2051,11 @@ def get_group_details(flag=1):
 
 
 def add_group(var_dict):
+    """
+
+    @param var_dict:
+    @return:
+    """
     db_connect()
     global global_db
     try:
@@ -1814,12 +2084,17 @@ def add_group(var_dict):
 
 
 def edit_group(var_dict):
+    """
+
+    @param var_dict:
+    @return:
+    """
     db_connect()
     global global_db
     try:
         if global_db.open != 1:
             return 1
-        # updateQuery = """UPDATE groups SET `description` = "%(description)s",
+            # updateQuery = """UPDATE groups SET `description` = "%(description)s",
         # `updated_by` = "%(session_user)s", `role_id` = "%(role)s" WHERE
         # group_id = "%(group_id)s" """%var_dict
         updateQuery = """UPDATE groups
@@ -1828,9 +2103,9 @@ def edit_group(var_dict):
         cursor = global_db.cursor()
         if cursor.execute(updateQuery) != 1:
             pass
-    #        cursor.close()
-    #        db_close()
-    #        return 3
+            #        cursor.close()
+            #        db_close()
+            #        return 3
         global_db.commit()
         cursor.close()
         db_close()
@@ -1844,6 +2119,12 @@ def edit_group(var_dict):
 
 
 def del_group(groupID, del_users=1):
+    """
+
+    @param groupID:
+    @param del_users:
+    @return:
+    """
     db_connect()
     global global_db
     try:
@@ -1881,6 +2162,12 @@ def del_group(groupID, del_users=1):
 
 
 def del_group_copy(groupID, del_users=1):
+    """
+
+    @param groupID:
+    @param del_users:
+    @return:
+    """
     db_connect()
     global global_db
     try:
@@ -1898,12 +2185,12 @@ def del_group_copy(groupID, del_users=1):
         delQuery1 = "DELETE from users_groups where group_id = \"%s\" " % groupID
         cursor = global_db.cursor()
         if cursor.execute(delQuery) < 1:
-#            pass
+        #            pass
             cursor.close()
             db_close()
             return 2
         if cursor.execute(delQuery) < 1:
-#            pass
+        #            pass
             cursor.close()
             db_close()
             return 2
@@ -1920,12 +2207,17 @@ def del_group_copy(groupID, del_users=1):
 
 
 def get_user_details():
+    """
+
+
+    @return:
+    """
     db_connect()
     global global_db
     try:
         if global_db.open != 1:
             return 1
-        # selectQuery = "SELECT  ul.`user_id`, ul.user_name,  u.`first_name` ,
+            # selectQuery = "SELECT  ul.`user_id`, ul.user_name,  u.`first_name` ,
         # u.`last_name` , u.`designation` , u.`mobile_no` , u.`email_id` FROM
         # user_login AS ul INNER JOIN users AS u WHERE u.user_id = ul.user_id
         # AND ul.is_deleted <> 1"
@@ -1961,6 +2253,11 @@ def get_user_details():
 
 
 def edit_group_view(group_id):
+    """
+
+    @param group_id:
+    @return:
+    """
     db_connect()
     global global_db
     result = 1
@@ -2003,6 +2300,11 @@ def edit_group_view(group_id):
 
 
 def get_role_list():
+    """
+
+
+    @return:
+    """
     db_connect()
     global global_db
     try:
@@ -2028,6 +2330,11 @@ def get_role_list():
 
 
 def change_password(var_dict):
+    """
+
+    @param var_dict:
+    @return:
+    """
     db_connect()
     global global_db
     try:
@@ -2061,6 +2368,11 @@ def change_password(var_dict):
 
 
 def get_hostgroup_info(hg_id):
+    """
+
+    @param hg_id:
+    @return:
+    """
     db_connect()
     global global_db
     try:
@@ -2087,6 +2399,11 @@ def get_hostgroup_info(hg_id):
 
 
 def get_hostgroup_details():
+    """
+
+
+    @return:
+    """
     db_connect()
     global global_db
     try:
@@ -2113,6 +2430,12 @@ def get_hostgroup_details():
 
 
 def show_hostgroups(group_id, all=1):
+    """
+
+    @param group_id:
+    @param all:
+    @return:
+    """
     db_connect()
     global global_db
     try:
@@ -2141,14 +2464,14 @@ def show_hostgroups(group_id, all=1):
         cursor.close()
         db_close()
         return gpHG_tuple
-#        if len(gpHG_tuple) < 1 :
-#            return 1
-#        else:
-##            make_list = lambda x: [" - " if i == None or i == '' else str(i) for i in x]
-##            gpHG_list = []
-##            for gpHG in gpHG_tuple:
-##                gpHG_list.append(make_list(gpHG))
-#            return gpHG_tuple
+    #        if len(gpHG_tuple) < 1 :
+    #            return 1
+    #        else:
+    ##            make_list = lambda x: [" - " if i == None or i == '' else str(i) for i in x]
+    ##            gpHG_list = []
+    ##            for gpHG in gpHG_tuple:
+    ##                gpHG_list.append(make_list(gpHG))
+    #            return gpHG_tuple
 
     except Exception as e:
         return 111  # str(e)
@@ -2159,6 +2482,13 @@ def show_hostgroups(group_id, all=1):
 
 
 def show_groups(hostgroup_id, all_var=1, grp_value=0):
+    """
+
+    @param hostgroup_id:
+    @param all_var:
+    @param grp_value:
+    @return:
+    """
     db_connect()
     global global_db
     try:
@@ -2203,14 +2533,14 @@ def show_groups(hostgroup_id, all_var=1, grp_value=0):
         cursor.close()
         db_close()
         return gpHG_tuple
-#        if len(gpHG_tuple) < 1 :
-#            return 1
-#        else:
-##            make_list = lambda x: [" - " if i == None or i == '' else str(i) for i in x]
-##            gpHG_list = []
-##            for gpHG in gpHG_tuple:
-##                gpHG_list.append(make_list(gpHG))
-#            return gpHG_tuple
+    #        if len(gpHG_tuple) < 1 :
+    #            return 1
+    #        else:
+    ##            make_list = lambda x: [" - " if i == None or i == '' else str(i) for i in x]
+    ##            gpHG_list = []
+    ##            for gpHG in gpHG_tuple:
+    ##                gpHG_list.append(make_list(gpHG))
+    #            return gpHG_tuple
 
     except Exception as e:
         return 111  # str(e)
@@ -2221,6 +2551,12 @@ def show_groups(hostgroup_id, all_var=1, grp_value=0):
 
 
 def add_hg_togroup(hg_ids_list, group_id):
+    """
+
+    @param hg_ids_list:
+    @param group_id:
+    @return:
+    """
     db_connect()
     global global_db
     try:
@@ -2272,6 +2608,13 @@ def add_hg_togroup(hg_ids_list, group_id):
 
 
 def move_hg_togroup(hg_ids_list, group_id, old_group_id):
+    """
+
+    @param hg_ids_list:
+    @param group_id:
+    @param old_group_id:
+    @return:
+    """
     db_connect()
     global global_db
     try:
@@ -2290,7 +2633,7 @@ def move_hg_togroup(hg_ids_list, group_id, old_group_id):
         f = lambda x: tuple(str(j[0]) for j in x)
 
         hg_ids_tuple = f(hg_ids_tuples)
-#        hg_ids_tuple = sum(hg_ids_tuples,())
+        #        hg_ids_tuple = sum(hg_ids_tuples,())
         insQuery = "insert into hostgroups_groups (`hostgroup_id`, `group_id`) values"
 
         i = 0
@@ -2330,6 +2673,13 @@ def move_hg_togroup(hg_ids_list, group_id, old_group_id):
 
 
 def move_group_tohg(hg_ids_list, group_id, old_group_id):
+    """
+
+    @param hg_ids_list:
+    @param group_id:
+    @param old_group_id:
+    @return:
+    """
     db_connect()
     global global_db
     try:
@@ -2387,6 +2737,12 @@ def move_group_tohg(hg_ids_list, group_id, old_group_id):
 
 
 def add_gp_tohostgroup(hg_ids_list, group_id):
+    """
+
+    @param hg_ids_list:
+    @param group_id:
+    @return:
+    """
     db_connect()
     global global_db
     try:
@@ -2440,6 +2796,13 @@ def add_gp_tohostgroup(hg_ids_list, group_id):
 
 
 def del_gp_fromhostgroup(gp_ids_list, hostgroup_id, flag=1):
+    """
+
+    @param gp_ids_list:
+    @param hostgroup_id:
+    @param flag:
+    @return:
+    """
     if flag == 1:
         db_connect()
     global global_db
@@ -2478,6 +2841,13 @@ def del_gp_fromhostgroup(gp_ids_list, hostgroup_id, flag=1):
 
 
 def del_hg_fromgroup(hg_ids_list, group_id, flag=1):
+    """
+
+    @param hg_ids_list:
+    @param group_id:
+    @param flag:
+    @return:
+    """
     if flag == 1:
         db_connect()
 
@@ -2517,6 +2887,11 @@ def del_hg_fromgroup(hg_ids_list, group_id, flag=1):
 
 
 def get_hostgroup_list():
+    """
+
+
+    @return:
+    """
     db_connect()
     global global_db
     try:

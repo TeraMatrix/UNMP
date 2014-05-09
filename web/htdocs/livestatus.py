@@ -63,6 +63,11 @@ persistent_connections = {}
 
 
 class MKLivestatusException(Exception):
+    """
+
+    @param value:
+    """
+
     def __init__(self, value):
         self.parameter = value
 
@@ -71,27 +76,53 @@ class MKLivestatusException(Exception):
 
 
 class MKLivestatusSocketError(MKLivestatusException):
+    """
+
+    @param reason:
+    """
+
     def __init__(self, reason):
         MKLivestatusException.__init__(self, reason)
 
 
 class MKLivestatusSocketClosed(MKLivestatusSocketError):
+    """
+
+    @param reason:
+    """
+
     def __init__(self, reason):
         MKLivestatusSocketError.__init__(self, reason)
 
 
 class MKLivestatusConfigError(MKLivestatusException):
+    """
+
+    @param reason:
+    """
+
     def __init__(self, reason):
         MKLivestatusException.__init__(self, reason)
 
 
 class MKLivestatusQueryError(MKLivestatusException):
+    """
+
+    @param code:
+    @param reason:
+    """
+
     def __init__(self, code, reason):
         MKLivestatusException.__init__(self, "%s: %s" % (code, reason))
         self.code = code
 
 
 class MKLivestatusNotFoundError(MKLivestatusException):
+    """
+
+    @param query:
+    """
+
     def __init__(self, query):
         MKLivestatusException.__init__(self, query)
         self.query = query
@@ -101,8 +132,13 @@ NO_DEFAULT = lambda: None
 
 
 class Helpers:
+    """
+    Livestatus - CMK
+    """
     def query_value(self, query, deflt=NO_DEFAULT):
         """Issues a query that returns exactly one line and one columns and returns
+        @param query:
+        @param deflt:
            the response as a single value"""
         result = self.query(query, "ColumnHeaders: off\n")
         try:
@@ -115,22 +151,26 @@ class Helpers:
 
     def query_row(self, query):
         """Issues a query that returns one line of data and returns the elements
+        @param query:
            of that line as list"""
         return self.query(query, "ColumnHeaders: off\n")[0]
 
     def query_row_assoc(self, query):
         """Issues a query that returns one line of data and returns the elements
+        @param query:
            of that line as a dictionary from column names to values"""
         r = self.query(query, "ColumnHeaders: on\n")[0:2]
         return dict(zip(r[0], r[1]))
 
     def query_column(self, query):
         """Issues a query that returns exactly one column and returns the values
+        @param query:
            of all lines in that column as a single list"""
         return [l[0] for l in self.query(query, "ColumnHeaders: off\n")]
 
     def query_column_unique(self, query):
         """Issues a query that returns exactly one column and returns the values
+        @param query:
            of all lines with duplicates removed"""
         result = []
         for line in self.query(query, "ColumnHeaders: off\n"):
@@ -140,12 +180,14 @@ class Helpers:
 
     def query_table(self, query):
         """Issues a query that may return multiple lines and columns and returns
+        @param query:
            a list of lists"""
         return self.query(query, "ColumnHeaders: off\n")
 
     def query_table_assoc(self, query):
         """Issues a query that may return multiple lines and columns and returns
            a dictionary from column names to values for each line. This can be
+        @param query:
            very ineffective for large response sets."""
         response = self.query(query, "ColumnHeaders: on\n")
         headers = response[0]
@@ -156,6 +198,8 @@ class Helpers:
 
     def query_summed_stats(self, query, add_headers=""):
         """Conveniance function for adding up numbers from Stats queries
+        @param query:
+        @param add_headers:
         Adds up results column-wise. This is useful for multisite queries."""
         data = self.query(query, add_headers)
         if len(data) == 1:
@@ -170,6 +214,12 @@ class Helpers:
 
 
 class BaseConnection:
+    """
+
+    @param socketurl:
+    @param persist:
+    """
+
     def __init__(self, socketurl, persist=False):
         """Create a new connection to a MK Livestatus socket"""
         self.add_headers = ""
@@ -179,14 +229,27 @@ class BaseConnection:
         self.timeout = None
 
     def add_header(self, header):
+        """
+
+        @param header:
+        """
         self.add_headers += header + "\n"
 
     def set_timeout(self, timeout):
+        """
+
+        @param timeout:
+        """
         self.timeout = timeout
         if self.socket:
             self.socket.settimeout(float(timeout))
 
     def connect(self):
+        """
+
+
+        @return: @raise:
+        """
         if self.persist and self.socketurl in persistent_connections:
             self.socket = persistent_connections[self.socketurl]
             return
@@ -228,11 +291,20 @@ class BaseConnection:
             persistent_connections[self.socketurl] = self.socket
 
     def disconnect(self):
+        """
+
+
+        """
         self.socket = None
         if self.persist:
             del persistent_connections[self.socketurl]
 
     def receive_data(self, size):
+        """
+
+        @param size:
+        @return: @raise:
+        """
         result = ""
         while size > 0:
             packet = self.socket.recv(size)
@@ -244,10 +316,22 @@ class BaseConnection:
         return result
 
     def do_query(self, query, add_headers=""):
+        """
+
+        @param query:
+        @param add_headers:
+        @return:
+        """
         self.send_query(query, add_headers)
         return self.recv_response(query, add_headers)
 
     def send_query(self, query, add_headers=""):
+        """
+
+        @param query:
+        @param add_headers:
+        @raise:
+        """
         if self.socket == None:
             self.connect()
         if not query.endswith("\n"):
@@ -272,6 +356,12 @@ class BaseConnection:
     # by the livestatus server, we automatically make a reconnect and send
     # the query again (once). This is due to timeouts during keepalive.
     def recv_response(self, query=None, add_headers=""):
+        """
+
+        @param query:
+        @param add_headers:
+        @return: @raise:
+        """
         try:
             resp = self.receive_data(16)
             code = resp[0:3]
@@ -304,6 +394,11 @@ class BaseConnection:
             raise MKLivestatusSocketError(str(e))
 
     def do_command(self, command):
+        """
+
+        @param command:
+        @raise:
+        """
         if not command.endswith("\n"):
             command += "\n"
         try:
@@ -316,6 +411,12 @@ class BaseConnection:
 
 
 class SingleSiteConnection(BaseConnection, Helpers):
+    """
+
+    @param socketurl:
+    @param persist:
+    """
+
     def __init__(self, socketurl, persist=False):
         BaseConnection.__init__(self, socketurl, persist)
         self.prepend_site = False
@@ -325,15 +426,33 @@ class SingleSiteConnection(BaseConnection, Helpers):
         self.limit = None
 
     def set_prepend_site(self, p):
+        """
+
+        @param p:
+        """
         self.prepend_site = p
 
     def set_only_sites(self, os=None):
+        """
+
+        @param os:
+        """
         pass
 
     def set_limit(self, limit=None):
+        """
+
+        @param limit:
+        """
         self.limit = limit
 
     def query(self, query, add_headers=""):
+        """
+
+        @param query:
+        @param add_headers:
+        @return:
+        """
         if self.limit != None:
             query += "Limit: %d\n" % self.limit
         data = self.do_query(query, add_headers)
@@ -343,10 +462,20 @@ class SingleSiteConnection(BaseConnection, Helpers):
             return data
 
     def command(self, command, site=None):
+        """
+
+        @param command:
+        @param site:
+        """
         self.do_command(command)
 
     # Set user to be used in certain authorization domain
     def set_auth_user(self, domain, user):
+        """
+
+        @param domain:
+        @param user:
+        """
         if user:
             self.auth_users[domain] = user
         else:
@@ -354,6 +483,10 @@ class SingleSiteConnection(BaseConnection, Helpers):
 
     # Switch future request to new authorization domain
     def set_auth_domain(self, domain):
+        """
+
+        @param domain:
+        """
         auth_user = self.auth_users.get(domain)
         if auth_user:
             self.auth_header = "AuthUser: %s\n" % auth_user
@@ -367,6 +500,13 @@ class SingleSiteConnection(BaseConnection, Helpers):
 # timeout:  timeout for tcp/unix in seconds
 
 class MultiSiteConnection(Helpers):
+    """
+
+    @param sites:
+    @param disabled_sites:
+    @raise:
+    """
+
     def __init__(self, sites, disabled_sites=[]):
         self.sites = sites
         self.connections = []
@@ -378,6 +518,12 @@ class MultiSiteConnection(Helpers):
 
         # Helper function for connecting to a site
         def connect_to_site(sitename, site, temporary=False):
+            """
+
+            @param sitename:
+            @param site:
+            @param temporary:
+            """
             try:
                 url = site["socket"]
                 persist = not temporary and site.get("persist", False)
@@ -395,6 +541,10 @@ class MultiSiteConnection(Helpers):
 
         # Needed for temporary connection for status_hosts in disabled sites
         def disconnect_site(sitename):
+            """
+
+            @param sitename:
+            """
             i = 0
             for name, site, connection in self.connections:
                 if name == sitename:
@@ -501,47 +651,94 @@ class MultiSiteConnection(Helpers):
                     }
 
     def add_header(self, header):
+        """
+
+        @param header:
+        """
         for sitename, site, connection in self.connections:
             connection.add_header(header)
 
     def set_prepend_site(self, p):
+        """
+
+        @param p:
+        """
         self.prepend_site = p
 
     def set_only_sites(self, os=None):
+        """
+
+        @param os:
+        """
         self.only_sites = os
 
     # Impose Limit on number of returned datasets (distributed amoung sites)
     def set_limit(self, limit=None):
+        """
+
+        @param limit:
+        """
         self.limit = limit
 
     def dead_sites(self):
+        """
+
+
+        @return:
+        """
         return self.deadsites
 
     def alive_sites(self):
+        """
+
+
+        @return:
+        """
         return self.connections.keys()
 
     def set_auth_user(self, domain, user):
+        """
+
+        @param domain:
+        @param user:
+        """
         for sitename, site, connection in self.connections:
             connection.set_auth_user(domain, user)
 
     def set_auth_domain(self, domain):
+        """
+
+        @param domain:
+        """
         for sitename, site, connection in self.connections:
             connection.set_auth_domain(domain)
 
     def query(self, query, add_headers=""):
+        """
+
+        @param query:
+        @param add_headers:
+        @return:
+        """
         if self.parallelize:
             return self.query_parallel(query, add_headers)
         else:
             return self.query_non_parallel(query, add_headers)
 
     def query_non_parallel(self, query, add_headers=""):
+        """
+
+        @param query:
+        @param add_headers:
+        @return:
+        """
         result = []
         stillalive = []
         limit = self.limit
         for sitename, site, connection in self.connections:
             if self.only_sites != None and sitename not in self.only_sites:
                 stillalive.append((sitename, site, connection))
-                                  # state unknown, assume still alive
+                # state unknown, assume still alive
                 continue
             try:
                 if limit != None:
@@ -569,9 +766,15 @@ class MultiSiteConnection(Helpers):
     # applied to all sites - resulting in possibly more results then Limit
     # requests.
     def query_parallel(self, query, add_headers=""):
+        """
+
+        @param query:
+        @param add_headers:
+        @return:
+        """
         if self.only_sites != None:
             active_sites = [c for c in self.connections if c[0]
-                            in self.only_sites]
+            in self.only_sites]
         else:
             active_sites = self.connections
 
@@ -599,7 +802,7 @@ class MultiSiteConnection(Helpers):
         for sitename, site, connection in self.connections:
             if self.only_sites != None and sitename not in self.only_sites:
                 stillalive.append((sitename, site, connection))
-                                  # state unknown, assume still alive
+                # state unknown, assume still alive
                 continue
 
             try:
@@ -618,6 +821,12 @@ class MultiSiteConnection(Helpers):
         return result
 
     def command(self, command, sitename="local"):
+        """
+
+        @param command:
+        @param sitename:
+        @raise:
+        """
         if sitename in self.deadsites:
             raise MKLivestatusSocketError("Connection to site %s is dead: %s" %
                                           (sitename, self.deadsites[sitename]["exception"]))
@@ -629,6 +838,11 @@ class MultiSiteConnection(Helpers):
 
     # Return connection to localhost (UNIX), if available
     def local_connection(self):
+        """
+
+
+        @return: @raise:
+        """
         for sitename, site, connection in self.connections:
             if site["socket"].startswith("unix:"):
                 return connection

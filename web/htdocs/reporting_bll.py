@@ -1,5 +1,5 @@
 #!/usr/bin/python2.6
-'''
+"""
 @author: Mahipal Choudhary
 @since: 07-Nov-2011
 @version: 0.1
@@ -7,24 +7,35 @@
 @organization: Codescape Consultants Pvt. Ltd.
 @copyright: 2011 Mahipal Choudhary for Codescape Consultants Pvt. Ltd.
 @see: http://www.codescape.in
-'''
+"""
 
 # Import modules that contain the function and libraries
-from datetime import date, timedelta, datetime
-import MySQLdb
-from mysql_collection import mysql_connection
-from unmp_config import SystemConfig
-import xlwt
-from xlwt import Workbook, easyxf
-import json
-from json import JSONEncoder
+from datetime import timedelta, datetime
 from operator import itemgetter
+
+import MySQLdb
+import xlwt
 from inventory_bll import HostBll
 from main_reporting_bll import MainOutage
+from mysql_collection import mysql_connection
+from unmp_config import SystemConfig
+
 
 class Report_bll(object):
+    """
+    Main reporting related BLL class
+    """
 # AVERAGE DATA FOR GIVEN DATE PERIOD
     def get_avg_data_for_two_dates(self, no_of_devices, date1, date2, all_group, all_host):
+        """
+
+        @param no_of_devices:
+        @param date1:
+        @param date2:
+        @param all_group:
+        @param all_host:
+        @return:
+        """
         try:
             conn = MySQLdb.connect(*SystemConfig.get_mysql_credentials())
             cursor = conn.cursor()
@@ -36,7 +47,7 @@ class Report_bll(object):
             make_list = lambda x: [
                 " - " if i == None or i == '' else str(i) for i in x]
             if all_host == "" and all_group == "":
-                while(d1 <= d2):
+                while (d1 <= d2):
                     date_temp = str(d1)[:10]
                     query = "Select date(go16.timestamp),hosts.host_name ,hosts.ip_address, AVG(go16.rx_phy_error) , AVG(go16.rx_crc_errors),hostgroups.hostgroup_name\
         	               from get_odu16_ra_tdd_mac_statistics_entry  as go16\
@@ -51,7 +62,7 @@ class Report_bll(object):
                     for avg in avg_result:
                         average_list.append(make_list(avg))
             else:
-                while(d1 <= d2):
+                while (d1 <= d2):
                     date_temp = str(d1)[:10]
                     host_data = str(all_host.split(
                         ',')).replace('[', '(').replace(']', ')')
@@ -80,8 +91,20 @@ class Report_bll(object):
         finally:
             conn.close()
 
-# TOTAL DATA FOR A GIVEN DATE PERIOD
+        # TOTAL DATA FOR A GIVEN DATE PERIOD
+
     def get_total_data_for_two_dates(self, no_of_devices, date1, date2, time1, time2, all_group, all_host):
+        """
+
+        @param no_of_devices:
+        @param date1:
+        @param date2:
+        @param time1:
+        @param time2:
+        @param all_group:
+        @param all_host:
+        @return:
+        """
         try:
             conn = MySQLdb.connect(*SystemConfig.get_mysql_credentials())
             cursor = conn.cursor()
@@ -106,7 +129,7 @@ class Report_bll(object):
                        order by hst.host_id,go16.timestamp asc  " % (no_of_devices, date_temp_1, date_temp_2)
                 cursor.execute(query)
                 res = cursor.fetchall()
-                if(len(res) == 0):
+                if (len(res) == 0):
                     result_dict = {"success": 0, "result": []}
                     return result_dict
                 li = []
@@ -114,7 +137,7 @@ class Report_bll(object):
                 host = res[0][1]
                 for i in range(len(res)):
                     li = make_list(res[i])
-                    if(str(li[3]) == "123456789" or str(li[4]) == "123456789"):
+                    if (str(li[3]) == "123456789" or str(li[4]) == "123456789"):
                         li[3] = "DEVICE WAS OFF"
                         li[4] = "DEVICE WAS OFF"
                         li.insert(5, "0")
@@ -134,15 +157,16 @@ class Report_bll(object):
                         var_crc_cur = res[i][4]
                         var_phy_old = res[i - 1][3]
                         var_crc_old = res[i - 1][4]
-                        if str(var_crc_old) == "123456789" or str(var_phy_old) == "123456789" or str(var_crc_old) == "987654321" or str(var_phy_old) == "987654321":
+                        if str(var_crc_old) == "123456789" or str(var_phy_old) == "123456789" or str(
+                                var_crc_old) == "987654321" or str(var_phy_old) == "987654321":
                             temp_crc = var_crc_cur
                             temp_phy = var_phy_cur
                         else:
                             temp_crc = var_crc_cur - var_crc_old
                             temp_phy = var_phy_cur - var_phy_old
-                            if(temp_crc < 0):
+                            if (temp_crc < 0):
                                 temp_crc = 0
-                            if(temp_phy < 0):
+                            if (temp_phy < 0):
                                 temp_phy = 0
                         li.insert(5, str(temp_phy))
                         li.insert(6, str(temp_crc))
@@ -154,10 +178,11 @@ class Report_bll(object):
                     join ( select host_id,host_name,ip_address from hosts where device_type_id like 'ODU16%%' group by host_id) as hst on go16.host_id=hst.host_id \
                     INNER JOIN hosts_hostgroups ON hosts_hostgroups.host_id = hst.host_id \
                     INNER JOIN hostgroups ON hostgroups.hostgroup_id = hosts_hostgroups.hostgroup_id\
-                    where go16.timestamp between '%s' and '%s' AND hst.host_id IN %s order by hst.host_id,go16.timestamp asc " % (date_temp_1, date_temp_2, host_data)
+                    where go16.timestamp between '%s' and '%s' AND hst.host_id IN %s order by hst.host_id,go16.timestamp asc " % (
+                date_temp_1, date_temp_2, host_data)
                 cursor.execute(query)
                 res = cursor.fetchall()
-                if(len(res) == 0):
+                if (len(res) == 0):
                     result_dict = {"success": 0, "result": []}
                     return result_dict
                 li = []
@@ -165,7 +190,7 @@ class Report_bll(object):
                 host = res[0][1]
                 for i in range(len(res)):
                     li = make_list(res[i])
-                    if(str(li[3]) == "123456789" or str(li[4]) == "123456789"):
+                    if (str(li[3]) == "123456789" or str(li[4]) == "123456789"):
                         li[3] = "DEVICE WAS OFF"
                         li[4] = "DEVICE WAS OFF"
                         li.insert(5, "0")
@@ -185,15 +210,16 @@ class Report_bll(object):
                         var_crc_cur = res[i][4]
                         var_phy_old = res[i - 1][3]
                         var_crc_old = res[i - 1][4]
-                        if str(var_crc_old) == "123456789" or str(var_phy_old) == "123456789" or str(var_crc_old) == "987654321" or str(var_phy_old) == "987654321":
+                        if str(var_crc_old) == "123456789" or str(var_phy_old) == "123456789" or str(
+                                var_crc_old) == "987654321" or str(var_phy_old) == "987654321":
                             temp_crc = var_crc_cur
                             temp_phy = var_phy_cur
                         else:
                             temp_crc = var_crc_cur - var_crc_old
                             temp_phy = var_phy_cur - var_phy_old
-                            if(temp_crc < 0):
+                            if (temp_crc < 0):
                                 temp_crc = 0
-                            if(temp_phy < 0):
+                            if (temp_phy < 0):
                                 temp_phy = 0
                         li.insert(5, str(temp_phy))
                         li.insert(6, str(temp_crc))
@@ -210,8 +236,20 @@ class Report_bll(object):
         finally:
             conn.close()
 
-# TOTAL DATA FOR A GIVEN DATE PERIOD FOR SYNC LOSS COUNTER
+        # TOTAL DATA FOR A GIVEN DATE PERIOD FOR SYNC LOSS COUNTER
+
     def get_synch_loss_for_two_dates(self, no_of_devices, date1, date2, time1, time2, all_group, all_host):
+        """
+
+        @param no_of_devices:
+        @param date1:
+        @param date2:
+        @param time1:
+        @param time2:
+        @param all_group:
+        @param all_host:
+        @return:
+        """
         try:
             conn = MySQLdb.connect(*SystemConfig.get_mysql_credentials())
             cursor = conn.cursor()
@@ -236,7 +274,7 @@ class Report_bll(object):
                        order by hst.host_id,go16.timestamp asc " % (no_of_devices, date_temp_1, date_temp_2)
                 cursor.execute(query)
                 res = cursor.fetchall()
-                if(len(res) == 0):
+                if (len(res) == 0):
                     result_dict = {"success": 0, "result": []}
                     return result_dict
                 li = []
@@ -244,7 +282,7 @@ class Report_bll(object):
                 host = res[0][1]
                 for i in range(len(res)):
                     li = make_list(res[i])  # work from here
-                    if(str(li[4]) == "123456789"):
+                    if (str(li[4]) == "123456789"):
                         li[4] = "DEVICE WAS OFF"
                     elif str(li[4]) == "987654321":
                         li[4] = "DEVICE WAS DISABLED"
@@ -257,7 +295,7 @@ class Report_bll(object):
                             temp_synch = 0
                         else:
                             temp_synch = var_synch_cur - var_synch_old
-                            if(temp_synch < 0):
+                            if (temp_synch < 0):
                                 temp_synch = 0
                         li[4] = str(temp_synch)
                     else:
@@ -275,7 +313,7 @@ class Report_bll(object):
                        order by hst.host_id,go16.timestamp asc " % (no_of_devices, date_temp_1, date_temp_2, host_data)
                 cursor.execute(query)
                 res = cursor.fetchall()
-                if(len(res) == 0):
+                if (len(res) == 0):
                     result_dict = {"success": 0, "result": []}
                     return result_dict
                 li = []
@@ -283,7 +321,7 @@ class Report_bll(object):
                 host = res[0][1]
                 for i in range(len(res)):
                     li = make_list(res[i])  # work from here
-                    if(str(li[4]) == "123456789"):
+                    if (str(li[4]) == "123456789"):
                         li[4] = "DEVICE WAS OFF"
                     elif str(li[4]) == "987654321":
                         li[4] = "DEVICE WAS DISABLED"
@@ -296,7 +334,7 @@ class Report_bll(object):
                             temp_synch = 0
                         else:
                             temp_synch = var_synch_cur - var_synch_old
-                            if(temp_synch < 0):
+                            if (temp_synch < 0):
                                 temp_synch = 0
                         li[4] = str(temp_synch)
                     else:
@@ -314,8 +352,18 @@ class Report_bll(object):
         finally:
             conn.close()
 
-# AVERAGE DATA FOR GIVEN DATE PERIOD  FOR RSSI
+        # AVERAGE DATA FOR GIVEN DATE PERIOD  FOR RSSI
+
     def get_avg_data_for_two_dates_rssi(self, no_of_devices, date1, date2, all_group, all_host):
+        """
+
+        @param no_of_devices:
+        @param date1:
+        @param date2:
+        @param all_group:
+        @param all_host:
+        @return:
+        """
         host_name = []
         ip_address = []
         grp_name = []
@@ -340,7 +388,7 @@ class Report_bll(object):
             make_list = lambda x: [
                 " - " if i == None or i == '' else str(i) for i in x]
             if all_group == '' and all_host == '':
-                while(d1 <= d2):
+                while (d1 <= d2):
                     flag = 0
                     date_temp = str(d1)[:10]
                     query = "Select date(go16.timestamp), hosts.host_name , hosts.ip_address , AVG(go16.sig_strength), go16.timeslot_index , hostgroups.hostgroup_name , go16.ssidentifier \
@@ -357,24 +405,25 @@ class Report_bll(object):
                     for k in range(0, len(signal_strength) - 1):
                         i = k
                         flag = 1
-                        if signal_strength[k][6] == '-1' or str(signal_strength[k][3]).strip() == '' or str(signal_strength[0][4]).strip() == '':
+                        if signal_strength[k][6] == '-1' or str(signal_strength[k][3]).strip() == '' or str(
+                                signal_strength[0][4]).strip() == '':
                             pass
-#			    grp_name.append(signal_strength[k][5])
-#			    host_name.append(signal_strength[k][1])
-#			    ip_address.append(signal_strength[k][2])
-#			    signal_interface1.append(0)
-#			    signal_interface2.append(0)
-#			    signal_interface3.append(0)
-#			    signal_interface4.append(0)
-#			    signal_interface5.append(0)
-#			    signal_interface6.append(0)
-#			    signal_interface7.append(0)
-#			    signal_interface8.append(0)
-# time_stamp_signal1.append(str((signal_strength[k][0]).strftime('%d-%m-%Y
-# %H:%M')))
+                        #			    grp_name.append(signal_strength[k][5])
+                        #			    host_name.append(signal_strength[k][1])
+                        #			    ip_address.append(signal_strength[k][2])
+                        #			    signal_interface1.append(0)
+                        #			    signal_interface2.append(0)
+                        #			    signal_interface3.append(0)
+                        #			    signal_interface4.append(0)
+                        #			    signal_interface5.append(0)
+                        #			    signal_interface6.append(0)
+                        #			    signal_interface7.append(0)
+                        #			    signal_interface8.append(0)
+                        # time_stamp_signal1.append(str((signal_strength[k][0]).strftime('%d-%m-%Y
+                        # %H:%M')))
                         else:
                             index = 1 if signal_strength[k][
-                                4] == '' else int(signal_strength[k][4])
+                                             4] == '' else int(signal_strength[k][4])
                             if signal_strength[k][0] == signal_strength[k + 1][0]:
                                 default_list[
                                     int(index) - 1] = int(signal_strength[k][3])
@@ -396,7 +445,8 @@ class Report_bll(object):
                                     (signal_strength[k][0]).strftime('%d-%m-%Y %H:%M')))
                                 default_list = [0, 0, 0, 0, 0, 0, 0, 0]
                     if len(signal_strength) > 0 and flag == 0:
-                        if signal_strength[0][6] == '-1' or str(signal_strength[0][3]).strip() == '' or str(signal_strength[0][4]).strip() == '':
+                        if signal_strength[0][6] == '-1' or str(signal_strength[0][3]).strip() == '' or str(
+                                signal_strength[0][4]).strip() == '':
                             grp_name.append(signal_strength[0][5])
                             host_name.append(signal_strength[0][1])
                             ip_address.append(signal_strength[0][2])
@@ -412,7 +462,7 @@ class Report_bll(object):
                                 str((signal_strength[0][0]).strftime('%d-%m-%Y %H:%M')))
                         else:
                             default_list[int(signal_strength[
-                                             0][4]) - 1] = int(signal_strength[0][3])
+                                0][4]) - 1] = int(signal_strength[0][3])
                             grp_name.append(signal_strength[0][5])
                             host_name.append(signal_strength[0][1])
                             ip_address.append(signal_strength[0][2])
@@ -428,7 +478,8 @@ class Report_bll(object):
                                 str((signal_strength[0][0]).strftime('%d-%m-%Y %H:%M')))
                             default_list = [0, 0, 0, 0, 0, 0, 0, 0]
                     if len(signal_strength) > 0 and flag == 1:
-                        if signal_strength[i + 1][6] == '-1' or str(signal_strength[i + 1][3]).strip() == '' or str(signal_strength[i + 1][4]).strip() == '':
+                        if signal_strength[i + 1][6] == '-1' or str(signal_strength[i + 1][3]).strip() == '' or str(
+                                signal_strength[i + 1][4]).strip() == '':
                             grp_name.append(signal_strength[i + 1][5])
                             host_name.append(signal_strength[i + 1][1])
                             ip_address.append(signal_strength[i + 1][2])
@@ -444,7 +495,7 @@ class Report_bll(object):
                                 (signal_strength[i + 1][0]).strftime('%d-%m-%Y %H:%M')))
                         else:
                             default_list[int(signal_strength[
-                                             i + 1][4]) - 1] = int(signal_strength[0][3])
+                                i + 1][4]) - 1] = int(signal_strength[0][3])
                             grp_name.append(signal_strength[i + 1][5])
                             host_name.append(signal_strength[i + 1][1])
                             ip_address.append(signal_strength[i + 1][2])
@@ -461,12 +512,14 @@ class Report_bll(object):
                             default_list = [0, 0, 0, 0, 0, 0, 0, 0]
                 for k in range(0, len(time_stamp_signal1)):
                     average_list.append(
-                        [time_stamp_signal1[k], host_name[k], ip_address[k], signal_interface1[k], signal_interface2[k], signal_interface3[k], signal_interface4[k],
-                         signal_interface5[k], signal_interface6[k], signal_interface7[k], signal_interface8[k], grp_name[k]])
+                        [time_stamp_signal1[k], host_name[k], ip_address[k], signal_interface1[k], signal_interface2[k],
+                         signal_interface3[k], signal_interface4[k],
+                         signal_interface5[k], signal_interface6[k], signal_interface7[k], signal_interface8[k],
+                         grp_name[k]])
             else:
                 host_data = str(
                     all_host.split(',')).replace('[', '(').replace(']', ')')
-                while(d1 <= d2):
+                while (d1 <= d2):
                     flag = 0
                     date_temp = str(d1)[:10]
                     query = "Select date(go16.timestamp), hosts.host_name , hosts.ip_address , AVG(go16.sig_strength), go16.timeslot_index,hostgroups.hostgroup_name,go16.ssidentifier \
@@ -475,7 +528,8 @@ class Report_bll(object):
 			       INNER JOIN hosts_hostgroups ON hosts_hostgroups.host_id = hosts.host_id\
 			       INNER JOIN hostgroups ON hostgroups.hostgroup_id = hosts_hostgroups.hostgroup_id\
 			       where go16.host_id=hosts.host_id and go16.timestamp between '%s 00:00:00' and '%s 23:59:59' and go16.sig_strength<>'-110' and go16.sig_strength<>'-111' \
-			       AND hosts.host_id IN %s group by go16.host_id,go16.timeslot_index " % (date_temp, date_temp, host_data)
+			       AND hosts.host_id IN %s group by go16.host_id,go16.timeslot_index " % (
+                    date_temp, date_temp, host_data)
                     cursor.execute(query)
                     signal_strength = cursor.fetchall()
                     d1 = d1 + timedelta(days=1)
@@ -483,24 +537,25 @@ class Report_bll(object):
                     for k in range(0, len(signal_strength) - 1):
                         i = k
                         flag = 1
-                        if signal_strength[k][6] == '-1' or str(signal_strength[k][3]).strip() == '' or str(signal_strength[0][4]).strip() == '':
+                        if signal_strength[k][6] == '-1' or str(signal_strength[k][3]).strip() == '' or str(
+                                signal_strength[0][4]).strip() == '':
                             pass
-#				    grp_name.append(signal_strength[k][5])
-#				    host_name.append(signal_strength[k][1])
-#				    ip_address.append(signal_strength[k][2])
-#				    signal_interface1.append(0)
-#				    signal_interface2.append(0)
-#				    signal_interface3.append(0)
-#				    signal_interface4.append(0)
-#				    signal_interface5.append(0)
-#				    signal_interface6.append(0)
-#				    signal_interface7.append(0)
-#				    signal_interface8.append(0)
-# time_stamp_signal1.append(str((signal_strength[k][0]).strftime('%d-%m-%Y
-# %H:%M')))
+                        #				    grp_name.append(signal_strength[k][5])
+                        #				    host_name.append(signal_strength[k][1])
+                        #				    ip_address.append(signal_strength[k][2])
+                        #				    signal_interface1.append(0)
+                        #				    signal_interface2.append(0)
+                        #				    signal_interface3.append(0)
+                        #				    signal_interface4.append(0)
+                        #				    signal_interface5.append(0)
+                        #				    signal_interface6.append(0)
+                        #				    signal_interface7.append(0)
+                        #				    signal_interface8.append(0)
+                        # time_stamp_signal1.append(str((signal_strength[k][0]).strftime('%d-%m-%Y
+                        # %H:%M')))
                         else:
                             index = 1 if signal_strength[k][
-                                4] == '' else int(signal_strength[k][4])
+                                             4] == '' else int(signal_strength[k][4])
                             if signal_strength[k][0] == signal_strength[k + 1][0]:
                                 default_list[
                                     int(index) - 1] = int(signal_strength[k][3])
@@ -522,7 +577,8 @@ class Report_bll(object):
                                     (signal_strength[k][0]).strftime('%d-%m-%Y %H:%M')))
                                 default_list = [0, 0, 0, 0, 0, 0, 0, 0]
                     if len(signal_strength) > 0 and flag == 0:
-                        if signal_strength[0][6] == '-1' or str(signal_strength[0][3]).strip() == '' or str(signal_strength[0][4]).strip() == '':
+                        if signal_strength[0][6] == '-1' or str(signal_strength[0][3]).strip() == '' or str(
+                                signal_strength[0][4]).strip() == '':
                             grp_name.append(signal_strength[0][5])
                             host_name.append(signal_strength[0][1])
                             ip_address.append(signal_strength[0][2])
@@ -538,7 +594,7 @@ class Report_bll(object):
                                 str((signal_strength[0][0]).strftime('%d-%m-%Y %H:%M')))
                         else:
                             default_list[int(signal_strength[
-                                             0][4]) - 1] = int(signal_strength[0][3])
+                                0][4]) - 1] = int(signal_strength[0][3])
                             grp_name.append(signal_strength[0][5])
                             host_name.append(signal_strength[0][1])
                             ip_address.append(signal_strength[0][2])
@@ -554,7 +610,8 @@ class Report_bll(object):
                                 str((signal_strength[0][0]).strftime('%d-%m-%Y %H:%M')))
                             default_list = [0, 0, 0, 0, 0, 0, 0, 0]
                     if len(signal_strength) > 0 and flag == 1:
-                        if signal_strength[i + 1][6] == '-1' or str(signal_strength[i + 1][3]).strip() == '' or str(signal_strength[i + 1][4]).strip() == '':
+                        if signal_strength[i + 1][6] == '-1' or str(signal_strength[i + 1][3]).strip() == '' or str(
+                                signal_strength[i + 1][4]).strip() == '':
                             grp_name.append(signal_strength[i + 1][5])
                             host_name.append(signal_strength[i + 1][1])
                             ip_address.append(signal_strength[i + 1][2])
@@ -570,7 +627,7 @@ class Report_bll(object):
                                 (signal_strength[i + 1][0]).strftime('%d-%m-%Y %H:%M')))
                         else:
                             default_list[int(signal_strength[
-                                             i + 1][4]) - 1] = int(signal_strength[0][3])
+                                i + 1][4]) - 1] = int(signal_strength[0][3])
                             grp_name.append(signal_strength[i + 1][5])
                             host_name.append(signal_strength[i + 1][1])
                             ip_address.append(signal_strength[i + 1][2])
@@ -587,8 +644,10 @@ class Report_bll(object):
                             default_list = [0, 0, 0, 0, 0, 0, 0, 0]
                 for k in range(0, len(time_stamp_signal1)):
                     average_list.append(
-                        [time_stamp_signal1[k], host_name[k], ip_address[k], signal_interface1[k], signal_interface2[k], signal_interface3[k], signal_interface4[k],
-                         signal_interface5[k], signal_interface6[k], signal_interface7[k], signal_interface8[k], grp_name[k]])
+                        [time_stamp_signal1[k], host_name[k], ip_address[k], signal_interface1[k], signal_interface2[k],
+                         signal_interface3[k], signal_interface4[k],
+                         signal_interface5[k], signal_interface6[k], signal_interface7[k], signal_interface8[k],
+                         grp_name[k]])
             result_dict = {}
             result_dict["success"] = 0
             result_dict["result"] = average_list
@@ -601,8 +660,20 @@ class Report_bll(object):
         finally:
             conn.close()
 
-# TOTAL DATA FOR A GIVEN DATE PERIOD FOR RSSI
+        # TOTAL DATA FOR A GIVEN DATE PERIOD FOR RSSI
+
     def get_total_data_for_two_dates_rssi(self, no_of_devices, date1, date2, time1, time2, all_group, all_host):
+        """
+
+        @param no_of_devices:
+        @param date1:
+        @param date2:
+        @param time1:
+        @param time2:
+        @param all_group:
+        @param all_host:
+        @return:
+        """
         flag = 1
         host_name = []
         ip_address = []
@@ -637,20 +708,21 @@ class Report_bll(object):
                     INNER JOIN hosts_hostgroups ON hosts_hostgroups.host_id = hst.host_id\
                     INNER JOIN hostgroups ON hostgroups.hostgroup_id = hosts_hostgroups.hostgroup_id\
                     where go16.timestamp between '%s' and '%s'\
-                    order by go16.timestamp asc,hst.host_name asc,go16.timeslot_index asc" % (no_of_devices, date_temp_1, date_temp_2)
+                    order by go16.timestamp asc,hst.host_name asc,go16.timeslot_index asc" % (
+                no_of_devices, date_temp_1, date_temp_2)
                 cursor.execute(query)
-#                total_result=cursor.fetchall()
-# 		sig_strength=3 , timeslot_index=4 , ssidentifier=6
+                #                total_result=cursor.fetchall()
+                # 		sig_strength=3 , timeslot_index=4 , ssidentifier=6
                 signal_strength = cursor.fetchall()
                 i = 0
                 for k in range(0, len(signal_strength) - 1):
                     i = k
                     flag = 1
-# if signal_strength[k][6]=='-1' or
-# str(signal_strength[k][3]).strip()=='-110' or
-# str(signal_strength[0][4]).strip()=='':
+                    # if signal_strength[k][6]=='-1' or
+                    # str(signal_strength[k][3]).strip()=='-110' or
+                    # str(signal_strength[0][4]).strip()=='':
                     if str(signal_strength[k][3]).strip() == '-110':
-#			    pass
+                    #			    pass
                         grp_name.append(signal_strength[k][5])
                         host_name.append(signal_strength[k][1])
                         ip_address.append(signal_strength[k][2])
@@ -665,7 +737,7 @@ class Report_bll(object):
                         time_stamp_signal1.append(
                             str((signal_strength[k][0]).strftime('%d-%m-%Y %H:%M')))
                     elif str(signal_strength[k][3]).strip() == '-111':
-#			    pass
+                    #			    pass
                         grp_name.append(signal_strength[k][5])
                         host_name.append(signal_strength[k][1])
                         ip_address.append(signal_strength[k][2])
@@ -681,8 +753,9 @@ class Report_bll(object):
                             str((signal_strength[k][0]).strftime('%d-%m-%Y %H:%M')))
                     else:
                         index = 1 if signal_strength[k][
-                            4] == '' else int(signal_strength[k][4])
-                        if signal_strength[k][0].strftime('%d-%m-%Y %H:%M') == signal_strength[k + 1][0].strftime('%d-%m-%Y %H:%M'):
+                                         4] == '' else int(signal_strength[k][4])
+                        if signal_strength[k][0].strftime('%d-%m-%Y %H:%M') == signal_strength[k + 1][0].strftime(
+                                '%d-%m-%Y %H:%M'):
                             default_list[int(
                                 index) - 1] = int(signal_strength[k][3])
                         else:
@@ -703,7 +776,8 @@ class Report_bll(object):
                                 str((signal_strength[k][0]).strftime('%d-%m-%Y %H:%M')))
                             default_list = [0, 0, 0, 0, 0, 0, 0, 0]
                 if len(signal_strength) > 0 and flag == 0:  # single entry flag!=-1
-                    if signal_strength[0][6] == '-1' or str(signal_strength[0][3]).strip() == '' or str(signal_strength[0][4]).strip() == '':
+                    if signal_strength[0][6] == '-1' or str(signal_strength[0][3]).strip() == '' or str(
+                            signal_strength[0][4]).strip() == '':
                         grp_name.append(signal_strength[0][5])
                         host_name.append(signal_strength[0][1])
                         ip_address.append(signal_strength[0][2])
@@ -735,7 +809,8 @@ class Report_bll(object):
                             str((signal_strength[0][0]).strftime('%d-%m-%Y %H:%M')))
                         default_list = [0, 0, 0, 0, 0, 0, 0, 0]
                 if len(signal_strength) > 0 and flag == 1:  # loop sey out , for last entry
-                    if signal_strength[i + 1][6] == '-1' or str(signal_strength[i + 1][3]).strip() == '' or str(signal_strength[i + 1][4]).strip() == '':
+                    if signal_strength[i + 1][6] == '-1' or str(signal_strength[i + 1][3]).strip() == '' or str(
+                            signal_strength[i + 1][4]).strip() == '':
                         grp_name.append(signal_strength[i + 1][5])
                         host_name.append(signal_strength[i + 1][1])
                         ip_address.append(signal_strength[i + 1][2])
@@ -751,7 +826,7 @@ class Report_bll(object):
                             str((signal_strength[i + 1][0]).strftime('%d-%m-%Y %H:%M')))
                     else:
                         default_list[int(signal_strength[
-                                         i + 1][4]) - 1] = int(signal_strength[0][3])
+                            i + 1][4]) - 1] = int(signal_strength[0][3])
                         grp_name.append(signal_strength[i + 1][5])
                         host_name.append(signal_strength[i + 1][1])
                         ip_address.append(signal_strength[i + 1][2])
@@ -766,11 +841,13 @@ class Report_bll(object):
                         time_stamp_signal1.append(
                             str((signal_strength[i + 1][0]).strftime('%d-%m-%Y %H:%M')))
                         default_list = [0, 0, 0, 0, 0, 0, 0, 0]
-                # make the RSSI 2'd list
+                    # make the RSSI 2'd list
                 for k in range(0, len(time_stamp_signal1)):
                     total_list.append(
-                        [time_stamp_signal1[k], host_name[k], ip_address[k], signal_interface1[k], signal_interface2[k], signal_interface3[k], signal_interface4[k],
-                         signal_interface5[k], signal_interface6[k], signal_interface7[k], signal_interface8[k], grp_name[k]])
+                        [time_stamp_signal1[k], host_name[k], ip_address[k], signal_interface1[k], signal_interface2[k],
+                         signal_interface3[k], signal_interface4[k],
+                         signal_interface5[k], signal_interface6[k], signal_interface7[k], signal_interface8[k],
+                         grp_name[k]])
             else:
                 host_data = str(
                     all_host.split(',')).replace('[', '(').replace(']', ')')
@@ -778,17 +855,18 @@ class Report_bll(object):
                 join ( select host_id,host_name,ip_address from hosts where device_type_id like 'ODU16%%' group by host_id) as hst ON go16.host_id=hst.host_id\
                 INNER JOIN hosts_hostgroups ON hosts_hostgroups.host_id = hst.host_id\
                 INNER JOIN hostgroups ON hostgroups.hostgroup_id = hosts_hostgroups.hostgroup_id\
-                where go16.timestamp between '%s' and '%s' AND hst.host_id IN %s order by go16.timestamp asc ,hst.host_name asc, go16.timeslot_index asc" % (date_temp_1, date_temp_2, host_data)
+                where go16.timestamp between '%s' and '%s' AND hst.host_id IN %s order by go16.timestamp asc ,hst.host_name asc, go16.timeslot_index asc" % (
+                date_temp_1, date_temp_2, host_data)
                 cursor.execute(query)
                 signal_strength = cursor.fetchall()
                 i = 0
                 for k in range(0, len(signal_strength) - 1):
                     i = k
                     flag = 1
-#			if signal_strength[k][6]=='-1' or str(signal_strength[k][3]).strip()=='' or str(signal_strength[0][4]).strip()=='':
-#			    pass
+                    #			if signal_strength[k][6]=='-1' or str(signal_strength[k][3]).strip()=='' or str(signal_strength[0][4]).strip()=='':
+                    #			    pass
                     if str(signal_strength[k][3]).strip() == '-110':
-#			    pass
+                    #			    pass
                         grp_name.append(signal_strength[k][5])
                         host_name.append(signal_strength[k][1])
                         ip_address.append(signal_strength[k][2])
@@ -803,7 +881,7 @@ class Report_bll(object):
                         time_stamp_signal1.append(
                             str((signal_strength[k][0]).strftime('%d-%m-%Y %H:%M')))
                     elif str(signal_strength[k][3]).strip() == '-111':
-#			    pass
+                    #			    pass
                         grp_name.append(signal_strength[k][5])
                         host_name.append(signal_strength[k][1])
                         ip_address.append(signal_strength[k][2])
@@ -817,22 +895,22 @@ class Report_bll(object):
                         signal_interface8.append("DEVICE WAS DISABLED")
                         time_stamp_signal1.append(
                             str((signal_strength[k][0]).strftime('%d-%m-%Y %H:%M')))
-#			    grp_name.append(signal_strength[k][5])
-#			    host_name.append(signal_strength[k][1])
-#			    ip_address.append(signal_strength[k][2])
-#			    signal_interface1.append(0)
-#			    signal_interface2.append(0)
-#			    signal_interface3.append(0)
-#			    signal_interface4.append(0)
-#			    signal_interface5.append(0)
-#			    signal_interface6.append(0)
-#			    signal_interface7.append(0)
-#			    signal_interface8.append(0)
-# time_stamp_signal1.append(str((signal_strength[k][0]).strftime('%d-%m-%Y
-# %H:%M')))
+                    #			    grp_name.append(signal_strength[k][5])
+                    #			    host_name.append(signal_strength[k][1])
+                    #			    ip_address.append(signal_strength[k][2])
+                    #			    signal_interface1.append(0)
+                    #			    signal_interface2.append(0)
+                    #			    signal_interface3.append(0)
+                    #			    signal_interface4.append(0)
+                    #			    signal_interface5.append(0)
+                    #			    signal_interface6.append(0)
+                    #			    signal_interface7.append(0)
+                    #			    signal_interface8.append(0)
+                    # time_stamp_signal1.append(str((signal_strength[k][0]).strftime('%d-%m-%Y
+                    # %H:%M')))
                     else:
                         index = 1 if signal_strength[k][
-                            4] == '' else int(signal_strength[k][4])
+                                         4] == '' else int(signal_strength[k][4])
                         if signal_strength[k][0] == signal_strength[k + 1][0]:
                             default_list[int(
                                 index) - 1] = int(signal_strength[k][3])
@@ -854,7 +932,8 @@ class Report_bll(object):
                                 str((signal_strength[k][0]).strftime('%d-%m-%Y %H:%M')))
                             default_list = [0, 0, 0, 0, 0, 0, 0, 0]
                 if len(signal_strength) > 0 and flag == 0:
-                    if signal_strength[0][6] == '-1' or str(signal_strength[0][3]).strip() == '' or str(signal_strength[0][4]).strip() == '':
+                    if signal_strength[0][6] == '-1' or str(signal_strength[0][3]).strip() == '' or str(
+                            signal_strength[0][4]).strip() == '':
                         grp_name.append(signal_strength[0][5])
                         host_name.append(signal_strength[0][1])
                         ip_address.append(signal_strength[0][2])
@@ -886,7 +965,8 @@ class Report_bll(object):
                             str((signal_strength[0][0]).strftime('%d-%m-%Y %H:%M')))
                         default_list = [0, 0, 0, 0, 0, 0, 0, 0]
                 if len(signal_strength) > 0 and flag == 1:
-                    if signal_strength[i + 1][6] == '-1' or str(signal_strength[i + 1][3]).strip() == '' or str(signal_strength[i + 1][4]).strip() == '':
+                    if signal_strength[i + 1][6] == '-1' or str(signal_strength[i + 1][3]).strip() == '' or str(
+                            signal_strength[i + 1][4]).strip() == '':
                         grp_name.append(signal_strength[i + 1][5])
                         host_name.append(signal_strength[i + 1][1])
                         ip_address.append(signal_strength[i + 1][2])
@@ -902,7 +982,7 @@ class Report_bll(object):
                             str((signal_strength[i + 1][0]).strftime('%d-%m-%Y %H:%M')))
                     else:
                         default_list[int(signal_strength[
-                                         i + 1][4]) - 1] = int(signal_strength[0][3])
+                            i + 1][4]) - 1] = int(signal_strength[0][3])
                         grp_name.append(signal_strength[i + 1][5])
                         host_name.append(signal_strength[i + 1][1])
                         ip_address.append(signal_strength[i + 1][2])
@@ -917,11 +997,13 @@ class Report_bll(object):
                         time_stamp_signal1.append(
                             str((signal_strength[i + 1][0]).strftime('%d-%m-%Y %H:%M')))
                         default_list = [0, 0, 0, 0, 0, 0, 0, 0]
-                # make the RSSI 2'd list
+                    # make the RSSI 2'd list
                 for k in range(0, len(time_stamp_signal1)):
                     total_list.append(
-                        [time_stamp_signal1[k], host_name[k], ip_address[k], signal_interface1[k], signal_interface2[k], signal_interface3[k], signal_interface4[k],
-                         signal_interface5[k], signal_interface6[k], signal_interface7[k], signal_interface8[k], grp_name[k]])
+                        [time_stamp_signal1[k], host_name[k], ip_address[k], signal_interface1[k], signal_interface2[k],
+                         signal_interface3[k], signal_interface4[k],
+                         signal_interface5[k], signal_interface6[k], signal_interface7[k], signal_interface8[k],
+                         grp_name[k]])
 
             result_dict = {}
             result_dict["success"] = 0
@@ -935,8 +1017,20 @@ class Report_bll(object):
         finally:
             conn.close()
 
-# TOTAL DATA FOR A GIVEN DATE PERIOD FOR NETWORK USAGE
+        # TOTAL DATA FOR A GIVEN DATE PERIOD FOR NETWORK USAGE
+
     def get_total_data_network_usage(self, no_of_devices, date1, date2, time1, time2, all_group, all_host):
+        """
+
+        @param no_of_devices:
+        @param date1:
+        @param date2:
+        @param time1:
+        @param time2:
+        @param all_group:
+        @param all_host:
+        @return:
+        """
         try:
             conn = MySQLdb.connect(*SystemConfig.get_mysql_credentials())
             cursor = conn.cursor()
@@ -956,10 +1050,11 @@ class Report_bll(object):
             result_dict["success"] = 0
             result_dict["result"] = tr
             if all_group == '' and all_host == '':
-                query = "SELECT  go16.index,go16.timestamp,hosts.host_name,hosts.ip_address,go16.rx_bytes,go16.tx_bytes,hostgroups.hostgroup_name FROM get_odu16_nw_interface_statistics_table AS 				go16 JOIN (SELECT host_id, host_name,ip_address FROM hosts WHERE device_type_id LIKE 'ODU16%%' GROUP BY host_id limit %s) AS hosts INNER JOIN hosts_hostgroups ON hosts_hostgroups.host_id = hosts.host_id INNER JOIN hostgroups ON hostgroups.hostgroup_id = hosts_hostgroups.hostgroup_id WHERE go16.host_id = hosts.host_id and go16.timestamp between '%s' and '%s' order by go16.timestamp asc , go16.index asc" % (no_of_devices, date_temp1, date_temp2)
+                query = "SELECT  go16.index,go16.timestamp,hosts.host_name,hosts.ip_address,go16.rx_bytes,go16.tx_bytes,hostgroups.hostgroup_name FROM get_odu16_nw_interface_statistics_table AS 				go16 JOIN (SELECT host_id, host_name,ip_address FROM hosts WHERE device_type_id LIKE 'ODU16%%' GROUP BY host_id limit %s) AS hosts INNER JOIN hosts_hostgroups ON hosts_hostgroups.host_id = hosts.host_id INNER JOIN hostgroups ON hostgroups.hostgroup_id = hosts_hostgroups.hostgroup_id WHERE go16.host_id = hosts.host_id and go16.timestamp between '%s' and '%s' order by go16.timestamp asc , go16.index asc" % (
+                no_of_devices, date_temp1, date_temp2)
                 cursor.execute(query)
                 res = cursor.fetchall()
-                if(len(res) == 0):
+                if (len(res) == 0):
                     return result_dict
                 while i < (len(res)):
                     ls.append(str(res[i][1]))
@@ -970,7 +1065,7 @@ class Report_bll(object):
                     if j > len(res):
                         break
                     while i < j:
-                        if(i < 3):
+                        if (i < 3):
                             if str(res[i][4]) == "123456789":
                                 ls.append("DEVICE WAS OFF")
                                 ls.append("DEVICE WAS OFF")
@@ -1000,9 +1095,9 @@ class Report_bll(object):
                                 var3 = float(res[i][5])
                                 var4 = float(res[i - 3][5])
                                 temp2 = var3 - var4
-                            if(temp1 < 0):
+                            if (temp1 < 0):
                                 temp1 = 0
-                            if(temp2) < 0:
+                            if (temp2) < 0:
                                 temp2 = 0
                             ls.append(str(temp1))
                             ls.append(str(temp2))
@@ -1017,7 +1112,7 @@ class Report_bll(object):
                     date_temp1, date_temp2, host_data)
                 cursor.execute(query)
                 res = cursor.fetchall()
-                if(len(res) == 0):
+                if (len(res) == 0):
                     return result_dict
 
                 while i < (len(res)):
@@ -1029,7 +1124,7 @@ class Report_bll(object):
                     if j > len(res):
                         break
                     while i < j:
-                        if(i < 3):
+                        if (i < 3):
                             if str(res[i][4]) == "123456789":
                                 ls.append("DEVICE WAS OFF")
                                 ls.append("DEVICE WAS OFF")
@@ -1059,9 +1154,9 @@ class Report_bll(object):
                                 var3 = float(res[i][5])
                                 var4 = float(res[i - 3][5])
                                 temp2 = var3 - var4
-                            if(temp1 < 0):
+                            if (temp1 < 0):
                                 temp1 = 0
-                            if(temp2) < 0:
+                            if (temp2) < 0:
                                 temp2 = 0
                             ls.append(str(temp1))
                             ls.append(str(temp2))
@@ -1082,8 +1177,20 @@ class Report_bll(object):
         finally:
             conn.close()
 
-# TOTAL DATA FOR A GIVEN DATE PERIOD FOR NETWORK OUTAGE
+        # TOTAL DATA FOR A GIVEN DATE PERIOD FOR NETWORK OUTAGE
+
     def get_total_data_network_outage(self, no_of_devices, date1, date2, time1, time2, all_group, all_host):
+        """
+
+        @param no_of_devices:
+        @param date1:
+        @param date2:
+        @param time1:
+        @param time2:
+        @param all_group:
+        @param all_host:
+        @return:
+        """
         try:
             main_res = get_outage(no_of_devices, date1, date2,
                                   time1, time2, all_group, all_host)
@@ -1126,13 +1233,15 @@ class Report_bll(object):
 				SELECT host_object_id \
 				FROM nagios_hosts \
 				GROUP BY host_object_id) AS host \
-				WHERE nagios_statehistory.object_id = host.host_object_id and state_time between '%s' and '%s' group by object_id " % (date_temp1, date_temp2)
+				WHERE nagios_statehistory.object_id = host.host_object_id and state_time between '%s' and '%s' group by object_id " % (
+                date_temp1, date_temp2)
                 query3 = "SELECT nagios_hoststatus.host_object_id FROM nagios_hoststatus JOIN ( \
 				SELECT host_object_id \
 				FROM nagios_hosts  \
 				GROUP BY host_object_id ) AS \
 				host \
-				WHERE nagios_hoststatus.host_object_id = host.host_object_id and  status_update_time between '%s' and '%s' GROUP BY nagios_hoststatus.host_object_id" % (date_temp1, date_temp2)
+				WHERE nagios_hoststatus.host_object_id = host.host_object_id and  status_update_time between '%s' and '%s' GROUP BY nagios_hoststatus.host_object_id" % (
+                date_temp1, date_temp2)
                 cursor.execute(query1)
                 r1 = cursor.fetchall()
                 cursor.execute(query2)
@@ -1152,22 +1261,23 @@ class Report_bll(object):
 				INNER JOIN hosts ON hosts.ip_address = host.address\
 				INNER JOIN hosts_hostgroups ON hosts_hostgroups.host_id = hosts.host_id\
 				INNER JOIN hostgroups ON hostgroups.hostgroup_id = hosts_hostgroups.hostgroup_id\
-				WHERE nagstat.host_object_id = host.host_object_id and  status_update_time between '%s' and '%s' GROUP BY nagstat.host_object_id " % (str(r1[i])[1:-3], no_of_devices, date_temp1, date_temp2)
+				WHERE nagstat.host_object_id = host.host_object_id and  status_update_time between '%s' and '%s' GROUP BY nagstat.host_object_id " % (
+                            str(r1[i])[1:-3], no_of_devices, date_temp1, date_temp2)
                             cursor.execute(query4)
                             res2 = cursor.fetchall()
-                            if(len(res2) == 0):
+                            if (len(res2) == 0):
                                 continue
                             tmp = str(res2[0][0])[:-3]
                             d1 = datetime.strptime(tmp, "%Y-%m-%d %H:%M")
-                            while(d1 < d2):
+                            while (d1 < d2):
                                 hstgroup = str(res2[0][4])
                                 ls.append(str(d1)[:-9])
                                 ls.append(str(res2[0][2]))
                                 ls.append(str(res2[0][3]))
-                                if(str(res2[0][1])) == '0':
+                                if (str(res2[0][1])) == '0':
                                     uptime_perc = "100.00"
                                     downtime_perc = "0.00"
-                                elif(str(res2[0][1])) == '1':
+                                elif (str(res2[0][1])) == '1':
                                     downtime_perc = "100.00"
                                     uptime_perc = "0.00"
                                 else:
@@ -1188,10 +1298,11 @@ class Report_bll(object):
 				INNER JOIN hosts ON hosts.ip_address = host.address \
 				INNER JOIN hosts_hostgroups ON hosts_hostgroups.host_id = hosts.host_id \
 				INNER JOIN hostgroups ON hostgroups.hostgroup_id = hosts_hostgroups.hostgroup_id \
-				WHERE nagstat.object_id = host.host_object_id and nagstat.state_time between '%s' and '%s' order by host.alias asc,nagstat.state_time asc " % (no_of_devices, date_temp1, date_temp2)
+				WHERE nagstat.object_id = host.host_object_id and nagstat.state_time between '%s' and '%s' order by host.alias asc,nagstat.state_time asc " % (
+                no_of_devices, date_temp1, date_temp2)
                 cursor.execute(query)
                 res = cursor.fetchall()
-                if(len(res) == 0):
+                if (len(res) == 0):
                     # return []
                     result_dict["result"] = []
                     return result_dict
@@ -1204,7 +1315,7 @@ class Report_bll(object):
                     ls.append(str(res[i][0])[:10])
                     ls.append(str(res[i][2]))
                     ls.append(str(res[i][3]))
-                    while(host == str(res[i][2]) and i < length):
+                    while (host == str(res[i][2]) and i < length):
                         time1 = str(res[i][0])
                         time2 = str(res[i + 1][0])
                         uptime = 0
@@ -1213,13 +1324,13 @@ class Report_bll(object):
                         m1 = int(time1[14:16])
                         sec1 = int(time1[17:])
                         time_diff = float((h1) * 3600 + (m1) * 60 + (sec1))
-                        if(i != 0):
-                            if(last == "0"):
+                        if (i != 0):
+                            if (last == "0"):
                                 uptime += time_diff
                             else:
                                 downtime += time_diff
                         s1 = str(res[i][1])
-                        while((time1[:10]) == (time2[:10]) and (i < length - 1) and host == str(res[i][2])):
+                        while ((time1[:10]) == (time2[:10]) and (i < length - 1) and host == str(res[i][2])):
                             h1 = int(time1[11:13])
                             h2 = int(time2[11:13])
                             m1 = int(time1[14:16])
@@ -1232,7 +1343,7 @@ class Report_bll(object):
                                 (h2 - h1) * 3600 + (m2 - m1) * 60 + (sec2 - sec1))
                             s1 = str(res[i][1])
                             s2 = str(res[i + 1][1])
-                            if(s1 == '0'):
+                            if (s1 == '0'):
                                 uptime += time_diff
                             else:
                                 downtime += time_diff
@@ -1242,8 +1353,8 @@ class Report_bll(object):
 
                         last = str(res[i][1])
                         i = i + 1
-                        if(time1[:10] != time2[:10]):
-                            if(cday != time1[:10]):
+                        if (time1[:10] != time2[:10]):
+                            if (cday != time1[:10]):
                                 h1 = int(time1[11:13])
                                 m1 = int(time1[14:16])
                                 sec1 = int(time1[17:])
@@ -1253,7 +1364,7 @@ class Report_bll(object):
                             else:
                                 time_diff = float((chour - h1) * 3600 + (
                                     cminute - m1) * 60 + (csecond - sec1))
-                            if(s1 == '0'):
+                            if (s1 == '0'):
                                 uptime += time_diff
                             else:
                                 downtime += time_diff
@@ -1263,20 +1374,20 @@ class Report_bll(object):
                             m1 = int(time1[14:16])
                             sec1 = int(time1[17:])
                             time_diff = float((
-                                chour - h1) * 3600 + (cminute - m1) * 60 + (csecond - sec1))
-                            if(s1 == '0'):
+                                                  chour - h1) * 3600 + (cminute - m1) * 60 + (csecond - sec1))
+                            if (s1 == '0'):
                                 uptime += time_diff
                             else:
                                 downtime += time_diff
-                        if(uptime == 0 and downtime == 0):
+                        if (uptime == 0 and downtime == 0):
                             uptime_perc = 0
                             downtime_perc = 0
                         else:
                             uptime_perc = (
                                 100 * (uptime) / (uptime + downtime))
-                            if(uptime_perc < 0):
+                            if (uptime_perc < 0):
                                 uptime_perc = 0.0
-                            elif(uptime_perc > 100):
+                            elif (uptime_perc > 100):
                                 uptime_perc = 100.0
                             downtime_perc = 100 - uptime_perc
                         ls.append(
@@ -1286,7 +1397,7 @@ class Report_bll(object):
                         ls.append(hstgroup)
                         tr.append(ls)
                         ls = []
-                        if(host != str(res[i][2])):
+                        if (host != str(res[i][2])):
                             last = "3"
                         break
             else:
@@ -1297,13 +1408,15 @@ class Report_bll(object):
 				SELECT host_object_id \
 				FROM nagios_hosts  \
 				GROUP BY host_object_id) AS host \
-				WHERE nagios_statehistory.object_id = host.host_object_id and state_time between '%s' and '%s' group by object_id " % (date_temp1, date_temp2)
+				WHERE nagios_statehistory.object_id = host.host_object_id and state_time between '%s' and '%s' group by object_id " % (
+                date_temp1, date_temp2)
                 query3 = "SELECT nagios_hoststatus.host_object_id FROM nagios_hoststatus JOIN ( \
 				SELECT host_object_id \
 				FROM nagios_hosts  \
 				GROUP BY host_object_id ) AS \
 				host \
-				WHERE nagios_hoststatus.host_object_id = host.host_object_id and  status_update_time between '%s' and '%s' GROUP BY nagios_hoststatus.host_object_id" % (date_temp1, date_temp2)
+				WHERE nagios_hoststatus.host_object_id = host.host_object_id and  status_update_time between '%s' and '%s' GROUP BY nagios_hoststatus.host_object_id" % (
+                date_temp1, date_temp2)
                 cursor.execute(query1)
                 r1 = cursor.fetchall()
                 cursor.execute(query2)
@@ -1323,22 +1436,23 @@ class Report_bll(object):
 				INNER JOIN hosts ON hosts.ip_address = host.address\
 				INNER JOIN hosts_hostgroups ON hosts_hostgroups.host_id = hosts.host_id\
 				INNER JOIN hostgroups ON hostgroups.hostgroup_id = hosts_hostgroups.hostgroup_id\
-				WHERE nagstat.host_object_id = host.host_object_id and  status_update_time between '%s' and '%s' AND hosts.host_id IN %s GROUP BY nagstat.host_object_id " % (str(i), date_temp1, date_temp2, host_data)
+				WHERE nagstat.host_object_id = host.host_object_id and  status_update_time between '%s' and '%s' AND hosts.host_id IN %s GROUP BY nagstat.host_object_id " % (
+                            str(i), date_temp1, date_temp2, host_data)
                             cursor.execute(query4)
                             res2 = cursor.fetchall()
-                            if(len(res2) == 0):
+                            if (len(res2) == 0):
                                 continue
                             tmp = str(res2[0][0])[:-3]
                             d1 = datetime.strptime(tmp, "%Y-%m-%d %H:%M")
-                            while(d1 < d2):
+                            while (d1 < d2):
                                 hstgroup = res2[0][4]
                                 ls.append(str(d1)[:-9])
                                 ls.append(str(res2[0][2]))
                                 ls.append(str(res2[0][3]))
-                                if(str(res2[0][1])) == '0':
+                                if (str(res2[0][1])) == '0':
                                     uptime_perc = "100.00"
                                     downtime_perc = "0.00"
-                                elif(str(res2[0][1])) == '1':
+                                elif (str(res2[0][1])) == '1':
                                     downtime_perc = "100.00"
                                     uptime_perc = "0.00"
                                 else:
@@ -1359,10 +1473,11 @@ class Report_bll(object):
 				INNER JOIN hosts ON hosts.ip_address = host.address\
 				INNER JOIN hosts_hostgroups ON hosts_hostgroups.host_id = hosts.host_id\
 				INNER JOIN hostgroups ON hostgroups.hostgroup_id = hosts_hostgroups.hostgroup_id\
-				WHERE nagstat.object_id = host.host_object_id and nagstat.state_time between '%s' and '%s' AND hosts.host_id IN %s order by host.alias asc,nagstat.state_time asc " % (date_temp1, date_temp2, host_data)
+				WHERE nagstat.object_id = host.host_object_id and nagstat.state_time between '%s' and '%s' AND hosts.host_id IN %s order by host.alias asc,nagstat.state_time asc " % (
+                date_temp1, date_temp2, host_data)
                 cursor.execute(query)
                 res = cursor.fetchall()
-                if(len(res) == 0):
+                if (len(res) == 0):
                     # return []
                     result_dict["result"] = []
                     return result_dict
@@ -1375,7 +1490,7 @@ class Report_bll(object):
                     ls.append(str(res[i][0])[:10])
                     ls.append(str(res[i][2]))
                     ls.append(str(res[i][3]))
-                    while(host == str(res[i][2]) and i < length):
+                    while (host == str(res[i][2]) and i < length):
                         time1 = str(res[i][0])
                         time2 = str(res[i + 1][0])
                         uptime = 0
@@ -1384,13 +1499,13 @@ class Report_bll(object):
                         m1 = int(time1[14:16])
                         sec1 = int(time1[17:])
                         time_diff = float((h1) * 3600 + (m1) * 60 + (sec1))
-                        if(i != 0):
-                            if(last == "0"):
+                        if (i != 0):
+                            if (last == "0"):
                                 uptime += time_diff
                             else:
                                 downtime += time_diff
                         s1 = str(res[i][1])
-                        while((time1[:10]) == (time2[:10]) and (i < length - 1) and host == str(res[i][2])):
+                        while ((time1[:10]) == (time2[:10]) and (i < length - 1) and host == str(res[i][2])):
                             h1 = int(time1[11:13])
                             h2 = int(time2[11:13])
                             m1 = int(time1[14:16])
@@ -1403,7 +1518,7 @@ class Report_bll(object):
                                 (h2 - h1) * 3600 + (m2 - m1) * 60 + (sec2 - sec1))
                             s1 = str(res[i][1])
                             s2 = str(res[i + 1][1])
-                            if(s1 == '0'):
+                            if (s1 == '0'):
                                 uptime += time_diff
                             else:
                                 downtime += time_diff
@@ -1413,8 +1528,8 @@ class Report_bll(object):
 
                         last = str(res[i][1])
                         i = i + 1
-                        if(time1[:10] != time2[:10]):
-                            if(cday != time1[:10]):
+                        if (time1[:10] != time2[:10]):
+                            if (cday != time1[:10]):
                                 h1 = int(time1[11:13])
                                 m1 = int(time1[14:16])
                                 sec1 = int(time1[17:])
@@ -1424,7 +1539,7 @@ class Report_bll(object):
                             else:
                                 time_diff = float((chour - h1) * 3600 + (
                                     cminute - m1) * 60 + (csecond - sec1))
-                            if(s1 == '0'):
+                            if (s1 == '0'):
                                 uptime += time_diff
                             else:
                                 downtime += time_diff
@@ -1434,20 +1549,20 @@ class Report_bll(object):
                             m1 = int(time1[14:16])
                             sec1 = int(time1[17:])
                             time_diff = float((
-                                chour - h1) * 3600 + (cminute - m1) * 60 + (csecond - sec1))
-                            if(s1 == '0'):
+                                                  chour - h1) * 3600 + (cminute - m1) * 60 + (csecond - sec1))
+                            if (s1 == '0'):
                                 uptime += time_diff
                             else:
                                 downtime += time_diff
-                        if(uptime == 0 and downtime == 0):
+                        if (uptime == 0 and downtime == 0):
                             uptime_perc = 0
                             downtime_perc = 0
                         else:
                             uptime_perc = (
                                 100 * (uptime) / (uptime + downtime))
-                            if(uptime_perc < 0):
+                            if (uptime_perc < 0):
                                 uptime_perc = 0.0
-                            elif(uptime_perc > 100):
+                            elif (uptime_perc > 100):
                                 uptime_perc = 100.0
                             downtime_perc = 100 - uptime_perc
                         ls.append(
@@ -1457,7 +1572,7 @@ class Report_bll(object):
                         ls.append(hstgroup)
                         tr.append(ls)
                         ls = []
-                        if(host != str(res[i][2])):
+                        if (host != str(res[i][2])):
                             last = "3"
                         break
 
@@ -1471,19 +1586,25 @@ class Report_bll(object):
 
     # reporting create fucntionaltiy started from here.
     def crc_excel_creating(self, crc_avg, crc_total):
+        """
+
+        @param crc_avg:
+        @param crc_total:
+        @return:
+        """
         nms_instance = __file__.split(
             "/")[3]       # it gives instance name of nagios system
         try:
             flag = 0
-            if(crc_avg["success"] == 1):
+            if (crc_avg["success"] == 1):
                 return crc_avg["result"]
-            if(crc_total["success"] == 1):
+            if (crc_total["success"] == 1):
                 return crc_total["result"]
             crc_avg = crc_avg["result"]
             crc_total = crc_total["result"]
             if len(crc_total) == 0:
                 return 1
-            xls_book = Workbook(encoding='ascii')
+            xls_book = xlwt.Workbook(encoding='ascii')
             # styling part start of excel file.
             style = xlwt.XFStyle()  # Create Style
             borders = xlwt.Borders()  # Create Borders
@@ -1499,23 +1620,23 @@ class Report_bll(object):
             pattern = xlwt.Pattern()  # Create the Pattern
             pattern.pattern = xlwt.Pattern.SOLID_PATTERN  # May be: NO_PATTERN, SOLID_PATTERN, or 0x00 through 0x12
             pattern.pattern_fore_colour = 16
-        # May be: 8 through 63. 0 = Black, 1 = White, 2 = Red, 3 = Green, 4 =
-        # Blue, 5 = Yellow, 6 = Magenta, 7 = Cyan, 16 = Maroon, 17 = Dark
-        # Green, 18 = Dark Blue, 19 = Dark Yellow , almost brown), 20 = Dark
-        # Magenta, 21 = Teal, 22 = Light Gray, 23 = Dark Gray, the list goes
-        # on...
+            # May be: 8 through 63. 0 = Black, 1 = White, 2 = Red, 3 = Green, 4 =
+            # Blue, 5 = Yellow, 6 = Magenta, 7 = Cyan, 16 = Maroon, 17 = Dark
+            # Green, 18 = Dark Blue, 19 = Dark Yellow , almost brown), 20 = Dark
+            # Magenta, 21 = Teal, 22 = Light Gray, 23 = Dark Gray, the list goes
+            # on...
             style.pattern = pattern  # Add Pattern to Style
 
             font = xlwt.Font()  # Create Font
             font.bold = True  # Set font to Bold
-#	    style = xlwt.XFStyle() # Create Style
+            #	    style = xlwt.XFStyle() # Create Style
             font.colour_index = 0x09
             style.font = font  # Add Bold Font to Style
 
             alignment = xlwt.Alignment()  # Create Alignment
             alignment.horz = xlwt.Alignment.HORZ_CENTER  # May be: HORZ_GENERAL, HORZ_LEFT, HORZ_CENTER, HORZ_RIGHT, HORZ_FILLED, HORZ_JUSTIFIED, HORZ_CENTER_ACROSS_SEL, HORZ_DISTRIBUTED
             alignment.vert = xlwt.Alignment.VERT_CENTER  # May be: VERT_TOP, VERT_CENTER, VERT_BOTTOM, VERT_JUSTIFIED, VERT_DISTRIBUTED
-#	    style = xlwt.XFStyle() # Create Style
+            #	    style = xlwt.XFStyle() # Create Style
             style.alignment = alignment  # Add Alignment to Style
 
             style1 = xlwt.XFStyle()  # Create Style
@@ -1524,23 +1645,23 @@ class Report_bll(object):
             alignment.vert = xlwt.Alignment.VERT_CENTER
             style1.alignment = alignment  # Add Alignment to Style
 
-#           pattern = xlwt.Pattern() # Create the Pattern
-#            pattern.pattern = xlwt.Pattern.SOLID_PATTERN # May be: NO_PATTERN, SOLID_PATTERN, or 0x00 through 0x12
-#            pattern.pattern_fore_colour= 0x0A
-                # May be: 8 through 63. 0 = Black, 1 = White, 2 = Red, 3 = Green, 4 = Blue, 5 = Yellow, 6 = Magenta, 7 = Cyan, 16 = Maroon, 17 = Dark Green, 18 = Dark Blue, 19 = Dark Yellow , almost 			brown), 20 = Dark Magenta, 21 = Teal, 22 = Light Gray, 23 = Dark Gray, the list goes on...
-#            style1.pattern = pattern # Add Pattern to Style
+            #           pattern = xlwt.Pattern() # Create the Pattern
+            #            pattern.pattern = xlwt.Pattern.SOLID_PATTERN # May be: NO_PATTERN, SOLID_PATTERN, or 0x00 through 0x12
+            #            pattern.pattern_fore_colour= 0x0A
+            # May be: 8 through 63. 0 = Black, 1 = White, 2 = Red, 3 = Green, 4 = Blue, 5 = Yellow, 6 = Magenta, 7 = Cyan, 16 = Maroon, 17 = Dark Green, 18 = Dark Blue, 19 = Dark Yellow , almost 			brown), 20 = Dark Magenta, 21 = Teal, 22 = Light Gray, 23 = Dark Gray, the list goes on...
+            #            style1.pattern = pattern # Add Pattern to Style
 
             # create another style for header
-#	    font = xlwt.Font() # Create Font
+            #	    font = xlwt.Font() # Create Font
             # font.family = xlwt.Font.FAMILY_ROMAN
-#	    font.bold = True # Set font to Bold
-#	    font.colour_index = 0x09
-#	    font.get_biff_record = ?
-#	    font.height = 0x00C8 # C8 in Hex (in decimal) = 10 points in height.
-#	    font.name = 'Arial'
-#	    font.outline = ?
-#	    font.shadow = True
-#	    style1.font = font # Add Bold Font to Style
+            #	    font.bold = True # Set font to Bold
+            #	    font.colour_index = 0x09
+            #	    font.get_biff_record = ?
+            #	    font.height = 0x00C8 # C8 in Hex (in decimal) = 10 points in height.
+            #	    font.name = 'Arial'
+            #	    font.outline = ?
+            #	    font.shadow = True
+            #	    style1.font = font # Add Bold Font to Style
 
             # -----------   End of style ---------#
             # average crc and phy error creation start.
@@ -1557,14 +1678,15 @@ class Report_bll(object):
                     xls_sheet.write_merge(
                         1, 1, 0, 4, "%s(Group Name)" % (crc_avg[k][5]), style)
                     xls_sheet.write_merge(2, 2, 0, 4, "")
-#		    xls_sheet.write(3,0,"Date",style1)
-#		    xls_sheet.write(3,1,"Hostname",style1)
-#		    xls_sheet.write(3,2,"No. of phy error",style1)
-#		    xls_sheet.write(3,3,"No. of crc error",style1)
+                    #		    xls_sheet.write(3,0,"Date",style1)
+                    #		    xls_sheet.write(3,1,"Hostname",style1)
+                    #		    xls_sheet.write(3,2,"No. of phy error",style1)
+                    #		    xls_sheet.write(3,3,"No. of crc error",style1)
                     i = 4
-# heading_xf = xlwt.easyxf('font: bold on; align: wrap on, vert centre,
-# horiz center,color grey25')
-                    heading_xf = xlwt.easyxf('font: bold on; align: wrap on, vert centre, horiz center;pattern: pattern solid, fore_colour light_green;')
+                    # heading_xf = xlwt.easyxf('font: bold on; align: wrap on, vert centre,
+                    # horiz center,color grey25')
+                    heading_xf = xlwt.easyxf(
+                        'font: bold on; align: wrap on, vert centre, horiz center;pattern: pattern solid, fore_colour light_green;')
                     headings = ['Data', 'Hostname',
                                 'IP Address', 'No. of phy error', 'No. of crc error']
 
@@ -1646,7 +1768,8 @@ class Report_bll(object):
                         1, 1, 0, 4, "%s(Group Name)" % (crc_total[k][5]), style)
                     xls_sheet.write_merge(2, 2, 0, 4, "")
                     i = 4
-                    heading_xf = xlwt.easyxf('font: bold on; align: wrap on, vert centre, horiz center;pattern: pattern solid, fore_colour light_green;')
+                    heading_xf = xlwt.easyxf(
+                        'font: bold on; align: wrap on, vert centre, horiz center;pattern: pattern solid, fore_colour light_green;')
                     headings = ['Data', 'Hostname',
                                 'IP Address', 'No. of phy error', 'No. of crc error']
 
@@ -1719,16 +1842,21 @@ class Report_bll(object):
             return str(e)
 
     def nw_bandwith_excel_creating(self, nw_total):
+        """
+
+        @param nw_total:
+        @return:
+        """
         nms_instance = __file__.split(
             "/")[3]       # it gives instance name of nagios system
         try:
             flag = 0
-            if(nw_total["success"] == 1):
+            if (nw_total["success"] == 1):
                 return nw_total["result"]
             nw_total = nw_total["result"]
             if len(nw_total) == 0:
                 return 1
-            xls_book = Workbook(encoding='ascii')
+            xls_book = xlwt.Workbook(encoding='ascii')
             # styling part start of excel file.
             style = xlwt.XFStyle()  # Create Style
             borders = xlwt.Borders()  # Create Borders
@@ -1744,11 +1872,11 @@ class Report_bll(object):
             pattern = xlwt.Pattern()  # Create the Pattern
             pattern.pattern = xlwt.Pattern.SOLID_PATTERN  # May be: NO_PATTERN, SOLID_PATTERN, or 0x00 through 0x12
             pattern.pattern_fore_colour = 16
-                # May be: 8 through 63. 0 = Black, 1 = White, 2 = Red, 3 =
-                # Green, 4 = Blue, 5 = Yellow, 6 = Magenta, 7 = Cyan, 16 =
-                # Maroon, 17 = Dark Green, 18 = Dark Blue, 19 = Dark Yellow ,
-                # almost brown), 20 = Dark Magenta, 21 = Teal, 22 = Light Gray,
-                # 23 = Dark Gray, the list goes on...
+            # May be: 8 through 63. 0 = Black, 1 = White, 2 = Red, 3 =
+            # Green, 4 = Blue, 5 = Yellow, 6 = Magenta, 7 = Cyan, 16 =
+            # Maroon, 17 = Dark Green, 18 = Dark Blue, 19 = Dark Yellow ,
+            # almost brown), 20 = Dark Magenta, 21 = Teal, 22 = Light Gray,
+            # 23 = Dark Gray, the list goes on...
             style.pattern = pattern  # Add Pattern to Style
             font = xlwt.Font()  # Create Font
             font.bold = True  # Set font to Bold
@@ -1781,14 +1909,15 @@ class Report_bll(object):
                     xls_sheet.write_merge(
                         1, 1, 0, 8, "%s(Group Name)" % (nw_total[k][9]), style)
                     xls_sheet.write_merge(2, 2, 0, 8, "")
-#		    xls_sheet.write(3,0,"Date",style1)
-#		    xls_sheet.write(3,1,"Hostname",style1)
-#		    xls_sheet.write(3,2,"No. of phy error",style1)
-#		    xls_sheet.write(3,3,"No. of crc error",style1)
+                    #		    xls_sheet.write(3,0,"Date",style1)
+                    #		    xls_sheet.write(3,1,"Hostname",style1)
+                    #		    xls_sheet.write(3,2,"No. of phy error",style1)
+                    #		    xls_sheet.write(3,3,"No. of crc error",style1)
                     i = 4
-# heading_xf = xlwt.easyxf('font: bold on; align: wrap on, vert centre,
-# horiz center,color grey25')
-                    heading_xf = xlwt.easyxf('font: bold on; align: wrap on, vert centre, horiz center;pattern: pattern solid, fore_colour light_green;')
+                    # heading_xf = xlwt.easyxf('font: bold on; align: wrap on, vert centre,
+                    # horiz center,color grey25')
+                    heading_xf = xlwt.easyxf(
+                        'font: bold on; align: wrap on, vert centre, horiz center;pattern: pattern solid, fore_colour light_green;')
                     headings = ['Data', 'Hostname', 'IP Address',
                                 'Eth0(Rx)', 'Eth0(Tx)', 'Eth1(Rx)', 'Eth1(Tx)', 'Br0(Rx)', 'Br0(Tx)']
 
@@ -1833,13 +1962,13 @@ class Report_bll(object):
                 xls_sheet.write_merge(
                     1, 1, 0, 3, "%s(Group Name)" % (nw_total[0][9]), style)
                 xls_sheet.write_merge(2, 2, 0, 3, "")
-#		    xls_sheet.write(3,0,"Date",style1)
-#		    xls_sheet.write(3,1,"Hostname",style1)
-#		    xls_sheet.write(3,2,"No. of phy error",style1)
-#		    xls_sheet.write(3,3,"No. of crc error",style1)
+                #		    xls_sheet.write(3,0,"Date",style1)
+                #		    xls_sheet.write(3,1,"Hostname",style1)
+                #		    xls_sheet.write(3,2,"No. of phy error",style1)
+                #		    xls_sheet.write(3,3,"No. of crc error",style1)
                 i = 4
-# heading_xf = xlwt.easyxf('font: bold on; align: wrap on, vert centre,
-# horiz center,color grey25')
+                # heading_xf = xlwt.easyxf('font: bold on; align: wrap on, vert centre,
+                # horiz center,color grey25')
                 heading_xf = xlwt.easyxf(
                     'font: bold on; align: wrap on, vert centre, horiz center;pattern: pattern solid, fore_colour light_green;')
                 headings = ['Data', 'Hostname', 'IP Address',
@@ -1866,13 +1995,19 @@ class Report_bll(object):
             return str(e[-1])
 
     def rssi_excel_creating(self, rssi_avg, rssi_total):
+        """
+
+        @param rssi_avg:
+        @param rssi_total:
+        @return:
+        """
         nms_instance = __file__.split(
             "/")[3]       # it gives instance name of nagios system
         try:
             flag = 0
-            if(rssi_avg["success"] == 1):
+            if (rssi_avg["success"] == 1):
                 return rssi_avg["result"]
-            if(rssi_total["success"] == 1):
+            if (rssi_total["success"] == 1):
                 return rssi_total["result"]
 
             rssi_avg = rssi_avg["result"]
@@ -1880,7 +2015,7 @@ class Report_bll(object):
             if len(rssi_total) == 0:
                 return 1
 
-            xls_book = Workbook(encoding='ascii')
+            xls_book = xlwt.Workbook(encoding='ascii')
             # styling part start of excel file.
             style = xlwt.XFStyle()  # Create Style
             borders = xlwt.Borders()  # Create Borders
@@ -1896,11 +2031,11 @@ class Report_bll(object):
             pattern = xlwt.Pattern()  # Create the Pattern
             pattern.pattern = xlwt.Pattern.SOLID_PATTERN  # May be: NO_PATTERN, SOLID_PATTERN, or 0x00 through 0x12
             pattern.pattern_fore_colour = 16
-                # May be: 8 through 63. 0 = Black, 1 = White, 2 = Red, 3 =
-                # Green, 4 = Blue, 5 = Yellow, 6 = Magenta, 7 = Cyan, 16 =
-                # Maroon, 17 = Dark Green, 18 = Dark Blue, 19 = Dark Yellow ,
-                # almost brown), 20 = Dark Magenta, 21 = Teal, 22 = Light Gray,
-                # 23 = Dark Gray, the list goes on...
+            # May be: 8 through 63. 0 = Black, 1 = White, 2 = Red, 3 =
+            # Green, 4 = Blue, 5 = Yellow, 6 = Magenta, 7 = Cyan, 16 =
+            # Maroon, 17 = Dark Green, 18 = Dark Blue, 19 = Dark Yellow ,
+            # almost brown), 20 = Dark Magenta, 21 = Teal, 22 = Light Gray,
+            # 23 = Dark Gray, the list goes on...
             style.pattern = pattern  # Add Pattern to Style
             font = xlwt.Font()  # Create Font
             font.bold = True  # Set font to Bold
@@ -1935,9 +2070,10 @@ class Report_bll(object):
                         1, 1, 0, 10, "%s(Group Name)" % (rssi_avg[k][11]), style)
                     xls_sheet.write_merge(2, 2, 0, 10, "")
                     i = 4
-# heading_xf = xlwt.easyxf('font: bold on; align: wrap on, vert centre,
-# horiz center,color grey25')
-                    heading_xf = xlwt.easyxf('font: bold on; align: wrap on, vert centre, horiz center;pattern: pattern solid, fore_colour light_green;')
+                    # heading_xf = xlwt.easyxf('font: bold on; align: wrap on, vert centre,
+                    # horiz center,color grey25')
+                    heading_xf = xlwt.easyxf(
+                        'font: bold on; align: wrap on, vert centre, horiz center;pattern: pattern solid, fore_colour light_green;')
                     headings = ['Data', 'Hostname', 'IP Address', 'Peer1',
                                 'Peer2', 'Peer3', 'Peer4', 'Peer5', 'Peer6', 'Peer7', 'Peer8', ]
 
@@ -1983,8 +2119,8 @@ class Report_bll(object):
                     1, 1, 0, 10, "%s(Group Name)" % (rssi_avg[0][11]), style)
                 xls_sheet.write_merge(2, 2, 0, 10, "")
                 i = 4
-# heading_xf = xlwt.easyxf('font: bold on; align: wrap on, vert centre,
-# horiz center,color grey25')
+                # heading_xf = xlwt.easyxf('font: bold on; align: wrap on, vert centre,
+                # horiz center,color grey25')
                 heading_xf = xlwt.easyxf(
                     'font: bold on; align: wrap on, vert centre, horiz center;pattern: pattern solid, fore_colour light_green;')
                 headings = ['Data', 'Hostname', 'IP Address', 'Peer1',
@@ -2019,9 +2155,10 @@ class Report_bll(object):
                         1, 1, 0, 10, "%s(Group Name)" % (rssi_total[k][11]), style)
                     xls_sheet.write_merge(2, 2, 0, 10, "")
                     i = 4
-# heading_xf = xlwt.easyxf('font: bold on; align: wrap on, vert centre,
-# horiz center,color grey25')
-                    heading_xf = xlwt.easyxf('font: bold on; align: wrap on, vert centre, horiz center;pattern: pattern solid, fore_colour light_green;')
+                    # heading_xf = xlwt.easyxf('font: bold on; align: wrap on, vert centre,
+                    # horiz center,color grey25')
+                    heading_xf = xlwt.easyxf(
+                        'font: bold on; align: wrap on, vert centre, horiz center;pattern: pattern solid, fore_colour light_green;')
                     headings = ['Data', 'Hostname', 'IP Address', 'Peer1',
                                 'Peer2', 'Peer3', 'Peer4', 'Peer5', 'Peer6', 'Peer7', 'Peer8', ]
 
@@ -2092,16 +2229,21 @@ class Report_bll(object):
             return str(e)
 
     def outage_excel_creating(self, outage_total):
+        """
+
+        @param outage_total:
+        @return:
+        """
         nms_instance = __file__.split(
             "/")[3]       # it gives instance name of nagios system
         try:
             flag = 0
-            if(outage_total["success"] == 1):
+            if (outage_total["success"] == 1):
                 return outage_total["result"]
             outage_total = outage_total["result"]
             if len(outage_total) == 0:
                 return 1
-            xls_book = Workbook(encoding='ascii')
+            xls_book = xlwt.Workbook(encoding='ascii')
             # styling part start of excel file.
             style = xlwt.XFStyle()  # Create Style
             borders = xlwt.Borders()  # Create Borders
@@ -2117,11 +2259,11 @@ class Report_bll(object):
             pattern = xlwt.Pattern()  # Create the Pattern
             pattern.pattern = xlwt.Pattern.SOLID_PATTERN  # May be: NO_PATTERN, SOLID_PATTERN, or 0x00 through 0x12
             pattern.pattern_fore_colour = 16
-                # May be: 8 through 63. 0 = Black, 1 = White, 2 = Red, 3 =
-                # Green, 4 = Blue, 5 = Yellow, 6 = Magenta, 7 = Cyan, 16 =
-                # Maroon, 17 = Dark Green, 18 = Dark Blue, 19 = Dark Yellow ,
-                # almost brown), 20 = Dark Magenta, 21 = Teal, 22 = Light Gray,
-                # 23 = Dark Gray, the list goes on...
+            # May be: 8 through 63. 0 = Black, 1 = White, 2 = Red, 3 =
+            # Green, 4 = Blue, 5 = Yellow, 6 = Magenta, 7 = Cyan, 16 =
+            # Maroon, 17 = Dark Green, 18 = Dark Blue, 19 = Dark Yellow ,
+            # almost brown), 20 = Dark Magenta, 21 = Teal, 22 = Light Gray,
+            # 23 = Dark Gray, the list goes on...
             style.pattern = pattern  # Add Pattern to Style
             font = xlwt.Font()  # Create Font
             font.bold = True  # Set font to Bold
@@ -2154,14 +2296,15 @@ class Report_bll(object):
                     xls_sheet.write_merge(
                         1, 1, 0, 4, "%s(Group Name)" % (outage_total[k][5]), style)
                     xls_sheet.write_merge(2, 2, 0, 4, "")
-#		    xls_sheet.write(3,0,"Date",style1)
-#		    xls_sheet.write(3,1,"Hostname",style1)
-#		    xls_sheet.write(3,2,"No. of phy error",style1)
-#		    xls_sheet.write(3,3,"No. of crc error",style1)
+                    #		    xls_sheet.write(3,0,"Date",style1)
+                    #		    xls_sheet.write(3,1,"Hostname",style1)
+                    #		    xls_sheet.write(3,2,"No. of phy error",style1)
+                    #		    xls_sheet.write(3,3,"No. of crc error",style1)
                     i = 4
-# heading_xf = xlwt.easyxf('font: bold on; align: wrap on, vert centre,
-# horiz center,color grey25')
-                    heading_xf = xlwt.easyxf('font: bold on; align: wrap on, vert centre, horiz center;pattern: pattern solid, fore_colour light_green;')
+                    # heading_xf = xlwt.easyxf('font: bold on; align: wrap on, vert centre,
+                    # horiz center,color grey25')
+                    heading_xf = xlwt.easyxf(
+                        'font: bold on; align: wrap on, vert centre, horiz center;pattern: pattern solid, fore_colour light_green;')
                     headings = ['Data', 'Hostname',
                                 'IP Address', 'Up Time(%)', 'Down Time(%)']
 
@@ -2224,15 +2367,27 @@ class Report_bll(object):
                     xls_sheet.write(
                         i, j, outage_total[len(outage_total) - 1][j], style1)
                     xls_sheet.col(j).width = width
-            # save the excel report
+                # save the excel report
             xls_book.save(
                 '/omd/sites/%s/share/check_mk/web/htdocs/download/outage_excel.xls' % nms_instance)
             return '0'
         except Exception, e:
             return str(e)
 
-# TOTAL TRAP DATA FOR A GIVEN DATE PERIOD BY SERVITY
+        # TOTAL TRAP DATA FOR A GIVEN DATE PERIOD BY SERVITY
+
     def get_total_data_trap(self, no_of_devices, date1, date2, time1, time2, all_group, all_host):
+        """
+
+        @param no_of_devices:
+        @param date1:
+        @param date2:
+        @param time1:
+        @param time2:
+        @param all_group:
+        @param all_host:
+        @return:
+        """
         try:
             conn = MySQLdb.connect(*SystemConfig.get_mysql_credentials())
             cursor = conn.cursor()
@@ -2259,7 +2414,7 @@ class Report_bll(object):
 				 order by  ta.timestamp,hosts.host_name,ta.serevity " % (no_of_devices, date_temp1, date_temp2)
                 cursor.execute(query)
                 res = cursor.fetchall()
-                if(len(res) == 0):
+                if (len(res) == 0):
                     return result_dict
                 length = len(res) - 1
                 ls = []
@@ -2272,7 +2427,8 @@ class Report_bll(object):
                     ls.append(str(res[i][2]))
                     group_name = res[i][5]
                     lst = [0, 0, 0, 0, 0, 0]
-                    while(str(res[i][1]) == str(res[i + 1][1]) and str(res[i][0]) == str(res[i + 1][0]) and (i < length - 1)):
+                    while (str(res[i][1]) == str(res[i + 1][1]) and str(res[i][0]) == str(res[i + 1][0]) and (
+                        i < length - 1)):
                         lst[int(res[i][4])] = int(res[i][3])
                         i = i + 1
                     lst[int(res[i][4])] = int(res[i][3])
@@ -2310,7 +2466,7 @@ class Report_bll(object):
 				 order by  ta.timestamp,hosts.host_name,ta.serevity " % (date_temp1, date_temp2, host_data)
                 cursor.execute(query)
                 res = cursor.fetchall()
-                if(len(res) == 0):
+                if (len(res) == 0):
                     return result_dict
                 length = len(res) - 1
                 ls = []
@@ -2323,7 +2479,8 @@ class Report_bll(object):
                     ls.append(str(res[i][2]))
                     group_name = res[i][5]
                     lst = [0, 0, 0, 0, 0, 0]
-                    while(str(res[i][1]) == str(res[i + 1][1]) and str(res[i][0]) == str(res[i + 1][0]) and (i < length - 1)):
+                    while (str(res[i][1]) == str(res[i + 1][1]) and str(res[i][0]) == str(res[i + 1][0]) and (
+                        i < length - 1)):
                         lst[int(res[i][4])] = int(res[i][3])
                         i = i + 1
                     lst[int(res[i][4])] = int(res[i][3])
@@ -2361,8 +2518,20 @@ class Report_bll(object):
         finally:
             conn.close()
 
-# TOTAL TRAP DATA EXCEL FOR A GIVEN DATE PERIOD BY SERVITY
+        # TOTAL TRAP DATA EXCEL FOR A GIVEN DATE PERIOD BY SERVITY
+
     def get_total_trap_data_excel(self, no_of_devices, date1, date2, time1, time2, all_group, all_host):
+        """
+
+        @param no_of_devices:
+        @param date1:
+        @param date2:
+        @param time1:
+        @param time2:
+        @param all_group:
+        @param all_host:
+        @return:
+        """
         try:
             conn = MySQLdb.connect(*SystemConfig.get_mysql_credentials())
             cursor = conn.cursor()
@@ -2417,7 +2586,7 @@ class Report_bll(object):
                 total_result = cursor.fetchall()
                 for total in total_result:
                     total_trap.append(make_list(total))
-                # this code calculate current alarm for devices
+                    # this code calculate current alarm for devices
                 query = "SELECT date(ta.timestamp),time(ta.timestamp),ta.trap_receive_date,device_type.device_name,hostgroups.hostgroup_name,hosts.host_name,ta.agent_id,ta.trap_event_id,ta.trap_event_type,ta.description,ta.serevity\
 	 			 FROM trap_alarm_current as ta join (select host_name,host_id,ip_address,device_type_id from hosts ) as hosts on hosts.ip_address=ta.agent_id\
 		                 INNER JOIN hosts_hostgroups ON hosts_hostgroups.host_id = hosts.host_id\
@@ -2436,13 +2605,19 @@ class Report_bll(object):
             conn.close()
 
     def event_excel_creating(self, event_total, alarm_result):
+        """
+
+        @param event_total:
+        @param alarm_result:
+        @return:
+        """
         nms_instance = __file__.split(
             "/")[3]       # it gives instance name of nagios system
         try:
             if len(event_total) == 0:
                 return 1
             flag = 0
-            xls_book = Workbook(encoding='ascii')
+            xls_book = xlwt.Workbook(encoding='ascii')
             # styling part start of excel file.
             style = xlwt.XFStyle()  # Create Style
             borders = xlwt.Borders()  # Create Borders
@@ -2458,11 +2633,11 @@ class Report_bll(object):
             pattern = xlwt.Pattern()  # Create the Pattern
             pattern.pattern = xlwt.Pattern.SOLID_PATTERN  # May be: NO_PATTERN, SOLID_PATTERN, or 0x00 through 0x12
             pattern.pattern_fore_colour = 16
-                # May be: 8 through 63. 0 = Black, 1 = White, 2 = Red, 3 =
-                # Green, 4 = Blue, 5 = Yellow, 6 = Magenta, 7 = Cyan, 16 =
-                # Maroon, 17 = Dark Green, 18 = Dark Blue, 19 = Dark Yellow ,
-                # almost brown), 20 = Dark Magenta, 21 = Teal, 22 = Light Gray,
-                # 23 = Dark Gray, the list goes on...
+            # May be: 8 through 63. 0 = Black, 1 = White, 2 = Red, 3 =
+            # Green, 4 = Blue, 5 = Yellow, 6 = Magenta, 7 = Cyan, 16 =
+            # Maroon, 17 = Dark Green, 18 = Dark Blue, 19 = Dark Yellow ,
+            # almost brown), 20 = Dark Magenta, 21 = Teal, 22 = Light Gray,
+            # 23 = Dark Gray, the list goes on...
             style.pattern = pattern  # Add Pattern to Style
             font = xlwt.Font()  # Create Font
             font.bold = True  # Set font to Bold
@@ -2499,9 +2674,10 @@ class Report_bll(object):
                         event_name[int(event_total[k][10])])), style)
                     xls_sheet.write_merge(2, 2, 0, 9, "")
                     i = 4
-# heading_xf = xlwt.easyxf('font: bold on; align: wrap on, vert centre,
-# horiz center,color grey25')
-                    heading_xf = xlwt.easyxf('font: bold on; align: wrap on, vert centre, horiz center;pattern: pattern solid, fore_colour light_green;')
+                    # heading_xf = xlwt.easyxf('font: bold on; align: wrap on, vert centre,
+                    # horiz center,color grey25')
+                    heading_xf = xlwt.easyxf(
+                        'font: bold on; align: wrap on, vert centre, horiz center;pattern: pattern solid, fore_colour light_green;')
                     headings = [
                         'system receive date', 'system receive time', 'Event receive date', 'device type', 'group name',
                         'host name', 'agent id', 'event id', 'event type', 'description']
@@ -2630,8 +2806,8 @@ class Report_bll(object):
                     0, 0, 0, 9, "Informational Events", style)
                 xls_sheet.write_merge(2, 2, 0, 9, "")
                 i = 4
-# heading_xf = xlwt.easyxf('font: bold on; align: wrap on, vert centre,
-# horiz center,color grey25')
+                # heading_xf = xlwt.easyxf('font: bold on; align: wrap on, vert centre,
+                # horiz center,color grey25')
                 heading_xf = xlwt.easyxf(
                     'font: bold on; align: wrap on, vert centre, horiz center;pattern: pattern solid, fore_colour light_green;')
                 headings = [
@@ -2707,6 +2883,12 @@ class Report_bll(object):
             return str(e)
 
     def group_data(self, search_text, common):
+        """
+
+        @param search_text:
+        @param common:
+        @return:
+        """
         try:
             output_list = []
             conn = MySQLdb.connect(*SystemConfig.get_mysql_credentials())
@@ -2732,6 +2914,12 @@ class Report_bll(object):
             conn.close()
 
     def host_data(self, search_text, common):
+        """
+
+        @param search_text:
+        @param common:
+        @return:
+        """
         try:
             host_result = ''
             conn = MySQLdb.connect(*SystemConfig.get_mysql_credentials())
@@ -2747,20 +2935,23 @@ class Report_bll(object):
 			                        INNER JOIN hosts_hostgroups ON hosts_hostgroups.host_id = hosts.host_id\
 			                        INNER JOIN hostgroups ON hostgroups.hostgroup_id = hosts_hostgroups.hostgroup_id\
 			                        WHERE (hosts.mac_address LIKE '%%%s%%' OR hosts.ip_address LIKE '%%%s%%' OR hosts.host_alias LIKE '%%%s%%'\
-			                        OR hostgroups.hostgroup_id LIKE '%s')" % (search_text, search_text, search_text, search_text))
+			                        OR hostgroups.hostgroup_id LIKE '%s')" % (
+                    search_text, search_text, search_text, search_text))
                     host_result = cursor.fetchall()
             else:
                 if (cursor.execute("SELECT hosts.host_id, hosts.ip_address,hosts.host_alias,hosts.mac_address FROM hosts\
 		                        INNER JOIN hosts_hostgroups ON hosts_hostgroups.host_id = hosts.host_id\
 		                        INNER JOIN hostgroups ON hostgroups.hostgroup_id = hosts_hostgroups.hostgroup_id\
-		                        WHERE hostgroups.hostgroup_id LIKE '%s' AND hosts.device_type_id like 'ODU16%%' " % (search_text))):
+		                        WHERE hostgroups.hostgroup_id LIKE '%s' AND hosts.device_type_id like 'ODU16%%' " % (
+                search_text))):
                     host_result = cursor.fetchall()
                 if len(host_result) == 0:
                     cursor.execute("SELECT hosts.host_id, hosts.ip_address,hosts.host_alias,hosts.mac_address FROM hosts\
 			                        INNER JOIN hosts_hostgroups ON hosts_hostgroups.host_id = hosts.host_id\
 			                        INNER JOIN hostgroups ON hostgroups.hostgroup_id = hosts_hostgroups.hostgroup_id\
 			                        WHERE (hosts.mac_address LIKE '%%%s%%' OR hosts.ip_address LIKE '%%%s%%' OR hosts.host_alias LIKE '%%%s%%'\
-			                        OR hostgroups.hostgroup_id LIKE '%s') AND hosts.device_type_id like 'ODU16%%' " % (search_text, search_text, search_text, search_text))
+			                        OR hostgroups.hostgroup_id LIKE '%s') AND hosts.device_type_id like 'ODU16%%' " % (
+                    search_text, search_text, search_text, search_text))
                     host_result = cursor.fetchall()
             return host_result, 0
             # close the cursor and database connection
@@ -2771,11 +2962,16 @@ class Report_bll(object):
             conn.close()
 
     def inventory_excel_report_creation(self, user_id):
+        """
+
+        @param user_id:
+        @return: @raise:
+        """
         try:
             nms_instance = __file__.split(
                 "/")[3]       # it gives instance name of nagios system
             # create the excel file
-            xls_book = Workbook(encoding='ascii')
+            xls_book = xlwt.Workbook(encoding='ascii')
 
             # Excel reproting Style part
             style = xlwt.XFStyle()
@@ -2821,12 +3017,12 @@ class Report_bll(object):
                 raise Exception()
 
             hst_bll = HostBll(user_id)
-                              # creating the HostBll object
+            # creating the HostBll object
             # Active hosts information
             all_hosts = hst_bll.grid_view_active_host_report(
             )     # fetching all hosts data from database
             hosts_list = []
-                # creating empty list [we will use this in datatables]
+            # creating empty list [we will use this in datatables]
             tdmoip = 'N/A'
             for hst in all_hosts:
                 if (hst.device_name).strip() == 'UBR' or (hst.device_name).strip() == 'RM18':
@@ -2841,17 +3037,17 @@ class Report_bll(object):
                     result = cursor.fetchall()
                     if len(result) > 0:
                         ra_mac = '--' if result[0][
-                            0] == None or result[0][0] == '' else result[0][0]
+                                             0] == None or result[0][0] == '' else result[0][0]
                         freq = '--' if result[0][
-                            1] == None or result[0][1] == '' else result[0][1]
+                                           1] == None or result[0][1] == '' else result[0][1]
                         gr_name = '--' if result[0][
-                            2] == None or result[0][2] == '' else result[0][2]
+                                              2] == None or result[0][2] == '' else result[0][2]
                         ac_ver = '--' if result[0][
-                            3] == None or result[0][3] == '' else result[0][3]
+                                             3] == None or result[0][3] == '' else result[0][3]
                         hw_ver = '--' if result[0][
-                            4] == None or result[0][4] == '' else result[0][4]
+                                             4] == None or result[0][4] == '' else result[0][4]
                         hw_sr_no = '--' if result[0][
-                            5] == None or result[0][5] == '' else result[0][5]
+                                               5] == None or result[0][5] == '' else result[0][5]
                         tdmoip = 'N/A'
 
                 elif (hst.device_name).strip() == 'UBRe' or (hst.device_name).strip() == 'RM':
@@ -2869,17 +3065,17 @@ class Report_bll(object):
                     result = cursor.fetchall()
                     if len(result) > 0:
                         ra_mac = '--' if result[0][
-                            0] == None or result[0][0] == '' else result[0][0]
+                                             0] == None or result[0][0] == '' else result[0][0]
                         freq = '--' if result[0][
-                            1] == None or result[0][1] == '' else result[0][1]
+                                           1] == None or result[0][1] == '' else result[0][1]
                         gr_name = '--' if result[0][
-                            2] == None or result[0][2] == '' else result[0][2]
+                                              2] == None or result[0][2] == '' else result[0][2]
                         ac_ver = '--' if result[0][
-                            3] == None or result[0][3] == '' else result[0][3]
+                                             3] == None or result[0][3] == '' else result[0][3]
                         hw_ver = '--' if result[0][
-                            4] == None or result[0][4] == '' else result[0][4]
+                                             4] == None or result[0][4] == '' else result[0][4]
                         hw_sr_no = '--' if result[0][
-                            5] == None or result[0][5] == '' else result[0][5]
+                                               5] == None or result[0][5] == '' else result[0][5]
                         tdmoip = 'N/A'
 
                 elif (hst.device_name).strip() == 'IDU4' or (hst.device_name).strip() == 'IDU':
@@ -2894,15 +3090,15 @@ class Report_bll(object):
                         ra_mac = 'N/A'
                         freq = 'N/A'
                         gr_name = '--' if result[0][
-                            0] == None or result[0][0] == '' else result[0][0]
+                                              0] == None or result[0][0] == '' else result[0][0]
                         ac_ver = '--' if result[0][
-                            1] == None or result[0][1] == '' else result[0][1]
+                                             1] == None or result[0][1] == '' else result[0][1]
                         hw_ver = '--' if result[0][
-                            2] == None or result[0][2] == '' else result[0][2]
+                                             2] == None or result[0][2] == '' else result[0][2]
                         hw_sr_no = '--' if result[0][
-                            3] == None or result[0][3] == '' else result[0][3]
+                                               3] == None or result[0][3] == '' else result[0][3]
                         tdmoip = '--' if result[0][
-                            4] == None or result[0][4] == '' else result[0][4]
+                                             4] == None or result[0][4] == '' else result[0][4]
 
                 elif (hst.device_name).strip() == 'Access Point' or (hst.device_name).strip() == 'AP':
                     sql = "SELECT hostgroups.hostgroup_name,sw.softwareVersion ,sw.hardwareVersion FROM hosts \
@@ -2916,11 +3112,11 @@ class Report_bll(object):
                         ra_mac = 'N/A'
                         freq = 'N/A'
                         gr_name = '--' if result[0][
-                            0] == None or result[0][0] == '' else result[0][0]
+                                              0] == None or result[0][0] == '' else result[0][0]
                         ac_ver = '--' if result[0][
-                            1] == None or result[0][1] == '' else result[0][1]
+                                             1] == None or result[0][1] == '' else result[0][1]
                         hw_ver = '--' if result[0][
-                            2] == None or result[0][2] == '' else result[0][2]
+                                             2] == None or result[0][2] == '' else result[0][2]
                         hw_sr_no = '--'
                         tdmoip = 'N/A'
                 else:
@@ -2938,7 +3134,8 @@ class Report_bll(object):
                     gr_name, ac_ver, hw_ver, hw_sr_no,
                     hst.creation_time != None and hst.creation_time.strftime(
                         "%d-%m-%Y %H:%M") or "-",
-                    hst.created_by != None and hst.created_by or "-", ra_mac, freq, tdmoip])       # creating 2D List of host details
+                    hst.created_by != None and hst.created_by or "-", ra_mac, freq,
+                    tdmoip])       # creating 2D List of host details
 
             xls_sheet = xls_book.add_sheet(
                 'Active Host(s)', cell_overwrite_ok=True)
@@ -2956,7 +3153,8 @@ class Report_bll(object):
             # Version','Hardware Serial No.','Active Since (Date -
             # Time)','Added By']
             headings = [
-                'Host Alias', 'IP Address', 'Device Name', 'MAC', 'Group Name', 'Active Software Version', 'Hardware Version', 'Hardware Serial No.',
+                'Host Alias', 'IP Address', 'Device Name', 'MAC', 'Group Name', 'Active Software Version',
+                'Hardware Version', 'Hardware Serial No.',
                 'Active Since (Date - Time)', 'Added By', 'RA MAC', 'Frequency', 'TDMOIP MAC']
             xls_sheet.set_panes_frozen(
                 True)  # frozen headings instead of split panes
@@ -2977,7 +3175,7 @@ class Report_bll(object):
             all_hosts = hst_bll.grid_view_disable_host_report(
             )     # fetching all hosts data from database
             disable_host = []
-                # creating empty list [we will use this in datatables]
+            # creating empty list [we will use this in datatables]
             for hst in all_hosts:
                 if (hst.device_name).strip() == 'UBR':
                     sql = "SELECT ra.ra_mac_address,fm.rf_channel_frequency,hostgroups.hostgroup_name,sw.active_version ,hw.hw_version,hw.hw_serial_no FROM hosts LEFT JOIN \
@@ -2991,17 +3189,17 @@ class Report_bll(object):
                     result = cursor.fetchall()
                     if len(result) > 0:
                         ra_mac = '--' if result[0][
-                            0] == None or result[0][0] == '' else result[0][0]
+                                             0] == None or result[0][0] == '' else result[0][0]
                         freq = '--' if result[0][
-                            1] == None or result[0][1] == '' else result[0][1]
+                                           1] == None or result[0][1] == '' else result[0][1]
                         gr_name = '--' if result[0][
-                            2] == None or result[0][2] == '' else result[0][2]
+                                              2] == None or result[0][2] == '' else result[0][2]
                         ac_ver = '--' if result[0][
-                            3] == None or result[0][3] == '' else result[0][3]
+                                             3] == None or result[0][3] == '' else result[0][3]
                         hw_ver = '--' if result[0][
-                            4] == None or result[0][4] == '' else result[0][4]
+                                             4] == None or result[0][4] == '' else result[0][4]
                         hw_sr_no = '--' if result[0][
-                            5] == None or result[0][5] == '' else result[0][5]
+                                               5] == None or result[0][5] == '' else result[0][5]
 
                 elif (hst.device_name).strip() == 'UBRe':
                     sql = """SELECT ra.raMacAddress, fm.rafrequency, hostgroups.hostgroup_name, sw.activeVersion, hw.hwVersion, hw.hwSerialNo
@@ -3018,17 +3216,17 @@ class Report_bll(object):
                     result = cursor.fetchall()
                     if len(result) > 0:
                         ra_mac = '--' if result[0][
-                            0] == None or result[0][0] == '' else result[0][0]
+                                             0] == None or result[0][0] == '' else result[0][0]
                         freq = '--' if result[0][
-                            1] == None or result[0][1] == '' else result[0][1]
+                                           1] == None or result[0][1] == '' else result[0][1]
                         gr_name = '--' if result[0][
-                            2] == None or result[0][2] == '' else result[0][2]
+                                              2] == None or result[0][2] == '' else result[0][2]
                         ac_ver = '--' if result[0][
-                            3] == None or result[0][3] == '' else result[0][3]
+                                             3] == None or result[0][3] == '' else result[0][3]
                         hw_ver = '--' if result[0][
-                            4] == None or result[0][4] == '' else result[0][4]
+                                             4] == None or result[0][4] == '' else result[0][4]
                         hw_sr_no = '--' if result[0][
-                            5] == None or result[0][5] == '' else result[0][5]
+                                               5] == None or result[0][5] == '' else result[0][5]
 
                 disable_host.append([
                     hst.host_alias != None and hst.host_alias or "-",
@@ -3051,7 +3249,8 @@ class Report_bll(object):
             heading_xf = xlwt.easyxf(
                 'font: bold on; align: wrap on, vert centre, horiz center;pattern: pattern solid, fore_colour light_green;')
             headings = [
-                'Host Alias', 'IP Address', 'Device Name', 'MAC', 'RA MAC', 'Frequency', 'Group Name', 'Active Software Version', 'Hardware Version',
+                'Host Alias', 'IP Address', 'Device Name', 'MAC', 'RA MAC', 'Frequency', 'Group Name',
+                'Active Software Version', 'Hardware Version',
                 'Hardware Serial No.', 'Disabled Since (Date - Time)', 'Disabled By']
             xls_sheet.set_panes_frozen(
                 True)  # frozen headings instead of split panes
@@ -3072,7 +3271,7 @@ class Report_bll(object):
             all_hosts = hst_bll.grid_view_deleted_host_report(
             )     # fetching all hosts data from database
             deleted_host = []
-                # creating empty list [we will use this in datatables]
+            # creating empty list [we will use this in datatables]
             for hst in all_hosts:
                 deleted_host.append([
                     # hst.host_name != None and hst.host_name or "-",
@@ -3081,7 +3280,8 @@ class Report_bll(object):
                     hst.device_name != None and hst.device_name or "-",
                     hst.mac_address != None and hst.mac_address or "-",
                     hst.updated_by != None and hst.updated_by or "-",
-                    hst.timestamp != None and hst.timestamp.strftime("%d-%m-%Y %H:%M") or "-"])       # creating 2D List of host details
+                    hst.timestamp != None and hst.timestamp.strftime(
+                        "%d-%m-%Y %H:%M") or "-"])       # creating 2D List of host details
 
             xls_sheet = xls_book.add_sheet(
                 'Deleted Host(s)', cell_overwrite_ok=True)
@@ -3117,7 +3317,7 @@ class Report_bll(object):
             all_hosts = hst_bll.grid_view_tcp_discovered_host_report(
             )     # fetching all hosts data from database
             hosts_list = []
-                # creating empty list [we will use this in datatables]
+            # creating empty list [we will use this in datatables]
             s_no = 0
             temp_list = []
             for hst in all_hosts:
@@ -3130,7 +3330,8 @@ class Report_bll(object):
                                        hst.ip_address != None and hst.ip_address or "",
                                        hst.site_mac != None and hst.site_mac or "",
                                        hst.product_id == 6021 and "Master" or "Slave",
-                                       hst.timestamp != None and hst.timestamp.strftime("%d-%m-%Y %H:%M") or ""])       # creating 2D List of host details
+                                       hst.timestamp != None and hst.timestamp.strftime(
+                                           "%d-%m-%Y %H:%M") or ""])       # creating 2D List of host details
                     temp_list.append(hst.ip_address)
 
             all_hosts2 = hst_bll.grid_view_discovered_host_report(
@@ -3145,14 +3346,15 @@ class Report_bll(object):
                                        hst.ip_address != None and hst.ip_address or "",
                                        hst.mac_address != None and hst.mac_address or "",
                                        " - ",
-                                       hst.timestamp != None and hst.timestamp.strftime("%d-%m-%Y %H:%M") or ""])       # creating 2D List of host details
+                                       hst.timestamp != None and hst.timestamp.strftime(
+                                           "%d-%m-%Y %H:%M") or ""])       # creating 2D List of host details
                     temp_list.append(hst.ip_address)
 
                     # creating empty list [we will use this in datatables]
             discovered_host = []
             for hst in hosts_list:
-#			cursor.execute("SELECT ra.raMacAddress FROM hosts INNER JOIN  odu100_raStatusTable as ra ON ra.host_id=hosts.host_id WHERE hosts.ip_address='%s'"%str(hst[2]))
-#			ra_mac=cursor.fetchall()
+            #			cursor.execute("SELECT ra.raMacAddress FROM hosts INNER JOIN  odu100_raStatusTable as ra ON ra.host_id=hosts.host_id WHERE hosts.ip_address='%s'"%str(hst[2]))
+            #			ra_mac=cursor.fetchall()
                 discovered_host.append([str(hst[1]), str(hst[2]), str(
                     hst[3]), str(hst[4]), str(hst[5])])       # creating 2D List of host details
             xls_sheet = xls_book.add_sheet(
@@ -3192,11 +3394,15 @@ class Report_bll(object):
 
 
 def outage_graph(host_id, start_date, end_date):
-    '''this function create the outage graph field and show the outage graph.'''
+    """this function create the outage graph field and show the outage graph.
+    @param host_id:
+    @param start_date:
+    @param end_date:
+    """
     date_days = []  # this list store the days information with date.
     up_state = []  # Its store the total up state of each day in percentage.
     down_state = []
-        # Its store the total down state of each day in percentage.
+    # Its store the total down state of each day in percentage.
     output_dict = {}  # its store the actual output for display in graph.
     last_status = 0
 
@@ -3211,20 +3417,20 @@ def outage_graph(host_id, start_date, end_date):
         temp_date = current_datetime
         temp_li = []
         total_li = []
-#        current_datetime=datetime.strptime(str(current_date+timedelta(days=-5))+" 00:00:00",'%Y-%m-%d %H:%M:%S') # convert the string in  datetime.
-            # last_datetime=datetime.strptime(str(current_date+timedelta(days=-1))+" 23:59:59",'%Y-%m-%d %H:%M:%S') # convert the string in  datetime.
+        #        current_datetime=datetime.strptime(str(current_date+timedelta(days=-5))+" 00:00:00",'%Y-%m-%d %H:%M:%S') # convert the string in  datetime.
+        # last_datetime=datetime.strptime(str(current_date+timedelta(days=-1))+" 23:59:59",'%Y-%m-%d %H:%M:%S') # convert the string in  datetime.
         # this datetime last status calculation
-#        last_status_current_time=datetime.strptime(str(current_date+timedelta(days=-6))+" 00:00:00",'%Y-%m-%d %H:%M:%S') # convert the string in  datetime.
-# last_status_end_time=datetime.strptime(str(current_date+timedelta(days=-5))+"
-# 23:59:59",'%Y-%m-%d %H:%M:%S') # convert the string in  datetime.
+        #        last_status_current_time=datetime.strptime(str(current_date+timedelta(days=-6))+" 00:00:00",'%Y-%m-%d %H:%M:%S') # convert the string in  datetime.
+        # last_status_end_time=datetime.strptime(str(current_date+timedelta(days=-5))+"
+        # 23:59:59",'%Y-%m-%d %H:%M:%S') # convert the string in  datetime.
 
         # connection from mysql
 
         # db=MySQLdb.Connect('172.22.0.94','root','root','nmsp')
         db = MySQLdb.connect(*SystemConfig.get_mysql_credentials())
         cursor = db.cursor()
-#        if db ==1:
-#            raise SelfException(cursor)
+        #        if db ==1:
+        #            raise SelfException(cursor)
 
         ip_address = ""
         # sel_query="SELECT trap_event_id,trap_event_type,timestamp FROM
@@ -3256,7 +3462,9 @@ def outage_graph(host_id, start_date, end_date):
         total_up_time = 0
         total = 0
         for no in range(len(result)):
-            if str(datetime.date(temp_date) + timedelta(days=i)) == datetime.strptime(str(result[no][2]), '%Y-%m-%d %H:%M:%S').strftime('%Y-%m-%d'):
+            if str(datetime.date(temp_date) + timedelta(days=i)) == datetime.strptime(str(result[no][2]),
+                                                                                      '%Y-%m-%d %H:%M:%S').strftime(
+                    '%Y-%m-%d'):
                 flag = 1
                 if int(last_status) == 50002:
                     total_up_time += abs((result[no][2] - start_time).days * 1440 + (
@@ -3349,7 +3557,8 @@ def outage_graph(host_id, start_date, end_date):
                 i += 1
                 flag = 0
 
-        for j in range(i, (datetime.strptime(end_date, '%Y-%m-%d %H:%M:%S') - datetime.strptime(start_date, '%Y-%m-%d %H:%M:%S')).days):
+        for j in range(i, (datetime.strptime(end_date, '%Y-%m-%d %H:%M:%S') - datetime.strptime(start_date,
+                                                                                                '%Y-%m-%d %H:%M:%S')).days):
             up_state.append(0)
             down_state.append(100)
             date_days.append(str(temp_date + timedelta(days=(i))))
@@ -3363,7 +3572,7 @@ def outage_graph(host_id, start_date, end_date):
             temp_li.append("%.2f" % down_state[-1])
             total_li.append(temp_li)
             i += 1
-        # close the database and cursor connection.
+            # close the database and cursor connection.
         cursor.close()
         db.close()
         output_dict = {'success': 0, 'UpTime': up_state,
@@ -3376,6 +3585,12 @@ def outage_graph(host_id, start_date, end_date):
 
 
 def main_outage(result_tuple, end_date):
+    """
+
+    @param result_tuple:
+    @param end_date:
+    @return:
+    """
     try:
         is_date = 0
         main_date = ''
@@ -3399,10 +3614,10 @@ def main_outage(result_tuple, end_date):
                             leftout_date = main_date + timedelta(days=i)
                             if prev_value == '50002':
                                 main_list.append([leftout_date, main_ip, tpl_temp[
-                                                 4], tpl_temp[5], tpl_temp[6], timedelta(0, 86399), None])
+                                    4], tpl_temp[5], tpl_temp[6], timedelta(0, 86399), None])
                             elif prev_value == '50001':
                                 main_list.append([leftout_date, main_ip, tpl_temp[
-                                                 4], tpl_temp[5], tpl_temp[6], None, timedelta(0, 86399)])
+                                    4], tpl_temp[5], tpl_temp[6], None, timedelta(0, 86399)])
 
                 else:
                     if temp_value == '50002':
@@ -3437,7 +3652,7 @@ def main_outage(result_tuple, end_date):
                     elif prev_value == '50001':
                         downtime = delta
                 main_list.append([main_date, main_ip, tpl_temp[4],
-                                 tpl_temp[5], tpl_temp[6], uptime, downtime])
+                                  tpl_temp[5], tpl_temp[6], uptime, downtime])
                 main_date = temp_date
                 uptime = None
                 downtime = None
@@ -3454,7 +3669,7 @@ def main_outage(result_tuple, end_date):
             elif prev_value == '50001':
                 downtime = delta
         main_list.append([main_date, main_ip, tpl_temp[4],
-                         tpl_temp[5], tpl_temp[6], uptime, downtime])
+                          tpl_temp[5], tpl_temp[6], uptime, downtime])
 
         day_diff = (end_date - main_date).days
         if day_diff > 1:
@@ -3462,10 +3677,10 @@ def main_outage(result_tuple, end_date):
                 leftout_date = main_date + timedelta(days=i)
                 if prev_value == '50002':
                     main_list.append([leftout_date, main_ip, tpl_temp[
-                                     4], tpl_temp[5], tpl_temp[6], timedelta(0, 86399), None])
+                        4], tpl_temp[5], tpl_temp[6], timedelta(0, 86399), None])
                 elif prev_value == '50001':
                     main_list.append([leftout_date, main_ip, tpl_temp[
-                                     4], tpl_temp[5], tpl_temp[6], None, timedelta(0, 86399)])
+                        4], tpl_temp[5], tpl_temp[6], None, timedelta(0, 86399)])
         main_dict = {}
         main_dict['success'] = 0
         main_dict['result'] = main_list
@@ -3479,6 +3694,17 @@ def main_outage(result_tuple, end_date):
 
 
 def get_outage(no_of_devices, date1, date2, time1, time2, all_group, all_host):
+    """
+
+    @param no_of_devices:
+    @param date1:
+    @param date2:
+    @param time1:
+    @param time2:
+    @param all_group:
+    @param all_host:
+    @return:
+    """
     try:
         conn = MySQLdb.connect(*SystemConfig.get_mysql_credentials())
         cursor = conn.cursor()
@@ -3501,7 +3727,8 @@ def get_outage(no_of_devices, date1, date2, time1, time2, all_group, all_host):
 		join ( select host_id,host_name,ip_address,host_alias from hosts ) as host on go16.agent_id=host.ip_address \
 		INNER JOIN (select host_id,hostgroup_id from hosts_hostgroups) as  hosts_hostgroups ON hosts_hostgroups.host_id = host.host_id  \
 		INNER JOIN (select hostgroup_id , hostgroup_name from hostgroups) as  hostgroups ON hostgroups.hostgroup_id = hosts_hostgroups.hostgroup_id \
-		where host.host_id='%s' and go16.timestamp>='%s' and go16.timestamp<='%s' order by timestamp" % (j, start_date, end_date)
+		where host.host_id='%s' and go16.timestamp>='%s' and go16.timestamp<='%s' order by timestamp" % (
+            j, start_date, end_date)
             cursor.execute(sel_query)
             result = cursor.fetchall()
 
@@ -3516,11 +3743,11 @@ def get_outage(no_of_devices, date1, date2, time1, time2, all_group, all_host):
                 t_date = result[0][2]
                 t_date = t_date.replace(hour=0, minute=0, second=0)
                 t_list = ((status_result[0][0], status_result[0][1], t_date, status_result[0][3], status_result[0][
-                          4], status_result[0][5], status_result[0][6]),)
+                    4], status_result[0][5], status_result[0][6]),)
                 result = t_list + result
 
             m = MainOutage(result, datetime.strptime(end_date, "%Y-%m-%d %H:%M:%S"), datetime.strptime(
-                    start_date, "%Y-%m-%d %H:%M:%S"))
+                start_date, "%Y-%m-%d %H:%M:%S"))
             temp_res = m.get_outage()
             # temp_res = main_outage(
             #     result, datetime.strptime(end_date, "%Y-%m-%d %H:%M:%S"))

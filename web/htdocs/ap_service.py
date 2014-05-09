@@ -45,18 +45,18 @@ def delete_service_for_graph(host_name, service_name):
     service_file_path = "/omd/sites/%s/etc/nagios/conf.d/services.cfg" % site_name
     temp_file_path = "/omd/sites/%s/tmp/temp.cfg" % site_name
     try:
-        if(os.path.isfile(service_file_path)):
+        if (os.path.isfile(service_file_path)):
             startCheckLine = "#service-" + host_name + "-" + check_command
             endCheckLine = "#endservice-" + host_name + "-" + check_command
             checkfile = 0
             fr = open(service_file_path, "r")
             ftw = open(temp_file_path, "w")
             for line in fr:
-                if(line.strip() != startCheckLine.strip() and checkfile == 0):
+                if (line.strip() != startCheckLine.strip() and checkfile == 0):
                     ftw.write(line)
                 else:
                     checkfile = 1
-            if(line.strip() == endCheckLine.strip() and checkfile == 1):
+            if (line.strip() == endCheckLine.strip() and checkfile == 1):
                 checkfile = 0
             fr.close()
             ftw.close()
@@ -90,7 +90,7 @@ def create_service_for_graph(host_name, service_name):
     check_command = "%s!%s" % (service_name, site_name)
     service_file_path = "/omd/sites/%s/etc/nagios/conf.d/services.cfg" % site_name
     try:
-        if(os.path.isfile(service_file_path)):
+        if (os.path.isfile(service_file_path)):
             fw = open(service_file_path, "a")
             fw.write("\n#service-" + host_name + "-" + check_command)
             fw.write("\ndefine service {")

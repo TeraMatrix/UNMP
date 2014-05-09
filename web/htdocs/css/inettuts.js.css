@@ -1,6 +1,6 @@
 /* JS-Enabled CSS */
 
-.widget-head a.remove  {
+.widget-head a.remove {
     float: right;
     display: inline;
     background: url(img/buttons.gif) no-repeat -24px 0;
@@ -11,7 +11,7 @@
     outline: none;
 }
 
-.widget-head a.edit  {
+.widget-head a.edit {
     float: right;
     display: inline;
     background: url(img/buttons.gif) no-repeat;
@@ -22,7 +22,7 @@
     outline: none;
 }
 
-.widget-head a.collapse  {
+.widget-head a.collapse {
     float: right;
     display: inline;
     background: url(img/buttons.gif) no-repeat -52px 0;
@@ -33,10 +33,21 @@
     outline: none;
 }
 
-.widget-placeholder { border: 2px dashed #999;}
-#column1 .widget-placeholder { margin: 30px 35px 0 25px; }
-#column2 .widget-placeholder { margin: 30px 20px 0 20px; }
-#column3 .widget-placeholder { margin: 30px 25px 0 35px; }
+.widget-placeholder {
+    border: 2px dashed #999;
+}
+
+#column1 .widget-placeholder {
+    margin: 30px 35px 0 25px;
+}
+
+#column2 .widget-placeholder {
+    margin: 30px 20px 0 20px;
+}
+
+#column3 .widget-placeholder {
+    margin: 30px 25px 0 35px;
+}
 
 .edit-box {
     overflow: hidden;
@@ -52,7 +63,6 @@
     width: 100%;
     clear: both;
 }
-
 
 .edit-box label {
     float: left;

@@ -7,7 +7,6 @@ import socket
 import time
 import urllib2
 
-import MySQLdb
 from common_bll import Essential
 from odu_scheduling import OduScheduling
 from odu_scheduling_bll import OduSchedulingBll
@@ -15,15 +14,21 @@ from odu_scheduling_bll import OduSchedulingBll
 
 ################################## Scheduling ############################
 def odu_scheduling(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     try:
         css_list = [
-            "css/style.css", "facebox/facebox.css", "calendrical/calendrical.css", "fullcalendar/fullcalendar.css", "css/jquery.multiselect.css",
+            "css/style.css", "facebox/facebox.css", "calendrical/calendrical.css", "fullcalendar/fullcalendar.css",
+            "css/jquery.multiselect.css",
             "css/jquery.multiselect.filter.css", "css/jquery-ui-1.8.4.custom.css", "css/demo_table_jui.css"]
         js_list = [
-            "js/jquery-ui-1.8.6.custom.min.js", "fullcalendar/fullcalendar.min.js", "facebox/facebox.js", "js/calendrical.js", "js/jquery.dataTables.min.js", "js/odu_scheduling.js",
-            "js/pages/jquery.multiselect.min.js", "js/pages/jquery.multiselect.filter.js"]
+            "js/lib/main/jquery-ui-1.8.6.custom.min.js", "fullcalendar/fullcalendar.min.js", "facebox/facebox.js",
+            "js/lib/main/calendrical.js", "js/lib/main/jquery.dataTables.min.js", "js/unmp/main/odu_scheduling.js",
+            "js/lib/main/jquery.multiselect.min.js", "js/lib/main/jquery.multiselect.filter.js"]
         header_btn = ""
         snapin_list = ["reports", "views", "Alarm", "Inventory", "Settings",
                        "NetworkMaps", "user_management", "schedule", "Listing"]
@@ -56,6 +61,10 @@ def odu_scheduling(h):
 
 
 def odu_scheduling_get_device_info(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     odu_bll_obj = OduSchedulingBll()
@@ -70,6 +79,10 @@ def odu_scheduling_get_device_info(h):
 
 
 def update_firmware_view(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     # host_id=h.var('host_id')
@@ -82,21 +95,29 @@ def update_firmware_view(h):
 
 
 def view_Scheduling_Details(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     odu_bll_obj = OduSchedulingBll()
     result = odu_bll_obj.view_Scheduling_Details()
-#    html.write(str(OduScheduling.view_Scheduling_Details(result)))
+    #    html.write(str(OduScheduling.view_Scheduling_Details(result)))
     html.write(str(result))
 
 
 def add_odu_scheduler(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     event = "Down"
     startDateTemp = html.var("startDate").split("/")
     startDate = startDateTemp[2] + "-" + startDateTemp[1] + "-" + \
-        startDateTemp[0]
+                startDateTemp[0]
     endDateTemp = html.var("endDate").split("/")
     endDate = endDateTemp[2] + "-" + endDateTemp[1] + "-" + endDateTemp[0]
     startTime = html.var("startTime")
@@ -173,7 +194,8 @@ def add_odu_scheduler(h):
     else:
         firmware_file_name = ""
     newId = odu_bll_obj.create_scheduler(
-        odu_list, event, startDate, endDate, startTime, endTime, repeat, repeatType, daysun, daymon, daytue, daywed, daythu, dayfri, daysat, monthjan, monthfeb, monthmar, monthapr, monthmay,
+        odu_list, event, startDate, endDate, startTime, endTime, repeat, repeatType, daysun, daymon, daytue, daywed,
+        daythu, dayfri, daysat, monthjan, monthfeb, monthmar, monthapr, monthmay,
         monthjun, monthjul, monthaug, monthsep, monthoct, monthnov, monthdec, dates, firmware_file_name)
     user_name = html.req.session["username"]
     create_crontab_file(user_name)
@@ -181,6 +203,10 @@ def add_odu_scheduler(h):
 
 
 def load_non_repeative_events_odu(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     odu_bll_obj = OduSchedulingBll()
@@ -189,6 +215,10 @@ def load_non_repeative_events_odu(h):
 
 
 def load_repeative_events_odu(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     odu_bll_obj = OduSchedulingBll()
@@ -197,6 +227,10 @@ def load_repeative_events_odu(h):
 
 
 def event_resize_odu(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     scheduleId = html.var("id")
@@ -207,7 +241,7 @@ def event_resize_odu(h):
     i = 0
     odu_bll_obj = OduSchedulingBll()
     result = odu_bll_obj.event_resize(scheduleId)
-    if(len(result) != 0):
+    if (len(result) != 0):
         for row in result:
             endDate = row[0]
             endTime = row[1]
@@ -228,6 +262,10 @@ def event_resize_odu(h):
 
 
 def event_drop_odu(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     scheduleId = html.var("id")
@@ -288,7 +326,7 @@ def event_drop_odu(h):
         eDateObj = eDateObj + datetime.timedelta(days=int(day))
         sTempnow = datetime.datetime.now()
         sTempObj = sTempnow.replace(day=sTempnow.day - 1)
-        if(sDateObj < sTempObj and isRepeat != 1):
+        if (sDateObj < sTempObj and isRepeat != 1):
             html.write("2")
         else:
             if int(day) != 0:
@@ -327,8 +365,13 @@ def event_drop_odu(h):
                     if repeatType == "Monthly":
                         dates = int(dates) + int(day)
             odu_bll_obj = OduSchedulingBll()
-            result = odu_bll_obj.event_drop_update(scheduleId, (str(sDateObj.year) + "-" + str(sDateObj.month) + "-" + str(
-                sDateObj.day)), (str(sDateObj.hour) + ":" + str(sDateObj.minute) + ":00"), (str(eDateObj.year) + "-" + str(eDateObj.month) + "-" + str(eDateObj.day)), (str(eDateObj.hour) + ":" + str(eDateObj.minute) + ":00"), sun, mon, tue, wed, thu, fri, sat, dates)
+            result = odu_bll_obj.event_drop_update(scheduleId,
+                                                   (str(sDateObj.year) + "-" + str(sDateObj.month) + "-" + str(
+                                                       sDateObj.day)),
+                                                   (str(sDateObj.hour) + ":" + str(sDateObj.minute) + ":00"), (
+                str(eDateObj.year) + "-" + str(eDateObj.month) + "-" + str(eDateObj.day)),
+                                                   (str(eDateObj.hour) + ":" + str(eDateObj.minute) + ":00"), sun, mon,
+                                                   tue, wed, thu, fri, sat, dates)
             user_name = html.req.session["username"]
             create_crontab_file(user_name)
             html.write("0")
@@ -337,6 +380,10 @@ def event_drop_odu(h):
 
 
 def delete_odu_scheduler(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     scheduleId = html.var("scheduleId")
@@ -348,6 +395,10 @@ def delete_odu_scheduler(h):
 
 
 def view_access_point_list_odu(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     scheduleId = html.var("scheduleId")
@@ -357,6 +408,10 @@ def view_access_point_list_odu(h):
 
 
 def get_odu_schedule_details(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     scheduleId = html.var("scheduleId")
@@ -414,6 +469,10 @@ def get_odu_schedule_details(h):
 
 
 def update_odu_scheduler(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     sitename = __file__.split("/")[3]
@@ -421,7 +480,7 @@ def update_odu_scheduler(h):
     event = "Down"
     startDateTemp = html.var("startDate").split("/")
     startDate = startDateTemp[2] + "-" + startDateTemp[1] + "-" + \
-        startDateTemp[0]
+                startDateTemp[0]
     endDateTemp = html.var("endDate").split("/")
     endDate = endDateTemp[2] + "-" + endDateTemp[1] + "-" + endDateTemp[0]
     startTime = html.var("startTime")
@@ -495,13 +554,14 @@ def update_odu_scheduler(h):
     try:
         odu_bll_obj = OduSchedulingBll()
         result = odu_bll_obj.update_odu_scheduler(
-            event, startDate, endDate, startTime, endTime, repeat, repeatType, daysun, daymon, daytue, daywed, daythu, dayfri, daysat, monthjan, monthfeb, monthmar, monthapr,
+            event, startDate, endDate, startTime, endTime, repeat, repeatType, daysun, daymon, daytue, daywed, daythu,
+            dayfri, daysat, monthjan, monthfeb, monthmar, monthapr,
             monthmay, monthjun, monthjul, monthaug, monthsep, monthoct, monthnov, monthdec, dates, scheduleId)
         result2 = odu_bll_obj.update_odu_scheduler_delete(scheduleId)
         for apId in accessPoint:
             if apId.strip() != "":
                 if event == "Firmware":
-# firmware_file_name=html.var("selected_firmware")#html.req.session["firmware_file"]
+                # firmware_file_name=html.var("selected_firmware")#html.req.session["firmware_file"]
                     firmware_file_name = html.req.session["firmware_file"]
                 else:
                     firmware_file_name = ""
@@ -516,6 +576,10 @@ def update_odu_scheduler(h):
 
 
 def scheduling_firmware_file_upload(h):
+    """
+
+    @param h:
+    """
     try:
         global html
         html = h
@@ -550,14 +614,18 @@ def scheduling_firmware_file_upload(h):
                 "<p style=\"font-size:10px;\">Image Verified Successfully.. you can continue with scheduling..<p/><div id=\"file_uploader_div\" name=\"file_uploader_div\" style=\"display:none\">hello</div>")
             html.req.session["firmware_file"] = file_path
             html.req.session.save()
-        # time.sleep(3)
-        # html.write("<p style=\"font-size:10px;\">Firmware Upgrade
-        # Successfully.<p/>")
+            # time.sleep(3)
+            # html.write("<p style=\"font-size:10px;\">Firmware Upgrade
+            # Successfully.<p/>")
     except Exception, e:
         html.write(str(e))
 
 
 def device_firmware_view(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     html.write(
@@ -565,6 +633,10 @@ def device_firmware_view(h):
 
 
 def create_crontab_file(user_name):
+    """
+
+    @param user_name:
+    """
     commands = "python2.6 /omd/daemon/odu_scheduling.py "
     crontabString = ""
     commandString = ""
@@ -604,7 +676,7 @@ def create_crontab_file(user_name):
             if row[6] == 0:            # this is for non repeated scheduling
                 if sDateObj > now:
                     commandString = sTime[1] + " " + \
-                        sTime[0] + " " + sDate[2] + " " + sDate[1] + " * "
+                                    sTime[0] + " " + sDate[2] + " " + sDate[1] + " * "
                     apresult = odu_bll_obj.crontab_details(row[0])
                     schedule_id = str(row[0])
                     port = "-1"
@@ -618,20 +690,20 @@ def create_crontab_file(user_name):
                             ip = str(aprow[0])
                         if str(aprow[4]) != "":
                             device_type = str(aprow[4])
-#                              if str(aprow[1]) != "":
-#                                   username = str(aprow[1])
-#                              if str(aprow[2]) != "":
-#                                   password = str(aprow[2])
-#                              if str(aprow[3]).strip() != "":
-#                                   port = str(aprow[3]).strip()
-                        crontabString += commandString + commands +  ip + " "  + device_type + \
-                            " " + event1 + \
-                            " " + str(schedule_id) + " " + user_name
+                        #                              if str(aprow[1]) != "":
+                        #                                   username = str(aprow[1])
+                        #                              if str(aprow[2]) != "":
+                        #                                   password = str(aprow[2])
+                        #                              if str(aprow[3]).strip() != "":
+                        #                                   port = str(aprow[3]).strip()
+                        crontabString += commandString + commands + ip + " " + device_type + \
+                                         " " + event1 + \
+                                         " " + str(schedule_id) + " " + user_name
                         apI1 += 1
                     crontabString += " 1 -1\n"
                 if eDateObj > now and event2 != "Firmware":
                     commandString = eTime[1] + " " + \
-                        eTime[0] + " " + eDate[2] + " " + eDate[1] + " * "
+                                    eTime[0] + " " + eDate[2] + " " + eDate[1] + " * "
                     apresult = odu_bll_obj.crontab_details(row[0])
                     schedule_id = row[0]
                     port = "-1"
@@ -645,15 +717,15 @@ def create_crontab_file(user_name):
                             ip = str(aprow[0])
                         if str(aprow[4]) != "":
                             device_type = str(aprow[4])
-#                              if str(aprow[1]) != "":
-#                                   username = str(aprow[1])
-#                              if str(aprow[2]) != "":
-#                                   password = str(aprow[2])
-#                              if str(aprow[3]).strip() != "":
-#                                   port = str(aprow[3]).strip()
-                        crontabString += commandString + commands + ip + " " +  device_type + \
-                            " " + event2 + \
-                            " " + str(schedule_id) + " " + user_name
+                        #                              if str(aprow[1]) != "":
+                        #                                   username = str(aprow[1])
+                        #                              if str(aprow[2]) != "":
+                        #                                   password = str(aprow[2])
+                        #                              if str(aprow[3]).strip() != "":
+                        #                                   port = str(aprow[3]).strip()
+                        crontabString += commandString + commands + ip + " " + device_type + \
+                                         " " + event2 + \
+                                         " " + str(schedule_id) + " " + user_name
                         apI2 += 1
                     crontabString += " 1 -1\n"
 
@@ -672,14 +744,14 @@ def create_crontab_file(user_name):
                             ip = str(aprow[0])
                         if str(aprow[4]) != "":
                             device_type = str(aprow[4])
-                        crontabString += commandString1 + commands + ip + " " +  device_type + " " + \
-                            event1 + " " + str(
-                                schedule_id) + " " + user_name + " 0 -1\n"
+                        crontabString += commandString1 + commands + ip + " " + device_type + " " + \
+                                         event1 + " " + str(
+                            schedule_id) + " " + user_name + " 0 -1\n"
                         if event2 != "Firmware":
-                            crontabString += commandString2 + commands + ip + " " +  device_type + " " + \
-                                event2 +  " " + \
-                                str(schedule_id)   + \
-                                " " + user_name + " 0 -1\n"
+                            crontabString += commandString2 + commands + ip + " " + device_type + " " + \
+                                             event2 + " " + \
+                                             str(schedule_id) + \
+                                             " " + user_name + " 0 -1\n"
 
                 elif row[7] == "Weekly":
                     apresult = odu_bll_obj.crontab_details(row[0])
@@ -747,14 +819,14 @@ def create_crontab_file(user_name):
                             commandString2 += "6"
                             dayI += 1
 
-                        crontabString += commandString1 + " " + commands  + ip + " " +  device_type + " " + \
-                            event1 + " " + str(
-                                schedule_id) + " " + user_name + " 0 -1\n"
+                        crontabString += commandString1 + " " + commands + ip + " " + device_type + " " + \
+                                         event1 + " " + str(
+                            schedule_id) + " " + user_name + " 0 -1\n"
                         if event2 != "Firmware":
-                            crontabString += commandString2 + " " + commands  + ip + " " +  device_type + " " + \
-                                event2 +  " " + \
-                                str(schedule_id)   + \
-                                " " + user_name + " 0 -1\n"
+                            crontabString += commandString2 + " " + commands + ip + " " + device_type + " " + \
+                                             event2 + " " + \
+                                             str(schedule_id) + \
+                                             " " + user_name + " 0 -1\n"
 
                 elif row[7] == "Monthly":
                     apresult = odu_bll_obj.crontab_details(row[0])
@@ -772,9 +844,9 @@ def create_crontab_file(user_name):
 
                         monthI = 0
                         commandString1 = sTime[1] + \
-                            " " + sTime[0] + " " + str(row[27]) + " "
+                                         " " + sTime[0] + " " + str(row[27]) + " "
                         commandString2 = sTime[1] + \
-                            " " + sTime[0] + " " + str(row[27]) + " "
+                                         " " + sTime[0] + " " + str(row[27]) + " "
                         if row[15] == 1:    # jan
                             if monthI > 0:
                                 commandString1 += ","
@@ -860,36 +932,36 @@ def create_crontab_file(user_name):
                             commandString2 += "12"
                             monthI += 1
 
-                        crontabString += commandString1 + " * " + commands  + ip + " " +  device_type + " " + \
-                            event1 + " " + str(
-                                schedule_id) + " " + user_name + " 0 -1\n"
+                        crontabString += commandString1 + " * " + commands + ip + " " + device_type + " " + \
+                                         event1 + " " + str(
+                            schedule_id) + " " + user_name + " 0 -1\n"
                         if event2 != "Firmware":
-                            crontabString += commandString2 + " * " + commands  + ip + " " +  device_type + " " + \
-                                event2 +  " " + \
-                                str(schedule_id)  + \
-                                " " + user_name + " 0 -1\n"
-        # prepare SQL query to create crontab
-        # result = odu_bll_obj.crontab_repeat_schedule()
-        # if (len(result)!=0):
-            #    for row in result:
-            #        port = "-1"
-    #	   username = "username"
-    #	   password = "password"
-    #	   ip = "255.255.255.255"
-    #	   event = "Unknown"
+                            crontabString += commandString2 + " * " + commands + ip + " " + device_type + " " + \
+                                             event2 + " " + \
+                                             str(schedule_id) + \
+                                             " " + user_name + " 0 -1\n"
+                            # prepare SQL query to create crontab
+                            # result = odu_bll_obj.crontab_repeat_schedule()
+                            # if (len(result)!=0):
+                            #    for row in result:
+                            #        port = "-1"
+                            #	   username = "username"
+                            #	   password = "password"
+                            #	   ip = "255.255.255.255"
+                            #	   event = "Unknown"
 
-    #	   sDate = str(row[1]).split("-")
-    #	   sTime = str(row[2]).split(":")
-    #	commandString = sTime[1] + " " + sTime[0] + " " + sDate[2] + " " + sDate[1] + " * "
-#
-    #	   if str(row[3]) != "":
-    #	       ip = str(row[3])
-    #           if str(aprow[4]) !="":
-    #                device_type =str(aprow[4])
-    #	   if str(row[8]).strip() != "":
-    #	       event = str(row[8]).strip()
-    # crontabString += commandString + commands + ip + " "  +  device_type + "
-    # " + event + " 0 " + str(row[0]) + "\n"
+                            #	   sDate = str(row[1]).split("-")
+                            #	   sTime = str(row[2]).split(":")
+                            #	commandString = sTime[1] + " " + sTime[0] + " " + sDate[2] + " " + sDate[1] + " * "
+                        #
+                        #	   if str(row[3]) != "":
+                        #	       ip = str(row[3])
+                        #           if str(aprow[4]) !="":
+                        #                device_type =str(aprow[4])
+                        #	   if str(row[8]).strip() != "":
+                        #	       event = str(row[8]).strip()
+                        # crontabString += commandString + commands + ip + " "  +  device_type + "
+                        # " + event + " 0 " + str(row[0]) + "\n"
 
         fobj = open("/omd/sites/%s/etc/cron.d/crontab" % (sitename), "w")
         fobj.write(crontabString)
@@ -909,12 +981,16 @@ def create_crontab_file(user_name):
 ################################## Scheduling ############################
 #################################### AP Radio Status #####################
 def radio_status(h):
+    """
+
+    @param h:
+    """
     socket.setdefaulttimeout(1)
     global html
     html = h
     css_list = ["css/style.css", "fullcalendar/fullcalendar.css"]
-    js_list = ["js/jquery-ui-1.8.6.custom.min.js",
-               "fullcalendar/fullcalendar.min.js", "js/radio_status.js"]
+    js_list = ["js/lib/main/jquery-ui-1.8.6.custom.min.js",
+               "fullcalendar/fullcalendar.min.js", "js/unmp/main/radio_status.js"]
     header_btn = ""
     html.new_header("Radio Status", "manage_ap_configuration.py",
                     header_btn, css_list, js_list)
@@ -929,6 +1005,10 @@ def radio_status(h):
 
 
 def change_redio(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     username = html.var("username")
@@ -978,8 +1058,8 @@ def change_redio(h):
 
 #################################### AP Radio Status #####################
 
-
-def view_page_tip_scheduling(h):
-    global html
-    html = h
-    html.write(OduScheduling.view_page_tip_scheduling())
+#
+# def view_page_tip_scheduling(h):
+#     global html
+#     html = h
+#     html.write(OduScheduling.view_page_tip_scheduling())

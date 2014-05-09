@@ -20,7 +20,7 @@ class Report(object):
                   host_data,
                   device_type_user_selected_id,
                   device_type_user_selected_name
-                  ):
+    ):
         now = datetime.now()
         old = now + timedelta(minutes=-30)
         cday = str(now.day) + "/" + str(now.month) + "/" + str(now.year)
@@ -33,7 +33,7 @@ class Report(object):
             if str(i[0]) not in dict_hg:
                 option_li.append('\
                     <option value="%s">%s</option>' % (str(i[0]), str(i[1]))
-                                 )
+                )
                 dict_hg[str(i[0])] = str(i[1])
 
         html_view = """\
@@ -184,7 +184,7 @@ class Report(object):
     def get_columns(selected_columns, non_selected_columns):
 
         plusList = []
-        if(non_selected_columns != [""]):
+        if (non_selected_columns != [""]):
             for row in non_selected_columns:
                 plusList.append('\
                     <li>%s\
@@ -196,7 +196,7 @@ class Report(object):
 
         minusList = []
         for row in selected_columns:
-            minusList .append('\
+            minusList.append('\
                 <li> %s \
                     <img src="images/minus16.png"\
                          class="minus minus"\
@@ -240,103 +240,17 @@ class Report(object):
                    len(selected_columns),
                    ' '.join(minusList),
                    ' '.join(plusList)
-                   )
+        )
 
         return selectList
 
-    @staticmethod
-    def page_tip_main_reporting():
-        html_view = '\
-        <div id="help_container">\
-        <h1>GENERAL REPORT</h1>\
-        <br/>\
-        <div>\
-            On this page you can view and generate report for different\
-            date and time periods alongwith different hostgroups,\
-            device types and different hosts \
-        </div>\
-        <br/>\
-        <div>\
-            Delta stands for the change in the consecutive values of fields. \
-        </div>\
-        <br/>\
-        <div>\
-        <b>Hostgroup</b>:\
-            This drop down selects hostgroups for the report.\
-        </div>\
-        <br/>\
-        <div><b>Device Type</b>:\
-            This drop down selects device type for\
-            the report.\
-        </div>\
-        <br/>\
-        <div><b>Report Type</b>:\
-            This drop down selects report type for\
-            the selected device type.\
-        </div>\
-        <br/>\
-        <div><b>Host Alias</b>:\
-            This drop down selects Hosts for the selected device type. \
-            You can also search hosts here.\
-        </div>\
-        <br/>\
-        <div><b>Date-Time Range</b>:\
-            Here you select the date-time range\
-            for the report to be generated.\
-        </div>\
-        <br/>\
-        <div><strong>Actions\
-              </strong>\
-        </div>\
-        <div class="action-tip">\
-            <div class="txt-div">\
-                <button type="submit"\
-                        class="yo-small yo-button">\
-                    <span class="ok">View\
-                    </span>\
-                </button> \
-                Click here to submit the data.\
-            </div>\
-        </div>\
-        <div class="action-tip">\
-            <div class="txt-div">\
-                <button type="button"\
-                        class="yo-small yo-button">\
-                    <span class="report">Excel Report\
-                    </span>\
-                </button>\
-                Click here to download the report in Excel format.\
-            </div>\
-        </div>\
-        <div class="action-tip">\
-            <div class="txt-div">\
-                <button type="button"\
-                        class="yo-small yo-button">\
-                    <span class="report">CSV Report\
-                    </span>\
-                </button>\
-                Click here to download the report in CSV format.\
-            </div>\
-        </div>\
-        <div class="action-tip">\
-            <div class="txt-div">\
-                <button class="yo-button disabled" type="button" \
-                        disabled="disabled" style="width:90px;">\
-                    More Options >>:\
-                </button>\
-                :Click and select the headings for which report will\
-                    be generated.\
-            </div>\
-        </div>\
-        \
-        <br/>\
-        <div>\
-        <strong>Note:</strong>\
-         You can\'t choose dates greater than current date and\
-                start date should be less than end date.</div>\
-        <br/>\
-        </div>'
-        return html_view
+    # @staticmethod
+    # def page_tip_main_reporting():
+    #     import defaults
+    #     f = open(defaults.web_dir + "/htdocs/locale/page_tip_main_reporting.html", "r")
+    #     html_view = f.read()
+    #     f.close()
+    #     return str(html_view)
 
     @staticmethod
     def trap_list_form(result, host_data):
@@ -510,75 +424,10 @@ class Report(object):
         return html_view
         #<div id="selectedList"></div>\
 
-    @staticmethod
-    def trap_page_tip_main_reporting():
-        html_view = '\
-            <div id="help_container">\
-            <h1>EVENTS REPORT</h1>\
-            <br/>\
-            <div>\
-                On this page you can view and generate Event report for \
-                different date and time periods alongwith different hostgroups\
-                ,device types and different hosts. \
-            </div>\
-            <br/>\
-            <div><b>Report Type</b>:\
-                his drop down selects report type of events.\
-            </div>\
-            <br/>\
-            <div><b>Hostgroup</b>: \
-                This drop down selects hostgroups for the report.\
-            </div>\
-            <br/>\
-            <div><b>Device Type</b>: \
-                This drop down selects device type for the report.\
-            </div>\
-            <br/>\
-            <div><b>Host Alias</b>:\
-                This drop down selects Hosts for the selected device type . \
-                You can also search hosts here.\
-            </div>\
-            <br/>\
-            <div><b>Time Range</b>:\
-                Here you select the date-time range for the report to be \
-                generated.\
-            </div>\
-            <br/>\
-            <div><strong>Actions\
-                  </strong>\
-            </div>\
-            <div class="action-tip">\
-            <div class="txt-div">\
-                <button type="submit" \
-                class="yo-small yo-button">\
-                <span class="ok">View\
-                </span>\
-                </button> Click here to submit the data.\
-            </div>\
-            </div>\
-            <div class="action-tip">\
-            <div class="txt-div">\
-                <button type="button"\
-                class="yo-small yo-button">\
-                <span class="report">Excel Report\
-                </span>\
-                </button>Click here to download the report in Excel format.\
-            </div>\
-            </div>\
-            <div class="action-tip">\
-            <div class="txt-div">\
-                <button type="button" class="yo-small yo-button">\
-                <span class="report">CSV Report\
-                </span>\
-                </button>Click here to download the report in CSV format.\
-            </div>\
-            </div>\
-            <br/>\
-            <div><strong>Note:\
-                  </strong>\
-                You can generate a general events report by selecting \
-                he report type.\
-            </div>\
-            <br/>\
-            </div>'
-        return html_view
+        # @staticmethod
+        # def trap_page_tip_main_reporting():
+        #     import defaults
+        #     f = open(defaults.web_dir + "/htdocs/locale/trap_page_tip_main_reporting.html", "r")
+        #     html_view = f.read()
+        #     f.close()
+        #     return str(html_view)

@@ -15,31 +15,31 @@
 
 /* For IE */
 
-div.cntr
-{
-	position:absolute;
-	top:0px;
+div.cntr {
+    position: absolute;
+    top: 0px;
 }
-div#container_body
-{
-	height:100%;
+
+div#container_body {
+    height: 100%;
 }
-div.form-div-footer
-{
-	position:absolute;
+
+div.form-div-footer {
+    position: absolute;
 }
-.img-loader{
-    position:absolute;
-    top:2px;
-    right:5px;
-    bottom:2px;
+
+.img-loader {
+    position: absolute;
+    top: 2px;
+    right: 5px;
+    bottom: 2px;
 }
-input[type=text],input[type=password],input[type=file]
-{
-	vertical-align:middle;
+
+input[type=text], input[type=password], input[type=file] {
+    vertical-align: middle;
 }
-select
-{
-	vertical-align:middle;
-	
+
+select {
+    vertical-align: middle;
+
 }

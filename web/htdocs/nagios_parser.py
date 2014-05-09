@@ -20,7 +20,6 @@ tarfile_path = "/omd/sites/%s/share/check_mk/web/htdocs/download/nag_db/" % (
     nms_instance)
 extract_here = "/omd/sites/%s/etc/nagios/conf.d/" % (nms_instance)
 
-
 verify_configuration = False
 filepath_dict = {
     "command_cfg": nagios_path + 'commands.cfg',
@@ -129,6 +128,11 @@ count_list = [1, 1, 1, 1, 1, 1, 1]
 
 def create_directory():
     # check if directory exists
+    """
+
+
+    @return:
+    """
     try:
         os.makedirs(db_path)
         return 0
@@ -141,6 +145,12 @@ def create_directory():
 
 
 def create_backup(comment="", flag_write_to_log_file=True):
+    """
+
+    @param comment:
+    @param flag_write_to_log_file:
+    @return:
+    """
     try:
         if flag_write_to_log_file:
             file_name = str(datetime.datetime.now())[:22]
@@ -163,6 +173,11 @@ def create_backup(comment="", flag_write_to_log_file=True):
 
 
 def restore_backup(file_name):
+    """
+
+    @param file_name:
+    @return:
+    """
     global tarfile_path
     try:
         comment = "Backup before config restore at time : %s" % (
@@ -184,6 +199,12 @@ def restore_backup(file_name):
 
 
 def get_file_names(directory_path=db_path, extension=".tar.bz2"):
+    """
+
+    @param directory_path:
+    @param extension:
+    @return:
+    """
     try:
         li = []
         for the_file in os.listdir(directory_path):
@@ -204,6 +225,10 @@ def get_file_names(directory_path=db_path, extension=".tar.bz2"):
 
 
 def store_file_modification_time(file_name=""):
+    """
+
+    @param file_name:
+    """
     try:
         file_stat = os.stat(file_name)
         file_old_stats = {}
@@ -227,6 +252,11 @@ def store_file_modification_time(file_name=""):
 
 def check_files_if_modified(file_name=""):
     # if file_name=="":
+    """
+
+    @param file_name:
+    @return:
+    """
     if not file_name.startswith("//"):
         file_name = nagios_path + file_name
     try:
@@ -253,6 +283,12 @@ def check_files_if_modified(file_name=""):
 
 
 def remove_directory(directory_path, extension=".cfg"):
+    """
+
+    @param directory_path:
+    @param extension:
+    @return:
+    """
     try:
         for the_file in os.listdir(directory_path):
             file_path = os.path.join(directory_path, the_file)
@@ -271,6 +307,12 @@ def remove_directory(directory_path, extension=".cfg"):
 
 
 def remove_directory_file(directory_path, filename=""):
+    """
+
+    @param directory_path:
+    @param filename:
+    @return:
+    """
     try:
         for the_file in os.listdir(directory_path):
             file_path = os.path.join(directory_path, the_file)
@@ -291,6 +333,13 @@ def remove_directory_file(directory_path, filename=""):
 def check_valid_template(source_dict, check_dict, dict_name):
     # check validity of template
     # from the source template
+    """
+
+    @param source_dict:
+    @param check_dict:
+    @param dict_name:
+    @return:
+    """
     try:
         for key in source_dict:
             if source_dict[key] == "r":  # required value
@@ -298,7 +347,7 @@ def check_valid_template(source_dict, check_dict, dict_name):
                     return key + " value not present in input file %s" % (dict_name)
         for key in check_dict:        # check validity of keys in check_dict
             if key not in source_dict:  # its not present in source_dict
-                    return key + " value not present in source template %s" % (dict_name)
+                return key + " value not present in source template %s" % (dict_name)
         return 0
     except Exception, e:
         return str(e)
@@ -307,6 +356,11 @@ def check_valid_template(source_dict, check_dict, dict_name):
 
 
 def load_configuration_to_memory(list_files=[]):
+    """
+
+    @param list_files:
+    @return: @raise:
+    """
     global count_list
     # load all .cfg files in memory which are present in nagios directory ie conf.d
     # load in memory the source dict
@@ -334,7 +388,7 @@ def load_configuration_to_memory(list_files=[]):
                 if line.startswith('#') or line == '':
                     continue
                 line = line.split('#')[0].strip()
-#                li.append(line)
+                #                li.append(line)
                 flag = 1
                 if line.endswith('\\'):
                     temp_str += line[:-1]
@@ -349,23 +403,23 @@ def load_configuration_to_memory(list_files=[]):
                     temp_str = ""
             i = 0
             dict_name = ""
-            while(i < len(li)):
+            while (i < len(li)):
                 j = i + 1
                 li[i] = li[i].strip()
                 if li[i].startswith('define'):        # li[i] = define host{
                     dict_name = li[i].split()[1]
-                                            # get the name of definition
+                    # get the name of definition
                     dict_name = dict_name.replace(
                         '{', '')  # replace any { if present
                     di_data = {}
-                        # initialize data dict
-                    while(j < len(li) and li[j].find('}') == -1):  # run till we reach end of file or find }
+                    # initialize data dict
+                    while (j < len(li) and li[j].find('}') == -1):  # run till we reach end of file or find }
                         if li[j].strip() == "{":
                             j = j + 1
                             continue
                         data = li[j].split()
                         di_data[data[0]
-                                ] = ' '.join(data[1:])  # make the key value pair
+                        ] = ' '.join(data[1:])  # make the key value pair
                         j = j + 1
                     if j == len(li):
                         raise Exception(
@@ -379,13 +433,13 @@ def load_configuration_to_memory(list_files=[]):
                     # if definition_name=="service":
                     #    definition_name = definition_name + "_description"
                     if definition_name in count_maintain_list:
-#                        if definition_name=="service":
-#                            definition_name_service=di_data.get("service_description","")+di_data.get("host_name","")
-#                        else:
+                    #                        if definition_name=="service":
+                    #                            definition_name_service=di_data.get("service_description","")+di_data.get("host_name","")
+                    #                        else:
                         index_count = count_maintain_list.index(
                             definition_name)
                         value_index = definition_name + \
-                            str(count_list[index_count])
+                                      str(count_list[index_count])
                         count_list[index_count] += 1
                         # index_count=count_maintain_list.index(definition_name)
                         # definition_name = definition_name + str(count_list[index_count])
@@ -399,9 +453,9 @@ def load_configuration_to_memory(list_files=[]):
                         eval(dict_name + "_dict"), di_data, dict_name)
                 if check_valid_config_file == 0:
                     if definition_name in count_maintain_list:
-#                        if definition_name=="service":
-#                            eval(dict_name)[definition_name_service]=di_data
-#                        else:
+                    #                        if definition_name=="service":
+                    #                            eval(dict_name)[definition_name_service]=di_data
+                    #                        else:
                         eval(dict_name)[value_index] = di_data
                         # eval(dict_name)[value_index]=di_data
                     else:
@@ -420,6 +474,11 @@ def load_configuration_to_memory(list_files=[]):
 # load configuration into memory and shelve files
 def load_configuration(list_files=[]):
     # write shelve files from the dict object present in memory
+    """
+
+    @param list_files:
+    @return:
+    """
     try:
         time1 = datetime.datetime.now()
         result = load_configuration_to_memory(list_files)
@@ -449,8 +508,17 @@ def load_configuration(list_files=[]):
 # function to forecefully write a file ie open it in 'w' mode
 
 
-def nagios_force_sync_parser(shelve_name='hostgroup', file_name='hostgroups.cfg', updated_dict={}, attribute="hostgroup"):
+def nagios_force_sync_parser(shelve_name='hostgroup', file_name='hostgroups.cfg', updated_dict={},
+                             attribute="hostgroup"):
     # write shelve files from the dict object present in memory
+    """
+
+    @param shelve_name:
+    @param file_name:
+    @param updated_dict:
+    @param attribute:
+    @return:
+    """
     try:
         db_dict = shelve.open(db_path + "%s.db" % (shelve_name))
         db_dict["data"] = updated_dict
@@ -476,6 +544,11 @@ def nagios_force_sync_parser(shelve_name='hostgroup', file_name='hostgroups.cfg'
 
 def load_db():
     # load shelve files to memory objects ie dicts in memory
+    """
+
+
+    @return:
+    """
     try:
         time1 = datetime.datetime.now()
         for dict_var in dicts_name:
@@ -497,6 +570,12 @@ def load_db():
 def load_db_by_name(dict_name, is_cfg=0):
     # get a specific .cfg file definition from shelve... no need of parsing
     # the .cfg files as we already have them in shelve
+    """
+
+    @param dict_name:
+    @param is_cfg:
+    @return:
+    """
     try:
         if is_cfg:
             dict_name = filename_dict_mapping[dict_name]
@@ -506,8 +585,8 @@ def load_db_by_name(dict_name, is_cfg=0):
         di.update(db_dict["data"])
         db_dict.close()
         # if di=={}:
-            # pass
-            # load_configuration([])
+        # pass
+        # load_configuration([])
         return {"success": 0, "data": di}
     except Exception, e:
         return {"success": 1, "data": str(e)}
@@ -517,6 +596,11 @@ def load_db_by_name(dict_name, is_cfg=0):
 
 def set_db_by_name(dict_name):
     # write  a specific shelve file with fetching data from memory.
+    """
+
+    @param dict_name:
+    @return:
+    """
     try:
         db_dict = shelve.open(db_path + "%s.db" % (dict_name))
         db_dict["data"] = eval(dict_name)
@@ -529,6 +613,11 @@ def set_db_by_name(dict_name):
 
 
 def get_host_by_name(host_name):
+    """
+
+    @param host_name:
+    @return:
+    """
     try:
         dict_name = "host"
         di = load_db_by_name(dict_name)
@@ -544,6 +633,11 @@ def get_host_by_name(host_name):
 
 
 def get_service_by_name(service_name):
+    """
+
+    @param service_name:
+    @return:
+    """
     try:
         dict_name = "service"
         di = load_db_by_name(dict_name)
@@ -558,6 +652,11 @@ def get_service_by_name(service_name):
 
 # get properties of a hostgroup from shelve
 def get_hostgroup_by_name(hostgroup_name):
+    """
+
+    @param hostgroup_name:
+    @return:
+    """
     try:
         dict_name = "hostgroup"
         di = load_db_by_name(dict_name)
@@ -574,6 +673,12 @@ def get_hostgroup_by_name(hostgroup_name):
 
 
 def get_attribute_by_name(attribute_name, attribute):
+    """
+
+    @param attribute_name:
+    @param attribute:
+    @return:
+    """
     try:
         di = load_db_by_name(attribute)
         if di["success"] == 0:
@@ -587,6 +692,13 @@ def get_attribute_by_name(attribute_name, attribute):
 
 # write config file & shelve file after any modification in memory
 def set_attribute_by_name(attribute_data, attribute, unique_name):
+    """
+
+    @param attribute_data:
+    @param attribute:
+    @param unique_name:
+    @return:
+    """
     try:
         db_dict = shelve.open(db_path + "%s.db" % (attribute))
         di = db_dict["data"]
@@ -605,6 +717,14 @@ def set_attribute_by_name(attribute_data, attribute, unique_name):
 
 
 def set_attribute_by_name_to_shelve(attribute_data, attribute, unique_name, extra_data={}):
+    """
+
+    @param attribute_data:
+    @param attribute:
+    @param unique_name:
+    @param extra_data:
+    @return:
+    """
     try:
         db_dict = shelve.open(db_path + "%s.db" % (attribute))
         di = db_dict["data"]
@@ -624,6 +744,13 @@ def set_attribute_by_name_to_shelve(attribute_data, attribute, unique_name, extr
 
 
 def complete_write_attribute_by_name_to_shelve(attribute_data, attribute, unique_name):
+    """
+
+    @param attribute_data:
+    @param attribute:
+    @param unique_name:
+    @return:
+    """
     try:
         db_dict = shelve.open(db_path + "%s.db" % (attribute))
         di = db_dict["data"]
@@ -640,6 +767,12 @@ def complete_write_attribute_by_name_to_shelve(attribute_data, attribute, unique
 
 def delete_attribute_by_name_from_shelve(attribute, unique_name):
     # write shelve file after any modification in memory
+    """
+
+    @param attribute:
+    @param unique_name:
+    @return:
+    """
     try:
         db_dict = shelve.open(db_path + "%s.db" % (attribute))
         di = db_dict["data"]
@@ -661,6 +794,11 @@ def delete_attribute_by_name_from_shelve(attribute, unique_name):
 def write_config_from_memory(attribute):
     # write objects to .cfg files from memory after modification to any
     # attributes
+    """
+
+    @param attribute:
+    @return:
+    """
     try:
         cfg_file = open(filepath_dict["%s_cfg" % (attribute)])
         attribute_dict = eval(attribute)
@@ -683,6 +821,11 @@ def write_config_from_memory(attribute):
 
 def write_db_from_memory(attribute):
     # write objects to shelve file from memory
+    """
+
+    @param attribute:
+    @return:
+    """
     try:
         cfg_file = open(filepath_dict["%s_cfg" % (attribute)], "w")
         attribute_dict = shelve.open(db_path + "%s.db" % (attribute))["data"]
@@ -705,6 +848,11 @@ def write_db_from_memory(attribute):
 
 def write_configuration(comment="nagios backup"):
     # write .cfg files from shelve files ..not from current memory
+    """
+
+    @param comment:
+    @return:
+    """
     backup_result = create_backup(comment)
     if backup_result["success"] == 0:
         remove_result = remove_directory(nagios_path, ".cfg")
@@ -743,6 +891,13 @@ def write_configuration(comment="nagios backup"):
 
 def write_configuration_file(file_name, comment="nagios backup", flag_write_to_log_file=True):
     # write .cfg files from shelve files ..not from current memory
+    """
+
+    @param file_name:
+    @param comment:
+    @param flag_write_to_log_file:
+    @return:
+    """
     backup_result = create_backup(comment, flag_write_to_log_file)
     if backup_result["success"] == 0:
         remove_result = remove_directory_file(nagios_path, file_name)
@@ -780,6 +935,11 @@ def write_configuration_file(file_name, comment="nagios backup", flag_write_to_l
 
 
 def load_return_attribute(file_name):
+    """
+
+    @param file_name:
+    @return:
+    """
     modified_result = check_files_if_modified(
         file_name)  # file_name = file_name,is_cfg=1
     flag_modified = 0
@@ -804,6 +964,12 @@ def load_return_attribute(file_name):
 
 # load nagios configuration for given dict_names and list of files
 def load_nagios_config_inventory(dict_names=[], list_files=[]):
+    """
+
+    @param dict_names:
+    @param list_files:
+    @return: @raise:
+    """
     global count_list
     # load all .cfg files in memory which are present in nagios directory ie conf.d
     # load in memory the source dict
@@ -825,7 +991,7 @@ def load_nagios_config_inventory(dict_names=[], list_files=[]):
                 if line.startswith('#') or line == '':
                     continue
                 line = line.split('#')[0].strip()
-#                li.append(line)
+                #                li.append(line)
                 flag = 1
                 if line.endswith('\\'):
                     temp_str += line[:-1]
@@ -840,23 +1006,23 @@ def load_nagios_config_inventory(dict_names=[], list_files=[]):
                     temp_str = ""
             i = 0
             dict_name = ""
-            while(i < len(li)):
+            while (i < len(li)):
                 j = i + 1
                 li[i] = li[i].strip()
                 if li[i].startswith('define'):        # li[i] = define host{
                     dict_name = li[i].split()[1]
-                                            # get the name of definition
+                    # get the name of definition
                     dict_name = dict_name.replace(
                         '{', '')  # replace any { if present
                     di_data = {}
-                        # initialize data dict
-                    while(j < len(li) and li[j].find('}') == -1):  # run till we reach end of file or find }
+                    # initialize data dict
+                    while (j < len(li) and li[j].find('}') == -1):  # run till we reach end of file or find }
                         if li[j].strip() == "{":
                             j = j + 1
                             continue
                         data = li[j].split()
                         di_data[data[0]
-                                ] = ' '.join(data[1:])  # make the key value pair
+                        ] = ' '.join(data[1:])  # make the key value pair
                         j = j + 1
                     if j == len(li):
                         raise Exception(
@@ -871,7 +1037,7 @@ def load_nagios_config_inventory(dict_names=[], list_files=[]):
                     #    definition_name = definition_name + "_description"
                     if definition_name == "service":
                         definition_name_service = di_data[
-                            "service_description"] + di_data["host_name"]
+                                                      "service_description"] + di_data["host_name"]
                     else:
                         definition_name = definition_name + "_name"
                 dict_name = dict_names[file_name]
@@ -891,8 +1057,18 @@ def load_nagios_config_inventory(dict_names=[], list_files=[]):
 # this is called after addition of new object through inventory
 
 
-def append_for_inventory_new_object(file_name, dict_name="host", attribute="host", new_host_dict={}, comment="nagios backup"):
+def append_for_inventory_new_object(file_name, dict_name="host", attribute="host", new_host_dict={},
+                                    comment="nagios backup"):
     # write .cfg files from shelve files ..not from current memory
+    """
+
+    @param file_name:
+    @param dict_name:
+    @param attribute:
+    @param new_host_dict:
+    @param comment:
+    @return:
+    """
     backup_result = create_backup(comment, False)
     if backup_result["success"] == 0:
         pass
@@ -918,9 +1094,19 @@ def append_for_inventory_new_object(file_name, dict_name="host", attribute="host
 
 
 def edit_for_inventory_object(
-    unique_name="localhost", file_name="hosts.cfg", attribute="host", dict_name="host", new_host_dict={},
+        unique_name="localhost", file_name="hosts.cfg", attribute="host", dict_name="host", new_host_dict={},
         comment="nagios backup"):
     # write .cfg files from shelve files ..not from current memory
+    """
+
+    @param unique_name:
+    @param file_name:
+    @param attribute:
+    @param dict_name:
+    @param new_host_dict:
+    @param comment:
+    @return:
+    """
     backup_result = create_backup(comment, False)
     if backup_result["success"] == 0:
         load_result = load_nagios_config_inventory([dict_name], [file_name])
@@ -956,9 +1142,20 @@ def edit_for_inventory_object(
 # edit object of config files... this is called after editing of object through inventory
 # we don't have unique name here
 def edit_for_inventory_object_without_unique(
-    other_dict={}, file_name="hosts.cfg", attribute="host", dict_name="host",
+        other_dict={}, file_name="hosts.cfg", attribute="host", dict_name="host",
         old_name='', new_name='', comment="nagios backup"):
     # write .cfg files from shelve files ..not from current memory
+    """
+
+    @param other_dict:
+    @param file_name:
+    @param attribute:
+    @param dict_name:
+    @param old_name:
+    @param new_name:
+    @param comment:
+    @return:
+    """
     backup_result = create_backup(comment, False)
     if backup_result["success"] == 0:
         load_result = load_nagios_config_inventory([dict_name], [file_name])
@@ -996,8 +1193,20 @@ def edit_for_inventory_object_without_unique(
 
 
 # delete inventory object when we have unique name
-def delete_for_inventory_object(unique_name="host3", file_name="hosts.cfg", attribute="host", dict_name="host", replace_dict={}, comment="nagios backup", take_backup=1):
+def delete_for_inventory_object(unique_name="host3", file_name="hosts.cfg", attribute="host", dict_name="host",
+                                replace_dict={}, comment="nagios backup", take_backup=1):
     # write .cfg files from shelve files ..not from current memory
+    """
+
+    @param unique_name:
+    @param file_name:
+    @param attribute:
+    @param dict_name:
+    @param replace_dict:
+    @param comment:
+    @param take_backup:
+    @return:
+    """
     if take_backup:
         backup_result = create_backup(comment, False)
         if backup_result["success"] == 0:
@@ -1036,8 +1245,20 @@ def delete_for_inventory_object(unique_name="host3", file_name="hosts.cfg", attr
 # delete inventory object and modify the hosts file...
 
 
-def delete_for_inventory_object_modify_hosts(old_dict_template, file_name="hosts.cfg", attribute="host", dict_name="host", replace_dict={}, comment="nagios backup", take_backup=1):
+def delete_for_inventory_object_modify_hosts(old_dict_template, file_name="hosts.cfg", attribute="host",
+                                             dict_name="host", replace_dict={}, comment="nagios backup", take_backup=1):
     # write .cfg files from shelve files ..not from current memory
+    """
+
+    @param old_dict_template:
+    @param file_name:
+    @param attribute:
+    @param dict_name:
+    @param replace_dict:
+    @param comment:
+    @param take_backup:
+    @return:
+    """
     if take_backup:
         backup_result = create_backup(comment, False)
         if backup_result["success"] == 0:
@@ -1079,8 +1300,21 @@ def delete_for_inventory_object_modify_hosts(old_dict_template, file_name="hosts
 # delete inventory files when we don't have unique name
 
 
-def delete_for_inventory_object_without_unique_name(unique_attribute="host_name", unique_name="host3", file_name="hosts.cfg", attribute="host", dict_name="host", replace_dict={}, comment="nagios backup"):
+def delete_for_inventory_object_without_unique_name(unique_attribute="host_name", unique_name="host3",
+                                                    file_name="hosts.cfg", attribute="host", dict_name="host",
+                                                    replace_dict={}, comment="nagios backup"):
     # write .cfg files from shelve files ..not from current memory
+    """
+
+    @param unique_attribute:
+    @param unique_name:
+    @param file_name:
+    @param attribute:
+    @param dict_name:
+    @param replace_dict:
+    @param comment:
+    @return:
+    """
     backup_result = create_backup(comment, False)
     if backup_result["success"] == 0:
         load_result = load_nagios_config_inventory([dict_name], [file_name])
@@ -1098,7 +1332,7 @@ def delete_for_inventory_object_without_unique_name(unique_attribute="host_name"
             di_data = di[key]
             if unique_attribute in di_data:
                 li_data = [i.strip() for i in di_data[
-                           unique_attribute].split(',')]
+                    unique_attribute].split(',')]
                 if li_data.count(unique_name) != 0:
                     li_data.remove(unique_name)
                     di_data[unique_attribute] = ','.join(li_data)
@@ -1106,8 +1340,8 @@ def delete_for_inventory_object_without_unique_name(unique_attribute="host_name"
                 di.pop(key)
             else:
                 di[key] = di_data
-#        if di.has_key(unique_name):
-#            u_data=di.pop(unique_name)
+            #        if di.has_key(unique_name):
+            #            u_data=di.pop(unique_name)
         cfg_file = open(nagios_path + file_name, "w")
         write_li = []
         for data in di:
@@ -1126,7 +1360,6 @@ def delete_for_inventory_object_without_unique_name(unique_attribute="host_name"
         return {"success": 0, "data": " config files modified successfully"}
     except Exception, e:
         return {"success": 1, "data": str(e)}
-
 
 
 #

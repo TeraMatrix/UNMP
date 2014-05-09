@@ -1,36 +1,30 @@
 #!/usr/bin/python2.6
 
-import config
-import htmllib
-import pprint
-import sidebar
-import views
-import time
-import defaults
-import os
-import cgi
-import xml.dom.minidom
-import subprocess
-import commands
-import MySQLdb
-import datetime
-import urllib2
 import base64
+import datetime
 import socket
-import sys
+import urllib2
+
+import MySQLdb
+
 from lib import *
+
 
 ################################## Scheduling ############################
 
 
 def ap_scheduling(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     css_list = ["css/style.css", "facebox/facebox.css",
                 "calendrical/calendrical.css", "fullcalendar/fullcalendar.css"]
     js_list = [
-        "js/jquery-ui-1.8.6.custom.min.js", "fullcalendar/fullcalendar.min.js",
-        "facebox/facebox.js", "calendrical/calendrical.js", "js/ap_scheduling.js"]
+        "js/lib/main/jquery-ui-1.8.6.custom.min.js", "fullcalendar/fullcalendar.min.js",
+        "facebox/facebox.js", "calendrical/calendrical.js", "js/unmp/main/ap_scheduling.js"]
     html.new_header("Access Point Scheduling", "", "", css_list, js_list)
     html.write(
         "<div id='calendar' style=\"width:900px;margin:0 auto;\"></div>")
@@ -56,7 +50,8 @@ def ap_scheduling(h):
     html.write("<td>")
     html.write(
         "<input type=\"text\" id=\"startDate\" name=\"startDate\" /> <input type=\"text\" id=\"startTime\" name=\"startTime\" style=\"width:100px;\" /> To")
-    html.write(" <input type=\"text\" id=\"endDate\" name=\"endDate\" /> <input type=\"text\" id=\"endTime\" name=\"endTime\" style=\"width:100px;\" />")
+    html.write(
+        " <input type=\"text\" id=\"endDate\" name=\"endDate\" /> <input type=\"text\" id=\"endTime\" name=\"endTime\" style=\"width:100px;\" />")
     html.write(
         "<label style=\"color:red;display:none;\" id=\"dateError\"> Please enter correct date time range</label>")
     html.write("</td>")
@@ -183,8 +178,10 @@ def ap_scheduling(h):
     html.write("</div>")
     html.footer()
     html.write("<div class=\"loading\"></div>")
-    html.write("<div class=\"calender-pop-up\" style=\"min-height:20px;width:150px;\" id=\"cEvent\"><a href=\"javascript:createEvent();\">Create Event</a></div>")
-    html.write("<div class=\"calender-pop-up\" id=\"dEvent\"><input type=\"hidden\" id=\"scheduleId\" name=\"scheduleId\" value=\"0\" /><a href=\"#viewApDiv\" id=\"showAP\"  rel=\"facebox\">View Access point</a><br/><a href=\"javascript:editSchedule();\">Edit</a><br/><a href=\"javascript:deleteSchedule();\">Delete</a></div>")
+    html.write(
+        "<div class=\"calender-pop-up\" style=\"min-height:20px;width:150px;\" id=\"cEvent\"><a href=\"javascript:createEvent();\">Create Event</a></div>")
+    html.write(
+        "<div class=\"calender-pop-up\" id=\"dEvent\"><input type=\"hidden\" id=\"scheduleId\" name=\"scheduleId\" value=\"0\" /><a href=\"#viewApDiv\" id=\"showAP\"  rel=\"facebox\">View Access point</a><br/><a href=\"javascript:editSchedule();\">Edit</a><br/><a href=\"javascript:deleteSchedule();\">Delete</a></div>")
     # image uploader div
     # html.write("<div class=\"loading\"></div>")
     # html.write("<div id=\"viewApDiv\" style=\"min-
@@ -196,12 +193,16 @@ def ap_scheduling(h):
 
 
 def add_ap_scheduler(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     event = "Down"
     startDateTemp = html.var("startDate").split("/")
     startDate = startDateTemp[2] + "-" + startDateTemp[1] + "-" + \
-        startDateTemp[0]
+                startDateTemp[0]
     endDateTemp = html.var("endDate").split("/")
     endDate = endDateTemp[2] + "-" + endDateTemp[1] + "-" + endDateTemp[0]
     startTime = html.var("startTime")
@@ -279,7 +280,9 @@ def add_ap_scheduler(h):
         cursor = db.cursor()
         # prepare SQL query to insert the scheduling details
         sql = "INSERT INTO schedule (event, startdate, enddate, starttime, endtime, isrepeat, repeattype, sun, mon, tue, wed, thu, fri, sat, jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dece, dates) VALUES ('%s','%s','%s','%s','%s',%s,'%s', %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, '%s')" % (
-            event, startDate, endDate, startTime, endTime, repeat, repeatType, daysun, daymon, daytue, daywed, daythu, dayfri, daysat, monthjan, monthfeb, monthmar, monthapr, monthmay, monthjun, monthjul, monthaug, monthsep, monthoct, monthnov, monthdec, dates)
+            event, startDate, endDate, startTime, endTime, repeat, repeatType, daysun, daymon, daytue, daywed, daythu,
+            dayfri, daysat, monthjan, monthfeb, monthmar, monthapr, monthmay, monthjun, monthjul, monthaug, monthsep,
+            monthoct, monthnov, monthdec, dates)
         cursor.execute(sql)
         newId = cursor.lastrowid
         for apId in accessPoint:
@@ -316,6 +319,12 @@ def add_ap_scheduler(h):
 
 # function to create multiple selection list for access point
 def access_point_multiple_select_list(accessPoints, selectListId):
+    """
+
+    @param accessPoints:
+    @param selectListId:
+    @return:
+    """
     selectList = ""
     # Open database connection
     db = MySQLdb.connect("localhost", "root", "root", "nms")
@@ -331,26 +340,26 @@ def access_point_multiple_select_list(accessPoints, selectListId):
     liList = ""
     for row in result:
         liList += "<li>" + row[1] + "<img src=\"images/add16.png\" class=\"plus plus" + selectListId + \
-            "\" alt=\"+\" title=\"Add\" id=\"" + str(
-                row[0]) + "\" name=\"" + row[1] + "\"/></li>"
+                  "\" alt=\"+\" title=\"Add\" id=\"" + str(
+            row[0]) + "\" name=\"" + row[1] + "\"/></li>"
 
     selectList += "<div class=\"multiSelectList\" id=\"multiSelectList" + \
-        selectListId + "\" style=\"position:;\">"
+                  selectListId + "\" style=\"position:;\">"
     selectList += "<input type=\"hidden\" id=\"hd" + selectListId + \
-        "\" name=\"hd" + selectListId + "\" value=\"\" />"
+                  "\" name=\"hd" + selectListId + "\" value=\"\" />"
     selectList += "<input type=\"hidden\" id=\"hdTemp" + selectListId + "\" name=\"hdTemp" + \
-        selectListId + "\" value=\"" + accessPoints + "\" />"
+                  selectListId + "\" value=\"" + accessPoints + "\" />"
     selectList += "<div class=\"selected\">"
     selectList += "<div class=\"shead\"><span id=\"count\">0</span><span> Access Point(s)</span><a href=\"#\" id=\"rm" + \
-        selectListId + \
-        "\">Remove all</a>"
+                  selectListId + \
+                  "\">Remove all</a>"
     selectList += "</div>"
     selectList += "<ul>"  # <li>asdf<img src=\"images/minus16.png\" class=\"minus\" alt=\"-\" title=\"Remove\" /></li>
     selectList += "</ul>"
     selectList += "</div>"
     selectList += "<div class=\"nonSelected\">"
     selectList += "<div class=\"shead\"><a href=\"#\" id=\"add" + \
-        selectListId + "\">Add all</a>"
+                  selectListId + "\">Add all</a>"
     selectList += "</div>"
     selectList += "<ul>" + liList
     selectList += "</ul>"
@@ -360,6 +369,10 @@ def access_point_multiple_select_list(accessPoints, selectListId):
 
 
 def load_non_repeative_events(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     # Open database connection
@@ -400,6 +413,10 @@ def load_non_repeative_events(h):
 
 
 def load_repeative_events(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     # Open database connection
@@ -482,6 +499,10 @@ def load_repeative_events(h):
 
 
 def event_resize(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     scheduleId = html.var("id")
@@ -513,7 +534,8 @@ def event_resize(h):
         sql = "UPDATE schedule SET \
                  enddate = '%s', \
                  endtime = '%s' \
-                 WHERE scheduleid = %s" % ((str(eDateObj.year) + "-" + str(eDateObj.month) + "-" + str(eDateObj.day)), (str(eDateObj.hour) + ":" + str(eDateObj.minute) + ":00"), scheduleId)
+                 WHERE scheduleid = %s" % ((str(eDateObj.year) + "-" + str(eDateObj.month) + "-" + str(eDateObj.day)),
+                                           (str(eDateObj.hour) + ":" + str(eDateObj.minute) + ":00"), scheduleId)
         cursor.execute(sql)
         db.commit()
         create_crontab_file()
@@ -523,6 +545,10 @@ def event_resize(h):
 
 
 def event_drop(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     scheduleId = html.var("id")
@@ -637,7 +663,11 @@ def event_drop(h):
                  fri = %s, \
                  sat = %s, \
                  dates = %s \
-                 WHERE scheduleid = %s" % ((str(sDateObj.year) + "-" + str(sDateObj.month) + "-" + str(sDateObj.day)), (str(sDateObj.hour) + ":" + str(sDateObj.minute) + ":00"), (str(eDateObj.year) + "-" + str(eDateObj.month) + "-" + str(eDateObj.day)), (str(eDateObj.hour) + ":" + str(eDateObj.minute) + ":00"), sun, mon, tue, wed, thu, fri, sat, dates, scheduleId)
+                 WHERE scheduleid = %s" % ((str(sDateObj.year) + "-" + str(sDateObj.month) + "-" + str(sDateObj.day)),
+                                           (str(sDateObj.hour) + ":" + str(sDateObj.minute) + ":00"),
+                                           (str(eDateObj.year) + "-" + str(eDateObj.month) + "-" + str(eDateObj.day)),
+                                           (str(eDateObj.hour) + ":" + str(eDateObj.minute) + ":00"), sun, mon, tue,
+                                           wed, thu, fri, sat, dates, scheduleId)
         cursor.execute(sql)
         db.commit()
         create_crontab_file()
@@ -647,6 +677,10 @@ def event_drop(h):
 
 
 def delete_ap_scheduler(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     scheduleId = html.var("scheduleId")
@@ -665,6 +699,10 @@ def delete_ap_scheduler(h):
 
 
 def view_access_point_list(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     scheduleId = html.var("scheduleId")
@@ -693,13 +731,17 @@ def view_access_point_list(h):
     for row in result:
         i += 1
         tableString += "<tr><td>" + str(i) + "</td><td>" + row[1] + "</td><td>" + \
-            row[0] + "</td><td>" + \
-            row[2] + "</td></tr>"
+                       row[0] + "</td><td>" + \
+                       row[2] + "</td></tr>"
     tableString += "</tbody></table>"
     html.write(tableString)
 
 
 def get_ap_schedule_details(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     scheduleId = html.var("scheduleId")
@@ -761,6 +803,10 @@ def get_ap_schedule_details(h):
 
 
 def update_ap_scheduler(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     sitename = __file__.split("/")[3]
@@ -768,7 +814,7 @@ def update_ap_scheduler(h):
     event = "Down"
     startDateTemp = html.var("startDate").split("/")
     startDate = startDateTemp[2] + "-" + startDateTemp[1] + "-" + \
-        startDateTemp[0]
+                startDateTemp[0]
     endDateTemp = html.var("endDate").split("/")
     endDate = endDateTemp[2] + "-" + endDateTemp[1] + "-" + endDateTemp[0]
     startTime = html.var("startTime")
@@ -846,7 +892,9 @@ def update_ap_scheduler(h):
         cursor = db.cursor()
         # prepare SQL query to update the scheduling details
         sql = "UPDATE schedule SET event = '%s', startdate = '%s', enddate = '%s', starttime = '%s', endtime = '%s', isrepeat = %s, repeattype = '%s', sun = %s, mon = %s, tue = %s, wed = %s, thu = %s, fri = %s, sat = %s, jan = %s, feb = %s, mar = %s, apr = %s, may = %s, jun = %s, jul = %s, aug = %s, sep = %s, oct = %s, nov = %s, dece = %s, dates = '%s' WHERE scheduleid = %s" % (
-            event, startDate, endDate, startTime, endTime, repeat, repeatType, daysun, daymon, daytue, daywed, daythu, dayfri, daysat, monthjan, monthfeb, monthmar, monthapr, monthmay, monthjun, monthjul, monthaug, monthsep, monthoct, monthnov, monthdec, dates, scheduleId)
+            event, startDate, endDate, startTime, endTime, repeat, repeatType, daysun, daymon, daytue, daywed, daythu,
+            dayfri, daysat, monthjan, monthfeb, monthmar, monthapr, monthmay, monthjun, monthjul, monthaug, monthsep,
+            monthoct, monthnov, monthdec, dates, scheduleId)
         cursor.execute(sql)
 
         sql = "DELETE FROM ap_schedule WHERE scheduleid = %s" % (scheduleId)
@@ -868,7 +916,11 @@ def update_ap_scheduler(h):
 
 
 def create_crontab_file():
+
+    """
     # Open database connection
+    write to crontab of UNMP user
+    """
     db = MySQLdb.connect("localhost", "root", "root", "nms")
 
     commands = "python /omd/deamon/scheduling.py "
@@ -904,10 +956,10 @@ def create_crontab_file():
             eDateObj = datetime.datetime(int(eDate[0]), int(eDate[1]), int(
                 eDate[2]), int(eTime[0]), int(eTime[1]), int(eTime[2]))
 
-            if row[6] == 0:			# this is for non repeated scheduling
+            if row[6] == 0:            # this is for non repeated scheduling
                 if sDateObj > now:
                     commandString = sTime[1] + " " + \
-                        sTime[0] + " " + sDate[2] + " " + sDate[1] + " * "
+                                    sTime[0] + " " + sDate[2] + " " + sDate[1] + " * "
                     sql = "SELECT nms_devices.ipaddress, nms_devices.username, nms_devices.password, nms_devices.port FROM ap_schedule \
                                 INNER JOIN nms_devices on ap_schedule.deviceid = nms_devices.id \
                                 WHERE ap_schedule.scheduleid = %s" % (row[0])
@@ -929,15 +981,15 @@ def create_crontab_file():
                         if str(aprow[3]).strip() != "":
                             port = str(aprow[3]).strip()
                         crontabString += commandString + commands + \
-                            username + " " + \
-                            password + \
-                            " " + port + " " + ip + " " + event1
+                                         username + " " + \
+                                         password + \
+                                         " " + port + " " + ip + " " + event1
                         apI1 += 1
                     crontabString += " 1 -1\n"
 
                 if eDateObj > now:
                     commandString = eTime[1] + " " + \
-                        eTime[0] + " " + eDate[2] + " " + eDate[1] + " * "
+                                    eTime[0] + " " + eDate[2] + " " + eDate[1] + " * "
                     sql = "SELECT nms_devices.ipaddress, nms_devices.username, nms_devices.password, nms_devices.port FROM ap_schedule \
                                 INNER JOIN nms_devices on ap_schedule.deviceid = nms_devices.id \
                                 WHERE ap_schedule.scheduleid = %s" % (row[0])
@@ -959,12 +1011,12 @@ def create_crontab_file():
                         if str(aprow[3]).strip() != "":
                             port = str(aprow[3]).strip()
                         crontabString += commandString + commands + \
-                            username + " " + \
-                            password + " " + port + " " + ip + " " + event2
+                                         username + " " + \
+                                         password + " " + port + " " + ip + " " + event2
                         apI2 += 1
                     crontabString += " 1 -1\n"
 
-            else:				# this is for repeated scheduling
+            else:                # this is for repeated scheduling
                 if row[7] == "Daily":
                     commandString1 = sTime[1] + " " + sTime[0] + " * * * "
                     commandString2 = eTime[1] + " " + eTime[0] + " * * * "
@@ -987,11 +1039,11 @@ def create_crontab_file():
                         if str(aprow[3]).strip() != "":
                             port = str(aprow[3]).strip()
                         crontabString += commandString1 + commands + username + " " + \
-                            password + " " + \
-                            port + " " + ip + " " + event1 + " 0 -1\n"
+                                         password + " " + \
+                                         port + " " + ip + " " + event1 + " 0 -1\n"
                         crontabString += commandString2 + commands + username + " " + \
-                            password + " " + \
-                            port + " " + ip + " " + event2 + " 0 -1\n"
+                                         password + " " + \
+                                         port + " " + ip + " " + event2 + " 0 -1\n"
 
                 elif row[7] == "Weekly":
                     sql = "SELECT nms_devices.ipaddress, nms_devices.username, nms_devices.password, nms_devices.port FROM ap_schedule \
@@ -1067,11 +1119,11 @@ def create_crontab_file():
                             dayI += 1
 
                         crontabString += commandString1 + " " + commands + username + " " + \
-                            password + " " + \
-                            port + " " + ip + " " + event1 + " 0 -1\n"
+                                         password + " " + \
+                                         port + " " + ip + " " + event1 + " 0 -1\n"
                         crontabString += commandString2 + " " + commands + username + " " + \
-                            password + " " + \
-                            port + " " + ip + " " + event2 + " 0 -1\n"
+                                         password + " " + \
+                                         port + " " + ip + " " + event2 + " 0 -1\n"
 
                 elif row[7] == "Monthly":
                     sql = "SELECT nms_devices.ipaddress, nms_devices.username, nms_devices.password, nms_devices.port FROM ap_schedule \
@@ -1096,9 +1148,9 @@ def create_crontab_file():
 
                         monthI = 0
                         commandString1 = sTime[1] + \
-                            " " + sTime[0] + " " + row[27] + " "
+                                         " " + sTime[0] + " " + row[27] + " "
                         commandString2 = sTime[1] + \
-                            " " + sTime[0] + " " + row[27] + " "
+                                         " " + sTime[0] + " " + row[27] + " "
                         if row[15] == 1:  # jan
                             if monthI > 0:
                                 commandString1 += ","
@@ -1185,11 +1237,11 @@ def create_crontab_file():
                             monthI += 1
 
                         crontabString += commandString1 + " * " + commands + username + " " + \
-                            password + " " + \
-                            port + " " + ip + " " + event1 + " 0 -1\n"
+                                         password + " " + \
+                                         port + " " + ip + " " + event1 + " 0 -1\n"
                         crontabString += commandString2 + " * " + commands + username + " " + \
-                            password + " " + \
-                            port + " " + ip + " " + event2 + " 0 -1\n"
+                                         password + " " + \
+                                         port + " " + ip + " " + event2 + " 0 -1\n"
 
         # prepare SQL query to create crontab
         sql = "SELECT repeat_ap_schedule.repeatapscheduleid, repeat_ap_schedule.datestamp, repeat_ap_schedule.timestamp, nms_devices.ipaddress, nms_devices.username, nms_devices.password, nms_devices.port, repeat_ap_schedule.message, repeat_ap_schedule.event FROM repeat_ap_schedule \
@@ -1206,7 +1258,7 @@ def create_crontab_file():
             sDate = str(row[1]).split("-")
             sTime = str(row[2]).split(":")
             commandString = sTime[1] + " " + sTime[0] + " " + \
-                sDate[2] + " " + sDate[1] + " * "
+                            sDate[2] + " " + sDate[1] + " * "
 
             if str(row[3]) != "":
                 ip = str(row[3])
@@ -1219,8 +1271,8 @@ def create_crontab_file():
             if str(row[8]).strip() != "":
                 event = str(row[8]).strip()
             crontabString += commandString + commands + username + " " + password + \
-                " " + port + " " + ip + " "  + event + \
-                " 0 " + str(row[0]) + "\n"
+                             " " + port + " " + ip + " " + event + \
+                             " 0 " + str(row[0]) + "\n"
 
         fobj = open("/omd/deamon/crontab", "w")
         fobj.write(crontabString)
@@ -1235,12 +1287,16 @@ def create_crontab_file():
 
 
 def radio_status(h):
+    """
+
+    @param h:
+    """
     socket.setdefaulttimeout(1)
     global html
     html = h
     css_list = ["css/style.css", "fullcalendar/fullcalendar.css"]
-    js_list = ["js/jquery-ui-1.8.6.custom.min.js",
-               "fullcalendar/fullcalendar.min.js", "js/radio_status.js"]
+    js_list = ["js/lib/main/jquery-ui-1.8.6.custom.min.js",
+               "fullcalendar/fullcalendar.min.js", "js/unmp/main/radio_status.js"]
     html.new_header("Radio Status", "", "", css_list, js_list)
 
     # Open database connection
@@ -1316,20 +1372,20 @@ def radio_status(h):
             tableString += "<td>" + retryTime + "</td>"
             tableString += "<td>" + retryMsg + "</td>"
             tableString += "<td><a href=\"javascript:disableRadio('" + row[2] + "','" + username + "','" + \
-                password + "','" + \
-                port + \
-                "')\">Disable</a></td>"
+                           password + "','" + \
+                           port + \
+                           "')\">Disable</a></td>"
         elif currentStatus == "Disable":
             tableString += "<td><img width=\"10px\" alt=\"disable\" title=\"Disable\" src=\"images/status-2.png\"></td>"
             tableString += "<td>" + retryTime + "</td>"
             tableString += "<td>" + retryMsg + "</td>"
             tableString += "<td><a href=\"javascript:enableRadio('" + row[2] + "','" + username + "','" + \
-                password + "','" + \
-                port + \
-                "')\">Enable</a></td>"
+                           password + "','" + \
+                           port + \
+                           "')\">Enable</a></td>"
         else:
             tableString += "<td><img width=\"10px\" alt=\"unknown\" title=\"" + \
-                message + "\" src=\"images/status-3.png\"></td>"
+                           message + "\" src=\"images/status-3.png\"></td>"
             tableString += "<td>-</td>"
             tableString += "<td>" + message + "</td>"
             tableString += "<td>-</td>"
@@ -1344,6 +1400,10 @@ def radio_status(h):
 
 
 def change_redio(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     username = html.var("username")

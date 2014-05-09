@@ -1,17 +1,12 @@
 #!/usr/bin/python2.6
-from __future__ import division
-import config
-import htmllib
-import time
-import cgi
-import MySQLdb
-from nms_config import *
 from datetime import datetime
-from datetime import timedelta
-import time
+
+import MySQLdb
+
 from mysql_collection import mysql_connection
-from unmp_dashboard_config import DashboardConfig
+from nms_config import *
 from odu100_common_dashboard import ubr_outage_calculation
+from unmp_dashboard_config import DashboardConfig
 
 #######################################################################################
 # Author			:	Rajendra Sharma
@@ -39,12 +34,18 @@ class SelfException(Exception):
     @organisation: Code Scape Consultants Pvt. Ltd.
     @copyright: 2011 Code Scape Consultants Pvt. Ltd.
     """
+
     def __init__(self, msg):
         output_dict = {'success': 2, 'output': str(msg)}
         html.write(str(output_dict))
 
 
 def get_dashboard_data():
+    """
+
+
+    @return:
+    """
     devcie_type_attr = ['id', 'refresh_time', 'show_device']
     get_data = DashboardConfig.get_config_attributes(
         'odu16_cdashboard', devcie_type_attr)
@@ -59,6 +60,8 @@ def get_dashboard_data():
 
 def odu_dashboard_page(h):
     """
+
+    @param h:
     @return: this function create the page for ODU common Dashboard.
     @rtype: this function return the html page for ODU common Dashboard graph display.
     @requires: this function take one html agrument.
@@ -73,7 +76,7 @@ def odu_dashboard_page(h):
     global html
     html = h
     css_list = ["css/style.css", "css/selection_interface.css"]
-    javascript_list = ["js/highcharts.js", "js/oduDashboard.js"]
+    javascript_list = ["js/lib/main/highcharts.js", "js/unmp/main/oduDashboard.js"]
     html.new_header("UBR Common DashBoard", "", "", css_list, javascript_list)
     refresh_time, no_of_devcie = get_dashboard_data()
     html.write(str(dashboard_table(str(refresh_time), str(no_of_devcie))))
@@ -81,6 +84,12 @@ def odu_dashboard_page(h):
 
 
 def dashboard_table(refresh_time, no_of_devcie):
+    """
+
+    @param refresh_time:
+    @param no_of_devcie:
+    @return:
+    """
     dash_str = '\
     <div id=\"show_message_div\"></div>\
     <div id=\"main_odu16_common_div\">\
@@ -113,6 +122,8 @@ def dashboard_table(refresh_time, no_of_devcie):
 
 def odu_network_interface_graph(h):
     """
+
+    @param h:
     @return: this function return a dictnoray of network interface for Network Interface graph showing .
     @rtype: this function return a dictnoray for Network interface graph .
     @requires: this function take one html agrument.
@@ -139,7 +150,7 @@ def odu_network_interface_graph(h):
         db, cursor = mysql_connection('nms_sample')
         if db == 1:
             raise SelfException(cursor)
-        # calling the procedure
+            # calling the procedure
         cursor.callproc("odu_interface_graph", (
             int(start), (int(start) + int(limit)), interface_value))
         result = cursor.fetchall()
@@ -171,7 +182,7 @@ def odu_network_interface_graph(h):
                             rx0.append(0)
                             tx0.append(0)
                             odu_name.append((result[i][index_val]))
-        # close the database and cursor connection.
+            # close the database and cursor connection.
         cursor.close()
         db.close()
         output_dict = {'success': 0, 'rx_interface': rx0,
@@ -194,6 +205,8 @@ def odu_network_interface_graph(h):
 
 def get_no_of_odu(h):
     """
+
+    @param h:
     @return: this function given the no of odu exists in database.
     @rtype: this function return a dictnoray.
     @requires: this function take one html agrument.
@@ -239,6 +252,8 @@ def get_no_of_odu(h):
 
 def odu_tdd_mac_error(h):
     """
+
+    @param h:
     @return: this function return a dictnoray with error(crc,phy) information for Error graph showing
     @rtype: this function return a dictnoray.
     @requires: this function take one html agrument.
@@ -283,7 +298,8 @@ def odu_tdd_mac_error(h):
                             crc_error.append(
                                 int(result[i * 2][0]))  # -int(result[2*i+1][0]))
                             phy_error.append(
-                                int(result[i * 2][1]))  # -int(result[2*i+1][1])) ## Doubt (Peeyush) Arithmatic Operation on wron values for Delta
+                                int(result[i * 2][
+                                    1]))  # -int(result[2*i+1][1])) ## Doubt (Peeyush) Arithmatic Operation on wron values for Delta
                             odu_name.append((result[i * 2][2]))
 
                 else:
@@ -320,6 +336,8 @@ def odu_tdd_mac_error(h):
 
 def odu_peer_node_signal(h):
     """
+
+    @param h:
     @return: this function return a dictnoray with error(crc,phy) information for Error graph showing
     @rtype: this function return a dictnoray.
     @requires: this function take one html agrument.
@@ -393,6 +411,8 @@ def odu_peer_node_signal(h):
 
 def odu_synslost_counter(h):
     """
+
+    @param h:
     @return: this function return a dictnoray with sync lost information for odu device.
     @rtype: this function return a dictnoray.
     @requires: this function take one html agrument.
@@ -434,7 +454,8 @@ def odu_synslost_counter(h):
 
                         else:
                             sync_lost.append(
-                                int(result[i * 2][0]))  # -int(result[i*2+1][0])) ## Doubt (Peeyush) Why is there an Aritmatic operation being performed here ?
+                                int(result[i * 2][
+                                    0]))  # -int(result[i*2+1][0])) ## Doubt (Peeyush) Why is there an Aritmatic operation being performed here ?
                             # odu_name.append((result[i*2+1][1]))
                             odu_name.append((result[i * 2][1]))
 
@@ -451,7 +472,7 @@ def odu_synslost_counter(h):
                         else:
                             sync_lost.append(0)
                             odu_name.append((result[i][index_val]))
-        # cursor.close() ## close cursor as soon as result is fetched ## comment by Peeyush
+            # cursor.close() ## close cursor as soon as result is fetched ## comment by Peeyush
         # db.close()
         output_dict = {'success': 0, 'counter': sync_lost,
                        'odu_name': odu_name}
@@ -475,6 +496,8 @@ def odu_synslost_counter(h):
 # this return the dictionary of value to javascript file for display the graph.
 def odu_outage_graph(h):
     """
+
+    @param h:
     @return: this function return a dictnoray with outage information for odu device.
     @rtype: this function return a dictnoray.
     @requires: this function take one html agrument.
@@ -491,7 +514,7 @@ def odu_outage_graph(h):
     ip_address_list = []
     start = html.var("start")  # starting range for odu data fatching.
     limit = html.var("limit")  # ending range for odu data fatching.
-        # calling the procedure
+    # calling the procedure
     current_date = str(
         datetime.date(datetime.now()))  # this is provided current date.
     current_datetime = datetime.strptime(str(
@@ -530,6 +553,11 @@ def odu_outage_graph(h):
 
 # ODU COMMON DASHBOARD REPORT GENERATOR --------------------------->
 def odu_common_dashboard_report_generating(h):
+    """
+
+    @param h:
+    @raise:
+    """
     global html
     html = h
     # take the starting and ending limit of current graph showing
@@ -605,7 +633,7 @@ def odu_common_dashboard_report_generating(h):
         odu_common_report.append(t)
         odu_common_report.append(Spacer(11, 11))
 
-            ########################################### ODU Network Interface r
+        ########################################### ODU Network Interface r
         odu_common_report.append(Spacer(21, 21))
 
         netwok_table_name = ['UBR Network Bandwidth(eth0)', 'UBR Network Bandwidth(br0)',
@@ -626,8 +654,9 @@ def odu_common_dashboard_report_generating(h):
         t.setStyle(
             TableStyle(
                 [(
-                    'BACKGROUND', (1, 0), (1, 0), (0.35, 0.35, 0.35)), ('FONT', (0,
-                                                                                 0), (1, 0), 'Helvetica', 11), ('TEXTCOLOR', (1, 0), (2, 0), colors.white)]))
+                     'BACKGROUND', (1, 0), (1, 0), (0.35, 0.35, 0.35)), ('FONT', (0,
+                                                                                  0), (1, 0), 'Helvetica', 11),
+                 ('TEXTCOLOR', (1, 0), (2, 0), colors.white)]))
         odu_common_report.append(t)
         data = table_output
         t = Table(data, [2.7 * inch, 2.2 * inch, 2.2 * inch])
@@ -635,7 +664,7 @@ def odu_common_dashboard_report_generating(h):
                                ('FONT', (0, 1), (2, int(len(
                                    table_output)) - 1), 'Helvetica', 9),
                                ('ALIGN', (1,
-                                0), (2, int(len(table_output)) - 1), 'CENTER'),
+                                          0), (2, int(len(table_output)) - 1), 'CENTER'),
                                ('BACKGROUND', (0, 0), (5, 0), (0.9, 0.9, 0.9)),
                                ('LINEABOVE',
                                 (0, 0), (5, 0), 1.21, (0.35, 0.35, 0.35)),
@@ -646,11 +675,11 @@ def odu_common_dashboard_report_generating(h):
                     TableStyle(
                         [('BACKGROUND', (1, i), (2, i), (0.95, 0.95, 0.95)),
                          ('BACKGROUND', (0, i -
-                          1), (0, i - 1), (0.98, 0.98, 0.98)),
-                         ]))
+                                            1), (0, i - 1), (0.98, 0.98, 0.98)),
+                        ]))
             else:
                 t.setStyle(TableStyle([('BACKGROUND', (1, i), (2, i), (0.9, 0.9, 0.9))
-                                       ]))
+                ]))
 
         t.setStyle(
             TableStyle([('BACKGROUND', (0, 0), (0, 0), (0.9, 0.9, 0.9))]))
@@ -666,8 +695,9 @@ def odu_common_dashboard_report_generating(h):
         t.setStyle(
             TableStyle(
                 [(
-                    'BACKGROUND', (0, 0), (0, 0), (0.9, 0.9, 0.9)), ('GRID', (0, 0),
-                  (5, 0), 0.31, (0.75, 0.75, 0.75)), ('ALIGN', (0, 0), (0, 0), 'RIGHT')]))
+                     'BACKGROUND', (0, 0), (0, 0), (0.9, 0.9, 0.9)), ('GRID', (0, 0),
+                                                                      (5, 0), 0.31, (0.75, 0.75, 0.75)),
+                 ('ALIGN', (0, 0), (0, 0), 'RIGHT')]))
         odu_common_report.append(t)
 
         #######################################################################
@@ -685,7 +715,7 @@ def odu_common_dashboard_report_generating(h):
         # close the database and cursor connection.
         table_output = []
         table_output.append(['UBR Devices', 'Crc Error(error count)',
-                            'Phy Error(error count)'])
+                             'Phy Error(error count)'])
         length = (str(len(result) / 2)).split('.')[0]
         if length > 0:
             if len(result[0]) > 1:
@@ -700,8 +730,9 @@ def odu_common_dashboard_report_generating(h):
         t.setStyle(
             TableStyle(
                 [(
-                    'BACKGROUND', (0, 0), (0, 0), (0.35, 0.35, 0.35)), ('FONT', (0,
-                                                                                 0), (1, 0), 'Helvetica', 11), ('TEXTCOLOR', (0, 0), (0, 0), colors.white)]))
+                     'BACKGROUND', (0, 0), (0, 0), (0.35, 0.35, 0.35)), ('FONT', (0,
+                                                                                  0), (1, 0), 'Helvetica', 11),
+                 ('TEXTCOLOR', (0, 0), (0, 0), colors.white)]))
         odu_common_report.append(t)
         data = table_output
         t = Table(data, [2.7 * inch, 2.2 * inch, 2.2 * inch])
@@ -709,7 +740,7 @@ def odu_common_dashboard_report_generating(h):
                                ('FONT', (0, 1), (2, int(len(
                                    table_output)) - 1), 'Helvetica', 9),
                                ('ALIGN', (1,
-                                0), (2, int(len(table_output)) - 1), 'CENTER'),
+                                          0), (2, int(len(table_output)) - 1), 'CENTER'),
                                ('BACKGROUND', (0, 0), (5, 0), (0.9, 0.9, 0.9)),
                                ('LINEABOVE',
                                 (0, 0), (5, 0), 1.21, (0.35, 0.35, 0.35)),
@@ -720,11 +751,11 @@ def odu_common_dashboard_report_generating(h):
                     TableStyle(
                         [('BACKGROUND', (1, i), (2, i), (0.95, 0.95, 0.95)),
                          ('BACKGROUND', (0, i -
-                          1), (0, i - 1), (0.98, 0.98, 0.98)),
-                         ]))
+                                            1), (0, i - 1), (0.98, 0.98, 0.98)),
+                        ]))
             else:
                 t.setStyle(TableStyle([('BACKGROUND', (1, i), (2, i), (0.9, 0.9, 0.9))
-                                       ]))
+                ]))
 
         t.setStyle(
             TableStyle([('BACKGROUND', (0, 0), (0, 0), (0.9, 0.9, 0.9))]))
@@ -740,8 +771,9 @@ def odu_common_dashboard_report_generating(h):
         t.setStyle(
             TableStyle(
                 [(
-                    'BACKGROUND', (0, 0), (0, 0), (0.9, 0.9, 0.9)), ('GRID', (0, 0),
-                  (5, 0), 0.31, (0.75, 0.75, 0.75)), ('ALIGN', (0, 0), (0, 0), 'RIGHT')]))
+                     'BACKGROUND', (0, 0), (0, 0), (0.9, 0.9, 0.9)), ('GRID', (0, 0),
+                                                                      (5, 0), 0.31, (0.75, 0.75, 0.75)),
+                 ('ALIGN', (0, 0), (0, 0), 'RIGHT')]))
         odu_common_report.append(t)
         #######################################################################
 
@@ -767,8 +799,9 @@ def odu_common_dashboard_report_generating(h):
         t.setStyle(
             TableStyle(
                 [(
-                    'BACKGROUND', (1, 0), (1, 0), (0.35, 0.35, 0.35)), ('FONT', (0,
-                                                                                 0), (1, 0), 'Helvetica', 11), ('TEXTCOLOR', (1, 0), (2, 0), colors.white)]))
+                     'BACKGROUND', (1, 0), (1, 0), (0.35, 0.35, 0.35)), ('FONT', (0,
+                                                                                  0), (1, 0), 'Helvetica', 11),
+                 ('TEXTCOLOR', (1, 0), (2, 0), colors.white)]))
         odu_common_report.append(t)
 
         data = table_output
@@ -780,7 +813,7 @@ def odu_common_dashboard_report_generating(h):
                                            table_output)) - 1), 'Helvetica', 9),
                                ('FONT', (0, 0), (1, 0), 'Helvetica-Bold', 10),
                                ('ALIGN', (1,
-                                0), (1, int(len(table_output)) - 1), 'CENTER'),
+                                          0), (1, int(len(table_output)) - 1), 'CENTER'),
                                ('BACKGROUND', (0, 0), (5, 0), (0.9, 0.9, 0.9)),
                                ('LINEABOVE',
                                 (0, 0), (5, 0), 1.21, (0.35, 0.35, 0.35)),
@@ -791,11 +824,11 @@ def odu_common_dashboard_report_generating(h):
                     TableStyle(
                         [('BACKGROUND', (1, i), (1, i), (0.95, 0.95, 0.95)),
                          ('BACKGROUND', (0, i -
-                          1), (0, i - 1), (0.98, 0.98, 0.98)),
-                         ]))
+                                            1), (0, i - 1), (0.98, 0.98, 0.98)),
+                        ]))
             else:
                 t.setStyle(TableStyle([('BACKGROUND', (1, i), (1, i), (0.9, 0.9, 0.9))
-                                       ]))
+                ]))
 
         t.setStyle(
             TableStyle([('BACKGROUND', (0, 0), (0, 0), (0.9, 0.9, 0.9))]))
@@ -811,8 +844,9 @@ def odu_common_dashboard_report_generating(h):
         t.setStyle(
             TableStyle(
                 [(
-                    'BACKGROUND', (0, 0), (0, 0), (0.9, 0.9, 0.9)), ('GRID', (0, 0),
-                  (5, 0), 0.31, (0.75, 0.75, 0.75)), ('ALIGN', (0, 0), (0, 0), 'RIGHT')]))
+                     'BACKGROUND', (0, 0), (0, 0), (0.9, 0.9, 0.9)), ('GRID', (0, 0),
+                                                                      (5, 0), 0.31, (0.75, 0.75, 0.75)),
+                 ('ALIGN', (0, 0), (0, 0), 'RIGHT')]))
         odu_common_report.append(t)
 
         #######################################################################
@@ -823,7 +857,7 @@ def odu_common_dashboard_report_generating(h):
         cursor = db.cursor()
         # prepare SQL query to get total number of access points in this system
         cursor.callproc("odu_sync_lost_counter", (int(sync_start),
-                        (int(sync_start) + int(sync_end))))
+                                                  (int(sync_start) + int(sync_end))))
         result = cursor.fetchall()
         # function calling
         # table_output=table_list_signal_sync(result1,'ODU Sync Lost','Sync
@@ -842,7 +876,7 @@ def odu_common_dashboard_report_generating(h):
                 for i in range(int(length)):
                     table_output.append([(result[i * 2 + 1][1]), int(
                         result[i * 2][0]) - int(result[i * 2 + 1][0])])
-        # close the database and cursor connection.
+            # close the database and cursor connection.
         cursor.close()
         data1 = []
         data1.append(['', 'UBR Sync Loss', '', ''])
@@ -850,8 +884,9 @@ def odu_common_dashboard_report_generating(h):
         t.setStyle(
             TableStyle(
                 [(
-                    'BACKGROUND', (1, 0), (1, 0), (0.35, 0.35, 0.35)), ('FONT', (0,
-                                                                                 0), (1, 0), 'Helvetica', 11), ('TEXTCOLOR', (1, 0), (2, 0), colors.white)]))
+                     'BACKGROUND', (1, 0), (1, 0), (0.35, 0.35, 0.35)), ('FONT', (0,
+                                                                                  0), (1, 0), 'Helvetica', 11),
+                 ('TEXTCOLOR', (1, 0), (2, 0), colors.white)]))
         odu_common_report.append(t)
 
         data = table_output
@@ -860,7 +895,7 @@ def odu_common_dashboard_report_generating(h):
                                ('FONT', (0, 1), (1, int(len(
                                    table_output)) - 1), 'Helvetica', 9),
                                ('ALIGN', (1,
-                                0), (1, int(len(table_output)) - 1), 'CENTER'),
+                                          0), (1, int(len(table_output)) - 1), 'CENTER'),
                                ('BACKGROUND', (0, 0), (3, 0), (0.9, 0.9, 0.9)),
                                ('LINEABOVE',
                                 (0, 0), (3, 0), 1.21, (0.35, 0.35, 0.35)),
@@ -871,11 +906,11 @@ def odu_common_dashboard_report_generating(h):
                     TableStyle(
                         [('BACKGROUND', (1, i), (1, i), (0.95, 0.95, 0.95)),
                          ('BACKGROUND', (0, i -
-                          1), (0, i - 1), (0.98, 0.98, 0.98)),
-                         ]))
+                                            1), (0, i - 1), (0.98, 0.98, 0.98)),
+                        ]))
             else:
                 t.setStyle(TableStyle([('BACKGROUND', (1, i), (1, i), (0.9, 0.9, 0.9))
-                                       ]))
+                ]))
 
         t.setStyle(
             TableStyle([('BACKGROUND', (0, 0), (0, 0), (0.9, 0.9, 0.9))]))
@@ -891,8 +926,9 @@ def odu_common_dashboard_report_generating(h):
         t.setStyle(
             TableStyle(
                 [(
-                    'BACKGROUND', (0, 0), (0, 0), (0.9, 0.9, 0.9)), ('GRID', (0, 0),
-                  (5, 0), 0.31, (0.75, 0.75, 0.75)), ('ALIGN', (0, 0), (0, 0), 'RIGHT')]))
+                     'BACKGROUND', (0, 0), (0, 0), (0.9, 0.9, 0.9)), ('GRID', (0, 0),
+                                                                      (5, 0), 0.31, (0.75, 0.75, 0.75)),
+                 ('ALIGN', (0, 0), (0, 0), 'RIGHT')]))
         odu_common_report.append(t)
         #######################################################################
 
@@ -937,8 +973,9 @@ def odu_common_dashboard_report_generating(h):
         t.setStyle(
             TableStyle(
                 [(
-                    'BACKGROUND', (1, 0), (1, 0), (0.35, 0.35, 0.35)), ('FONT', (0,
-                                                                                 0), (1, 0), 'Helvetica', 11), ('TEXTCOLOR', (1, 0), (2, 0), colors.white)]))
+                     'BACKGROUND', (1, 0), (1, 0), (0.35, 0.35, 0.35)), ('FONT', (0,
+                                                                                  0), (1, 0), 'Helvetica', 11),
+                 ('TEXTCOLOR', (1, 0), (2, 0), colors.white)]))
         odu_common_report.append(t)
 
         data = table_output
@@ -947,7 +984,7 @@ def odu_common_dashboard_report_generating(h):
                                ('FONT', (0, 1), (2, int(len(
                                    table_output)) - 1), 'Helvetica', 9),
                                ('ALIGN', (1,
-                                0), (2, int(len(table_output)) - 1), 'CENTER'),
+                                          0), (2, int(len(table_output)) - 1), 'CENTER'),
                                ('BACKGROUND', (0, 0), (5, 0), (0.9, 0.9, 0.9)),
                                ('LINEABOVE',
                                 (0, 0), (5, 0), 1.21, (0.35, 0.35, 0.35)),
@@ -958,11 +995,11 @@ def odu_common_dashboard_report_generating(h):
                     TableStyle(
                         [('BACKGROUND', (1, i), (2, i), (0.95, 0.95, 0.95)),
                          ('BACKGROUND', (0, i -
-                          1), (0, i - 1), (0.98, 0.98, 0.98)),
-                         ]))
+                                            1), (0, i - 1), (0.98, 0.98, 0.98)),
+                        ]))
             else:
                 t.setStyle(TableStyle([('BACKGROUND', (1, i), (2, i), (0.9, 0.9, 0.9))
-                                       ]))
+                ]))
 
         t.setStyle(
             TableStyle([('BACKGROUND', (0, 0), (0, 0), (0.9, 0.9, 0.9))]))
@@ -978,8 +1015,9 @@ def odu_common_dashboard_report_generating(h):
         t.setStyle(
             TableStyle(
                 [(
-                    'BACKGROUND', (0, 0), (0, 0), (0.9, 0.9, 0.9)), ('GRID', (0, 0),
-                  (5, 0), 0.31, (0.75, 0.75, 0.75)), ('ALIGN', (0, 0), (0, 0), 'RIGHT')]))
+                     'BACKGROUND', (0, 0), (0, 0), (0.9, 0.9, 0.9)), ('GRID', (0, 0),
+                                                                      (5, 0), 0.31, (0.75, 0.75, 0.75)),
+                 ('ALIGN', (0, 0), (0, 0), 'RIGHT')]))
         odu_common_report.append(t)
         #######################################################################
 
@@ -1001,6 +1039,14 @@ def odu_common_dashboard_report_generating(h):
 
 
 def table_list_creation(result, table_name, first_header, second_header):
+    """
+
+    @param result:
+    @param table_name:
+    @param first_header:
+    @param second_header:
+    @return:
+    """
     table_output = []
     # table_output.append([table_name])
     temp = ['UBR Devices', first_header, second_header]
@@ -1015,6 +1061,13 @@ def table_list_creation(result, table_name, first_header, second_header):
 
 
 def table_list_signal_sync(result, table_name, first_header):
+    """
+
+    @param result:
+    @param table_name:
+    @param first_header:
+    @return:
+    """
     table_output = []
     temp = ['UBR Devices', first_header]
     table_output.append(temp)
@@ -1027,6 +1080,13 @@ def table_list_signal_sync(result, table_name, first_header):
 
 
 def outage_graph_generation(odu_name, down_state, up_state):
+    """
+
+    @param odu_name:
+    @param down_state:
+    @param up_state:
+    @return:
+    """
     output = []
     output.append(['UBR Devices', 'Reachable(%)', 'Unreachable(%)'])
     i = 0
@@ -1036,20 +1096,11 @@ def outage_graph_generation(odu_name, down_state, up_state):
     return output
 
 
-def page_tip_ubr_common_dashboard(h):
-    global html
-    html = h
-    html_view = ""\
-        "<div id=\"help_container\">"\
-        "<h1>Common Dashboard</h1>"\
-        "<div><strong>Common Dashboard</strong> page shown all Devices information.</div>"\
-        "<br/>"\
-        "<div>On this page you can see bandwidth graph,signal graph,sync lost graph,outage graph and Crc/Phy Error graph.</div>"\
-        "<div><button id=\"odu_report_btn\" class=\"yo-button\" style=\"margin-top: 5px;\" type=\"submit\"><span class=\"save\">Report</span></button>Geneate the PDF report.</div>"\
-        "<br/>"\
-        "<br/>"\
-        "<div><strong>Note:</strong>UBR Common dashboard show different graph and all refresh 5 min. time interval.\
-	Report button create the PDF report of showing graph.\
-        </div>"\
-        "</div>"
-    html.write(str(html_view))
+# def page_tip_ubr_common_dashboard(h):
+#     global html
+#     html = h
+#     import defaults
+#     f = open(defaults.web_dir + "/htdocs/locale/page_tip_ubr_common_dashboard.html", "r")
+#     html_view = f.read()
+#     f.close()
+#     html.write(str(html_view))

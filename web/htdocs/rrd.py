@@ -1,11 +1,12 @@
 #!/usr/bin/python2.6
 
-import rrdtool
-# from utility import UNMPDeviceType
 import os
 from os.path import isfile
 import subprocess
-# RRA: <consolidation function> : <XFiles factor> : <dataset> : <samples>
+
+import rrdtool
+
+# from utility import UNMPDeviceType# RRA: <consolidation function> : <XFiles factor> : <dataset> : <samples>
 # DS: <name> : <DS type> : <heartbeat> : <lower limit> : <upper limit>
 # import logging
 # logging.basicConfig(filename='/omd/daemon/debug.log',format='%(levelname)s:
@@ -62,7 +63,8 @@ class RRDGraph(object):
         self.version = version
         self.stop_it = 0
 
-    def write_tmp(self, file_path, given_table_dict=None, ip=None, community=None, port=None, version=None, action=None, time_out=60):
+    def write_tmp(self, file_path, given_table_dict=None, ip=None, community=None, port=None, version=None, action=None,
+                  time_out=60):
         # logging.info(" in write testing ")
         st = ''
         file_flag = 0
@@ -100,7 +102,7 @@ class RRDGraph(object):
                 st += "\ntable_dict = { '%s' : %s } " % (
                     key, given_table_dict[key])
         st += "\ntimeout=%s" % (time_out)
-#        if self.stop_it == 0:
+        #        if self.stop_it == 0:
         f = open(file_path, 'w')
         f.write(st)
         f.close()
@@ -109,10 +111,12 @@ class RRDGraph(object):
     def rrd(self, table, action='start'):
         global RRD_CONF_FILE
         import traceback
+
         st_ = '  Nothing '
         try:
 
             from time import sleep, time
+
             rrd_graph = {}
             rrd_param = {}
             if isfile(RRD_CONF_FILE):
@@ -130,9 +134,9 @@ class RRDGraph(object):
                     self.rrd_step = graph["rrd_step"]
                     # logging.info(" in the IF ")
                     # files path
-                    tmp_file_path =  self.root_path + \
-                        self.device_type + "/" + \
-                        ''.join(self.ip_address.split('.')) + '.tmp'
+                    tmp_file_path = self.root_path + \
+                                    self.device_type + "/" + \
+                                    ''.join(self.ip_address.split('.')) + '.tmp'
                     rrd_file_path = self.root_path + ''.join(self.ip_address.split(
                         '.')) + "_" + self.device_type + "_" + graph["rrd_file_name"]
 
@@ -160,16 +164,16 @@ class RRDGraph(object):
                             for ds_i in range(ex_count_temp):
                                 new_ds.append("temp" + str(ds_i))
                             new_ds = graph["ds_name"] + new_ds
-                        # creating ds
+                            # creating ds
                         ds = []
                         rra = []
                         for d in new_ds:
                             ds.append("DS:%s:%s:%s:%s:%s" % (d, graph["ds_type"], graph[
-                                      "ds_heartbeat"], graph["ds_lower_limit"], graph["ds_upper_limit"]))
+                                "ds_heartbeat"], graph["ds_lower_limit"], graph["ds_upper_limit"]))
 
                         for r in range(len(graph['rra_cf'])):
                             rra.append("RRA:%s:%s:%s:%s" % (graph['rra_cf'][r], graph[
-                                       'rra_x_file_factor'][r], graph['rra_dataset'][r], graph['rra_samples'][r]))
+                                'rra_x_file_factor'][r], graph['rra_dataset'][r], graph['rra_samples'][r]))
 
                         self.create_rrd(rrd_file_path,
                                         self.rrd_start, self.rrd_step, ds, rra)
@@ -180,9 +184,11 @@ class RRDGraph(object):
                     try:
                         out = 0
                         # logging.info(" in try internal  "+str(graph))
-                        if(graph["is_snmp"] == True):
-                            table_dict = {str(table): {'row': graph["row_index"], 'col': graph["column_index"], 'oid': graph["oid_table"], 'file':
-                                                       rrd_file_path, 'row_count': graph["row_count"], 'unreachable_value': graph["unreachable_value"]}}
+                        if (graph["is_snmp"] == True):
+                            table_dict = {str(table): {'row': graph["row_index"], 'col': graph["column_index"],
+                                                       'oid': graph["oid_table"], 'file':
+                                rrd_file_path, 'row_count': graph["row_count"],
+                                                       'unreachable_value': graph["unreachable_value"]}}
                             # logging.info(" in try internal
                             # "+str(table_dict))
                             if isfile(tmp_file_path):  # 'file exist'

@@ -1,26 +1,18 @@
 #!/usr/bin/python2.6
 # import the packeges
-import config
-import htmllib
-import time
-import cgi
-import MySQLdb
-import sys
+from datetime import datetime, timedelta
+from json import JSONEncoder
+
+import ap_advanced_graph_controller
+from client_dashboard_bll import ClientDashboardBll
+from client_dashboard_view import ClientDashboardView
 from common_controller import *
+from error_message import ErrorMessageClass
+from mysql_collection import mysql_connection
 from nms_config import *
 from odu_controller import *
-from datetime import datetime, timedelta
-from mysql_collection import mysql_connection
-from unmp_dashboard_config import DashboardConfig
 from utility import Validation
-from operator import itemgetter
-from client_dashboard_view import ClientDashboardView
-from client_dashboard_bll import ClientDashboardBll
-import json
-from json import JSONEncoder
-from encodings import undefined
-import ap_advanced_graph_controller
-from error_message import ErrorMessageClass
+
 
 # create the global object of sp_bll_obj
 global sp_bll_obj, err_obj
@@ -37,8 +29,8 @@ def client_dashboard_profiling(h):
                         'ap25': 'Access Point'}
     css_list = ["css/style.css", "css/custom.css",
                 "calendrical/calendrical.css", 'css/ccpl_jquery_combobox.css']
-    javascript_list = ["js/highcharts.js", 'js/ccpl_jquery_autocomplete.js',
-                       "js/client_dashboard.js", "calendrical/calendrical.js"]
+    javascript_list = ["js/lib/main/highcharts.js", 'js/unmp/main/ccpl_jquery_autocomplete.js',
+                       "js/unmp/main/client_dashboard.js", "calendrical/calendrical.js"]
     mac_address = ""
     # mac_address = html.var("mac_address")
     ap_mac_address = html.var("client_mac")
@@ -48,13 +40,16 @@ def client_dashboard_profiling(h):
         'Client'), "ap_listing.py", "", css_list, javascript_list)
     html.write('<div class=\"form-div\" >')
     extr_button = [{'tag': 'button', 'id': 'sp_ad_graph', 'value': 'Historical Graphs', 'name': 'sp_ad_graph'}, {'tag':
-                                                                                                                 'button', 'id': 'sp_show_graph_list', 'value': 'Dashboard Configuration', 'name': 'sp_show_graph_list'}]
+                                                                                                                     'button',
+                                                                                                                 'id': 'sp_show_graph_list',
+                                                                                                                 'value': 'Dashboard Configuration',
+                                                                                                                 'name': 'sp_show_graph_list'}]
     device_type = ""
     device_list_state = ""
     device_list_param = []
-    if html.var("device_type") != None:
+    if html.var("device_type") is not None:
         device_type = html.var("device_type")
-    if html.var("device_list_state") != None:
+    if html.var("device_list_state") is not None:
         device_list_state = html.var("device_list_state")
     host_id = ''
     device_list_param = get_device_param(host_id)
@@ -78,7 +73,7 @@ def client_dashboard_profiling(h):
             	<input type=\"button\" style=\"margin-top: 2px;\" class=\"yo-small yo-button\" value=\"Back\" name=\"back_to_ap\" id=\"back_to_ap\" >\
             	</div></div>" % (sp_start_date, sp_start_time, sp_end_date, sp_end_time))
 
-    if ap_mac_address == "" or ap_mac_address == None:
+    if ap_mac_address == "" or ap_mac_address is None:
         val = ""
         flag = 1
         html.write("<div id=\"sp_show_msg\"></div><div id=\"tab_yo\">There is no profile selected</div>")
@@ -110,8 +105,9 @@ def client_add_date_time_on_slide(h):
         if int(graph_result['success']) == 1:
             h.req.write(str(JSONEncoder().encode(graph_result['result'])))
         else:
-            output_dict = {'success': 0, 'end_date': sp_end_date, 'end_time': sp_end_time, 'start_date': sp_start_date, 'start_time': sp_start_time, 'show_graph_table':
-                           ClientDashboardView.sp_get_graph(graph_result['selected'], graph_result['non_selected'])}
+            output_dict = {'success': 0, 'end_date': sp_end_date, 'end_time': sp_end_time, 'start_date': sp_start_date,
+                           'start_time': sp_start_time, 'show_graph_table':
+                ClientDashboardView.sp_get_graph(graph_result['selected'], graph_result['non_selected'])}
             h.req.write(str(JSONEncoder().encode(output_dict)))
     except Exception as e:
         output_dict = {'success': 1, 'output': str(e[-1])}
@@ -126,15 +122,15 @@ def get_device_list_odu(h):
     ip_address = ""
     mac_address = ""
     selected_device = "odu16"
-    if html.var("ip_address") == None:
+    if html.var("ip_address") is None:
         ip_address = ""
     else:
         ip_address = html.var("ip_address")
-    if html.var("mac_address") == None:
+    if html.var("mac_address") is None:
         mac_address = ""
     else:
         mac_address = html.var("mac_address")
-    if html.var("selected_device_type") == None:
+    if html.var("selected_device_type") is None:
         selected_device = "odu16"
     else:
         selected_device = html.var("selected_device_type")
@@ -170,12 +166,12 @@ def client_dashboard(h):
     mac_address = html.var("client_mac")
     path = html.var("path")
     host_id = html.var("host_id")
-#    now=datetime.now()
-#    sp_end_date=now.strftime("%d/%m/%Y")
-#    sp_end_time=now.strftime("%H:%M")
-#    now=now+timedelta(minutes=-int(total_count))
-#    sp_start_date=now.strftime("%d/%m/%Y")
-#   sp_start_time=now.strftime("%H:%M")
+    #    now=datetime.now()
+    #    sp_end_date=now.strftime("%d/%m/%Y")
+    #    sp_end_time=now.strftime("%H:%M")
+    #    now=now+timedelta(minutes=-int(total_count))
+    #    sp_start_date=now.strftime("%d/%m/%Y")
+    #   sp_start_time=now.strftime("%H:%M")
     html.write(ClientDashboardView.sp_table(
         mac_address, str(sp_refresh_time), str(total_count), path, host_id))
 
@@ -252,14 +248,14 @@ def client_graph_creation(h):
         column_name = column_value.split(",")
         table_name = table_name.split(",")
         user_id = html.req.session["user_id"]
-        if update_field == '' or update_field == None:
+        if update_field == '' or update_field is None:
             update_field_name = ''
         else:
             update_field_name = update_field
         result_dict = client_bll_obj.client_graph_json(
             display_type, user_id, table_name[0], table_name[1], table_name[-
-                                                                            2], table_name[
-                                                                                -1], flag, start_date, end_date, start, limit,
+            2], table_name[
+                -1], flag, start_date, end_date, start, limit,
             mac_address, graph_type, update_field_name, interface_value, cal_type, column_name)
         h.req.content_type = 'application/json'
         h.req.write(str(JSONEncoder().encode(result_dict)))
@@ -276,34 +272,14 @@ def update_client_graph(h):
     html.write(str(result))
 
 
-def page_tip_client_monitor_dashboard(h):
-    global html
-    html = h
-    html_view = ""
-    html_view = ""\
-        "<div id=\"help_container\">"\
-        "<h1>Dashboard</h1>"\
-        "<div>This <strong>Dashboard</strong> show client silver statistics information by graph.</div>"\
-        "<br/>"\
-        "<br/>"\
-        "<div class=\"action-tip\"><div class=\"img-div\"><img style=\"width:16px;height:16px;\" src=\"images/{0}/round_plus.png\"/></div><div class=\"txt-div\">Show device details.</div></div>"\
-        "<br/>"\
-        "<div class=\"action-tip\"><div class=\"img-div\"><img style=\"width:16px;height:16px;\" src=\"images/{0}/round_minus.png\"/></div><div class=\"txt-div\">Hide device details.</div></div>"\
-        "<br/>"\
-        "<div class=\"action-tip\"><div class=\"img-div img-div2\"><img style=\"width:16px;height:16px;\" src=\"images/device-down.gif\"/></div><div class=\"txt-div\">Device Unreachable.</div></div>"\
-        "<br/>"\
-        "<div><input class=\"yo-button yo-small\" type=\"button\" style=\"width: 30px;\" value=\"Back\" name=\"odu_graph_show\"> This button back to dashboard or back to AP listing according to enter state.</div>"\
-        "<div><input class=\"yo-button yo-small\" type=\"button\" style=\"width: 50px;\" value=\"Dashboard Configuration\" name=\"odu_graph_show\"> This is open a window for customize the graph according to User.</div>"\
-        "<br/>"\
-        "<div><button id=\"odu_report_btn\" class=\"yo-button\" style=\"margin-top: 5px;\" type=\"submit\"><span class=\"report\">Report</span></button>Download the Excel report.</div>"\
-        "<br/>"\
-        "<div><button id=\"odu_report_btn\" class=\"yo-button\" style=\"margin-top: 5px;\" type=\"submit\"><span class=\"report\">CSV Report</span></button>Download the CSV report.</div>"\
-        "<br/>\
-        <br/>\
-        <div><strong>Note:</strong>This page show real time information of device and it page refresh on 10 min time interval.\
-        </div>"\
-        "</div>".format(theme)
-    html.write(str(html_view))
+# def page_tip_client_monitor_dashboard(h):
+#     global html
+#     html = h
+#     import defaults
+#     f = open(defaults.web_dir + "/htdocs/locale/page_tip_client_monitor_dashboard.html", "r")
+#     html_view = f.read()
+#     f.close()
+#     html.write(str(html_view))
 
 
 def client_excel_report_genrating(h):
@@ -368,8 +344,8 @@ def client_excel_report_genrating(h):
                     start_date + ' ' + start_time, "%d/%m/%Y %H:%M")
                 end_date = datetime.strptime(
                     end_date + ' ' + end_time, "%d/%m/%Y %H:%M")
-        #    start_date=datetime.strptime(start_date+' '+start_time,"%d/%m/%Y %H:%M")
-        #    end_date=datetime.strptime(end_date+' '+end_time,"%d/%m/%Y %H:%M")
+                #    start_date=datetime.strptime(start_date+' '+start_time,"%d/%m/%Y %H:%M")
+                #    end_date=datetime.strptime(end_date+' '+end_time,"%d/%m/%Y %H:%M")
             result_dict = client_bll_obj.client_excel_report(
                 device_type_id, user_id, mac_address, cal_list, tab_list, field_list, table_name_list, graph_name_list,
                 start_date, end_date, select_option, limitFlag, graph_list, start_list, limit_list)
@@ -445,7 +421,8 @@ def client_csv_report_genrating(h):
                 end_date = datetime.strptime(
                     end_date + ' ' + end_time, "%d/%m/%Y %H:%M")
             result_dict = client_bll_obj.client_csv_report(
-                device_type_id, user_id, mac_address, cal_list, tab_list, field_list, table_name_list, graph_name_list, start_date,
+                device_type_id, user_id, mac_address, cal_list, tab_list, field_list, table_name_list, graph_name_list,
+                start_date,
                 end_date, select_option, limitFlag, graph_list, start_list, limit_list)
             h.req.write(str(JSONEncoder().encode(result_dict)))
         else:

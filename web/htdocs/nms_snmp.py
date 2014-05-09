@@ -65,6 +65,7 @@ def snmp_walk(version, community, ip, port, oid, option, option1):
         ii = i + 1
         dict[str(row[i].strip())] = str(row[ii].strip())
     return dict
+
 ##    arg=["snmpwalk","-Le","-Ln","-v",version,"-c",community,(ip+":"+port),oid,option,option1]
 ##    SS=subprocess.Popen(arg, stdout=subprocess.PIPE,stderr=subprocess.PIPE).communicate()[0]
 ##    row=re.split("[\n=]",SS)

@@ -11,18 +11,13 @@
 '''
 
 # Import modules that contain the function and libraries
-from unmp_model import *
-from utility import ErrorMessages, Validation, HostState, NagiosConfiguration, SystemSetting, DiscoveryName, PingDiscovery, SnmpDiscovery, UpnpDiscovery, UNMPDeviceType
-from unmp_config import SystemConfig
-from sqlalchemy import and_, or_, desc, asc
-from pysnmp_module import pysnmp_set
-from py_module import snmp_ping
-import MySQLdb
-from json import JSONEncoder
-from os.path import isfile, join
 from os import unlink, listdir
+from os.path import isfile, join
 from time import time
+
 import rrdtool
+# from sqlalchemy import and_, or_, desc, asc
+# from unmp_model import *
 
 
 class DSType(object):
@@ -60,7 +55,7 @@ class LiveMonitoringBll(object):
             root_path = rrd_param.get("rrd_file_path", "/omd/daemon/rrd/")
             graphs = rrd_graph.get(device_type)
             tmp_file = root_path + "/" + device_type + "/" + \
-                ''.join(ip_address.split('.')) + '.tmp'
+                       ''.join(ip_address.split('.')) + '.tmp'
             table_dict = {}
             if isfile(tmp_file):
                 f = open(tmp_file, 'r')
@@ -123,7 +118,7 @@ class LiveMonitoringBll(object):
             graph_file = root_path + ''.join(ip_address.split(
                 '.')) + "_" + device_type + "_" + str(graph.get("rrd_file_name"))
             tmp_file = root_path + "/" + device_type + "/" + \
-                ''.join(ip_address.split('.')) + '.tmp'
+                       ''.join(ip_address.split('.')) + '.tmp'
             unit = graph["unit"]
             if isfile(graph_file):
                 table_dict = {}
@@ -194,7 +189,7 @@ class LiveMonitoringBll(object):
                     for ds_i in range(ex_count_temp):
                         new_ds.append("temp" + str(ds_i))
                     new_ds = graph["ds_name"] + new_ds
-                # creating ds
+                    # creating ds
                 label = new_ds
                 timestamp = int(time() - total_sec)
                 for i in range(len(label)):

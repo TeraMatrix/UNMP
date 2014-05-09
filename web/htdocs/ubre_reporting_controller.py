@@ -12,10 +12,11 @@
 
 
 # Import modules that contain the function and libraries
+from json import JSONEncoder
+
 from ubre_reporting_bll import Report_bll
 from ubre_reporting_view import Report
-import json
-from json import JSONEncoder
+
 
 # global variables
 rs2 = {"all": [], "avg": []}
@@ -27,8 +28,8 @@ def ubre_manage_crc_phy_report(h):
     html = h
     css_list = ["css/demo_table_jui.css", "css/jquery-ui-1.8.4.custom.css",
                 "css/calendrical.css", "css/fcbkcomplete.css", "css/style12.css"]
-    js_list = ["js/calendrical.js", "js/jquery.dataTables.min.js",
-               "js/pages/ubre_reporting.js", "js/jquery.fcbkcomplete.js"]
+    js_list = ["js/lib/main/calendrical.js", "js/lib/main/jquery.dataTables.min.js",
+               "js/unmp/main/ubre_reporting.js", "js/lib/main/jquery.fcbkcomplete.js"]
     html.new_header(
         "UBRe CRC-PHY Error Report", "#ubre_sub_menu", "", css_list, js_list)
     html.write(Report.ubre_create_crc_phy_form())
@@ -132,8 +133,8 @@ def ubre_manage_rssi_report(h):
     html = h
     css_list = ["css/demo_table_jui.css", "css/jquery-ui-1.8.4.custom.css",
                 "css/calendrical.css", "css/fcbkcomplete.css", "css/style12.css"]
-    js_list = ["js/calendrical.js", "js/jquery.dataTables.min.js",
-               "js/pages/ubre_reporting_rssi.js", "js/jquery.fcbkcomplete.js"]
+    js_list = ["js/lib/main/calendrical.js", "js/lib/main/jquery.dataTables.min.js",
+               "js/unmp/main/ubre_reporting_rssi.js", "js/lib/main/jquery.fcbkcomplete.js"]
     html.new_header(
         "UBRe RSSI Report", "#ubre_sub_menu", "", css_list, js_list)
     html.write(Report.ubre_create_rssi_form())
@@ -189,8 +190,8 @@ def ubre_manage_network_usage_report(h):
     html = h
     css_list = ["css/demo_table_jui.css", "css/jquery-ui-1.8.4.custom.css",
                 "css/calendrical.css", "css/fcbkcomplete.css", "css/style12.css"]
-    js_list = ["js/calendrical.js", "js/jquery.dataTables.min.js",
-               "js/pages/ubre_reporting_network_usage.js", "js/jquery.fcbkcomplete.js"]
+    js_list = ["js/lib/main/calendrical.js", "js/lib/main/jquery.dataTables.min.js",
+               "js/unmp/main/ubre_reporting_network_usage.js", "js/lib/main/jquery.fcbkcomplete.js"]
     html.new_header(
         "UBRe Network Usage Report", "#ubre_sub_menu", "", css_list, js_list)
     html.write(Report.ubre_create_network_usage_form())
@@ -255,22 +256,22 @@ def ubre_rssi_excel_reporting(h):
     html.write(str(report_status))
 
 
-def ubre_page_tip_crc_phy(h):
-    global html
-    html = h
-    html.write(Report.page_tip_crc_phy())
-
-
-def ubre_page_tip_rssi(h):
-    global html
-    html = h
-    html.write(Report.ubre_page_tip_rssi())
-
-
-def ubre_page_tip_network_usage(h):
-    global html
-    html = h
-    html.write(Report.ubre_page_tip_network_usage())
+# def ubre_page_tip_crc_phy(h):
+#     global html
+#     html = h
+#     html.write(Report.page_tip_crc_phy())
+#
+#
+# def ubre_page_tip_rssi(h):
+#     global html
+#     html = h
+#     html.write(Report.ubre_page_tip_rssi())
+#
+#
+# def ubre_page_tip_network_usage(h):
+#     global html
+#     html = h
+#     html.write(Report.ubre_page_tip_network_usage())
 
 
 def ubre_show_group_result(h):

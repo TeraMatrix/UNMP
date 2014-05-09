@@ -1,31 +1,39 @@
 #!/usr/bin/python2.6
-import MySQLdb
-from unmp_model import *
-from utility import Validation
-import xml.dom.minidom
-import os
-from sqlalchemy import create_engine
-from sqlalchemy import *
-from nagios_livestatus import Nagios
-from common_bll import LocalSystemBll, Essential, agent_start
-from common import LocalSystem
-from mysql_collection import mysql_connection
-from json import JSONEncoder
-from datetime import datetime
-from pysnmp_ap import bulktable, odubulk as main_bulk
-from py_module import pysnmp_geter
-from unmp_config import SystemConfig
-from utility import UNMPDeviceType
-import time
 
-# session=session_db()
 """
 Common Controller : All Common functions For NMS
 
-Author : Anuj Samaria
+Author : Anuj Samaria, Rahul Gautam
 
 (CodeScape Consultants Pvt. Ltd.)
 """
+
+
+from datetime import datetime
+from json import JSONEncoder
+import time
+import traceback
+
+import MySQLdb
+from sqlalchemy import *
+
+from common import LocalSystem
+from common_bll import LocalSystemBll, Essential
+from mysql_collection import mysql_connection
+from nagios_livestatus import Nagios
+from unmp_config import SystemConfig
+from unmp_model import *
+from utility import UNMPDeviceType
+from utility import Validation
+from py_module import pysnmp_geter
+from pysnmp_ap import bulktable, odubulk as main_bulk
+
+#------------- Sentry logging
+#from raven import Client
+#client = Client('http://d9f2a22e56b04153bd683afd3c1c50b4:10d3bee1979a4b7b92d5a22beaa0dc92@localhost:9000/2')
+#------------- END
+
+# session=session_db()
 
 # mapping of firmware model with mib object model
 # {'device_type': {'firmware_model': 'object_model'} }
@@ -106,16 +114,7 @@ errorStatus = {0: 'noError',
                553: 'Device Unreachable'}
 
 
-##################################################
-##                                              ##
-##           Author- Anuj Samariya              ##
-##                                              ##
-##             Common Controller                ##
-##                                              ##
-##                                              ##
-##          CodeScape Consultants Pvt. Ltd.     ##
-##                                              ##
-##################################################
+
 host_status_dic = {0: 'No operation',
                    1: 'Firmware download',
                    2: 'Firmware upgrade',
@@ -135,6 +134,11 @@ host_status_dic = {0: 'No operation',
 
 
 def webssh(h):
+    """
+
+    @param h:
+    @return:
+    """
     global html
     html = h  # ,'autoConnectURL':'ssh://root@172.22.0.94:22'
     host = html.var("host_id")
@@ -206,6 +210,11 @@ def webssh(h):
 
 
 def rename_tablename(tablename):
+    """
+
+    @param tablename:
+    @return:
+    """
     try:
         ss = ""
         idx = tablename.index("_")
@@ -219,6 +228,9 @@ def rename_tablename(tablename):
 
 class SqlAlchemyDBConnection(object):
 
+    """
+    SQL Alchemy DB connection
+    """
     db = None
     db_connect = None
     # Session = None
@@ -232,6 +244,10 @@ class SqlAlchemyDBConnection(object):
             self.error = 1
 
     def sql_alchemy_db_connection_open(self):
+        """
+        open SQL connection with SQL Alchemy object
+
+        """
         try:
             # self.db_connect = self.db.connect()
             Session = sessionmaker(bind=self.db)
@@ -240,36 +256,23 @@ class SqlAlchemyDBConnection(object):
             self.error = 1
 
     def get_sqlalchemy_credentials(self):
-        sitename = __file__.split("/")[3]  # get site name
-        # sitename='nms2'
-        # set parameter and default values
-        sqlalchemy_host = "localhost"
-        sqlalchemy_user_name = "root"
-        sqlalchemy_password = "root"
-        sqlalchemy_schema = "nms_sample"
-        sqlalchemy_driver = "mysql"
+        """
 
-        # config.xml file path
-        xml_config_file = "/omd/sites/%s/share/check_mk/web/htdocs/xml/config.xml" % sitename
-        # xml_config_file = "nms2"
-        try:
-            # check config.xml file exist or not
-            if(os.path.isfile(xml_config_file)):
-                dom = xml.dom.minidom.parse(
-                    xml_config_file)  # create xml dom object for config.xml file
-                mysql_dom = dom.getElementsByTagName("sqlalchemy")
-                for m in mysql_dom:
-                    sqlalchemy_host = m.getAttribute("hostname")
-                    sqlalchemy_user_name = m.getAttribute("username")
-                    sqlalchemy_password = m.getAttribute("password")
-                    sqlalchemy_schema = m.getAttribute("schema")
-                    sqlalchemy_driver = m.getAttribute("driver")
-            return sqlalchemy_host, sqlalchemy_user_name, sqlalchemy_password, sqlalchemy_schema, sqlalchemy_driver
-        except Exception as e:
-            # print sys.exc_info()
-            return sqlalchemy_host, sqlalchemy_user_name, sqlalchemy_password, sqlalchemy_schema, sqlalchemy_driver
+
+        @return:
+        """
+        (sqlalchemy_driver,
+         sqlalchemy_user_name,
+         sqlalchemy_password,
+         sqlalchemy_host,
+         sqlalchemy_schema) = SystemConfig.get_sqlalchemy_credentials()
+        return sqlalchemy_host, sqlalchemy_user_name, sqlalchemy_password, sqlalchemy_schema, sqlalchemy_driver
 
     def sql_alchemy_db_connection_close(self):
+        """
+        SQL Alchemy class : db close
+
+        """
         try:
             self.session.close()
             # self.session.bind.dispose()
@@ -284,6 +287,11 @@ sqlalche_obj = SqlAlchemyDBConnection()
 
 
 def chk_sqlalchemy_connection():
+    """
+
+
+    @return:
+    """
     global sqlalche_obj
     return sqlalche_obj.error
 # Author- Anuj Samariya
@@ -303,6 +311,21 @@ def data_table_data_sqlalchemy(ip_address, mac_address, device_type, i_display_s
     # Easy set variables
 
     # columns that are shown in data table
+    """
+
+    @param ip_address:
+    @param mac_address:
+    @param device_type:
+    @param i_display_start:
+    @param i_display_length:
+    @param s_search:
+    @param sEcho:
+    @param sSortDir_0:
+    @param iSortCol_0:
+    @param userid:
+    @param html_var:
+    @return:
+    """
     a_columns = []
     i_total = 0
     i_filtered_total = 0
@@ -717,43 +740,64 @@ def data_table_data_sqlalchemy(ip_address, mac_address, device_type, i_display_s
 ##########################################################################
 
 
-def page_header_search(ip_address, mac_address, device_types=None, selected_device_type=None, device_list_state="enabled", select_list_id="device_type", extra_tag_element_list=[]):
+def page_header_search(ip_address,
+                       mac_address,
+                       device_types=None,
+                       selected_device_type=None,
+                       device_list_state="enabled",
+                       select_list_id="device_type",
+                       extra_tag_element_list=[]):
     """
     This function is used for listing the Devices based on IPaddress,Macaddress,DeviceTypes
+    @param ip_address:
+    @param mac_address:
+    @param device_types:
+    @param selected_device_type:
+    @param device_list_state:
+    @param select_list_id:
+    @param extra_tag_element_list:
     """
-#   and extra_tag_element['click']==''\
-#   and extra_tag_element['class']==''
     header_search_html = ""
     extra_tag_element_html = ""
-    if len(extra_tag_element_list) > 0:
-        for extra_tag_element in extra_tag_element_list:
-            if extra_tag_element.get('id', None) is not None\
-                and extra_tag_element.get('name', None) is not None\
-                and extra_tag_element.get('value', None) is not None\
-                    and extra_tag_element.get('tag', None) is not None:
-                extra_tag_element_html += "<input type='%(tag)s' id='%(id)s' name='%(name)s' value='%(value)s' class=\"yo-small yo-button\" style=\" margin-top: 2px;\">" % extra_tag_element
 
-    header_search_html += "<div id=\"filterOptions\" style=\"position:relative;\">\
-                            <div class=\"ipFilter\">IP : \
-                                <input type=\"text\" name=\"filter_ip\" id=\"filter_ip\" style=\"width:140px;margin-left:10px;\" value=\"%s\"/>\
-                            </div>\
-                            <div  class=\"ipFilter\"> MAC:\
-                                <input type=\"text\" name=\"filter_mac\" id=\"filter_mac\" style=\"width:140px;margin-left:10px;\" value=\"%s\"/>\
-                            </div>\
-                            <div  class=\"ipFilter\"  id=\"filterDeviceType\" > Device Type : \
-                            %s\
-                            </div>\
-                            <div>\
-                                <input type=\"button\"  id=\"btnSearch\" name=\"btnSearch\" value=\"Search\" class=\"yo-small yo-button\" style=\"margin-top: 2px;\"/>\
-                                %s\
-                            </div>\
-                        </div>\
-                        <div id=\"hide_search\" style=\"position: static; top: 1px; right: 1px; display: block; background-color: rgb(241, 241, 241); height: 20px; overflow: hidden; width: 100%%; z-index: 1000;\">\
-                            <label class=\"lbl\" style=\"margin-left:10px;margin-top:5px;\"><b>Global Search</b></label>\
-                            <span id=\"up_down_search\" class=\"dwn\" style=\"height: 16px; width: 16px; display: block; float: right;margin:2px 10px;cursor:pointer;\"></span>\
-                        </div>" % (ip_address, mac_address, device_type_select_list(device_types, selected_device_type, device_list_state, select_list_id), extra_tag_element_html)
+    # is it really neccessary
+    for extra_tag_element in extra_tag_element_list:
+        if extra_tag_element.get('id') \
+          and extra_tag_element.get('name') \
+          and extra_tag_element.get('value') \
+          and extra_tag_element.get('tag') :
+            extra_tag_element_html += "\
+              <input type='%(tag)s' id='%(id)s' name='%(name)s' value='%(value)s' class=\"yo-small yo-button\" style=\" margin-top: 2px;\">\
+              " % extra_tag_element
+
+    header_search_html = "\
+      <div id=\"filterOptions\" style=\"position:relative;\">\
+        <div class=\"ipFilter\">IP : \
+            <input type=\"text\" name=\"filter_ip\" id=\"filter_ip\" style=\"width:140px;margin-left:10px;\" value=\"%s\"/>\
+        </div>\
+        <div  class=\"ipFilter\"> MAC:\
+            <input type=\"text\" name=\"filter_mac\" id=\"filter_mac\" style=\"width:140px;margin-left:10px;\" value=\"%s\"/>\
+        </div>\
+        <div  class=\"ipFilter\"  id=\"filterDeviceType\" > Device Type : \
+          %s\
+        </div>\
+        <div>\
+          <input type=\"button\"  id=\"btnSearch\" name=\"btnSearch\" value=\"Search\" class=\"yo-small yo-button\" style=\"margin-top: 2px;\"/>\
+            %s\
+        </div>\
+      </div>\
+      <div id=\"hide_search\" style=\"position: static; top: 1px; right: 1px; display: block; background-color: rgb(241, 241, 241); height: 20px; overflow: hidden; width: 100%%; z-index: 1000;\">\
+          <label class=\"lbl\" style=\"margin-left:10px;margin-top:5px;\"><b>Global Search</b></label>\
+          <span id=\"up_down_search\" class=\"dwn\" style=\"height: 16px; width: 16px; display: block; float: right;margin:2px 10px;cursor:pointer;\">\
+          </span>\
+      </div>\
+      " % (ip_address,
+           mac_address,
+           device_type_select_list(device_types, selected_device_type, device_list_state, select_list_id),
+           extra_tag_element_html)
 
     return header_search_html
+
 # Author- Anuj Samariya
 # This function is used for creating the Select List Of Devices based on Devie Types,Selected Device Type,Device List State,Select List Id
 #
@@ -766,12 +810,20 @@ def page_header_search(ip_address, mac_address, device_types=None, selected_devi
 
 
 def device_type_select_list(device_types=None, selected_device_type=None, device_list_state="enabled", select_list_id="device_type", style=""):
+    """
+
+    @param device_types:
+    @param selected_device_type:
+    @param device_list_state:
+    @param select_list_id:
+    @param style:
+    @return:
+    """
     connection_chk = chk_sqlalchemy_connection()
     device_select = ''
     if connection_chk == 0 or connection_chk == "0":
         global sqlalche_obj
         try:
-
             sqlalche_obj.sql_alchemy_db_connection_open()
 
             select_list_html = ""
@@ -809,13 +861,9 @@ def device_type_select_list(device_types=None, selected_device_type=None, device
                                 device_list[i].device_type_id, device_list[i].device_name)
                     else:
                         continue
-            select_list_html += "</select>"
-            select_list_html += "<input type=\"hidden\" value=\"%s\" name=\"device_select\"/>" % (
-                device_select)
-            sqlalche_obj.sql_alchemy_db_connection_close()
+            select_list_html += "</select> <input type=\"hidden\" value=\"%s\" name=\"device_select\"/>" % (device_select)
             return select_list_html
         except Exception as e:
-            sqlalche_obj.sql_alchemy_db_connection_close()
             return str(e)
         finally:
             sqlalche_obj.sql_alchemy_db_connection_close()
@@ -829,6 +877,17 @@ def device_type_select_list(device_types=None, selected_device_type=None, device
 
 
 def make_select_list_using_dictionary(select_param_dic, selected_field, select_list_state, select_list_id, is_readonly, select_list_initial_msg, attr={}):
+    """
+
+    @param select_param_dic:
+    @param selected_field:
+    @param select_list_state:
+    @param select_list_id:
+    @param is_readonly:
+    @param select_list_initial_msg:
+    @param attr:
+    @return:
+    """
     try:
         select_list_html = ""
         attr_html = ""
@@ -857,10 +916,21 @@ def make_select_list_using_dictionary(select_param_dic, selected_field, select_l
 
 
 class IpMacSearch(object):
+    """
+    IP and MAC based search
+    """
     global sqlalche_obj
 
     def ip_search(self, device_type, search_value, userid, ip_mac_search):
         # pass
+        """
+
+        @param device_type:
+        @param search_value:
+        @param userid:
+        @param ip_mac_search:
+        @return:
+        """
         sqlalche_obj.sql_alchemy_db_connection_open()
         ip_mac_list = []
         ip_mac_list = sqlalche_obj.session.query(
@@ -874,6 +944,12 @@ class IpMacSearch(object):
         return ip_mac_list
 
     def get_ip_mac_selected_device(self, selected_val, ip_mac_val):
+        """
+
+        @param selected_val:
+        @param ip_mac_val:
+        @return:
+        """
         try:
             sqlalche_obj.sql_alchemy_db_connection_open()
             ip_mac_list = []
@@ -904,8 +980,22 @@ class IpMacSearch(object):
 
 
 class MakeSelectListUsingDictionary(object):
+    """
+    Option list using a dictionary
+    """
     @staticmethod
     def make_select_list_using_dictionary(select_param_dic, selected_field, select_list_state, select_list_id, is_readonly, select_list_initial_msg, style=""):
+        """
+
+        @param select_param_dic:
+        @param selected_field:
+        @param select_list_state:
+        @param select_list_id:
+        @param is_readonly:
+        @param select_list_initial_msg:
+        @param style:
+        @return:
+        """
         try:
             select_list_html = ""
             if select_list_state == "enabled":
@@ -954,6 +1044,18 @@ class SelfException(Exception):
 
 
 def make_select_list(table_name="", value_field_name="", display_field_name="", selected_field="", select_list_state="enabled", select_list_id="", is_readonly="false", select_list_initial_msg=""):
+    """
+
+    @param table_name:
+    @param value_field_name:
+    @param display_field_name:
+    @param selected_field:
+    @param select_list_state:
+    @param select_list_id:
+    @param is_readonly:
+    @param select_list_initial_msg:
+    @return: @raise:
+    """
     try:
 
         db, cursor = mysql_connection('nms_sample')
@@ -1005,18 +1107,54 @@ def make_select_list(table_name="", value_field_name="", display_field_name="", 
 
 
 def make_group_select_list(selected_field, select_list_state, select_list_id, is_readonly, select_list_initial_msg):
+    """
+
+    @param selected_field:
+    @param select_list_state:
+    @param select_list_id:
+    @param is_readonly:
+    @param select_list_initial_msg:
+    @return:
+    """
     return make_select_list("groups", "group_id", "group_name", selected_field, select_list_state, select_list_id, is_readonly, select_list_initial_msg)
 
 
 def make_alarm_field_select_list(selected_field, select_list_state, select_list_id, is_readonly, select_list_initial_msg):
+    """
+
+    @param selected_field:
+    @param select_list_state:
+    @param select_list_id:
+    @param is_readonly:
+    @param select_list_initial_msg:
+    @return:
+    """
     return make_select_list("trap_alarm_field_table", "trap_alarm_field", "field_name", selected_field, select_list_state, select_list_id, is_readonly, select_list_initial_msg)
 
 
 def make_action_table_select_list(selected_field, select_list_state, select_list_id, is_readonly, select_list_initial_msg):
+    """
+
+    @param selected_field:
+    @param select_list_state:
+    @param select_list_id:
+    @param is_readonly:
+    @param select_list_initial_msg:
+    @return:
+    """
     return make_select_list("actions", "action_id", "action_name", selected_field, select_list_state, select_list_id, is_readonly, select_list_initial_msg)
 
 
 def make_acknowledge_table_select_list(selected_field, select_list_state, select_list_id, is_readonly, select_list_initial_msg):
+    """
+
+    @param selected_field:
+    @param select_list_state:
+    @param select_list_id:
+    @param is_readonly:
+    @param select_list_initial_msg:
+    @return:
+    """
     return make_select_list("acknowledge", "acknowledge_id", "acknowledge_name", selected_field, select_list_state, select_list_id, is_readonly, select_list_initial_msg)
 
 
@@ -1025,18 +1163,22 @@ from nagios_livestatus import Nagios
 
 
 def tactical_overview(h):
-    '''
+    """
     @author: Yogesh Kumar
     @param h: html object [request object]
     @var html: global html object
     @note: this function call tactical overview function which gives status overview.
-    '''
+    """
     global html
     html = h
     html.write(str(Nagios.tactical_overview(html)))
 
 
 def unmp_help(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     css_list = []
@@ -1048,10 +1190,14 @@ def unmp_help(h):
 
 
 def localhost_dashboard(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     css_list = []
-    js_list = ["js/highcharts.js", "js/pages/local_system_dashboard.js"]
+    js_list = ["js/lib/main/highcharts.js", "js/unmp/main/local_system_dashboard.js"]
     header_btn = ""
     html.new_header("UNMP System Dashboard", "", header_btn, css_list, js_list)
     html.write(LocalSystem.localhost_dashboard_table())
@@ -1059,6 +1205,10 @@ def localhost_dashboard(h):
 
 
 def system_uptime(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     ls = LocalSystemBll()
@@ -1066,6 +1216,10 @@ def system_uptime(h):
 
 
 def system_ram(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     ls = LocalSystemBll()
@@ -1073,6 +1227,10 @@ def system_ram(h):
 
 
 def system_harddisk_details(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     ls = LocalSystemBll()
@@ -1080,6 +1238,10 @@ def system_harddisk_details(h):
 
 
 def system_processor_details(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     total = html.var("total")
@@ -1090,6 +1252,10 @@ def system_processor_details(h):
 
 
 def system_bandwidth_details(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     total = html.var("total")
@@ -1101,6 +1267,10 @@ def system_bandwidth_details(h):
 
 def common_ip_mac_search(h):
     # pass
+    """
+
+    @param h:
+    """
     global html
     html = h
     obj = IpMacSearch()
@@ -1125,6 +1295,10 @@ def common_ip_mac_search(h):
 
 
 def get_ip_mac_selected_device(h):
+    """
+
+    @param h:
+    """
     global html
     obj = IpMacSearch()
     html = h
@@ -1137,8 +1311,16 @@ def get_ip_mac_selected_device(h):
 
 
 class TrapStatus(object):
-
+    """
+    Device traps and alarms related class
+    """
     def trap_alarm_chk(self, host_id, device_type):
+        """
+
+        @param host_id:
+        @param device_type:
+        @return:
+        """
         trap_final_dic = {'success': 0, 'result': {}}
         try:
             global sqlalchemy
@@ -1177,6 +1359,10 @@ class TrapStatus(object):
 
 
 def show_trap_alarms(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     host_id = html.var("host_id")
@@ -1212,7 +1398,15 @@ def show_trap_alarms(h):
 
 
 class DeviceStatus(object):
+    """
+    Common device status controller class
+    """
     def device_status(self, host_id):
+        """
+
+        @param host_id:
+        @return:
+        """
         host_status_dic = {}
         host_data = []
         try:
@@ -1254,6 +1448,11 @@ class DeviceStatus(object):
         #{"result": {"7": 1, "6": 0}, "success": 0}
 
     def common_list_device_status(self, host_id):
+        """
+
+        @param host_id:
+        @return:
+        """
         try:
             global sqlalchemy
 
@@ -1295,6 +1494,10 @@ class DeviceStatus(object):
 
 
 def device_status(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     host_id = html.var("host_id")
@@ -1308,8 +1511,18 @@ def device_status(h):
 
 
 class CommonReconciliation(object):
-
+    """
+    common device reconciliation class
+    """
     def reconciliation_common(self, host_id, device_type, tablename, tablecount):
+        """
+
+        @param host_id:
+        @param device_type:
+        @param tablename:
+        @param tablecount:
+        @return:
+        """
         global sqlalche_obj
         success = 1
         result_str = ''
@@ -1443,6 +1656,14 @@ class CommonReconciliation(object):
             return result
 
     def reconciliation_model(self, host_id, device_type, tablename, tablecount):
+        """
+
+        @param host_id:
+        @param device_type:
+        @param tablename:
+        @param tablecount:
+        @return:
+        """
         global sqlalche_obj
         success = 1
         result_str = ''
@@ -1630,6 +1851,10 @@ class CommonReconciliation(object):
 # print obj.reconciliation_common(28,'odu100','peerConfigTable',0)
 
 def chk_common_reconcile(h):
+    """
+
+    @param h:
+    """
     global html, host_status_dic
     html = h
     result = {}
@@ -1647,6 +1872,10 @@ def chk_common_reconcile(h):
 
 
 def local_reconciliation(h):
+    """
+
+    @param h:
+    """
     global thml
     html = h
     text_name = html.var("textname")
@@ -1668,6 +1897,10 @@ def local_reconciliation(h):
 
 def common_reconcile(h):
     # import common_reconciliation
+    """
+
+    @param h:
+    """
     import odu_controller
     import idu_profiling_bll
     import ap_profiling_bll
@@ -1757,7 +1990,20 @@ def common_reconcile(h):
 
 class GetAdminState(object):
 
+    """
+    Admin state of the device
+    """
+
+    def __init__(self):
+        pass
+
     def admin_state_get(self, host_id, device_type):
+        """
+
+        @param host_id:
+        @param device_type:
+        @return:
+        """
         global sqlalche_obj
         global errorStatus
         sqlalche_obj.sql_alchemy_db_connection_open()
@@ -1849,11 +2095,16 @@ class GetAdminState(object):
         sqlalche_obj.session.commit()
         sqlalche_obj.sql_alchemy_db_connection_close()
         return result
-obj = GetAdminState()
+
+# obj = GetAdminState()
 # print obj.admin_state_get(28,'odu100')
 
 
 def get_admin_state(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     host_id = html.var('host_id')
@@ -1864,16 +2115,12 @@ def get_admin_state(h):
     html.req.write(str(JSONEncoder().encode(result)))
 
 
-def view_page_tip_local_dashboard(h):
-    html_view = ""\
-        "<div id=\"help_container\">"\
-        "<h1>UNMP System Dashboard</h1>"\
-        "<br/>"\
-        "<div><strong>System Dashboard</strong> provide the all system information such that RAM , Memory , CPU utilization, Bandwidth etc.</div>"\
-        "<br/>"\
-        "<div>On this page user can monitor the Ram Statistics,memory Usage,Network Statistcis and CPU Utilization.</div>"\
-        "<br/>"
-    h.write(str(html_view))
+# def view_page_tip_local_dashboard(h):
+#     import defaults
+#     f = open(defaults.web_dir + "/htdocs/locale/view_page_tip_local_dashboard.html", "r")
+#     html_view = f.read()
+#     f.close()
+#     h.write(str(html_view))
 
 
 # Author: Rahul Gautam
@@ -1881,16 +2128,25 @@ import logging
 logging.basicConfig(filename='/omd/daemon/log/debug_log.log',
                     format='%(levelname)s: %(asctime)s >> %(message)s', level=logging.DEBUG)
 
-def logme(*msg):
-    logging.info(' ;; '.join(map(str,msg)))
+def logme(*msg, **kwrgs):
+    """
 
-
+    @param msg:
+    @param kwrgs:
+    """
+    logging.info(' :: '.join(map(str,msg)))
 
 from common_bll import DB
 
 def get_select_list(selected_field, select_list_id, table_name, is_enabled=True, is_readonly=False, attr={}):
     """
     Most generic function for creating select list
+    @param selected_field:
+    @param select_list_id:
+    @param table_name:
+    @param is_enabled:
+    @param is_readonly:
+    @param attr:
     """
     option_li = ['<option value="" selected="selected">\
                     -- Select %s --\
@@ -1931,3 +2187,51 @@ def get_select_list(selected_field, select_list_id, table_name, is_enabled=True,
         select_list_id,
         ' '.join(option_li),
         '' if is_enabled else 'disable="disabled"')
+
+
+from utility import Validation
+
+
+def get_device_field(**kwrgs):
+    """
+    usage:
+      1. get_device_field(host_id = 1, field = 'ip_address')
+            will return ip_address of device on basis of host_id
+      2. get_device_field(ip_address = '172.22.0.120', field = 'mac_address')
+            will return mac_address of device on basis of ip_address
+
+    note:
+     field='field_name' to be get is an required argument
+    @param **kwrgs:
+    """
+    try:
+        if len(kwrgs) != 2 \
+           and not kwrgs.get('field'):
+            raise ValueError("Arguments should be\
+                like host_id = 1, field = 'ip_address'\
+                or ip_address = '172.22.0.120', field = 'mac_address' ")
+
+        if kwrgs.get('ip_address') and not Validation.is_valid_ip(ip_address):
+            raise ValueError(" Not a valid ip_address ")
+
+        query = "SELECT %s \
+                FROM hosts " % kwrgs.pop('field')
+        query = query + "\
+                WHERE %s = '%s'\
+                "% (kwrgs.popitem())
+
+        db = DB()
+        db.ready()
+        rows, get_result = db.execute(query)
+        db.close()
+
+        if rows == -1:
+            raise db.error
+
+        return 0, get_result[0][0] if get_result and get_result[0] else ()
+
+    except Exception as e:
+        logme(__file__.split("/")[-1]+ ".get_device_field ", traceback.format_exc())
+        # supression of errors is bad
+        return 1, str(e[-1])
+

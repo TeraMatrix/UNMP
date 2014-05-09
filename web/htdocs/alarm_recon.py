@@ -1,12 +1,15 @@
-
-
 def view():
+    """
+
+
+    @return:
+    """
     success = 1
     #
     try:
         s = ''
         s += """<div>
-                <script type="text/javascript" src="js/alarm_recon.js"></script>
+                <script type="text/javascript" src="js/unmp/main/alarm_recon.js"></script>
                 <div id="outer_div">
                     <div id="details" name="%(id)s">
                         <table id="alarm_details" class="tt-table" cellspacing="0" cellpadding="0" width="100%%">
@@ -70,6 +73,6 @@ def view():
     finally:
         return s
 
-
+# useful comments
 #<button type="submit" class="yo-small yo-button" id="show_recon_alarm" style="margin-left:25px;" >
 #                            Show Reconcilied Alarms</button>

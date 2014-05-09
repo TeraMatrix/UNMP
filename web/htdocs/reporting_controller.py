@@ -1,6 +1,6 @@
 #!/usr/bin/python2.6
 
-'''
+"""
 @author: Mahipal Choudhary
 @since: 07-Nov-2011
 @version: 0.1
@@ -8,13 +8,14 @@
 @organization: Codescape Consultants Pvt. Ltd.
 @copyright: 2011 Mahipal Choudhary for Codescape Consultants Pvt. Ltd.
 @see: http://www.codescape.in
-'''
+"""
 
 # Import modules that contain the function and libraries
-from reporting_bll import Report_bll
-from reporting import Report
-import json
 from json import JSONEncoder
+
+from reporting import Report
+from reporting_bll import Report_bll
+
 
 # global variables
 rs2 = {"all": [], "avg": []}
@@ -22,12 +23,16 @@ rs2 = {"all": [], "avg": []}
 
 
 def manage_crc_phy_report(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     css_list = ["css/demo_table_jui.css", "css/jquery-ui-1.8.4.custom.css",
                 "css/calendrical.css", "css/fcbkcomplete.css", "css/style12.css"]
-    js_list = ["js/calendrical.js", "js/jquery.dataTables.min.js",
-               "js/pages/reporting.js", "js/jquery.fcbkcomplete.js"]
+    js_list = ["js/lib/main/calendrical.js", "js/lib/main/jquery.dataTables.min.js",
+               "js/unmp/main/reporting.js", "js/lib/main/jquery.fcbkcomplete.js"]
     html.new_header(
         "UBR CRC-PHY Error Report", "#ubr_sub_menu", "", css_list, js_list)
     html.write(Report.create_crc_phy_form())
@@ -35,9 +40,12 @@ def manage_crc_phy_report(h):
 
 
 def get_crc_phy_data(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
-    global rs2
     rs = {"all": [], "avg": []}
     no_of_devices = str(html.var("no_of_devices"))
     date_start = str(html.var("start_date"))
@@ -50,6 +58,11 @@ def get_crc_phy_data(h):
 
 
 def average_data_crc_phy(h):
+    """
+
+    @param h:
+    @return:
+    """
     global html
     html = h
     no_of_devices = str(html.var("no_of_devices"))
@@ -64,6 +77,11 @@ def average_data_crc_phy(h):
 
 
 def total_data_crc_phy(h):
+    """
+
+    @param h:
+    @return:
+    """
     global html
     html = h
     no_of_devices = str(html.var("no_of_devices"))
@@ -80,18 +98,26 @@ def total_data_crc_phy(h):
 
 
 def manage_rssi_report(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     css_list = ["css/demo_table_jui.css", "css/jquery-ui-1.8.4.custom.css",
                 "css/calendrical.css", "css/fcbkcomplete.css", "css/style12.css"]
-    js_list = ["js/calendrical.js", "js/jquery.dataTables.min.js",
-               "js/pages/reporting_rssi.js", "js/jquery.fcbkcomplete.js"]
+    js_list = ["js/lib/main/calendrical.js", "js/lib/main/jquery.dataTables.min.js",
+               "js/unmp/main/reporting_rssi.js", "js/lib/main/jquery.fcbkcomplete.js"]
     html.new_header("UBR RSSI Report", "#ubr_sub_menu", "", css_list, js_list)
     html.write(Report.create_rssi_form())
     html.new_footer()
 
 
 def get_rssi_data(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     rs = {"all": [], "avg": []}
@@ -106,6 +132,11 @@ def get_rssi_data(h):
 
 
 def average_data_rssi(h):
+    """
+
+    @param h:
+    @return:
+    """
     global html
     html = h
     no_of_devices = str(html.var("no_of_devices"))
@@ -120,6 +151,11 @@ def average_data_rssi(h):
 
 
 def total_data_rssi(h):
+    """
+
+    @param h:
+    @return:
+    """
     global html
     html = h
     no_of_devices = str(html.var("no_of_devices"))
@@ -136,12 +172,16 @@ def total_data_rssi(h):
 
 
 def manage_network_usage_report(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     css_list = ["css/demo_table_jui.css", "css/jquery-ui-1.8.4.custom.css",
                 "css/calendrical.css", "css/fcbkcomplete.css", "css/style12.css"]
-    js_list = ["js/calendrical.js", "js/jquery.dataTables.min.js",
-               "js/pages/reporting_network_usage.js", "js/jquery.fcbkcomplete.js"]
+    js_list = ["js/lib/main/calendrical.js", "js/lib/main/jquery.dataTables.min.js",
+               "js/unmp/main/reporting_network_usage.js", "js/lib/main/jquery.fcbkcomplete.js"]
     html.new_header(
         "UBR Network Usage Report", "#ubr_sub_menu", "", css_list, js_list)
     html.write(Report.create_network_usage_form())
@@ -149,6 +189,10 @@ def manage_network_usage_report(h):
 
 
 def get_network_usage_data(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     rs = {"all": []}
@@ -162,6 +206,11 @@ def get_network_usage_data(h):
 
 
 def total_data_network_usage(h):
+    """
+
+    @param h:
+    @return:
+    """
     global html
     html = h
     no_of_devices = str(html.var("no_of_devices"))
@@ -178,12 +227,16 @@ def total_data_network_usage(h):
 
 
 def manage_network_outage_report(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     css_list = ["css/demo_table_jui.css", "css/jquery-ui-1.8.4.custom.css",
                 "css/calendrical.css", "css/fcbkcomplete.css", "css/style12.css"]
-    js_list = ["js/calendrical.js", "js/jquery.dataTables.min.js",
-               "js/pages/reporting_network_outage.js", "js/jquery.fcbkcomplete.js"]
+    js_list = ["js/lib/main/calendrical.js", "js/lib/main/jquery.dataTables.min.js",
+               "js/unmp/main/reporting_network_outage.js", "js/lib/main/jquery.fcbkcomplete.js"]
     html.new_header("Network Outage Report",
                     "manage_network_outage_report.py", "", css_list, js_list)
     html.write(Report.create_network_outage_form())
@@ -191,6 +244,10 @@ def manage_network_outage_report(h):
 
 
 def get_network_outage_data(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     rs = {"all": []}
@@ -204,6 +261,11 @@ def get_network_outage_data(h):
 
 
 def total_data_network_outage(h):
+    """
+
+    @param h:
+    @return:
+    """
     global html
     html = h
     no_of_devices = str(html.var("no_of_devices"))
@@ -220,6 +282,10 @@ def total_data_network_outage(h):
 
 
 def odu_excel_reporting(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     crc_avg = average_data_crc_phy(h)
@@ -230,6 +296,10 @@ def odu_excel_reporting(h):
 
 
 def nw_bandwidth_excel_reporting(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     nw_data = total_data_network_usage(h)
@@ -239,6 +309,10 @@ def nw_bandwidth_excel_reporting(h):
 
 
 def rssi_excel_reporting(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     rssi_avg = average_data_rssi(h)
@@ -249,6 +323,10 @@ def rssi_excel_reporting(h):
 
 
 def outage_excel_reporting(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     outage_total = total_data_network_outage(h)
@@ -258,12 +336,16 @@ def outage_excel_reporting(h):
 
 
 def manage_trap_report(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     css_list = ["css/demo_table_jui.css", "css/jquery-ui-1.8.4.custom.css",
                 "css/calendrical.css", "css/fcbkcomplete.css", "css/style12.css"]
-    js_list = ["js/calendrical.js", "js/jquery.dataTables.min.js",
-               "js/pages/reporting_traps.js", "js/jquery.fcbkcomplete.js"]
+    js_list = ["js/lib/main/calendrical.js", "js/lib/main/jquery.dataTables.min.js",
+               "js/unmp/main/reporting_traps.js", "js/lib/main/jquery.fcbkcomplete.js"]
     html.new_header(
         "Event Report", "manage_trap_report.py", "", css_list, js_list)
     html.write(Report.create_trap_form())
@@ -271,6 +353,10 @@ def manage_trap_report(h):
 
 
 def get_trap_data(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     rs = {"all": []}
@@ -284,6 +370,11 @@ def get_trap_data(h):
 
 
 def total_data_trap(h):
+    """
+
+    @param h:
+    @return:
+    """
     global html
     html = h
     no_of_devices = str(html.var("no_of_devices"))
@@ -300,6 +391,11 @@ def total_data_trap(h):
 
 
 def total_data_trap_excel(h):
+    """
+
+    @param h:
+    @return:
+    """
     global html
     html = h
     no_of_devices = str(html.var("no_of_devices"))
@@ -316,6 +412,10 @@ def total_data_trap_excel(h):
 
 
 def event_excel_reporting(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     event_total, alarm_result = total_data_trap_excel(h)
@@ -326,44 +426,48 @@ def event_excel_reporting(h):
     else:
         html.write(str(event_total))
 
-
-def page_tip_crc_phy(h):
-    global html
-    html = h
-    html.write(Report.page_tip_crc_phy())
-
-
-def page_tip_rssi(h):
-    global html
-    html = h
-    html.write(Report.page_tip_rssi())
-
-
-def page_tip_network_outage(h):
-    global html
-    html = h
-    html.write(Report.page_tip_network_outage())
-
-
-def page_tip_network_usage(h):
-    global html
-    html = h
-    html.write(Report.page_tip_network_usage())
-
-
-def page_tip_trap(h):
-    global html
-    html = h
-    html.write(Report.page_tip_trap())
-
-
-def page_tip_inventory_report(h):
-    global html
-    html = h
-    html.write(Report.page_tip_for_inventory())
+#
+# def page_tip_crc_phy(h):
+#     global html
+#     html = h
+#     html.write(Report.page_tip_crc_phy())
+#
+#
+# def page_tip_rssi(h):
+#     global html
+#     html = h
+#     html.write(Report.page_tip_rssi())
+#
+#
+# def page_tip_network_outage(h):
+#     global html
+#     html = h
+#     html.write(Report.page_tip_network_outage())
+#
+#
+# def page_tip_network_usage(h):
+#     global html
+#     html = h
+#     html.write(Report.page_tip_network_usage())
+#
+#
+# def page_tip_trap(h):
+#     global html
+#     html = h
+#     html.write(Report.page_tip_trap())
+#
+#
+# def page_tip_inventory_report(h):
+#     global html
+#     html = h
+#     html.write(Report.page_tip_for_inventory())
 
 
 def show_group_result(h):
+    """
+
+    @param h:
+    """
     output_list = []
     data = h.var('tag')
     common = h.var('common')
@@ -380,6 +484,10 @@ def show_group_result(h):
 
 
 def show_host_result(h):
+    """
+
+    @param h:
+    """
     output_list = []
     data = h.var('tag')
     common = h.var('common')
@@ -397,6 +505,10 @@ def show_host_result(h):
 
 
 def show_host_data_of_group(h):
+    """
+
+    @param h:
+    """
     output_list = []
     data = h.var('select_value')
     common = h.var('common')
@@ -416,11 +528,15 @@ def show_host_data_of_group(h):
 
 
 def inventory_report(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     css_list = ["css/demo_table_jui.css", "css/jquery-ui-1.8.4.custom.css"]
-    js_list = ["js/calendrical.js", "js/jquery.dataTables.min.js",
-               "js/pages/inventory_report.js"]
+    js_list = ["js/lib/main/calendrical.js", "js/lib/main/jquery.dataTables.min.js",
+               "js/unmp/main/inventory_report.js"]
     html.new_header(
         "Inventory Report", "inventory_report.py", "", css_list, js_list)
     html.write(Report.invetory_view())
@@ -428,6 +544,10 @@ def inventory_report(h):
 
 
 def inventory_reprot_creating(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     r = Report_bll()

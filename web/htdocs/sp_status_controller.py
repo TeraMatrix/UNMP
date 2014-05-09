@@ -1,28 +1,20 @@
 #!/usr/bin/python2.6
 
 # import the packeges
-import config
-import htmllib
-import time
-import cgi
-import MySQLdb
-import sys
+from datetime import datetime, timedelta
+from json import JSONEncoder
+
+import advanced_status_controller
 from common_controller import *
+from error_message import ErrorMessageClass
+from mysql_collection import mysql_connection
 from nms_config import *
 from odu_controller import *
-from datetime import datetime, timedelta
-from mysql_collection import mysql_connection
-from unmp_dashboard_config import DashboardConfig
-from utility import Validation
-from operator import itemgetter
-from sp_status_view import SPStatusView
 from sp_status_bll import SPStatusBll
-import json
-from json import JSONEncoder
-from encodings import undefined
-import advanced_status_controller
-from error_message import ErrorMessageClass
+from sp_status_view import SPStatusView
+from utility import Validation
 
+from common_controller import get_device_field
 # create the global object of sp_bll_obj
 global sp_bll_obj, err_obj
 err_obj = ErrorMessageClass()
@@ -30,6 +22,10 @@ sp_bll_obj = SPStatusBll()
 
 
 def sp_status_profiling(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     flag = 0
@@ -38,12 +34,12 @@ def sp_status_profiling(h):
                         'ap25': 'Access Point'}
     css_list = ["css/style.css", "css/custom.css",
                 "calendrical/calendrical.css", 'css/ccpl_jquery_combobox.css']
-    javascript_list = ["js/highcharts.js", 'js/ccpl_jquery_autocomplete.js',
-                       "js/sp_status.js", "calendrical/calendrical.js"]
-#    header_btn = SPDashboardView.header_buttons()
-    host_id = ""
-    host_id = html.var("host_id")
+    javascript_list = ["js/lib/main/highcharts.js", 'js/unmp/main/ccpl_jquery_autocomplete.js',
+                       "js/unmp/main/sp_status.js", "calendrical/calendrical.js"]
+    #    header_btn = SPDashboardView.header_buttons()
+    host_id = html.var("host_id", "")
     selected_listing = ""
+    device_list_param = None
     device_type_id = html.var("device_type")
     if device_type_id == 'odu100' or device_type_id == 'odu16':
         selected_listing = "odu_listing.py"
@@ -53,45 +49,46 @@ def sp_status_profiling(h):
         selected_listing = "ap_listing.py"
     elif device_type_id == 'ccu':
         selected_listing = "ccu_listing.py"
-    output, ip_address = get_device_field(host_id, "ip_address")
+
+    if host_id != "" and host_id is not None:
+        output, ip_address = get_device_field(host_id=host_id, field="ip_address")
+        device_list_param = get_device_param(host_id)
+    else:
+        output, ip_address = 1, 'No profile exists, Please refresh'
     ip_address = ip_address if int(output) == 0 else ""
     html.new_header(str(device_name_dict[device_type]) + " %s Current Status" % (
         ip_address), selected_listing, SPStatusView.header_buttons(), css_list, javascript_list)
     html.write('<div class=\"form-div\" >')
-# extr_button=[{'tag':'button','id':'adSrhAP','value':'Advance
-# Search','name':'adSrhAP'},{'tag':'button','id':'ap_ad_graph','value':'Advance
-# Graph','name':'ap_ad_graph'}]
+
     extr_button = [{'tag': 'button', 'id': 'sp_ad_graph', 'value': 'Historical Status', 'name': 'sp_ad_graph'}, {
         'tag': 'button', 'id': 'sp_show_graph_list', 'value': 'Configuration', 'name': 'sp_show_graph_list'}]
-    # this is used for storing DeviceTypeList e.g "odu16,odu100"
-    device_type = ""
-    # this is used for storing DeviceListState e.g "enabled"
-    device_list_state = ""
-    device_list_param = []
-    if html.var("device_type") is not None:  # we get the variable of page through html.var
-        device_type = html.var("device_type")
-    if html.var("device_list_state") is not None:
-        device_list_state = html.var("device_list_state")
-    if host_id is None:
-        host_id = ""
-    device_list_param = get_device_param(host_id)
+
+    # # this is used for storing DeviceTypeList e.g "odu16,odu100"
+    # device_type = ""
+    # # this is used for storing DeviceListState e.g "enabled"
+    # device_list_state = ""
+
+    device_type = html.var("device_type", "")
+    device_list_state = html.var("device_list_state", "")
+
     if device_list_param == [] or device_list_param is None:
-        flag = 1
-        output, mac_address = get_device_field(host_id, "mac_address")
+        flag, output = 1, 1
+        if host_id:
+            output, mac_address = get_device_field(host_id=host_id, field="mac_address")
         if int(output) == 1:
             html.write(page_header_search("", "", "RM18,RM,Access Point,IDU",
-                       None, "enabled", "device_type", extr_button))
+                                          None, "enabled", "device_type", extr_button))
             # html.write(page_header_search("","","UBR,UBRe",device_type,"enabled","device_type",extr_button))
         else:
-                html.write(
-                    page_header_search(
-                        host_id, mac_address, "RM18,RM,Access Point,IDU",
-                        device_type, "enabled", "device_type", extr_button))
+            html.write(
+                page_header_search(
+                    host_id, mac_address, "RM18,RM,Access Point,IDU",
+                    device_type, "enabled", "device_type", extr_button))
     else:
-        html.write(page_header_search(device_list_param[0][0], device_list_param[0][1], "RM18,RM,Access Point,IDU", device_list_param[0][
-                   2], device_list_state, "device_type", extr_button))
-    if host_id == "" or host_id == "None":
-        val = ""
+        html.write(page_header_search(device_list_param[0][0], device_list_param[0][1], "RM18,RM,Access Point,IDU",
+                                      device_list_param[0][
+                                          2], device_list_state, "device_type", extr_button))
+    if host_id == "" or host_id is None or host_id == "None":
         flag = 1
         html.write("<div id=\"sp_show_msg\"></div><div id=\"tab_yo\">There is no profile selected</div>")
     else:
@@ -103,38 +100,42 @@ def sp_status_profiling(h):
     html.new_footer()
 
 
-def get_device_field(ip_address, get_field):
-    try:
-        mac_address = ''
-        db, cursor = mysql_connection()  # create the connection
-        if db == 1:
-            raise SelfException(cursor)
-        if Validation.is_valid_ip(ip_address):
-            sel_query = "select %s from hosts where ip_address='%s'" % (
-                get_field, ip_address)
-            cursor.execute(sel_query)
-            mac_result = cursor.fetchall()
-            if len(mac_result) > 0:
-                mac_address = mac_result[0][0]
-        else:
-            sel_query = "select %s from hosts where host_id='%s'" % (
-                get_field, ip_address)
-            cursor.execute(sel_query)
-            mac_result = cursor.fetchall()
-            if len(mac_result) > 0:
-                mac_address = mac_result[0][0]
-        return 0, mac_address
-    except SelfException:
-        return 1, str(e[-1])
-        pass
-    except Exception as e:
-        return 1, str(e[-1])
-    finally:
-        if db.open:
-            db.close()
+# def get_device_field(ip_address, get_field):
+#     try:
+#         mac_address = ''
+#         db, cursor = mysql_connection()  # create the connection
+#         if db == 1:
+#             raise SelfException(cursor)
+#         if Validation.is_valid_ip(ip_address):
+#             sel_query = "select %s from hosts where ip_address='%s'" % (
+#                 get_field, ip_address)
+#             cursor.execute(sel_query)
+#             mac_result = cursor.fetchall()
+#             if len(mac_result) > 0:
+#                 mac_address = mac_result[0][0]
+#         else:
+#             sel_query = "select %s from hosts where host_id='%s'" % (
+#                 get_field, ip_address)
+#             cursor.execute(sel_query)
+#             mac_result = cursor.fetchall()
+#             if len(mac_result) > 0:
+#                 mac_address = mac_result[0][0]
+#         return 0, mac_address
+#     except SelfException:
+#         return 1, str(e[-1])
+#         pass
+#     except Exception as e:
+#         return 1, str(e[-1])
+#     finally:
+#         if db.open:
+#             db.close()
 
 
 def sp_add_date_time_on_slide_status(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     try:
@@ -157,8 +158,9 @@ def sp_add_date_time_on_slide_status(h):
             h.req.write(str(JSONEncoder().encode(graph_result['result'])))
 
         else:
-            output_dict = {'success': 0, 'end_date': sp_end_date, 'end_time': sp_end_time, 'start_date': sp_start_date, 'start_time': sp_start_time, 'show_graph_table':
-                           SPStatusView.sp_get_graph(graph_result['selected'], graph_result['non_selected'])}
+            output_dict = {'success': 0, 'end_date': sp_end_date, 'end_time': sp_end_time, 'start_date': sp_start_date,
+                           'start_time': sp_start_time, 'show_graph_table':
+                SPStatusView.sp_get_graph(graph_result['selected'], graph_result['non_selected'])}
             h.req.write(str(JSONEncoder().encode(output_dict)))
     except Exception as e:
         output_dict = {'success': 1, 'output': str(e[-1])}
@@ -167,6 +169,11 @@ def sp_add_date_time_on_slide_status(h):
 
 
 def get_device_list_odu(h):
+    """
+
+    @param h:
+    @raise:
+    """
     global html
     html = h
     # this is the result which we show on the page
@@ -225,9 +232,13 @@ def get_device_list_odu(h):
 
 
 def sp_dashboard(h):
+    """
+
+    @param h:
+    """
     global html, sp_bll_obj
     h = html
-#    sp_bll_obj=SPDashboardBll()
+    #    sp_bll_obj=SPDashboardBll()
     sp_refresh_time, total_count = sp_bll_obj.get_dashboard_data()
     host_id = html.var("host_id")
     now = datetime.now()
@@ -251,12 +262,16 @@ def sp_dashboard(h):
 
 
 def sp_generic_table_json(h):
+    """
+
+    @param h:
+    """
     global html, sp_bll_obj
     html = h
     device_type = h.var('device_type_id')
     ip_address = h.var('ip_address')
     user_id = html.req.session["user_id"]
-#    ap_bll_obj=SPDashboardBll()
+    #    ap_bll_obj=SPDashboardBll()
     result_dict = sp_bll_obj.specific_all_graph_json(
         device_type, user_id, ip_address)
     h.req.content_type = 'application/json'
@@ -264,6 +279,10 @@ def sp_generic_table_json(h):
 
 
 def update_status_table_in_database(h):
+    """
+
+    @param h:
+    """
     global html, sp_bll_obj
     html = h
     table_name = html.var('table_name')
@@ -275,6 +294,10 @@ def update_status_table_in_database(h):
 
 
 def sp_status_device_details(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     ip_address = html.var("ip_address")
@@ -288,6 +311,7 @@ def sp_status_device_details(h):
         h.req.write(str(JSONEncoder().encode(output_dict)))
     else:
         h.req.write(str(JSONEncoder().encode(output)))
+
 # view_output=SPDashboardView.device_information_view_default(output,ip_address,1)
 
 # def sp_event_alarm_information(h):
@@ -320,6 +344,10 @@ def sp_status_device_details(h):
 
 
 def sp_common_status_table_creation(h):
+    """
+
+    @param h:
+    """
     global html, sp_bll_obj
     html = h
     display_type = 'graph'
@@ -355,14 +383,18 @@ def sp_common_status_table_creation(h):
             update_field_name = update_field
         result_dict = sp_bll_obj.common_table_json(
             display_type, user_id, table_name[0], table_name[1], table_name[-
-                                                                            2], table_name[
-                                                                                -1], flag, start_date, end_date, start, limit,
+            2], table_name[
+                -1], flag, start_date, end_date, start, limit,
             ip_address, graph_type, update_field_name, interface_value, cal_type, column_name)
         h.req.content_type = 'application/json'
         h.req.write(str(JSONEncoder().encode(result_dict)))
 
 
 def update_show_graph_status(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     user_id = html.req.session["user_id"]
@@ -373,37 +405,21 @@ def update_show_graph_status(h):
     html.write(str(result))
 
 
-def page_tip_sp_status_table(h):
-        global html
-        html = h
-        html_view = ""
-        html_view = ""\
-            "<div id=\"help_container\">"\
-            "<h1>Current Status Dashboard</h1>"\
-            "<div>This <strong>Dashboard</strong> show all device silver statistics information by graph.</div>"\
-            "<br/>"\
-            "<br/>"\
-            "<div class=\"action-tip\"><div class=\"img-div\"><img style=\"width:16px;height:16px;\" src=\"images/{0}/round_plus.png\"/></div><div class=\"txt-div\">Show device details.</div></div>"\
-            "<br/>"\
-            "<div class=\"action-tip\"><div class=\"img-div\"><img style=\"width:16px;height:16px;\" src=\"images/{0}/round_minus.png\"/></div><div class=\"txt-div\">Hide device details.</div></div>"\
-            "<br/>"\
-            "<div><input class=\"yo-button yo-small\" type=\"button\" style=\"width: 30px;\" value=\"Historical Status\" name=\"odu_graph_show\"> This button open a window on self click and show more information by historical status.</div>"\
-            "<div><input class=\"yo-button yo-small\" type=\"button\" style=\"width: 30px;\" value=\"Search\" name=\"odu_graph_show\"> Search the devices.</div>"\
-            "<div><input class=\"yo-button yo-small\" type=\"button\" style=\"width: 50px;\" value=\"Configuration\" name=\"odu_graph_show\"> This is open a window for customize the table according to User.</div>"\
-            "<br/>"\
-            "<div><button id=\"odu_report_btn\" style=\"margin-top: 5px;\" type=\"submit\"><span class=\"report\">Report</span></button>Download the Excel report.</div>"\
-            "<br/>"\
-            "<div><button id=\"odu_report_btn\"  style=\"margin-top: 5px;\" type=\"submit\"><span class=\"report\">CSV Report</span></button>Download the CSV report.</div>"\
-            "<br/>\
-        <br/>\
-        <div><strong>Note:</strong>This page show real time information of device and it page refresh on 10 min time interval.\
-        Search button search device by MAC address and IP address and show current status  by table.\
-        </div>"\
-        "</div>".format(theme)
-        html.write(str(html_view))
+# def page_tip_sp_status_table(h):
+#         global html
+#         html = h
+#         import defaults
+#         f = open(defaults.web_dir + "/htdocs/locale/page_tip_sp_status_table.html", "r")
+#         html_view = f.read()
+#         f.close()
+#         html.write(str(html_view))
 
 
 def sp_excel_status_report_genrating(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     result1 = ''
@@ -466,7 +482,8 @@ def sp_excel_status_report_genrating(h):
                 end_date = datetime.strptime(
                     end_date + ' ' + end_time, "%d/%m/%Y %H:%M")
             result_dict = sp_bll_obj.sp_excel_report(
-                device_type_id, user_id, ip_address, cal_list, tab_list, field_list, table_name_list, graph_name_list, start_date,
+                device_type_id, user_id, ip_address, cal_list, tab_list, field_list, table_name_list, graph_name_list,
+                start_date,
                 end_date, select_option, limitFlag, graph_list, start_list, limit_list)
             h.req.write(str(JSONEncoder().encode(result_dict)))
         else:
@@ -478,6 +495,10 @@ def sp_excel_status_report_genrating(h):
 
 
 def sp_csv_status_report_genrating(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     result1 = ''
@@ -539,10 +560,11 @@ def sp_csv_status_report_genrating(h):
                     start_date + ' ' + start_time, "%d/%m/%Y %H:%M")
                 end_date = datetime.strptime(
                     end_date + ' ' + end_time, "%d/%m/%Y %H:%M")
-        #    start_date=datetime.strptime(start_date+' '+start_time,"%d/%m/%Y %H:%M")
-        #    end_date=datetime.strptime(end_date+' '+end_time,"%d/%m/%Y %H:%M")
+                #    start_date=datetime.strptime(start_date+' '+start_time,"%d/%m/%Y %H:%M")
+                #    end_date=datetime.strptime(end_date+' '+end_time,"%d/%m/%Y %H:%M")
             result_dict = sp_bll_obj.sp_csv_report(
-                device_type_id, user_id, ip_address, cal_list, tab_list, field_list, table_name_list, graph_name_list, start_date,
+                device_type_id, user_id, ip_address, cal_list, tab_list, field_list, table_name_list, graph_name_list,
+                start_date,
                 end_date, select_option, limitFlag, graph_list, start_list, limit_list)
             h.req.write(str(JSONEncoder().encode(result_dict)))
         else:
@@ -554,6 +576,10 @@ def sp_csv_status_report_genrating(h):
 
 
 def sp_pdf_report_genrating(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     result1 = ''
@@ -614,10 +640,11 @@ def sp_pdf_report_genrating(h):
                     start_date + ' ' + start_time, "%d/%m/%Y %H:%M")
                 end_date = datetime.strptime(
                     end_date + ' ' + end_time, "%d/%m/%Y %H:%M")
-        #    start_date=datetime.strptime(start_date+' '+start_time,"%d/%m/%Y %H:%M")
-        #    end_date=datetime.strptime(end_date+' '+end_time,"%d/%m/%Y %H:%M")
+                #    start_date=datetime.strptime(start_date+' '+start_time,"%d/%m/%Y %H:%M")
+                #    end_date=datetime.strptime(end_date+' '+end_time,"%d/%m/%Y %H:%M")
             result_dict = sp_bll_obj.sp_pdf_report(
-                device_type_id, user_id, ip_address, cal_list, tab_list, field_list, table_name_list, graph_name_list, start_date,
+                device_type_id, user_id, ip_address, cal_list, tab_list, field_list, table_name_list, graph_name_list,
+                start_date,
                 end_date, select_option, limitFlag, graph_list, start_list, limit_list)
             h.req.write(str(JSONEncoder().encode(result_dict)))
         else:

@@ -1,23 +1,19 @@
 #!/usr/bin/python2.6
 # import the packeges
-import config
+from datetime import datetime
 import time
-import cgi
+
 import MySQLdb
-import sys
-import csv
+
 from common_controller import *
-from nms_config import *
-from odu_controller import *
-from datetime import datetime, timedelta
-from mysql_collection import mysql_connection
-from unmp_dashboard_config import DashboardConfig
-from operator import itemgetter
-from utility import Validation
 from error_message import ErrorMessageClass
-import time
-from operator import itemgetter
+from mysql_collection import mysql_connection
+from nms_config import *
 from odu100_common_dashboard import MainOutage
+from odu_controller import *
+from unmp_dashboard_config import DashboardConfig
+from utility import Validation
+
 
 global err_obj
 err_obj = ErrorMessageClass()
@@ -44,8 +40,13 @@ nts Pvt. Ltd.
 
 
 class SPDashboardBll(object):
+    """
+    AP dashboard Modal class
+    """
     def sp_dashboard(self, host_id):
         """
+
+        @param host_id:
         @return: This function return the ip_address.
         @rtype: dictionary
         @author: Rajendra Sharma
@@ -107,6 +108,11 @@ class SPDashboardBll(object):
                 db.close()
 
     def get_dashboard_data(self):
+        """
+
+
+        @return:
+        """
         devcie_type_attr = ['id', 'refresh_time', 'time_diffrence']
         get_data = DashboardConfig.get_config_attributes(
             'odu_dashboard', devcie_type_attr)
@@ -119,6 +125,12 @@ class SPDashboardBll(object):
         return str(odu_refresh_time), str(total_count)
 
     def sp_device_information(self, ip_address, device_type):
+        """
+
+        @param ip_address:
+        @param device_type:
+        @return: @raise:
+        """
         last_reboot_time = ''
         output_dict = {}
         try:
@@ -224,6 +236,13 @@ class SPDashboardBll(object):
 
     # generic graph json data
     def specific_all_graph_json(self, device_type_id, user_id, ip_address):
+        """
+
+        @param device_type_id:
+        @param user_id:
+        @param ip_address:
+        @return: @raise:
+        """
         data_list = []
         time_list = []
         output_dic = {}
@@ -371,6 +390,27 @@ class SPDashboardBll(object):
                 conn.close()
 
     def common_graph_json(self, display_type, user_id, table_name, x_axis_value, index_name, graph_id, flag, start_date, end_date, start, limit, ip_address, graph, update_field_name, interface=1, value_cal=1, *column_name):
+        """
+
+        @param display_type:
+        @param user_id:
+        @param table_name:
+        @param x_axis_value:
+        @param index_name:
+        @param graph_id:
+        @param flag:
+        @param start_date:
+        @param end_date:
+        @param start:
+        @param limit:
+        @param ip_address:
+        @param graph:
+        @param update_field_name:
+        @param interface:
+        @param value_cal:
+        @param column_name:
+        @return: @raise:
+        """
         data_list = []
         time_list = []
         calculation = ['normal', 'delta']
@@ -588,6 +628,13 @@ class SPDashboardBll(object):
                 conn.close()
 
     def sp_total_display_graph(self, device_type_id, user_id, ip_address):
+        """
+
+        @param device_type_id:
+        @param user_id:
+        @param ip_address:
+        @return:
+        """
         try:
 
             # check the deivce is master or not.
@@ -630,7 +677,12 @@ class SPDashboardBll(object):
                 db.close()
 
     def sp_advanced_outage_graph(self, display_type, ip_address, start_date, end_date):
-        '''this function create the outage graph field and show the outage graph.'''
+        """this function create the outage graph field and show the outage graph.
+        @param display_type:
+        @param ip_address:
+        @param start_date:
+        @param end_date:
+        """
         date_days = []   # this list store the days information with date.
         up_state = []
             # Its store the total up state of each day in percentage.
@@ -658,6 +710,17 @@ class SPDashboardBll(object):
             return output_dict
 
     def sp_signal_strength_graph(self, display_type, graph_id, ip_address, start_time, end_time, table_name, column_list):
+        """
+
+        @param display_type:
+        @param graph_id:
+        @param ip_address:
+        @param start_time:
+        @param end_time:
+        @param table_name:
+        @param column_list:
+        @return: @raise:
+        """
         signal_flag = 1
         rssi_dict = []
         default_list = {}
@@ -916,6 +979,12 @@ class SPDashboardBll(object):
                 db.close()
 
     def sp_event_alarm(self, ip_address, device_type):
+        """
+
+        @param ip_address:
+        @param device_type:
+        @return: @raise:
+        """
         try:
             db, cursor = mysql_connection()
             if db == 1:
@@ -950,6 +1019,13 @@ class SPDashboardBll(object):
                 db.close()
 
     def update_show_graph_table(self, device_type_id, user_id, show_graph):
+        """
+
+        @param device_type_id:
+        @param user_id:
+        @param show_graph:
+        @return: @raise:
+        """
         try:
             db, cursor = mysql_connection()
             if db == 1:
@@ -984,6 +1060,13 @@ class SPDashboardBll(object):
                 db.close()
 
     def sp_dashboard_get_graph_name(self, user_id, device_type, ip_address):
+        """
+
+        @param user_id:
+        @param device_type:
+        @param ip_address:
+        @return:
+        """
         try:
             make_list = lambda x: [
                 " - " if i == None or i == '' else str(i) for i in x]
@@ -1028,6 +1111,13 @@ class SPDashboardBll(object):
                 db.close()
 
     def sp_total_display_graph(self, device_type_id, user_id, ip_address):
+        """
+
+        @param device_type_id:
+        @param user_id:
+        @param ip_address:
+        @return:
+        """
         try:
             master_slave_status = get_master_slave_value(ip_address)
 
@@ -1068,6 +1158,12 @@ class SPDashboardBll(object):
                 db.close()
 
     def sp_ap_client_information(self, device_type_id, ip_address):
+        """
+
+        @param device_type_id:
+        @param ip_address:
+        @return:
+        """
         try:
             db = MySQLdb.connect(*SystemConfig.get_mysql_credentials())
             cursor = db.cursor()
@@ -1109,6 +1205,25 @@ class SPDashboardBll(object):
 ######### reportring work start here .########
 # Excel reporting start here.
     def sp_excel_report(self, device_type, user_id, ip_address, cal_list, tab_list, field_list, table_name_list, graph_name_list, start_date, end_date, select_option, limitFlag, graph_list, start_list, limit_list):
+        """
+
+        @param device_type:
+        @param user_id:
+        @param ip_address:
+        @param cal_list:
+        @param tab_list:
+        @param field_list:
+        @param table_name_list:
+        @param graph_name_list:
+        @param start_date:
+        @param end_date:
+        @param select_option:
+        @param limitFlag:
+        @param graph_list:
+        @param start_list:
+        @param limit_list:
+        @return: @raise:
+        """
         if ip_address == '' or ip_address == None or ip_address == 'undefined' or str(ip_address) == 'None':
             raise SelfException(
                 'This UBR devices not exists so excel report can not be generated.')
@@ -1597,6 +1712,25 @@ class SPDashboardBll(object):
 
 # CSV reporting start here.
     def sp_csv_report(self, device_type, user_id, ip_address, cal_list, tab_list, field_list, table_name_list, graph_name_list, start_date, end_date, select_option, limitFlag, graph_list, start_list, limit_list):
+        """
+
+        @param device_type:
+        @param user_id:
+        @param ip_address:
+        @param cal_list:
+        @param tab_list:
+        @param field_list:
+        @param table_name_list:
+        @param graph_name_list:
+        @param start_date:
+        @param end_date:
+        @param select_option:
+        @param limitFlag:
+        @param graph_list:
+        @param start_list:
+        @param limit_list:
+        @return: @raise:
+        """
         if ip_address == '' or ip_address == None or ip_address == 'undefined' or str(ip_address) == 'None':
             raise SelfException(
                 'This devices not exists so excel report can not be generated.')
@@ -2015,6 +2149,26 @@ class SPDashboardBll(object):
                 db.close()
 
     def sp_pdf_report(self, device_type, user_id, ip_address, cal_list, graph_id_list, tab_list, field_list, table_name_list, graph_name_list, start_date, end_date, select_option, limitFlag, graph_list, start_list, limit_list):
+        """
+
+        @param device_type:
+        @param user_id:
+        @param ip_address:
+        @param cal_list:
+        @param graph_id_list:
+        @param tab_list:
+        @param field_list:
+        @param table_name_list:
+        @param graph_name_list:
+        @param start_date:
+        @param end_date:
+        @param select_option:
+        @param limitFlag:
+        @param graph_list:
+        @param start_list:
+        @param limit_list:
+        @return: @raise:
+        """
         if ip_address == '' or ip_address == None or ip_address == 'undefined' or str(ip_address) == 'None':
             raise SelfException(
                 'This devices not exists so excel report can not be generated.')
@@ -2593,6 +2747,11 @@ class SPDashboardBll(object):
 
 
 def get_master_slave_value(ip_address):
+    """
+
+    @param ip_address:
+    @return: @raise:
+    """
     try:
         conn, cursor = mysql_connection()
         if conn == 1:
@@ -2645,6 +2804,11 @@ def get_master_slave_value(ip_address):
 
 
 def merge_list(arg):
+    """
+
+    @param arg:
+    @return:
+    """
     total = len(arg)
     flag = True
     d2 = []
@@ -2822,6 +2986,13 @@ def merge_list(arg):
 
 
 def get_outage(d1, d2, ip_address):
+    """
+
+    @param d1:
+    @param d2:
+    @param ip_address:
+    @return: @raise:
+    """
     try:
         conn, cursor = mysql_connection()
         if conn == 1:
@@ -2904,6 +3075,12 @@ def get_outage(d1, d2, ip_address):
 
 
 def conversion_to_pdf(data_list, heading):
+    """
+
+    @param data_list:
+    @param heading:
+    @return:
+    """
     new_list = []
     if len(data_list) > 0:
         for i in range(1, len(data_list[0])):

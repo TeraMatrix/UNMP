@@ -13,9 +13,8 @@
 @copyright: 2011 Anuj Samariya from Codescape Consultants Pvt. Ltd.
 """
 
-
 from utility import ErrorMessages
-from common_controller import page_header_search, make_select_list_using_dictionary, DeviceStatus
+from common_controller import page_header_search, DeviceStatus
 from idu_profiling import IduProfiling, IduForms
 from idu_profiling_bll import *
 from json import JSONEncoder
@@ -24,6 +23,10 @@ from time import sleep
 
 
 def idu_listing(h):
+    """
+
+    @param h:
+    """
     try:
         """
         @requires : odu_controller,utility,from common_controller import page_header_search function
@@ -51,8 +54,8 @@ def idu_listing(h):
         sitename = __file__.split("/")[3]
         css_list = ["css/demo_table_jui.css",
                     "css/jquery-ui-1.8.4.custom.css", 'css/ccpl_jquery_combobox.css']
-        javascript_list = ["js/jquery.dataTables.min.js",
-                           'js/ccpl_jquery_autocomplete.js', "js/idu_listing.js"]
+        javascript_list = ["js/lib/main/jquery.dataTables.min.js",
+                           'js/unmp/main/ccpl_jquery_autocomplete.js', "js/unmp/main/idu_listing.js"]
         snapin_list = ["reports", "views", "Alarm", "Inventory", "Settings",
                        "NetworkMaps", "user_management", "schedule", "Listing"]
         # This we import the javascript
@@ -80,7 +83,7 @@ def idu_listing(h):
             ip_address = html.var("ip_address")
         if html.var("mac_address") != None:
             mac_address = html.var("mac_address")
-        # Here we print the heading of page
+            # Here we print the heading of page
         html.new_header("IDU Listing", "idu_listing.py", "",
                         css_list, javascript_list, snapin_list)
 
@@ -88,7 +91,8 @@ def idu_listing(h):
         # we pass parameters
         # ipaddress,macaddress,devicelist,selectedDevice,devicestate,selectdeviceid
         html.write(str(page_header_search(ip_address, mac_address,
-                   "RM18,RM,IDU,Access Point,CCU", selected_device_type, "enabled", "device_type")))
+                                          "RM18,RM,IDU,Access Point,CCU", selected_device_type, "enabled",
+                                          "device_type")))
 
         # Here we make a div to show the result in datatable
         html.write(IduProfiling.idu_listing())
@@ -128,10 +132,12 @@ def idu_profiling(h):
     ##################### Header Declaration ##################################
     # Define the page header e.g Odu Profiling
     css_list = ['css/demo_table_jui.css',
-                "css/jquery.multiselect.css", "css/jquery.multiselect.filter.css", "css/jquery-ui-1.8.4.custom.css", 'css/ccpl_jquery_combobox.css']
+                "css/jquery.multiselect.css", "css/jquery.multiselect.filter.css", "css/jquery-ui-1.8.4.custom.css",
+                'css/ccpl_jquery_combobox.css']
     jss_list = [
-        "js/jquery-ui-1.8.6.custom.min.js", "js/pages/jquery.multiselect.min.js",
-        "js/pages/jquery.multiselect.filter.js", 'js/jquery.dataTables.min.js', 'js/ccpl_jquery_autocomplete.js', 'js/idu_controller.js', 'js/jquery-ui-personalized-1.6rc2.min.js']
+        "js/lib/main/jquery-ui-1.8.6.custom.min.js", "js/lib/main/jquery.multiselect.min.js",
+        "js/lib/main/jquery.multiselect.filter.js", 'js/lib/main/jquery.dataTables.min.js', 'js/unmp/main/ccpl_jquery_autocomplete.js',
+        'js/unmp/main/idu_controller.js', 'js/lib/main/jquery-ui-personalized-1.6rc2.min.js']
     snapin_list = ["reports", "views", "Alarm", "Inventory",
                    "Settings", "NetworkMaps", "user_management", "schedule", "Listing"]
 
@@ -164,34 +170,34 @@ def idu_profiling(h):
         if device_list_parameter == [] or device_list_parameter == None:
             html.write(page_header_search(
                 "", "", "RM18,RM,IDU,CCU", None, "enabled", "device_type"))
-                       # call the function of common_controller , it is used
-                       # for listing the Devices based on
-                       # IPaddress,Macaddress,DeviceTy
+            # call the function of common_controller , it is used
+            # for listing the Devices based on
+            # IPaddress,Macaddress,DeviceTy
         else:
             html.new_header("%s %s Configuration" % ("IDU", device_list_parameter[0]
-                            .ip_address), "idu_listing.py", "", css_list, jss_list, snapin_list)
+            .ip_address), "idu_listing.py", "", css_list, jss_list, snapin_list)
             html.write(
                 page_header_search(
                     device_list_parameter[0][
                         0], device_list_parameter[0][1], "RM18,RM,IDU,CCU",
                     device_type, device_list_state, "device_type"))
             html.write(IduProfiling.idu_div(device_list_parameter[0][0],
-                       device_list_parameter[0][1], host_id))
+                                            device_list_parameter[0][1], host_id))
     elif isinstance(device_list_parameter, Exception):
         html.write("DataBase Error Occured")
     html.new_footer()
 
 
-def page_tip_idu_listing(h):
-    global html
-    html = h
-    html.write(str(IduProfiling.page_tip_idu_listing()))
-
-
-def page_tip_idu_profiling(h):
-    global html
-    html = h
-    html.write(str(IduProfiling.page_tip_idu_profiling()))
+# def page_tip_idu_listing(h):
+#     global html
+#     html = h
+#     html.write(str(IduProfiling.page_tip_idu_listing()))
+#
+#
+# def page_tip_idu_profiling(h):
+#     global html
+#     html = h
+#     html.write(str(IduProfiling.page_tip_idu_profiling()))
 
 
 def idu_device_listing_table(h):
@@ -253,17 +259,18 @@ def idu_device_listing_table(h):
         selected_device = "idu4"
     else:
         selected_device = html.var("device_type")
-    # call the function get_odu_list of odu-controller which return us the
+        # call the function get_odu_list of odu-controller which return us the
     # list of devices in two dimensional list according to
     # IPAddress,MACaddress,SelectedDevice
 
     device_dict = idu_device_list_bll_obj.idu_device_list(
-        ip_address, mac_address, selected_device, i_display_start, i_display_length, s_search, sEcho, sSortDir_0, iSortCol_0, userid, html_req)
+        ip_address, mac_address, selected_device, i_display_start, i_display_length, s_search, sEcho, sSortDir_0,
+        iSortCol_0, userid, html_req)
     #[1, "172.22.0.120", "Default", "172.22.0.120",
     device_list = device_dict["aaData"]
     index = int(device_dict["i_display_start"])
-# display the result on page
-# This is a empty list variable used for storing the device list
+    # display the result on page
+    # This is a empty list variable used for storing the device list
     if isinstance(device_list, list):
         for i in range(0, len(device_list)):
             if device_list[i][8] <= 35:
@@ -312,31 +319,39 @@ def idu_device_listing_table(h):
             else:
                 device_status_host_id += str(device_list[i][0]) + ","
             temp_list = []
-            monitoring_status = "<a target=\"main\" href=\"%s?host_id=%s&device_type=%s&device_list_state=%s\"><img src=\"images/new/info.png\" style=\"width:16px;height:16px;\" title=\"Current Device Status\" class=\"imgbutton n-reconcile\"/></a>" % ('sp_status_profiling.py',
-                                                                                                                                                                                                                                                            device_list[i][0], device_list[i][7], device_list_state) if device_list[i][7] == "idu4" else "<img src=\"images/new/info.png\" style=\"width:16px;height:16px;\" title=\"Current Device Status\" class=\"imgbutton n-reconcile\"/>"
+            monitoring_status = "<a target=\"main\" href=\"%s?host_id=%s&device_type=%s&device_list_state=%s\"><img src=\"images/new/info.png\" style=\"width:16px;height:16px;\" title=\"Current Device Status\" class=\"imgbutton n-reconcile\"/></a>" % (
+            'sp_status_profiling.py',
+            device_list[i][0], device_list[i][7], device_list_state) if device_list[i][
+                                                                            7] == "idu4" else "<img src=\"images/new/info.png\" style=\"width:16px;height:16px;\" title=\"Current Device Status\" class=\"imgbutton n-reconcile\"/>"
             if html.req.session["role"] == "admin" or html.req.session["role"] == "user":
-                result_device_list.append(["<center><img id=\"device_status\" name=\"device_status\" src=\"%s\" title=\"%s\" style=\"width:8px;height:8px;\" class=\"imgbutton w-reconcile\" /></center>"
-                                           % (device_status_image_path, device_status),
-                                           device_list[i][1], device_list[i][2], device_list[i][3], device_list[i][4], "" if device_list[i][5] == None else device_list[i][5], "-" if device_list[i][6] == None else "Slave IDU" if int(device_list[i][6]) == 1 else "Master IDU"])
+                result_device_list.append([
+                    "<center><img id=\"device_status\" name=\"device_status\" src=\"%s\" title=\"%s\" style=\"width:8px;height:8px;\" class=\"imgbutton w-reconcile\" /></center>"
+                    % (device_status_image_path, device_status),
+                    device_list[i][1], device_list[i][2], device_list[i][3], device_list[i][4],
+                    "" if device_list[i][5] == None else device_list[i][5],
+                    "-" if device_list[i][6] == None else "Slave IDU" if int(device_list[i][6]) == 1 else "Master IDU"])
                 temp_list.append(
                     "<ul class=\"button_group\" style=\"width: 113px;\">")
                 for j in range(0, len(e1_port_list)):
                     temp_list.append("<li><a class=\"%s imgEditodu16 n-reconcile\" title=\"E1 Port%s %s\" id=\"e1_admin_state_%s\" name=\"admin_state_%s\" state=\"%s\" \
                     onClick=\"idu_admin_state_change(event,this,'%s','%s','%s','iduConfiguration.e1PortConfigurationTable.adminState',0);\">E1</a></li>"
                                      % (
-                                         "green" if int(e1_port_list[j].adminState) == 1 else "red", str(
-                                             e1_port_list[j].portNumber), "Unlocked" if int(e1_port_list[j].adminState) == 1 else "Locked",
-                                     e1_port_list[j].portNumber, e1_port_list[
-                                     j].portNumber,
-                                     1 if int(e1_port_list[
-                                              j].adminState) == 1 else 0,
-                                     device_list[i][0], e1_port_list[j].idu_e1PortConfigurationTable_id, e1_port_list[j].portNumber))
+                        "green" if int(e1_port_list[j].adminState) == 1 else "red", str(
+                            e1_port_list[j].portNumber),
+                        "Unlocked" if int(e1_port_list[j].adminState) == 1 else "Locked",
+                        e1_port_list[j].portNumber, e1_port_list[
+                            j].portNumber,
+                        1 if int(e1_port_list[
+                            j].adminState) == 1 else 0,
+                        device_list[i][0], e1_port_list[j].idu_e1PortConfigurationTable_id, e1_port_list[j].portNumber))
 
                 temp_list.append(
-                    '<li><a class=\"%s n-reconcile imgEditodu16\" title=\"%s\" onclick=\"main_admin_state_change(event,this,\'%s\',\'iduinfo.iduAdminStateTable.adminstate\'); \"/>A</a></li>' % (main_admin_image_class, main_admin_title,
-                                                                                                                                                                                                  device_list[i][0]))
-                temp_list.append('<li><a class=\"%s n-reconcile imgEditodu16\" title=\"%s\" onclick=\"show_link_admin_state(event,this,\'%s\',\'%s\');\"/>L</a></li>' %
-                                 (link_image_class, link_title, device_list[i][0], device_list[i][7]))
+                    '<li><a class=\"%s n-reconcile imgEditodu16\" title=\"%s\" onclick=\"main_admin_state_change(event,this,\'%s\',\'iduinfo.iduAdminStateTable.adminstate\'); \"/>A</a></li>' % (
+                    main_admin_image_class, main_admin_title,
+                    device_list[i][0]))
+                temp_list.append(
+                    '<li><a class=\"%s n-reconcile imgEditodu16\" title=\"%s\" onclick=\"show_link_admin_state(event,this,\'%s\',\'%s\');\"/>L</a></li>' %
+                    (link_image_class, link_title, device_list[i][0], device_list[i][7]))
                 temp_list.append("</ul>")
                 result_device_list[i].append("".join(temp_list))
                 temp_list = []
@@ -350,46 +365,52 @@ def idu_device_listing_table(h):
                 <img src=\"%s\" title=\"Reconciliation %s%% Done\" style=\"width:16px;height:16px;\" class=\"imgbutton n-reconcile imgEditodu16\" onclick=\"imgReconcile(this,'%s','%s','idu_','True'); state_rec=0\"/>\
                 &nbsp;&nbsp;%s%s"
                                  % (
-                                     device_list[i][0], device_list[i][
-                                         7], device_list_state, device_list[
-                                             i][0],
-                                 'sp_dashboard_profiling.py' if device_list[i][
-                                 7] == "idu4" else 'sp_dashboard_profiling.py',
-                                 device_list[i][0], device_list[i][
-                                       7], device_list_state, device_list[
-                                           i][
-                                               3], device_list[
-                                                   i][0], device_list[i][7],
-                                 device_list_state, images, device_list[i][
-                                 8], device_list[
-                                 i][
-                                 0], device_list[
-                                 i][7], monitoring_status,
-                                 "<input type=\"hidden\" value=\"%s\" name=\"host_id\" id=\"host_id\" />" % (device_status_host_id) if i == len(device_list) - 1 else ""))
+                    device_list[i][0], device_list[i][
+                        7], device_list_state, device_list[
+                        i][0],
+                    'sp_dashboard_profiling.py' if device_list[i][
+                                                       7] == "idu4" else 'sp_dashboard_profiling.py',
+                    device_list[i][0], device_list[i][
+                        7], device_list_state, device_list[
+                        i][
+                        3], device_list[
+                        i][0], device_list[i][7],
+                    device_list_state, images, device_list[i][
+                        8], device_list[
+                        i][
+                        0], device_list[
+                        i][7], monitoring_status,
+                    "<input type=\"hidden\" value=\"%s\" name=\"host_id\" id=\"host_id\" />" % (
+                    device_status_host_id) if i == len(device_list) - 1 else ""))
                 result_device_list[i].append(" ".join(temp_list))
             else:
-                result_device_list.append(["<center><img id=\"device_status\" name=\"device_status\" src=\"%s\" title=\"%s\" style=\"width:8px;height:8px;\" class=\"imgbutton w-reconcile\" /></center>"
-                                           % (device_status_image_path, device_status),
-                                           device_list[i][1], device_list[i][2], device_list[i][3], device_list[i][4], device_list[i][5], "Slave IDU" if int(device_list[i][6]) == 1 else "Master IDU"])
+                result_device_list.append([
+                    "<center><img id=\"device_status\" name=\"device_status\" src=\"%s\" title=\"%s\" style=\"width:8px;height:8px;\" class=\"imgbutton w-reconcile\" /></center>"
+                    % (device_status_image_path, device_status),
+                    device_list[i][1], device_list[i][2], device_list[i][3], device_list[i][4], device_list[i][5],
+                    "Slave IDU" if int(device_list[i][6]) == 1 else "Master IDU"])
                 temp_list.append(
                     "<ul class=\"button_group\" style=\"width: 170px;\">")
                 for j in range(0, len(e1_port_list)):
                     temp_list.append("<li><a class=\"%s imgEditodu16 n-reconcile\" title=\"E1 Port%s %s\" id=\"e1_admin_state_%s\" name=\"admin_state_%s\" state=\"%s\" \
                     onClick=\"idu_admin_state_change(event,this,'%s','%s','%s','iduConfiguration.e1PortConfigurationTable.adminState',0);\">E1</a></li>"
                                      % (
-                                         "green" if int(e1_port_list[j].adminState) == 1 else "red", str(
-                                             e1_port_list[j].portNumber), "Unlocked" if int(e1_port_list[j].adminState) == 1 else "Locked",
-                                     e1_port_list[j].portNumber, e1_port_list[
-                                     j].portNumber,
-                                     1 if int(e1_port_list[
-                                              j].adminState) == 1 else 0,
-                                     device_list[i][0], e1_port_list[j].idu_e1PortConfigurationTable_id, e1_port_list[j].portNumber))
+                        "green" if int(e1_port_list[j].adminState) == 1 else "red", str(
+                            e1_port_list[j].portNumber),
+                        "Unlocked" if int(e1_port_list[j].adminState) == 1 else "Locked",
+                        e1_port_list[j].portNumber, e1_port_list[
+                            j].portNumber,
+                        1 if int(e1_port_list[
+                            j].adminState) == 1 else 0,
+                        device_list[i][0], e1_port_list[j].idu_e1PortConfigurationTable_id, e1_port_list[j].portNumber))
 
                 temp_list.append(
-                    '<li><a class=\"%s n-reconcile imgEditodu16\" title=\"%s\" onclick=\"main_admin_state_change(event,this,\'%s\',\'iduinfo.iduAdminStateTable.adminstate\'); \"/>A</a></li>' % (main_admin_image_class, main_admin_title,
-                                                                                                                                                                                                  device_list[i][0]))
-                temp_list.append('<li><a class=\"%s n-reconcile imgEditodu16\" title=\"%s\" onclick=\"show_link_admin_state(event,this,\'%s\',\'%s\');\"/>L</a></li>' %
-                                 (link_image_class, link_title, device_list[i][0], device_list[i][7]))
+                    '<li><a class=\"%s n-reconcile imgEditodu16\" title=\"%s\" onclick=\"main_admin_state_change(event,this,\'%s\',\'iduinfo.iduAdminStateTable.adminstate\'); \"/>A</a></li>' % (
+                    main_admin_image_class, main_admin_title,
+                    device_list[i][0]))
+                temp_list.append(
+                    '<li><a class=\"%s n-reconcile imgEditodu16\" title=\"%s\" onclick=\"show_link_admin_state(event,this,\'%s\',\'%s\');\"/>L</a></li>' %
+                    (link_image_class, link_title, device_list[i][0], device_list[i][7]))
                 temp_list.append("</ul>")
                 result_device_list[i].append("".join(temp_list))
                 temp_list = []
@@ -404,13 +425,14 @@ def idu_device_listing_table(h):
                 &nbsp;&nbsp;%s%s"
                                  % (device_list[i][0],
                                     'sp_dashboard_profiling.py' if device_list[i][
-                                    7] == "idu4" else 'sp_dashboard_profiling.py',
+                                                                       7] == "idu4" else 'sp_dashboard_profiling.py',
                                     device_list[i][0], device_list[i][
-                                    7], device_list_state, device_list[
-                                    i][
-                                    3], images, device_list[
-                                    i][8], monitoring_status,
-                                    "<input type=\"hidden\" value=\"%s\" name=\"host_id\" id=\"host_id\" />" % (device_status_host_id) if i == len(device_list) - 1 else ""))
+                    7], device_list_state, device_list[
+                                        i][
+                                        3], images, device_list[
+                                        i][8], monitoring_status,
+                                    "<input type=\"hidden\" value=\"%s\" name=\"host_id\" id=\"host_id\" />" % (
+                                    device_status_host_id) if i == len(device_list) - 1 else ""))
                 result_device_list[i].append(" ".join(temp_list))
     html.req.content_type = 'application/json'
     device_dict["aaData"] = result_device_list
@@ -418,6 +440,10 @@ def idu_device_listing_table(h):
 
 
 def get_device_list_idu_profiling(h):
+    """
+
+    @param h:
+    """
     try:
         global html
         html = h
@@ -440,7 +466,7 @@ def get_device_list_idu_profiling(h):
             mac_address = ""
         else:
             mac_address = html.var("mac_address")
-        # take value of SelectedDevice from the page through html.var
+            # take value of SelectedDevice from the page through html.var
         # check that value is None Then It takes the empty string
         if html.var("selected_device_type") == None:
             selected_device = "idu4"
@@ -477,6 +503,10 @@ def get_device_list_idu_profiling(h):
 
 
 def alarm_port_form(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     alarm_port_list = []
@@ -490,6 +520,10 @@ def alarm_port_form(h):
 
 
 def port_configuration_form(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     port_configuration_list = []
@@ -503,12 +537,16 @@ def port_configuration_form(h):
         port_configuration_id, host_id, id_name, class_name)
     if isinstance(port_configuration_list, list):
         html.write(IduForms.port_configuration_form(port_configuration_list,
-                   host_id, selected_device, port_configuration_id))
+                                                    host_id, selected_device, port_configuration_id))
     elif isinstance(port_configuration_list, Exception):
         html.write(str(e))
 
 
 def port_bandwidth_form(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     port_bandwidth_list = []
@@ -523,12 +561,16 @@ def port_bandwidth_form(h):
         port_bandwidth_id, host_id, id_name, class_name)
     if isinstance(port_bandwidth_list, list):
         html.write(str(IduForms.port_bandwidth_form(port_bandwidth_list,
-                   host_id, selected_device, port_bandwidth_id)))
+                                                    host_id, selected_device, port_bandwidth_id)))
     elif isinstance(port_bandwidth_list, Exception):
         html.write(str(e))
 
 
 def port_QinQ_form(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     port_bandwidth_list = []
@@ -543,12 +585,16 @@ def port_QinQ_form(h):
         port_bandwidth_id, host_id, id_name, class_name)
     if isinstance(port_bandwidth_list, list):
         html.write(str(IduForms.port_QinQ_form(port_bandwidth_list,
-                   host_id, selected_device, port_bandwidth_id)))
+                                               host_id, selected_device, port_bandwidth_id)))
     elif isinstance(port_bandwidth_list, Exception):
         html.write(str(e))
 
 
 def e1_port(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     port_e1_list = []
@@ -569,6 +615,10 @@ def e1_port(h):
 
 
 def update_e1_port_table(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     try:
@@ -581,6 +631,10 @@ def update_e1_port_table(h):
 
 
 def e1_port_form_action(h):
+    """
+
+    @param h:
+    """
     obj_bll_cancel_set_valid = IduCommonSetValidation()
     global html
     html = h
@@ -631,17 +685,17 @@ def e1_port_form_action(h):
                 dic_result["success"] = 1
                 dic_result["result"] = "Link Type is required"
 
-##        if html.var("iduConfiguration.e1PortConfigurationTable.lineCode")!=None:
-##            if Validation.is_required(html.var("iduConfiguration.e1PortConfigurationTable.lineCode")):
-##                dic_result["iduConfiguration.e1PortConfigurationTable.lineCode"]=html.var("iduConfiguration.e1PortConfigurationTable.lineCode")
-##            else:
-##                flag = 1
-##                dic_result["success"] = 1
-##                dic_result["result"] = "Line code is required"
+            ##        if html.var("iduConfiguration.e1PortConfigurationTable.lineCode")!=None:
+            ##            if Validation.is_required(html.var("iduConfiguration.e1PortConfigurationTable.lineCode")):
+            ##                dic_result["iduConfiguration.e1PortConfigurationTable.lineCode"]=html.var("iduConfiguration.e1PortConfigurationTable.lineCode")
+            ##            else:
+            ##                flag = 1
+            ##                dic_result["success"] = 1
+            ##                dic_result["result"] = "Line code is required"
 
-##        if html.var("adminState")!=None:
-##            if Validation.is_required(html.var("adminState")):
-##                dic_result["adminState"]=html.var("adminState")
+            ##        if html.var("adminState")!=None:
+            ##            if Validation.is_required(html.var("adminState")):
+            ##                dic_result["adminState"]=html.var("adminState")
 
         if flag == 1:
             html.req.content_type = 'application/json'
@@ -675,6 +729,10 @@ def e1_port_form_action(h):
 
 
 def port_ATU_form(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     port_ATU_list = []
@@ -688,6 +746,10 @@ def port_ATU_form(h):
 
 
 def port_vlan_add_form(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     port_vlan_list = []
@@ -706,12 +768,16 @@ def port_vlan_add_form(h):
 
     if isinstance(port_vlan_list, list):
         html.write(str(IduForms.port_vlan_form(port_vlan_list,
-                   host_id, selected_device, port_vlan_id, addEdit, vlanId)))
+                                               host_id, selected_device, port_vlan_id, addEdit, vlanId)))
     elif isinstance(port_vlan_list, Exception):
         html.write(str(e))
 
 
 def vlan_form_action(h):
+    """
+
+    @param h:
+    """
     try:
         obj_bll_cancel_set_valid = IduCommonSetValidation()
         global html
@@ -734,7 +800,8 @@ def vlan_form_action(h):
             html.req.content_type = 'application/json'
             html.req.write(str(JSONEncoder().encode(dic_result)))
 
-        elif html.var("common_submit") == "Save" or html.var("common_submit") == "Retry" or html.var("common_submit") == "":
+        elif html.var("common_submit") == "Save" or html.var("common_submit") == "Retry" or html.var(
+                "common_submit") == "":
             if html.var("vlan_id") != None:
                 id = html.var("vlan_id")
             if html.var("index_id") != None:
@@ -744,7 +811,8 @@ def vlan_form_action(h):
                 addEdit = html.var("addEdit")
             if html.var("switch.vlanconfigTable.vlanname") != None:
                 if Validation.is_required(html.var("switch.vlanconfigTable.vlanname")):
-                    if obj_bll_cancel_set_valid.check_vlan_name(html.var("switch.vlanconfigTable.vlanname"), host_id) == 0:
+                    if obj_bll_cancel_set_valid.check_vlan_name(html.var("switch.vlanconfigTable.vlanname"),
+                                                                host_id) == 0:
                         dic_result["switch.vlanconfigTable.vlanname"] = html.var(
                             "switch.vlanconfigTable.vlanname")
                     else:
@@ -760,8 +828,10 @@ def vlan_form_action(h):
             if html.var("switch.vlanconfigTable.vlantag") != None:
                 if Validation.is_required(html.var("switch.vlanconfigTable.vlantag")):
                     if Validation.is_number(html.var("switch.vlanconfigTable.vlantag")):
-                        if int(html.var("switch.vlanconfigTable.vlantag")) > 0 and int(html.var("switch.vlanconfigTable.vlantag")) < 4096:
-                            if obj_bll_cancel_set_valid.check_vlan_tag(html.var("switch.vlanconfigTable.vlantag"), host_id) == 0:
+                        if int(html.var("switch.vlanconfigTable.vlantag")) > 0 and int(
+                                html.var("switch.vlanconfigTable.vlantag")) < 4096:
+                            if obj_bll_cancel_set_valid.check_vlan_tag(html.var("switch.vlanconfigTable.vlantag"),
+                                                                       host_id) == 0:
                                 dic_result["switch.vlanconfigTable.vlantag"] = html.var(
                                     "switch.vlanconfigTable.vlantag")
                             else:
@@ -819,6 +889,10 @@ def vlan_form_action(h):
 
 
 def update_vlan_port_form(h):
+    """
+
+    @param h:
+    """
     try:
         global html
         html = h
@@ -831,6 +905,10 @@ def update_vlan_port_form(h):
 
 
 def device_update_reconciliation(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     user_name = html.req.session['username']
@@ -856,6 +934,10 @@ def device_update_reconciliation(h):
 
 
 def reconciliation_status_idu(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     bll_rec_obj = IduReconcilation()
@@ -867,6 +949,10 @@ def reconciliation_status_idu(h):
 
 
 def commit_to_flash(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     host_id = html.var("host_id")
@@ -884,6 +970,10 @@ def commit_to_flash(h):
 
 
 def reboot(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     host_id = html.var("host_id")
@@ -902,6 +992,10 @@ def reboot(h):
 
 
 def ping_check(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     host_id = html.var("host_id")
@@ -913,6 +1007,10 @@ def ping_check(h):
 
 
 def temperature_form_action(h):
+    """
+
+    @param h:
+    """
     obj_bll_cancel_set_valid = IduCommonSetValidation()
     global html
     html = h
@@ -998,6 +1096,10 @@ def temperature_form_action(h):
 
 
 def date_time_action(h):
+    """
+
+    @param h:
+    """
     obj_bll_cancel_set_valid = IduCommonSetValidation()
     global html
     html = h
@@ -1126,6 +1228,10 @@ def date_time_action(h):
 
 
 def poe_form_action(h):
+    """
+
+    @param h:
+    """
     obj_bll_cancel_set_valid = IduCommonSetValidation()
     global html
     html = h
@@ -1181,6 +1287,10 @@ def poe_form_action(h):
 
 
 def swt_port_config_action(h):
+    """
+
+    @param h:
+    """
     obj_bll_cancel_set_valid = IduCommonSetValidation()
     global html
     html = h
@@ -1302,6 +1412,10 @@ def swt_port_config_action(h):
 
 
 def update_swt_port_form(h):
+    """
+
+    @param h:
+    """
     try:
         global html
         html = h
@@ -1315,6 +1429,10 @@ def update_swt_port_form(h):
 
 
 def swt_bw_action(h):
+    """
+
+    @param h:
+    """
     obj_bll_cancel_set_valid = IduCommonSetValidation()
     global html
     html = h
@@ -1386,6 +1504,10 @@ def swt_bw_action(h):
 
 
 def mirror_port_form_action(h):
+    """
+
+    @param h:
+    """
     obj_bll_cancel_set_valid = IduCommonSetValidation()
     global html
     html = h
@@ -1442,6 +1564,10 @@ def mirror_port_form_action(h):
 
 
 def unmp_ip_action(h):
+    """
+
+    @param h:
+    """
     obj_bll_cancel_set_valid = IduCommonSetValidation()
     global html
     html = h
@@ -1502,6 +1628,10 @@ def unmp_ip_action(h):
 
 
 def update_bw_form(h):
+    """
+
+    @param h:
+    """
     try:
         global html
         html = h
@@ -1515,6 +1645,10 @@ def update_bw_form(h):
 
 
 def update_qinq_form(h):
+    """
+
+    @param h:
+    """
     try:
         global html
         html = h
@@ -1528,6 +1662,10 @@ def update_qinq_form(h):
 
 
 def qinq_form_action(h):
+    """
+
+    @param h:
+    """
     obj_bll_cancel_set_valid = IduCommonSetValidation()
     global html
     html = h
@@ -1618,6 +1756,10 @@ def qinq_form_action(h):
 
 
 def port_link_form(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     port_link_list = []
@@ -1636,12 +1778,16 @@ def port_link_form(h):
             port_link_id, host_id, id_name, class_name)
     if isinstance(port_link_list, list):
         html.write(str(IduForms.port_link_form(port_link_list, host_id,
-                   selected_device, port_link_id, port_num, link_num, addEdit)))
+                                               selected_device, port_link_id, port_num, link_num, addEdit)))
     elif isinstance(port_link_list, Exception):
         html.write(str(e))
 
 
 def link_port_delete(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     obj = LinkConfiguration()
@@ -1655,6 +1801,10 @@ def link_port_delete(h):
 
 
 def vlan_port_delete(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     obj = IduCommonSetValidation()
@@ -1666,6 +1816,10 @@ def vlan_port_delete(h):
 
 
 def update_link_port_table(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     try:
@@ -1678,6 +1832,10 @@ def update_link_port_table(h):
 
 
 def link_form_action(h):
+    """
+
+    @param h:
+    """
     obj_bll_cancel_set_valid = IduCommonSetValidation()
     obj_link = LinkConfiguration()
     global html
@@ -1767,8 +1925,12 @@ def link_form_action(h):
         if html.var("iduConfiguration.linkConfigurationTable.srcBundleID") != None:
             if Validation.is_required(html.var("iduConfiguration.linkConfigurationTable.srcBundleID")):
                 if Validation.is_number(html.var("iduConfiguration.linkConfigurationTable.srcBundleID")):
-                    if int(html.var("iduConfiguration.linkConfigurationTable.srcBundleID")) >= 0 and int(html.var("iduConfiguration.linkConfigurationTable.srcBundleID")) <= 63:
-                        if obj_link.src_bundle_chk(host_id, int(html.var("iduConfiguration.linkConfigurationTable.srcBundleID")), html.var("bundle_id") if int(addEdit) == 0 else id, port_num if int(addEdit) == 0 else index) == 0:
+                    if int(html.var("iduConfiguration.linkConfigurationTable.srcBundleID")) >= 0 and int(
+                            html.var("iduConfiguration.linkConfigurationTable.srcBundleID")) <= 63:
+                        if obj_link.src_bundle_chk(host_id,
+                                                   int(html.var("iduConfiguration.linkConfigurationTable.srcBundleID")),
+                                                   html.var("bundle_id") if int(addEdit) == 0 else id,
+                                                   port_num if int(addEdit) == 0 else index) == 0:
                             dic_result["iduConfiguration.linkConfigurationTable.srcBundleID"] = html.var(
                                 "iduConfiguration.linkConfigurationTable.srcBundleID")
                         else:
@@ -1794,8 +1956,12 @@ def link_form_action(h):
         if html.var("iduConfiguration.linkConfigurationTable.dstBundleID") != None:
             if Validation.is_required(html.var("iduConfiguration.linkConfigurationTable.dstBundleID")):
                 if Validation.is_number(html.var("iduConfiguration.linkConfigurationTable.dstBundleID")):
-                    if int(html.var("iduConfiguration.linkConfigurationTable.dstBundleID")) >= 0 and int(html.var("iduConfiguration.linkConfigurationTable.dstBundleID")) <= 63:
-                        if obj_link.destination_bundle_chk(host_id, int(html.var("iduConfiguration.linkConfigurationTable.dstBundleID")), html.var("bundle_id") if int(addEdit) == 0 else id, port_num if int(addEdit) == 0 else index) == 0:
+                    if int(html.var("iduConfiguration.linkConfigurationTable.dstBundleID")) >= 0 and int(
+                            html.var("iduConfiguration.linkConfigurationTable.dstBundleID")) <= 63:
+                        if obj_link.destination_bundle_chk(host_id, int(
+                                html.var("iduConfiguration.linkConfigurationTable.dstBundleID")),
+                                                           html.var("bundle_id") if int(addEdit) == 0 else id,
+                                                           port_num if int(addEdit) == 0 else index) == 0:
                             dic_result["iduConfiguration.linkConfigurationTable.dstBundleID"] = html.var(
                                 "iduConfiguration.linkConfigurationTable.dstBundleID")
                         else:
@@ -1838,7 +2004,8 @@ def link_form_action(h):
         if html.var("iduConfiguration.linkConfigurationTable.bundleSize") != None:
             if Validation.is_required(html.var("iduConfiguration.linkConfigurationTable.bundleSize")):
                 if Validation.is_number(html.var("iduConfiguration.linkConfigurationTable.bundleSize")):
-                    if int(html.var("iduConfiguration.linkConfigurationTable.bundleSize")) >= 1 and int(html.var("iduConfiguration.linkConfigurationTable.bundleSize")) <= 99:
+                    if int(html.var("iduConfiguration.linkConfigurationTable.bundleSize")) >= 1 and int(
+                            html.var("iduConfiguration.linkConfigurationTable.bundleSize")) <= 99:
                         dic_result["iduConfiguration.linkConfigurationTable.bundleSize"] = html.var(
                             "iduConfiguration.linkConfigurationTable.bundleSize")
                     else:
@@ -1859,7 +2026,8 @@ def link_form_action(h):
         if html.var("iduConfiguration.linkConfigurationTable.bufferSize") != None:
             if Validation.is_required(html.var("iduConfiguration.linkConfigurationTable.bufferSize")):
                 if Validation.is_number(html.var("iduConfiguration.linkConfigurationTable.bufferSize")):
-                    if int(html.var("iduConfiguration.linkConfigurationTable.bufferSize")) >= 1000 and int(html.var("iduConfiguration.linkConfigurationTable.bufferSize")) <= 25000:
+                    if int(html.var("iduConfiguration.linkConfigurationTable.bufferSize")) >= 1000 and int(
+                            html.var("iduConfiguration.linkConfigurationTable.bufferSize")) <= 25000:
                         dic_result["iduConfiguration.linkConfigurationTable.bufferSize"] = html.var(
                             "iduConfiguration.linkConfigurationTable.bufferSize")
                     else:
@@ -1916,6 +2084,10 @@ def link_form_action(h):
 
 
 def get_selected_timeslot(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     link_obj = LinkConfiguration()
@@ -1960,8 +2132,16 @@ def get_selected_timeslot(h):
 
 
 class IduStatus(object):
-
+    """
+    Device IDU related status class
+    """
     def idu_hw_sw_temperature_status(self, host_id, device_type):
+        """
+
+        @param host_id:
+        @param device_type:
+        @return:
+        """
         hw_sw_temperature_dic = {'success': 0, 'result': {}}
         try:
             obj_idu_get_data = IduGetData()
@@ -1974,7 +2154,8 @@ class IduStatus(object):
             temp_dic.update(
                 {'active_version': sw_status_list[0].activeVersion if len(sw_status_list) > 0 else "-",
                  'hw_serial_number': hw_temperature_list[0].hwSerialNumber if len(hw_temperature_list) > 0 else "-",
-                 'temperature': str(hw_temperature_list[0].currentTemperature) if len(hw_temperature_list) > 0 else "-"})
+                 'temperature': str(hw_temperature_list[0].currentTemperature) if len(
+                     hw_temperature_list) > 0 else "-"})
             hw_sw_temperature_dic['result'] = temp_dic
         except Exception, e:
             hw_sw_temperature_dic['success'] = 1
@@ -1985,6 +2166,10 @@ class IduStatus(object):
 
 
 def idu_listing_status(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     host_id = html.var("host_id")
@@ -1998,10 +2183,11 @@ def idu_listing_status(h):
 
     if int(result_dic['success']) == 0:
         html_str += "<tr>"
-        html_str += "<td>%s</td><td>%s</td><td>%s</td>" % ("-" if result_dic['result']['active_version'] == None else result_dic['result']['active_version'],
-                                                           "-" if result_dic['result'][
-                                                           'hw_serial_number'] == None else result_dic['result']['hw_serial_number'],
-                                                           "-" if result_dic['result']['temperature'] == None else result_dic['result']['temperature'])
+        html_str += "<td>%s</td><td>%s</td><td>%s</td>" % (
+        "-" if result_dic['result']['active_version'] == None else result_dic['result']['active_version'],
+        "-" if result_dic['result'][
+                   'hw_serial_number'] == None else result_dic['result']['hw_serial_number'],
+        "-" if result_dic['result']['temperature'] == None else result_dic['result']['temperature'])
 
         html_str += "</tr>"
     else:
@@ -2013,6 +2199,10 @@ def idu_listing_status(h):
 
 
 def e1_admin_state_show(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     host_id = html.var("host_id")
@@ -2026,17 +2216,18 @@ def e1_admin_state_show(h):
 
     if len(e1_port_list) > 0:
         for i in range(0, len(e1_port_list)):
-
             html_str += "<tr><td>%s</td>" % (e1_port_list[i].portNumber)
-            html_str += "<td><img src=\"%s\" class=\"n-reconcile\" title=\"%s Port Admin State\" id=\"admin_state_%s\" name=\"admin_state_%s\" style=\"width:10px;height:10px;\" state=\"%s\" onClick=\"idu_admin_state_change(event,this,'%s','%s','%s','iduConfiguration.e1PortConfigurationTable.adminState',0);\"/></td></tr>"\
-                % (
-                    "images/temp/green_dot.png" if int(
-                        e1_port_list[i].adminState) == 1 else "images/temp/red_dot.png", "E" + str(e1_port_list[i].portNumber),
-                    e1_port_list[i].portNumber, e1_port_list[i].portNumber,
-                    1 if int(e1_port_list[i].adminState) == 1 else 0,
-                    host_id, e1_port_list[i].idu_e1PortConfigurationTable_id, e1_port_list[i].portNumber)
+            html_str += "<td><img src=\"%s\" class=\"n-reconcile\" title=\"%s Port Admin State\" id=\"admin_state_%s\" name=\"admin_state_%s\" style=\"width:10px;height:10px;\" state=\"%s\" onClick=\"idu_admin_state_change(event,this,'%s','%s','%s','iduConfiguration.e1PortConfigurationTable.adminState',0);\"/></td></tr>" \
+                        % (
+                "images/temp/green_dot.png" if int(
+                    e1_port_list[i].adminState) == 1 else "images/temp/red_dot.png",
+                "E" + str(e1_port_list[i].portNumber),
+                e1_port_list[i].portNumber, e1_port_list[i].portNumber,
+                1 if int(e1_port_list[i].adminState) == 1 else 0,
+                host_id, e1_port_list[i].idu_e1PortConfigurationTable_id, e1_port_list[i].portNumber)
         html_str += "<tr><td><input type=\"radio\" class=\"n-reconcile\" title=\"Lock All Admin State\" id=\"lock_all\" name=\"unlock_lock_all\" onClick=\"lock_unlock_admin(event,this,'%s','iduConfiguration.e1PortConfigurationTable.adminState',0);\"/>Lock All</td>\
-        <td><input type=\"radio\" id=\"unlock_all\" class=\"n-reconcile\" title=\"UnLock All Admin State\" name=\"unlock_lock_all\" onClick=\"lock_unlock_admin(event,this,'%s','iduConfiguration.e1PortConfigurationTable.adminState',1);\"/>Unlock All</td></tr>" % (host_id, host_id)
+        <td><input type=\"radio\" id=\"unlock_all\" class=\"n-reconcile\" title=\"UnLock All Admin State\" name=\"unlock_lock_all\" onClick=\"lock_unlock_admin(event,this,'%s','iduConfiguration.e1PortConfigurationTable.adminState',1);\"/>Unlock All</td></tr>" % (
+        host_id, host_id)
     else:
         html_str += "<tr><td colspan=2>No E1 Port Exist</td></tr>"
     html_str += "</table>"
@@ -2044,6 +2235,10 @@ def e1_admin_state_show(h):
 
 
 def link_admin_state_show(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     host_id = html.var("host_id")
@@ -2058,19 +2253,21 @@ def link_admin_state_show(h):
         for i in range(0, len(link_port_list)):
             html_str += "<tr><!--<td>%s</td>-->" % (
                 link_port_list[i].portNumber)
-            html_str += "<td colspan=2><ul class=\"button_group\" style=\"width:40px;\"><li><a class=\"%s n-reconcile\" title=\"Link %s\" id=\"admin_state_%s\" name=\"admin_state_%s\" state=\"%s\" bundle_num=\"%s\" onClick=\"idu_admin_state_change(event,this,'%s','%s','%s','iduConfiguration.linkConfigurationTable.adminStatus',1);\">L %s</a></li></td></tr>"\
-                % (
-                    "green" if int(
-                        link_port_list[i].adminStatus) == 1 else "red",
-                    str(link_port_list[i].portNumber) + " Unlocked" if int(link_port_list[i]
-                                                                           .adminStatus) == 1 else str(
-                                                                               link_port_list[i].portNumber) + " Locked",
-                    link_port_list[i].portNumber, link_port_list[i].portNumber,
-                    1 if int(link_port_list[i].adminStatus) == 1 else 0,
-                    link_port_list[i].bundleNumber,
-                    host_id, link_port_list[i].idu_linkConfigurationTable_id, link_port_list[i].portNumber, link_port_list[i].portNumber)
+            html_str += "<td colspan=2><ul class=\"button_group\" style=\"width:40px;\"><li><a class=\"%s n-reconcile\" title=\"Link %s\" id=\"admin_state_%s\" name=\"admin_state_%s\" state=\"%s\" bundle_num=\"%s\" onClick=\"idu_admin_state_change(event,this,'%s','%s','%s','iduConfiguration.linkConfigurationTable.adminStatus',1);\">L %s</a></li></td></tr>" \
+                        % (
+                "green" if int(
+                    link_port_list[i].adminStatus) == 1 else "red",
+                str(link_port_list[i].portNumber) + " Unlocked" if int(link_port_list[i]
+                .adminStatus) == 1 else str(
+                    link_port_list[i].portNumber) + " Locked",
+                link_port_list[i].portNumber, link_port_list[i].portNumber,
+                1 if int(link_port_list[i].adminStatus) == 1 else 0,
+                link_port_list[i].bundleNumber,
+                host_id, link_port_list[i].idu_linkConfigurationTable_id, link_port_list[i].portNumber,
+                link_port_list[i].portNumber)
         html_str += "<tr><td><input type=\"radio\" class=\"n-reconcile\" title=\"Lock All Link State\" id=\"link_lock_all\" name=\"link_unlock_lock_all\" onClick=\"link_lock_unlock_admin(event,this,'%s','iduConfiguration.linkConfigurationTable.adminStatus',0);\"/>Lock All</td>\
-        <td><input type=\"radio\" class=\"n-reconcile\" title=\"Unlock All Link State\" id=\"link_unlock_all\" name=\"link_unlock_lock_all\" onClick=\"link_lock_unlock_admin(event,this,'%s','iduConfiguration.linkConfigurationTable.adminStatus',1);\"/>Unlock All</td></tr>" % (host_id, host_id)
+        <td><input type=\"radio\" class=\"n-reconcile\" title=\"Unlock All Link State\" id=\"link_unlock_all\" name=\"link_unlock_lock_all\" onClick=\"link_lock_unlock_admin(event,this,'%s','iduConfiguration.linkConfigurationTable.adminStatus',1);\"/>Unlock All</td></tr>" % (
+        host_id, host_id)
     else:
         html_str += "<tr><td colspan=2>No Link Exist</td></tr>"
     html_str += "</table>"
@@ -2078,6 +2275,10 @@ def link_admin_state_show(h):
 
 
 def main_admin_state_show(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     host_id = html.var("host_id")
@@ -2089,13 +2290,13 @@ def main_admin_state_show(h):
     html_str += "<th>System Admin State</th>"
     if len(main_admin_list) > 0:
         for i in range(0, len(main_admin_list)):
-            html_str += "<td><img src=\"%s\" class=\"n-reconcile\" title=\"System Admin State\" id=\"main_admin\" name=\"main_admin\" style=\"width:10px;height:10px;\" state=\"%s\" onClick=\"main_admin_state_change(event,this,'%s','iduinfo.iduAdminStateTable.adminstate');\"/></td></tr>"\
-                % (
-                    "images/temp/green_dot.png" if int(
-                        main_admin_list[
-                            i].adminstate) == 1 else "images/temp/red_dot.png",
-                    1 if int(main_admin_list[i].adminstate) == 1 else 0,
-                    host_id)
+            html_str += "<td><img src=\"%s\" class=\"n-reconcile\" title=\"System Admin State\" id=\"main_admin\" name=\"main_admin\" style=\"width:10px;height:10px;\" state=\"%s\" onClick=\"main_admin_state_change(event,this,'%s','iduinfo.iduAdminStateTable.adminstate');\"/></td></tr>" \
+                        % (
+                "images/temp/green_dot.png" if int(
+                    main_admin_list[
+                        i].adminstate) == 1 else "images/temp/red_dot.png",
+                1 if int(main_admin_list[i].adminstate) == 1 else 0,
+                host_id)
     else:
         html_str += "<tr><td colspan=2>No Data Available</td></tr>"
     html_str += "</table>"
@@ -2103,6 +2304,10 @@ def main_admin_state_show(h):
 
 
 def e1_admin_parameters(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     host_id = html.var("host_id")
@@ -2118,6 +2323,10 @@ def e1_admin_parameters(h):
 
 
 def link_admin_parameters(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     host_id = html.var("host_id")
@@ -2134,6 +2343,10 @@ def link_admin_parameters(h):
 
 
 def main_admin_parameters(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     host_id = html.var("host_id")
@@ -2146,6 +2359,10 @@ def main_admin_parameters(h):
 
 
 def all_locked_unlocked(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     host_id = html.var("host_id")
@@ -2174,6 +2391,10 @@ def all_locked_unlocked(h):
 
 
 def link_all_locked_unlocked(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     host_id = html.var("host_id")
@@ -2205,6 +2426,10 @@ def link_all_locked_unlocked(h):
 
 
 def link_status_count(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     host_id = html.var("host_id")
@@ -2215,6 +2440,10 @@ def link_status_count(h):
 
 
 def global_admin_request(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     host_id = html.var("host_id")
@@ -2225,6 +2454,10 @@ def global_admin_request(h):
 
 
 def global_admin(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     host_id = html.var("host_id")
@@ -2238,6 +2471,10 @@ def global_admin(h):
 
 
 def idu_form_reconcile(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     if html.var("host_id") != None:
@@ -2247,6 +2484,6 @@ def idu_form_reconcile(h):
         formname = html.var("formName")
     if html.var("device_type") != None:
         device_type = html.var("device_type")
-    # obj_form = OduConfiguration()
+        # obj_form = OduConfiguration()
     result = eval("IduForms.%s(%s,'%s')" % (formname, host_id, device_type))
     html.write(str(result))

@@ -11,12 +11,12 @@
 '''
 
 # Import modules that contain the function and libraries
+from json import JSONEncoder
+
 from main_reporting_bll import MainReportBll
 from main_reporting import Report
-import json
-from json import JSONEncoder
-from datetime import datetime, timedelta
 from common_bll import Essential
+
 user_report_dict = None
 
 
@@ -36,17 +36,18 @@ def main_report(h):
     user_report_dict = {}
     device_type_user_selected_id = html.var("device_type_user_selected_id")
     device_type_user_selected_name = html.var("device_type_user_selected_name")
-#    device_type_user_selected_id="odu16"
-#    device_type_user_selected_name="UBR"
+    #    device_type_user_selected_id="odu16"
+    #    device_type_user_selected_name="UBR"
     css_list = [
-        "css/demo_table_jui.css", "css/calendrical.css", "css/fcbkcomplete.css", "css/style12.css", "css/jquery.multiselect.css", "css/jquery.multiselect.filter.css",
+        "css/demo_table_jui.css", "css/calendrical.css", "css/fcbkcomplete.css", "css/style12.css",
+        "css/jquery.multiselect.css", "css/jquery.multiselect.filter.css",
         "css/jquery-ui-1.8.4.custom.css"]  # ,"css/jquery.multiselect.filter.css"]
     js_list = [
-        "js/calendrical.js", "js/jquery-ui-1.8.6.custom.min.js", "js/pages/jquery.multiselect.min.js",
-        "js/pages/jquery.multiselect.filter.js", "js/jquery.dataTables.min.js", "js/pages/main_reporting.js"]  # ,
+        "js/lib/main/calendrical.js", "js/lib/main/jquery-ui-1.8.6.custom.min.js", "js/lib/main/jquery.multiselect.min.js",
+        "js/lib/main/jquery.multiselect.filter.js", "js/lib/main/jquery.dataTables.min.js", "js/unmp/main/main_reporting.js"]  # ,
     snapin_list = ["reports", "views", "Alarm", "Inventory",
                    "Settings", "NetworkMaps", "user_management", "schedule", "Listing"]
-    if(device_type_user_selected_name == None):
+    if (device_type_user_selected_name is None):
         html.new_header("General Report", "main_report.py", "",
                         css_list, js_list, snapin_list)
     else:
@@ -58,14 +59,14 @@ def main_report(h):
     user_id = html.req.session["user_id"]
     es = Essential()
     hostgroup_id_list = es.get_hostgroup_ids(user_id)
-    if(hostgroup_id_list == []):
+    if (hostgroup_id_list == []):
         html.write(Report.list_form([], [], device_type_user_selected_id,
-                   device_type_user_selected_name))
+                                            device_type_user_selected_name))
     else:
         result = r.get_hostgroup_device(user_id, hostgroup_id_list)
         if (result["success"] == 0):
             html.write(Report.list_form(result["result"], result["host_data"],
-                       device_type_user_selected_id, device_type_user_selected_name))
+                                        device_type_user_selected_id, device_type_user_selected_name))
         else:
             pass
     html.new_footer()
@@ -109,7 +110,7 @@ def main_reporting_get_excel(h):
     global user_report_dict
     user_report_dict = {}
     username = html.req.session["username"]
-#    no_of_devices=str(html.var("no_of_devices"))
+    #    no_of_devices=str(html.var("no_of_devices"))
     date_start = str(html.var("start_date"))
     date_end = str(html.var("end_date"))
     time_start = str(html.var("start_time"))
@@ -141,7 +142,8 @@ def main_reporting_get_excel(h):
     new_user_report_dict["end_time"] = time_end
     ####
     result = r.main_reporting_get_excel(
-        date_start, date_end, time_start, time_end, all_host, report_type, column_value, device_type, hostgroup, view_type, i_display_start, i_display_length,
+        date_start, date_end, time_start, time_end, all_host, report_type, column_value, device_type, hostgroup,
+        view_type, i_display_start, i_display_length,
         s_search, sEcho, sSortDir_0, iSortCol_0, new_user_report_dict, username)
     html.write(JSONEncoder().encode(result))
 
@@ -154,8 +156,8 @@ def trap_main_report(h):
         "css/demo_table_jui.css", "css/calendrical.css", "css/fcbkcomplete.css", "css/style12.css",
         "css/jquery.multiselect.css", "css/jquery.multiselect.filter.css", "css/jquery-ui-1.8.4.custom.css"]
     js_list = [
-        "js/calendrical.js", "js/jquery-ui-1.8.6.custom.min.js", "js/pages/jquery.multiselect.min.js",
-        "js/pages/jquery.multiselect.filter.js", "js/jquery.dataTables.min.js", "js/pages/main_reporting_trap.js"]
+        "js/lib/main/calendrical.js", "js/lib/main/jquery-ui-1.8.6.custom.min.js", "js/lib/main/jquery.multiselect.min.js",
+        "js/lib/main/jquery.multiselect.filter.js", "js/lib/main/jquery.dataTables.min.js", "js/unmp/main/main_reporting_trap.js"]
     snapin_list = ["reports", "views", "Alarm", "Inventory",
                    "Settings", "NetworkMaps", "user_management", "schedule", "Listing"]
     html.new_header(
@@ -164,7 +166,7 @@ def trap_main_report(h):
     user_id = html.req.session["user_id"]
     es = Essential()
     hostgroup_id_list = es.get_hostgroup_ids(user_id)
-    if(hostgroup_id_list == []):
+    if (hostgroup_id_list == []):
         html.write(Report.trap_list_form([], []))
     else:
         result = r.get_hostgroup_device(user_id, hostgroup_id_list)
@@ -226,25 +228,26 @@ def trap_main_reporting_get_excel(h):
     new_user_report_dict["start_time"] = time_start
     new_user_report_dict["end_time"] = time_end
     ####
-    if(hostgroup == ""):
+    if (hostgroup == ""):
         user_id = html.req.session["user_id"]
         es = Essential()
         hostgroup_id_list = es.get_hostgroup_ids(user_id)
     else:
         hostgroup_id_list = [hostgroup]
     result = r.trap_main_reporting_get_excel(
-        date_start, date_end, time_start, time_end, all_host, report_type, device_type, hostgroup, view_type, i_display_start,
+        date_start, date_end, time_start, time_end, all_host, report_type, device_type, hostgroup, view_type,
+        i_display_start,
         i_display_length, s_search, sEcho, sSortDir_0, iSortCol_0, new_user_report_dict, username, hostgroup_id_list)
     html.write(JSONEncoder().encode(result))
 
 
-def view_page_tip_main_reporting(h):
-    global html
-    html = h
-    html.write(Report.page_tip_main_reporting())
-
-
-def trap_view_page_tip_main_reporting(h):
-    global html
-    html = h
-    html.write(Report.trap_page_tip_main_reporting())
+# def view_page_tip_main_reporting(h):
+#     global html
+#     html = h
+#     html.write(Report.page_tip_main_reporting())
+#
+#
+# def trap_view_page_tip_main_reporting(h):
+#     global html
+#     html = h
+#     html.write(Report.trap_page_tip_main_reporting())

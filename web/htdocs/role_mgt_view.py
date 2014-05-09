@@ -9,6 +9,12 @@ space_check = lambda x: 1 if set(" ").intersection(x) else 0
 
 
 def validate_name(nm, type):
+    """
+
+    @param nm:
+    @param type:
+    @return:
+    """
     if len(nm) < 5:
         return 1
     if special_check(nm) == 1:
@@ -25,6 +31,10 @@ def validate_name(nm, type):
 
 
 def check_rolename(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     name = html.var("name")
@@ -50,6 +60,10 @@ def check_rolename(h):
 
 
 def role_table(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     role_str = ""
@@ -65,6 +79,10 @@ def role_table(h):
 
 
 def role_info(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     table = role_bll.get_role_details("details", html.var("role_id"))
@@ -88,14 +106,18 @@ def role_info(h):
 
 
 def role_view1(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     # css_list =
     # ["css/role.css","css/demo_page.css","css/demo_table_jui.css","css
     # /jquery-ui-1.8.4.custom.css","css/divya.css"]
     css_list = ["css/role.css"]
-        #,"css/demo_page.css","css/demo_table_jui.css","css/jquery-ui-1.8.4.custom.css","css/divya.css"]
-    javascript_list = ["js/pages/manage_role.js"]
+    #,"css/demo_page.css","css/demo_table_jui.css","css/jquery-ui-1.8.4.custom.css","css/divya.css"]
+    javascript_list = ["js/unmp/main/manage_role.js"]
     add_btn = "<div class=\"header-icon\"><img onclick=\"addRole();\" class=\"n-tip-image\" src=\"images/%s/round_plus.png\" id=\"add_role\" name=\"add_role\" style=\"width: 16px; height: 16px; margin: 6px 20px 6px 10px;\" title=\"Add Role\"></div>" % theme
     edit_btn = "<div class=\"header-icon\"><img onclick=\"editRole();\" class=\"n-tip-image\" src=\"images/%s/doc_edit.png\" id=\"edit_role\" name=\"edit_role\" style=\"width: 16px; height: 16px; margin: 6px 20px 6px 10px;\" title=\"Edit Role\"></div>" % theme
     del_btn = "<div class=\"header-icon\"><img onclick=\"delRole();\" class=\"n-tip-image\" src=\"images/%s/round_minus.png\" id=\"del_role\" name=\"del_role\" style=\"width: 16px; height: 16px; margin: 6px 20px 6px 10px;\" title=\"Delete Role\"></div>" % theme
@@ -152,9 +174,11 @@ def role_view1(h):
 
 
 def dict_page(snapin, pages):
-    '''
+    """
     used in add_role_view
-    '''
+    @param snapin:
+    @param pages:
+    """
     dik = {}
     for i in snapin:
         li = []
@@ -166,9 +190,11 @@ def dict_page(snapin, pages):
 
 
 def dict_module(pageid_list, module):
-    '''
+    """
     used in add_role_view
-    '''
+    @param pageid_list:
+    @param module:
+    """
     dik = {}
     for i in pageid_list:
         li = []
@@ -180,6 +206,10 @@ def dict_module(pageid_list, module):
 
 
 def add_roleview(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     type_tuple = type(())
@@ -200,9 +230,10 @@ def add_roleview(h):
                                 <textarea id=\"description\" name=\"description\" title=\"Role Description\"></textarea>\
                             </div>\
                             <div class=\"row-elem\">\
-                               <label class=\"lbl lbl-big\" for=\"role\" title=\"Select Parent Role\" >Select Parent Role</label>" + roles_select_list("", "") + "\
+                               <label class=\"lbl lbl-big\" for=\"role\" title=\"Select Parent Role\" >Select Parent Role</label>" + roles_select_list(
+        "", "") + "\
                             </div>"
-                        # form-body and form-div is not closed
+    # form-body and form-div is not closed
     html_str += "\
                     </div>\
                     <div class=\"form-div-footer\">\
@@ -211,6 +242,7 @@ def add_roleview(h):
                     </div>\
             </div>"
     html.write(html_str)
+
 #    snapin_tuple = role_bll.get_snapindata()
 #    if type(snapin_tuple) == type_tuple:
 #        flag = 0
@@ -297,6 +329,10 @@ def add_roleview(h):
 
 
 def add_role(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     var_list = []
@@ -323,11 +359,11 @@ def add_role(h):
             prole = 1
     else:
         prole = 1
-#    if plinks != None:
-#        if len(plinks) < 6:
-#            sel_page_link = 1
-#    else:
-#        sel_page_link = 1
+    #    if plinks != None:
+    #        if len(plinks) < 6:
+    #            sel_page_link = 1
+    #    else:
+    #        sel_page_link = 1
 
     result_json = {}
     if name_not == 1:
@@ -337,16 +373,16 @@ def add_role(h):
     elif prole == 1:
         result_json['success'] = 1
         result_json['result'] = " Please select Parent Role"
-#    elif sel_page_link == 1:
-#        result_json['success'] = 1
-#        result_json['result'] = " No page or module is selected "
+    #    elif sel_page_link == 1:
+    #        result_json['success'] = 1
+    #        result_json['result'] = " No page or module is selected "
     else:
         # plink_list = plinks.split(",")
         # result = role_bll.add_role(role_name,prole_id,description,plink_list)
         result = role_bll.add_role(role_name, prole_id, description)
-#        result_json['success'] = 1
-#        result_json['result'] = " Message :   "+str(result)+" : "+str(role_name)
-#        result = 1
+        #        result_json['success'] = 1
+        #        result_json['result'] = " Message :   "+str(result)+" : "+str(role_name)
+        #        result = 1
         if result == 0:
             result_json['success'] = 0
         else:
@@ -357,6 +393,10 @@ def add_role(h):
 
 
 def edit_roleview(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     type_tuple = type(())
@@ -389,9 +429,10 @@ def edit_roleview(h):
         prole_id = dik_role['prole_id']
 
         html_str += "<div class=\"row-elem\">\
-                       <label class=\"lbl lbl-big\" for=\"role\" title=\"Select Parent Role\" >Select Parent Role</label>" + roles_select_list(prole_id, role_id) + "\
+                       <label class=\"lbl lbl-big\" for=\"role\" title=\"Select Parent Role\" >Select Parent Role</label>" + roles_select_list(
+            prole_id, role_id) + "\
                     </div>"
-                            # form-body and form-div is not closed
+        # form-body and form-div is not closed
 
         html_str += "\
                     </div>\
@@ -401,132 +442,132 @@ def edit_roleview(h):
                     </div>\
             </div>"
         html.write(html_str)
-#    else:
-#        pass
-#
-#    pagelink_tuple = role_bll.get_page_links(role_id)
-#    #html.write(str(pagelink_tuple))
-#    html_str += "<ul id=\"treeList\">"
-#    if type(pagelink_tuple) == type_tuple:
-#        flag = 0
-#        pagelink_list = []
-#        for i in pagelink_tuple:
-#            pagelink_list.append(i[0])
-#    else:
-#        pagelink_list = []
-#    snapin_tuple = role_bll.get_snapindata()
-#    if type(snapin_tuple) == type_tuple:
-#        flag = 0
-#    elif snapin_tuple == 11:
-#        flag = 1
-#
-#    if flag == 0:
-#        page_tuple = role_bll.get_pagedata(snapin_tuple)
-#        if type(page_tuple) == type_tuple:
-#            page_list = []
-#            for i in page_tuple:
-#                page_list.append(i[2])
-#        else:
-#            flag = 1
-#
-#        if flag == 0 and len(page_list) > 0:
-#            module_tuple = role_bll.get_moduledata(page_list)
-#        else:
-#            flag = 1 # 2
-#
-#    if flag == 0:
-#        snapins = dict(snapin_tuple)
-#        snapin_pages = dict_page(snapin_tuple,page_tuple)
-#        page_modules = dict_module(page_list,module_tuple)
-#        page_tuple = None
-#        module_tuple = None
-#        for snap in snapins:
-#            dik_s = {}
-#            dik_s['snapin_name'] = snapins[snap]
-#
-#            inner_list = snapin_pages[snap]
-#            s_flag = 1
-#            pages_str = ""
-#            for page_tuple in inner_list:
-#                page_id = page_tuple[2]
-#                dik_p = {}
-#                dik_p['plink_id'] = page_tuple[0]
-#                dik_p['page_name'] = page_tuple[1]
-#                page_str = ""
-#
-#                if pagelink_list.count(page_tuple[0]) > 0:
-#                    s_flag = 0
-#                    #html.write(page_tuple[1])
-#                    page_str += "<ul><li style=\"margin-left:25px; float:none;\"><div id=\"page\" class=\"page\" >\
-#                                        <input type=\"checkbox\" name=\"plink_id\" style=\"margin:0px; float:none; padding:none; \" checked=\"checked\" value=\"%(plink_id)s\" >\
-#                                        <span id=\"page_name\" >\
-#                                                %(page_name)s\
-#                                        </span>"%dik_p
-#                else:
-#                    #html.write(page_tuple[1])
-#                    page_str += "<ul><li style=\"margin-left:25px; float:none;\"><div id=\"page\" class=\"page\" >\
-#                                        <input type=\"checkbox\" name=\"plink_id\" style=\"margin:0px; float:none; padding:none; \" value=\"%(plink_id)s\" >\
-#                                        <span id=\"page_name\" >\
-#                                                %(page_name)s\
-#                                        </span>"%dik_p
-#
-#
-#                inner_list2 = page_modules[page_id]
-#                if len(inner_list2) > 0:
-#                    for module_tuple in inner_list2:
-#                        dik_m = {}
-#                        dik_m['module_name'] = module_tuple[0]
-#                        dik_m['plink_id'] = module_tuple[1]
-#                        if pagelink_list.count(module_tuple[1]) > 0:
-#                            #html.write(module_tuple[0])
-#                            s_flag = 0
-#                            page_str += "<ul><li style=\"margin-left:25px; float:none;\"><div id=\"module\" class=\"module\" >\
-#                                            <input type=\"checkbox\" name=\"plink_id\" style=\"margin:0px; float:none; padding:none; \" checked=\"checked\" value=\"%(plink_id)s\" >\
-#                                            <span id=\"module_name\" >\
-#                                                    %(module_name)s\
-#                                            </span></div></li></ul>"%dik_m
-#                        else:
-#                            #html.write(module_tuple[0])
-#                            page_str += "<ul><li style=\"margin-left:25px; float:none;\"><div id=\"module\" class=\"module\" >\
-#                                            <input type=\"checkbox\" name=\"plink_id\" style=\"margin:0px; float:none; padding:none; \" value=\"%(plink_id)s\" >\
-#                                            <span id=\"module_name\" >\
-#                                                    %(module_name)s\
-#                                            </span></div></li></ul>"%dik_m
-#
-#
-#                    page_str += "</div></li></ul>" # page div close
-#                    pages_str += page_str
-#                else:
-#                    page_str += "</div></li></ul>" # page div close
-#                    pages_str += page_str
-#
-#            if s_flag == 0:
-#                html_str += "<li style=\"margin-left:25px; float:none;\"><div id=\"snapin\" class=\"snapin\" >\
-#                            <input type=\"checkbox\" checked=\"checked\" style=\"margin:0px; float:none; padding:none; \" name=\"snapin_id\">\
-#                            <span id=\"snapin_name\" >\
-#                                    %(snapin_name)s\
-#                            </span>"%dik_s
-#                html_str += pages_str
-#            elif s_flag == 1:
-#                html_str += "<li><div id=\"snapin\" class=\"snapin\" >\
-#                            <input type=\"checkbox\" name=\"snapin_id\" style=\"margin:0px; float:none; padding:none; \">\
-#                            <span id=\"snapin_name\" >\
-#                                    %(snapin_name)s\
-#                            </span>"%dik_s
-#                html_str += pages_str
-#            html_str += "</div>" # span div close
-#
-#    #html_str += "</ul>"
-#    if flag == 0:
-#        html_str += "</div>\
-#                    </div></ul>\
-#                    <div class=\"form-div-footer\">\
-#                        <button onclick=\"editformSubmit();\" class=\"yo-small yo-button\"><span class=\"edit\"></span><strong>Edit</strong></button>\
-#                        <button type=\"reset\" class=\"yo-small yo-button\" id=\"close_role\"><span class=\"cancel\">Cancel</span></button>\
-#                    </div>\
-#            </div>"
-#
-#        html.write(html_str)
+    #    else:
+    #        pass
+    #
+    #    pagelink_tuple = role_bll.get_page_links(role_id)
+    #    #html.write(str(pagelink_tuple))
+    #    html_str += "<ul id=\"treeList\">"
+    #    if type(pagelink_tuple) == type_tuple:
+    #        flag = 0
+    #        pagelink_list = []
+    #        for i in pagelink_tuple:
+    #            pagelink_list.append(i[0])
+    #    else:
+    #        pagelink_list = []
+    #    snapin_tuple = role_bll.get_snapindata()
+    #    if type(snapin_tuple) == type_tuple:
+    #        flag = 0
+    #    elif snapin_tuple == 11:
+    #        flag = 1
+    #
+    #    if flag == 0:
+    #        page_tuple = role_bll.get_pagedata(snapin_tuple)
+    #        if type(page_tuple) == type_tuple:
+    #            page_list = []
+    #            for i in page_tuple:
+    #                page_list.append(i[2])
+    #        else:
+    #            flag = 1
+    #
+    #        if flag == 0 and len(page_list) > 0:
+    #            module_tuple = role_bll.get_moduledata(page_list)
+    #        else:
+    #            flag = 1 # 2
+    #
+    #    if flag == 0:
+    #        snapins = dict(snapin_tuple)
+    #        snapin_pages = dict_page(snapin_tuple,page_tuple)
+    #        page_modules = dict_module(page_list,module_tuple)
+    #        page_tuple = None
+    #        module_tuple = None
+    #        for snap in snapins:
+    #            dik_s = {}
+    #            dik_s['snapin_name'] = snapins[snap]
+    #
+    #            inner_list = snapin_pages[snap]
+    #            s_flag = 1
+    #            pages_str = ""
+    #            for page_tuple in inner_list:
+    #                page_id = page_tuple[2]
+    #                dik_p = {}
+    #                dik_p['plink_id'] = page_tuple[0]
+    #                dik_p['page_name'] = page_tuple[1]
+    #                page_str = ""
+    #
+    #                if pagelink_list.count(page_tuple[0]) > 0:
+    #                    s_flag = 0
+    #                    #html.write(page_tuple[1])
+    #                    page_str += "<ul><li style=\"margin-left:25px; float:none;\"><div id=\"page\" class=\"page\" >\
+    #                                        <input type=\"checkbox\" name=\"plink_id\" style=\"margin:0px; float:none; padding:none; \" checked=\"checked\" value=\"%(plink_id)s\" >\
+    #                                        <span id=\"page_name\" >\
+    #                                                %(page_name)s\
+    #                                        </span>"%dik_p
+    #                else:
+    #                    #html.write(page_tuple[1])
+    #                    page_str += "<ul><li style=\"margin-left:25px; float:none;\"><div id=\"page\" class=\"page\" >\
+    #                                        <input type=\"checkbox\" name=\"plink_id\" style=\"margin:0px; float:none; padding:none; \" value=\"%(plink_id)s\" >\
+    #                                        <span id=\"page_name\" >\
+    #                                                %(page_name)s\
+    #                                        </span>"%dik_p
+    #
+    #
+    #                inner_list2 = page_modules[page_id]
+    #                if len(inner_list2) > 0:
+    #                    for module_tuple in inner_list2:
+    #                        dik_m = {}
+    #                        dik_m['module_name'] = module_tuple[0]
+    #                        dik_m['plink_id'] = module_tuple[1]
+    #                        if pagelink_list.count(module_tuple[1]) > 0:
+    #                            #html.write(module_tuple[0])
+    #                            s_flag = 0
+    #                            page_str += "<ul><li style=\"margin-left:25px; float:none;\"><div id=\"module\" class=\"module\" >\
+    #                                            <input type=\"checkbox\" name=\"plink_id\" style=\"margin:0px; float:none; padding:none; \" checked=\"checked\" value=\"%(plink_id)s\" >\
+    #                                            <span id=\"module_name\" >\
+    #                                                    %(module_name)s\
+    #                                            </span></div></li></ul>"%dik_m
+    #                        else:
+    #                            #html.write(module_tuple[0])
+    #                            page_str += "<ul><li style=\"margin-left:25px; float:none;\"><div id=\"module\" class=\"module\" >\
+    #                                            <input type=\"checkbox\" name=\"plink_id\" style=\"margin:0px; float:none; padding:none; \" value=\"%(plink_id)s\" >\
+    #                                            <span id=\"module_name\" >\
+    #                                                    %(module_name)s\
+    #                                            </span></div></li></ul>"%dik_m
+    #
+    #
+    #                    page_str += "</div></li></ul>" # page div close
+    #                    pages_str += page_str
+    #                else:
+    #                    page_str += "</div></li></ul>" # page div close
+    #                    pages_str += page_str
+    #
+    #            if s_flag == 0:
+    #                html_str += "<li style=\"margin-left:25px; float:none;\"><div id=\"snapin\" class=\"snapin\" >\
+    #                            <input type=\"checkbox\" checked=\"checked\" style=\"margin:0px; float:none; padding:none; \" name=\"snapin_id\">\
+    #                            <span id=\"snapin_name\" >\
+    #                                    %(snapin_name)s\
+    #                            </span>"%dik_s
+    #                html_str += pages_str
+    #            elif s_flag == 1:
+    #                html_str += "<li><div id=\"snapin\" class=\"snapin\" >\
+    #                            <input type=\"checkbox\" name=\"snapin_id\" style=\"margin:0px; float:none; padding:none; \">\
+    #                            <span id=\"snapin_name\" >\
+    #                                    %(snapin_name)s\
+    #                            </span>"%dik_s
+    #                html_str += pages_str
+    #            html_str += "</div>" # span div close
+    #
+    #    #html_str += "</ul>"
+    #    if flag == 0:
+    #        html_str += "</div>\
+    #                    </div></ul>\
+    #                    <div class=\"form-div-footer\">\
+    #                        <button onclick=\"editformSubmit();\" class=\"yo-small yo-button\"><span class=\"edit\"></span><strong>Edit</strong></button>\
+    #                        <button type=\"reset\" class=\"yo-small yo-button\" id=\"close_role\"><span class=\"cancel\">Cancel</span></button>\
+    #                    </div>\
+    #            </div>"
+    #
+    #        html.write(html_str)
     elif flag == 1:
         html.write(" No data in DB ")
     else:
@@ -534,6 +575,10 @@ def edit_roleview(h):
 
 
 def edit_role(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     var_list = []
@@ -549,9 +594,9 @@ def edit_role(h):
 
     if role_id == None:
         name_not = 1
-#    if len(plinks) < 6:
-#        sel_page = 1
-#
+    #    if len(plinks) < 6:
+    #        sel_page = 1
+    #
     if len(prole_id) < 6:
         prole = 1
 
@@ -581,6 +626,10 @@ def edit_role(h):
 
 
 def del_role(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     name_not = 0
@@ -606,6 +655,12 @@ def del_role(h):
 
 
 def roles_select_list(selectedRole, notRole):
+    """
+
+    @param selectedRole:
+    @param notRole:
+    @return:
+    """
     selectString = "<select id=\"role\" name=\"role\" title=\"Select Parent Role\"><option value=\"\" class='required' >-- Select Parent Role --</option>"
     role_tuple = role_bll.get_role_details("list")
     # role_list = ['Admin','Operator','Guest']
@@ -623,19 +678,6 @@ def roles_select_list(selectedRole, notRole):
                     roleName[0]) + "\">" + str(roleName[1]) + "</option>"
     selectString += "</select>"
     return selectString
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 # addrole form

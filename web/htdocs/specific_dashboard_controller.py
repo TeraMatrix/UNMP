@@ -1,27 +1,17 @@
 #!/usr/bin/python2.6
 # import the packeges
-import config
-import htmllib
-import time
-import cgi
-import MySQLdb
-import sys
+from datetime import datetime, timedelta
+from json import JSONEncoder
+
+import ap_advanced_graph_controller
 from common_controller import *
+from error_message import ErrorMessageClass
+from mysql_collection import mysql_connection
 from nms_config import *
 from odu_controller import *
-from datetime import datetime, timedelta
-from mysql_collection import mysql_connection
-from unmp_dashboard_config import DashboardConfig
-from utility import Validation
-from operator import itemgetter
-from specific_dashboard_view import SPDashboardView
 from specific_dashboard_bll import SPDashboardBll
-import json
-from json import JSONEncoder
-from encodings import undefined
-import ap_advanced_graph_controller
-from error_message import ErrorMessageClass
-
+from specific_dashboard_view import SPDashboardView
+from utility import Validation
 
 # create the global object of sp_bll_obj
 global sp_bll_obj, err_obj
@@ -30,6 +20,10 @@ sp_bll_obj = SPDashboardBll()
 
 
 def sp_dashboard_profiling(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     flag = 0
@@ -38,8 +32,8 @@ def sp_dashboard_profiling(h):
                         'ap25': 'Access Point', 'ccu': 'CCU'}
     css_list = ["css/style.css", "css/custom.css",
                 "calendrical/calendrical.css", 'css/ccpl_jquery_combobox.css']
-    javascript_list = ["js/highcharts.js", 'js/ccpl_jquery_autocomplete.js',
-                       "js/specific_dashboard.js", "calendrical/calendrical.js"]
+    javascript_list = ["js/lib/main/highcharts.js", 'js/unmp/main/ccpl_jquery_autocomplete.js',
+                       "js/unmp/main/specific_dashboard.js", "calendrical/calendrical.js"]
     host_id = ""
     host_id = html.var("host_id")
     selected_listing = ""
@@ -58,8 +52,9 @@ def sp_dashboard_profiling(h):
     html.new_header(str(device_name_dict[device_type]) + " %s Dashboard" % (
         ip_address), selected_listing, SPDashboardView.header_buttons(), css_list, javascript_list)
     html.write('<div class=\"form-div\" >')
-    extr_button = [{'tag': 'button', 'id': 'sp_ad_graph', 'value': 'Historical Graphs', 'name': 'sp_ad_graph'}, {'tag':
-                                                                                                                 'button', 'id': 'sp_show_graph_list', 'value': 'Dashboard Configuration', 'name': 'sp_show_graph_list'}]
+    extr_button = [{'tag': 'button', 'id': 'sp_ad_graph', 'value': 'Historical Graphs', 'name': 'sp_ad_graph'},
+                   {'tag': 'button', 'id': 'sp_show_graph_list', 'value': 'Dashboard Configuration',
+                    'name': 'sp_show_graph_list'}]
     device_type = ""
     device_list_state = ""
     device_list_param = []
@@ -79,18 +74,21 @@ def sp_dashboard_profiling(h):
                     "", "", "RM18,RM,Access Point,IDU,CCU", None,
                     "enabled", "device_type", extr_button))
         else:
-                html.write(
-                    page_header_search(
-                        host_id, mac_address, "RM18,RM,Access Point,IDU,CCU",
-                        device_type, "enabled", "device_type", extr_button))
+            html.write(
+                page_header_search(
+                    host_id, mac_address, "RM18,RM,Access Point,IDU,CCU",
+                    device_type, "enabled", "device_type", extr_button))
     else:
+        logme(page_header_search(
+            device_list_param[0][0], device_list_param[
+                0][1], "RM18,RM,Access Point,IDU,CCU",
+            device_list_param[0][2], device_list_state, "device_type", extr_button))
         html.write(
             page_header_search(
                 device_list_param[0][0], device_list_param[
                     0][1], "RM18,RM,Access Point,IDU,CCU",
                 device_list_param[0][2], device_list_state, "device_type", extr_button))
     if host_id == "" or host_id == "None":
-        val = ""
         flag = 1
         html.write("<div id=\"sp_show_msg\"></div><div id=\"tab_yo\">There is no profile selected</div>")
     else:
@@ -103,6 +101,12 @@ def sp_dashboard_profiling(h):
 
 
 def get_device_field(ip_address, get_field):
+    """
+
+    @param ip_address:
+    @param get_field:
+    @return: @raise:
+    """
     try:
         mac_address = ''
         db, cursor = mysql_connection()
@@ -134,6 +138,10 @@ def get_device_field(ip_address, get_field):
 
 
 def sp_client_information(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     ip_address = html.var("ip_address")
@@ -150,6 +158,10 @@ def sp_client_information(h):
 
 
 def sp_add_date_time_on_slide(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     try:
@@ -171,7 +183,9 @@ def sp_add_date_time_on_slide(h):
         else:
             output_dict = {
                 'success': 0, 'end_date': sp_end_date, 'end_time': sp_end_time, 'start_date': sp_start_date,
-                'start_time': sp_start_time, 'show_graph_table': SPDashboardView.sp_get_graph(graph_result['selected'], graph_result['non_selected'])}
+                'start_time': sp_start_time, 'show_graph_table': SPDashboardView.sp_get_graph(graph_result['selected'],
+                                                                                              graph_result[
+                                                                                                  'non_selected'])}
 
             h.req.write(str(JSONEncoder().encode(output_dict)))
     except Exception as e:
@@ -181,6 +195,11 @@ def sp_add_date_time_on_slide(h):
 
 
 def get_device_list_odu(h):
+    """
+
+    @param h:
+    @raise:
+    """
     global html
     html = h
     result = ""
@@ -238,9 +257,13 @@ def get_device_list_odu(h):
 
 
 def sp_dashboard(h):
+    """
+
+    @param h:
+    """
     global html, sp_bll_obj
     h = html
-#    sp_bll_obj=SPDashboardBll()
+    #    sp_bll_obj=SPDashboardBll()
     sp_refresh_time, total_count = sp_bll_obj.get_dashboard_data()
     host_id = html.var("host_id")
     now = datetime.now()
@@ -264,6 +287,10 @@ def sp_dashboard(h):
 
 
 def sp_generic_json(h):
+    """
+
+    @param h:
+    """
     global html, sp_bll_obj
     html = h
     device_type = h.var('device_type_id')
@@ -276,6 +303,10 @@ def sp_generic_json(h):
 
 
 def sp_device_details(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     ip_address = html.var("ip_address")
@@ -293,6 +324,10 @@ def sp_device_details(h):
 
 
 def sp_event_alarm_information(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     ip_address = html.var("ip_address")
@@ -308,6 +343,10 @@ def sp_event_alarm_information(h):
 
 
 def sp_common_graph_creation(h):
+    """
+
+    @param h:
+    """
     global html, sp_bll_obj
     html = h
     display_type = 'graph'
@@ -343,14 +382,18 @@ def sp_common_graph_creation(h):
             update_field_name = update_field
         result_dict = sp_bll_obj.common_graph_json(
             display_type, user_id, table_name[0], table_name[1], table_name[-
-                                                                            2], table_name[
-                                                                                -1], flag, start_date, end_date, start, limit,
+            2], table_name[
+                -1], flag, start_date, end_date, start, limit,
             ip_address, graph_type, update_field_name, interface_value, cal_type, column_name)
         h.req.content_type = 'application/json'
         h.req.write(str(JSONEncoder().encode(result_dict)))
 
 
 def update_show_graph(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     user_id = html.req.session["user_id"]
@@ -361,40 +404,21 @@ def update_show_graph(h):
     html.write(str(result))
 
 
-def page_tip_sp_monitor_dashboard(h):
-        global html
-        html = h
-        html_view = ""
-        html_view = ""\
-            "<div id=\"help_container\">"\
-            "<h1>Dashboard</h1>"\
-            "<div>This <strong>Dashboard</strong> show all device silver statistics information by graph.</div>"\
-            "<br/>"\
-            "<br/>"\
-            "<div class=\"action-tip\"><div class=\"img-div\"><img style=\"width:16px;height:16px;\" src=\"images/{0}/round_plus.png\"/></div><div class=\"txt-div\">Show device details.</div></div>"\
-            "<br/>"\
-            "<div class=\"action-tip\"><div class=\"img-div\"><img style=\"width:16px;height:16px;\" src=\"images/{0}/round_minus.png\"/></div><div class=\"txt-div\">Hide device details.</div></div>"\
-            "<br/>"\
-            "<div class=\"action-tip\"><div class=\"img-div img-div2\"><img style=\"width:16px;height:16px;\" src=\"images/device-down.gif\"/></div><div class=\"txt-div\">Device Unreachable.</div></div>"\
-            "<br/>"\
-            "<div><input class=\"yo-button yo-small\" type=\"button\" style=\"width: 30px;\" value=\"Historical Graph\" name=\"odu_graph_show\"> This button open a window on self click and show more information by historical dashboard.</div>"\
-            "<div><input class=\"yo-button yo-small\" type=\"button\" style=\"width: 30px;\" value=\"Search\" name=\"odu_graph_show\"> Search the devices.</div>"\
-            "<div><input class=\"yo-button yo-small\" type=\"button\" style=\"width: 50px;\" value=\"Dashboard Configuration\" name=\"odu_graph_show\"> This is open a window for customize the graph according to User.</div>"\
-            "<div><button id=\"odu_report_btn\"  style=\"margin-top: 5px;\" type=\"submit\"><span class=\"save\">Report</span></button>Download the PDF report.</div>"\
-            "<br/>"\
-            "<div><button id=\"odu_report_btn\"  style=\"margin-top: 5px;\" type=\"submit\"><span class=\"report\">Report</span></button>Download the Excel report.</div>"\
-            "<br/>"\
-            "<div><button id=\"odu_report_btn\"  style=\"margin-top: 5px;\" type=\"submit\"><span class=\"report\">CSV Report</span></button>Download the CSV report.</div>"\
-            "<br/>\
-        <br/>\
-        <div><strong>Note:</strong>This page show real time information of device and it page refresh on 10 min time interval.\
-        Search button search device by MAC address and IP address and show information by graph.\
-        </div>"\
-        "</div>".format(theme)
-        html.write(str(html_view))
+# def page_tip_sp_monitor_dashboard(h):
+#         global html
+#         html = h
+#         import defaults
+#         f = open(defaults.web_dir + "/htdocs/locale/page_tip_sp_monitor_dashboard.html", "r")
+#         html_view = f.read()
+#         f.close()
+#         html.write(str(html_view))
 
 
 def sp_excel_report_genrating(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     result1 = ''
@@ -457,7 +481,8 @@ def sp_excel_report_genrating(h):
                 end_date = datetime.strptime(
                     end_date + ' ' + end_time, "%d/%m/%Y %H:%M")
             result_dict = sp_bll_obj.sp_excel_report(
-                device_type_id, user_id, ip_address, cal_list, tab_list, field_list, table_name_list, graph_name_list, start_date,
+                device_type_id, user_id, ip_address, cal_list, tab_list, field_list, table_name_list, graph_name_list,
+                start_date,
                 end_date, select_option, limitFlag, graph_list, start_list, limit_list)
             h.req.write(str(JSONEncoder().encode(result_dict)))
         else:
@@ -469,6 +494,10 @@ def sp_excel_report_genrating(h):
 
 
 def sp_csv_report_genrating(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     result1 = ''
@@ -544,6 +573,10 @@ def sp_csv_report_genrating(h):
 
 
 def sp_pdf_report_genrating(h):
+    """
+
+    @param h:
+    """
     global html
     html = h
     result1 = ''
@@ -607,7 +640,8 @@ def sp_pdf_report_genrating(h):
                 end_date = datetime.strptime(
                     end_date + ' ' + end_time, "%d/%m/%Y %H:%M")
             result_dict = sp_bll_obj.sp_pdf_report(
-                device_type_id, user_id, ip_address, cal_list, graph_id_list, tab_list, field_list, table_name_list, graph_name_list,
+                device_type_id, user_id, ip_address, cal_list, graph_id_list, tab_list, field_list, table_name_list,
+                graph_name_list,
                 start_date, end_date, select_option, limitFlag, graph_list, start_list, limit_list)
             h.req.write(str(JSONEncoder().encode(result_dict)))
         else:

@@ -105,7 +105,7 @@ class License(object):
 		                    %s\
                                   </td>\
                                 </tr>' % (mid_list[0], mid_list[1], mid_list[2], mid_list[3])
-                               )
+                )
         html_li.append('</tbody> </table> </div>\
                             <div class="form-div-footer">\
                                 <form action="license_upload.py" enctype=\"multipart/form-data\" method=\"post\">\
@@ -114,7 +114,7 @@ class License(object):
                                  <button class="yo-button yo-small" type="file" id="button_uploader" name="button_uploader"><span class="upload">Upload</span></button>\
                                 </form>\
                             </div>'
-                       )
+        )
         return ''.join(html_li)
 
     @staticmethod
@@ -180,27 +180,19 @@ class License(object):
     @staticmethod
     def license_toast_msg(msg_type, msg_text):
         type = {"success": "showSuccessToast", "error":
-                "showErrorToast", "warning": "showWarningToast"}
+            "showErrorToast", "warning": "showWarningToast"}
         msg = "<script type=\"text/javascript\">\
                 $().toastmessage('%s', '%s');\
             </script>" % (type[msg_type], msg_text)
         return msg
 
-    @staticmethod
-    def page_tip_license():
-        html_view = ""\
-            "<div id=\"help_container\">"\
-            "<h1>License</h1>"\
-            "<div><strong>License</strong>  required for managing complete UNMP Server . </div>"\
-            "<br/>"\
-            "<div><strong><u>License Information</u></strong> consists of company name which has this license and expiry date.</div>"\
-            "<div><strong><u>System Object</u></strong> are host, hostgroup, user and usergroup. This page displays current system object details like  Allowed user, Used and Remaining Objects</div>"\
-            "<br/>"\
-            "<div><strong>Actions</strong></div>"\
-            "<div class=\"action-tip\"><div class=\"txt-div\">User can upload new license to renew it.</div></div>"\
-            "<br/>"\
-            "</div>"
-        return html_view
+    # @staticmethod
+    # def page_tip_license():
+    #     import defaults
+    #     f = open(defaults.web_dir + "/htdocs/locale/page_tip_license.html", "r")
+    #     html_view = f.read()
+    #     f.close()
+    #     return str(html_view)
 
     @staticmethod
     def invalid_license(return_dict={}):
@@ -248,7 +240,8 @@ class License(object):
                               </td>\
                             </tr>\
                     %s\
-                    ' % (item, mid_list[0], mid_list[1], mid_list[2], mid_list[3], mid_list[4], License.para_type2(mid_dict, item))
+                    ' % (item, mid_list[0], mid_list[1], mid_list[2], mid_list[3], mid_list[4],
+                         License.para_type2(mid_dict, item))
                 )
             else:
                 mid_list = return_dict[item].get('allow')
@@ -267,7 +260,7 @@ class License(object):
 		                    %s\
                                   </td>\
                                 </tr>' % (mid_list[0], mid_list[1], mid_list[2], mid_list[3], mid_list[4])
-                               )
+                )
         html_li.append(
             '</tbody> </table> <span> Note: You can not exceed your allowed limit&nbsp;&nbsp;[Check Red Font Titles]</span></div>')
         return ''.join(html_li)
