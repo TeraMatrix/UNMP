@@ -1,0 +1,94 @@
+#!/bin/sh
+# Startup script for all daemons in Unified Network Management Platform
+
+### BEGIN INIT INFO
+# Developer:         Rahul Gautam
+# Provides:          CodeScape Consultants Pvt. Ltd.
+# Required-Start:    
+# Required-Stop:     
+# Default-Start:     
+# Default-Stop:      
+# Description:       Start and Stop for all daemons
+#
+# Acronym:           unmp := Unified Network Management Platform
+# ServiceName:
+#
+### END INIT INFO
+
+# start unmp-ds, if not disabled in /etc/default/unmp-ds
+AUTOSTART=1
+
+echo 
+echo "		[34mUnified Network Management Platform[0m"
+case "$1" in
+    start)
+	    echo
+	    echo " Starting All Services  [ Please Wait ]"
+	    echo " ========================================="
+	    service snmptt start
+	    service snmpd start
+	    service snmptrapd start	
+	    omd start UNMP
+	    #service ndo2db start
+	
+	    service unmp-ds start
+	    echo
+	    echo " ========================================="
+	    echo
+    ;;
+    stop)
+	    echo
+	    echo " *Stopping All Services  [ Please Wait ]"
+	    echo " ========================================="
+        omd stop UNMP
+	    service snmptt stop
+	    service snmpd stop
+	    service snmptrapd stop
+	    service ndo2db stop
+	
+	    echo
+	    echo " ========================================="
+	    echo
+    ;;
+    help)
+	    echo
+	    echo "          *** Unified Network Management Platform ***"
+	    echo
+	    echo
+	    echo "  Author: Rahul Gautam "
+	    echo
+	    echo "  Provider:  CodeScape Consultants Pvt. Ltd."
+	    echo
+	    echo "     Usage: unmp-all start | stop | help | status "
+	    echo
+	    echo
+    ;;
+    status)
+	    echo
+	    echo " Status UNMP Services"
+	    echo
+        omd status UNMP
+	    service snmptt status
+	    service snmpd status
+	    service snmptrapd status
+	    #service ndo2db status
+	    echo
+    ;;
+    '')
+	    echo
+	    echo "  usage: unmp-all start | stop | help | log | status "
+	    echo
+	    echo " Please use help option if you are using it first time "
+	    exit 1
+    ;;
+    *)
+	echo        
+        echo " Wrong Arguments "
+	    echo "  usage: unmp-all start | stop | help | log | status "
+	    echo
+	    echo " Please use help option if you are using it first time "
+	    exit 1
+    ;;
+esac
+
+

@@ -1,0 +1,70 @@
+#!/bin/sh
+#chkconfig: 345 99 01
+# Startup script for Local System Monitoring
+### BEGIN INIT INFO
+# Developer:         Yogesh Kumar
+# Provides:          CodeScape Consultants Pvt. Ltd.
+# Required-Start:    
+# Required-Stop:     
+# Default-Start:     
+# Default-Stop:      
+# Short-Description: Local System Monitoring
+# Description:       Start and stop the sites of the Local System Monitoring
+#
+# Acronym:           unmp-local := Unified Network Management Platform Local System Monitoring
+# ServiceName:
+#
+### END INIT INFO
+
+# start unmp-local, if not disabled in /etc/default/unmp-local
+
+AUTOSTART=1
+
+PROGNAME=$0
+
+
+trap="/omd/daemon/localhost_monitor.py"
+case "$1" in
+    start)
+    	$trap "$1"
+    ;;
+    stop)
+	    $trap "$1"
+    ;;
+    restart)
+	    $trap "$1"
+    ;;
+    help)
+	    echo
+	    echo "          *** Unified Network Management Platform ***"
+	    echo
+            echo "  Daemon: Provide localhost States ."
+	    echo
+	    echo "  Author: Yogesh Kumar "
+	    echo
+	    echo "  Provider:  CodeScape Consultants Pvt. Ltd."
+	    echo
+	    echo "     Usage: unmp-local start | stop | restart | help | status "
+	    echo
+	    echo
+    ;;
+    status)
+    	$trap "$1"
+	    exit $?
+    ;;
+    '')
+	    echo
+	    echo "  usage: unmp-local start | stop | restart | help |  status "
+	    echo
+	    echo " Please use help option if you are using it first time "
+	    exit 1 
+    ;;
+    *)
+	    echo
+	    echo "  usage: unmp-local start | stop | restart | help | status "
+	    echo
+	    echo " Please use help option if you are using it first time "
+	    exit 1   
+    ;;
+esac
+
