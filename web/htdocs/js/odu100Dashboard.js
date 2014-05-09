@@ -18,7 +18,6 @@ var alarmDetail100=null;
 var trapDetail100=null;
 var trapAllDetail=null;
 
-
 $(function(){
 	$spinLoading = $("div#spin_loading");		// create object that hold loading circle
 	$spinMainLoading = $("div#main_loading");	// create object that hold loading squire
@@ -126,8 +125,8 @@ function oduGraphButtonClick(){
 			str2=str2.split("/");
 			str3=str3.split(":");
 			str4=str4.split(":");
-			var date1 = new Date(str1[2],parseInt(str1[1],10)-1, str1[0],str3[0],str3[1]); 
-			var date2 = new Date(str2[2],parseInt(str2[1],10)-1, str2[0],str4[0],str4[1]);
+			var date1 = new Date(str1[2],parseInt(str1[1])-1, str1[0],str3[0],str3[1]); 
+			var date2 = new Date(str2[2],parseInt(str2[1])-1, str2[0],str4[0],str4[1]);
 			if(date2 < date1)
 			{
 				 $().toastmessage('showWarningToast', "End Date can't be greater than Start Date");
@@ -1069,8 +1068,8 @@ function odu100ReportGeneration(){
 				str2=str2.split("/");
 				str3=str3.split(":");
 				str4=str4.split(":");
-				var date1 = new Date(str1[2],parseInt(str1[1],10)-1, str1[0],str3[0],str3[1]); 
-				var date2 = new Date(str2[2],parseInt(str2[1],10)-1, str2[0],str4[0],str4[1]);
+				var date1 = new Date(str1[2],parseInt(str1[1])-1, str1[0],str3[0],str3[1]); 
+				var date2 = new Date(str2[2],parseInt(str2[1])-1, str2[0],str4[0],str4[1]);
 				if(date2 < date1)
 				{
 					 $().toastmessage('showWarningToast', "End Date can't be greater than Start Date");
@@ -1196,8 +1195,8 @@ function odu100ExcelReportGeneration(){
 				str2=str2.split("/");
 				str3=str3.split(":");
 				str4=str4.split(":");
-				var date1 = new Date(str1[2],parseInt(str1[1],10)-1, str1[0],str3[0],str3[1]); 
-				var date2 = new Date(str2[2],parseInt(str2[1],10)-1, str2[0],str4[0],str4[1]);
+				var date1 = new Date(str1[2],parseInt(str1[1])-1, str1[0],str3[0],str3[1]); 
+				var date2 = new Date(str2[2],parseInt(str2[1])-1, str2[0],str4[0],str4[1]);
 				if(date2 < date1)
 				{
 					 $().toastmessage('showWarningToast', "End Date can't be greater than Start Date");

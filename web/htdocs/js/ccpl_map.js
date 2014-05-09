@@ -23,69 +23,6 @@ var lockNode;
 var movedLocations = new Array();
 var lastMovedPos;
 
-var styles = [[{
-        url: '../images/people35.png',
-        height: 35,
-        width: 35,
-        opt_anchor: [16, 0],
-        opt_textColor: '#ff00ff',
-        opt_textSize: 10
-      }, {
-        url: '../images/people45.png',
-        height: 45,
-        width: 45,
-        opt_anchor: [24, 0],
-        opt_textColor: '#ff0000',
-        opt_textSize: 11
-      }, {
-        url: '../images/people55.png',
-        height: 55,
-        width: 55,
-        opt_anchor: [32, 0],
-        opt_textSize: 12
-      }], [{
-        url: '../images/conv30.png',
-        height: 27,
-        width: 30,
-        anchor: [3, 0],
-        textColor: '#ff00ff',
-        opt_textSize: 10
-      }, {
-        url: '../images/conv40.png',
-        height: 36,
-        width: 40,
-        opt_anchor: [6, 0],
-        opt_textColor: '#ff0000',
-        opt_textSize: 11
-      }, {
-        url: '../images/conv50.png',
-        width: 50,
-        height: 45,
-        opt_anchor: [8, 0],
-        opt_textSize: 12
-      }], [{
-        url: '../images/heart30.png',
-        height: 26,
-        width: 30,
-        opt_anchor: [4, 0],
-        opt_textColor: '#ff00ff',
-        opt_textSize: 10
-      }, {
-        url: '../images/heart40.png',
-        height: 35,
-        width: 40,
-        opt_anchor: [8, 0],
-        opt_textColor: '#ff0000',
-        opt_textSize: 11
-      }, {
-        url: '../images/heart50.png',
-        width: 50,
-        height: 44,
-        opt_anchor: [12, 0],
-        opt_textSize: 12
-      }]];
-
-
 function Dummy(map) {
     this.setMap(map);
 }
@@ -101,7 +38,7 @@ Dummy.prototype.onRemove = function () { };
     ccplMap: function (settings) {
         settings = jQuery.extend({
             title: "MyMap", 
-            type: "SATELLITE",           
+            type: "TERRAIN",           
 	    option : {},
             centerLat: 26.90,
 			centerLng: 75.80,		
@@ -139,29 +76,17 @@ var ccplJs = jQuery.ccplMap = {
             var maptype;
             
             if(ccplJs.s.type.toUpperCase() == "ROADMAP")
-                maptype = google.maps.MapTypeId.SATELLITE; // change the satelite map from road map 
+                maptype = google.maps.MapTypeId.ROADMAP;
             else if(ccplJs.s.type.toUpperCase() == "HYBRID")
-                maptype = google.maps.MapTypeId.SATELLITE;
+                maptype = google.maps.MapTypeId.TERRAIN;
 
 			var myOptions = {
 			  zoom: ccplJs.s.zoom,
 			  center: new google.maps.LatLng(ccplJs.s.centerLat,ccplJs.s.centerLng),
-			  mapTypeId: maptype,
-			  mapTypeControl: true,
-			    mapTypeControlOptions: {
-			      style:  google.maps.MapTypeControlStyle.DROPDOWN_MENU,
-			      position: google.maps.ControlPosition.RIGHT_BOTTOM
-			    }
-
+			  mapTypeId: maptype
 			};
 			map = new google.maps.Map(document.getElementById(ccplJs.s.parentId), myOptions);			
-			/*google.maps.event.addListener(map, 'zoom_changed',
-				function () {
-				 			for(var i in markers_array)
-						{
-							console.log(markers_array[i]);
-						}
-					});*/
+			
 			dummy1 = new Dummy(map);
 			abc1 = dummy1.getProjection();		
         },
@@ -450,18 +375,17 @@ $.fn.showNMSDetails = function(nmsDetails) {
 	var bounds = new google.maps.LatLngBounds();	
 	var icon;
 	var isDrag;
-	for(var i=0;i<nmsDetails.length;i++) {
+	for(var i=0;i<nmsDetails.length;i++) {	
 		isDrag = true;
 		icon = (nmsDetails[i].type == "host") ? ((nmsDetails[i].state == "d") ? "images/Ldown.png" : "images/localhost-0.png" ) : "images/site.png";
 		isDrag = (nmsDetails[i].lck && nmsDetails[i].lck == "t") ? false : true;
 
+		
 		var marker = new google.maps.Marker({ 
 				position: new google.maps.LatLng(parseFloat(nmsDetails[i].lt),parseFloat(nmsDetails[i].lg)),
 				map:map,
 				draggable: isDrag,
 				icon: icon,
-//				icon: new google.maps.MarkerImage("http://google-maps-utility-library-v3.googlecode.com/svn/trunk/markerclusterer/images/m1.png"),
-//				icon: new google.maps.MarkerImage("http://chart.googleapis.com/chart?chst=d_bubble_text_small&chld=bb|L|FF8080|000000",null,null, new google.maps.Poin(0, 42)),
 				title:nmsDetails[i].name
 		});
 		marker.setMap(map);	
@@ -474,12 +398,6 @@ $.fn.showNMSDetails = function(nmsDetails) {
 		map.fitBounds(bounds);
 		markers_array.push(marker);	
 		nmsDetailsArr.push(marker);
-		 var markerClusterer = null;
-		 markerClusterer = new MarkerClusterer(map, markers_array, {
-		  maxZoom: 10,
-		  gridSize: 500,
-		  styles: styles[-1]
-		});
 		
 		if(nmsDetails[i].child && nmsDetails[i].child.length > 0) {			
 			nmsDetails[i].child.plines = [];			
@@ -505,16 +423,14 @@ $.fn.showNMSDetails = function(nmsDetails) {
 		var icon;
 		var isDrag;
 		for(var i=0;i<node.length;i++)	{
-			if (node[i].device_type.toLowerCase().indexOf('odu16')>=0 || node[i].device_type.toLowerCase().indexOf('odu100')>=0)
-				icon = (node[i].type == "host") ? ((node[i].state == "d") ? "images/device2.png" : "images/device6.png" ) : "images/site.png";
-			else if (node[i].device_type.toLowerCase().indexOf('idu4')>=0)
-				icon = (node[i].type == "host") ? ((node[i].state == "d") ? "images/device2.png" : "images/device6.png" ) : "images/site.png";
+			if (node[i].device_type.toLowerCase().indexOf('odu')>=0)
+				icon = (node[i].type == "host") ? ((node[i].state == "d") ? "images/Odown.png" : "images/odu-0.png" ) : "images/site.png";
+			else if (node[i].device_type.toLowerCase().indexOf('idu')>=0)
+				icon = (node[i].type == "host") ? ((node[i].state == "d") ? "images/Idown.png" : "images/idu-0.png" ) : "images/site.png";
 			else if (node[i].device_type.toLowerCase().indexOf('swt')>=0)
-				icon = (node[i].type == "host") ? ((node[i].state == "d") ? "images/device2.png" : "images/device6.png" ) : "images/site.png";
-			else if (node[i].device_type.toLowerCase().indexOf('ap25')>=0)
-				icon = (node[i].type == "host") ? ((node[i].state == "d") ? "images/device2.png" : "images/device6.png" ) : "images/site.png";
+				icon = (node[i].type == "host") ? ((node[i].state == "d") ? "images/Sdown.png" : "images/switch-0.png" ) : "images/site.png";
 			else
-				icon = (node[i].type == "host") ? ((node[i].state == "d") ? "images/device2.png" : "images/device6.png" ) : "images/site.png";
+				icon = (node[i].type == "host") ? ((node[i].state == "d") ? "images/Udown.png" : "images/unknown-0.png" ) : "images/site.png";
 			isDrag = (node[i].lck && node[i].lck == "t") ? false : true; 
 			var marker = new google.maps.Marker({
 				
@@ -601,15 +517,6 @@ function deviceLockUnlock(element) {
 	
 	lockMode = 'off';
     $(element).parent('div').hide();
-}
-// 2FEE16
-// E41414
-// F8ED1F
-// ABABA0
-function event(map)
-{
-	
-	
 }
 
 

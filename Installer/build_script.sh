@@ -1,4 +1,20 @@
-#!/bin/bash
+<<<<<<< .working
+#!/bin/sh
+
+cd ..
+basedir="$(pwd)"
+echo "$(pwd)"
+cd Installer/InstallJammer
+
+echo ""
+echo "Building the UNMP Installer.."
+echo ""
+
+./installjammer -DVersion $1 -DBaseDir $basedir --output-dir ../linux/el5/ --platform Linux-x86 --verbose $3 --build $basedir/Installer/$2
+
+./installjammer -DVersion $1 -DBaseDir $basedir --output-dir ../linux/el5/ --platform Linux-x86_64 --verbose $3 --build $basedir/Installer/$2
+=======
+#!/bin/sh
 
 ###########################################
 # $1 = Linux-x86 / Linux-x86_64
@@ -17,7 +33,7 @@ chmod -R 777 temp
 unzip InstallJammer.zip -d temp
 chmod -R 777 temp/InstallJammer
 
-if [ "$1" == "Linux-x86_64" ]
+if [ "$1" == "Linux-x86_64" ] 
 then
 	svn export --force ../../ThirdParty/64-bit temp/ThirdParty
 
@@ -26,14 +42,7 @@ then
 	cp -f temp/ThirdParty/MySQL-devel-community-5.1.60-1.rhel5.x86_64.rpm temp/ThirdParty_DB
 	cp -f temp/ThirdParty/MySQL-server-community-5.1.60-1.rhel5.x86_64.rpm temp/ThirdParty_DB
 	cp -f temp/ThirdParty/MySQL-shared-compat-5.1.60-1.rhel5.x86_64.rpm temp/ThirdParty_DB
-
 	cp -f temp/ThirdParty/postgresql-libs-8.1.18-2.el5_4.1.x86_64.rpm temp/ThirdParty_DB
-
-	# cp -f temp/ThirdParty/MySQL-client-5.6.10-1.rhel5.x86_64.rpm temp/ThirdParty_DB
-	# cp -f temp/ThirdParty/MySQL-devel-5.6.10-1.rhel5.x86_64.rpm temp/ThirdParty_DB
-	# cp -f temp/ThirdParty/MySQL-server-5.6.10-1.rhel5.x86_64.rpm temp/ThirdParty_DB
-	# cp -f temp/ThirdParty/MySQL-shared-5.6.10-1.rhel5.x86_64.rpm temp/ThirdParty_DB
-	# cp -f temp/ThirdParty/MySQL-shared-compat-5.6.10-1.rhel5.x86_64.rpm  temp/ThirdParty_DB
 
 else
 	svn export --force ../../ThirdParty/32-bit temp/ThirdParty
@@ -43,14 +52,7 @@ else
 	cp -f temp/ThirdParty/MySQL-devel-community-5.1.60-1.rhel5.i386.rpm temp/ThirdParty_DB
 	cp -f temp/ThirdParty/MySQL-server-community-5.1.60-1.rhel5.i386.rpm temp/ThirdParty_DB
 	cp -f temp/ThirdParty/MySQL-shared-compat-5.1.60-1.rhel5.i386.rpm temp/ThirdParty_DB
-
 	cp -f temp/ThirdParty/postgresql-libs-8.1.11-1.el5_1.1.i386.rpm temp/ThirdParty_DB
-
-	# cp -f temp/ThirdParty/MySQL-client-5.6.10-1.rhel5.i386.rpm temp/ThirdParty_DB
-	# cp -f temp/ThirdParty/MySQL-devel-5.6.10-1.rhel5.i386.rpm temp/ThirdParty_DB
-	# cp -f temp/ThirdParty/MySQL-server-5.6.10-1.rhel5.i386.rpm  temp/ThirdParty_DB
-	# cp -f temp/ThirdParty/MySQL-shared-5.6.10-1.rhel5.i386.rpm temp/ThirdParty_DB
-	# cp -f temp/ThirdParty/MySQL-shared-compat-5.6.10-1.rhel5.i386.rpm temp/ThirdParty_DB
 fi
 
 svn export --force scripts temp/scripts
@@ -123,3 +125,4 @@ rm -rf temp
 
 echo "Installer Build Completed Successfully.."
 echo ""
+>>>>>>> .merge-right.r125

@@ -57,6 +57,10 @@ function log_data(tabledata)
 			"bPaginate":true,
 			"bStateSave": false,
 			"aaData": tabledata,
+			"aLengthMenu": [[20, 40, 60, -1],[20, 40, 60, "All"]],
+			"bLengthChange":true,
+			"iDisplayLength":20,
+			"sScrollY":String($("div#container_body").height()-153),
 			"aaSorting" : [],
 			"oLanguage":{
 				"sInfo":"_START_ - _END_ of _TOTAL_",
@@ -140,6 +144,10 @@ function user_data(user_tabledata)
 			"bPaginate":true,
 			"bStateSave": false,
 			"aaData": user_tabledata,
+			"aLengthMenu": [[20, 40, 60, -1],[20, 40, 60, "All"]],
+			"bLengthChange":true,
+			"iDisplayLength":20,
+			"sScrollY":String($("div#container_body").height()-153),
 			"aaSorting" : [],
 			"oLanguage":{
 				"sInfo":"_START_ - _END_ of _TOTAL_",

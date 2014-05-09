@@ -26,7 +26,7 @@ $(document).ready(function(){
 					$("#"+type+"_stop").show();
 					$("#"+type+"_start").hide();
 					error_label_start=$("#"+type+"_name").html()+ " daemon started ."
-					setTimeout(function() { $("#"+type+"_label").html(error_label_start); }, 1000);
+					setTimeout(function() { $("#"+type+"_label").html(error_label_stop); }, 1000);
 					//setTimeout(function() { $("#"+type+"_label").html("started"); }, 1000);
 					setTimeout(function() { $("#"+type+"_label").html(info_start); }, 3000);
 
@@ -113,7 +113,7 @@ $(document).ready(function(){
 				else
 				{
 					error_label_restart=$("#"+type+"_name").html()+ " daemon can't be restarted from UNMP interface. Reason insufficient permission error."
-					setTimeout(function() { $("#"+type+"_label").html(error_label_restart); }, 1000);
+					setTimeout(function() { $("#"+type+"_label").html(error_label_stop); }, 1000);
 					//setTimeout(function() { $("#"+type+"_label").html("you cannot restart the daemon from here.."); }, 1000);
 					setTimeout(function() { $("#"+type+"_label").html(info_restart); }, 3000);
 				}

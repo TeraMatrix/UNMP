@@ -6,7 +6,7 @@ var deviceTypeId='';
 var graph_type=1;
 var limitFlag=1;
 var spRecursionVar=null;
-var refresh_time=10; // default time for refreshing the hidden datatime value.
+var refresh_time=60000; // default time for refreshing the hidden datatime value.
 var spE1MainObj=null;
 var linkObj=null;
 var spEndDate='';
@@ -22,7 +22,7 @@ $(function(){
 	deviceTypeId=$("select[id='device_type']").val();
 	$("#device_type").change(function(){
 		$("#filter_ip").val("");
-		$("#filter_mac").val("");
+		$("#filter_mac").val("");		
 			});
 	$('#sp_start_date, #sp_start_time, #sp_end_date,  #sp_end_time').calendricalDateTimeRange({
 		isoTime:true
@@ -31,9 +31,10 @@ $(function(){
 		$("input[id='filter_mac']").val("");
 	})
         $("input[id='btnSearch']").click(function(){
+	//call the device list function on click of search button
 		deviceList();
 	})
-
+        
 	$("input[id='filter_ip']").ccplAutoComplete("common_ip_mac_search.py?device_type="+deviceTypeId+"&ip_mac_search="+1,{
             dataType: 'json',
             max: 30,
@@ -42,7 +43,7 @@ $(function(){
                         ipSelectMacDeviceType(obj,1);
                 }
         });
-
+        
    $("input[id='filter_mac']").ccplAutoComplete("common_ip_mac_search.py?device_type="+deviceTypeId+"&ip_mac_search="+0,{
             dataType: 'json',
             max: 30,
@@ -52,18 +53,18 @@ $(function(){
             }
     });
 
-	$("input[id='filter_ip']").val($("input[id='filter_ip']").val());
+	$("input[id='filter_ip']").val($("input[id='filter_ip']").val());	
 	$("select[id='device_type']").val($("input[id='device_type']").val());
 	$("select[id='device_type']").val(deviceTypeId);
 
 
-	$("#up_down_search").toggle(function(){
-		//var $span = $(this);
-		//var $span = $this.find("span").eq(0);
-		$("#up_down_search").removeClass("dwn");
-		$("#up_down_search").addClass("up");
-		$("#filterOptions").show();
-		$("#hide_search").css({
+        $("#hide_search").toggle(function(){
+		var $this = $(this);
+		var $span = $this.find("span").eq(0);
+		$span.removeClass("up");
+		$span.addClass("dwn");
+		$("#filterOptions").hide();
+		$this.css({
 		        'background-color': "#F1F1F1",
                         'display': "block",
                         'height': '20px',
@@ -71,25 +72,31 @@ $(function(){
                         'overflow': 'hidden',
                         'width': "100%"});
 	},
+
 	function(){
-		//var $this = $(this);
-		//var $span = $this.find("span").eq(0);
-		$("#up_down_search").removeClass("up");
-		$("#up_down_search").addClass("dwn");
-		$("#filterOptions").hide();
-		$("#hide_search").css({
+		var $this = $(this);
+		var $span = $this.find("span").eq(0);
+		$span.removeClass("dwn");
+		$span.addClass("up");
+		$("#filterOptions").show();
+		$this.css({
 		        'background-color': "#F1F1F1",
                         'display': "block",
                         'height': '20px',
                         'overflow': 'hidden',
-                        'position': 'static',
+                        'position': 'relative',
+			'border-bottom':'1px solid #AAA',
                         'right': 1,
                         'top': 1,
                         'width': "100%",
                         'z-index': 1000});
-
+		
 	});
+//	$("#more_graph").toggle($('#more_graph_columns').attr('disabled',''),$('#more_graph_columns').attr('disabled',''));
+	//deviceList();
 	spIpAddress=$("input#filter_ip").val();
+	//oduGraphButtonClick();
+	//graphInitiator();   // calling the function for graph showing
 
 	$("#page_tip").colorbox(
 	{
@@ -103,7 +110,7 @@ $(function(){
 	})
 
 	$('#sp_host_info_div').slideUp('fast');
-	// Slide up and slide down functionality starthere
+	// Slide up and slide down functionality starthere  
  	$("#tab_yo").slideUp('fast');
 	$("#sp_show_graph_list").toggle(
 				function(){
@@ -120,78 +127,63 @@ $(function(){
 		parent.main.location="get_advanced_status_value.py?ip_address='"+String(spIpAddress)+"'&device_type_id="+deviceTypeId;
 	});
 
+//	spUpdateDateTime();
 	specificGenericGraphJson();
 });
 
 function hostInformation(){
 	$('#sp_host_info_div').animate({
-	    left: '+=50',
-	    height: 'toggle'
-	 }, 1000, function()
-	 {
-	  	var $hostInfo = $("#host_info");
-		if ($hostInfo.attr('src')=="images/new_icons/round_minus.png")
-		{
-			$hostInfo.attr('src',"images/new_icons/round_plus.png");
-			$hostInfo.attr('original-title','Show Status');
-		}
-		else
-		{
-			$hostInfo.attr('src',"images/new_icons/round_minus.png");
-			$hostInfo.attr('original-title','Hide Status');
-
-		}
+			    left: '+=50',
+			    height: 'toggle'
+			  }, 1000, function()
+			  {
+			  	var $hostInfo = $("#host_info");
+				if ($hostInfo.attr('src')=="images/new_icons/round_plus.png")
+				{
+					$hostInfo.attr('src',"images/new_icons/round_minus.png");
+					$hostInfo.attr('original-title','Hide Status')
+//					$("#host_info").html("original-title='Hide Status'");
+				}
+				else
+				{
+					$hostInfo.attr('src',"images/new_icons/round_plus.png");
+					$hostInfo.attr('original-title','Show Status')
+				}
                }
              );
 }
-
-function backListing(){
-	if (deviceTypeId=='odu16' || deviceTypeId=='odu100')
-		redirectPath='odu_listing.py';
-	else if (deviceTypeId=='ap25')
-		redirectPath='ap_listing.py';
-	else if (deviceTypeId=='idu4')
-		redirectPath='idu_listing.py';
-	else
-		redirectPath='odu_listing.py';
-	parent.main.location=redirectPath+"?device_type="+String(deviceTypeId)+"device_list_state=enabled&selected_device_type=";
-}
-
 
 function specificGenericGraphJson(){
 	$.ajax({
 		type:"post",
 		url:"sp_generic_table_json.py?device_type_id="+deviceTypeId+"&ip_address="+spIpAddress,
-		data:$(this).serialize(),
+		data:$(this).serialize(), // $(this).text?
 		cache:false,
 		success:function(result){
-			if (result.graphs.length==0)
-			   $().toastmessage('showErrorToast','Graph Information not exists in database for this User.');
-			else if (result.success==0){
-			   result.otherData=[{name:'start_date',value:function() { return $('input#sp_start_date').val();}},
-			   {name:'start_time',value:function() { return $('input#sp_start_time').val();}},
-			   {name:'end_date',value:function() { return $('input#sp_end_date').val();}},
-			   {name:'end_time',value:function() { return $('input#sp_end_time').val();}},{name:'flag',value:function() { return limitFlag; }},
-			   {name:'ip_address',value:function() { return spIpAddress; }},{name:'graph_type',value:function() { return graph_type; }},
-			   {name:'is_table',value:function() { return true; }}];
-			   spAddDateTime();
-			   result.graphColumn=1;
-			   spUpdateDateTime(); // update date time in text box
-			   if (deviceTypeId=='odu16'){
-				    $("#sp_main_graph").html("Status information dose not exist for UBR devices.");
-				    disbaledReportButton();
-			        }
-			   else{
-				    $("#sp_main_graph").html("");
-				    spMainObj=$("#sp_main_graph").yoAllGenericDashboard(result);
-				    enabledReportButton();
+				var e1PortJsonDict={'graphs':[]};
+				var linkJosnDict={'graphs':[]};
+				if (result.success==0){
+				   result.otherData=[{name:'start_date',value:function() { return $('input#sp_start_date').val();}},{name:'start_time',value:function() { return $('input#sp_start_time').val();}},{name:'end_date',value:function() { return $('input#sp_end_date').val();}},{name:'end_time',value:function() { return $('input#sp_end_time').val();}},{name:'flag',value:function() { return limitFlag; }},{name:'ip_address',value:function() { return spIpAddress; }},{name:'graph_type',value:function() { return graph_type; }},{name:'is_table',value:function() { return true; }}];
+					spAddDateTime();
+	               			result.graphColumn=1;       
+					spUpdateDateTime(); // update date time in text box
+					if (deviceTypeId=='odu16'){
+						$("#sp_main_graph").html("Status information dose not exist for UBR devices.");
+						disbaledReportButton();
+					}
+					else{
+						$("#sp_main_graph").html("");
+						spMainObj=$("#sp_main_graph").yoAllGenericDashboard(result);
+						enabledReportButton();
+
+					}
+					//trapAlarmInformation('alarm');
 				}
-			}
-			else{
-				$().toastmessage('showErrorToast',result.error_msg);
-			}
+				else{
+					$().toastmessage('showErrorToast',result.error_msg);
+				}
 		}
-	});
+	});  
 }
 
 
@@ -240,7 +232,7 @@ function deviceList()
 
 	if (selectListElem=="" || selectListElem==undefined)
 		selectListElem=""
-	// this ajax return the call to function get_device_data_table which is in odu_view and pass the ipaddress,macaddress,devicetype with url
+	// this ajax return the call to function get_device_data_table which is in odu_view and pass the ipaddress,macaddress,devicetype with url  
 	if (selected_device_type=='odu16' || selected_device_type=='odu100')
 		redirectPath='odu_listing.py';
 	else if (selected_device_type=='ap25')
@@ -263,6 +255,8 @@ function deviceList()
 					if (result == 0 || result == "0")
 					{
 						redirectOnListing(redirectPath);
+                         //clearTimeout(tempObj);
+//						 $("#sp_show_msg").html("No Data exist for this device.")
 						 $("#adSrhap").hide(); // hide the button
 						 $("#tab_yo").hide();
 						 $("#event_table").hide();
@@ -275,38 +269,42 @@ function deviceList()
 					else if (result==1 || result=="1")
 					{
 						parent.main.location = redirectPath+"?ip_address=" + ip_address + "&mac_address=" + mac_address + "&selected_device_type=" + selected_device_type;
-
+						
 					}
 					else if (result == 2 || result == "2")
 					{
 						redirectOnListing(redirectPath);
+//						 $("#sp_show_msg").html("Please Try Again.")
 						 $("#adSrhap").hide(); // hide the button
 						 $("#tab_yo").hide();
 						 $("#event_table").hide();
 						 $("#alarm_table").hide();
+						 //$("#ap_device_graph").hide();
 						 $("#main_host_info_div").hide();
 						 $("#sp_main_graph").html("");
 						disbaledReportButton();
 
 
 					}
-					else
-				 	{
+					else 
+				 	{	
 						$("#sp_show_msg").html("")
+					//	$("#adSrhap").show(); // show the button
 						$("#tab_yo").show();
 						$("input#filter_ip").val(result);
 						spIpAddress=result;
+						//$("#ap_device_graph").show();
 						 $("#event_table").show();
 						 $("#alarm_table").show();
 						$("#main_host_info_div").show();
 						$("#sp_main_graph").html("");
 						spDeviceDetail();
 						specificGenericGraphJson();
-						enabledReportButton();
+						enabledReportButton();						
 					}
 				}
 		});
-
+		
 }
 
 
@@ -334,7 +332,7 @@ function ipSelectMacDeviceType(obj,ipMacVal)
             }
             else
             {
-                 $().toastmessage('showErrorToast',result.error);
+                 $().toastmessage('showErrorToast',result.error);   
             }
         }
    });
@@ -344,7 +342,7 @@ function ipSelectMacDeviceType(obj,ipMacVal)
 function redirectOnListing(redirctPath){
 		 $().toastmessage('showWarningToast',"Searched Device Doesn't Exist");
 		setTimeout(function(){
-		parent.main.location = redirectPath+"?ip_address=" + "" + "&mac_address=" + "" + "&selected_device_type=" + "";
+		parent.main.location = redirectPath+"?ip_address=" + "" + "&mac_address=" + "" + "&selected_device_type=" + "";							
 		},1500);
 }
 
@@ -358,15 +356,15 @@ function spDeviceDetail()
 		data:$(this).serialize(),
 		cache:false,
 		success:function(result){
-			if (result.success>=1 || result.success>="1")
-			{
-				$().toastmessage('showErrorToast',result.error_msg);
-			}
-			else
-			{
-				$("#sp_host_info_div").html(result.device_table);
-			}
-		    },
+					if (result.success>=1 || result.success>="1")
+					{
+						$().toastmessage('showErrorToast',result.error_msg);
+					}
+					else
+					{
+						$("#sp_host_info_div").html(result.device_table);	
+					}
+			},		
 		error:function(req,status,err){
 		}
 	});
@@ -378,27 +376,27 @@ function spDeviceDetail()
 // This function update date and time
 function spAddDateTime(){
     $.ajax({
-	type:"post",
-	url:"sp_add_date_time_on_slide_status.py?device_type_id="+deviceTypeId+"&ip_address="+spIpAddress,
-	cache:false,
-	success:function(result){
-		if (result.success==1 || result.success=="1")
-		{
-			$().toastmessage('showWarningToast', "Date time not receving in proper format.");
-		}
-		else
-		{
-			$("#more_graph_columns").html(result.show_graph_table);
-			totalSelectedGraph=$("#sp").val();
-			$("#sp_start_date").val(result.start_date);
-			$("#sp_end_date").val(result.end_date);
-			$("#sp_start_time").val(result.start_time);
-			$("#sp_end_time").val(result.end_time);
-			multiSelectColumns();
-		}
-    	     }
+        type:"post",
+        url:"sp_add_date_time_on_slide_status.py?device_type_id="+deviceTypeId+"&ip_address="+spIpAddress,
+		cache:false,
+	    success:function(result){
+			if (result.success==1 || result.success=="1")
+			{
+				$().toastmessage('showWarningToast', "Date time not receving in proper format.");
+			}
+			else
+			{
+				$("#more_graph_columns").html(result.show_graph_table);
+				totalSelectedGraph=$("#sp").val();
+				$("#sp_start_date").val(result.start_date);
+				$("#sp_end_date").val(result.end_date);
+				$("#sp_start_time").val(result.start_time);
+				$("#sp_end_time").val(result.end_time);
+				multiSelectColumns();				
+			}
+    	}
 	});
-   return false;
+   return false; //always remamber this	
 }
 
 
@@ -406,39 +404,41 @@ function spAddDateTime(){
 
 function spUpdateDateTime(){
 	if(spRecursionVar!=null)
-	{
+	{	
 		clearInterval(spRecursionVar);
 	}
 	spDeviceDetail();
 	spAddDateTime();
-	spRecursionVar=setInterval(function (){spUpdateDateTime();},refresh_time*60000);
+	//trapAlarmInformation();
+	spRecursionVar=setInterval(function (){spAddDateTime();},refresh_time*60000);
 }
 
 
 
 function trapAlarmInformation()
 		{
-	//console.log(divObj);
-	$.ajax({
-		type:"post",
-		url:"sp_event_alarm_information.py?ip_address="+spIpAddress,
-		data:$(this).serialize(),
-		cache:false,
-		success:function(result){
-				if (result.success>=1 || result.success>="1")
-				{
-					$().toastmessage('showErrorToast',result.error_msg);
-				}
-				else
-				{
-					$("#event_dashboard").html(result.event_table);
+		//console.log(divObj);
+		$.ajax({
+			type:"post",
+			url:"sp_event_alarm_information.py?ip_address="+spIpAddress,
+			data:$(this).serialize(),
+			cache:false,
+			success:function(result){
+					if (result.success>=1 || result.success>="1")
+					{
+						$().toastmessage('showErrorToast',result.error_msg);
+					}
+					else
+					{
+						//$("#alarm_dashboard").html(result.alarm_table);
+						$("#event_dashboard").html(result.event_table);
+						
 
-
-				}
-			},
-			error:function(req,status,err){
-		}
-	});
+					}
+				},
+				error:function(req,status,err){
+			}
+		});
 }
 
 
@@ -447,22 +447,22 @@ function advancedUpdateDateTime(){
     $.ajax({
         type:"post",
         url:"advanced_update_date_time.py?device_type_id="+deviceTypeId,
-	data:$(this).serialize(),
-	cache:false,
-	success:function(result){
-		if (result.success==1 || result.success=="1")
-		{
-			$().toastmessage('showWarningToast', "Date time not receving in proper format.");
-			return	;
-		}
-		else
-		{
-			$("#sp_end_date").val(result.end_date);
-			$("#sp_end_time'").val(result.end_time);
-		}
-           }
+		data:$(this).serialize(), // $(this).text?
+		cache:false,
+	    success:function(result){
+			if (result.success==1 || result.success=="1")
+			{
+				$().toastmessage('showWarningToast', "Date time not receving in proper format.");
+				return	;
+			}
+			else
+			{
+				$("#sp_end_date").val(result.end_date);
+				$("#sp_end_time'").val(result.end_time);
+			}
+        }
 	});
-   return false;
+   return false;	
 }
 
 
@@ -482,6 +482,12 @@ function spCSVStatusReportGeneration(){
 
 
 function spCommonReportCreating(redirectPath,file_name){
+	/*if (totalSelectedGraph==""){
+		$().toastmessage('showWarningToast', "Please select atleast one graph from configuration.");
+		return false;
+	}
+	totalSelectedGraph=$("#sp").val();
+	*/
 	graph_json={};
 	var field=[];
 	var cal_type=null;
@@ -495,7 +501,7 @@ function spCommonReportCreating(redirectPath,file_name){
 	var end_date=$("#sp_end_date").val();
 	var end_time=$("#sp_end_time").val();
 	var subObj=spMainObj.options.db;
-
+	
 	for (node in spMainObj.options.db)
 	{
 		totalGraph+=1;
@@ -528,13 +534,13 @@ function spCommonReportCreating(redirectPath,file_name){
 
 		tab_option = spMainObj.options.db[node]["options"].tabList.selected;
 		ajaxData=spMainObj.options.db[node]["options"].ajax.data['table_name'];
-
+		
 		graphQuerySrting+= "&start"+String(totalGraph)+"="+spMainObj.options.db[node]["options"].startFrom;
 		graphQuerySrting+= "&limit"+String(totalGraph)+"="+spMainObj.options.db[node]["options"].itemLimit;
 
 		graphQuerySrting+= "&table_name" + String(totalGraph) + "=" + ajaxData;
 		graphQuerySrting+= "&type"+String(totalGraph)+"="+graph;
-
+		
 		graphQuerySrting+= "&field"+String(totalGraph)+"="+field;
 		graphQuerySrting+= "&cal"+String(totalGraph)+"="+cal_type;
 		graphQuerySrting+= "&tab"+String(totalGraph)+"="+tab_option;
@@ -557,6 +563,8 @@ function spCommonReportCreating(redirectPath,file_name){
 					}
 					else
 					{
+						//$("#sp_end_date").val(result.end_date);
+						//$("#sp_end_time'").val(result.end_time);
 						$.ajax({
 							type:"post",
 							url:redirectPath+"?ip_address="+spIpAddress+"&start_date="+start_date+"&start_time="+start_time+"&end_date="+$("#sp_end_date").val()+"&end_time="+result.end_time+"&device_type_id="+deviceTypeId+"&select_option="+select_option+"&limitFlag="+limitFlag+graphQuerySrting,
@@ -576,7 +584,7 @@ function spCommonReportCreating(redirectPath,file_name){
 										spinStop($spinLoading,$spinMainLoading);
 
 								}
-							});
+							});  
 						}
 					}
 					});
@@ -602,13 +610,13 @@ function spCommonReportCreating(redirectPath,file_name){
 								}
 									spinStop($spinLoading,$spinMainLoading);
 							}
-					});
+					});  
 	}
 }
 
-// Selectded list function start here
+// Selectded list function start here 
 function multiSelectColumns()
-{
+{       
 	$(".plus").click(function(){
 		plusHostParentOption(this);
 	})

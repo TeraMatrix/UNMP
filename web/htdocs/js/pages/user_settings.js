@@ -1,7 +1,6 @@
 /*
  * 
  * Author			:	Mahipal Choudhary
- 
  * Version			:	0.1
  * Modify Date			:	12-September-2011
  * Purpose			:	Define All Required Javascript Functions
@@ -14,6 +13,16 @@
 
 $(document).ready(function() {
 	$("div.yo-tabs").yoTabs();
+	// page tip [for page tip write this code on each page please dont forget to change "href" value because this link create your help tip page]
+	/*$("#page_tip").colorbox(
+	{
+		href:"#",
+		title: "Page Tip",
+		opacity: 0.4,
+		maxWidth: "80%",
+		width:"350px",
+		height:"250px"
+	});*/
 	
 	// spin loading object [write this code on each page]
 	var spinLoading = $("div#spin_loading");		// create object that hold loading circle
@@ -21,34 +30,22 @@ $(document).ready(function() {
 	$("#edit_user_form").show();
 	$("#edit_password_form").hide();
 
-   	var page_tip_href;
 	$("a#personal_information_tab").click(function(e){
-			e.preventDefault();
-			currentTab = "active";
-			$("#edit_user_form").show();
-			$("#edit_password_form").hide();
-			page_tip_href = "help_change_user_setting.py";	    
+		e.preventDefault();
+		currentTab = "active";
+		$("#edit_user_form").show();
+	    $("#edit_password_form").hide();
 	});
 	
 	/* Disable Host Tab*/
 	$("a#change_password_tab").click(function(e){
-			e.preventDefault();
-			currentTab = "active";
-			$("#edit_user_form").hide();
-			$("#edit_password_form").show();
-			page_tip_href = "help_change_password.py";
+		e.preventDefault();
+		currentTab = "active";
+		$("#edit_user_form").hide();
+	    $("#edit_password_form").show();
 	});
 	
-	$("div#grid_view_div").find('.active').click();
 	
-	if(($("div#is_first_login").length != 0)) {
-		$().toastmessage('showNoticeToast', "You have logged in for first time, kindly change your password!");
-		page_tip_href = "help_change_password.py";
-  }
-	if(($("div#is_password_expired").length != 0)) {
-		$().toastmessage('showNoticeToast', "Your password has been expired, kindly change your password!");
-		page_tip_href = "help_change_password.py";	
-	}
 	
 	$("#edit_user_form").validate({
 		rules:{
@@ -75,98 +72,42 @@ $(document).ready(function() {
 			
 		}
 	});
-	
-	
-	// Edit start Title: "User Management Password Complexity"
-	// Redmine Issue: Features 
-	// 687: "User Management Password Complexity"
-	// Added code to implement: Password 2 num, 2 alpha, 2 special, 
-	// and min 8 characters
-	// By: Grijesh Chauhan, Date: 8, Feb 2013
-	
-	
-	$.validator.addMethod("passwd",
-        function(value, element, regexp) {
-            var re = new RegExp(/((?=(.*\d.*){2,})(?=(.*[a-zA-Z].*){2,})(?=(.*[\\\@\#\$\(\)\{\;\_\&\}\[\]\!\~\,\.\!\*\^\?\/\|\<\:\>\+\=\-\_\%\"\'].*){2,}).{8,20})/);
-            return this.optional(element) || re.test(value);
-        },
-        "Invalid input"
-	);
-	
-	$.validator.addMethod(
-		"equalToOld", 
-		function(value, element){
-			var is_valid_passwd = false;
-			$.ajax({
-				type:'GET',
-				url:"check_password.py?&pwd="+ value,
-				cache:false,
-				async: false,
-				success:function(result){
-					if(result.success == 0){
-						is_valid_passwd = true;
-					}
-					else{
-						is_valid_passwd = false;
-					}
-				}
-			}); 
-			return is_valid_passwd;
-		}, 
-		' Invalid Password'
-	);
-
-	
-	
-	jQuery.validator.addMethod("notEqualTo",  
-    	function(value, element, param) {  
-         	return this.optional(element) || value!=$(param).val(); 
-		}, 
-		"Please specify a different (non-default) value"
-	);
-	
-	$("#edit_password_form").validate({
+		$("#edit_password_form").validate({
 		rules:{
 			password: {
 				required: true,
-				passwd: ".*"
+				equalTo: "#true_password"
+				
 			},
 			confirm_password_1: {
 				required: true,
-				minlength: 8,
-				notEqualTo: "#password", 
-				passwd: ".*"
+				minlength: 3
 			},
 			confirm_password_2: {
 				required: true,
-				minlength: 8,
+				minlength: 3,
 				equalTo: "#confirm_password_1"
 			}
 		},
 		messages:{
 			password: {
 				required: "*",
-				minlength: "Your password must be at least 8 characters long. Please try",
-				passwd: " Password should consist of 2 Numeric, 2 alpha, 2 special"
+				minlength: " Your password must be at least 6 characters long",
+				equalTo: " Please enter the correct old password"
 			},
 			
 			confirm_password_1: {
 				required: "*",
-				minlength: "Your password must be at least 8 characters long. Please try",
-				notEqualTo:  "New Password can't be same as Old password",
-				passwd: " Password should consist of 2 Numeric, 2 alpha, 2 special"
+				minlength: " Your password must be at least 6 characters long"
 			},
 			confirm_password_2: {
 				required: "*",
-				minlength: "Your password must be at least 8 characters long. Please try",
-				equalTo: " Passwords doesn't match"
+				minlength: " Your password must be at least 6 characters long",
+				equalTo: " Please enter the same password as above"
 			}
 			
 		}
 	});
-	// Edit end
-	
-
 	$("#edit_user_form").submit(function(){
 		if($(this).valid())
 		{
@@ -191,8 +132,8 @@ $(document).ready(function() {
 					}
 					else if(result.success == 1)
 					{
-						$().toastmessage('showErrorToast', String(result));
 						
+						$().toastmessage('showErrorToast', String(result));
 					}
 				}
 			});
@@ -221,16 +162,16 @@ $(document).ready(function() {
 				cache:false,
 				success:function(result)
 				{ 
-					if(result.success == 0)
+					if(result == 0)
 					{
 						$().toastmessage('showSuccessToast', "Password Saved Successfully.");
 						//$("#close_edit_password").click();
-						form[0].reset();
+						
 					}
 					else if(result.success == 1)
 					{
 						
-						$().toastmessage('showErrorToast', result.msg);
+						$().toastmessage('showErrorToast', "Password couldn't be saved");
 					}
 				}
 			});
@@ -246,17 +187,10 @@ $(document).ready(function() {
 		window.history.go(-1);
 	});
 	
-		
-	/* Removed due to Redmine Issue #1065: UNMP CRASH ON LOGIN for new user
-	// Removing this function Causes to an non-uniform behaviour of cancel 
-	// button in UNMP system
-	
+				
 	$("#close_edit_password").click(function(){
 		window.history.go(-1);
 	});
-	*/
-	
-	
 	// add tool tip
 	$tooltipEditPassword = $("form#edit_password_form input[type='password']").tooltip({
 		// place tooltip on the right edge
@@ -278,16 +212,6 @@ $(document).ready(function() {
 		effect: "fade",
 		// custom opacity setting
 		opacity: 0.7
-	});		
-	
-	$("#page_tip").colorbox(
-	{
-        href: page_tip_href,
-		title: "Page Tip",
-		opacity: 0.4,
-		maxWidth: "80%",
-		width:"600px",
-		height:"500px"
-	});		
+	});				
 });
 

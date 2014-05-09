@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
-echo -n "         *Stopping all sub processes(unmp-ds) "
+echo -n "         *Stopping all sub processes "
 echo -n "."
 a=$( ps -A | grep unmp-discover | awk '{print $1}')
 echo -n "."
 for i in $a
-do
+do 
         echo -n "."
         kill -9 $i
 done
-echo -n ".OK"
+echo -n "  [ ok ]"
 echo

@@ -12,12 +12,7 @@ var dragHappenFlag=false;
 var lastHostMoved=[];
 //array used to hold sites that moved
 var movedSiteLocations=new Array();
-var labelArr =new Array();
-var labelDict ={};
-var labelFlag =0;
-
 $(document).ready(function(){
-	
 	$("#ctr").click(function(){
 		$(this).parent().toggleClass("hide");
 		if($(this).hasClass("h")){
@@ -57,14 +52,13 @@ $(document).ready(function(){
 				    {
 				    	//newHostJson=result.output;
 					newDiscoverDevice(result.output,"tfbc");
-					newDiscoverDevice(result.disable_hosts,"dfbc");
 					//bindDragHandlerToNewHost();
 
 				    }
 			}
 
 		});
-	//setTimeout(function(){$("#ctr").click();},3000);
+	setTimeout(function(){$("#ctr").click();},3000);
 	return false;
 
 
@@ -611,7 +605,6 @@ function bindFunctinality(marker){
 
 //Function implement the click handler to new discovered host
 function deviceClickHandler(marker,id) {// alert(element);alert(id);
-
 							//console.log(element)
 							var url = "show_details.py?host_id=" +id;
 							$.ajax({
@@ -718,19 +711,21 @@ for(i in groupJson){
 	var point2=0;
 	var distance=0;
 	//Iterating hosts of site group
-	for(var s in groupJson[i].member)
-		for(var l in markers_array){
+	for(s in groupJson[i].member)
+	for(l in markers_array){
 			if(markers_array[l].title==groupJson[i].member[s].id){
 				if((markers_array[l].device_type.toLowerCase().indexOf('odu'))>=0)
-					(groupJson[i].member[s].state=='e')?markers_array[l].setIcon("images/device2.png"):markers_array[l].setIcon("images/device6.png");
+					(groupJson[i].member[s].state=='e')?markers_array[l].setIcon("images/odu-0.png"):markers_array[l].setIcon("images/Odown.png");
 				else if((markers_array[l].device_type.toLowerCase().indexOf('idu'))>=0)
-					(groupJson[i].member[s].state=='e')?markers_array[l].setIcon("images/device2.png"):markers_array[l].setIcon("images/device6.png");
+					(groupJson[i].member[s].state=='e')?markers_array[l].setIcon("images/idu-0.png"):markers_array[l].setIcon("images/Idown.png");
 				else if((markers_array[l].device_type.toLowerCase().indexOf('ap'))>=0)
-					(groupJson[i].member[s].state=='e')?markers_array[l].setIcon("images/device2.png"):markers_array[l].setIcon("images/device6.png");
+					(groupJson[i].member[s].state=='e')?markers_array[l].setIcon("images/ap-0.png"):markers_array[l].setIcon("images/Adown.png");
 				else if((markers_array[l].device_type.toLowerCase().indexOf('swt'))>=0)
-					(groupJson[i].member[s].state=='e')?markers_array[l].setIcon("images/device2.png"):markers_array[l].setIcon("images/device6.png");
+					(groupJson[i].member[s].state=='e')?markers_array[l].setIcon("images/switch-0.png"):markers_array[l].setIcon("images/Sdown.png");
 				else
-					(groupJson[i].member[s].state=='e')?markers_array[l].setIcon("images/device2.png"):markers_array[l].setIcon("images/device6.png");
+					(groupJson[i].member[s].state=='e')?markers_array[l].setIcon("images/unknown-0.png"):markers_array[l].setIcon("images/Udown.png");
+
+
 
 			shost_array.push(markers_array[l]);			
 			}
@@ -766,7 +761,7 @@ for(i in groupJson){
 		strokeColor: "#403E51",
       strokeOpacity: 0.8,
       strokeWeight: 2,
-      fillColor: get_random_color(),
+      fillColor: "#FFFFFF",
       fillOpacity: 0.35,
       map: map,
       center: midPoint,
@@ -789,16 +784,6 @@ for(i in groupJson){
 	circles_array.push(circle);
 	
 }
-}
-
-// function  create by rajendra
-function get_random_color() {
-    var letters = '0123456789ABCDEF'.split('');
-    var color = '#';
-    for (var i = 0; i < 6; i++ ) {
-        color += letters[Math.round(Math.random() * 15)];
-    }
-    return color;
 }
 
 //function used to handle cheking of moveOut functionality of site groups
@@ -919,7 +904,7 @@ if(lastHostMoved.length>0){
 			circle.hostarray[m].plines[p].setPath([circle.hostarray[m].getPosition(),circle.hostarray[m].cm[p].getPosition()]);		
 			if(lockMode == "on"){
 				$('#customtooltip').hide();
-				markers_arraylockMode = "off";
+				lockMode = "off";
 				lockNode = null;
 			}	
 			
@@ -935,182 +920,20 @@ if(lastHostMoved.length>0){
 }	
 }
 
-// ######################################################### Code by rajendra ###########################
-        function Label(opt_options) {
-            // Initialization
-            this.setValues(opt_options);
-            // Here go the label styles
-            var span = this.span_ = document.createElement('span');
-            span.style.cssText = 'position: relative; left: -50%; top: -35px; ' +
-'white-space: nowrap;color:#ffffff;' +
-'padding: 2px;font-family: Arial; font-weight: bold;' +
-'font-size: 12px;';
-            var div = this.div_ = document.createElement('div');
-            div.appendChild(span);
-            div.style.cssText = 'position: absolute; display: none';
-        };
-        Label.prototype = new google.maps.OverlayView;
-        Label.prototype.onAdd = function () {
-            var pane = this.getPanes().overlayImage;
-            pane.appendChild(this.div_);
-            // Ensures the label is redrawn if the text or position is changed.
-            var me = this;
-            this.listeners_ = [
-	google.maps.event.addListener(this, 'position_changed',
-	function () { me.draw(); }),
-	google.maps.event.addListener(this, 'text_changed',
-	function () { me.draw(); }),
-	google.maps.event.addListener(this, 'zindex_changed',
-	function () { me.draw(); })
-	] 
-        }; 
-        // Implement onRemove
-        Label.prototype.onRemove = function () {
-            this.div_.parentNode.removeChild(this.div_);
-            // Label is removed from the map, stop updating its position/text.
-            for (var i = 0, I = this.listeners_.length; i < I; ++i) {
-                google.maps.event.removeListener(this.listeners_[i]);
-            }
-        };
-        // Implement draw
-        Label.prototype.draw = function () {
-            var projection = this.getProjection();
-            var position = projection.fromLatLngToDivPixel(this.get('position'));
-            var div = this.div_;
-            div.style.left = position.x + 'px';
-            div.style.top = position.y + 'px';
-            div.style.display = 'block';
-            div.style.zIndex = this.get('zIndex'); //ALLOW LABEL TO OVERLAY MARKER
-            this.span_.innerHTML = this.get('text').toString();
-        };
-// ###############################################################################
-
-
 //Function discover the state changed of host
 function updateStateOfHost(updateInfo){
 	for(j in updateInfo){
 		for(k in markers_array){
-		//markers_array[k].plines[0].setOptions({'strokeColor':'red'});
 		if(markers_array[k].title==updateInfo[j].id){ 
-			if ((markers_array[k].device_type.toLowerCase().indexOf('odu16'))>=0){
-				
-				//markers_array[k].setIcon("images/odu-"+updateInfo[j].state+".png");
-				if (labelFlag==0){
-					var label = new Label({
-						map: map
-					});
-					label.set('zIndex', 1234);
-					label.bindTo('position', markers_array[k], 'position');
-					label.set('text','<div style="text-align:center;margin-top:-24px;font-size:10px;">RM18<br/>'+String(updateInfo[j].signal)+'</div>');
-					markers_array[k].setIcon("images/device"+updateInfo[j].state+".png");
-					labelDict[markers_array[k].title]=label
-					}
-				else{
-					markers_array[k].setIcon("images/device"+updateInfo[j].state+".png");
-					labelDict[markers_array[k].title].set('text','<div style="text-align:center;margin-top:-24px;font-size:10px;">RM18<br/>'+String(updateInfo[j].signal)+'</div>');
-				 }					
-
-				}
-			else if ((markers_array[k].device_type.toLowerCase().indexOf('odu100'))>=0){
-				if (labelFlag==0){
-					var label = new Label({
-						map: map
-					});
-					label.set('zIndex', 1234);
-					label.bindTo('position', markers_array[k], 'position');
-					label.set('text','<div style="text-align:center;margin-top:-24px;font-size:10px;">RM<br/>'+String(updateInfo[j].signal)+'</div>');
-					markers_array[k].setIcon("images/device"+updateInfo[j].state+".png");
-					labelDict[markers_array[k].title]=label
-					}
-				else{
-					markers_array[k].setIcon("images/device"+updateInfo[j].state+".png");
-					labelDict[markers_array[k].title].set('text','<div style="text-align:center;margin-top:-24px;font-size:10px;">RM<br/>'+String(updateInfo[j].signal)+'</div>');
-				 }					
-
+			if ((markers_array[k].device_type.toLowerCase().indexOf('odu'))>=0){
+				markers_array[k].setIcon("images/odu-"+updateInfo[j].state+".png");
 				}
 			else if ((markers_array[k].device_type.toLowerCase().indexOf('idu'))>=0){
-				//markers_array[k].setIcon("images/idu-"+updateInfo[j].state+".png");
-				if (labelFlag==0){
-					var label = new Label({
-						map: map
-					});
-					label.set('zIndex', 1234);
-					label.bindTo('position', markers_array[k], 'position');
-					label.set('text','<div style="text-align:center;margin-top:-24px;font-size:10px;">IDU</div>');
-					markers_array[k].setIcon("images/device"+updateInfo[j].state+".png");
-					labelDict[markers_array[k].title]=label
-					}
-				else{
-					markers_array[k].setIcon("images/device"+updateInfo[j].state+".png");
-					labelDict[markers_array[k].title].set('text','<div style="text-align:center;margin-top:-24px;font-size:10px;">IDU</div>');
-				 }					
+				markers_array[k].setIcon("images/idu-"+updateInfo[j].state+".png");
 				}
 			else if ((markers_array[k].device_type.toLowerCase().indexOf('ap'))>=0){
-				if (labelFlag==0){
-					var label = new Label({
-						map: map
-					});
-					label.set('zIndex', 1234);
-					label.bindTo('position', markers_array[k], 'position');
-					label.set('text','<div style="text-align:center;margin-top:-24px;font-size:10px;">AP<br/>'+String(updateInfo[j].client)+'</div>');
-					markers_array[k].setIcon("images/device"+updateInfo[j].state+".png");
-					labelDict[markers_array[k].title]=label
-					}
-				else{
-					markers_array[k].setIcon("images/device"+updateInfo[j].state+".png");
-					labelDict[markers_array[k].title].set('text','<div style="text-align:center;margin-top:-24px;font-size:10px;">AP<br/>'+String(updateInfo[j].client)+'</div>');
-				 }					
+				markers_array[k].setIcon("images/ap-"+updateInfo[j].state+".png");
 				}
-			else if ((markers_array[k].device_type.toLowerCase().indexOf('ccu'))>=0){
-				if (labelFlag==0){
-					var label = new Label({
-						map: map
-					});
-					label.set('zIndex', 1234);
-					label.bindTo('position', markers_array[k], 'position');
-					label.set('text','<div style="text-align:center;margin-top:-24px;font-size:10px;">CCU<br/></div>');
-					markers_array[k].setIcon("images/device"+updateInfo[j].state+".png");
-					labelDict[markers_array[k].title]=label
-					}
-				else{
-					markers_array[k].setIcon("images/device"+updateInfo[j].state+".png");
-					labelDict[markers_array[k].title].set('text','<div style="text-align:center;margin-top:-24px;font-size:10px;">CCU<br/></div>');
-				 }					
-				}
-			else if ((markers_array[k].device_type.toLowerCase().indexOf('mou'))>=0){
-				if (labelFlag==0){
-					var label = new Label({
-						map: map
-					});
-					label.set('zIndex', 1234);
-					label.bindTo('position', markers_array[k], 'position');
-					label.set('text','<div style="text-align:center;margin-top:-24px;font-size:10px;">MOU<br/></div>');
-
-					markers_array[k].setIcon("images/device"+updateInfo[j].state+".png");
-					labelDict[markers_array[k].title]=label
-					}
-				else{
-					markers_array[k].setIcon("images/device"+updateInfo[j].state+".png");
-					labelDict[markers_array[k].title].set('text','<div style="text-align:center;margin-top:-24px;font-size:10px;">MOU<br/></div>');
-				 }					
-				}
-			else if ((markers_array[k].device_type.toLowerCase().indexOf('rou'))>=0){
-				if (labelFlag==0){
-					var label = new Label({
-						map: map
-					});
-					label.set('zIndex', 1234);
-					label.bindTo('position', markers_array[k], 'position');
-					label.set('text','<div style="text-align:center;margin-top:-24px;font-size:10px;">ROU<br/></div>');
-					markers_array[k].setIcon("images/device"+updateInfo[j].state+".png");
-					labelDict[markers_array[k].title]=label
-					}
-				else{
-					markers_array[k].setIcon("images/device"+updateInfo[j].state+".png");
-					labelDict[markers_array[k].title].set('text','<div style="text-align:center;margin-top:-24px;font-size:10px;">ROU<br/></div>');
-				 }					
-				}
-
 			else if ((markers_array[k].device_type.toLowerCase().indexOf('swt'))>=0){
 				markers_array[k].setIcon("images/switch-"+updateInfo[j].state+".png");		
 			}
@@ -1118,29 +941,11 @@ function updateStateOfHost(updateInfo){
 				markers_array[k].setIcon("images/localhost-"+updateInfo[j].state+".png");		
 			}
 			else
-				
-				//console.log(markers_array[k].device_type.toLowerCase());
 				markers_array[k].setIcon("images/unknown-"+updateInfo[j].state+".png");		
+
 		}
 		}
 	}
-	labelFlag=1;
 }
+
 /*======================code ended by pawan=======================*/
-
-
-// change the state of device
-function enabledDevice(ip_address){
-	$.ajax({
-		type:"post",
-		url: "enabled_device_state.py?ip_address="+ip_address,
-		success:function(result){
-			if (result.success==1 || result.success=='1')
-				alert(result.error_msg);
-			else
-				alert('Host state update successfully.');
-		}
-	});
-}
-
-

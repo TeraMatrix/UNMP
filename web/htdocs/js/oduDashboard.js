@@ -426,7 +426,7 @@ function oduSyncLostGraph(action,div,start,limit)
 				},
 				series: [{
 					color:"#DCCC21",
-					name: 'Sync Loss',
+					name: 'Sync Lost',
 					data: result.counter
 				}]
 			});
@@ -497,8 +497,8 @@ function getNumberOfODU()
 					}
 					else
 					{
-						errorGraph=$("#dashboard1").yoDashboard({
-							title:"Error Graph",
+						errorGraph=$("#dashboard4").yoDashboard({
+							title:"Crc/Phy Error Graph",
 							showRefreshButton:true,
 							showNextPreButton:true,
 							startFrom:0,
@@ -512,7 +512,7 @@ function getNumberOfODU()
 							//tabList: {value:[1,2,3,4],name:["eth0","br0","ath0","ath1"],selected:1},
 							height:"180px"
 						});
-						nwBandwidth=$("#dashboard5").yoDashboard({
+						nwBandwidth=$("#dashboard1").yoDashboard({
 							title:"Network Bandwidth Graph",
 							showRefreshButton:true,
 							showNextPreButton:true,
@@ -543,7 +543,7 @@ function getNumberOfODU()
 							height:"180px"
 						});
 						syncLost=$("#dashboard2").yoDashboard({
-							title:"Sync Loss Graph",
+							title:"Sync Lost Graph",
 							showRefreshButton:true,
 							showNextPreButton:true,
 							startFrom:0,
@@ -555,7 +555,7 @@ function getNumberOfODU()
 							getTotalItem:function(){return totalODUInTheSystem},
 							height:"180px"
 						});
-						outage=$("#dashboard4").yoDashboard({
+						outage=$("#dashboard5").yoDashboard({
 							title:"Device Reachability Graph",
 							showRefreshButton:true,
 							showNextPreButton:true,

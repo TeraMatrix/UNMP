@@ -11,16 +11,7 @@ var yo3 = null;
 
 
 $(function(){
-	$("#page_tip").colorbox( //page tip
-		    	{
-			href:"view_page_tip_local_dashboard.py",
-			title: "Page Tip",
-			opacity: 0.4,
-			maxWidth: "80%",
-			width:"400px",
-			height:"400px"
-		    });
-
+	$('#page_tip').hide();
 	setTimeout(function()
 	{
 		if(tactical_call != null)
@@ -86,7 +77,7 @@ function harddiskDetails(div_id)
 		success:function(result){
 				// total,free,available,used
 				result = result.split(",");
-				$("#sys_memory").html("Total: " + result[0] + "GB Free: " + result[1] + "GB<br/>Unused: " + result[2] + "GB Used: " + result[3] + "GB");
+				$("#sys_memory").html("Total: " + result[0] + "GB; Free: " + result[1] + "GB;<br/>Unused: " + result[2] + "GB; Used: " + result[3] + "GB;");
 				var used = parseFloat(result[3]) * 100.0/parseFloat(result[0]);
 				var unused = parseFloat(result[2]) * 100.0/parseFloat(result[0]);
 				var free = 100 - (used + unused);
@@ -289,7 +280,7 @@ function proDetails(div_id)
 							    //var monthStr = Highcharts.dateFormat('%b', this.value);
 							    //var firstLetter = monthStr.substring(0, 1);
 							    //return firstLetter;
-							    return Highcharts.dateFormat('%H:%M:%S', this.value);
+							    return Highcharts.dateFormat('%M:%S', this.value);
 							}
 						    }
 					},
@@ -400,7 +391,7 @@ function bandDetails(div_id)
 							    //var monthStr = Highcharts.dateFormat('%b', this.value);
 							    //var firstLetter = monthStr.substring(0, 1);
 							    //return firstLetter;
-							    return Highcharts.dateFormat('%H:%M:%S', this.value);
+							    return Highcharts.dateFormat('%M:%S', this.value);
 							}
 						    }
 					},

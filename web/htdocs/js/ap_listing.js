@@ -1,32 +1,23 @@
 var timeSlot = 60000;
 // spin loading object
-var $spinLoading = null;		// create object that hold loading circle
-var $spinMainLoading = null;	// create object that hold loading squire
-var timecheck = 5000;	
-var chcekProcessStatus=0;
-var ap_mode = {0:'Standard',1:'Root AP',2:'Repeater',3:'Client',4:'Multi AP',5:'Multi VLAN',6:'Dynamic VLAN'}
-var opStatusDic = {0:'No operation', 1:'Firmware download', 2:'Firmware upgrade', 3:'Restore default config', 4:'Flash commit', 5:'Reboot', 6:'Site survey', 7:'Calculate BW', 8:'Uptime service', 9:'Statistics gathering', 10:'Reconciliation', 11:'Table reconciliation', 12:'Set operation', 13:'Live monitoring', 14:'Status capturing',15:'Refreshing Site Survey','16':'Refreshing RA Channel List'}
-
+var $spinLoading = $("div#spin_loading");		// create object that hold loading circle
+var $spinMainLoading = $("div#main_loading");	// create object that hold loading squire
+var timecheck = 60000;	
 $(function(){
-	$spinLoading = $("div#spin_loading");		// create object that hold loading circle
-	$spinMainLoading = $("div#main_loading");	// create object that hold loading squire	
-
 	//we call the devicelist function 
-	$("input[id='filter_ip']").ccplAutoComplete("common_ip_mac_search.py?device_type="+$("select[id='device_type']").val()+"&ip_mac_search="+1 ,{
+	$("input[id='filter_ip']").ccplAutoComplete("common_ip_mac_search.py?device_type="+$("select[id='device_type']").val()+"&ip_mac_search="+1,{
                 dataType: 'json',
                 max: 30,
-                cache:false,
-                selectedItem: $("input[id='filter_ip']").val(),
+                selectedItem: "",
                 callAfterSelect : function(obj){
                         ipSelectMacDeviceType(obj,1);
                 }
         });
         
-       $("input[id='filter_mac']").ccplAutoComplete("common_ip_mac_search.py?device_type="+$("select[id='device_type']").val()+"&ip_mac_search="+0 + "&search_type=" ,{
+       $("input[id='filter_mac']").ccplAutoComplete("common_ip_mac_search.py?device_type="+$("select[id='device_type']").val()+"&ip_mac_search="+0,{
                 dataType: 'json',
                 max: 30,
-                cache:false,
-                selectedItem: $("input[id='filter_mac']").val(),
+                selectedItem: "",
                 callAfterSelect : function(obj){
                         ipSelectMacDeviceType(obj,0);
                 }
@@ -34,27 +25,28 @@ $(function(){
 	deviceList();
 	$("#filterOptions").hide();
 	$("#hide_search").show();
-	$("#up_down_search").toggle(function(){
-		//var $span = $(this);
-		//var $span = $this.find("span").eq(0);
-		$("#up_down_search").removeClass("dwn");
-		$("#up_down_search").addClass("up");
+	$("#hide_search").toggle(function(){
+		var $this = $(this);
+		var $span = $this.find("span").eq(0);
+		$span.removeClass("up");
+		$span.addClass("dwn");
 		$("#filterOptions").show();
-		$("#hide_search").css({
+		$this.css({
 		        'background-color': "#F1F1F1",
                         'display': "block",
                         'height': '20px',
                         'position': 'static',
                         'overflow': 'hidden',
-                        'width': "100%"});
+                        'width': "100%"
+                     });
 	},
 	function(){
-		//var $this = $(this);
-		//var $span = $this.find("span").eq(0);
-		$("#up_down_search").removeClass("up");
-		$("#up_down_search").addClass("dwn");
+		var $this = $(this);
+		var $span = $this.find("span").eq(0);
+		$span.removeClass("dwn");
+		$span.addClass("up");
 		$("#filterOptions").hide();
-		$("#hide_search").css({
+		$this.css({
 		        'background-color': "#F1F1F1",
                         'display': "block",
                         'height': '20px',
@@ -63,7 +55,8 @@ $(function(){
                         'right': 1,
                         'top': 1,
                         'width': "100%",
-                        'z-index': 1000});
+                        'z-index': 1000
+                    });
 		
 	});
 	//Here we call the click event of search button
@@ -90,87 +83,6 @@ $(function(){
 	//spinStop($spinLoading,$spinMainLoading);
 });
 
-function editClient(clientId)
-{
-        $.colorbox({
-		href:"edit_ap_client.py?client_id=" + clientId,
-		title: "Edit Client Details",
-		opacity: 0.4,
-		maxWidth: "80%",
-		width:"600px", 
-		height:"280px", 
-		onComplete:function(){
-		        $("#edit_client").validate({
-		                rules:{
-			                client_mac:{
-				                required:true,
-				                macAddress:true
-			                },
-			                client_name:{
-				                required:true,
-				                alphaNumeric:true
-				                
-			                },
-			                client_ip:{
-				                //required:true,
-				                ipv4Address:true
-			                }
-		                },
-		                messages:{
-			                client_mac:{
-				                required:"MAC Address is a required field",
-				                macAddress:"Invalid MAC address"
-			                },
-			                client_name:{
-				                required:"Client is a required field",
-				                alphaNumeric:"Client Name should be alpha numeric"
-			                },
-			                client_ip:{
-				                //required:"Client IP is a required field",
-				                ipv4Address:"Invalid IP address"
-			                }
-		                }
-	                });
-	                $("#edit_client").submit(function(){
-	                        
-	                        var $formThis = $(this);
-		                if($formThis.valid())
-		                {
-			                //spinStart($spinLoading,$spinMainLoading);
-			                var action = $formThis.attr("action");
-			                var method = $formThis.attr("method");
-			                var data = $formThis.serialize();
-			                $.ajax({
-			                        type:method,
-		                                url:action,
-		                                data:data,
-		                                cache:false,
-		                                success:function(result){
-		                                        if(result.success == 0)
-		                                        {
-		                                                $().toastmessage('showSuccessToast',String(result.result));
-		                                                $.colorbox.close();
-		                                                addClientListing();
-		                                        }
-		                                        else
-		                                        {
-		                                                $().toastmessage('showErrorToast',String(result.result));
-		                                        }
-		                                }
-			                });
-		                }
-		                else
-		                {
-			                $().toastmessage('showErrorToast', "Invalid client details are entered, please recheck");
-		                }
-		                return false;
-	                });
-	                
-		},
-		overlayClose:false
-	});
-}
-
 function apFormwareUpdate(host_id,device_type,device_state)
 {
 	$.colorbox(
@@ -188,282 +100,9 @@ function apFormwareUpdate(host_id,device_type,device_state)
 }
 //this the defination of device list function
 //this function return the datatable   
-function apListing()
-{
-        $("#ap_device_div").show();
-        $("#ap_client_div").hide();
-        $("#ap_client").show();
-        $("#ap_listing").hide();
-        $("#filterOptions").hide();
-        $("#hide_search").show();
-}
-
-// This is for view service details
-function viewServiceDetails(host_id)
-{
-	if(!$("table#device_data_table tr").hasClass("listing-color"))
-	{
-		$.colorbox(
-		{
-			href:"view_service_details_example.py?host_id="+host_id,
-			//iframe:true,
-			title : "service details",
-			opacity: 0.4,
-			maxWidth: "90%",
-			width:"1100px",
-			height:"300px",
-			overlayClose:false
-		});
-	}	
-}
-
-
-function performActionService(oLink,action, type, site, name1, name2) {
-		    var oImg = $(oLink).find("img");
-		    oImg.attr("src","images/icon_reloading.gif");
-		    // Chrome and IE are not animating the gif during sync ajax request
-		    // So better use the async request here
-		    //get_url('nagios_action.py?action='+action+'&site='+site+'&host='+name1+'&service='+name2,actionResponseHandler, oImg);
-		    //oImg = null;
-		    
-		    $.ajax({
-			type:"get",
-			url:'nagios_action.py',//actionResponseHandler, oImg,
-			data:{"action":action,"site":site,"host":name1,"service":name2,"view_type":"UNMP"},
-			cache:false,
-			success:function(result){
-					//oLink;
-					result=result.substring(1,result.length-2);
-					result=result.split("','");
-					/*
-					0 'OK', 1337773481, 0, 'SNMP RESPONSE : OK
-					1 0
-					2 33 min
-					3 1 sec
-					4 58 sec
-					5 0.128615
-					6 SNMP RESPONSE : OK ( Host Uptime - 0 Days, 0 Hours, 34 Mins, 30 Secs)'
-					
-					*/
-					var recTableObj = $(oLink).parent().parent();
-		                        var td0 = $(recTableObj).find("td:eq(0)");
-		                        var span0=$(td0).find("span");
-		                        if(result[1]!='undefined' && result[1]!="undefined" && result[1])
-		                        {
-				                $(span0).removeClass("icon-0");
-				                $(span0).removeClass("icon-1");
-				                $(span0).removeClass("icon-2");
-				                $(span0).removeClass("icon-3");
-				                $(span0).addClass("icon-"+result[1]);
-				        }
-				        else
-				        {
-				        	var td7 = $(recTableObj).find("td:eq(6)");
-			                        $(td7).html("Service check is in progress. Please wait for atleast 120 seconds before scheduling the check again.");
-				        }
-		                        var td3 = $(recTableObj).find("td:eq(2)");
-		                        $(td3).html(result[2]);
-		                        var td4 = $(recTableObj).find("td:eq(3)");
-		                        $(td4).html(result[3]);
-		                        var td5 = $(recTableObj).find("td:eq(4)");
-		                        $(td5).html(result[4]);
-		                        var td6 = $(recTableObj).find("td:eq(5)");
-		                        $(td6).html(result[5]);
-		                        var td7 = $(recTableObj).find("td:eq(6)");
-		                        $(td7).html(result[6]);
-					oImg.attr("src","images/icon_reload.gif");
-			}
-		    });
-		    
-}
-
-
-
-
-
-
-function addClientListing()
-{
-        $("#ap_device_div").hide();
-        $("#ap_client_div").show();
-        $("#ap_client").hide();
-        $("#ap_listing").show();
-        $("#filterOptions").hide();
-        $("#hide_search").hide();
-        urlString = "get_client_data_table.py";
-        spinStart($spinLoading,$spinMainLoading);
-        var oTable = $('#client_data_table').dataTable({
-                "bJQueryUI": true,
-                "sPaginationType": "full_numbers",
-                "bProcessing": true,
-                "bServerSide": true,
-                "aaSorting": [ [0,'desc'] ],
-                "aoColumns": [ 
-                      { "sWidth": "5%"},
-                      { "sWidth": "10%" },
-                      { "sWidth": "10%" },
-                      { "sWidth": "10%" },
-                      { "sWidth": "5%" },
-                      { "sWidth": "5%" },
-                      { "sWidth": "5%" },
-                      { "sWidth": "10%" },
-                      { "sWidth": "10%" },
-                      { "sWidth": "10%" },
-                      { "sWidth": "10%" },
-                      { "sWidth": "10%","bSortable": false  }],
-                "bDestroy": true,
-                "sAjaxSource": urlString,
-               "fnServerData": function(sSource,aoData,fnCallback){
-			$.getJSON( sSource, aoData, function (json) { 
-				/**
-				 * Insert an extra argument to the request: rm.
-				 * It's the the name of the CGI form parameter that
-				 * contains the run mode name. Its value is the
-				 * runmode, that produces the json output for
-				 * datatables.
-				 **/
-				fnCallback(json);
-				$('.n-reconcile').tipsy({gravity: 'n'});
-				spinStop($spinLoading,$spinMainLoading);
-			});
-			
-		}
-       	});
-       	
-        /*
-        spinStart($spinLoading,$spinMainLoading);
-        $.ajax({
-		type:"post",
-		url:urlString,
-		cache:false,
-		success:function(result){
-		//alert(result);
-			try
-			{
-				//result = eval("(" + result + ")");
-				result = eval(result);
-				
-			}
-			catch(err)
-			{
-				result = [];
-				
-			}
-			//	create data table object
-			var oTable = $('#client_data_table').dataTable({
-                "bJQueryUI": true,
-                "sPaginationType": "full_numbers",
-                "bProcessing": true,
-                "aaData": result,
-                //"bServerSide": true,
-               // "oSearch": {"sSearch": ip_address},
-              "aoColumns": [ 
-                      { "sWidth": "5%" },
-                      { "sWidth": "10%" },
-                      { "sWidth": "10%" },
-                      { "sWidth": "10%" },
-                      { "sWidth": "10%" },
-                      { "sWidth": "10%"},
-                      { "sWidth": "10%"},
-                      { "sWidth": "10%"},
-                      { "sWidth": "10%"},
-                      { "sWidth": "10%"},
-                      { "sWidth": "10%"},
-                      { "sWidth": "5%"}],
-                "bDestroy": true
-                //"sAjaxSource": urlString,
-			});
-		spinStop($spinLoading,$spinMainLoading);
-		}
-
-       	});
-       	*/
-       	
-			/*$gridViewActiveHostDataTable = $gridViewActiveHostTableObj.dataTable({
-				"bDestroy":true,
-				"bJQueryUI": true,
-				"bProcessing": true,
-				"sPaginationType": "full_numbers",
-				"bPaginate":true,
-				"bStateSave": false,
-				"aaData": result,
-				"oLanguage":{
-					"sInfo":"_START_ - _END_ of _TOTAL_",
-					"sInfoEmpty":"0 - 0 of 0",
-					"sInfoFiltered":"(of _MAX_)"
-				},
-				"aoColumns": [
-					{ "bSearchable": false, "bVisible": false, "aTargets": [ 0 ] },
-					{ "bSearchable": false, "bVisible": false, "aTargets": [ 1 ] },
-					{ "sTitle": "Host Name" , "sClass": "center", "sWidth": "18%"},
-					{ "sTitle": "Host Alias" , "sClass": "center", "sWidth": "20%"},
-					{ "sTitle": "IP Address", "sClass": "center", "sWidth": "18%" },
-					{ "sTitle": "Device Type", "sClass": "center", "sWidth": "18%" },
-					{ "sTitle": "MAC Address", "sClass": "center", "sWidth": "17%" },
-					{ "sTitle": " ", "sWidth": "9%", "bVisible": false }
-				]
-			});
-			$gridViewActiveHostDataTable.fnDraw();
-			spinStop($spinLoading,$spinMainLoading);
-		}
-	});*/
-	
-	
-	
-	
-	/*var oTable = $('#client_data_table').dataTable({
-                "bJQueryUI": true,
-                "sPaginationType": "full_numbers",
-                "bProcessing": true,
-                "bServerSide": true,
-               // "oSearch": {"sSearch": ip_address},
-                "aoColumns": [ 
-                      { "sWidth": "5%" },
-                      { "sWidth": "10%" },
-                      { "sWidth": "10%" },
-                      { "sWidth": "10%" },
-                      { "sWidth": "10%" },
-                      { "sWidth": "5%" },
-                      { "sWidth": "10%" },
-                      { "sWidth": "10%","bSortable": false  },
-                      { "sWidth": "30%","bSortable": false  }],
-                "bDestroy": true,
-                "sAjaxSource": urlString,
-               "fnServerData": function(sSource,aoData,fnCallback){
-			$.getJSON( sSource, aoData, function (json) { 
-				/**
-				 * Insert an extra argument to the request: rm.
-				 * It's the the name of the CGI form parameter that
-				 * contains the run mode name. Its value is the
-				 * runmode, that produces the json output for
-				 * datatables.
-				 **/
-				/*fnCallback(json);
-				$('.n-reconcile').tipsy({gravity: 'n'});
-				//chkReconciliationRun();
-	                        //oduListingTableClick();
-	                        //chkDeviceStatus();
-	                        //chkRadioStatus();
-	                        //chkConnectedClients();
-			});
-		}
-       	});
-	//$('.n-reconcile').tipsy({gravity: 'n'}); // n | s | e | w
-	
-        //$("input[id='filter_ip']").val(ip_address);
-         //$("input[id='filter_mac']").val(mac_address);
-        //$("select[id='device_type']").val(device_type);
-				
-		//	}
-		//});*/
-		
-}
-
 
 function deviceList()
 {
-         $("#ap_device_div").show();
-        $("#ap_client_div").hide();
 	// spin loading object
 	// this retreive the value of ipaddress textbox
 	var ip_address = $("input[id='filter_ip']").val();
@@ -471,7 +110,6 @@ function deviceList()
 	var mac_address = $("input[id='filter_mac']").val();
 	// this retreive the value of selectdevicetype from select menu
 	var device_type = $("select[id='device_type']").val();
-	spinStart($spinLoading,$spinMainLoading);
 	urlString = ""
         if(device_type == "odu100" || device_type=="odu16")
         {       
@@ -482,11 +120,6 @@ function deviceList()
         {
                urlString = "idu_device_listing_table.py?ip_address=" + ip_address + "&mac_address=" + mac_address + "&device_type=" + device_type
                parent.main.location = "idu_listing.py?ip_address=" + ip_address + "&mac_address=" + mac_address + "&selected_device_type=" + device_type;
-        }
-        else if(device_type == "ccu")
-        {
-               urlString = "ccu_device_listing_table.py?ip_address=" + ip_address + "&mac_address=" + mac_address + "&device_type=" + device_type
-               parent.main.location = "ccu_listing.py?ip_address=" + ip_address + "&mac_address=" + mac_address + "&selected_device_type=" + device_type;
         }
         else
         {
@@ -504,11 +137,9 @@ function deviceList()
                       { "sWidth": "10%" },
                       { "sWidth": "10%" },
                       { "sWidth": "10%" },
-                      { "sWidth": "5%" },
                       { "sWidth": "10%" },
                       { "sWidth": "10%","bSortable": false  },
-                      { "sWidth": "25%","bSortable": false  },
-                      { "sWidth": "5%","bSortable": false  }],
+                      { "sWidth": "30%","bSortable": false  }],
                 "bDestroy": true,
                 "sAjaxSource": urlString,
                "fnServerData": function(sSource,aoData,fnCallback){
@@ -526,8 +157,6 @@ function deviceList()
 	                        oduListingTableClick();
 	                        chkDeviceStatus();
 	                        chkRadioStatus();
-	                        chkConnectedClients();
-        			spinStop($spinLoading,$spinMainLoading);
 			});
 		}
        	});
@@ -574,23 +203,22 @@ function ipSelectMacDeviceType(obj,ipMacVal)
 
 function wirelessStatus(event,obj,hostId,deviceTypeId)
 {
-	if (chcekProcessStatus==0){
-		//event.stopPropagation();
-		$(".listing-icon").removeClass("listing-icon-selected");
-		$.ajax({
-			        type: "get",
-			        url : "show_wireless_status.py?host_id=" + hostId +"&device_type_id="+ deviceTypeId,
-			        success:function(result){
-			                
-			                $(obj).parent().addClass("listing-icon-selected");
-			                $("#status_div").html(result);
-		                        $("#status_div").css({'top':event.pageY-90});
-		                        $("#status_div").css({'left':event.pageX-200-parseInt((($("#status_div").width())*2)/3)});
-		                        $("#status_div").show();
-		                   spinStop($spinLoading,$spinMainLoading);     
-			        }       
-		        });
-	}
+        //event.stopPropagation();
+        $(".listing-icon").removeClass("listing-icon-selected");
+        $.ajax({
+	                type: "get",
+	                url : "show_wireless_status.py?host_id=" + hostId +"&device_type_id="+ deviceTypeId,
+	                success:function(result){
+	                        
+	                        $(obj).parent().addClass("listing-icon-selected");
+	                        $("#status_div").html(result);
+                                $("#status_div").css({'top':event.pageY-90});
+                                $("#status_div").css({'left':event.pageX-200-parseInt((($("#status_div").width())*2)/3)});
+                                $("#status_div").show();
+                                
+	                }       
+                });
+
 }
 
 /*function serviceStatus(event,obj,hostId,deviceTypeId)
@@ -679,11 +307,6 @@ function show_radio_admin_state(event,obj,hostId,deviceTypeId)
 function radio_enable_disable(event,obj,hostId,adminStateName)
 {
         attrValue = $(obj).attr("state");
-        var recTableObj = $("#"+hostId).parent().parent().parent();
-        var OPobj = $(recTableObj).find("td:eq(9)");
-	OPobj.html("");
-        OPobj.html('<center><div style="display:block;background:url(images/new/loading.gif) no-repeat scroll 0% 0% transparent; width: 16px; height: 16px;"><img id="operation_status" name="operation_status" src="images/host_status1.png" title="'+opStatusDic[12]+'" style=\"width:12px;height:12px;\"class=\"n-reconcile\" original-title="'+opStatusDic[12]+'"/></div></center>');
-
         if(parseInt(attrValue)==0)
         {
                 attrValue=1;
@@ -730,9 +353,6 @@ function radio_enable_disable(event,obj,hostId,adminStateName)
 	                                {
 	                                        $().toastmessage('showErrorToast',result.result);
 	                                }
-	                                OPobj.html("");
-                                        OPobj.html('<center><img id="operation_status" name="operation_status" src="'+String(result.image)+'" title="'+opStatusDic[0]+'" style=\"width:12px;height:12px;\"class=\"n-reconcile\" original-title="'+opStatusDic[0]+'"/></center>');  
-
 	                        }
 	                        
 	               });
@@ -793,7 +413,6 @@ function imgOdu16Reconcilation(v,m)
 				objTableDetail.removeClass(classAttr);
 				objTableDetail.addClass("listing-color");
 				flagClick = true;
-				$().toastmessage('showNoticeToast',"Reconciliation started successfully please wait for atleast 60 seconds.");
 				$.ajax({
 					type: "get",
 					url : "update_reconciliation.py?host_id=" + reconcileHostId +"&device_type_id="+ reconcileDeviceTypeId ,
@@ -857,19 +476,24 @@ function imgOdu16Reconcilation(v,m)
 function oduListingTableClick()
 {
 	var tableObj = $("table#device_data_table tr");
-	chcekProcessStatus=0;
+	
 	tableObj.click(function(event){
 				var elementClick = $(event.target);
 				if($(this).hasClass("listing-color") || $(this).hasClass(""))//check this type of condition because when more than one reconciliation performs the class has been 												      empty due to confliction of objects
 				{
-					chcekProcessStatus=1;
 					if($(elementClick).hasClass("imgEditodu16"))
 					{
 						$.prompt('Reconciliation is Running. Please wait.',{prefix:'jqismooth'});
 						return false;	
 					}	
 				}
-				
+				else
+				{
+					if(elementClick.is("img"))
+					{
+						spinStart($spinLoading,$spinMainLoading);
+					}
+				}
 				
 			});
 }
@@ -1039,11 +663,9 @@ function chkRadioStatus()
 						        {
 						                var recTableObj = $("#"+node).parent().parent().parent();
 						                var objTable = $(recTableObj); 
-						                var imgRec = $(recTableObj).find("td:eq(7)").find("a:eq(0)"); 
-						                var apMode = $(recTableObj).find("td:eq(6)");
-						                var objModeAP = $(apMode);
+						                var imgRec = $(recTableObj).find("td:eq(6)").find("a:eq(0)"); 
 						                var imgbtn = $(imgRec);
-						                if(parseInt(json[node][0]) == 1)
+						                if(parseInt(json[node]) == 1)
 								{
 							                imgbtn.attr({"class":"green"});
 							                imgbtn.attr({"state":1});
@@ -1053,13 +675,7 @@ function chkRadioStatus()
 							        {
                                                                         imgbtn.attr({"class":"red"});
 							                imgbtn.attr({"state":0});
-							                imgbtn.attr({"original-title":"Radio Disabled"});							        
-							        }
-							        objModeAP.html(ap_mode[parseInt(json[node][1])]);
-						                var OPobj = $(recTableObj).find("td:eq(9)");
-					                		OPobj.html("");
-					                        OPobj.html('<center><img id="operation_status" name="operation_status" src="'+json[node][2]+'" title="'+opStatusDic[json[node][3]]+'" style=\"width:12px;height:12px;\"class=\"n-reconcile\" original-title="'+opStatusDic[json[node][3]]+'"/></center>');
-
+							                imgbtn.attr({"original-title":"Radio Disabled"});							        }
 						        }
 						}
 						callC = setTimeout(function()
@@ -1071,36 +687,4 @@ function chkRadioStatus()
 					}
                 });
 }
-
-var callD=null;
-function chkConnectedClients()
-{
-        host_id = $("input[name='host_id']").val();
-        if(callD!=null)
-        {
-                clearTimeout(callD);
-        }
-	$.ajax({
-		type:"get",
-		url:"connected_clients.py?host_id="+host_id,
-		success:function(result){
-						if(parseInt(result.success)==0)
-						{
-						        json = result.result;
-					                var recTableObj = $("#"+json[1]).parent().parent().parent();
-					                var objTable = $(recTableObj); 					               
-					                var tdData = $(recTableObj).find("td:eq(5)");
-        				                $(tdData).html(json[0]);
-	        				        
-						}
-						callD = setTimeout(function()
-						{
-		
-							chkConnectedClients();
-
-						},timecheck);	
-					}
-                });
-}
-
 

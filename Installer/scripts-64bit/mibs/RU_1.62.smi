@@ -1,0 +1,3407 @@
+
+-- File Name : RU_1.62.smi
+-- Date      : Wed May 11 10:02:35 IST 2011
+-- Author    : WebNMS Agent Toolkit C Edition - MibEditor 6
+
+
+
+RU	DEFINITIONS ::= BEGIN
+	IMPORTS
+		TEXTUAL-CONVENTION, RowStatus, TruthValue, TimeInterval, DisplayString, MacAddress
+			FROM SNMPv2-TC
+		DisplayString
+			FROM RFC1213-MIB
+		MODULE-COMPLIANCE, OBJECT-GROUP
+			FROM SNMPv2-CONF
+		enterprises, MODULE-IDENTITY, OBJECT-TYPE, mib-2, Counter32, Counter64, Integer32, Unsigned32, TimeTicks, IpAddress, Gauge32
+			FROM SNMPv2-SMI;
+
+	vihaan	MODULE-IDENTITY
+		LAST-UPDATED	"200904010000Z"
+		ORGANIZATION	"Vihaan Networks Limited"
+		CONTACT-INFO	"246 Phase 4 Udyog Vihar ,Gurgaon, Haryana "
+		DESCRIPTION		"Description  "
+		REVISION		"200904010000Z"
+		DESCRIPTION		" This description will only carry data on the basic of release note in the revision"
+		::=  {  enterprises  26149  }
+
+-- TEXTUAL-CONVENTIONS --
+	AdminStatus ::= TEXTUAL-CONVENTION 
+		DISPLAY-HINT	""
+		STATUS			current
+		DESCRIPTION
+			"This object indicates the admin state for an object. The admin state 'locked' means that the manager has made this instance of object out of use. This is an immediate shutdown request. 'unlocked' is the normal state where the instance of the object is provided by the manager for normal use"
+		SYNTAX 			INTEGER  { locked ( 0 ) , unlocked ( 1 ) } 
+
+	OperationStatus ::= TEXTUAL-CONVENTION 
+		DISPLAY-HINT	""
+		STATUS			current
+		DESCRIPTION
+			"The status of an instance of an object or an object is : 'enabled' indicates that it operatable and the
+       dependent objects can use it, while 'disabled' indicates that it is not."
+		SYNTAX 			INTEGER  { disabled ( 0 ) , enabled ( 1 ) } 
+
+	org	OBJECT IDENTIFIER
+		::=  {  iso  3  }
+
+	dod	OBJECT IDENTIFIER
+		::=  {  org  6  }
+
+	internet	OBJECT IDENTIFIER
+		::=  {  dod  1  }
+
+	mgmt	OBJECT IDENTIFIER
+		::=  {  internet  2  }
+
+	private	OBJECT IDENTIFIER
+		::=  {  internet  4  }
+
+	mib-2	OBJECT IDENTIFIER
+		::=  {  mgmt  1  }
+
+	enterprises	OBJECT IDENTIFIER
+		::=  {  private  1  }
+
+	gsm	OBJECT IDENTIFIER
+		::=  {  vihaan  1  }
+
+	transmission	OBJECT IDENTIFIER
+		::=  {  vihaan  2  }
+
+	ru	OBJECT IDENTIFIER
+		::=  {  transmission  2  }
+
+	ruConfTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  RuConfEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Contains configuration parameters for the RU"
+		::=  { ru  1 }
+
+	ruConfEntry	OBJECT-TYPE
+		SYNTAX		RuConfEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Row Description"
+		INDEX		{  confIndex  }
+		::=  { ruConfTable 1 }
+
+	RuConfEntry  ::=  SEQUENCE {
+		confIndex  Integer32,
+		adminstate  AdminStatus,
+		defaultNodeType  INTEGER,
+		channelBandwidth  INTEGER,
+		synchSource  INTEGER,
+		countryCode  INTEGER,
+		poeState  INTEGER,
+		alignmentControl  Integer32
+		}
+
+
+	confIndex	OBJECT-TYPE	
+		SYNTAX			Integer32  ( -2147483648 .. 2147483647  ) 
+		MAX-ACCESS		not-accessible
+		STATUS			current
+		DESCRIPTION		"Dummy Index Value"
+		::=  {  ruConfEntry  1  }
+
+
+	adminstate	OBJECT-TYPE	
+		SYNTAX			AdminStatus  { locked ( 0 ) , unlocked ( 1 ) } 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Admin State of this MO."
+		::=  {  ruConfEntry  2  }
+
+
+	defaultNodeType	OBJECT-TYPE	
+		SYNTAX			INTEGER  { rootRU ( 0 ) , t1TDN ( 1 ) , t2TDN ( 2 ) , t2TEN ( 3 ) } 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Indicates the default node type of this RU."
+		::=  {  ruConfEntry  5  }
+
+
+	channelBandwidth	OBJECT-TYPE	
+		SYNTAX			INTEGER  { raBW5Mhz ( 0 ) , raBW10Mhz ( 1 ) , raBW20Mhz ( 2 ) , raBW40MHz ( 3 ) , raBW40SGIMHz ( 4 ) } 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Channel bandwidth this radio can use."
+		::=  {  ruConfEntry  7  }
+
+
+	synchSource	OBJECT-TYPE	
+		SYNTAX			INTEGER  { internal ( 0 ) , radio1 ( 1 ) , gpioPIN ( 3 ) } 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Synchronisation source"
+		::=  {  ruConfEntry  8  }
+
+
+	countryCode	OBJECT-TYPE	
+		SYNTAX			INTEGER  { dbg ( 0 ) , denmark ( 208 ) , india ( 356 ) , sweden ( 752 ) } 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Country code required to derive WiFi information 
+Restrtiction, Change of Country code requires reboot of RU"
+		::=  {  ruConfEntry  9  }
+
+
+	poeState	OBJECT-TYPE	
+		SYNTAX			INTEGER  { disable ( 0 ) , enable ( 1 ) , na ( 2 ) } 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Object to enable/disable the POE facility on the POE port controlled by this RU."
+		DEFVAL			{ disable }
+		::=  {  ruConfEntry  10  }
+
+
+	alignmentControl	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 0 .. 300  ) 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Description"
+		::=  {  ruConfEntry  11  }
+
+	ruDateTimeTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  RuDateTimeEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Contains system time information and parameters for configuring RTC. This is persistent table,Number of rows:1"
+		::=  { ru  2 }
+
+	ruDateTimeEntry	OBJECT-TYPE
+		SYNTAX		RuDateTimeEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Row Description"
+		INDEX		{  dateIndex  }
+		::=  { ruDateTimeTable 1 }
+
+	RuDateTimeEntry  ::=  SEQUENCE {
+		dateIndex  Integer32,
+		year  Integer32,
+		month  Integer32,
+		day  Integer32,
+		hour  Integer32,
+		min  Integer32,
+		sec  Integer32
+		}
+
+
+	dateIndex	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 0 .. 1  ) 
+		MAX-ACCESS		not-accessible
+		STATUS			current
+		DESCRIPTION		"Dummy Index Value"
+		::=  {  ruDateTimeEntry  1  }
+
+
+	year	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 1900 .. 2099  ) 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Year"
+		::=  {  ruDateTimeEntry  2  }
+
+
+	month	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 1 .. 12  ) 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Month"
+		::=  {  ruDateTimeEntry  3  }
+
+
+	day	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 1 .. 31  ) 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Date"
+		::=  {  ruDateTimeEntry  4  }
+
+
+	hour	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 0 .. 23  ) 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Hour"
+		::=  {  ruDateTimeEntry  5  }
+
+
+	min	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 0 .. 59  ) 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Minute"
+		::=  {  ruDateTimeEntry  6  }
+
+
+	sec	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 0 .. 59  ) 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Column Description"
+		::=  {  ruDateTimeEntry  7  }
+
+	ruStatusTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  RuStatusEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Contains configuration parameters for the RU"
+		::=  { ru  3 }
+
+	ruStatusEntry	OBJECT-TYPE
+		SYNTAX		RuStatusEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Row Description"
+		INDEX		{  statusIndex  }
+		::=  { ruStatusTable 1 }
+
+	RuStatusEntry  ::=  SEQUENCE {
+		statusIndex  Integer32,
+		lastRebootReason  Integer32,
+		isConfigCommitedToFlash  INTEGER,
+		upTime  Counter64,
+		poeStatus  INTEGER,
+		cpuId  INTEGER,
+		ruoperationalState  OperationStatus
+		}
+
+
+	statusIndex	OBJECT-TYPE	
+		SYNTAX			Integer32  ( -2147483648 .. 2147483647  ) 
+		MAX-ACCESS		not-accessible
+		STATUS			current
+		DESCRIPTION		"Dummy Index Value"
+		::=  {  ruStatusEntry  1  }
+
+
+	lastRebootReason	OBJECT-TYPE	
+		SYNTAX			Integer32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Reason for the last reboot"
+		::=  {  ruStatusEntry  2  }
+
+
+	isConfigCommitedToFlash	OBJECT-TYPE	
+		SYNTAX			INTEGER  { no ( 0 ) , yes ( 1 ) } 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Specifies if there is some portion of configuration data that is still not committed in FLASH."
+		DEFVAL			{ yes }
+		::=  {  ruStatusEntry  3  }
+
+
+	upTime	OBJECT-TYPE	
+		SYNTAX			Counter64
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"RU uptime in seconds"
+		::=  {  ruStatusEntry  4  }
+
+
+	poeStatus	OBJECT-TYPE	
+		SYNTAX			INTEGER  { disable ( 0 ) , enable ( 1 ) , na ( 2 ) } 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"POE Status of the port whose POE is controlled by this RU"
+		::=  {  ruStatusEntry  5  }
+
+
+	cpuId	OBJECT-TYPE	
+		SYNTAX			INTEGER  { woESWandPOE ( 0 ) , npTdu7 ( 1 ) , mp1Tdu7 ( 2 ) , mp2Tdu7 ( 3 ) , mp3Tdu7 ( 4 ) , spTdu7 ( 5 ) , withESWandPOE ( 6 ) } 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"CPU ID in case there are multiple CPU on the same boardCPU ID in case there are multiple CPU on the same board"
+		::=  {  ruStatusEntry  6  }
+
+
+	ruoperationalState	OBJECT-TYPE	
+		SYNTAX			OperationStatus  { disabled ( 0 ) , enabled ( 1 ) } 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Description"
+		::=  {  ruStatusEntry  7  }
+
+	ruOmOperationsTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  RuOmOperationsEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Contains O&M operations for  RU"
+		::=  { ru  5 }
+
+	ruOmOperationsEntry	OBJECT-TYPE
+		SYNTAX		RuOmOperationsEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Row Description"
+		INDEX		{  omIndex  }
+		::=  { ruOmOperationsTable 1 }
+
+	RuOmOperationsEntry  ::=  SEQUENCE {
+		omIndex  Integer32,
+		omOperationReq  INTEGER,
+		userName  DisplayString,
+		password  DisplayString,
+		ftpServerAddress  IpAddress,
+		pathName  DisplayString,
+		omOperationResult  INTEGER,
+		omSpecificCause  INTEGER,
+		listOfChannels  DisplayString,
+		txTime  Integer32,
+		txRate  Integer32,
+		txBW  Integer32
+		}
+
+
+	omIndex	OBJECT-TYPE	
+		SYNTAX			Integer32
+		MAX-ACCESS		not-accessible
+		STATUS			current
+		DESCRIPTION		"Dummy Index Value"
+		::=  {  ruOmOperationsEntry  1  }
+
+
+	omOperationReq	OBJECT-TYPE	
+		SYNTAX			INTEGER  { noOperation ( 0 ) , startDownload ( 1 ) , activateSW ( 2 ) , restoreDefaultConfig ( 3 ) , flashCommit ( 4 ) , reboot ( 5 ) , siteSurvey ( 6 ) , calcBW ( 7 ) } 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Request for the specific O&M operation."
+		::=  {  ruOmOperationsEntry  2  }
+
+
+	userName	OBJECT-TYPE	
+		SYNTAX			DisplayString  ( SIZE ( 0 .. 15  ) ) 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"User name for FTP. This field is only required when omOperationReq is STARTSWDOWNLOAD."
+		::=  {  ruOmOperationsEntry  3  }
+
+
+	password	OBJECT-TYPE	
+		SYNTAX			DisplayString  ( SIZE ( 0 .. 15  ) ) 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Password for FTP. This field is only required when omOperationReq is STARTSWDOWNLOAD"
+		::=  {  ruOmOperationsEntry  4  }
+
+
+	ftpServerAddress	OBJECT-TYPE	
+		SYNTAX			IpAddress
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"IP address of the FTP server. This field is only required when omOperationReq is STARTSWDOWNLOAD."
+		::=  {  ruOmOperationsEntry  5  }
+
+
+	pathName	OBJECT-TYPE	
+		SYNTAX			DisplayString  ( SIZE ( 0 .. 100  ) ) 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Path of the upgrade image file on the FTP server. This field is only required when omOperationReq is STARTSWDOWNLOAD"
+		::=  {  ruOmOperationsEntry  6  }
+
+
+	omOperationResult	OBJECT-TYPE	
+		SYNTAX			INTEGER  { idle ( 0 ) , ongoing ( 1 ) , pass ( 2 ) , fail ( 3 ) } 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Result of operation."
+		::=  {  ruOmOperationsEntry  7  }
+
+
+	omSpecificCause	OBJECT-TYPE	
+		SYNTAX			INTEGER  { omNoError ( 0 ) , omFileNotFound ( 2 ) , omAuthFailed ( 4 ) , omNetworkFailed ( 5 ) , omDiskFull ( 6 ) , omHWCompatibility ( 7 ) , omChecksumFailed ( 8 ) , omErrorFlash ( 9 ) , omOtherError ( 10 ) } 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Cause of failure of an operation. Value in this field is valid only if omOperationResult is FAIL"
+		::=  {  ruOmOperationsEntry  8  }
+
+
+	listOfChannels	OBJECT-TYPE	
+		SYNTAX			DisplayString
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Description"
+		::=  {  ruOmOperationsEntry  9  }
+
+
+	txTime	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 0 .. 4000  ) 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Description"
+		::=  {  ruOmOperationsEntry  10  }
+
+
+	txRate	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 0 .. 300000  ) 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Description"
+		::=  {  ruOmOperationsEntry  11  }
+
+
+	txBW	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 0 .. 300000  ) 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Description"
+		::=  {  ruOmOperationsEntry  12  }
+
+	swStatusTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  SwStatusEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Contains software version information for the running SW state"
+		::=  { ru  6 }
+
+	swStatusEntry	OBJECT-TYPE
+		SYNTAX		SwStatusEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Row Description"
+		INDEX		{  swStatusIndex  }
+		::=  { swStatusTable 1 }
+
+	SwStatusEntry  ::=  SEQUENCE {
+		swStatusIndex  Integer32,
+		activeVersion  DisplayString,
+		passiveVersion  DisplayString,
+		bootloaderVersion  DisplayString
+		}
+
+
+	swStatusIndex	OBJECT-TYPE	
+		SYNTAX			Integer32
+		MAX-ACCESS		not-accessible
+		STATUS			current
+		DESCRIPTION		"Dummy Index Value"
+		::=  {  swStatusEntry  1  }
+
+
+	activeVersion	OBJECT-TYPE	
+		SYNTAX			DisplayString  ( SIZE ( 0 .. 32  ) ) 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Active Version Number"
+		::=  {  swStatusEntry  2  }
+
+
+	passiveVersion	OBJECT-TYPE	
+		SYNTAX			DisplayString  ( SIZE ( 0 .. 32  ) ) 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Passive Software Version"
+		::=  {  swStatusEntry  3  }
+
+
+	bootloaderVersion	OBJECT-TYPE	
+		SYNTAX			DisplayString  ( SIZE ( 0 .. 50  ) ) 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Version information about bootloader"
+		::=  {  swStatusEntry  4  }
+
+	omcConfTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  OmcConfEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Contains configuration parameters for OMC"
+		::=  { ru  7 }
+
+	omcConfEntry	OBJECT-TYPE
+		SYNTAX		OmcConfEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Row Description"
+		INDEX		{  omcConfIndex  }
+		::=  { omcConfTable 1 }
+
+	OmcConfEntry  ::=  SEQUENCE {
+		omcConfIndex  Integer32,
+		omcIpAddress  IpAddress,
+		periodicStatsTimer  Unsigned32
+		}
+
+
+	omcConfIndex	OBJECT-TYPE	
+		SYNTAX			Integer32
+		MAX-ACCESS		not-accessible
+		STATUS			current
+		DESCRIPTION		"Dummy Index Value"
+		::=  {  omcConfEntry  1  }
+
+
+	omcIpAddress	OBJECT-TYPE	
+		SYNTAX			IpAddress
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"IP address of OMC server"
+		::=  {  omcConfEntry  2  }
+
+
+	periodicStatsTimer	OBJECT-TYPE	
+		SYNTAX			Unsigned32  ( 5 .. 1440  ) 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Timer for periodic collection and transfer of statistics and alarm files to OMC-T"
+		DEFVAL			{ 30 }
+		::=  {  omcConfEntry  3  }
+
+	sysOmcRegistrationTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  SysOmcRegistrationEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Contains registration data that NE uses to register with OMC"
+		::=  { ru  8 }
+
+	sysOmcRegistrationEntry	OBJECT-TYPE
+		SYNTAX		SysOmcRegistrationEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Row Description"
+		INDEX		{  sysOmcRegistrationIndex  }
+		::=  { sysOmcRegistrationTable 1 }
+
+	SysOmcRegistrationEntry  ::=  SEQUENCE {
+		sysOmcRegistrationIndex  Integer32,
+		sysOmcRegisterContactAddr  DisplayString,
+		sysOmcRegisterContactPerson  DisplayString,
+		sysOmcRegisterContactMobile  DisplayString,
+		sysOmcRegisterAlternateContact  DisplayString,
+		sysOmcRegisterContactEmail  DisplayString
+		}
+
+
+	sysOmcRegistrationIndex	OBJECT-TYPE	
+		SYNTAX			Integer32
+		MAX-ACCESS		not-accessible
+		STATUS			current
+		DESCRIPTION		"Dummy Index Value"
+		::=  {  sysOmcRegistrationEntry  1  }
+
+
+	sysOmcRegisterContactAddr	OBJECT-TYPE	
+		SYNTAX			DisplayString  ( SIZE ( 0 .. 20  ) ) 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Contact address of person looking after site"
+		::=  {  sysOmcRegistrationEntry  2  }
+
+
+	sysOmcRegisterContactPerson	OBJECT-TYPE	
+		SYNTAX			DisplayString  ( SIZE ( 0 .. 20  ) ) 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Name of the contact person"
+		::=  {  sysOmcRegistrationEntry  3  }
+
+
+	sysOmcRegisterContactMobile	OBJECT-TYPE	
+		SYNTAX			DisplayString  ( SIZE ( 0 .. 20  ) ) 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Mobile number of contact person"
+		::=  {  sysOmcRegistrationEntry  4  }
+
+
+	sysOmcRegisterAlternateContact	OBJECT-TYPE	
+		SYNTAX			DisplayString  ( SIZE ( 0 .. 20  ) ) 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Name of alternate contact person"
+		::=  {  sysOmcRegistrationEntry  5  }
+
+
+	sysOmcRegisterContactEmail	OBJECT-TYPE	
+		SYNTAX			DisplayString  ( SIZE ( 0 .. 20  ) ) 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"E-mail of contact person"
+		::=  {  sysOmcRegistrationEntry  6  }
+
+	ipConfigTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  IpConfigEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Contains configurable IP settings"
+		::=  { ru  9 }
+
+	ipConfigEntry	OBJECT-TYPE
+		SYNTAX		IpConfigEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Row Description"
+		INDEX		{  ipConfigIndex  }
+		::=  { ipConfigTable 1 }
+
+	IpConfigEntry  ::=  SEQUENCE {
+		ipConfigIndex  Integer32,
+		adminState  AdminStatus,
+		ipAddress  IpAddress,
+		ipNetworkMask  IpAddress,
+		ipDefaultGateway  IpAddress,
+		autoIpConfig  INTEGER
+		}
+
+
+	ipConfigIndex	OBJECT-TYPE	
+		SYNTAX			Integer32
+		MAX-ACCESS		not-accessible
+		STATUS			current
+		DESCRIPTION		"Dummy Index Value"
+		::=  {  ipConfigEntry  1  }
+
+
+	adminState	OBJECT-TYPE	
+		SYNTAX			AdminStatus
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Administrative state of this MO Locking of this Table does not have effect on traffic. This admin state is used to ensure that all changes in the IP configuration happen only after the MO is unlocked."
+		::=  {  ipConfigEntry  2  }
+
+
+	ipAddress	OBJECT-TYPE	
+		SYNTAX			IpAddress
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Default IP address with which the system should come"
+		DEFVAL			{ 'C0A811'h }
+		::=  {  ipConfigEntry  3  }
+
+
+	ipNetworkMask	OBJECT-TYPE	
+		SYNTAX			IpAddress
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"IP Network mask related to ipAddress"
+		DEFVAL			{ 'FFFFFF'h }
+		::=  {  ipConfigEntry  4  }
+
+
+	ipDefaultGateway	OBJECT-TYPE	
+		SYNTAX			IpAddress
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Default gateway to use for routed traffic."
+		DEFVAL			{ 'C0A81'h }
+		::=  {  ipConfigEntry  5  }
+
+
+	autoIpConfig	OBJECT-TYPE	
+		SYNTAX			INTEGER  { no ( 0 ) , yes ( 1 ) } 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Default gateway to use for routed traffic."
+		::=  {  ipConfigEntry  6  }
+
+	hwDescTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  HwDescEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Contains hardware description"
+		::=  { ru  10 }
+
+	hwDescEntry	OBJECT-TYPE
+		SYNTAX		HwDescEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Row Description"
+		INDEX		{  hwDescIndex  }
+		::=  { hwDescTable 1 }
+
+	HwDescEntry  ::=  SEQUENCE {
+		hwDescIndex  Integer32,
+		hwVersion  DisplayString,
+		hwSerialNo  DisplayString
+		}
+
+
+	hwDescIndex	OBJECT-TYPE	
+		SYNTAX			Integer32
+		MAX-ACCESS		not-accessible
+		STATUS			current
+		DESCRIPTION		"Dummy Index Value"
+		::=  {  hwDescEntry  1  }
+
+
+	hwVersion	OBJECT-TYPE	
+		SYNTAX			DisplayString  ( SIZE ( 0 .. 100  ) ) 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Hardware description of this board. How this is extracted is TBD, probably set at production"
+		::=  {  hwDescEntry  2  }
+
+
+	hwSerialNo	OBJECT-TYPE	
+		SYNTAX			DisplayString  ( SIZE ( 0 .. 50  ) ) 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Hardware serial no.  How this is extracted is TBD, probably set at production"
+		::=  {  hwDescEntry  3  }
+
+	syncClock	OBJECT IDENTIFIER
+		::=  {  ru  11  }
+
+	networkInterface	OBJECT IDENTIFIER
+		::=  {  ru  12  }
+
+	ra	OBJECT IDENTIFIER
+		::=  {  ru  13  }
+
+	esw	OBJECT IDENTIFIER
+		::=  {  ru  14  }
+
+	syncConfigTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  SyncConfigEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Contains parameters related to configuration of sync."
+		::=  { syncClock  1 }
+
+	syncConfigEntry	OBJECT-TYPE
+		SYNTAX		SyncConfigEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Row Description"
+		INDEX		{  syncConfigIndex  }
+		::=  { syncConfigTable 1 }
+
+	SyncConfigEntry  ::=  SEQUENCE {
+		syncConfigIndex  Integer32,
+		adminStatus  AdminStatus,
+		synchState  INTEGER,
+		rasterTime  Integer32,
+		syncLossThreshold  Unsigned32,
+		leakyBucketTimer  Unsigned32,
+		syncLostTimeout  Unsigned32,
+		syncConfigTimerAdjust  Integer32,
+		percentageDownlinkTransmitTime  Integer32
+		}
+
+
+	syncConfigIndex	OBJECT-TYPE	
+		SYNTAX			Integer32
+		MAX-ACCESS		not-accessible
+		STATUS			current
+		DESCRIPTION		"Dummy Index"
+		::=  {  syncConfigEntry  1  }
+
+
+	adminStatus	OBJECT-TYPE	
+		SYNTAX			AdminStatus
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Administrative State of this MO"
+		DEFVAL			{ locked }
+		::=  {  syncConfigEntry  2  }
+
+
+	synchState	OBJECT-TYPE	
+		SYNTAX			INTEGER  { notsynchronised ( 0 ) , synchronised ( 1 ) } 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Current state for Synch."
+		::=  {  syncConfigEntry  3  }
+
+
+	rasterTime	OBJECT-TYPE	
+		SYNTAX			Integer32
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"T/R switch cycle time. 
+This value will be derived from discovery frames for T1_TDN (if sync source is Radio), T2_TEN
+NOTE: 
+This parameter is RW only for 
+-	Root RU
+-	T2_TDN
+-	T1_TDN (if syncsource is internal)"
+		::=  {  syncConfigEntry  4  }
+
+
+	syncLossThreshold	OBJECT-TYPE	
+		SYNTAX			Unsigned32  ( 1 .. 100  ) 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Maximum number of sync loss errors allowed for leaky bucket timer duration"
+		DEFVAL			{ 2 }
+		::=  {  syncConfigEntry  6  }
+
+
+	leakyBucketTimer	OBJECT-TYPE	
+		SYNTAX			Unsigned32  ( 1 .. 60  ) 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Leaky bucket timer duration. At expiry of this timer, if current number of sync loss exceeds maxSyncLoss then an alarm is raised"
+		DEFVAL			{ 2 }
+		::=  {  syncConfigEntry  7  }
+
+
+	syncLostTimeout	OBJECT-TYPE	
+		SYNTAX			Unsigned32  ( 30 .. 600  ) 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Max time for which the sync can be lost. At expiry of this timer, RU will go back in discovery mode."
+		DEFVAL			{ 60 }
+		::=  {  syncConfigEntry  8  }
+
+
+	syncConfigTimerAdjust	OBJECT-TYPE	
+		SYNTAX			Integer32  ( -127 .. 127  ) 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Raster time adjustment parameter"
+		REFERENCE		"35 for Root RU, 20 for TDN are typical values"
+		DEFVAL			{ 10 }
+		::=  {  syncConfigEntry  9  }
+
+
+	percentageDownlinkTransmitTime	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 20 .. 80  ) 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Description"
+		::=  {  syncConfigEntry  10  }
+
+	synchStatisticsTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  SynchStatisticsEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Contains statistics related to sync."
+		::=  { syncClock  2 }
+
+	synchStatisticsEntry	OBJECT-TYPE
+		SYNTAX		SynchStatisticsEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Row Description"
+		INDEX		{  synchStatsIndex  }
+		::=  { synchStatisticsTable 1 }
+
+	SynchStatisticsEntry  ::=  SEQUENCE {
+		synchStatsIndex  Integer32,
+		syncLostCounter  Counter64
+		}
+
+
+	synchStatsIndex	OBJECT-TYPE	
+		SYNTAX			Integer32
+		MAX-ACCESS		not-accessible
+		STATUS			current
+		DESCRIPTION		"Dummy Index"
+		::=  {  synchStatisticsEntry  1  }
+
+
+	syncLostCounter	OBJECT-TYPE	
+		SYNTAX			Counter64
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Counter for number of times the sync has been lost"
+		::=  {  synchStatisticsEntry  2  }
+
+	synchStatusTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  SynchStatusEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Contains statistics related to sync."
+		::=  { syncClock  3 }
+
+	synchStatusEntry	OBJECT-TYPE
+		SYNTAX		SynchStatusEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Row Description"
+		INDEX		{  synchStatsIndex  }
+		::=  { synchStatusTable 1 }
+
+	SynchStatusEntry  ::=  SEQUENCE {
+		syncoperationalState  OperationStatus,
+		syncrasterTime  Integer32,
+		timerAdjust  Integer32,
+		syncpercentageDownlinkTransmitTime  Integer32
+		}
+
+
+	syncoperationalState	OBJECT-TYPE	
+		SYNTAX			OperationStatus  { disabled ( 0 ) , enabled ( 1 ) } 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Description"
+		::=  {  synchStatusEntry  1  }
+
+
+	syncrasterTime	OBJECT-TYPE	
+		SYNTAX			Integer32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Description"
+		::=  {  synchStatusEntry  2  }
+
+
+	timerAdjust	OBJECT-TYPE	
+		SYNTAX			Integer32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Description"
+		::=  {  synchStatusEntry  3  }
+
+
+	syncpercentageDownlinkTransmitTime	OBJECT-TYPE	
+		SYNTAX			Integer32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Description"
+		::=  {  synchStatusEntry  4  }
+
+	nwInterfaceStatusTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  NwInterfaceStatusEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Contains Status for Network interface in the running configuration."
+		::=  { networkInterface  2 }
+
+	nwInterfaceStatusEntry	OBJECT-TYPE
+		SYNTAX		NwInterfaceStatusEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Row Description"
+		INDEX		{  nwStatusIndex  }
+		::=  { nwInterfaceStatusTable 1 }
+
+	NwInterfaceStatusEntry  ::=  SEQUENCE {
+		nwStatusIndex  Integer32,
+		nwInterfaceName  DisplayString,
+		operationalState  OperationStatus,
+		macAddress  OCTET STRING
+		}
+
+
+	nwStatusIndex	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 1 .. 2  ) 
+		MAX-ACCESS		not-accessible
+		STATUS			current
+		DESCRIPTION		"Dummy Index"
+		::=  {  nwInterfaceStatusEntry  1  }
+
+
+	nwInterfaceName	OBJECT-TYPE	
+		SYNTAX			DisplayString  ( SIZE ( 1 .. 16  ) ) 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Interface name
+For RootRU and T2_TEN  
+   eth0 is connected to TU 
+   eth1 is not used. 
+
+For T1_TDN 
+    eth0 is Connected to T2_TDN within same TDN box.  
+    eth1 is connected to TU
+
+For T2_TDN 
+    eth0 is connected to T1_TDN  in same TDN Box.
+    eth1 is not connected"
+		::=  {  nwInterfaceStatusEntry  2  }
+
+
+	operationalState	OBJECT-TYPE	
+		SYNTAX			OperationStatus
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Operational state of this interface."
+		::=  {  nwInterfaceStatusEntry  3  }
+
+
+	macAddress	OBJECT-TYPE	
+		SYNTAX			OCTET STRING  ( SIZE ( 18  ) ) 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"MAC address of this Ethernet interface"
+		::=  {  nwInterfaceStatusEntry  4  }
+
+	nwInterfaceStatisticsTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  NwInterfaceStatisticsEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Contains statistics for Ethernet interface"
+		::=  { networkInterface  3 }
+
+	nwInterfaceStatisticsEntry	OBJECT-TYPE
+		SYNTAX		NwInterfaceStatisticsEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Row Description"
+		INDEX		{  nwStatsIndex  }
+		::=  { nwInterfaceStatisticsTable 1 }
+
+	NwInterfaceStatisticsEntry  ::=  SEQUENCE {
+		nwStatsIndex  Integer32,
+		rxPackets  Unsigned32,
+		txPackets  Unsigned32,
+		rxBytes  Unsigned32,
+		txBytes  Unsigned32,
+		rxErrors  Unsigned32,
+		txErrors  Unsigned32,
+		rxDropped  Unsigned32,
+		txDropped  Unsigned32
+		}
+
+
+	nwStatsIndex	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 1 .. 2  ) 
+		MAX-ACCESS		not-accessible
+		STATUS			current
+		DESCRIPTION		"Dummy Index"
+		::=  {  nwInterfaceStatisticsEntry  1  }
+
+
+	rxPackets	OBJECT-TYPE	
+		SYNTAX			Unsigned32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Total number of packets received"
+		DEFVAL			{ 0 }
+		::=  {  nwInterfaceStatisticsEntry  2  }
+
+
+	txPackets	OBJECT-TYPE	
+		SYNTAX			Unsigned32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Total number of packets transmitted"
+		DEFVAL			{ 0 }
+		::=  {  nwInterfaceStatisticsEntry  3  }
+
+
+	rxBytes	OBJECT-TYPE	
+		SYNTAX			Unsigned32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Total number of bytes received"
+		DEFVAL			{ 0 }
+		::=  {  nwInterfaceStatisticsEntry  4  }
+
+
+	txBytes	OBJECT-TYPE	
+		SYNTAX			Unsigned32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Total number of bytes transmitted"
+		DEFVAL			{ 0 }
+		::=  {  nwInterfaceStatisticsEntry  5  }
+
+
+	rxErrors	OBJECT-TYPE	
+		SYNTAX			Unsigned32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Total number of bad packets received"
+		DEFVAL			{ 0 }
+		::=  {  nwInterfaceStatisticsEntry  6  }
+
+
+	txErrors	OBJECT-TYPE	
+		SYNTAX			Unsigned32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Total number of packet transmit problems"
+		DEFVAL			{ 0 }
+		::=  {  nwInterfaceStatisticsEntry  7  }
+
+
+	rxDropped	OBJECT-TYPE	
+		SYNTAX			Unsigned32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Total number of buffer overflow"
+		DEFVAL			{ 0 }
+		::=  {  nwInterfaceStatisticsEntry  8  }
+
+
+	txDropped	OBJECT-TYPE	
+		SYNTAX			Unsigned32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Total number of buffer overflow"
+		DEFVAL			{ 0 }
+		::=  {  nwInterfaceStatisticsEntry  9  }
+
+	raConfTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  RaConfEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Contains configuration for radio access."
+		::=  { ra  1 }
+
+	raConfEntry	OBJECT-TYPE
+		SYNTAX		RaConfEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Row Description"
+		INDEX		{  raIndex  }
+		::=  { raConfTable 1 }
+
+	RaConfEntry  ::=  SEQUENCE {
+		raIndex  Integer32,
+		raAdminState  AdminStatus,
+		aclMode  INTEGER,
+		ssID  DisplayString,
+		guaranteedBroadcastBW  Integer32,
+		dba  OperationStatus,
+		acm  OperationStatus,
+		acs  OperationStatus,
+		dfs  OperationStatus,
+		numSlaves  Integer32,
+		antennaPort  INTEGER
+		}
+
+
+	raIndex	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 1  ) 
+		MAX-ACCESS		not-accessible
+		STATUS			current
+		DESCRIPTION		"Radio Index"
+		::=  {  raConfEntry  1  }
+
+
+	raAdminState	OBJECT-TYPE	
+		SYNTAX			AdminStatus
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Administrative state of this MO."
+		::=  {  raConfEntry  2  }
+
+
+	aclMode	OBJECT-TYPE	
+		SYNTAX			INTEGER  { disabled ( 0 ) , accept ( 1 ) , deny ( 2 ) } 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Access list mode"
+		DEFVAL			{ disabled }
+		::=  {  raConfEntry  4  }
+
+
+	ssID	OBJECT-TYPE	
+		SYNTAX			DisplayString  ( SIZE ( 0 .. 32  ) ) 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Sector Information."
+		::=  {  raConfEntry  5  }
+
+
+	guaranteedBroadcastBW	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 0 .. 10000  ) 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Description"
+		::=  {  raConfEntry  6  }
+
+
+	dba	OBJECT-TYPE	
+		SYNTAX			OperationStatus  { disabled ( 0 ) , enabled ( 1 ) } 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Description"
+		::=  {  raConfEntry  7  }
+
+
+	acm	OBJECT-TYPE	
+		SYNTAX			OperationStatus  { disabled ( 0 ) , enabled ( 1 ) } 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Description"
+		::=  {  raConfEntry  8  }
+
+
+	acs	OBJECT-TYPE	
+		SYNTAX			OperationStatus  { disabled ( 0 ) , enabled ( 1 ) } 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Description"
+		::=  {  raConfEntry  9  }
+
+
+	dfs	OBJECT-TYPE	
+		SYNTAX			OperationStatus  { disabled ( 0 ) , enabled ( 1 ) } 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Description"
+		::=  {  raConfEntry  10  }
+
+
+	numSlaves	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 1 .. 50  ) 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Description"
+		::=  {  raConfEntry  11  }
+
+
+	antennaPort	OBJECT-TYPE	
+		SYNTAX			INTEGER  { port1 ( 1 ) , port2 ( 2 ) , both ( 3 ) } 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Description"
+		::=  {  raConfEntry  12  }
+
+	raStatusTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  RaStatusEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Contains status for radio access."
+		::=  { ra  2 }
+
+	raStatusEntry	OBJECT-TYPE
+		SYNTAX		RaStatusEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Row Description"
+		INDEX		{  raIndex  }
+		::=  { raStatusTable 1 }
+
+	RaStatusEntry  ::=  SEQUENCE {
+		currentTimeSlot  Unsigned32,
+		raMacAddress  OCTET STRING,
+		raoperationalState  OperationStatus,
+		unusedTxTimeUL  Integer32,
+		unusedTxTimeDL  Integer32
+		}
+
+
+	currentTimeSlot	OBJECT-TYPE	
+		SYNTAX			Unsigned32  ( 0 .. 8  ) 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Current time slot that is being used to connect to master in case of north radio interface.
+This value will not be valid for south radio interface."
+		DEFVAL			{ 0 }
+		::=  {  raStatusEntry  1  }
+
+
+	raMacAddress	OBJECT-TYPE	
+		SYNTAX			OCTET STRING
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"MAC address of interface [raIndex]"
+		::=  {  raStatusEntry  2  }
+
+
+	raoperationalState	OBJECT-TYPE	
+		SYNTAX			OperationStatus  { disabled ( 0 ) , enabled ( 1 ) } 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Description"
+		::=  {  raStatusEntry  3  }
+
+
+	unusedTxTimeUL	OBJECT-TYPE	
+		SYNTAX			Integer32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Description"
+		::=  {  raStatusEntry  4  }
+
+
+	unusedTxTimeDL	OBJECT-TYPE	
+		SYNTAX			Integer32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Description"
+		::=  {  raStatusEntry  5  }
+
+	raChannelListTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  RaChannelListEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Contains list of available channels for this radio interface. This tables is populated in runtime. This is populated on the basis of the value of RuConfigTable.countrycode,"
+		::=  { ra  3 }
+
+	raChannelListEntry	OBJECT-TYPE
+		SYNTAX		RaChannelListEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Row Description"
+		INDEX		{  raIndex, raChanIndex  }
+		::=  { raChannelListTable 1 }
+
+	RaChannelListEntry  ::=  SEQUENCE {
+		raChanIndex  Integer32,
+		channelNumber  Unsigned32,
+		frequency  Unsigned32
+		}
+
+
+	raChanIndex	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 1 .. 200  ) 
+		MAX-ACCESS		not-accessible
+		STATUS			current
+		DESCRIPTION		"Dummy Index"
+		::=  {  raChannelListEntry  1  }
+
+
+	channelNumber	OBJECT-TYPE	
+		SYNTAX			Unsigned32  ( 0 .. 200  ) 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Channel number as defined in IEEE standard"
+		::=  {  raChannelListEntry  2  }
+
+
+	frequency	OBJECT-TYPE	
+		SYNTAX			Unsigned32  ( 100 .. 6000  ) 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Frequency in MHz"
+		::=  {  raChannelListEntry  3  }
+
+	raScanListTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  RaScanListEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Contains Status for visible Radio Networks. This table is populated in runtime during connect to master procedure. It will show a row for each node currently discovered."
+		::=  { ra  4 }
+
+	raScanListEntry	OBJECT-TYPE
+		SYNTAX		RaScanListEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Row Description"
+		INDEX		{  raIndex, raScanIndex  }
+		::=  { raScanListTable 1 }
+
+	RaScanListEntry  ::=  SEQUENCE {
+		raScanIndex  Integer32,
+		ssid  DisplayString,
+		signalStrength  Integer32,
+		macAddr  OCTET STRING,
+		rastertime  Unsigned32,
+		timeslot  Unsigned32,
+		maxSlaves  Unsigned32,
+		channelNum  Integer32,
+		basicRate  Integer32,
+		radfs  OperationStatus,
+		raacm  OperationStatus
+		}
+
+
+	raScanIndex	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 1 .. 16  ) 
+		MAX-ACCESS		not-accessible
+		STATUS			current
+		DESCRIPTION		"Dummy Index"
+		::=  {  raScanListEntry  1  }
+
+
+	ssid	OBJECT-TYPE	
+		SYNTAX			DisplayString  ( SIZE ( 0 .. 32  ) ) 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Sector information"
+		::=  {  raScanListEntry  2  }
+
+
+	signalStrength	OBJECT-TYPE	
+		SYNTAX			Integer32  ( -95 .. 0  ) 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Received Signal Strength Indication in dBm"
+		::=  {  raScanListEntry  3  }
+
+
+	macAddr	OBJECT-TYPE	
+		SYNTAX			OCTET STRING  ( SIZE ( 18  ) ) 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"MAC address of the master that transmitted this discovery frame,"
+		::=  {  raScanListEntry  4  }
+
+
+	rastertime	OBJECT-TYPE	
+		SYNTAX			Unsigned32  ( 2 | 4 | 8  ) 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"T/R switch cycle time in milliseconds"
+		::=  {  raScanListEntry  5  }
+
+
+	timeslot	OBJECT-TYPE	
+		SYNTAX			Unsigned32  ( 1 .. 8  ) 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Timeslot on which the discovery frame is received"
+		::=  {  raScanListEntry  6  }
+
+
+	maxSlaves	OBJECT-TYPE	
+		SYNTAX			Unsigned32  ( 1 .. 8  ) 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Maximum slaves that are served by the master that transmitted this discovery frame,"
+		::=  {  raScanListEntry  7  }
+
+
+	channelNum	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 0 .. 200  ) 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Chnnael Number as defined in Wifi 802.11 standard. In case of channel in non standard band, channel number will be 0."
+		::=  {  raScanListEntry  9  }
+
+
+	basicRate	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 6000 .. 300000  ) 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Description"
+		::=  {  raScanListEntry  10  }
+
+
+	radfs	OBJECT-TYPE	
+		SYNTAX			OperationStatus  { disabled ( 0 ) , enabled ( 1 ) } 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Description"
+		::=  {  raScanListEntry  11  }
+
+
+	raacm	OBJECT-TYPE	
+		SYNTAX			OperationStatus  { disabled ( 0 ) , enabled ( 1 ) } 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Description"
+		::=  {  raScanListEntry  12  }
+
+	raAclConfigTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  RaAclConfigEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Contains list of MAC addresses which are allowed to be connected This table is used in a configuration transaction"
+		::=  { ra  5 }
+
+	raAclConfigEntry	OBJECT-TYPE
+		SYNTAX		RaAclConfigEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Row Description"
+		INDEX		{  raIndex, aclIndex  }
+		::=  { raAclConfigTable 1 }
+
+	RaAclConfigEntry  ::=  SEQUENCE {
+		aclIndex  Integer32,
+		macaddress  OCTET STRING,
+		rowSts  RowStatus
+		}
+
+
+	aclIndex	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 1 .. 400  ) 
+		MAX-ACCESS		not-accessible
+		STATUS			current
+		DESCRIPTION		"Dummy Index"
+		::=  {  raAclConfigEntry  1  }
+
+
+	macaddress	OBJECT-TYPE	
+		SYNTAX			OCTET STRING  ( SIZE ( 18  ) ) 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"MAC Address"
+		::=  {  raAclConfigEntry  2  }
+
+
+	rowSts	OBJECT-TYPE	
+		SYNTAX			RowStatus
+		MAX-ACCESS		read-create
+		STATUS			current
+		DESCRIPTION		"Description"
+		::=  {  raAclConfigEntry  3  }
+
+	llc	OBJECT IDENTIFIER
+		::=  {  ra  6  }
+
+	tddMac	OBJECT IDENTIFIER
+		::=  {  ra  7  }
+
+	tp	OBJECT IDENTIFIER
+		::=  {  ra  8  }
+
+	peerNode	OBJECT IDENTIFIER
+		::=  {  ra  9  }
+
+	raValidPhyRatesTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  RaValidPhyRatesEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Contains Status for visible Radio Networks. This table is populated in runtime during connect to master procedure. It will show a row for each node currently discovered."
+		::=  { ra  10 }
+
+	raValidPhyRatesEntry	OBJECT-TYPE
+		SYNTAX		RaValidPhyRatesEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Row Description"
+		INDEX		{  raIndex, mcsindex  }
+		::=  { raValidPhyRatesTable 1 }
+
+	RaValidPhyRatesEntry  ::=  SEQUENCE {
+		mcsindex  Integer32,
+		spatialStreams  Integer32,
+		modulationType  INTEGER,
+		codingRate  INTEGER,
+		rate  Integer32
+		}
+
+
+	mcsindex	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 1 .. 16  ) 
+		MAX-ACCESS		not-accessible
+		STATUS			current
+		DESCRIPTION		"Dummy Index"
+		::=  {  raValidPhyRatesEntry  1  }
+
+
+	spatialStreams	OBJECT-TYPE	
+		SYNTAX			Integer32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Description"
+		::=  {  raValidPhyRatesEntry  2  }
+
+
+	modulationType	OBJECT-TYPE	
+		SYNTAX			INTEGER  { bpsk ( 1 ) , qpsk ( 2 ) , qam16 ( 3 ) , qam64 ( 4 ) } 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Description"
+		::=  {  raValidPhyRatesEntry  3  }
+
+
+	codingRate	OBJECT-TYPE	
+		SYNTAX			INTEGER  { onebytwo ( 1 ) , twobythree ( 2 ) , threebyfour ( 3 ) , fivebysix ( 4 ) } 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Description"
+		::=  {  raValidPhyRatesEntry  4  }
+
+
+	rate	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 6000 .. 30000  ) 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Description"
+		::=  {  raValidPhyRatesEntry  5  }
+
+	raSiteSurveyResultTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  RaSiteSurveyResultEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Contains Status for visible Radio Networks. This table is populated in runtime during connect to master procedure. It will show a row for each node currently discovered."
+		::=  { ra  11 }
+
+	raSiteSurveyResultEntry	OBJECT-TYPE
+		SYNTAX		RaSiteSurveyResultEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Row Description"
+		INDEX		{  raIndex, scanIndex  }
+		::=  { raSiteSurveyResultTable 1 }
+
+	RaSiteSurveyResultEntry  ::=  SEQUENCE {
+		scanIndex  Integer32,
+		rfChannelFrequency  Integer32,
+		numCrcErrors  Counter32,
+		maxRslCrcError  Integer32,
+		numPhyErrors  Counter32,
+		maxRslPhyError  Integer32,
+		maxRslValidFrames  Integer32,
+		channelnumber  Integer32,
+		noiseFloor  Integer32
+		}
+
+
+	scanIndex	OBJECT-TYPE	
+		SYNTAX			Integer32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Description"
+		::=  {  raSiteSurveyResultEntry  1  }
+
+
+	rfChannelFrequency	OBJECT-TYPE	
+		SYNTAX			Integer32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Description"
+		::=  {  raSiteSurveyResultEntry  2  }
+
+
+	numCrcErrors	OBJECT-TYPE	
+		SYNTAX			Counter32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Description"
+		::=  {  raSiteSurveyResultEntry  3  }
+
+
+	maxRslCrcError	OBJECT-TYPE	
+		SYNTAX			Integer32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Description"
+		::=  {  raSiteSurveyResultEntry  4  }
+
+
+	numPhyErrors	OBJECT-TYPE	
+		SYNTAX			Counter32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Description"
+		::=  {  raSiteSurveyResultEntry  5  }
+
+
+	maxRslPhyError	OBJECT-TYPE	
+		SYNTAX			Integer32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Description"
+		::=  {  raSiteSurveyResultEntry  6  }
+
+
+	maxRslValidFrames	OBJECT-TYPE	
+		SYNTAX			Integer32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Description"
+		::=  {  raSiteSurveyResultEntry  7  }
+
+
+	channelnumber	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 0 .. 200  ) 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Description"
+		::=  {  raSiteSurveyResultEntry  8  }
+
+
+	noiseFloor	OBJECT-TYPE	
+		SYNTAX			Integer32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Description"
+		::=  {  raSiteSurveyResultEntry  9  }
+
+	eswPortConfigTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  EswPortConfigEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Contains parameters related to Port Configuration on Ethernet Switch."
+		::=  { esw  4 }
+
+	eswPortConfigEntry	OBJECT-TYPE
+		SYNTAX		EswPortConfigEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Ethernet Switch Port Configuration Entry"
+		INDEX		{  eswPortConfigPortNum  }
+		::=  { eswPortConfigTable 1 }
+
+	EswPortConfigEntry  ::=  SEQUENCE {
+		eswPortConfigPortNum  Integer32,
+		eswPortConfigAdminState  INTEGER,
+		eswPortConfigLinkMode  INTEGER,
+		eswPortConfigPortVid  Integer32,
+		eswPortConfigAuthState  INTEGER,
+		eswPortConfigMirrDir  INTEGER,
+		eswPortConfigDotqMode  INTEGER,
+		eswPortConfigMacFlowControl  INTEGER
+		}
+
+
+	eswPortConfigPortNum	OBJECT-TYPE	
+		SYNTAX			Integer32
+		MAX-ACCESS		not-accessible
+		STATUS			current
+		DESCRIPTION		"Port Number"
+		::=  {  eswPortConfigEntry  1  }
+
+
+	eswPortConfigAdminState	OBJECT-TYPE	
+		SYNTAX			INTEGER  { locked ( 0 ) , unlocked ( 1 ) } 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Admin State of Ethernet Switch Port Configuration Table"
+		::=  {  eswPortConfigEntry  2  }
+
+
+	eswPortConfigLinkMode	OBJECT-TYPE	
+		SYNTAX			INTEGER  { auto ( 0 ) , mbps100 ( 2 ) , mbps10 ( 3 ) } 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Link State: Ethernet Switch Port Configuration Table"
+		::=  {  eswPortConfigEntry  3  }
+
+
+	eswPortConfigPortVid	OBJECT-TYPE	
+		SYNTAX			Integer32
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Port Vid: Ethernet Switch Port Configuration Table"
+		::=  {  eswPortConfigEntry  4  }
+
+
+	eswPortConfigAuthState	OBJECT-TYPE	
+		SYNTAX			INTEGER  { disable ( 0 ) , acceptSpecificMac ( 1 ) } 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"State of MAC filtering on the portState of MAC filtering on the port"
+		DEFVAL			{ disable }
+		::=  {  eswPortConfigEntry  5  }
+
+
+	eswPortConfigMirrDir	OBJECT-TYPE	
+		SYNTAX			INTEGER  { disable ( 0 ) , mirrorTX ( 1 ) , mirrorTXRX ( 2 ) } 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Direction in which mirror is required."
+		DEFVAL			{ disable }
+		::=  {  eswPortConfigEntry  6  }
+
+
+	eswPortConfigDotqMode	OBJECT-TYPE	
+		SYNTAX			INTEGER  { disable ( 0 ) , fallback ( 1 ) , check ( 2 ) } 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Configure how the port responds to the untagged/known tagged/unknown tagged  data traffic"
+		DEFVAL			{ disable }
+		::=  {  eswPortConfigEntry  7  }
+
+
+	eswPortConfigMacFlowControl	OBJECT-TYPE	
+		SYNTAX			INTEGER  { disable ( 0 ) , enable ( 1 ) } 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Enable/disable flow control on this port at MAC level."
+		DEFVAL			{ disable }
+		::=  {  eswPortConfigEntry  8  }
+
+	eswPortBwTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  EswPortBwEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Contains parameters related to Port Bandwidth Configuration on Ethernet Switch."
+		::=  { esw  5 }
+
+	eswPortBwEntry	OBJECT-TYPE
+		SYNTAX		EswPortBwEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Ethernet Switch System Port Bandwidth Configuration Entry"
+		INDEX		{  eswPortBwPortNum  }
+		::=  { eswPortBwTable 1 }
+
+	EswPortBwEntry  ::=  SEQUENCE {
+		eswPortBwPortNum  Integer32,
+		eswPortBwEgressBw  Integer32,
+		eswPortBwIngressBw  Integer32
+		}
+
+
+	eswPortBwPortNum	OBJECT-TYPE	
+		SYNTAX			Integer32
+		MAX-ACCESS		not-accessible
+		STATUS			current
+		DESCRIPTION		"Port Number"
+		::=  {  eswPortBwEntry  1  }
+
+
+	eswPortBwEgressBw	OBJECT-TYPE	
+		SYNTAX			Integer32
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Egress Bandwidth on given port"
+		::=  {  eswPortBwEntry  2  }
+
+
+	eswPortBwIngressBw	OBJECT-TYPE	
+		SYNTAX			Integer32
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Ingress Bandwidth on given port"
+		::=  {  eswPortBwEntry  3  }
+
+	eswPortQinQTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  EswPortQinQEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"QinQ Table on Ethernet Switch."
+		::=  { esw  6 }
+
+	eswPortQinQEntry	OBJECT-TYPE
+		SYNTAX		EswPortQinQEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Entry in QinQ table:  Ethernet Switch"
+		INDEX		{  eswPortQinQPortNum  }
+		::=  { eswPortQinQTable 1 }
+
+	EswPortQinQEntry  ::=  SEQUENCE {
+		eswPortQinQPortNum  Integer32,
+		eswPortQinQAuthState  INTEGER,
+		eswPortQinQProviderTag  Integer32
+		}
+
+
+	eswPortQinQPortNum	OBJECT-TYPE	
+		SYNTAX			Integer32
+		MAX-ACCESS		not-accessible
+		STATUS			current
+		DESCRIPTION		"Port Number"
+		::=  {  eswPortQinQEntry  1  }
+
+
+	eswPortQinQAuthState	OBJECT-TYPE	
+		SYNTAX			INTEGER  { disable ( 0 ) , enable ( 1 ) } 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"QinQ State"
+		::=  {  eswPortQinQEntry  2  }
+
+
+	eswPortQinQProviderTag	OBJECT-TYPE	
+		SYNTAX			Integer32  ( -2147483648 .. 2147483647  ) 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Tag to Add"
+		::=  {  eswPortQinQEntry  3  }
+
+	eswMirroringPortTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  EswMirroringPortEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Configuration as to which port is the mirroring port"
+		::=  { esw  9 }
+
+	eswMirroringPortEntry	OBJECT-TYPE
+		SYNTAX		EswMirroringPortEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Entry for the table eswMirroringPortTable"
+		INDEX		{  eswMirroringPortIndexId  }
+		::=  { eswMirroringPortTable 1 }
+
+	EswMirroringPortEntry  ::=  SEQUENCE {
+		eswMirroringPortIndexId  Integer32,
+		eswMirroringPort  Integer32,
+		eswMirroringPortSecond  Integer32
+		}
+
+
+	eswMirroringPortIndexId	OBJECT-TYPE	
+		SYNTAX			Integer32
+		MAX-ACCESS		not-accessible
+		STATUS			current
+		DESCRIPTION		"Port Number"
+		::=  {  eswMirroringPortEntry  1  }
+
+
+	eswMirroringPort	OBJECT-TYPE	
+		SYNTAX			Integer32  ( -2147483648 .. 2147483647  ) 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Port in switch 1 which is acting as Rx/Tx mirror port on the basis of direction value in PortConfigurationTable"
+		DEFVAL			{ 0 }
+		::=  {  eswMirroringPortEntry  2  }
+
+
+	eswMirroringPortSecond	OBJECT-TYPE	
+		SYNTAX			Integer32  ( -2147483648 .. 2147483647  ) 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Port in switch 2 which is acting as Rx/Tx mirror port on the basis of direction value in PortConfigurationTable"
+		DEFVAL			{ 0 }
+		::=  {  eswMirroringPortEntry  3  }
+
+	eswPortStatusTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  EswPortStatusEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Ethernet Switch Port Status Table"
+		::=  { esw  10 }
+
+	eswPortStatusEntry	OBJECT-TYPE
+		SYNTAX		EswPortStatusEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Entry for the Ethernet Switch Port Status Table "
+		INDEX		{  eswPortStatusPortNum  }
+		::=  { eswPortStatusTable 1 }
+
+	EswPortStatusEntry  ::=  SEQUENCE {
+		eswPortStatusPortNum  Integer32,
+		eswPortStatusOpState  INTEGER,
+		eswPortStatusLinkSpeed  INTEGER,
+		eswPortStatusMacFlowControl  INTEGER
+		}
+
+
+	eswPortStatusPortNum	OBJECT-TYPE	
+		SYNTAX			Integer32
+		MAX-ACCESS		not-accessible
+		STATUS			current
+		DESCRIPTION		"Port Number"
+		::=  {  eswPortStatusEntry  1  }
+
+
+	eswPortStatusOpState	OBJECT-TYPE	
+		SYNTAX			INTEGER  { disable ( 0 ) , enable ( 1 ) } 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Operational state: Link up/down"
+		::=  {  eswPortStatusEntry  2  }
+
+
+	eswPortStatusLinkSpeed	OBJECT-TYPE	
+		SYNTAX			INTEGER  { mbps100 ( 2 ) , mbps10 ( 3 ) } 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Speed of the link"
+		::=  {  eswPortStatusEntry  3  }
+
+
+	eswPortStatusMacFlowControl	OBJECT-TYPE	
+		SYNTAX			INTEGER  { disable ( 0 ) , enable ( 1 ) } 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Current flow control state at on the link at this port PHY and will depend on the configuration of the node on the other side of the link."
+		::=  {  eswPortStatusEntry  4  }
+
+	eswPortStatisticsTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  EswPortStatisticsEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Ethernet Switch Port Statistics Table"
+		::=  { esw  11 }
+
+	eswPortStatisticsEntry	OBJECT-TYPE
+		SYNTAX		EswPortStatisticsEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Entry for the Ethernet Switch Port Statistics Table "
+		INDEX		{  eswPortStatisticsPortNum  }
+		::=  { eswPortStatisticsTable 1 }
+
+	EswPortStatisticsEntry  ::=  SEQUENCE {
+		eswPortStatisticsPortNum  Integer32,
+		eswPortStatisticsInDiscards  Unsigned32,
+		eswPortStatisticsInGoodOctets  Counter64,
+		eswPortStatisticsInBadOctets  Unsigned32,
+		eswPortStatisticsOutOctets  Counter64
+		}
+
+
+	eswPortStatisticsPortNum	OBJECT-TYPE	
+		SYNTAX			Integer32
+		MAX-ACCESS		not-accessible
+		STATUS			current
+		DESCRIPTION		"Port Number"
+		::=  {  eswPortStatisticsEntry  1  }
+
+
+	eswPortStatisticsInDiscards	OBJECT-TYPE	
+		SYNTAX			Unsigned32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Total number of good. Non filtered frames which are transmitted due to lack of buffer memory."
+		::=  {  eswPortStatisticsEntry  4  }
+
+
+	eswPortStatisticsInGoodOctets	OBJECT-TYPE	
+		SYNTAX			Counter64
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"The sum of length of all GOOD frames received"
+		::=  {  eswPortStatisticsEntry  5  }
+
+
+	eswPortStatisticsInBadOctets	OBJECT-TYPE	
+		SYNTAX			Unsigned32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"The sum of length of all BAD frames received"
+		::=  {  eswPortStatisticsEntry  6  }
+
+
+	eswPortStatisticsOutOctets	OBJECT-TYPE	
+		SYNTAX			Counter64
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"The sum of length of all Ethernet frames sent from this MAC"
+		::=  {  eswPortStatisticsEntry  7  }
+
+	eswGoodFramesTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  EswGoodFramesEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Ethernet Switch Port Good Frames Statistics Table"
+		::=  { esw  12 }
+
+	eswGoodFramesEntry	OBJECT-TYPE
+		SYNTAX		EswGoodFramesEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Entry for the Ethernet Switch Port Good Frames Statistics Table "
+		INDEX		{  eswGoodFramesPortNum  }
+		::=  { eswGoodFramesTable 1 }
+
+	EswGoodFramesEntry  ::=  SEQUENCE {
+		eswGoodFramesPortNum  Integer32,
+		eswGoodFramesInUnicast  Unsigned32,
+		eswGoodFramesOutUnicast  Unsigned32,
+		eswGoodFramesInBCast  Unsigned32,
+		eswGoodFramesOutBCast  Unsigned32,
+		eswGoodFramesInMCast  Unsigned32,
+		eswGoodFramesOutMcast  Unsigned32
+		}
+
+
+	eswGoodFramesPortNum	OBJECT-TYPE	
+		SYNTAX			Integer32
+		MAX-ACCESS		not-accessible
+		STATUS			current
+		DESCRIPTION		"Port Number"
+		::=  {  eswGoodFramesEntry  1  }
+
+
+	eswGoodFramesInUnicast	OBJECT-TYPE	
+		SYNTAX			Unsigned32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Total good frames received with Unicast MAC address"
+		::=  {  eswGoodFramesEntry  2  }
+
+
+	eswGoodFramesOutUnicast	OBJECT-TYPE	
+		SYNTAX			Unsigned32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Total good frames sent with Unicast MAC address"
+		::=  {  eswGoodFramesEntry  3  }
+
+
+	eswGoodFramesInBCast	OBJECT-TYPE	
+		SYNTAX			Unsigned32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Total good frames received with Broadcast MAC address."
+		::=  {  eswGoodFramesEntry  4  }
+
+
+	eswGoodFramesOutBCast	OBJECT-TYPE	
+		SYNTAX			Unsigned32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Total good frames sent with Broadcast MAC address"
+		::=  {  eswGoodFramesEntry  5  }
+
+
+	eswGoodFramesInMCast	OBJECT-TYPE	
+		SYNTAX			Unsigned32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Total good frames received with Multicast MAC address"
+		::=  {  eswGoodFramesEntry  6  }
+
+
+	eswGoodFramesOutMcast	OBJECT-TYPE	
+		SYNTAX			Unsigned32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Total good frames sent with Multicast MAC address"
+		::=  {  eswGoodFramesEntry  7  }
+
+	eswBadFramesTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  EswBadFramesEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Ethernet Switch Port Bad Frames Statistics Table"
+		::=  { esw  13 }
+
+	eswBadFramesEntry	OBJECT-TYPE
+		SYNTAX		EswBadFramesEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Entry for the Ethernet Switch Port Bad Frames Statistics Table "
+		INDEX		{  eswBadFramesPortNum  }
+		::=  { eswBadFramesTable 1 }
+
+	EswBadFramesEntry  ::=  SEQUENCE {
+		eswBadFramesPortNum  Integer32,
+		eswBadFramesInUndersizeRx  Unsigned32,
+		eswBadFramesInFragmentsRx  Unsigned32,
+		eswBadFramesInOversizeRx  Unsigned32,
+		eswBadFramesInJabberRx  Unsigned32,
+		eswBadFramesInFCSErrRx  Unsigned32,
+		eswBadFramesOutFCSErrTx  Unsigned32,
+		eswBadFramesDeferredTx  Unsigned32,
+		eswBadFramesCollisionsTx  Unsigned32,
+		eswBadFramesLateTx  Unsigned32,
+		eswBadFramesExcessiveTx  Unsigned32,
+		eswBadFramesSingleTx  Unsigned32,
+		eswBadFramesMultipleTx  Unsigned32
+		}
+
+
+	eswBadFramesPortNum	OBJECT-TYPE	
+		SYNTAX			Integer32
+		MAX-ACCESS		not-accessible
+		STATUS			current
+		DESCRIPTION		"Port Number"
+		::=  {  eswBadFramesEntry  1  }
+
+
+	eswBadFramesInUndersizeRx	OBJECT-TYPE	
+		SYNTAX			Unsigned32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Frames with less than 64 bytes but with valid FCS"
+		::=  {  eswBadFramesEntry  2  }
+
+
+	eswBadFramesInFragmentsRx	OBJECT-TYPE	
+		SYNTAX			Unsigned32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Frames with less than 64 bytes and invalid FCS"
+		::=  {  eswBadFramesEntry  3  }
+
+
+	eswBadFramesInOversizeRx	OBJECT-TYPE	
+		SYNTAX			Unsigned32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Frames with more than MaxSize bytes but with valid FCS."
+		::=  {  eswBadFramesEntry  4  }
+
+
+	eswBadFramesInJabberRx	OBJECT-TYPE	
+		SYNTAX			Unsigned32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Frames with more than MaxSize bytes and invalid FCS."
+		::=  {  eswBadFramesEntry  5  }
+
+
+	eswBadFramesInFCSErrRx	OBJECT-TYPE	
+		SYNTAX			Unsigned32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Total frames received with CRC error"
+		::=  {  eswBadFramesEntry  7  }
+
+
+	eswBadFramesOutFCSErrTx	OBJECT-TYPE	
+		SYNTAX			Unsigned32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Frames transmitted incorrectly"
+		::=  {  eswBadFramesEntry  8  }
+
+
+	eswBadFramesDeferredTx	OBJECT-TYPE	
+		SYNTAX			Unsigned32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Successfully transmitted frames which got delayed"
+		::=  {  eswBadFramesEntry  9  }
+
+
+	eswBadFramesCollisionsTx	OBJECT-TYPE	
+		SYNTAX			Unsigned32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"total collisions (late + excessive)"
+		::=  {  eswBadFramesEntry  10  }
+
+
+	eswBadFramesLateTx	OBJECT-TYPE	
+		SYNTAX			Unsigned32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"number of late collisions."
+		::=  {  eswBadFramesEntry  11  }
+
+
+	eswBadFramesExcessiveTx	OBJECT-TYPE	
+		SYNTAX			Unsigned32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"frames dropped due to excessive collisions"
+		::=  {  eswBadFramesEntry  12  }
+
+
+	eswBadFramesSingleTx	OBJECT-TYPE	
+		SYNTAX			Unsigned32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Frames which experienced exactly one collison"
+		::=  {  eswBadFramesEntry  13  }
+
+
+	eswBadFramesMultipleTx	OBJECT-TYPE	
+		SYNTAX			Unsigned32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Frames which experienced multiple collison"
+		::=  {  eswBadFramesEntry  14  }
+
+	eswVlanConfigTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  EswVlanConfigEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Ethernet Switch Vlan Configuration Table"
+		::=  { esw  14 }
+
+	eswVlanConfigEntry	OBJECT-TYPE
+		SYNTAX		EswVlanConfigEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Entry for the Ethernet Switch Vlan Configuration Table"
+		INDEX		{  eswVlanConfigVlanId  }
+		::=  { eswVlanConfigTable 1 }
+
+	EswVlanConfigEntry  ::=  SEQUENCE {
+		eswVlanConfigVlanId  Integer32,
+		eswVlanConfigVlanName  DisplayString,
+		eswVlanConfigVlanType  INTEGER,
+		eswVlanConfigVlanTag  Integer32,
+		eswVlanConfigMemberPorts  Unsigned32,
+		eswVlanConfigRowStatus  RowStatus
+		}
+
+
+	eswVlanConfigVlanId	OBJECT-TYPE	
+		SYNTAX			Integer32
+		MAX-ACCESS		not-accessible
+		STATUS			current
+		DESCRIPTION		"Vlan Id"
+		::=  {  eswVlanConfigEntry  1  }
+
+
+	eswVlanConfigVlanName	OBJECT-TYPE	
+		SYNTAX			DisplayString  ( SIZE ( 1 .. 8  ) ) 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Name of the VLAN"
+		::=  {  eswVlanConfigEntry  3  }
+
+
+	eswVlanConfigVlanType	OBJECT-TYPE	
+		SYNTAX			INTEGER  { tagBased ( 1 ) } 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Type of VLAN"
+		::=  {  eswVlanConfigEntry  4  }
+
+
+	eswVlanConfigVlanTag	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 0 .. 4095  ) 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"VLAN ID or Tag. This field defines that on which tagged packets this vlan will be effective. E.g. vlanTag of 0x20 will only route the packets with tag 0x20."
+		::=  {  eswVlanConfigEntry  5  }
+
+
+	eswVlanConfigMemberPorts	OBJECT-TYPE	
+		SYNTAX			Unsigned32  ( 0 .. 4294967295  ) 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Each bit indicates the corresponding port association with VLAN. E.g. 0x06 represents port 2 & port 3 are members."
+		::=  {  eswVlanConfigEntry  6  }
+
+
+	eswVlanConfigRowStatus	OBJECT-TYPE	
+		SYNTAX			RowStatus  { active ( 1 ) , notInService ( 2 ) , notReady ( 3 ) , createAndGo ( 4 ) , createAndWait ( 5 ) , destroy ( 6 ) } 
+		MAX-ACCESS		read-create
+		STATUS			current
+		DESCRIPTION		"Row Status"
+		::=  {  eswVlanConfigEntry  8  }
+
+	eswATUConfigTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  EswATUConfigEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Ethernet Switch ATU Configuration Table"
+		::=  { esw  15 }
+
+	eswATUConfigEntry	OBJECT-TYPE
+		SYNTAX		EswATUConfigEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Entry for the Ethernet Switch ATU Configuration Table"
+		INDEX		{  eswATUConfigAtuId  }
+		::=  { eswATUConfigTable 1 }
+
+	EswATUConfigEntry  ::=  SEQUENCE {
+		eswATUConfigAtuId  Integer32,
+		eswATUConfigEntryType  INTEGER,
+		eswATUConfigPriorityVal  Integer32,
+		eswATUConfigMacAddress  OCTET STRING,
+		eswATUConfigMemberPorts  Unsigned32,
+		eswATUConfigRowStatus  RowStatus
+		}
+
+
+	eswATUConfigAtuId	OBJECT-TYPE	
+		SYNTAX			Integer32
+		MAX-ACCESS		not-accessible
+		STATUS			current
+		DESCRIPTION		"Atu Id"
+		::=  {  eswATUConfigEntry  1  }
+
+
+	eswATUConfigEntryType	OBJECT-TYPE	
+		SYNTAX			INTEGER  { static ( 0 ) , mgmt ( 1 ) , priorityOverride ( 2 ) } 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Type of the ATU entry"
+		DEFVAL			{ static }
+		::=  {  eswATUConfigEntry  3  }
+
+
+	eswATUConfigPriorityVal	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 0 .. 3  ) 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Priority Value"
+		DEFVAL			{ 0 }
+		::=  {  eswATUConfigEntry  4  }
+
+
+	eswATUConfigMacAddress	OBJECT-TYPE	
+		SYNTAX			OCTET STRING
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Static mac entry configured in the ATU"
+		::=  {  eswATUConfigEntry  5  }
+
+
+	eswATUConfigMemberPorts	OBJECT-TYPE	
+		SYNTAX			Unsigned32  ( 0 .. 4294967295  ) 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Each bit indicates where the frame from the above macAddress needs to be egressed. E.g. 0x06represents port 2 & port 3."
+		::=  {  eswATUConfigEntry  6  }
+
+
+	eswATUConfigRowStatus	OBJECT-TYPE	
+		SYNTAX			RowStatus
+		MAX-ACCESS		read-create
+		STATUS			current
+		DESCRIPTION		"RowStatus"
+		::=  {  eswATUConfigEntry  7  }
+
+	eswPortAccessListTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  EswPortAccessListEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Description"
+		::=  { esw  16 }
+
+	eswPortAccessListEntry	OBJECT-TYPE
+		SYNTAX		EswPortAccessListEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Row Description"
+		INDEX		{  eswPortACLPortNum, eswPortACLSecIndex  }
+		::=  { eswPortAccessListTable 1 }
+
+	EswPortAccessListEntry  ::=  SEQUENCE {
+		eswPortACLPortNum  Integer32,
+		eswPortACLSecIndex  Integer32,
+		eswPortACLMacAddress  OCTET STRING
+		}
+
+
+	eswPortACLPortNum	OBJECT-TYPE	
+		SYNTAX			Integer32  ( -2147483648 .. 2147483647  ) 
+		MAX-ACCESS		not-accessible
+		STATUS			current
+		DESCRIPTION		"Port Number for which this entry is applicable"
+		::=  {  eswPortAccessListEntry  1  }
+
+
+	eswPortACLSecIndex	OBJECT-TYPE	
+		SYNTAX			Integer32  ( -2147483648 .. 2147483647  ) 
+		MAX-ACCESS		not-accessible
+		STATUS			current
+		DESCRIPTION		"Column Description"
+		::=  {  eswPortAccessListEntry  2  }
+
+
+	eswPortACLMacAddress	OBJECT-TYPE	
+		SYNTAX			OCTET STRING
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"MAC address"
+		::=  {  eswPortAccessListEntry  3  }
+
+	raLlcConfTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  RaLlcConfEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Contains configuration for LLC."
+		::=  { llc  1 }
+
+	raLlcConfEntry	OBJECT-TYPE
+		SYNTAX		RaLlcConfEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Row Description"
+		INDEX		{  raIndex  }
+		::=  { raLlcConfTable 1 }
+
+	RaLlcConfEntry  ::=  SEQUENCE {
+		arqWinLow  Unsigned32,
+		arqWinHigh  Unsigned32,
+		frameLossThreshold  Unsigned32,
+		leakyBucketTimerVal  Unsigned32,
+		frameLossTimeout  Integer32
+		}
+
+
+	arqWinLow	OBJECT-TYPE	
+		SYNTAX			Unsigned32  ( 0 .. 5  ) 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Retransmit window size. Low"
+		DEFVAL			{ 1 }
+		::=  {  raLlcConfEntry  2  }
+
+
+	arqWinHigh	OBJECT-TYPE	
+		SYNTAX			Unsigned32  ( 0 .. 5  ) 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Retransmit window size. High"
+		DEFVAL			{ 1 }
+		::=  {  raLlcConfEntry  3  }
+
+
+	frameLossThreshold	OBJECT-TYPE	
+		SYNTAX			Unsigned32  ( 0 .. 4294967295  ) 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Threshold value for number of frame loss allowed for leaky bucket duration"
+		DEFVAL			{ 1000 }
+		::=  {  raLlcConfEntry  4  }
+
+
+	leakyBucketTimerVal	OBJECT-TYPE	
+		SYNTAX			Unsigned32  ( 1 .. 60  ) 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Column Description"
+		DEFVAL			{ 5 }
+		::=  {  raLlcConfEntry  5  }
+
+
+	frameLossTimeout	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 30 .. 600  ) 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Max time for which the frame can be lost. At expiry of this timer link will be deassigned."
+		DEFVAL			{ 60 }
+		::=  {  raLlcConfEntry  6  }
+
+	raTddMacConfigTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  RaTddMacConfigEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Contains configuration for TDD-MAC."
+		::=  { tddMac  1 }
+
+	raTddMacConfigEntry	OBJECT-TYPE
+		SYNTAX		RaTddMacConfigEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Row Description"
+		INDEX		{  raIndex  }
+		::=  { raTddMacConfigTable 1 }
+
+	RaTddMacConfigEntry  ::=  SEQUENCE {
+		passPhrase  DisplayString,
+		txPower  Unsigned32,
+		maxPower  Unsigned32,
+		maxCrcErrors  Unsigned32,
+		leakyBucketTimerValue  Unsigned32,
+		encryptionType  INTEGER
+		}
+
+
+	passPhrase	OBJECT-TYPE	
+		SYNTAX			DisplayString  ( SIZE ( 0 .. 64  ) ) 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"WEP encryption key. 
+Empty value in this field would mean that encryption is disabled.
+
+NOTE: OMC should ensure that any changes in encryption setting should be applied in bottom up approach i.e. first configuring the slave and then the master."
+		::=  {  raTddMacConfigEntry  2  }
+
+
+	txPower	OBJECT-TYPE	
+		SYNTAX			Unsigned32  ( 0 .. 30  ) 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Current used transmit power on radio"
+		::=  {  raTddMacConfigEntry  4  }
+
+
+	maxPower	OBJECT-TYPE	
+		SYNTAX			Unsigned32  ( 0 .. 30  ) 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Maximum transmit power that this radio can handle."
+		::=  {  raTddMacConfigEntry  5  }
+
+
+	maxCrcErrors	OBJECT-TYPE	
+		SYNTAX			Unsigned32  ( 0 .. 50000  ) 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Maximum number of CRC errors allowed for leaky bucket timer duration"
+		::=  {  raTddMacConfigEntry  6  }
+
+
+	leakyBucketTimerValue	OBJECT-TYPE	
+		SYNTAX			Unsigned32  ( 1 .. 60  ) 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Leaky bucket timer for maxCrcErrors. 
+At expiry of this timer, if current number of CRC errors exceeds maxCrcErrors then an alarm is raised."
+		DEFVAL			{ 5 }
+		::=  {  raTddMacConfigEntry  7  }
+
+
+	encryptionType	OBJECT-TYPE	
+		SYNTAX			INTEGER  { no ( 0 ) , aes ( 1 ) } 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"encryption type to be used"
+		::=  {  raTddMacConfigEntry  8  }
+
+	raTddMacStatusTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  RaTddMacStatusEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Contains status for TDD-MAC."
+		::=  { tddMac  2 }
+
+	raTddMacStatusEntry	OBJECT-TYPE
+		SYNTAX		RaTddMacStatusEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Row Description"
+		INDEX		{  raIndex  }
+		::=  { raTddMacStatusTable 1 }
+
+	RaTddMacStatusEntry  ::=  SEQUENCE {
+		rfChanFreq  Unsigned32
+		}
+
+
+	rfChanFreq	OBJECT-TYPE	
+		SYNTAX			Unsigned32  ( 0 | 100 .. 6000  ) 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"RF channel frequency currently in use."
+		::=  {  raTddMacStatusEntry  1  }
+
+	raTddMacStatisticsTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  RaTddMacStatisticsEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Contains statistics for TDD-MAC"
+		::=  { tddMac  3 }
+
+	raTddMacStatisticsEntry	OBJECT-TYPE
+		SYNTAX		RaTddMacStatisticsEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Row Description"
+		INDEX		{  raIndex  }
+		::=  { raTddMacStatisticsTable 1 }
+
+	RaTddMacStatisticsEntry  ::=  SEQUENCE {
+		rxpackets  Unsigned32,
+		txpackets  Unsigned32,
+		rxerrors  Unsigned32,
+		txerrors  Unsigned32,
+		rxdropped  Unsigned32,
+		txdropped  Unsigned32,
+		rxCrcErrors  Unsigned32,
+		rxPhyError  Unsigned32
+		}
+
+
+	rxpackets	OBJECT-TYPE	
+		SYNTAX			Unsigned32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Total number of packets received"
+		DEFVAL			{ 0 }
+		::=  {  raTddMacStatisticsEntry  1  }
+
+
+	txpackets	OBJECT-TYPE	
+		SYNTAX			Unsigned32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Total number of packets transmitted"
+		DEFVAL			{ 0 }
+		::=  {  raTddMacStatisticsEntry  2  }
+
+
+	rxerrors	OBJECT-TYPE	
+		SYNTAX			Unsigned32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Total number of bad packets received"
+		DEFVAL			{ 0 }
+		::=  {  raTddMacStatisticsEntry  3  }
+
+
+	txerrors	OBJECT-TYPE	
+		SYNTAX			Unsigned32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Total number of packet transmit problems"
+		DEFVAL			{ 0 }
+		::=  {  raTddMacStatisticsEntry  4  }
+
+
+	rxdropped	OBJECT-TYPE	
+		SYNTAX			Unsigned32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Total number of buffer overflow"
+		DEFVAL			{ 0 }
+		::=  {  raTddMacStatisticsEntry  5  }
+
+
+	txdropped	OBJECT-TYPE	
+		SYNTAX			Unsigned32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Column Description"
+		DEFVAL			{ 0 }
+		::=  {  raTddMacStatisticsEntry  6  }
+
+
+	rxCrcErrors	OBJECT-TYPE	
+		SYNTAX			Unsigned32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Total number of CRC errors received on this interface."
+		::=  {  raTddMacStatisticsEntry  7  }
+
+
+	rxPhyError	OBJECT-TYPE	
+		SYNTAX			Unsigned32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Total number of phy level errors occured on this interface."
+		::=  {  raTddMacStatisticsEntry  8  }
+
+	raPreferredRFChannelTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  RaPreferredRFChannelEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Contains statistics for TDD-MAC"
+		::=  { tddMac  4 }
+
+	raPreferredRFChannelEntry	OBJECT-TYPE
+		SYNTAX		RaPreferredRFChannelEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Row Description"
+		INDEX		{  raIndex, preindex  }
+		::=  { raPreferredRFChannelTable 1 }
+
+	RaPreferredRFChannelEntry  ::=  SEQUENCE {
+		preindex  Unsigned32,
+		rafrequency  Unsigned32
+		}
+
+
+	preindex	OBJECT-TYPE	
+		SYNTAX			Unsigned32  ( 1 .. 10  ) 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Description"
+		::=  {  raPreferredRFChannelEntry  1  }
+
+
+	rafrequency	OBJECT-TYPE	
+		SYNTAX			Unsigned32
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"The frequency for the preference given by index"
+		::=  {  raPreferredRFChannelEntry  2  }
+
+	peerConfigTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  PeerConfigEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Contains configuration for Peer Node.  In case of south interface this table controls if a certain Link /timeslot should be assigned to a specific slave."
+		::=  { peerNode  1 }
+
+	peerConfigEntry	OBJECT-TYPE
+		SYNTAX		PeerConfigEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Row Description"
+		INDEX		{  raIndex, timeslotIndex  }
+		::=  { peerConfigTable 1 }
+
+	PeerConfigEntry  ::=  SEQUENCE {
+		timeslotIndex  Integer32,
+		peerMacAddress  OCTET STRING,
+		guaranteedUplinkBW  Integer32,
+		guaranteedDownlinkBW  Integer32,
+		basicRateMCSIndex  Integer32
+		}
+
+
+	timeslotIndex	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 1 .. 8  ) 
+		MAX-ACCESS		not-accessible
+		STATUS			current
+		DESCRIPTION		"Timeslot Index"
+		::=  {  peerConfigEntry  1  }
+
+
+	peerMacAddress	OBJECT-TYPE	
+		SYNTAX			OCTET STRING  ( SIZE ( 0 .. 17  ) ) 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"MAC address, 
+Empty MAC address for south interface means timeslot is available for any slave."
+		::=  {  peerConfigEntry  2  }
+
+
+	guaranteedUplinkBW	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 0 .. 100000  ) 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Description"
+		::=  {  peerConfigEntry  3  }
+
+
+	guaranteedDownlinkBW	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 0 .. 100000  ) 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Description"
+		::=  {  peerConfigEntry  4  }
+
+
+	basicRateMCSIndex	OBJECT-TYPE	
+		SYNTAX			Integer32  ( -1 .. 15  ) 
+		MAX-ACCESS		read-write
+		STATUS			current
+		DESCRIPTION		"Description"
+		::=  {  peerConfigEntry  5  }
+
+	peerNodeStatusTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  PeerNodeStatusEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Contains status of peer node."
+		::=  { peerNode  2 }
+
+	peerNodeStatusEntry	OBJECT-TYPE
+		SYNTAX		PeerNodeStatusEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Row Description"
+		INDEX		{  raIndex, timeSlotIndex  }
+		::=  { peerNodeStatusTable 1 }
+
+	PeerNodeStatusEntry  ::=  SEQUENCE {
+		timeSlotIndex  Integer32,
+		linkStatus  INTEGER,
+		tunnelStatus  INTEGER,
+		sigStrength1  Integer32,
+		peerMacAddr  OCTET STRING,
+		ssIdentifier  DisplayString,
+		peerNodeStatusNumSlaves  Unsigned32,
+		peerNodeStatusrxRate  Integer32,
+		peerNodeStatustxRate  Integer32,
+		allocatedTxBW  Integer32,
+		allocatedRxBW  Integer32,
+		usedTxBW  Integer32,
+		usedRxBW  Integer32,
+		txbasicRate  Integer32,
+		sigStrength2  Integer32,
+		rxbasicRate  Integer32,
+		txLinkQuality  Integer32,
+		peerNodeStatustxTime  Integer32,
+		peerNodeStatusrxTime  Integer32
+		}
+
+
+	timeSlotIndex	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 1 .. 50  ) 
+		MAX-ACCESS		not-accessible
+		STATUS			current
+		DESCRIPTION		"Timeslot Index"
+		::=  {  peerNodeStatusEntry  1  }
+
+
+	linkStatus	OBJECT-TYPE	
+		SYNTAX			INTEGER  { notAssigned ( 0 ) , assigned ( 1 ) , connected ( 2 ) } 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Status of the link."
+		::=  {  peerNodeStatusEntry  2  }
+
+
+	tunnelStatus	OBJECT-TYPE	
+		SYNTAX			INTEGER  { enabled ( 1 ) , notAvailable ( 2 ) } 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Status of the tunnel."
+		::=  {  peerNodeStatusEntry  3  }
+
+
+	sigStrength1	OBJECT-TYPE	
+		SYNTAX			Integer32  ( -95 .. 0  ) 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Received Signal Strength Indication in dBm"
+		::=  {  peerNodeStatusEntry  4  }
+
+
+	peerMacAddr	OBJECT-TYPE	
+		SYNTAX			OCTET STRING  ( SIZE ( 18  ) ) 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"MAC Address of peer node in the Link."
+		::=  {  peerNodeStatusEntry  5  }
+
+
+	ssIdentifier	OBJECT-TYPE	
+		SYNTAX			DisplayString  ( SIZE ( 0 .. 32  ) ) 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Sector information for this timeslot on this radio.
+For north interface, this will be sector information received from master.
+For south interface this will be not applicable."
+		::=  {  peerNodeStatusEntry  6  }
+
+
+	peerNodeStatusNumSlaves	OBJECT-TYPE	
+		SYNTAX			Unsigned32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Maximum number southbound slaves per radio this RU can have"
+		::=  {  peerNodeStatusEntry  8  }
+
+
+	peerNodeStatusrxRate	OBJECT-TYPE	
+		SYNTAX			Integer32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Description"
+		::=  {  peerNodeStatusEntry  10  }
+
+
+	peerNodeStatustxRate	OBJECT-TYPE	
+		SYNTAX			Integer32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Description"
+		::=  {  peerNodeStatusEntry  11  }
+
+
+	allocatedTxBW	OBJECT-TYPE	
+		SYNTAX			Integer32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Description"
+		::=  {  peerNodeStatusEntry  12  }
+
+
+	allocatedRxBW	OBJECT-TYPE	
+		SYNTAX			Integer32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Description"
+		::=  {  peerNodeStatusEntry  13  }
+
+
+	usedTxBW	OBJECT-TYPE	
+		SYNTAX			Integer32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Description"
+		::=  {  peerNodeStatusEntry  14  }
+
+
+	usedRxBW	OBJECT-TYPE	
+		SYNTAX			Integer32  ( -2147483648 .. 2147483647  ) 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Description"
+		::=  {  peerNodeStatusEntry  15  }
+
+
+	txbasicRate	OBJECT-TYPE	
+		SYNTAX			Integer32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Description"
+		::=  {  peerNodeStatusEntry  16  }
+
+
+	sigStrength2	OBJECT-TYPE	
+		SYNTAX			Integer32  ( -95 .. 0  ) 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Description"
+		::=  {  peerNodeStatusEntry  17  }
+
+
+	rxbasicRate	OBJECT-TYPE	
+		SYNTAX			Integer32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Description"
+		::=  {  peerNodeStatusEntry  18  }
+
+
+	txLinkQuality	OBJECT-TYPE	
+		SYNTAX			Integer32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Description"
+		::=  {  peerNodeStatusEntry  19  }
+
+
+	peerNodeStatustxTime	OBJECT-TYPE	
+		SYNTAX			Integer32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Description"
+		::=  {  peerNodeStatusEntry  20  }
+
+
+	peerNodeStatusrxTime	OBJECT-TYPE	
+		SYNTAX			Integer32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Description"
+		::=  {  peerNodeStatusEntry  21  }
+
+	peerTunnelStatisticsTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  PeerTunnelStatisticsEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Contains statistics for Peer Node Tunnel"
+		::=  { peerNode  3 }
+
+	peerTunnelStatisticsEntry	OBJECT-TYPE
+		SYNTAX		PeerTunnelStatisticsEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Row Description"
+		INDEX		{  raIndex, tsIndex  }
+		::=  { peerTunnelStatisticsTable 1 }
+
+	PeerTunnelStatisticsEntry  ::=  SEQUENCE {
+		tsIndex  Integer32,
+		rxPacket  Counter64,
+		txPacket  Counter64,
+		rxBundles  Counter64,
+		txBundles  Counter64,
+		rxDroped  Counter64,
+		txDroped  Counter64
+		}
+
+
+	tsIndex	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 1 .. 50  ) 
+		MAX-ACCESS		not-accessible
+		STATUS			current
+		DESCRIPTION		"Time Slot Index"
+		::=  {  peerTunnelStatisticsEntry  1  }
+
+
+	rxPacket	OBJECT-TYPE	
+		SYNTAX			Counter64
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Total number of packets received"
+		::=  {  peerTunnelStatisticsEntry  2  }
+
+
+	txPacket	OBJECT-TYPE	
+		SYNTAX			Counter64
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Total number of packets transmitted"
+		::=  {  peerTunnelStatisticsEntry  3  }
+
+
+	rxBundles	OBJECT-TYPE	
+		SYNTAX			Counter64
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Total number of received bundles."
+		::=  {  peerTunnelStatisticsEntry  6  }
+
+
+	txBundles	OBJECT-TYPE	
+		SYNTAX			Counter64
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Total number of transmitted bundles."
+		::=  {  peerTunnelStatisticsEntry  7  }
+
+
+	rxDroped	OBJECT-TYPE	
+		SYNTAX			Counter64
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Total number of dropped rx packets"
+		::=  {  peerTunnelStatisticsEntry  12  }
+
+
+	txDroped	OBJECT-TYPE	
+		SYNTAX			Counter64
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Total number of dropped tx packets"
+		::=  {  peerTunnelStatisticsEntry  13  }
+
+	peerLinkStatisticsTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  PeerLinkStatisticsEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Contains statistics for peer link"
+		::=  { peerNode  4 }
+
+	peerLinkStatisticsEntry	OBJECT-TYPE
+		SYNTAX		PeerLinkStatisticsEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Row Description"
+		INDEX		{  raIndex, timeslotindex  }
+		::=  { peerLinkStatisticsTable 1 }
+
+	PeerLinkStatisticsEntry  ::=  SEQUENCE {
+		timeslotindex  Integer32,
+		txdroped  Counter64,
+		rxDataSubFrames  Counter64,
+		txDataSubFrames  Counter64,
+		signalstrength1  Integer32,
+		txRetransmissions5  Counter64,
+		txRetransmissions4  Counter64,
+		txRetransmissions3  Counter64,
+		txRetransmissions2  Counter64,
+		txRetransmissions1  Counter64,
+		txRetransmissions0  Counter64,
+		rxRetransmissions5  Counter64,
+		rxRetransmissions4  Counter64,
+		rxRetransmissions3  Counter64,
+		rxRetransmissions2  Counter64,
+		rxRetransmissions1  Counter64,
+		rxRetransmissions0  Counter64,
+		rxBroadcastDataSubFrames  Counter64,
+		rateIncreases  Counter64,
+		rateDecreases  Counter64,
+		emptyRasters  Counter64,
+		rxDroppedTpPkts  Counter64,
+		rxDroppedRadioPkts  Counter64,
+		signalstrength2  Integer32
+		}
+
+
+	timeslotindex	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 1 .. 50  ) 
+		MAX-ACCESS		not-accessible
+		STATUS			current
+		DESCRIPTION		"TimeSlot Index"
+		::=  {  peerLinkStatisticsEntry  1  }
+
+
+	txdroped	OBJECT-TYPE	
+		SYNTAX			Counter64
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Total number of dropped tx packets"
+		::=  {  peerLinkStatisticsEntry  7  }
+
+
+	rxDataSubFrames	OBJECT-TYPE	
+		SYNTAX			Counter64
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Total number of received data frames."
+		::=  {  peerLinkStatisticsEntry  14  }
+
+
+	txDataSubFrames	OBJECT-TYPE	
+		SYNTAX			Counter64
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Total number of transmitted data frames"
+		::=  {  peerLinkStatisticsEntry  15  }
+
+
+	signalstrength1	OBJECT-TYPE	
+		SYNTAX			Integer32  ( -2147483648 .. 2147483647  ) 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Received signal strength in dBm"
+		REFERENCE		"-95"
+		::=  {  peerLinkStatisticsEntry  20  }
+
+
+	txRetransmissions5	OBJECT-TYPE	
+		SYNTAX			Counter64
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Number of frames that were transmitted  5 times"
+		::=  {  peerLinkStatisticsEntry  21  }
+
+
+	txRetransmissions4	OBJECT-TYPE	
+		SYNTAX			Counter64
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Number of frames that were transmitted  4 times"
+		::=  {  peerLinkStatisticsEntry  22  }
+
+
+	txRetransmissions3	OBJECT-TYPE	
+		SYNTAX			Counter64
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Number of frames that were transmitted  3 times"
+		::=  {  peerLinkStatisticsEntry  23  }
+
+
+	txRetransmissions2	OBJECT-TYPE	
+		SYNTAX			Counter64
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Number of frames that were transmitted  2 times"
+		::=  {  peerLinkStatisticsEntry  24  }
+
+
+	txRetransmissions1	OBJECT-TYPE	
+		SYNTAX			Counter64
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Number of frames that were transmitted  1 times"
+		::=  {  peerLinkStatisticsEntry  25  }
+
+
+	txRetransmissions0	OBJECT-TYPE	
+		SYNTAX			Counter64
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Number of frames that were transmitted  0 times"
+		::=  {  peerLinkStatisticsEntry  26  }
+
+
+	rxRetransmissions5	OBJECT-TYPE	
+		SYNTAX			Counter64
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Number of frames that were transmitted 5 times"
+		::=  {  peerLinkStatisticsEntry  27  }
+
+
+	rxRetransmissions4	OBJECT-TYPE	
+		SYNTAX			Counter64
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Number of frames that were transmitted 4 times"
+		::=  {  peerLinkStatisticsEntry  28  }
+
+
+	rxRetransmissions3	OBJECT-TYPE	
+		SYNTAX			Counter64
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Number of frames that were transmitted 3 times"
+		::=  {  peerLinkStatisticsEntry  29  }
+
+
+	rxRetransmissions2	OBJECT-TYPE	
+		SYNTAX			Counter64
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Number of frames that were transmitted 2 times"
+		::=  {  peerLinkStatisticsEntry  30  }
+
+
+	rxRetransmissions1	OBJECT-TYPE	
+		SYNTAX			Counter64
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Number of frames that were transmitted 1 times"
+		::=  {  peerLinkStatisticsEntry  31  }
+
+
+	rxRetransmissions0	OBJECT-TYPE	
+		SYNTAX			Counter64
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Number of frames that were received with no retransmissions."
+		::=  {  peerLinkStatisticsEntry  32  }
+
+
+	rxBroadcastDataSubFrames	OBJECT-TYPE	
+		SYNTAX			Counter64
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Description"
+		::=  {  peerLinkStatisticsEntry  42  }
+
+
+	rateIncreases	OBJECT-TYPE	
+		SYNTAX			Counter64
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Description"
+		::=  {  peerLinkStatisticsEntry  47  }
+
+
+	rateDecreases	OBJECT-TYPE	
+		SYNTAX			Counter64
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Description"
+		::=  {  peerLinkStatisticsEntry  48  }
+
+
+	emptyRasters	OBJECT-TYPE	
+		SYNTAX			Counter64
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Description"
+		::=  {  peerLinkStatisticsEntry  49  }
+
+
+	rxDroppedTpPkts	OBJECT-TYPE	
+		SYNTAX			Counter64
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Description"
+		::=  {  peerLinkStatisticsEntry  50  }
+
+
+	rxDroppedRadioPkts	OBJECT-TYPE	
+		SYNTAX			Counter64
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Description"
+		::=  {  peerLinkStatisticsEntry  51  }
+
+
+	signalstrength2	OBJECT-TYPE	
+		SYNTAX			Integer32  ( -2147483648 .. 2147483647  ) 
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Description"
+		::=  {  peerLinkStatisticsEntry  52  }
+
+	peerRateStatisticsTable	OBJECT-TYPE
+		SYNTAX		SEQUENCE  OF  PeerRateStatisticsEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Contains statistics for peer link"
+		::=  { peerNode  5 }
+
+	peerRateStatisticsEntry	OBJECT-TYPE
+		SYNTAX		PeerRateStatisticsEntry
+		MAX-ACCESS	not-accessible
+		STATUS		current
+		DESCRIPTION	"Row Description"
+		INDEX		{  raIndex, mcsIndex, timeSlotindex  }
+		::=  { peerRateStatisticsTable 1 }
+
+	PeerRateStatisticsEntry  ::=  SEQUENCE {
+		timeSlotindex  Integer32,
+		mcsIndex  Integer32,
+		peerrate  Unsigned32,
+		per  Integer32,
+		ticks  Counter64,
+		ticksMinimumRateTx  Counter64,
+		ticksWasted  Counter64
+		}
+
+
+	timeSlotindex	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 1 .. 50  ) 
+		MAX-ACCESS		not-accessible
+		STATUS			current
+		DESCRIPTION		"TimeSlot Index"
+		::=  {  peerRateStatisticsEntry  1  }
+
+
+	mcsIndex	OBJECT-TYPE	
+		SYNTAX			Integer32  ( 1 .. 16  ) 
+		MAX-ACCESS		not-accessible
+		STATUS			current
+		DESCRIPTION		"MCS Index"
+		::=  {  peerRateStatisticsEntry  2  }
+
+
+	peerrate	OBJECT-TYPE	
+		SYNTAX			Unsigned32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Description"
+		::=  {  peerRateStatisticsEntry  3  }
+
+
+	per	OBJECT-TYPE	
+		SYNTAX			Integer32
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Description"
+		::=  {  peerRateStatisticsEntry  4  }
+
+
+	ticks	OBJECT-TYPE	
+		SYNTAX			Counter64
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Description"
+		::=  {  peerRateStatisticsEntry  5  }
+
+
+	ticksMinimumRateTx	OBJECT-TYPE	
+		SYNTAX			Counter64
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Description"
+		::=  {  peerRateStatisticsEntry  6  }
+
+
+	ticksWasted	OBJECT-TYPE	
+		SYNTAX			Counter64
+		MAX-ACCESS		read-only
+		STATUS			current
+		DESCRIPTION		"Description"
+		::=  {  peerRateStatisticsEntry  7  }
+
+END

@@ -35,18 +35,12 @@ dict_details_on["odu100"]=["161", "private", ['1.3.6.1.4.1.26149.2.2.13.1.1.2.1'
 dict_details_off["odu16"]= ["161", "private", ['1.3.6.1.4.1.26149.2.2.13.1.1.2.1','Integer32','0']]
 dict_details_off["odu100"]=["161", "private", ['1.3.6.1.4.1.26149.2.2.13.1.1.2.1','Integer32','0']]
 
-dict_details_off["idu4"]= ["8001", "private", ['1.3.6.1.4.1.26149.2.2.13.1.1.2.1','Integer32','0']]
-dict_details_on["idu4"]=["8001", "private", ['1.3.6.1.4.1.26149.2.2.13.1.1.2.1','Integer32','0']]
-
 dict_details_on["ap25"]=["161", "private", ['1.3.6.1.4.1.26149.10.2.2.1.0','Integer32','1']]
 dict_details_off["ap25"]= ["161", "private", ['1.3.6.1.4.1.26149.10.2.2.1.0','Integer32','0']]
 dict_save["ap25"]=["161", "private", ['1.3.6.1.4.1.26149.10.5.3.0','Integer32','1']]
 dict_reboot["ap25"]=["161", "private", ['1.3.6.1.4.1.26149.10.5.1.0','Integer32','1']]
 
-opt={}
-opt['success']=1
-opt['message']=""
-opt['result']=""
+
 if(os.path.isfile(MySql_file)):    # getting variables from config file    
     execfile(MySql_file)
 else:
@@ -90,14 +84,12 @@ def firmware_file_upload_ap_odu(ip_address,file_path,hostname_db,username_db,pas
 	        c = pycurl.Curl()
 	        b = StringIO.StringIO()
 	        file =file_path
-	        #print file_path
+	        print file_path
 	        values = [('image' , (c.FORM_FILE,  file))]
 	        if device_type=="ap25":
 	            c.setopt(pycurl.URL, "http://%s/cgi-bin/FirmwareUpgrade"%ip_address)
-	        elif device_type=="odu16":
-	            c.setopt(pycurl.URL, "http://%s:5555/cgi-bin/index"%ip_address)
 	        else:
-	            c.setopt(pycurl.URL, "http://%s/cgi-bin/index"%ip_address)
+	            c.setopt(pycurl.URL, "http://%s:5555/cgi-bin/index"%ip_address)
 	        #c.setopt(pycurl.HTTPHEADER, ['Accept: application/json'])http://172.22.0.101/cgi-bin/FirmwareUpgrade
 	        c.setopt(c.HTTPPOST,  values)
 	        c.setopt(pycurl.VERBOSE, 0)
@@ -374,7 +366,7 @@ def set_on_device(ip_address,port,community,received_list):
                                 
                 if errorIndication:
                     success = 1
-                    response_dict[553] = str(errorIndication)
+                    response_dict[53] = str(errorIndication)
                       
                 else:             
                     if errorStatus > 0 and errorIndex != None:
@@ -391,7 +383,7 @@ def set_on_device(ip_address,port,community,received_list):
             except socket.error as (sock_errno, sock_errstr):
                 response_dict = {}
                 success = 1
-                response_dict[551] = sock_errstr                
+                response_dict[51] = sock_errstr                
             except pysnmp.proto.error.ProtocolError as err:
                 response_dict = {}
                 success = 1
@@ -423,7 +415,6 @@ def set_on_device(ip_address,port,community,received_list):
 #is_success=1 means event failed 
 #update_time=time of event occurrence 
 #print set_on_device("172.22.0.102", "161", "private", ['1.3.6.1.4.1.26149.2.2.13.1.1.2.1','Integer32','1'])
-status_msg="Scheduling done successfully for host with ip %s"%(ip)
 if state=="Firmware":
     db = MySQLdb.connect(hostname,username,password,schema)    
     cursor = db.cursor()    
@@ -435,79 +426,54 @@ if state=="Firmware":
     file_path=res[0][0]
     if device_type=="ap25" or device_type=="odu16" or device_type=="odu100" :
 	output=firmware_file_upload_ap_odu(ip,file_path,hostname,username,password,schema,device_type)
-	opt=output
     else:
 	output=firmware_file_upload_idu(ip,file_path,hostname,username,password,schema)
-	opt=output
-    #print output
+    print output
 elif device_type!="ap25":
     if state=="Down":
         output=set_on_device(ip,dict_details_off[device_type][0],dict_details_off[device_type][1],dict_details_off[device_type][2])
-        opt=output
     if state=="Up":
         output=set_on_device(ip,dict_details_on[device_type][0],dict_details_on[device_type][1],dict_details_on[device_type][2])
-        opt=output
-    #print output
+    print output
 else:
     if state=="Down":
         output=set_on_device(ip,dict_details_off[device_type][0],dict_details_off[device_type][1],dict_details_off[device_type][2])
         print output
-        opt=output
         if(str(output['success'])=='0'):
             output=set_on_device(ip,dict_save[device_type][0],dict_save[device_type][1],dict_save[device_type][2])
             print output
-            opt=output
             if(str(output['success'])=='0'):
                 output=set_on_device(ip,dict_reboot[device_type][0],dict_reboot[device_type][1],dict_reboot[device_type][2])
                 print output
-                opt=output
     if state=="Up":
         output=set_on_device(ip,dict_details_on[device_type][0],dict_details_on[device_type][1],dict_details_on[device_type][2])
         print output
-        opt=output
         if(str(output['success'])=='0'):
             output=set_on_device(ip,dict_save[device_type][0],dict_save[device_type][1],dict_save[device_type][2])
             print output
-            opt=output
             if(str(output['success'])=='0'):
                 output=set_on_device(ip,dict_reboot[device_type][0],dict_reboot[device_type][1],dict_reboot[device_type][2])
                 print output
-                opt=output
     
 try:
     db = MySQLdb.connect(hostname,username,password,schema)    
     cursor = db.cursor()    
-    sql = "UPDATE odu_schedule set is_deleted=0,is_success=%s,update_time='%s' WHERE schedule_id = %s" % (opt['success'],str(datetime.now())[:19],schedule_id)
+    sql = "UPDATE odu_schedule set is_deleted=0,is_success=%s,update_time='%s' WHERE schedule_id = %s" % (output['success'],str(datetime.now())[:19],schedule_id)
     cursor.execute(sql)
-    mesg=""
     if state=="Firmware":
 	ssql = "UPDATE odu_host_schedule as ohs inner join (select host_id,ip_address from hosts) as h on h.host_id=ohs.host_id set ohs.is_success='%s',ohs.message='%s' \
-		where h.ip_address='%s' and ohs.schedule_id = '%s' " % (opt['success'],opt["message"],str(ip),schedule_id)
-	mesg=opt["message"]
+		where h.ip_address='%s' and ohs.schedule_id = '%s' " % (output['success'],output["message"],str(ip),schedule_id)
     else:
 	ssql = "UPDATE odu_host_schedule as ohs inner join (select host_id,ip_address from hosts) as h on h.host_id=ohs.host_id set ohs.is_success='%s' \
-		where h.ip_address='%s' and ohs.schedule_id = '%s' " % (opt['success'],str(ip),schedule_id)
-	try:
-	    mesg=opt["result"].keys()[0]
-	except Exception,e:
-	    mesg=""
+		where h.ip_address='%s' and ohs.schedule_id = '%s' " % (output['success'],str(ip),schedule_id)
     cursor.execute(ssql)
-    try:
-        if str(opt['success'])=='0':
-            sql = "INSERT INTO event_log values('null','%s',null,'Scheduling done successfully for host with ip %s','%s')" % (user_name,ip,str(datetime.now())[:19])
-        else:
-            if mesg=="":
-                sql = "INSERT INTO event_log values('null','%s',null,'Scheduling failed for host with ip %s','%s')" % (user_name,ip,str(datetime.now())[:19])
-            else:
-                sql = "INSERT INTO event_log values('null','%s',null,'Scheduling failed for host with ip %s (error : %s)','%s')" % (user_name,ip,mesg,str(datetime.now())[:19])
-    except Exception,e:
-        sql = "INSERT INTO event_log values('null','%s',null,'Scheduling done successfully for host with ip %s','%s')" % (user_name,ip,str(datetime.now())[:19])
+    sql = "INSERT INTO event_log values('null','%s',null,'SCHEDULING DONE SUCCESSFULLY','%s')" % (user_name,str(datetime.now())[:19])
     cursor.execute(sql)
     db.commit()
     db.close()
 except Exception ,e :
     print str(e)
-    #db.close()
+    db.close()
     
  
         #html.write(str(e))

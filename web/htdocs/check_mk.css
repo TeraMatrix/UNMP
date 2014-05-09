@@ -260,13 +260,12 @@ div.snapin {
     width: 100%;
     margin: 0;
     padding: 0;
-    cursor:default;
 }
 
 
 /* snapin header */
 div.snapin div.head {
-    width: 210px;
+    width: 234px;
     text-align: center;
     color: white;
 }
@@ -281,11 +280,11 @@ div.snapin div.head.open {
     display: block;
     font-weight: bold;
     font-size:10px;
-    height: 24px;
-    width: 250px;
+    height: 25px;
+    min-width: 234px;
     outline: medium none;
     padding-left: 10px;
-    padding-top: 4px;
+    padding-top: 2px;
     padding-bottom: 5px;
     text-align: left;
     text-decoration: none;
@@ -305,11 +304,11 @@ div.snapin div.head.closed {
     display: block;
     font-weight: bold;
     font-size:10px;
-    height: 24px;
-    width: 250px;
+    height: 25px;
+    min-width: 234px;
     outline: medium none;
     padding-left: 10px;
-    padding-top: 4px;
+    padding-top: 2px;
     padding-bottom: 5px;
     text-align: left;
     text-decoration: none;
@@ -327,21 +326,17 @@ div.snapin div.closesnapin {
 
 div.snapin div.head b.heading {
     position: relative;
-    top:5px;
+    top:9px;
 }
 
-div.snapin div.head:hover
-{
-	cursor:pointer;
-}
 div.snapin div.content {
     overflow: hidden;
     padding-bottom: 5px;
     padding-top: 5px;
 
-    -moz-box-shadow: 0 2px 8px #555;
-    box-shadow: #555 0 2px 8px;
-    behavior: url(/PIE.htc); -webkit-box-shadow: #555 0 2px 8px;
+    -moz-box-shadow: 0 2px 8px #333333;
+    box-shadow: #333333 0 2px 8px;
+    behavior: url(/PIE.htc); -webkit-box-shadow: #333333 0 2px 8px;
     border-top: #333333 0px solid;
     border-left: #333333 1px solid;
     border-right: #333333 1px solid;
@@ -351,10 +346,10 @@ div.snapin div.content {
     /*margin: 0 auto 10px;*/
     padding: 0;
     padding-top: 10px;
-    padding-left: 5px;
+    padding-left: 15px;
     padding-right: 12px;
     padding-bottom: 10px;
-    width: 240px;
+    width: 216px;
 }
 
 div.snapin div.foot {
@@ -1779,15 +1774,14 @@ div.shortcut-icon-div
     /*-moz-box-shadow: 0 2px 8px #333333;*/
     padding: 8px;
     margin: 16px 0 0 16px;
-    position:relative;
     float: left;
     background: -moz-linear-gradient(center top , #FFFFFF 0%, #DFDBDB 100%);	
     background:	-webkit-gradient(linear, 0% 0%, 0% 100%, from(#DFDBDB), to(#FFFFFF));	
     filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#FFFFFF', EndColorStr='#DFDBDB'); 
     -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#FFFFFF', EndColorStr='#DFDBDB')";
-    width: 205px;
+    width: 175px;
     -moz-border-radius: 5px;
-    height: 100px;
+    height: 95px;
     color: #222;
     font-size:10px;
     cursor: pointer;
@@ -1819,23 +1813,13 @@ div.shortcut-icon-div div span.sub-head
 {
    font-style:italic;
 }
-div.shortcut-icon-div div ul
-{
-	position:absolute;
-	right:20px;
-	bottom:0;
-}
-.snapin-container
-{
-   height:auto;
-   width:auto;
-}
-ul.button_group {
+/*ul.button_group {
 padding: 0;
 list-style: none;
 overflow: hidden;
 font-size:9px;
 margin: 5px auto;
+width: 230px;
 }
 ul.button_group li {
 float: left;
@@ -1843,7 +1827,6 @@ float: left;
 border: 1px solid #bbb;
 border-right: 0;
 overflow: hidden;
-cursor:pointer;
 }
 ul.button_group li:hover {
 border: 1px solid #939393;
@@ -1856,72 +1839,50 @@ background: -ms-linear-gradient(top, #f9f9f9 40%, #e3e3e3 70%);
 background: -o-linear-gradient(top, #f9f9f9 40%, #e3e3e3 70%);
 background: linear-gradient(top, #f9f9f9 40%, #e3e3e3 70%);
 
-padding: 2px 4px;
+padding: 3px 8px;
 color: #555;
 text-decoration: none;
 display: inline-block;
 }
-ul.button_group li a.green{
-background: #66c947;
-color:#111;
-
-}
-ul.button_group li a.green:active{
-background: #66c947;
-color:#111;
-}
-ul.button_group li a.red{
-background: #f07546;
-color:#111;
-}
-ul.button_group li a.red:active{
-background: #f07546;
-color:#111;
-}
-ul.button_group li a.yellow{
-background: #EEC72B;
-color:#111;
-}
-ul.button_group li a.yellow:active{
-background: #EEC72B;
-color:#111;
-}
-
 ul.button_group li a:active {
 background: #e3e3e3;
-
+background: -webkit-linear-gradient(top, #e3e3e3 40%, #f9f9f9 70%);
+background: -moz-linear-gradient(top, #e3e3e3 40%, #f9f9f9 70%);
+background: -ms-linear-gradient(top, #e3e3e3 40%, #f9f9f9 70%);
+background: -o-linear-gradient(top, #e3e3e3 40%, #f9f9f9 70%);
+background: linear-gradient(top, #e3e3e3 40%, #f9f9f9 70%);
 }
-
+*/
 /* First item */
-ul.button_group li:first-child {
+/*ul.button_group li:first-child {
 -webkit-border-radius: 3px 0 0 3px;
 -moz-border-radius: 3px 0 0 3px;
 border-radius: 3px 0 0 3px;
 border-right: 0;
-}
+}*/
 
 /* Last item */
-ul.button_group li:last-child {
--webkit-border-radius: 0 3px 3px 0;
--moz-border-radius: 0 3px 3px 0;
+/*ul.button_group li:last-child {
+-webkit-border-radius: 3px 0 0 3px;
+-moz-border-radius: 3px 0 0 3px;
 border-radius: 0 3px 3px 0;
 border-right: 1px solid #bbb;
 }
 ul.button_group li:last-child:hover {
 border-right: 1px solid #939393;
 }
-
+*/
 /* Items except first and last, i.e., middle items */
-ul.button_group li:not(:first-child):not(:last-child):hover {
+/*ul.button_group li:not(:first-child):not(:last-child):hover {
 border: 1px solid #939393;
 border-right: 0;
 }
-
+*/
 /* Items except the last one */
-ul.button_group li:not(:last-child):hover + li {
+/*ul.button_group li:not(:last-child):hover + li {
 border-left: 1px solid #939393;
 }
-
+*/
 table.addform
 {
     border-collapse: collapse;
@@ -2320,4 +2281,101 @@ a {
    outline: 0;
 }
 /*========================  End network overview page css ================================#C54B43 #7FC442 #68A7EE*/
+
+
+
+/*========================  For listing and configuration admin states css ======================================*/
+
+
+ul.button_group {
+padding: 0;
+list-style: none;
+overflow: hidden;
+font-size:9px;
+margin: 5px auto;
+}
+ul.button_group li {
+float: left;
+
+border: 1px solid #bbb;
+border-right: 0;
+overflow: hidden;
+cursor:pointer;
+}
+ul.button_group li:hover {
+border: 1px solid #939393;
+}
+ul.button_group li a {
+background: #f9f9f9;
+background: -webkit-linear-gradient(top, #f9f9f9 40%, #e3e3e3 70%);
+background: -moz-linear-gradient(top, #f9f9f9 40%, #e3e3e3 70%);
+background: -ms-linear-gradient(top, #f9f9f9 40%, #e3e3e3 70%);
+background: -o-linear-gradient(top, #f9f9f9 40%, #e3e3e3 70%);
+background: linear-gradient(top, #f9f9f9 40%, #e3e3e3 70%);
+
+padding: 2px 4px;
+color: #555;
+text-decoration: none;
+display: inline-block;
+}
+ul.button_group li a.green{
+background: #66c947;
+color:#111;
+
+}
+ul.button_group li a.green:active{
+background: #66c947;
+color:#111;
+}
+ul.button_group li a.red{
+background: #f07546;
+color:#111;
+}
+ul.button_group li a.red:active{
+background: #f07546;
+color:#111;
+}
+ul.button_group li a.yellow{
+background: #EEC72B;
+color:#111;
+}
+ul.button_group li a.yellow:active{
+background: #EEC72B;
+color:#111;
+}
+
+ul.button_group li a:active {
+background: #e3e3e3;
+
+}
+
+/* First item */
+ul.button_group li:first-child {
+-webkit-border-radius: 3px 0 0 3px;
+-moz-border-radius: 3px 0 0 3px;
+border-radius: 3px 0 0 3px;
+border-right: 0;
+}
+
+/* Last item */
+ul.button_group li:last-child {
+-webkit-border-radius: 0 3px 3px 0;
+-moz-border-radius: 0 3px 3px 0;
+border-radius: 0 3px 3px 0;
+border-right: 1px solid #bbb;
+}
+ul.button_group li:last-child:hover {
+border-right: 1px solid #939393;
+}
+
+/* Items except first and last, i.e., middle items */
+ul.button_group li:not(:first-child):not(:last-child):hover {
+border: 1px solid #939393;
+border-right: 0;
+}
+
+/* Items except the last one */
+ul.button_group li:not(:last-child):hover + li {
+border-left: 1px solid #939393;
+}
 

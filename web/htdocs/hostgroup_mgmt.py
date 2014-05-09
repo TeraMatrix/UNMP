@@ -11,24 +11,24 @@
 class HostgroupMgmt(object):
     @staticmethod
     def header_buttons():
-        add_btn = "<div class=\"header-icon\"><img onclick=\"addHostgroup();\" class=\"n-tip-image\" src=\"images/%s/round_plus.png\" id=\"add_hostgroup\" style=\"width: 16px; height: 16px; margin: 6px 20px 6px 10px;\" original-title=\"Add Hostgroup\"></div>" % theme
-        edit_btn = "<div class=\"header-icon\"><img onclick=\"editHostgroup();\" class=\"n-tip-image\" src=\"images/%s/doc_edit.png\" id=\"edit_hostgroup\" style=\"width: 16px; height: 16px; margin: 6px 20px 6px 10px;\" original-title=\"Edit Hostgroup\"></div>" % theme
-        del_btn = "<div class=\"header-icon\"><img onclick=\"delHostgroup();\" class=\"n-tip-image\" src=\"images/%s/round_minus.png\" id=\"del_hostgroup\" style=\"width: 16px; height: 16px; margin: 6px 20px 6px 10px;\" original-title=\"Delete Hostgroup\"></div>" % theme
+        add_btn = "<div class=\"header-icon\"><img onclick=\"addHostgroup();\" class=\"n-tip-image\" src=\"images/new_icons/round_plus.png\" id=\"add_hostgroup\" style=\"width: 16px; height: 16px; margin: 6px 20px 6px 10px;\" original-title=\"Add Hostgroup\"></div>"
+        edit_btn = "<div class=\"header-icon\"><img onclick=\"editHostgroup();\" class=\"n-tip-image\" src=\"images/new_icons/doc_edit.png\" id=\"edit_hostgroup\" style=\"width: 16px; height: 16px; margin: 6px 20px 6px 10px;\" original-title=\"Edit Hostgroup\"></div>"
+        del_btn = "<div class=\"header-icon\"><img onclick=\"delHostgroup();\" class=\"n-tip-image\" src=\"images/new_icons/round_minus.png\" id=\"del_hostgroup\" style=\"width: 16px; height: 16px; margin: 6px 20px 6px 10px;\" original-title=\"Delete Hostgroup\"></div>"
         header_btn = del_btn + edit_btn + add_btn
         return header_btn
-
+        
     @staticmethod
     def create_form():
-        '''
-        @author		: Mahipal Choudhary
-        @since		: 07-Dec-2011
-        @requires	: Nothing
-        @var html_view	: string containing code of View for logs
-        @return		: the string of view.
-        @note		: This function creates form for displaying all logs to the user.
-        '''
+    	'''
+	@author		: Mahipal Choudhary
+   	@since		: 07-Dec-2011
+	@requires	: Nothing
+	@var html_view	: string containing code of View for logs
+	@return		: the string of view.
+	@note		: This function creates form for displaying all logs to the user.
+	'''
         try:
-            html_view = "\
+            html_view="\
             <div id=\"mahipal\">\
             <form name=\"get_hostgroup_data\" id=\"get_hostgroup_data\" action=\"get_hostgroup_data.py\" method=\"get\"> </form>\
             		<table class=\"tt-table\" cellspacing=\"0\" cellpadding=\"0\" width=\"100%%\" style=\"margin-bottom:0px;\">\
@@ -78,9 +78,11 @@ class HostgroupMgmt(object):
 			</div>\
 			<div id=\"form_div\" style=\"display:none;\"></div>"
             return html_view
-        except Exception, e:
+        except Exception,e:
             return str(e)
-
+            
+            
+            
     @staticmethod
     def viewGroupDetails(res):
         html_str = '<div>\
@@ -94,31 +96,32 @@ class HostgroupMgmt(object):
  	       			<tr class="yo-table-head">\
  	       				<th class=" vertline">User Name:</th>\
 		    			<th>Mobile Number</th>\
-		    			<th>Email ID</th>\
+		    			<th>Email Id</th>\
 		    		</tr>'
-        for i in range(0, len(res)):
-            html_str += '<tr>\
+        for i in range(0,len(res)):
+            html_str+='<tr>\
 		   <td class=" vertline">%s</td>\
 		   <td class=" vertline">%s</td>\
 		   <td class=" vertline">%s</td>\
-		   </tr>' % (res[i][0], res[i][1], res[i][2])
-
-        html_str += "</div>"
-        return html_str
-
+		   </tr>'%(res[i][0],res[i][1],res[i][2])
+		   
+        html_str+="</div>"
+    	return html_str
+    
     @staticmethod
     def view_page_tip_hostgroup():
-        html_view = ""\
-            "<div id=\"help_container\">"\
-            "<h1>HOSTGROUP MANAGEMENT</h1>"\
-            "<div>This page manages HostGroup and their Mappping with UserGroups.</div>"\
-            "<br/>"\
-            "<div>On this page user can manage mappings between Hostgroup  and Usergroups.</div>"\
-            "<br/>"\
-            "<div><strong>Actions</strong></div>"\
-            "<div class=\"action-tip\"><div class=\"txt-div\"><div class=\"user-header-icon\"><button class=\"yo-button\" type=\"button\"><span class=\"edit\">Manage</span></button>Click to Manage mapping of the respected Hostgroup.  </div></div></div>"\
-            "<div class=\"action-tip\"><div class=\"txt-div\"><div class=\"user-header-icon\"><button class=\"yo-button disabled\" type=\"button\" ><span class=\"add\">Add Group(s)</span></button>Add New User Group to the respected Hostgroup.  </div></div></div>"\
-            "<div class=\"action-tip\"><div class=\"txt-div\"><div class=\"user-header-icon\"><button class=\"yo-button disabled\" type=\"button\"><span class=\"delete\" >Remove Group</span></button>Deletes selected Usergroup from the respected Hostgroup.  </div></div></div>"\
-            "<div class=\"action-tip\"><div class=\"txt-div\"><div class=\"user-header-icon\"><button class=\"yo-button disabled\" type=\"button\"><span class=\"moveto\" >Move Group</span></button>moves Usergroup from the respected Hostgroup to another Hostgroup.  </div></div></div>"\
-            "</div>"
-        return html_view
+	html_view = ""\
+	"<div id=\"help_container\">"\
+	"<h1>HOSTGROUP MANAGEMENT</h1>"\
+	"<div>This page manages HostGroup and their Mappping with UserGroups.</div>"\
+	"<br/>"\
+	"<div>On this page you can manage mappings between Hostgroup  and Usergroups.</div>"\
+	"<br/>"\
+	"<div><strong>Actions</strong></div>"\
+	"<div class=\"action-tip\"><div class=\"txt-div\"><div class=\"user-header-icon\"><button class=\"yo-button\" type=\"button\"><span class=\"edit\">Manage</span></button>Click to Manage mapping of the respected Hostgroup.  </div></div></div>"\
+	"<div class=\"action-tip\"><div class=\"txt-div\"><div class=\"user-header-icon\"><button class=\"yo-button disabled\" type=\"button\" ><span class=\"add\">Add Group(s)</span></button>Add New User Group to the respected Hostgroup.  </div></div></div>"\
+	"<div class=\"action-tip\"><div class=\"txt-div\"><div class=\"user-header-icon\"><button class=\"yo-button disabled\" type=\"button\"><span class=\"delete\" >Remove Group</span></button>Delete the selected Usergroup from the respected Hostgroup.  </div></div></div>"\
+	"<div class=\"action-tip\"><div class=\"txt-div\"><div class=\"user-header-icon\"><button class=\"yo-button disabled\" type=\"button\"><span class=\"moveto\" >Move Group</span></button>Move Usergroup from the respected Hostgroup to another Hostgroup.  </div></div></div>"\
+	"</div>"
+	return html_view
+ 

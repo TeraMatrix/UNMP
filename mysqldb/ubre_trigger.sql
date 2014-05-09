@@ -42,12 +42,12 @@ CREATE TRIGGER odu100_raTddMacStatisticsTable_trigger BEFORE INSERT ON odu100_ra
 	                    if(t2.`rxdropped`>t1.`rxdropped`,t2.`rxdropped`-t1.`rxdropped`,0) as delta_rx_dropped,
 	                    if(t2.`txdropped`>t1.`txdropped`,t2.`txdropped`-t1.`txdropped`,0) as delta_tx_dropped,
 	                    t2.host_id,t2.timestamp
-                    FROM ( select * from `odu100_raTddMacStatisticsTable` where host_id=NEW.host_id and timestamp between hour_start and hour_end ) as t1
-                    inner join (select * from `odu100_raTddMacStatisticsTable` where host_id=NEW.host_id and timestamp between hour_start and hour_end ) as t2 
+                    FROM `odu100_raTddMacStatisticsTable`as t1
+                    inner join (select `rxpackets` as `rxpackets`, `txpackets` as `txpackets`, `rxerrors` as `rxerrors`, `txerrors` as `txerrors`, `rxdropped` as `rxdropped`, `txdropped` as `txdropped`, `rxCrcErrors`  as `rxCrcErrors`, `rxPhyError` as `rxPhyError`,host_id,timestamp from `odu100_raTddMacStatisticsTable`) as t2 
                         on t2.timestamp>t1.timestamp and t2.host_id=t1.host_id 
                     where  t1.timestamp between hour_start and hour_end
          	           and t2.timestamp between hour_start and hour_end 
-         	           and t2.`rxCrcErrors`<>1111111 and t2.`rxPhyError`<>1111111  
+         	           and t2.`rxCrcErrors`<>1 and t2.`rxPhyError`<>1  
                     group by t1.timestamp
                     order by t1.timestamp asc ,t1.host_id asc 
                 ) as t3
@@ -88,12 +88,12 @@ CREATE TRIGGER odu100_raTddMacStatisticsTable_trigger BEFORE INSERT ON odu100_ra
 	                    if(t2.`rxdropped`>t1.`rxdropped`,t2.`rxdropped`-t1.`rxdropped`,0) as delta_rx_dropped,
 	                    if(t2.`txdropped`>t1.`txdropped`,t2.`txdropped`-t1.`txdropped`,0) as delta_tx_dropped,
 	                    t2.host_id,t2.timestamp
-                   FROM ( select * from `odu100_raTddMacStatisticsTable` where host_id=NEW.host_id and timestamp between hour_start and hour_end ) as t1
-                    inner join (select * from `odu100_raTddMacStatisticsTable` where host_id=NEW.host_id and timestamp between hour_start and hour_end ) as t2 
+                    FROM `odu100_raTddMacStatisticsTable`as t1
+                    inner join (select `rxpackets` as `rxpackets`, `txpackets` as `txpackets`, `rxerrors` as `rxerrors`, `txerrors` as `txerrors`, `rxdropped` as `rxdropped`, `txdropped` as `txdropped`, `rxCrcErrors`  as `rxCrcErrors`, `rxPhyError` as `rxPhyError`,host_id,timestamp from `odu100_raTddMacStatisticsTable`) as t2 
                         on t2.timestamp>t1.timestamp and t2.host_id=t1.host_id 
                     where t1.timestamp between hour_start and hour_end
          	           and t2.timestamp between hour_start and hour_end 
-         	           and t2.`rxCrcErrors`<>1111111 and t2.`rxPhyError`<>1111111  
+         	           and t2.`rxCrcErrors`<>1 and t2.`rxPhyError`<>1  
                     group by t1.timestamp
                     order by t1.timestamp asc ,t1.host_id asc 
                 ) as t3
@@ -135,12 +135,12 @@ CREATE TRIGGER odu100_raTddMacStatisticsTable_trigger BEFORE INSERT ON odu100_ra
 	                    if(t2.`rxdropped`>t1.`rxdropped`,t2.`rxdropped`-t1.`rxdropped`,0) as delta_rx_dropped,
 	                    if(t2.`txdropped`>t1.`txdropped`,t2.`txdropped`-t1.`txdropped`,0) as delta_tx_dropped,
 	                    t2.host_id,t2.timestamp
-                    FROM ( select * from `odu100_raTddMacStatisticsTable` where host_id=NEW.host_id and timestamp between hour_start and hour_end ) as t1
-                    inner join (select * from `odu100_raTddMacStatisticsTable` where host_id=NEW.host_id and timestamp between hour_start and hour_end ) as t2 
+                    FROM `odu100_raTddMacStatisticsTable`as t1
+                    inner join (select `rxpackets` as `rxpackets`, `txpackets` as `txpackets`, `rxerrors` as `rxerrors`, `txerrors` as `txerrors`, `rxdropped` as `rxdropped`, `txdropped` as `txdropped`, `rxCrcErrors`  as `rxCrcErrors`, `rxPhyError` as `rxPhyError`,host_id,timestamp from `odu100_raTddMacStatisticsTable`) as t2 
                         on t2.timestamp>t1.timestamp and t2.host_id=t1.host_id 
                     where   t1.timestamp between hour_start and hour_end
          	           and t2.timestamp between hour_start and hour_end 
-         	           and t2.`rxCrcErrors`<>1111111 and t2.`rxPhyError`<>1111111  
+         	           and t2.`rxCrcErrors`<>1 and t2.`rxPhyError`<>1  
                     group by t1.timestamp
                     order by t1.timestamp asc ,t1.host_id asc 
                 ) as t3
@@ -181,12 +181,12 @@ CREATE TRIGGER odu100_raTddMacStatisticsTable_trigger BEFORE INSERT ON odu100_ra
 	                    if(t2.`rxdropped`>t1.`rxdropped`,t2.`rxdropped`-t1.`rxdropped`,0) as delta_rx_dropped,
 	                    if(t2.`txdropped`>t1.`txdropped`,t2.`txdropped`-t1.`txdropped`,0) as delta_tx_dropped,
 	                    t2.host_id,t2.timestamp
-                   FROM ( select * from `odu100_raTddMacStatisticsTable` where host_id=NEW.host_id and timestamp between hour_start and hour_end ) as t1
-                    inner join (select * from `odu100_raTddMacStatisticsTable` where host_id=NEW.host_id and timestamp between hour_start and hour_end ) as t2 
+                    FROM `odu100_raTddMacStatisticsTable`as t1
+                    inner join (select `rxpackets` , `txpackets` , `rxerrors`, `txerrors` , `rxdropped` , `txdropped` , `rxCrcErrors` , `rxPhyError`,host_id,timestamp from `odu100_raTddMacStatisticsTable`) as t2 
                         on t2.timestamp>t1.timestamp and t2.host_id=t1.host_id
                     where t1.timestamp between hour_start and hour_end
          	           and t2.timestamp between hour_start and hour_end 
-         	           and t2.`rxCrcErrors`<>1111111 and t2.`rxPhyError`<>1111111  
+         	           and t2.`rxCrcErrors`<>1 and t2.`rxPhyError`<>1  
                     group by t1.timestamp
                     order by t1.timestamp asc ,t1.host_id asc
                 ) as t3
@@ -207,7 +207,7 @@ CREATE TRIGGER odu100_nwInterfaceStatisticsTable_trigger BEFORE INSERT ON odu100
         DECLARE n_time DATETIME;
         DECLARE hour_start VARCHAR(25);  
         DECLARE hour_end VARCHAR(25);  
-        SELECT timestamp into old_time from odu100_nwInterfaceStatisticsTable where host_id=NEW.host_id and `nwStatsIndex`='1' order by timestamp desc limit 1;
+        SELECT timestamp into old_time from odu100_nwInterfaceStatisticsTable where host_id=NEW.host_id order by timestamp desc limit 1;
         ## HOURLY
         IF (DATE_FORMAT(NEW.timestamp, '%Y-%m-%d %H')>DATE_FORMAT(old_time, '%Y-%m-%d %H')) 
             THEN
@@ -242,12 +242,12 @@ CREATE TRIGGER odu100_nwInterfaceStatisticsTable_trigger BEFORE INSERT ON odu100
 	                    if(t2.`rxDropped`>t1.`rxDropped`,t2.`rxDropped`-t1.`rxDropped`,0) as delta_rx_dropped,
 	                    if(t2.`txDropped`>t1.`txDropped`,t2.`txDropped`-t1.`txDropped`,0) as delta_tx_dropped,                  
 	                    t2.host_id,t2.`nwStatsIndex`,t2.timestamp
-                    FROM (select * from `odu100_nwInterfaceStatisticsTable` where host_id=NEW.host_id and  timestamp between hour_start and hour_end and `nwStatsIndex`='1') as t1
-                    inner join (select * from `odu100_nwInterfaceStatisticsTable` where host_id=NEW.host_id and  timestamp between hour_start and hour_end and `nwStatsIndex`='1') as t2 
+                    FROM `odu100_nwInterfaceStatisticsTable`as t1
+                    inner join (select `rxPackets`, `txPackets`, `rxBytes`, `txBytes`, `rxErrors`, `txErrors`, `rxDropped`, `txDropped`,host_id,`nwStatsIndex`,timestamp from `odu100_nwInterfaceStatisticsTable` where timestamp between hour_start and hour_end and `nwStatsIndex`='1') as t2 
                         on t2.timestamp>t1.timestamp and t2.host_id=t1.host_id and t2.`nwStatsIndex`=t1.`nwStatsIndex`
                     where t1.`nwStatsIndex`='1' and t1.timestamp between hour_start and hour_end
          	           and t2.timestamp between hour_start and hour_end 
-         	           and t2.`rxBytes`<>1111111 and t2.`txBytes`<>1111111  
+         	           and t2.`rxBytes`<>1 and t2.`txBytes`<>1  
                     group by t1.timestamp,t1.`nwStatsIndex`
                     order by t1.timestamp asc ,t1.host_id asc , t1.`nwStatsIndex` asc
                 ) as t3
@@ -283,12 +283,12 @@ CREATE TRIGGER odu100_nwInterfaceStatisticsTable_trigger BEFORE INSERT ON odu100
 	                    if(t2.`rxDropped`>t1.`rxDropped`,t2.`rxDropped`-t1.`rxDropped`,0) as delta_rx_dropped,
 	                    if(t2.`txDropped`>t1.`txDropped`,t2.`txDropped`-t1.`txDropped`,0) as delta_tx_dropped,
                     t2.host_id,t2.`nwStatsIndex`,t2.timestamp
-                    FROM (select * from `odu100_nwInterfaceStatisticsTable` where host_id=NEW.host_id and  timestamp between hour_start and hour_end and `nwStatsIndex`='2') as t1
-                    inner join (select * from `odu100_nwInterfaceStatisticsTable` where host_id=NEW.host_id and  timestamp between hour_start and hour_end and `nwStatsIndex`='2') as t2 
+                    FROM `odu100_nwInterfaceStatisticsTable` as t1
+                    inner join (select `rxPackets`, `txPackets`, `rxBytes`, `txBytes`, `rxErrors`, `txErrors`, `rxDropped`, `txDropped`,host_id,`nwStatsIndex`,timestamp from `odu100_nwInterfaceStatisticsTable` where timestamp between hour_start and hour_end and `nwStatsIndex`='2') as t2 
                     on t2.timestamp>t1.timestamp and t2.host_id=t1.host_id and t2.`nwStatsIndex`=t1.`nwStatsIndex`
                     where t1.`nwStatsIndex`='2' and t1.timestamp between hour_start and hour_end 
                                        and t2.timestamp between hour_start and hour_end 
-                                       and t2.`rxBytes`<>1111111 and t2.`rxBytes`<>1111111 
+                                       and t2.`rxBytes`<>1 and t2.`rxBytes`<>1 
                     group by t1.timestamp,t1.`nwStatsIndex`
                     order by t1.timestamp asc ,t1.host_id asc , t1.`nwStatsIndex` asc ) as t3
                     group by t3.host_id,t3.`nwStatsIndex`,CONCAT(DATE(t3.timestamp),HOUR(t3.timestamp))
@@ -368,12 +368,12 @@ CREATE TRIGGER odu100_nwInterfaceStatisticsTable_trigger BEFORE INSERT ON odu100
 	                    if(t2.`rxDropped`>t1.`rxDropped`,t2.`rxDropped`-t1.`rxDropped`,0) as delta_rx_dropped,
 	                    if(t2.`txDropped`>t1.`txDropped`,t2.`txDropped`-t1.`txDropped`,0) as delta_tx_dropped,
 	                    t2.host_id,t2.`nwStatsIndex`,t2.timestamp
-                    FROM (select * from `odu100_nwInterfaceStatisticsTable` where host_id=NEW.host_id and  timestamp between hour_start and hour_end and `nwStatsIndex`='1') as t1
-                    inner join (select * from `odu100_nwInterfaceStatisticsTable` where host_id=NEW.host_id and  timestamp between hour_start and hour_end and `nwStatsIndex`='1') as t2 
+                    FROM `odu100_nwInterfaceStatisticsTable`as t1
+                    inner join (select `rxPackets`, `txPackets`, `rxBytes`, `txBytes`, `rxErrors`, `txErrors`, `rxDropped`, `txDropped`,host_id,`nwStatsIndex`,timestamp from `odu100_nwInterfaceStatisticsTable`) as t2 
                         on t2.timestamp>t1.timestamp and t2.host_id=t1.host_id and t2.`nwStatsIndex`=t1.`nwStatsIndex`
                     where t1.`nwStatsIndex`='1' and t1.timestamp between hour_start and hour_end
          	           and t2.timestamp between hour_start and hour_end 
-         	           and t2.`rxBytes`<>1111111 and t2.`txBytes`<>1111111  
+         	           and t2.`rxBytes`<>1 and t2.`txBytes`<>1  
                     group by t1.timestamp,t1.`nwStatsIndex`
                     order by t1.timestamp asc ,t1.host_id asc , t1.`nwStatsIndex` asc
                 ) as t3
@@ -408,12 +408,12 @@ CREATE TRIGGER odu100_nwInterfaceStatisticsTable_trigger BEFORE INSERT ON odu100
 	                    if(t2.`rxDropped`>t1.`rxDropped`,t2.`rxDropped`-t1.`rxDropped`,0) as delta_rx_dropped,
 	                    if(t2.`txDropped`>t1.`txDropped`,t2.`txDropped`-t1.`txDropped`,0) as delta_tx_dropped,
                     t2.host_id,t2.`nwStatsIndex`,t2.timestamp
-                    FROM (select * from `odu100_nwInterfaceStatisticsTable` where host_id=NEW.host_id and  timestamp between hour_start and hour_end and `nwStatsIndex`='2') as t1
-                    inner join (select * from `odu100_nwInterfaceStatisticsTable` where host_id=NEW.host_id and  timestamp between hour_start and hour_end and `nwStatsIndex`='2') as t2 
+                    FROM `odu100_nwInterfaceStatisticsTable` as t1
+                    inner join (select `rxPackets`, `txPackets`, `rxBytes`, `txBytes`, `rxErrors`, `txErrors`, `rxDropped`, `txDropped`,host_id,`nwStatsIndex`,timestamp from `odu100_nwInterfaceStatisticsTable` where timestamp between hour_start and hour_end and `nwStatsIndex`='2') as t2 
                     on t2.timestamp>t1.timestamp and t2.host_id=t1.host_id and t2.`nwStatsIndex`=t1.`nwStatsIndex`
                     where t1.`nwStatsIndex`='2' and t1.timestamp between hour_start and hour_end 
                                        and t2.timestamp between hour_start and hour_end 
-                                       and t2.`rxBytes`<>1111111 and t2.`rxBytes`<>1111111 
+                                       and t2.`rxBytes`<>1 and t2.`rxBytes`<>1 
                     group by t1.timestamp,t1.`nwStatsIndex`
                     order by t1.timestamp asc ,t1.host_id asc , t1.`nwStatsIndex` asc ) as t3
                     group by t3.host_id,t3.`nwStatsIndex`,DATE(t3.timestamp)
@@ -494,12 +494,12 @@ CREATE TRIGGER odu100_nwInterfaceStatisticsTable_trigger BEFORE INSERT ON odu100
 	                    if(t2.`rxDropped`>t1.`rxDropped`,t2.`rxDropped`-t1.`rxDropped`,0) as delta_rx_dropped,
 	                    if(t2.`txDropped`>t1.`txDropped`,t2.`txDropped`-t1.`txDropped`,0) as delta_tx_dropped,
 	                    t2.host_id,t2.`nwStatsIndex`,t2.timestamp
-                   FROM (select * from `odu100_nwInterfaceStatisticsTable` where host_id=NEW.host_id and  timestamp between hour_start and hour_end and `nwStatsIndex`='1') as t1
-                    inner join (select * from `odu100_nwInterfaceStatisticsTable` where host_id=NEW.host_id and  timestamp between hour_start and hour_end and `nwStatsIndex`='1') as t2 
+                    FROM `odu100_nwInterfaceStatisticsTable`as t1
+                    inner join (select `rxPackets`, `txPackets`, `rxBytes`, `txBytes`, `rxErrors`, `txErrors`, `rxDropped`, `txDropped`,host_id,`nwStatsIndex`,timestamp from `odu100_nwInterfaceStatisticsTable` where timestamp between hour_start and hour_end and `nwStatsIndex`='1') as t2 
                         on t2.timestamp>t1.timestamp and t2.host_id=t1.host_id and t2.`nwStatsIndex`=t1.`nwStatsIndex`
                     where t1.`nwStatsIndex`='1' and t1.timestamp between hour_start and hour_end
          	           and t2.timestamp between hour_start and hour_end 
-         	           and t2.`rxBytes`<>1111111 and t2.`txBytes`<>1111111  
+         	           and t2.`rxBytes`<>1 and t2.`txBytes`<>1  
                     group by t1.timestamp,t1.`nwStatsIndex`
                     order by t1.timestamp asc ,t1.host_id asc , t1.`nwStatsIndex` asc
                 ) as t3
@@ -534,15 +534,15 @@ CREATE TRIGGER odu100_nwInterfaceStatisticsTable_trigger BEFORE INSERT ON odu100
 	                    if(t2.`rxDropped`>t1.`rxDropped`,t2.`rxDropped`-t1.`rxDropped`,0) as delta_rx_dropped,
 	                    if(t2.`txDropped`>t1.`txDropped`,t2.`txDropped`-t1.`txDropped`,0) as delta_tx_dropped,
                     t2.host_id,t2.`nwStatsIndex`,t2.timestamp
-                    FROM (select * from `odu100_nwInterfaceStatisticsTable` where host_id=NEW.host_id and  timestamp between hour_start and hour_end and `nwStatsIndex`='2') as t1
-                    inner join (select * from `odu100_nwInterfaceStatisticsTable` where host_id=NEW.host_id and  timestamp between hour_start and hour_end and `nwStatsIndex`='2') as t2 
+                    FROM `odu100_nwInterfaceStatisticsTable` as t1
+                    inner join (select `rxPackets`, `txPackets`, `rxBytes`, `txBytes`, `rxErrors`, `txErrors`, `rxDropped`, `txDropped`,host_id,`nwStatsIndex`,timestamp from `odu100_nwInterfaceStatisticsTable` where timestamp between hour_start and hour_end and `nwStatsIndex`='2') as t2 
                     on t2.timestamp>t1.timestamp and t2.host_id=t1.host_id and t2.`nwStatsIndex`=t1.`nwStatsIndex`
                     where t1.`nwStatsIndex`='2' and t1.timestamp between hour_start and hour_end 
                                        and t2.timestamp between hour_start and hour_end 
-                                       and t2.`rxBytes`<>1111111 and t2.`rxBytes`<>1111111 
+                                       and t2.`rxBytes`<>1 and t2.`rxBytes`<>1 
                     group by t1.timestamp,t1.`nwStatsIndex`
                     order by t1.timestamp asc ,t1.host_id asc , t1.`nwStatsIndex` asc ) as t3
-                    group by t3.host_id,t3.`nwStatsIndex`,YEARWEEK(t3.timestamp)
+                    group by t3.host_id,t3.`nwStatsIndex`,DATE(t3.timestamp)
                     order by t3.timestamp,t3.`nwStatsIndex`,t3.host_id) as t5
                 set 
                     `index_2_rx_packets_Avg` =delta_rx_packets_Avg,
@@ -618,12 +618,12 @@ CREATE TRIGGER odu100_nwInterfaceStatisticsTable_trigger BEFORE INSERT ON odu100
 	                    if(t2.`rxDropped`>t1.`rxDropped`,t2.`rxDropped`-t1.`rxDropped`,0) as delta_rx_dropped,
 	                    if(t2.`txDropped`>t1.`txDropped`,t2.`txDropped`-t1.`txDropped`,0) as delta_tx_dropped,
 	                    t2.host_id,t2.`nwStatsIndex`,t2.timestamp
-                   FROM (select * from `odu100_nwInterfaceStatisticsTable` where host_id=NEW.host_id and  timestamp between hour_start and hour_end and `nwStatsIndex`='1') as t1
-                    inner join (select * from `odu100_nwInterfaceStatisticsTable` where host_id=NEW.host_id and  timestamp between hour_start and hour_end and `nwStatsIndex`='1') as t2 
+                    FROM `odu100_nwInterfaceStatisticsTable`as t1
+                    inner join (select `rxPackets`, `txPackets`, `rxBytes`, `txBytes`, `rxErrors`, `txErrors`, `rxDropped`, `txDropped`,host_id,`nwStatsIndex`,timestamp from `odu100_nwInterfaceStatisticsTable` where timestamp between hour_start and hour_end and `nwStatsIndex`='1' ) as t2 
                         on t2.timestamp>t1.timestamp and t2.host_id=t1.host_id and t2.`nwStatsIndex`=t1.`nwStatsIndex`
                     where t1.`nwStatsIndex`='1' and t1.timestamp between hour_start and hour_end
          	           and t2.timestamp between hour_start and hour_end 
-         	           and t2.`rxBytes`<>1111111 and t2.`txBytes`<>1111111  
+         	           and t2.`rxBytes`<>1 and t2.`txBytes`<>1  
                     group by t1.timestamp,t1.`nwStatsIndex`
                     order by t1.timestamp asc ,t1.host_id asc , t1.`nwStatsIndex` asc
                 ) as t3
@@ -659,12 +659,12 @@ CREATE TRIGGER odu100_nwInterfaceStatisticsTable_trigger BEFORE INSERT ON odu100
 	                    if(t2.`rxDropped`>t1.`rxDropped`,t2.`rxDropped`-t1.`rxDropped`,0) as delta_rx_dropped,
 	                    if(t2.`txDropped`>t1.`txDropped`,t2.`txDropped`-t1.`txDropped`,0) as delta_tx_dropped,
                     t2.host_id,t2.`nwStatsIndex`,t2.timestamp
-                    FROM (select * from `odu100_nwInterfaceStatisticsTable` where host_id=NEW.host_id and  timestamp between hour_start and hour_end and `nwStatsIndex`='2') as t1
-                    inner join (select * from `odu100_nwInterfaceStatisticsTable` where host_id=NEW.host_id and  timestamp between hour_start and hour_end and `nwStatsIndex`='2') as t2 
+                    FROM `odu100_nwInterfaceStatisticsTable` as t1
+                    inner join (select `rxPackets`, `txPackets`, `rxBytes`, `txBytes`, `rxErrors`, `txErrors`, `rxDropped`, `txDropped`,host_id,`nwStatsIndex`,timestamp from `odu100_nwInterfaceStatisticsTable` where timestamp between hour_start and hour_end and `nwStatsIndex`='2' ) as t2 
                     on t2.timestamp>t1.timestamp and t2.host_id=t1.host_id and t2.`nwStatsIndex`=t1.`nwStatsIndex`
                     where t1.`nwStatsIndex`='2' and t1.timestamp between hour_start and hour_end 
                                        and t2.timestamp between hour_start and hour_end 
-                                       and t2.`rxBytes`<>1111111 and t2.`rxBytes`<>1111111 
+                                       and t2.`rxBytes`<>1 and t2.`rxBytes`<>1 
                     group by t1.timestamp,t1.`nwStatsIndex`
                     order by t1.timestamp asc ,t1.host_id asc , t1.`nwStatsIndex` asc ) as t3
                     group by t3.host_id,t3.`nwStatsIndex`,DATE_FORMAT(t3.timestamp, '%Y-%m')
@@ -716,10 +716,12 @@ CREATE TRIGGER odu100_nwInterfaceStatisticsTable_trigger BEFORE INSERT ON odu100
 delimiter ;
 
 
-DROP TRIGGER IF EXISTS `odu100_peerNodeStatusTable_trigger`;
-DELIMITER //
-CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_peerNodeStatusTable`
- FOR EACH ROW BEGIN
+
+
+DROP TRIGGER IF EXISTS odu100_peerNodeStatusTable_trigger;
+delimiter |
+CREATE TRIGGER odu100_peerNodeStatusTable_trigger BEFORE INSERT ON odu100_peerNodeStatusTable
+    FOR EACH ROW BEGIN
         DECLARE old_time DATETIME;
         DECLARE n_time DATETIME;
         DECLARE hour_start VARCHAR(25);  
@@ -731,7 +733,7 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
                 SET hour_start=CONCAT(DATE_FORMAT(old_time,'%Y-%m-%d %H'),':00:00');
                 SET hour_end=CONCAT(DATE_FORMAT(old_time,'%Y-%m-%d %H'),':59:59');
                 INSERT INTO `analyze_odu100_peerNodeStatusTable` (`analyze_odu100_peerNodeStatusTable_id`, `timestamp`, `host_id`,`type`,
-                `sig1_index_1_Min`, `sig1_index_1_Max`,`sig1_index_1_Range`)
+                `index_1_Min`, `index_1_Max`,`index_1_Range` , `index_1_Range_count`)
                 select NULL,DATE_FORMAT(timestamp, '%Y-%m-%d %H'),host_id,'HOURLY',minimum,maximum,
                 if(range_values=1,-5,
                   if(range_values=2,-15,
@@ -751,7 +753,28 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
                         )
                      )
                   )
-                ) as `Most_values`
+                ) as `Most_values`,
+
+                if(range_values=1,`count_100`,
+                  if(range_values=2,`count_2010`,
+                    if(range_values=3,`count_3020`,
+                        if(range_values=4,`count_4030`,
+                            if(range_values=5,`count_5040`,
+                                if(range_values=6,`count_6050`,
+                                    if(range_values=7,`count_7060`,
+                                        if(range_values=8,`count_8070`,
+                                            if(range_values=9,`count_9080`,
+                                                if(range_values=10,`count_9590`,`count_9590`)
+                                            )
+                                        )
+                                    )
+                                )
+                            )
+                        )
+                     )
+                  )
+                ) as `no_of_values`
+
                 from (
                 select timestamp,host_id,minimum,maximum,
                 FIELD(GREATEST(`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`),
@@ -773,12 +796,11 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
                 SUM(if(sigStrength1 between '-95' and '-90',1,0)) as `count_9590`,
                 min(sigStrength1) as minimum,max(sigStrength1) as maximum
                 FROM `odu100_peerNodeStatusTable` 
-                where host_id=NEW.host_id and sigStrength1<>1111111 and timestamp between hour_start and hour_end and timeSlotIndex=1
+                where sigStrength1<>1 and timestamp between hour_start and hour_end and timeSlotIndex=1
                 group by host_id,timeSlotIndex,CONCAT(DATE(timestamp),HOUR(timestamp))
                 ) as t3
                 ) as t4;
 
-
 		update `analyze_odu100_peerNodeStatusTable`  as ap ,
 		(select timestamp,host_id,minimum,maximum,
 		if(range_values=1,-5,
@@ -799,7 +821,27 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
                         )
                      )
                   )
-                ) as `Most_values`
+                ) as `Most_values`,
+
+		if(range_values=1,`count_100`,
+		  if(range_values=2,`count_2010`,
+		    if(range_values=3,`count_3020`,
+			if(range_values=4,`count_4030`,
+			    if(range_values=5,`count_5040`,
+				if(range_values=6,`count_6050`,
+				    if(range_values=7,`count_7060`,
+				        if(range_values=8,`count_8070`,
+				            if(range_values=9,`count_9080`,
+				                if(range_values=10,`count_9590`,`count_9590`)
+				            )
+				        )
+				    )
+				)
+			    )
+			)
+		     )
+		  )
+		) as `no_of_values`
 
 		from (
 		select timestamp,host_id,minimum,maximum,
@@ -822,16 +864,17 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
 		SUM(if(sigStrength1 between '-95' and '-90',1,0)) as `count_9590`,
 		min(sigStrength1) as minimum,max(sigStrength1) as maximum
 		FROM `odu100_peerNodeStatusTable` 
-		where host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=2
+		where sigStrength1<>1 and  timestamp between hour_start and hour_end and timeSlotIndex=2
 		group by host_id,timeSlotIndex,CONCAT(DATE(timestamp),HOUR(timestamp))
 		) as t3
 		) as t4
 		)as t5 
 
 		set 
-		`sig1_index_2_Min`=t5.minimum,
-		`sig1_index_2_Max`=t5.maximum, 
-		`sig1_index_2_Range`=t5.`Most_values`
+		`index_2_Min`=t5.minimum,
+		`index_2_Max`=t5.maximum, 
+		`index_2_Range`=t5.`Most_values`,
+		`index_2_Range_count`=t5.`no_of_values`
 
 		where CONCAT_WS(' ',DATE(t5.timestamp),HOUR(t5.timestamp))=CONCAT_WS(' ',DATE(ap.timestamp),HOUR(ap.timestamp)) and 
 		t5.host_id=ap.host_id;
@@ -860,7 +903,27 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
                         )
                      )
                   )
-                ) as `Most_values`  
+                ) as `Most_values`,
+
+		if(range_values=1,`count_100`,
+		  if(range_values=2,`count_2010`,
+		    if(range_values=3,`count_3020`,
+			if(range_values=4,`count_4030`,
+			    if(range_values=5,`count_5040`,
+				if(range_values=6,`count_6050`,
+				    if(range_values=7,`count_7060`,
+				        if(range_values=8,`count_8070`,
+				            if(range_values=9,`count_9080`,
+				                if(range_values=10,`count_9590`,`count_9590`)
+				            )
+				        )
+				    )
+				)
+			    )
+			)
+		     )
+		  )
+		) as `no_of_values`
 
 		from (
 		select timestamp,host_id,minimum,maximum,
@@ -883,16 +946,17 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
 		SUM(if(sigStrength1 between '-95' and '-90',1,0)) as `count_9590`,
 		min(sigStrength1) as minimum,max(sigStrength1) as maximum
 		FROM `odu100_peerNodeStatusTable` 
-		where host_id=NEW.host_id and  sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=3
+		where sigStrength1<>1 and  timestamp between hour_start and hour_end and timeSlotIndex=3
 		group by host_id,timeSlotIndex,CONCAT(DATE(timestamp),HOUR(timestamp))
 		) as t3
 		) as t4
 		)as t5 
 
 		set 
-		`sig1_index_3_Min`=t5.minimum,
-		`sig1_index_3_Max`=t5.maximum, 
-		`sig1_index_3_Range`=t5.`Most_values`  
+		`index_3_Min`=t5.minimum,
+		`index_3_Max`=t5.maximum, 
+		`index_3_Range`=t5.`Most_values`,
+		`index_3_Range_count`=t5.`no_of_values`
 
 		where CONCAT_WS(' ',DATE(t5.timestamp),HOUR(t5.timestamp))=CONCAT_WS(' ',DATE(ap.timestamp),HOUR(ap.timestamp)) and 
 		t5.host_id=ap.host_id;
@@ -919,7 +983,27 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
                         )
                      )
                   )
-                ) as `Most_values`  
+                ) as `Most_values`,
+
+		if(range_values=1,`count_100`,
+		  if(range_values=2,`count_2010`,
+		    if(range_values=3,`count_3020`,
+			if(range_values=4,`count_4030`,
+			    if(range_values=5,`count_5040`,
+				if(range_values=6,`count_6050`,
+				    if(range_values=7,`count_7060`,
+				        if(range_values=8,`count_8070`,
+				            if(range_values=9,`count_9080`,
+				                if(range_values=10,`count_9590`,`count_9590`)
+				            )
+				        )
+				    )
+				)
+			    )
+			)
+		     )
+		  )
+		) as `no_of_values`
 
 		from (
 		select timestamp,host_id,minimum,maximum,
@@ -942,16 +1026,17 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
 		SUM(if(sigStrength1 between '-95' and '-90',1,0)) as `count_9590`,
 		min(sigStrength1) as minimum,max(sigStrength1) as maximum
 		FROM `odu100_peerNodeStatusTable` 
-		where  host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=4
+		where sigStrength1<>1 and  timestamp between hour_start and hour_end and timeSlotIndex=4
 		group by host_id,timeSlotIndex,CONCAT(DATE(timestamp),HOUR(timestamp))
 		) as t3
 		) as t4
 		)as t5 
 
 		set 
-		`sig1_index_4_Min`=t5.minimum,
-		`sig1_index_4_Max`=t5.maximum, 
-		`sig1_index_4_Range`=t5.`Most_values`  
+		`index_4_Min`=t5.minimum,
+		`index_4_Max`=t5.maximum, 
+		`index_4_Range`=t5.`Most_values`,
+		`index_4_Range_count`=t5.`no_of_values`
 
 		where CONCAT_WS(' ',DATE(t5.timestamp),HOUR(t5.timestamp))=CONCAT_WS(' ',DATE(ap.timestamp),HOUR(ap.timestamp)) and 
 		t5.host_id=ap.host_id;
@@ -978,7 +1063,27 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
                         )
                      )
                   )
-                ) as `Most_values`  
+                ) as `Most_values`,
+
+		if(range_values=1,`count_100`,
+		  if(range_values=2,`count_2010`,
+		    if(range_values=3,`count_3020`,
+			if(range_values=4,`count_4030`,
+			    if(range_values=5,`count_5040`,
+				if(range_values=6,`count_6050`,
+				    if(range_values=7,`count_7060`,
+				        if(range_values=8,`count_8070`,
+				            if(range_values=9,`count_9080`,
+				                if(range_values=10,`count_9590`,`count_9590`)
+				            )
+				        )
+				    )
+				)
+			    )
+			)
+		     )
+		  )
+		) as `no_of_values`
 
 		from (
 		select timestamp,host_id,minimum,maximum,
@@ -1001,16 +1106,17 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
 		SUM(if(sigStrength1 between '-95' and '-90',1,0)) as `count_9590`,
 		min(sigStrength1) as minimum,max(sigStrength1) as maximum
 		FROM `odu100_peerNodeStatusTable` 
-		where  host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=5
+		where sigStrength1<>1 and  timestamp between hour_start and hour_end and timeSlotIndex=5
 		group by host_id,timeSlotIndex,CONCAT(DATE(timestamp),HOUR(timestamp))
 		) as t3
 		) as t4
 		)as t5 
 
 		set 
-		`sig1_index_5_Min`=t5.minimum,
-		`sig1_index_5_Max`=t5.maximum, 
-		`sig1_index_5_Range`=t5.`Most_values`  
+		`index_5_Min`=t5.minimum,
+		`index_5_Max`=t5.maximum, 
+		`index_5_Range`=t5.`Most_values`,
+		`index_5_Range_count`=t5.`no_of_values`
 
 		where CONCAT_WS(' ',DATE(t5.timestamp),HOUR(t5.timestamp))=CONCAT_WS(' ',DATE(ap.timestamp),HOUR(ap.timestamp)) and 
 		t5.host_id=ap.host_id;
@@ -1037,7 +1143,27 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
                         )
                      )
                   )
-                ) as `Most_values`  
+                ) as `Most_values`,
+
+		if(range_values=1,`count_100`,
+		  if(range_values=2,`count_2010`,
+		    if(range_values=3,`count_3020`,
+			if(range_values=4,`count_4030`,
+			    if(range_values=5,`count_5040`,
+				if(range_values=6,`count_6050`,
+				    if(range_values=7,`count_7060`,
+				        if(range_values=8,`count_8070`,
+				            if(range_values=9,`count_9080`,
+				                if(range_values=10,`count_9590`,`count_9590`)
+				            )
+				        )
+				    )
+				)
+			    )
+			)
+		     )
+		  )
+		) as `no_of_values`
 
 		from (
 		select timestamp,host_id,minimum,maximum,
@@ -1060,16 +1186,17 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
 		SUM(if(sigStrength1 between '-95' and '-90',1,0)) as `count_9590`,
 		min(sigStrength1) as minimum,max(sigStrength1) as maximum
 		FROM `odu100_peerNodeStatusTable` 
-		where  host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=6
+		where sigStrength1<>1 and  timestamp between hour_start and hour_end and timeSlotIndex=6
 		group by host_id,timeSlotIndex,CONCAT(DATE(timestamp),HOUR(timestamp))
 		) as t3
 		) as t4
 		)as t5 
 
 		set 
-		`sig1_index_6_Min`=t5.minimum,
-		`sig1_index_6_Max`=t5.maximum, 
-		`sig1_index_6_Range`=t5.`Most_values`  
+		`index_6_Min`=t5.minimum,
+		`index_6_Max`=t5.maximum, 
+		`index_6_Range`=t5.`Most_values`,
+		`index_6_Range_count`=t5.`no_of_values`
 
 		where CONCAT_WS(' ',DATE(t5.timestamp),HOUR(t5.timestamp))=CONCAT_WS(' ',DATE(ap.timestamp),HOUR(ap.timestamp)) and 
 		t5.host_id=ap.host_id;
@@ -1096,7 +1223,27 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
                         )
                      )
                   )
-                ) as `Most_values`  
+                ) as `Most_values`,
+
+		if(range_values=1,`count_100`,
+		  if(range_values=2,`count_2010`,
+		    if(range_values=3,`count_3020`,
+			if(range_values=4,`count_4030`,
+			    if(range_values=5,`count_5040`,
+				if(range_values=6,`count_6050`,
+				    if(range_values=7,`count_7060`,
+				        if(range_values=8,`count_8070`,
+				            if(range_values=9,`count_9080`,
+				                if(range_values=10,`count_9590`,`count_9590`)
+				            )
+				        )
+				    )
+				)
+			    )
+			)
+		     )
+		  )
+		) as `no_of_values`
 
 		from (
 		select timestamp,host_id,minimum,maximum,
@@ -1119,16 +1266,17 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
 		SUM(if(sigStrength1 between '-95' and '-90',1,0)) as `count_9590`,
 		min(sigStrength1) as minimum,max(sigStrength1) as maximum
 		FROM `odu100_peerNodeStatusTable` 
-		where host_id=NEW.host_id and  sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=7
+		where sigStrength1<>1 and  timestamp between hour_start and hour_end and timeSlotIndex=7
 		group by host_id,timeSlotIndex,CONCAT(DATE(timestamp),HOUR(timestamp))
 		) as t3
 		) as t4
 		)as t5 
 
 		set 
-		`sig1_index_7_Min`=t5.minimum,
-		`sig1_index_7_Max`=t5.maximum, 
-		`sig1_index_7_Range`=t5.`Most_values`  
+		`index_7_Min`=t5.minimum,
+		`index_7_Max`=t5.maximum, 
+		`index_7_Range`=t5.`Most_values`,
+		`index_7_Range_count`=t5.`no_of_values`
 
 		where CONCAT_WS(' ',DATE(t5.timestamp),HOUR(t5.timestamp))=CONCAT_WS(' ',DATE(ap.timestamp),HOUR(ap.timestamp)) and 
 		t5.host_id=ap.host_id;
@@ -1155,7 +1303,27 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
                         )
                      )
                   )
-                ) as `Most_values`  
+                ) as `Most_values`,
+
+		if(range_values=1,`count_100`,
+		  if(range_values=2,`count_2010`,
+		    if(range_values=3,`count_3020`,
+			if(range_values=4,`count_4030`,
+			    if(range_values=5,`count_5040`,
+				if(range_values=6,`count_6050`,
+				    if(range_values=7,`count_7060`,
+				        if(range_values=8,`count_8070`,
+				            if(range_values=9,`count_9080`,
+				                if(range_values=10,`count_9590`,`count_9590`)
+				            )
+				        )
+				    )
+				)
+			    )
+			)
+		     )
+		  )
+		) as `no_of_values`
 
 		from (
 		select timestamp,host_id,minimum,maximum,
@@ -1178,16 +1346,17 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
 		SUM(if(sigStrength1 between '-95' and '-90',1,0)) as `count_9590`,
 		min(sigStrength1) as minimum,max(sigStrength1) as maximum
 		FROM `odu100_peerNodeStatusTable` 
-		where  host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=8
+		where sigStrength1<>1 and  timestamp between hour_start and hour_end and timeSlotIndex=8
 		group by host_id,timeSlotIndex,CONCAT(DATE(timestamp),HOUR(timestamp))
 		) as t3
 		) as t4
 		)as t5 
 
 		set 
-		`sig1_index_8_Min`=t5.minimum,
-		`sig1_index_8_Max`=t5.maximum, 
-		`sig1_index_8_Range`=t5.`Most_values`  
+		`index_8_Min`=t5.minimum,
+		`index_8_Max`=t5.maximum, 
+		`index_8_Range`=t5.`Most_values`,
+		`index_8_Range_count`=t5.`no_of_values`
 
 		where CONCAT_WS(' ',DATE(t5.timestamp),HOUR(t5.timestamp))=CONCAT_WS(' ',DATE(ap.timestamp),HOUR(ap.timestamp)) and 
 		t5.host_id=ap.host_id;
@@ -1214,7 +1383,27 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
                         )
                      )
                   )
-                ) as `Most_values`  
+                ) as `Most_values`,
+
+		if(range_values=1,`count_100`,
+		  if(range_values=2,`count_2010`,
+		    if(range_values=3,`count_3020`,
+			if(range_values=4,`count_4030`,
+			    if(range_values=5,`count_5040`,
+				if(range_values=6,`count_6050`,
+				    if(range_values=7,`count_7060`,
+				        if(range_values=8,`count_8070`,
+				            if(range_values=9,`count_9080`,
+				                if(range_values=10,`count_9590`,`count_9590`)
+				            )
+				        )
+				    )
+				)
+			    )
+			)
+		     )
+		  )
+		) as `no_of_values`
 
 		from (
 		select timestamp,host_id,minimum,maximum,
@@ -1237,16 +1426,17 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
 		SUM(if(sigStrength1 between '-95' and '-90',1,0)) as `count_9590`,
 		min(sigStrength1) as minimum,max(sigStrength1) as maximum
 		FROM `odu100_peerNodeStatusTable` 
-		where  host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=9
+		where sigStrength1<>1 and  timestamp between hour_start and hour_end and timeSlotIndex=9
 		group by host_id,timeSlotIndex,CONCAT(DATE(timestamp),HOUR(timestamp))
 		) as t3
 		) as t4
 		)as t5 
 
 		set 
-		`sig1_index_9_Min`=t5.minimum,
-		`sig1_index_9_Max`=t5.maximum, 
-		`sig1_index_9_Range`=t5.`Most_values`  
+		`index_9_Min`=t5.minimum,
+		`index_9_Max`=t5.maximum, 
+		`index_9_Range`=t5.`Most_values`,
+		`index_9_Range_count`=t5.`no_of_values`
 
 		where CONCAT_WS(' ',DATE(t5.timestamp),HOUR(t5.timestamp))=CONCAT_WS(' ',DATE(ap.timestamp),HOUR(ap.timestamp)) and 
 		t5.host_id=ap.host_id;
@@ -1272,7 +1462,27 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
                         )
                      )
                   )
-                ) as `Most_values`  
+                ) as `Most_values`,
+
+		if(range_values=1,`count_100`,
+		  if(range_values=2,`count_2010`,
+		    if(range_values=3,`count_3020`,
+			if(range_values=4,`count_4030`,
+			    if(range_values=5,`count_5040`,
+				if(range_values=6,`count_6050`,
+				    if(range_values=7,`count_7060`,
+				        if(range_values=8,`count_8070`,
+				            if(range_values=9,`count_9080`,
+				                if(range_values=10,`count_9590`,`count_9590`)
+				            )
+				        )
+				    )
+				)
+			    )
+			)
+		     )
+		  )
+		) as `no_of_values`
 
 		from (
 		select timestamp,host_id,minimum,maximum,
@@ -1295,16 +1505,17 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
 		SUM(if(sigStrength1 between '-95' and '-90',1,0)) as `count_9590`,
 		min(sigStrength1) as minimum,max(sigStrength1) as maximum
 		FROM `odu100_peerNodeStatusTable` 
-		where  host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=10
+		where sigStrength1<>1 and  timestamp between hour_start and hour_end and timeSlotIndex=10
 		group by host_id,timeSlotIndex,CONCAT(DATE(timestamp),HOUR(timestamp))
 		) as t3
 		) as t4
 		)as t5 
 
 		set 
-		`sig1_index_10_Min`=t5.minimum,
-		`sig1_index_10_Max`=t5.maximum, 
-		`sig1_index_10_Range`=t5.`Most_values`  
+		`index_10_Min`=t5.minimum,
+		`index_10_Max`=t5.maximum, 
+		`index_10_Range`=t5.`Most_values`,
+		`index_10_Range_count`=t5.`no_of_values`
 
 		where CONCAT_WS(' ',DATE(t5.timestamp),HOUR(t5.timestamp))=CONCAT_WS(' ',DATE(ap.timestamp),HOUR(ap.timestamp)) and 
 		t5.host_id=ap.host_id;
@@ -1329,7 +1540,27 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
                         )
                      )
                   )
-                ) as `Most_values`  
+                ) as `Most_values`,
+
+		if(range_values=1,`count_100`,
+		  if(range_values=2,`count_2010`,
+		    if(range_values=3,`count_3020`,
+			if(range_values=4,`count_4030`,
+			    if(range_values=5,`count_5040`,
+				if(range_values=6,`count_6050`,
+				    if(range_values=7,`count_7060`,
+				        if(range_values=8,`count_8070`,
+				            if(range_values=9,`count_9080`,
+				                if(range_values=10,`count_9590`,`count_9590`)
+				            )
+				        )
+				    )
+				)
+			    )
+			)
+		     )
+		  )
+		) as `no_of_values`
 
 		from (
 		select timestamp,host_id,minimum,maximum,
@@ -1352,16 +1583,17 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
 		SUM(if(sigStrength1 between '-95' and '-90',1,0)) as `count_9590`,
 		min(sigStrength1) as minimum,max(sigStrength1) as maximum
 		FROM `odu100_peerNodeStatusTable` 
-		where host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=11
+		where sigStrength1<>1 and  timestamp between hour_start and hour_end and timeSlotIndex=11
 		group by host_id,timeSlotIndex,CONCAT(DATE(timestamp),HOUR(timestamp))
 		) as t3
 		) as t4
 		)as t5 
 
 		set 
-		`sig1_index_11_Min`=t5.minimum,
-		`sig1_index_11_Max`=t5.maximum, 
-		`sig1_index_11_Range`=t5.`Most_values`  
+		`index_11_Min`=t5.minimum,
+		`index_11_Max`=t5.maximum, 
+		`index_11_Range`=t5.`Most_values`,
+		`index_11_Range_count`=t5.`no_of_values`
 
 		where CONCAT_WS(' ',DATE(t5.timestamp),HOUR(t5.timestamp))=CONCAT_WS(' ',DATE(ap.timestamp),HOUR(ap.timestamp)) and 
 		t5.host_id=ap.host_id;
@@ -1387,7 +1619,27 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
                         )
                      )
                   )
-                ) as `Most_values`  
+                ) as `Most_values`,
+
+		if(range_values=1,`count_100`,
+		  if(range_values=2,`count_2010`,
+		    if(range_values=3,`count_3020`,
+			if(range_values=4,`count_4030`,
+			    if(range_values=5,`count_5040`,
+				if(range_values=6,`count_6050`,
+				    if(range_values=7,`count_7060`,
+				        if(range_values=8,`count_8070`,
+				            if(range_values=9,`count_9080`,
+				                if(range_values=10,`count_9590`,`count_9590`)
+				            )
+				        )
+				    )
+				)
+			    )
+			)
+		     )
+		  )
+		) as `no_of_values`
 
 		from (
 		select timestamp,host_id,minimum,maximum,
@@ -1410,16 +1662,17 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
 		SUM(if(sigStrength1 between '-95' and '-90',1,0)) as `count_9590`,
 		min(sigStrength1) as minimum,max(sigStrength1) as maximum
 		FROM `odu100_peerNodeStatusTable` 
-		where  host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=12
+		where sigStrength1<>1 and  timestamp between hour_start and hour_end and timeSlotIndex=12
 		group by host_id,timeSlotIndex,CONCAT(DATE(timestamp),HOUR(timestamp))
 		) as t3
 		) as t4
 		)as t5 
 
 		set 
-		`sig1_index_12_Min`=t5.minimum,
-		`sig1_index_12_Max`=t5.maximum, 
-		`sig1_index_12_Range`=t5.`Most_values`  
+		`index_12_Min`=t5.minimum,
+		`index_12_Max`=t5.maximum, 
+		`index_12_Range`=t5.`Most_values`,
+		`index_12_Range_count`=t5.`no_of_values`
 
 		where CONCAT_WS(' ',DATE(t5.timestamp),HOUR(t5.timestamp))=CONCAT_WS(' ',DATE(ap.timestamp),HOUR(ap.timestamp)) and 
 		t5.host_id=ap.host_id;
@@ -1444,7 +1697,27 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
                         )
                      )
                   )
-                ) as `Most_values`  
+                ) as `Most_values`,
+
+		if(range_values=1,`count_100`,
+		  if(range_values=2,`count_2010`,
+		    if(range_values=3,`count_3020`,
+			if(range_values=4,`count_4030`,
+			    if(range_values=5,`count_5040`,
+				if(range_values=6,`count_6050`,
+				    if(range_values=7,`count_7060`,
+				        if(range_values=8,`count_8070`,
+				            if(range_values=9,`count_9080`,
+				                if(range_values=10,`count_9590`,`count_9590`)
+				            )
+				        )
+				    )
+				)
+			    )
+			)
+		     )
+		  )
+		) as `no_of_values`
 
 		from (
 		select timestamp,host_id,minimum,maximum,
@@ -1467,16 +1740,17 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
 		SUM(if(sigStrength1 between '-95' and '-90',1,0)) as `count_9590`,
 		min(sigStrength1) as minimum,max(sigStrength1) as maximum
 		FROM `odu100_peerNodeStatusTable` 
-		where  host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=13
+		where sigStrength1<>1 and  timestamp between hour_start and hour_end and timeSlotIndex=13
 		group by host_id,timeSlotIndex,CONCAT(DATE(timestamp),HOUR(timestamp))
 		) as t3
 		) as t4
 		)as t5 
 
 		set 
-		`sig1_index_13_Min`=t5.minimum,
-		`sig1_index_13_Max`=t5.maximum, 
-		`sig1_index_13_Range`=t5.`Most_values`  
+		`index_13_Min`=t5.minimum,
+		`index_13_Max`=t5.maximum, 
+		`index_13_Range`=t5.`Most_values`,
+		`index_13_Range_count`=t5.`no_of_values`
 
 		where CONCAT_WS(' ',DATE(t5.timestamp),HOUR(t5.timestamp))=CONCAT_WS(' ',DATE(ap.timestamp),HOUR(ap.timestamp)) and 
 		t5.host_id=ap.host_id;		
@@ -1502,7 +1776,27 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
                         )
                      )
                   )
-                ) as `Most_values`  
+                ) as `Most_values`,
+
+		if(range_values=1,`count_100`,
+		  if(range_values=2,`count_2010`,
+		    if(range_values=3,`count_3020`,
+			if(range_values=4,`count_4030`,
+			    if(range_values=5,`count_5040`,
+				if(range_values=6,`count_6050`,
+				    if(range_values=7,`count_7060`,
+				        if(range_values=8,`count_8070`,
+				            if(range_values=9,`count_9080`,
+				                if(range_values=10,`count_9590`,`count_9590`)
+				            )
+				        )
+				    )
+				)
+			    )
+			)
+		     )
+		  )
+		) as `no_of_values`
 
 		from (
 		select timestamp,host_id,minimum,maximum,
@@ -1525,16 +1819,17 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
 		SUM(if(sigStrength1 between '-95' and '-90',1,0)) as `count_9590`,
 		min(sigStrength1) as minimum,max(sigStrength1) as maximum
 		FROM `odu100_peerNodeStatusTable` 
-		where  host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=14
+		where sigStrength1<>1 and  timestamp between hour_start and hour_end and timeSlotIndex=14
 		group by host_id,timeSlotIndex,CONCAT(DATE(timestamp),HOUR(timestamp))
 		) as t3
 		) as t4
 		)as t5 
 
 		set 
-		`sig1_index_14_Min`=t5.minimum,
-		`sig1_index_14_Max`=t5.maximum, 
-		`sig1_index_14_Range`=t5.`Most_values`  
+		`index_14_Min`=t5.minimum,
+		`index_14_Max`=t5.maximum, 
+		`index_14_Range`=t5.`Most_values`,
+		`index_14_Range_count`=t5.`no_of_values`
 
 		where CONCAT_WS(' ',DATE(t5.timestamp),HOUR(t5.timestamp))=CONCAT_WS(' ',DATE(ap.timestamp),HOUR(ap.timestamp)) and 
 		t5.host_id=ap.host_id;		
@@ -1560,7 +1855,27 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
                         )
                      )
                   )
-                ) as `Most_values`  
+                ) as `Most_values`,
+
+		if(range_values=1,`count_100`,
+		  if(range_values=2,`count_2010`,
+		    if(range_values=3,`count_3020`,
+			if(range_values=4,`count_4030`,
+			    if(range_values=5,`count_5040`,
+				if(range_values=6,`count_6050`,
+				    if(range_values=7,`count_7060`,
+				        if(range_values=8,`count_8070`,
+				            if(range_values=9,`count_9080`,
+				                if(range_values=10,`count_9590`,`count_9590`)
+				            )
+				        )
+				    )
+				)
+			    )
+			)
+		     )
+		  )
+		) as `no_of_values`
 
 		from (
 		select timestamp,host_id,minimum,maximum,
@@ -1583,16 +1898,17 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
 		SUM(if(sigStrength1 between '-95' and '-90',1,0)) as `count_9590`,
 		min(sigStrength1) as minimum,max(sigStrength1) as maximum
 		FROM `odu100_peerNodeStatusTable` 
-		where host_id=NEW.host_id and  sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=15
+		where sigStrength1<>1 and  timestamp between hour_start and hour_end and timeSlotIndex=15
 		group by host_id,timeSlotIndex,CONCAT(DATE(timestamp),HOUR(timestamp))
 		) as t3
 		) as t4
 		)as t5 
 
 		set 
-		`sig1_index_15_Min`=t5.minimum,
-		`sig1_index_15_Max`=t5.maximum, 
-		`sig1_index_15_Range`=t5.`Most_values`  
+		`index_15_Min`=t5.minimum,
+		`index_15_Max`=t5.maximum, 
+		`index_15_Range`=t5.`Most_values`,
+		`index_15_Range_count`=t5.`no_of_values`
 
 		where CONCAT_WS(' ',DATE(t5.timestamp),HOUR(t5.timestamp))=CONCAT_WS(' ',DATE(ap.timestamp),HOUR(ap.timestamp)) and 
 		t5.host_id=ap.host_id;
@@ -1617,7 +1933,27 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
                         )
                      )
                   )
-                ) as `Most_values`  
+                ) as `Most_values`,
+
+		if(range_values=1,`count_100`,
+		  if(range_values=2,`count_2010`,
+		    if(range_values=3,`count_3020`,
+			if(range_values=4,`count_4030`,
+			    if(range_values=5,`count_5040`,
+				if(range_values=6,`count_6050`,
+				    if(range_values=7,`count_7060`,
+				        if(range_values=8,`count_8070`,
+				            if(range_values=9,`count_9080`,
+				                if(range_values=10,`count_9590`,`count_9590`)
+				            )
+				        )
+				    )
+				)
+			    )
+			)
+		     )
+		  )
+		) as `no_of_values`
 
 		from (
 		select timestamp,host_id,minimum,maximum,
@@ -1640,953 +1976,17 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
 		SUM(if(sigStrength1 between '-95' and '-90',1,0)) as `count_9590`,
 		min(sigStrength1) as minimum,max(sigStrength1) as maximum
 		FROM `odu100_peerNodeStatusTable` 
-		where  host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=16
+		where sigStrength1<>1 and  timestamp between hour_start and hour_end and timeSlotIndex=16
 		group by host_id,timeSlotIndex,CONCAT(DATE(timestamp),HOUR(timestamp))
 		) as t3
 		) as t4
 		)as t5 
 
 		set 
-		`sig1_index_16_Min`=t5.minimum,
-		`sig1_index_16_Max`=t5.maximum, 
-		`sig1_index_16_Range`=t5.`Most_values`  
-
-		where CONCAT_WS(' ',DATE(t5.timestamp),HOUR(t5.timestamp))=CONCAT_WS(' ',DATE(ap.timestamp),HOUR(ap.timestamp)) and 
-		t5.host_id=ap.host_id;		
-			update `analyze_odu100_peerNodeStatusTable`  as ap ,
-		(select timestamp,host_id,minimum,maximum,
-		if(range_values=1,-5,
-                  if(range_values=2,-15,
-                    if(range_values=3,-25,
-                        if(range_values=4,-35,
-                            if(range_values=5,-45,
-                                if(range_values=6,-55,
-                                    if(range_values=7,-65,
-                                        if(range_values=8,-75,
-                                            if(range_values=9,-85,
-                                                if(range_values=10,-95,-95)
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                     )
-                  )
-                ) as `Most_values`
-
-		from (
-		select timestamp,host_id,minimum,maximum,
-		FIELD(GREATEST(`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`),
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`) as range_values,
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`
-		 from 
-		(
-		SELECT  
-		timestamp,host_id,
-		SUM(if(sigStrength2 between '-10' and '0',1,0))   as `count_100`,
-		SUM(if(sigStrength2 between '-20' and '-10',1,0)) as `count_2010`,
-		SUM(if(sigStrength2 between '-30' and '-20',1,0)) as `count_3020`,
-		SUM(if(sigStrength2 between '-40' and '-30',1,0)) as `count_4030`,
-		SUM(if(sigStrength2 between '-50' and '-40',1,0)) as `count_5040`,
-		SUM(if(sigStrength2 between '-60' and '-50',1,0)) as `count_6050`,
-		SUM(if(sigStrength2 between '-70' and '-60',1,0)) as `count_7060`,
-		SUM(if(sigStrength2 between '-80' and '-70',1,0)) as `count_8070`,
-		SUM(if(sigStrength2 between '-90' and '-80',1,0)) as `count_9080`,
-		SUM(if(sigStrength2 between '-95' and '-90',1,0)) as `count_9590`,
-		min(sigStrength2) as minimum,max(sigStrength2) as maximum
-		FROM `odu100_peerNodeStatusTable` 
-		where host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=1
-		group by host_id,timeSlotIndex,CONCAT(DATE(timestamp),HOUR(timestamp))
-		) as t3
-		) as t4
-		)as t5 
-
-		set 
-		`sig2_index_1_Min`=t5.minimum,
-		`sig2_index_1_Max`=t5.maximum, 
-		`sig2_index_1_Range`=t5.`Most_values`
-
-		where CONCAT_WS(' ',DATE(t5.timestamp),HOUR(t5.timestamp))=CONCAT_WS(' ',DATE(ap.timestamp),HOUR(ap.timestamp)) and 
-		t5.host_id=ap.host_id;
-			
-	
-	
-	
-	
-	
-	
-	update `analyze_odu100_peerNodeStatusTable`  as ap ,
-		(select timestamp,host_id,minimum,maximum,
-		if(range_values=1,-5,
-                  if(range_values=2,-15,
-                    if(range_values=3,-25,
-                        if(range_values=4,-35,
-                            if(range_values=5,-45,
-                                if(range_values=6,-55,
-                                    if(range_values=7,-65,
-                                        if(range_values=8,-75,
-                                            if(range_values=9,-85,
-                                                if(range_values=10,-95,-95)
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                     )
-                  )
-                ) as `Most_values`
-
-		from (
-		select timestamp,host_id,minimum,maximum,
-		FIELD(GREATEST(`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`),
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`) as range_values,
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`
-		 from 
-		(
-		SELECT  
-		timestamp,host_id,
-		SUM(if(sigStrength2 between '-10' and '0',1,0))   as `count_100`,
-		SUM(if(sigStrength2 between '-20' and '-10',1,0)) as `count_2010`,
-		SUM(if(sigStrength2 between '-30' and '-20',1,0)) as `count_3020`,
-		SUM(if(sigStrength2 between '-40' and '-30',1,0)) as `count_4030`,
-		SUM(if(sigStrength2 between '-50' and '-40',1,0)) as `count_5040`,
-		SUM(if(sigStrength2 between '-60' and '-50',1,0)) as `count_6050`,
-		SUM(if(sigStrength2 between '-70' and '-60',1,0)) as `count_7060`,
-		SUM(if(sigStrength2 between '-80' and '-70',1,0)) as `count_8070`,
-		SUM(if(sigStrength2 between '-90' and '-80',1,0)) as `count_9080`,
-		SUM(if(sigStrength2 between '-95' and '-90',1,0)) as `count_9590`,
-		min(sigStrength2) as minimum,max(sigStrength2) as maximum
-		FROM `odu100_peerNodeStatusTable` 
-		where host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=2
-		group by host_id,timeSlotIndex,CONCAT(DATE(timestamp),HOUR(timestamp))
-		) as t3
-		) as t4
-		)as t5 
-
-		set 
-		`sig2_index_2_Min`=t5.minimum,
-		`sig2_index_2_Max`=t5.maximum, 
-		`sig2_index_2_Range`=t5.`Most_values`
-
-		where CONCAT_WS(' ',DATE(t5.timestamp),HOUR(t5.timestamp))=CONCAT_WS(' ',DATE(ap.timestamp),HOUR(ap.timestamp)) and 
-		t5.host_id=ap.host_id;
-		
-		
-		
-				 
-
-		update `analyze_odu100_peerNodeStatusTable`  as ap ,
-		(select timestamp,host_id,minimum,maximum,
-		if(range_values=1,-5,
-                  if(range_values=2,-15,
-                    if(range_values=3,-25,
-                        if(range_values=4,-35,
-                            if(range_values=5,-45,
-                                if(range_values=6,-55,
-                                    if(range_values=7,-65,
-                                        if(range_values=8,-75,
-                                            if(range_values=9,-85,
-                                                if(range_values=10,-95,-95)
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                     )
-                  )
-                ) as `Most_values`  
-
-		from (
-		select timestamp,host_id,minimum,maximum,
-		FIELD(GREATEST(`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`),
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`) as range_values,
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`
-		 from 
-		(
-		SELECT  
-		timestamp,host_id,
-		SUM(if(sigStrength2 between '-10' and '0',1,0))   as `count_100`,
-		SUM(if(sigStrength2 between '-20' and '-10',1,0)) as `count_2010`,
-		SUM(if(sigStrength2 between '-30' and '-20',1,0)) as `count_3020`,
-		SUM(if(sigStrength2 between '-40' and '-30',1,0)) as `count_4030`,
-		SUM(if(sigStrength2 between '-50' and '-40',1,0)) as `count_5040`,
-		SUM(if(sigStrength2 between '-60' and '-50',1,0)) as `count_6050`,
-		SUM(if(sigStrength2 between '-70' and '-60',1,0)) as `count_7060`,
-		SUM(if(sigStrength2 between '-80' and '-70',1,0)) as `count_8070`,
-		SUM(if(sigStrength2 between '-90' and '-80',1,0)) as `count_9080`,
-		SUM(if(sigStrength2 between '-95' and '-90',1,0)) as `count_9590`,
-		min(sigStrength2) as minimum,max(sigStrength2) as maximum
-		FROM `odu100_peerNodeStatusTable` 
-		where host_id=NEW.host_id and  sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=3
-		group by host_id,timeSlotIndex,CONCAT(DATE(timestamp),HOUR(timestamp))
-		) as t3
-		) as t4
-		)as t5 
-
-		set 
-		`sig2_index_3_Min`=t5.minimum,
-		`sig2_index_3_Max`=t5.maximum, 
-		`sig2_index_3_Range`=t5.`Most_values`  
-
-		where CONCAT_WS(' ',DATE(t5.timestamp),HOUR(t5.timestamp))=CONCAT_WS(' ',DATE(ap.timestamp),HOUR(ap.timestamp)) and 
-		t5.host_id=ap.host_id;
-
-
-
-		update `analyze_odu100_peerNodeStatusTable`  as ap ,
-		(select timestamp,host_id,minimum,maximum,
-		if(range_values=1,-5,
-                  if(range_values=2,-15,
-                    if(range_values=3,-25,
-                        if(range_values=4,-35,
-                            if(range_values=5,-45,
-                                if(range_values=6,-55,
-                                    if(range_values=7,-65,
-                                        if(range_values=8,-75,
-                                            if(range_values=9,-85,
-                                                if(range_values=10,-95,-95)
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                     )
-                  )
-                ) as `Most_values`  
-
-		from (
-		select timestamp,host_id,minimum,maximum,
-		FIELD(GREATEST(`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`),
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`) as range_values,
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`
-		 from 
-		(
-		SELECT  
-		timestamp,host_id,
-		SUM(if(sigStrength2 between '-10' and '0',1,0))   as `count_100`,
-		SUM(if(sigStrength2 between '-20' and '-10',1,0)) as `count_2010`,
-		SUM(if(sigStrength2 between '-30' and '-20',1,0)) as `count_3020`,
-		SUM(if(sigStrength2 between '-40' and '-30',1,0)) as `count_4030`,
-		SUM(if(sigStrength2 between '-50' and '-40',1,0)) as `count_5040`,
-		SUM(if(sigStrength2 between '-60' and '-50',1,0)) as `count_6050`,
-		SUM(if(sigStrength2 between '-70' and '-60',1,0)) as `count_7060`,
-		SUM(if(sigStrength2 between '-80' and '-70',1,0)) as `count_8070`,
-		SUM(if(sigStrength2 between '-90' and '-80',1,0)) as `count_9080`,
-		SUM(if(sigStrength2 between '-95' and '-90',1,0)) as `count_9590`,
-		min(sigStrength2) as minimum,max(sigStrength2) as maximum
-		FROM `odu100_peerNodeStatusTable` 
-		where  host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=4
-		group by host_id,timeSlotIndex,CONCAT(DATE(timestamp),HOUR(timestamp))
-		) as t3
-		) as t4
-		)as t5 
-
-		set 
-		`sig2_index_4_Min`=t5.minimum,
-		`sig2_index_4_Max`=t5.maximum, 
-		`sig2_index_4_Range`=t5.`Most_values`  
-
-		where CONCAT_WS(' ',DATE(t5.timestamp),HOUR(t5.timestamp))=CONCAT_WS(' ',DATE(ap.timestamp),HOUR(ap.timestamp)) and 
-		t5.host_id=ap.host_id;
-
-
-
-		update `analyze_odu100_peerNodeStatusTable`  as ap ,
-		(select timestamp,host_id,minimum,maximum,
-		if(range_values=1,-5,
-                  if(range_values=2,-15,
-                    if(range_values=3,-25,
-                        if(range_values=4,-35,
-                            if(range_values=5,-45,
-                                if(range_values=6,-55,
-                                    if(range_values=7,-65,
-                                        if(range_values=8,-75,
-                                            if(range_values=9,-85,
-                                                if(range_values=10,-95,-95)
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                     )
-                  )
-                ) as `Most_values`  
-
-		from (
-		select timestamp,host_id,minimum,maximum,
-		FIELD(GREATEST(`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`),
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`) as range_values,
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`
-		 from 
-		(
-		SELECT  
-		timestamp,host_id,
-		SUM(if(sigStrength2 between '-10' and '0',1,0))   as `count_100`,
-		SUM(if(sigStrength2 between '-20' and '-10',1,0)) as `count_2010`,
-		SUM(if(sigStrength2 between '-30' and '-20',1,0)) as `count_3020`,
-		SUM(if(sigStrength2 between '-40' and '-30',1,0)) as `count_4030`,
-		SUM(if(sigStrength2 between '-50' and '-40',1,0)) as `count_5040`,
-		SUM(if(sigStrength2 between '-60' and '-50',1,0)) as `count_6050`,
-		SUM(if(sigStrength2 between '-70' and '-60',1,0)) as `count_7060`,
-		SUM(if(sigStrength2 between '-80' and '-70',1,0)) as `count_8070`,
-		SUM(if(sigStrength2 between '-90' and '-80',1,0)) as `count_9080`,
-		SUM(if(sigStrength2 between '-95' and '-90',1,0)) as `count_9590`,
-		min(sigStrength2) as minimum,max(sigStrength2) as maximum
-		FROM `odu100_peerNodeStatusTable` 
-		where  host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=5
-		group by host_id,timeSlotIndex,CONCAT(DATE(timestamp),HOUR(timestamp))
-		) as t3
-		) as t4
-		)as t5 
-
-		set 
-		`sig2_index_5_Min`=t5.minimum,
-		`sig2_index_5_Max`=t5.maximum, 
-		`sig2_index_5_Range`=t5.`Most_values`  
-
-		where CONCAT_WS(' ',DATE(t5.timestamp),HOUR(t5.timestamp))=CONCAT_WS(' ',DATE(ap.timestamp),HOUR(ap.timestamp)) and 
-		t5.host_id=ap.host_id;
-
-
-
-		update `analyze_odu100_peerNodeStatusTable`  as ap ,
-		(select timestamp,host_id,minimum,maximum,
-		if(range_values=1,-5,
-                  if(range_values=2,-15,
-                    if(range_values=3,-25,
-                        if(range_values=4,-35,
-                            if(range_values=5,-45,
-                                if(range_values=6,-55,
-                                    if(range_values=7,-65,
-                                        if(range_values=8,-75,
-                                            if(range_values=9,-85,
-                                                if(range_values=10,-95,-95)
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                     )
-                  )
-                ) as `Most_values`  
-
-		from (
-		select timestamp,host_id,minimum,maximum,
-		FIELD(GREATEST(`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`),
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`) as range_values,
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`
-		 from 
-		(
-		SELECT  
-		timestamp,host_id,
-		SUM(if(sigStrength2 between '-10' and '0',1,0))   as `count_100`,
-		SUM(if(sigStrength2 between '-20' and '-10',1,0)) as `count_2010`,
-		SUM(if(sigStrength2 between '-30' and '-20',1,0)) as `count_3020`,
-		SUM(if(sigStrength2 between '-40' and '-30',1,0)) as `count_4030`,
-		SUM(if(sigStrength2 between '-50' and '-40',1,0)) as `count_5040`,
-		SUM(if(sigStrength2 between '-60' and '-50',1,0)) as `count_6050`,
-		SUM(if(sigStrength2 between '-70' and '-60',1,0)) as `count_7060`,
-		SUM(if(sigStrength2 between '-80' and '-70',1,0)) as `count_8070`,
-		SUM(if(sigStrength2 between '-90' and '-80',1,0)) as `count_9080`,
-		SUM(if(sigStrength2 between '-95' and '-90',1,0)) as `count_9590`,
-		min(sigStrength2) as minimum,max(sigStrength2) as maximum
-		FROM `odu100_peerNodeStatusTable` 
-		where  host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=6
-		group by host_id,timeSlotIndex,CONCAT(DATE(timestamp),HOUR(timestamp))
-		) as t3
-		) as t4
-		)as t5 
-
-		set 
-		`sig2_index_6_Min`=t5.minimum,
-		`sig2_index_6_Max`=t5.maximum, 
-		`sig2_index_6_Range`=t5.`Most_values`  
-
-		where CONCAT_WS(' ',DATE(t5.timestamp),HOUR(t5.timestamp))=CONCAT_WS(' ',DATE(ap.timestamp),HOUR(ap.timestamp)) and 
-		t5.host_id=ap.host_id;
-
-
-
-		update `analyze_odu100_peerNodeStatusTable`  as ap ,
-		(select timestamp,host_id,minimum,maximum,
-		if(range_values=1,-5,
-                  if(range_values=2,-15,
-                    if(range_values=3,-25,
-                        if(range_values=4,-35,
-                            if(range_values=5,-45,
-                                if(range_values=6,-55,
-                                    if(range_values=7,-65,
-                                        if(range_values=8,-75,
-                                            if(range_values=9,-85,
-                                                if(range_values=10,-95,-95)
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                     )
-                  )
-                ) as `Most_values`  
-
-		from (
-		select timestamp,host_id,minimum,maximum,
-		FIELD(GREATEST(`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`),
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`) as range_values,
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`
-		 from 
-		(
-		SELECT  
-		timestamp,host_id,
-		SUM(if(sigStrength2 between '-10' and '0',1,0))   as `count_100`,
-		SUM(if(sigStrength2 between '-20' and '-10',1,0)) as `count_2010`,
-		SUM(if(sigStrength2 between '-30' and '-20',1,0)) as `count_3020`,
-		SUM(if(sigStrength2 between '-40' and '-30',1,0)) as `count_4030`,
-		SUM(if(sigStrength2 between '-50' and '-40',1,0)) as `count_5040`,
-		SUM(if(sigStrength2 between '-60' and '-50',1,0)) as `count_6050`,
-		SUM(if(sigStrength2 between '-70' and '-60',1,0)) as `count_7060`,
-		SUM(if(sigStrength2 between '-80' and '-70',1,0)) as `count_8070`,
-		SUM(if(sigStrength2 between '-90' and '-80',1,0)) as `count_9080`,
-		SUM(if(sigStrength2 between '-95' and '-90',1,0)) as `count_9590`,
-		min(sigStrength2) as minimum,max(sigStrength2) as maximum
-		FROM `odu100_peerNodeStatusTable` 
-		where host_id=NEW.host_id and  sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=7
-		group by host_id,timeSlotIndex,CONCAT(DATE(timestamp),HOUR(timestamp))
-		) as t3
-		) as t4
-		)as t5 
-
-		set 
-		`sig2_index_7_Min`=t5.minimum,
-		`sig2_index_7_Max`=t5.maximum, 
-		`sig2_index_7_Range`=t5.`Most_values`  
-
-		where CONCAT_WS(' ',DATE(t5.timestamp),HOUR(t5.timestamp))=CONCAT_WS(' ',DATE(ap.timestamp),HOUR(ap.timestamp)) and 
-		t5.host_id=ap.host_id;
-
-
-
-		update `analyze_odu100_peerNodeStatusTable`  as ap ,
-		(select timestamp,host_id,minimum,maximum,
-		if(range_values=1,-5,
-                  if(range_values=2,-15,
-                    if(range_values=3,-25,
-                        if(range_values=4,-35,
-                            if(range_values=5,-45,
-                                if(range_values=6,-55,
-                                    if(range_values=7,-65,
-                                        if(range_values=8,-75,
-                                            if(range_values=9,-85,
-                                                if(range_values=10,-95,-95)
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                     )
-                  )
-                ) as `Most_values`  
-
-		from (
-		select timestamp,host_id,minimum,maximum,
-		FIELD(GREATEST(`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`),
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`) as range_values,
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`
-		 from 
-		(
-		SELECT  
-		timestamp,host_id,
-		SUM(if(sigStrength2 between '-10' and '0',1,0))   as `count_100`,
-		SUM(if(sigStrength2 between '-20' and '-10',1,0)) as `count_2010`,
-		SUM(if(sigStrength2 between '-30' and '-20',1,0)) as `count_3020`,
-		SUM(if(sigStrength2 between '-40' and '-30',1,0)) as `count_4030`,
-		SUM(if(sigStrength2 between '-50' and '-40',1,0)) as `count_5040`,
-		SUM(if(sigStrength2 between '-60' and '-50',1,0)) as `count_6050`,
-		SUM(if(sigStrength2 between '-70' and '-60',1,0)) as `count_7060`,
-		SUM(if(sigStrength2 between '-80' and '-70',1,0)) as `count_8070`,
-		SUM(if(sigStrength2 between '-90' and '-80',1,0)) as `count_9080`,
-		SUM(if(sigStrength2 between '-95' and '-90',1,0)) as `count_9590`,
-		min(sigStrength2) as minimum,max(sigStrength2) as maximum
-		FROM `odu100_peerNodeStatusTable` 
-		where  host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=8
-		group by host_id,timeSlotIndex,CONCAT(DATE(timestamp),HOUR(timestamp))
-		) as t3
-		) as t4
-		)as t5 
-
-		set 
-		`sig2_index_8_Min`=t5.minimum,
-		`sig2_index_8_Max`=t5.maximum, 
-		`sig2_index_8_Range`=t5.`Most_values`  
-
-		where CONCAT_WS(' ',DATE(t5.timestamp),HOUR(t5.timestamp))=CONCAT_WS(' ',DATE(ap.timestamp),HOUR(ap.timestamp)) and 
-		t5.host_id=ap.host_id;
-
-
-
-		update `analyze_odu100_peerNodeStatusTable`  as ap ,
-		(select timestamp,host_id,minimum,maximum,
-		if(range_values=1,-5,
-                  if(range_values=2,-15,
-                    if(range_values=3,-25,
-                        if(range_values=4,-35,
-                            if(range_values=5,-45,
-                                if(range_values=6,-55,
-                                    if(range_values=7,-65,
-                                        if(range_values=8,-75,
-                                            if(range_values=9,-85,
-                                                if(range_values=10,-95,-95)
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                     )
-                  )
-                ) as `Most_values`  
-
-		from (
-		select timestamp,host_id,minimum,maximum,
-		FIELD(GREATEST(`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`),
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`) as range_values,
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`
-		 from 
-		(
-		SELECT  
-		timestamp,host_id,
-		SUM(if(sigStrength2 between '-10' and '0',1,0))   as `count_100`,
-		SUM(if(sigStrength2 between '-20' and '-10',1,0)) as `count_2010`,
-		SUM(if(sigStrength2 between '-30' and '-20',1,0)) as `count_3020`,
-		SUM(if(sigStrength2 between '-40' and '-30',1,0)) as `count_4030`,
-		SUM(if(sigStrength2 between '-50' and '-40',1,0)) as `count_5040`,
-		SUM(if(sigStrength2 between '-60' and '-50',1,0)) as `count_6050`,
-		SUM(if(sigStrength2 between '-70' and '-60',1,0)) as `count_7060`,
-		SUM(if(sigStrength2 between '-80' and '-70',1,0)) as `count_8070`,
-		SUM(if(sigStrength2 between '-90' and '-80',1,0)) as `count_9080`,
-		SUM(if(sigStrength2 between '-95' and '-90',1,0)) as `count_9590`,
-		min(sigStrength2) as minimum,max(sigStrength2) as maximum
-		FROM `odu100_peerNodeStatusTable` 
-		where  host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=9
-		group by host_id,timeSlotIndex,CONCAT(DATE(timestamp),HOUR(timestamp))
-		) as t3
-		) as t4
-		)as t5 
-
-		set 
-		`sig2_index_9_Min`=t5.minimum,
-		`sig2_index_9_Max`=t5.maximum, 
-		`sig2_index_9_Range`=t5.`Most_values`  
-
-		where CONCAT_WS(' ',DATE(t5.timestamp),HOUR(t5.timestamp))=CONCAT_WS(' ',DATE(ap.timestamp),HOUR(ap.timestamp)) and 
-		t5.host_id=ap.host_id;
-
-
-		update `analyze_odu100_peerNodeStatusTable`  as ap ,
-		(select timestamp,host_id,minimum,maximum,
-		if(range_values=1,-5,
-                  if(range_values=2,-15,
-                    if(range_values=3,-25,
-                        if(range_values=4,-35,
-                            if(range_values=5,-45,
-                                if(range_values=6,-55,
-                                    if(range_values=7,-65,
-                                        if(range_values=8,-75,
-                                            if(range_values=9,-85,
-                                                if(range_values=10,-95,-95)
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                     )
-                  )
-                ) as `Most_values`  
-
-		from (
-		select timestamp,host_id,minimum,maximum,
-		FIELD(GREATEST(`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`),
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`) as range_values,
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`
-		 from 
-		(
-		SELECT  
-		timestamp,host_id,
-		SUM(if(sigStrength2 between '-10' and '0',1,0))   as `count_100`,
-		SUM(if(sigStrength2 between '-20' and '-10',1,0)) as `count_2010`,
-		SUM(if(sigStrength2 between '-30' and '-20',1,0)) as `count_3020`,
-		SUM(if(sigStrength2 between '-40' and '-30',1,0)) as `count_4030`,
-		SUM(if(sigStrength2 between '-50' and '-40',1,0)) as `count_5040`,
-		SUM(if(sigStrength2 between '-60' and '-50',1,0)) as `count_6050`,
-		SUM(if(sigStrength2 between '-70' and '-60',1,0)) as `count_7060`,
-		SUM(if(sigStrength2 between '-80' and '-70',1,0)) as `count_8070`,
-		SUM(if(sigStrength2 between '-90' and '-80',1,0)) as `count_9080`,
-		SUM(if(sigStrength2 between '-95' and '-90',1,0)) as `count_9590`,
-		min(sigStrength2) as minimum,max(sigStrength2) as maximum
-		FROM `odu100_peerNodeStatusTable` 
-		where  host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=10
-		group by host_id,timeSlotIndex,CONCAT(DATE(timestamp),HOUR(timestamp))
-		) as t3
-		) as t4
-		)as t5 
-
-		set 
-		`sig2_index_10_Min`=t5.minimum,
-		`sig2_index_10_Max`=t5.maximum, 
-		`sig2_index_10_Range`=t5.`Most_values`  
-
-		where CONCAT_WS(' ',DATE(t5.timestamp),HOUR(t5.timestamp))=CONCAT_WS(' ',DATE(ap.timestamp),HOUR(ap.timestamp)) and 
-		t5.host_id=ap.host_id;
-
-		update `analyze_odu100_peerNodeStatusTable`  as ap ,
-		(select timestamp,host_id,minimum,maximum,
-		if(range_values=1,-5,
-                  if(range_values=2,-15,
-                    if(range_values=3,-25,
-                        if(range_values=4,-35,
-                            if(range_values=5,-45,
-                                if(range_values=6,-55,
-                                    if(range_values=7,-65,
-                                        if(range_values=8,-75,
-                                            if(range_values=9,-85,
-                                                if(range_values=10,-95,-95)
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                     )
-                  )
-                ) as `Most_values`  
-
-		from (
-		select timestamp,host_id,minimum,maximum,
-		FIELD(GREATEST(`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`),
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`) as range_values,
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`
-		 from 
-		(
-		SELECT  
-		timestamp,host_id,
-		SUM(if(sigStrength2 between '-10' and '0',1,0))   as `count_100`,
-		SUM(if(sigStrength2 between '-20' and '-10',1,0)) as `count_2010`,
-		SUM(if(sigStrength2 between '-30' and '-20',1,0)) as `count_3020`,
-		SUM(if(sigStrength2 between '-40' and '-30',1,0)) as `count_4030`,
-		SUM(if(sigStrength2 between '-50' and '-40',1,0)) as `count_5040`,
-		SUM(if(sigStrength2 between '-60' and '-50',1,0)) as `count_6050`,
-		SUM(if(sigStrength2 between '-70' and '-60',1,0)) as `count_7060`,
-		SUM(if(sigStrength2 between '-80' and '-70',1,0)) as `count_8070`,
-		SUM(if(sigStrength2 between '-90' and '-80',1,0)) as `count_9080`,
-		SUM(if(sigStrength2 between '-95' and '-90',1,0)) as `count_9590`,
-		min(sigStrength2) as minimum,max(sigStrength2) as maximum
-		FROM `odu100_peerNodeStatusTable` 
-		where host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=11
-		group by host_id,timeSlotIndex,CONCAT(DATE(timestamp),HOUR(timestamp))
-		) as t3
-		) as t4
-		)as t5 
-
-		set 
-		`sig2_index_11_Min`=t5.minimum,
-		`sig2_index_11_Max`=t5.maximum, 
-		`sig2_index_11_Range`=t5.`Most_values`  
-
-		where CONCAT_WS(' ',DATE(t5.timestamp),HOUR(t5.timestamp))=CONCAT_WS(' ',DATE(ap.timestamp),HOUR(ap.timestamp)) and 
-		t5.host_id=ap.host_id;
-
-
-		update `analyze_odu100_peerNodeStatusTable`  as ap ,
-		(select timestamp,host_id,minimum,maximum,
-		if(range_values=1,-5,
-                  if(range_values=2,-15,
-                    if(range_values=3,-25,
-                        if(range_values=4,-35,
-                            if(range_values=5,-45,
-                                if(range_values=6,-55,
-                                    if(range_values=7,-65,
-                                        if(range_values=8,-75,
-                                            if(range_values=9,-85,
-                                                if(range_values=10,-95,-95)
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                     )
-                  )
-                ) as `Most_values`  
-
-		from (
-		select timestamp,host_id,minimum,maximum,
-		FIELD(GREATEST(`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`),
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`) as range_values,
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`
-		 from 
-		(
-		SELECT  
-		timestamp,host_id,
-		SUM(if(sigStrength2 between '-10' and '0',1,0))   as `count_100`,
-		SUM(if(sigStrength2 between '-20' and '-10',1,0)) as `count_2010`,
-		SUM(if(sigStrength2 between '-30' and '-20',1,0)) as `count_3020`,
-		SUM(if(sigStrength2 between '-40' and '-30',1,0)) as `count_4030`,
-		SUM(if(sigStrength2 between '-50' and '-40',1,0)) as `count_5040`,
-		SUM(if(sigStrength2 between '-60' and '-50',1,0)) as `count_6050`,
-		SUM(if(sigStrength2 between '-70' and '-60',1,0)) as `count_7060`,
-		SUM(if(sigStrength2 between '-80' and '-70',1,0)) as `count_8070`,
-		SUM(if(sigStrength2 between '-90' and '-80',1,0)) as `count_9080`,
-		SUM(if(sigStrength2 between '-95' and '-90',1,0)) as `count_9590`,
-		min(sigStrength2) as minimum,max(sigStrength2) as maximum
-		FROM `odu100_peerNodeStatusTable` 
-		where  host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=12
-		group by host_id,timeSlotIndex,CONCAT(DATE(timestamp),HOUR(timestamp))
-		) as t3
-		) as t4
-		)as t5 
-
-		set 
-		`sig2_index_12_Min`=t5.minimum,
-		`sig2_index_12_Max`=t5.maximum, 
-		`sig2_index_12_Range`=t5.`Most_values`  
-
-		where CONCAT_WS(' ',DATE(t5.timestamp),HOUR(t5.timestamp))=CONCAT_WS(' ',DATE(ap.timestamp),HOUR(ap.timestamp)) and 
-		t5.host_id=ap.host_id;
-
-		update `analyze_odu100_peerNodeStatusTable`  as ap ,
-		(select timestamp,host_id,minimum,maximum,
-		if(range_values=1,-5,
-                  if(range_values=2,-15,
-                    if(range_values=3,-25,
-                        if(range_values=4,-35,
-                            if(range_values=5,-45,
-                                if(range_values=6,-55,
-                                    if(range_values=7,-65,
-                                        if(range_values=8,-75,
-                                            if(range_values=9,-85,
-                                                if(range_values=10,-95,-95)
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                     )
-                  )
-                ) as `Most_values`  
-
-		from (
-		select timestamp,host_id,minimum,maximum,
-		FIELD(GREATEST(`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`),
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`) as range_values,
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`
-		 from 
-		(
-		SELECT  
-		timestamp,host_id,
-		SUM(if(sigStrength2 between '-10' and '0',1,0))   as `count_100`,
-		SUM(if(sigStrength2 between '-20' and '-10',1,0)) as `count_2010`,
-		SUM(if(sigStrength2 between '-30' and '-20',1,0)) as `count_3020`,
-		SUM(if(sigStrength2 between '-40' and '-30',1,0)) as `count_4030`,
-		SUM(if(sigStrength2 between '-50' and '-40',1,0)) as `count_5040`,
-		SUM(if(sigStrength2 between '-60' and '-50',1,0)) as `count_6050`,
-		SUM(if(sigStrength2 between '-70' and '-60',1,0)) as `count_7060`,
-		SUM(if(sigStrength2 between '-80' and '-70',1,0)) as `count_8070`,
-		SUM(if(sigStrength2 between '-90' and '-80',1,0)) as `count_9080`,
-		SUM(if(sigStrength2 between '-95' and '-90',1,0)) as `count_9590`,
-		min(sigStrength2) as minimum,max(sigStrength2) as maximum
-		FROM `odu100_peerNodeStatusTable` 
-		where  host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=13
-		group by host_id,timeSlotIndex,CONCAT(DATE(timestamp),HOUR(timestamp))
-		) as t3
-		) as t4
-		)as t5 
-
-		set 
-		`sig2_index_13_Min`=t5.minimum,
-		`sig2_index_13_Max`=t5.maximum, 
-		`sig2_index_13_Range`=t5.`Most_values`  
-
-		where CONCAT_WS(' ',DATE(t5.timestamp),HOUR(t5.timestamp))=CONCAT_WS(' ',DATE(ap.timestamp),HOUR(ap.timestamp)) and 
-		t5.host_id=ap.host_id;		
-
-
-		update `analyze_odu100_peerNodeStatusTable`  as ap ,
-		(select timestamp,host_id,minimum,maximum,
-		if(range_values=1,-5,
-                  if(range_values=2,-15,
-                    if(range_values=3,-25,
-                        if(range_values=4,-35,
-                            if(range_values=5,-45,
-                                if(range_values=6,-55,
-                                    if(range_values=7,-65,
-                                        if(range_values=8,-75,
-                                            if(range_values=9,-85,
-                                                if(range_values=10,-95,-95)
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                     )
-                  )
-                ) as `Most_values`  
-
-		from (
-		select timestamp,host_id,minimum,maximum,
-		FIELD(GREATEST(`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`),
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`) as range_values,
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`
-		 from 
-		(
-		SELECT  
-		timestamp,host_id,
-		SUM(if(sigStrength2 between '-10' and '0',1,0))   as `count_100`,
-		SUM(if(sigStrength2 between '-20' and '-10',1,0)) as `count_2010`,
-		SUM(if(sigStrength2 between '-30' and '-20',1,0)) as `count_3020`,
-		SUM(if(sigStrength2 between '-40' and '-30',1,0)) as `count_4030`,
-		SUM(if(sigStrength2 between '-50' and '-40',1,0)) as `count_5040`,
-		SUM(if(sigStrength2 between '-60' and '-50',1,0)) as `count_6050`,
-		SUM(if(sigStrength2 between '-70' and '-60',1,0)) as `count_7060`,
-		SUM(if(sigStrength2 between '-80' and '-70',1,0)) as `count_8070`,
-		SUM(if(sigStrength2 between '-90' and '-80',1,0)) as `count_9080`,
-		SUM(if(sigStrength2 between '-95' and '-90',1,0)) as `count_9590`,
-		min(sigStrength2) as minimum,max(sigStrength2) as maximum
-		FROM `odu100_peerNodeStatusTable` 
-		where  host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=14
-		group by host_id,timeSlotIndex,CONCAT(DATE(timestamp),HOUR(timestamp))
-		) as t3
-		) as t4
-		)as t5 
-
-		set 
-		`sig2_index_14_Min`=t5.minimum,
-		`sig2_index_14_Max`=t5.maximum, 
-		`sig2_index_14_Range`=t5.`Most_values`  
-
-		where CONCAT_WS(' ',DATE(t5.timestamp),HOUR(t5.timestamp))=CONCAT_WS(' ',DATE(ap.timestamp),HOUR(ap.timestamp)) and 
-		t5.host_id=ap.host_id;		
-		
-
-		update `analyze_odu100_peerNodeStatusTable`  as ap ,
-		(select timestamp,host_id,minimum,maximum,
-		if(range_values=1,-5,
-                  if(range_values=2,-15,
-                    if(range_values=3,-25,
-                        if(range_values=4,-35,
-                            if(range_values=5,-45,
-                                if(range_values=6,-55,
-                                    if(range_values=7,-65,
-                                        if(range_values=8,-75,
-                                            if(range_values=9,-85,
-                                                if(range_values=10,-95,-95)
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                     )
-                  )
-                ) as `Most_values`  
-
-		from (
-		select timestamp,host_id,minimum,maximum,
-		FIELD(GREATEST(`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`),
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`) as range_values,
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`
-		 from 
-		(
-		SELECT  
-		timestamp,host_id,
-		SUM(if(sigStrength2 between '-10' and '0',1,0))   as `count_100`,
-		SUM(if(sigStrength2 between '-20' and '-10',1,0)) as `count_2010`,
-		SUM(if(sigStrength2 between '-30' and '-20',1,0)) as `count_3020`,
-		SUM(if(sigStrength2 between '-40' and '-30',1,0)) as `count_4030`,
-		SUM(if(sigStrength2 between '-50' and '-40',1,0)) as `count_5040`,
-		SUM(if(sigStrength2 between '-60' and '-50',1,0)) as `count_6050`,
-		SUM(if(sigStrength2 between '-70' and '-60',1,0)) as `count_7060`,
-		SUM(if(sigStrength2 between '-80' and '-70',1,0)) as `count_8070`,
-		SUM(if(sigStrength2 between '-90' and '-80',1,0)) as `count_9080`,
-		SUM(if(sigStrength2 between '-95' and '-90',1,0)) as `count_9590`,
-		min(sigStrength2) as minimum,max(sigStrength2) as maximum
-		FROM `odu100_peerNodeStatusTable` 
-		where host_id=NEW.host_id and  sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=15
-		group by host_id,timeSlotIndex,CONCAT(DATE(timestamp),HOUR(timestamp))
-		) as t3
-		) as t4
-		)as t5 
-
-		set 
-		`sig2_index_15_Min`=t5.minimum,
-		`sig2_index_15_Max`=t5.maximum, 
-		`sig2_index_15_Range`=t5.`Most_values`  
-
-		where CONCAT_WS(' ',DATE(t5.timestamp),HOUR(t5.timestamp))=CONCAT_WS(' ',DATE(ap.timestamp),HOUR(ap.timestamp)) and 
-		t5.host_id=ap.host_id;
-
-		update `analyze_odu100_peerNodeStatusTable`  as ap ,
-		(select timestamp,host_id,minimum,maximum,
-		if(range_values=1,-5,
-                  if(range_values=2,-15,
-                    if(range_values=3,-25,
-                        if(range_values=4,-35,
-                            if(range_values=5,-45,
-                                if(range_values=6,-55,
-                                    if(range_values=7,-65,
-                                        if(range_values=8,-75,
-                                            if(range_values=9,-85,
-                                                if(range_values=10,-95,-95)
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                     )
-                  )
-                ) as `Most_values`  
-
-		from (
-		select timestamp,host_id,minimum,maximum,
-		FIELD(GREATEST(`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`),
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`) as range_values,
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`
-		 from 
-		(
-		SELECT  
-		timestamp,host_id,
-		SUM(if(sigStrength2 between '-10' and '0',1,0))   as `count_100`,
-		SUM(if(sigStrength2 between '-20' and '-10',1,0)) as `count_2010`,
-		SUM(if(sigStrength2 between '-30' and '-20',1,0)) as `count_3020`,
-		SUM(if(sigStrength2 between '-40' and '-30',1,0)) as `count_4030`,
-		SUM(if(sigStrength2 between '-50' and '-40',1,0)) as `count_5040`,
-		SUM(if(sigStrength2 between '-60' and '-50',1,0)) as `count_6050`,
-		SUM(if(sigStrength2 between '-70' and '-60',1,0)) as `count_7060`,
-		SUM(if(sigStrength2 between '-80' and '-70',1,0)) as `count_8070`,
-		SUM(if(sigStrength2 between '-90' and '-80',1,0)) as `count_9080`,
-		SUM(if(sigStrength2 between '-95' and '-90',1,0)) as `count_9590`,
-		min(sigStrength2) as minimum,max(sigStrength2) as maximum
-		FROM `odu100_peerNodeStatusTable` 
-		where  host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=16
-		group by host_id,timeSlotIndex,CONCAT(DATE(timestamp),HOUR(timestamp))
-		) as t3
-		) as t4
-		)as t5 
-
-		set 
-		`sig2_index_16_Min`=t5.minimum,
-		`sig2_index_16_Max`=t5.maximum, 
-		`sig2_index_16_Range`=t5.`Most_values`  
+		`index_16_Min`=t5.minimum,
+		`index_16_Max`=t5.maximum, 
+		`index_16_Range`=t5.`Most_values`,
+		`index_16_Range_count`=t5.`no_of_values`
 
 		where CONCAT_WS(' ',DATE(t5.timestamp),HOUR(t5.timestamp))=CONCAT_WS(' ',DATE(ap.timestamp),HOUR(ap.timestamp)) and 
 		t5.host_id=ap.host_id;		
@@ -2598,7 +1998,7 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
                 SET hour_start=CONCAT(DATE_FORMAT(old_time,'%Y-%m-%d'),' 00:00:00');
                 SET hour_end=CONCAT(DATE_FORMAT(old_time,'%Y-%m-%d'),' 23:59:59');
                 INSERT INTO `analyze_odu100_peerNodeStatusTable` (`analyze_odu100_peerNodeStatusTable_id`, `timestamp`, `host_id`,`type`,
-                `sig1_index_1_Min`, `sig1_index_1_Max`,`sig1_index_1_Range`  )
+                `index_1_Min`, `index_1_Max`,`index_1_Range` , `index_1_Range_count`)
                 select NULL,DATE(timestamp),host_id,'DAILY',minimum,maximum,
                 if(range_values=1,-5,
                   if(range_values=2,-15,
@@ -2618,7 +2018,27 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
                         )
                      )
                   )
-                ) as `Most_values`  
+                ) as `Most_values`,
+
+                if(range_values=1,`count_100`,
+                  if(range_values=2,`count_2010`,
+                    if(range_values=3,`count_3020`,
+                        if(range_values=4,`count_4030`,
+                            if(range_values=5,`count_5040`,
+                                if(range_values=6,`count_6050`,
+                                    if(range_values=7,`count_7060`,
+                                        if(range_values=8,`count_8070`,
+                                            if(range_values=9,`count_9080`,
+                                                if(range_values=10,`count_9590`,`count_9590`)
+                                            )
+                                        )
+                                    )
+                                )
+                            )
+                        )
+                     )
+                  )
+                ) as `no_of_values`
 
                 from (
                 select timestamp,host_id,minimum,maximum,
@@ -2641,7 +2061,7 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
                 SUM(if(sigStrength1 between '-95' and '-90',1,0)) as `count_9590`,
                 min(sigStrength1) as minimum,max(sigStrength1) as maximum
                 FROM `odu100_peerNodeStatusTable` 
-                where host_id=NEW.host_id and sigStrength1<>1111111 and timestamp between hour_start and hour_end and timeSlotIndex=1
+                where sigStrength1<>1 and timestamp between hour_start and hour_end and timeSlotIndex=1
                 group by host_id,timeSlotIndex,DATE(timestamp)
                 ) as t3
                 ) as t4;
@@ -2667,7 +2087,27 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
                         )
                      )
                   )
-                ) as `Most_values`  
+                ) as `Most_values`,
+
+		if(range_values=1,`count_100`,
+		  if(range_values=2,`count_2010`,
+		    if(range_values=3,`count_3020`,
+			if(range_values=4,`count_4030`,
+			    if(range_values=5,`count_5040`,
+				if(range_values=6,`count_6050`,
+				    if(range_values=7,`count_7060`,
+				        if(range_values=8,`count_8070`,
+				            if(range_values=9,`count_9080`,
+				                if(range_values=10,`count_9590`,`count_9590`)
+				            )
+				        )
+				    )
+				)
+			    )
+			)
+		     )
+		  )
+		) as `no_of_values`
 
 		from (
 		select timestamp,host_id,minimum,maximum,
@@ -2690,16 +2130,17 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
 		SUM(if(sigStrength1 between '-95' and '-90',1,0)) as `count_9590`,
 		min(sigStrength1) as minimum,max(sigStrength1) as maximum
 		FROM `odu100_peerNodeStatusTable` 
-		where host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=2
+		where sigStrength1<>1 and  timestamp between hour_start and hour_end and timeSlotIndex=2
 		group by host_id,timeSlotIndex,DATE(timestamp)
 		) as t3
 		) as t4
 		)as t5 
 
 		set 
-		`sig1_index_2_Min`=t5.minimum,
-		`sig1_index_2_Max`=t5.maximum, 
-		`sig1_index_2_Range`=t5.`Most_values`  
+		`index_2_Min`=t5.minimum,
+		`index_2_Max`=t5.maximum, 
+		`index_2_Range`=t5.`Most_values`,
+		`index_2_Range_count`=t5.`no_of_values`
 
 		where DATE(t5.timestamp)=DATE(ap.timestamp) and 
 		t5.host_id=ap.host_id;
@@ -2728,7 +2169,27 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
                         )
                      )
                   )
-                ) as `Most_values`  
+                ) as `Most_values`,
+
+		if(range_values=1,`count_100`,
+		  if(range_values=2,`count_2010`,
+		    if(range_values=3,`count_3020`,
+			if(range_values=4,`count_4030`,
+			    if(range_values=5,`count_5040`,
+				if(range_values=6,`count_6050`,
+				    if(range_values=7,`count_7060`,
+				        if(range_values=8,`count_8070`,
+				            if(range_values=9,`count_9080`,
+				                if(range_values=10,`count_9590`,`count_9590`)
+				            )
+				        )
+				    )
+				)
+			    )
+			)
+		     )
+		  )
+		) as `no_of_values`
 
 		from (
 		select timestamp,host_id,minimum,maximum,
@@ -2751,16 +2212,17 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
 		SUM(if(sigStrength1 between '-95' and '-90',1,0)) as `count_9590`,
 		min(sigStrength1) as minimum,max(sigStrength1) as maximum
 		FROM `odu100_peerNodeStatusTable` 
-		where host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=3
+		where sigStrength1<>1 and  timestamp between hour_start and hour_end and timeSlotIndex=3
 		group by host_id,timeSlotIndex,DATE(timestamp)
 		) as t3
 		) as t4
 		)as t5 
 
 		set 
-		`sig1_index_3_Min`=t5.minimum,
-		`sig1_index_3_Max`=t5.maximum, 
-		`sig1_index_3_Range`=t5.`Most_values`  
+		`index_3_Min`=t5.minimum,
+		`index_3_Max`=t5.maximum, 
+		`index_3_Range`=t5.`Most_values`,
+		`index_3_Range_count`=t5.`no_of_values`
 
 		where DATE(t5.timestamp)=DATE(ap.timestamp) and 
 		t5.host_id=ap.host_id;
@@ -2787,7 +2249,27 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
                         )
                      )
                   )
-                ) as `Most_values`  
+                ) as `Most_values`,
+
+		if(range_values=1,`count_100`,
+		  if(range_values=2,`count_2010`,
+		    if(range_values=3,`count_3020`,
+			if(range_values=4,`count_4030`,
+			    if(range_values=5,`count_5040`,
+				if(range_values=6,`count_6050`,
+				    if(range_values=7,`count_7060`,
+				        if(range_values=8,`count_8070`,
+				            if(range_values=9,`count_9080`,
+				                if(range_values=10,`count_9590`,`count_9590`)
+				            )
+				        )
+				    )
+				)
+			    )
+			)
+		     )
+		  )
+		) as `no_of_values`
 
 		from (
 		select timestamp,host_id,minimum,maximum,
@@ -2810,16 +2292,17 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
 		SUM(if(sigStrength1 between '-95' and '-90',1,0)) as `count_9590`,
 		min(sigStrength1) as minimum,max(sigStrength1) as maximum
 		FROM `odu100_peerNodeStatusTable` 
-		where host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=4
+		where sigStrength1<>1 and  timestamp between hour_start and hour_end and timeSlotIndex=4
 		group by host_id,timeSlotIndex,DATE(timestamp)
 		) as t3
 		) as t4
 		)as t5 
 
 		set 
-		`sig1_index_4_Min`=t5.minimum,
-		`sig1_index_4_Max`=t5.maximum, 
-		`sig1_index_4_Range`=t5.`Most_values`  
+		`index_4_Min`=t5.minimum,
+		`index_4_Max`=t5.maximum, 
+		`index_4_Range`=t5.`Most_values`,
+		`index_4_Range_count`=t5.`no_of_values`
 
 		where DATE(t5.timestamp)=DATE(ap.timestamp) and 
 		t5.host_id=ap.host_id;
@@ -2846,7 +2329,27 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
                         )
                      )
                   )
-                ) as `Most_values`  
+                ) as `Most_values`,
+
+		if(range_values=1,`count_100`,
+		  if(range_values=2,`count_2010`,
+		    if(range_values=3,`count_3020`,
+			if(range_values=4,`count_4030`,
+			    if(range_values=5,`count_5040`,
+				if(range_values=6,`count_6050`,
+				    if(range_values=7,`count_7060`,
+				        if(range_values=8,`count_8070`,
+				            if(range_values=9,`count_9080`,
+				                if(range_values=10,`count_9590`,`count_9590`)
+				            )
+				        )
+				    )
+				)
+			    )
+			)
+		     )
+		  )
+		) as `no_of_values`
 
 		from (
 		select timestamp,host_id,minimum,maximum,
@@ -2869,16 +2372,17 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
 		SUM(if(sigStrength1 between '-95' and '-90',1,0)) as `count_9590`,
 		min(sigStrength1) as minimum,max(sigStrength1) as maximum
 		FROM `odu100_peerNodeStatusTable` 
-		where host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=5
+		where sigStrength1<>1 and  timestamp between hour_start and hour_end and timeSlotIndex=5
 		group by host_id,timeSlotIndex,DATE(timestamp)
 		) as t3
 		) as t4
 		)as t5 
 
 		set 
-		`sig1_index_5_Min`=t5.minimum,
-		`sig1_index_5_Max`=t5.maximum, 
-		`sig1_index_5_Range`=t5.`Most_values`  
+		`index_5_Min`=t5.minimum,
+		`index_5_Max`=t5.maximum, 
+		`index_5_Range`=t5.`Most_values`,
+		`index_5_Range_count`=t5.`no_of_values`
 
 		where DATE(t5.timestamp)=DATE(ap.timestamp) and 
 		t5.host_id=ap.host_id;
@@ -2905,7 +2409,27 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
                         )
                      )
                   )
-                ) as `Most_values`  
+                ) as `Most_values`,
+
+		if(range_values=1,`count_100`,
+		  if(range_values=2,`count_2010`,
+		    if(range_values=3,`count_3020`,
+			if(range_values=4,`count_4030`,
+			    if(range_values=5,`count_5040`,
+				if(range_values=6,`count_6050`,
+				    if(range_values=7,`count_7060`,
+				        if(range_values=8,`count_8070`,
+				            if(range_values=9,`count_9080`,
+				                if(range_values=10,`count_9590`,`count_9590`)
+				            )
+				        )
+				    )
+				)
+			    )
+			)
+		     )
+		  )
+		) as `no_of_values`
 
 		from (
 		select timestamp,host_id,minimum,maximum,
@@ -2928,16 +2452,17 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
 		SUM(if(sigStrength1 between '-95' and '-90',1,0)) as `count_9590`,
 		min(sigStrength1) as minimum,max(sigStrength1) as maximum
 		FROM `odu100_peerNodeStatusTable` 
-		where host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=6
+		where sigStrength1<>1 and  timestamp between hour_start and hour_end and timeSlotIndex=6
 		group by host_id,timeSlotIndex,DATE(timestamp)
 		) as t3
 		) as t4
 		)as t5 
 
 		set 
-		`sig1_index_6_Min`=t5.minimum,
-		`sig1_index_6_Max`=t5.maximum, 
-		`sig1_index_6_Range`=t5.`Most_values`  
+		`index_6_Min`=t5.minimum,
+		`index_6_Max`=t5.maximum, 
+		`index_6_Range`=t5.`Most_values`,
+		`index_6_Range_count`=t5.`no_of_values`
 
 		where DATE(t5.timestamp)=DATE(ap.timestamp) and 
 		t5.host_id=ap.host_id;
@@ -2964,7 +2489,27 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
                         )
                      )
                   )
-                ) as `Most_values`  
+                ) as `Most_values`,
+
+		if(range_values=1,`count_100`,
+		  if(range_values=2,`count_2010`,
+		    if(range_values=3,`count_3020`,
+			if(range_values=4,`count_4030`,
+			    if(range_values=5,`count_5040`,
+				if(range_values=6,`count_6050`,
+				    if(range_values=7,`count_7060`,
+				        if(range_values=8,`count_8070`,
+				            if(range_values=9,`count_9080`,
+				                if(range_values=10,`count_9590`,`count_9590`)
+				            )
+				        )
+				    )
+				)
+			    )
+			)
+		     )
+		  )
+		) as `no_of_values`
 
 		from (
 		select timestamp,host_id,minimum,maximum,
@@ -2987,16 +2532,17 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
 		SUM(if(sigStrength1 between '-95' and '-90',1,0)) as `count_9590`,
 		min(sigStrength1) as minimum,max(sigStrength1) as maximum
 		FROM `odu100_peerNodeStatusTable` 
-		where host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=7
+		where sigStrength1<>1 and  timestamp between hour_start and hour_end and timeSlotIndex=7
 		group by host_id,timeSlotIndex,DATE(timestamp)
 		) as t3
 		) as t4
 		)as t5 
 
 		set 
-		`sig1_index_7_Min`=t5.minimum,
-		`sig1_index_7_Max`=t5.maximum, 
-		`sig1_index_7_Range`=t5.`Most_values`  
+		`index_7_Min`=t5.minimum,
+		`index_7_Max`=t5.maximum, 
+		`index_7_Range`=t5.`Most_values`,
+		`index_7_Range_count`=t5.`no_of_values`
 
 		where DATE(t5.timestamp)=DATE(ap.timestamp) and 
 		t5.host_id=ap.host_id;
@@ -3023,7 +2569,27 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
                         )
                      )
                   )
-                ) as `Most_values`  
+                ) as `Most_values`,
+
+		if(range_values=1,`count_100`,
+		  if(range_values=2,`count_2010`,
+		    if(range_values=3,`count_3020`,
+			if(range_values=4,`count_4030`,
+			    if(range_values=5,`count_5040`,
+				if(range_values=6,`count_6050`,
+				    if(range_values=7,`count_7060`,
+				        if(range_values=8,`count_8070`,
+				            if(range_values=9,`count_9080`,
+				                if(range_values=10,`count_9590`,`count_9590`)
+				            )
+				        )
+				    )
+				)
+			    )
+			)
+		     )
+		  )
+		) as `no_of_values`
 
 		from (
 		select timestamp,host_id,minimum,maximum,
@@ -3046,16 +2612,17 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
 		SUM(if(sigStrength1 between '-95' and '-90',1,0)) as `count_9590`,
 		min(sigStrength1) as minimum,max(sigStrength1) as maximum
 		FROM `odu100_peerNodeStatusTable` 
-		where host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=8
+		where sigStrength1<>1 and  timestamp between hour_start and hour_end and timeSlotIndex=8
 		group by host_id,timeSlotIndex,DATE(timestamp)
 		) as t3
 		) as t4
 		)as t5 
 
 		set 
-		`sig1_index_8_Min`=t5.minimum,
-		`sig1_index_8_Max`=t5.maximum, 
-		`sig1_index_8_Range`=t5.`Most_values`  
+		`index_8_Min`=t5.minimum,
+		`index_8_Max`=t5.maximum, 
+		`index_8_Range`=t5.`Most_values`,
+		`index_8_Range_count`=t5.`no_of_values`
 
 		where DATE(t5.timestamp)=DATE(ap.timestamp) and 
 		t5.host_id=ap.host_id;
@@ -3082,7 +2649,27 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
                         )
                      )
                   )
-                ) as `Most_values`  
+                ) as `Most_values`,
+
+		if(range_values=1,`count_100`,
+		  if(range_values=2,`count_2010`,
+		    if(range_values=3,`count_3020`,
+			if(range_values=4,`count_4030`,
+			    if(range_values=5,`count_5040`,
+				if(range_values=6,`count_6050`,
+				    if(range_values=7,`count_7060`,
+				        if(range_values=8,`count_8070`,
+				            if(range_values=9,`count_9080`,
+				                if(range_values=10,`count_9590`,`count_9590`)
+				            )
+				        )
+				    )
+				)
+			    )
+			)
+		     )
+		  )
+		) as `no_of_values`
 
 		from (
 		select timestamp,host_id,minimum,maximum,
@@ -3105,16 +2692,17 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
 		SUM(if(sigStrength1 between '-95' and '-90',1,0)) as `count_9590`,
 		min(sigStrength1) as minimum,max(sigStrength1) as maximum
 		FROM `odu100_peerNodeStatusTable` 
-		where host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=9
+		where sigStrength1<>1 and  timestamp between hour_start and hour_end and timeSlotIndex=9
 		group by host_id,timeSlotIndex,DATE(timestamp)
 		) as t3
 		) as t4
 		)as t5 
 
 		set 
-		`sig1_index_9_Min`=t5.minimum,
-		`sig1_index_9_Max`=t5.maximum, 
-		`sig1_index_9_Range`=t5.`Most_values`  
+		`index_9_Min`=t5.minimum,
+		`index_9_Max`=t5.maximum, 
+		`index_9_Range`=t5.`Most_values`,
+		`index_9_Range_count`=t5.`no_of_values`
 
 		where DATE(t5.timestamp)=DATE(ap.timestamp) and 
 		t5.host_id=ap.host_id;
@@ -3140,7 +2728,27 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
                         )
                      )
                   )
-                ) as `Most_values`  
+                ) as `Most_values`,
+
+		if(range_values=1,`count_100`,
+		  if(range_values=2,`count_2010`,
+		    if(range_values=3,`count_3020`,
+			if(range_values=4,`count_4030`,
+			    if(range_values=5,`count_5040`,
+				if(range_values=6,`count_6050`,
+				    if(range_values=7,`count_7060`,
+				        if(range_values=8,`count_8070`,
+				            if(range_values=9,`count_9080`,
+				                if(range_values=10,`count_9590`,`count_9590`)
+				            )
+				        )
+				    )
+				)
+			    )
+			)
+		     )
+		  )
+		) as `no_of_values`
 
 		from (
 		select timestamp,host_id,minimum,maximum,
@@ -3163,16 +2771,17 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
 		SUM(if(sigStrength1 between '-95' and '-90',1,0)) as `count_9590`,
 		min(sigStrength1) as minimum,max(sigStrength1) as maximum
 		FROM `odu100_peerNodeStatusTable` 
-		where host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=10
+		where sigStrength1<>1 and  timestamp between hour_start and hour_end and timeSlotIndex=10
 		group by host_id,timeSlotIndex,DATE(timestamp)
 		) as t3
 		) as t4
 		)as t5 
 
 		set 
-		`sig1_index_10_Min`=t5.minimum,
-		`sig1_index_10_Max`=t5.maximum, 
-		`sig1_index_10_Range`=t5.`Most_values`  
+		`index_10_Min`=t5.minimum,
+		`index_10_Max`=t5.maximum, 
+		`index_10_Range`=t5.`Most_values`,
+		`index_10_Range_count`=t5.`no_of_values`
 
 		where DATE(t5.timestamp)=DATE(ap.timestamp) and 
 		t5.host_id=ap.host_id;
@@ -3198,7 +2807,27 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
                         )
                      )
                   )
-                ) as `Most_values`  
+                ) as `Most_values`,
+
+		if(range_values=1,`count_100`,
+		  if(range_values=2,`count_2010`,
+		    if(range_values=3,`count_3020`,
+			if(range_values=4,`count_4030`,
+			    if(range_values=5,`count_5040`,
+				if(range_values=6,`count_6050`,
+				    if(range_values=7,`count_7060`,
+				        if(range_values=8,`count_8070`,
+				            if(range_values=9,`count_9080`,
+				                if(range_values=10,`count_9590`,`count_9590`)
+				            )
+				        )
+				    )
+				)
+			    )
+			)
+		     )
+		  )
+		) as `no_of_values`
 
 		from (
 		select timestamp,host_id,minimum,maximum,
@@ -3221,16 +2850,17 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
 		SUM(if(sigStrength1 between '-95' and '-90',1,0)) as `count_9590`,
 		min(sigStrength1) as minimum,max(sigStrength1) as maximum
 		FROM `odu100_peerNodeStatusTable` 
-		where host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=11
+		where sigStrength1<>1 and  timestamp between hour_start and hour_end and timeSlotIndex=11
 		group by host_id,timeSlotIndex,DATE(timestamp)
 		) as t3
 		) as t4
 		)as t5 
 
 		set 
-		`sig1_index_11_Min`=t5.minimum,
-		`sig1_index_11_Max`=t5.maximum, 
-		`sig1_index_11_Range`=t5.`Most_values`  
+		`index_11_Min`=t5.minimum,
+		`index_11_Max`=t5.maximum, 
+		`index_11_Range`=t5.`Most_values`,
+		`index_11_Range_count`=t5.`no_of_values`
 
 		where DATE(t5.timestamp)=DATE(ap.timestamp) and 
 		t5.host_id=ap.host_id;
@@ -3256,7 +2886,27 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
                         )
                      )
                   )
-                ) as `Most_values`  
+                ) as `Most_values`,
+
+		if(range_values=1,`count_100`,
+		  if(range_values=2,`count_2010`,
+		    if(range_values=3,`count_3020`,
+			if(range_values=4,`count_4030`,
+			    if(range_values=5,`count_5040`,
+				if(range_values=6,`count_6050`,
+				    if(range_values=7,`count_7060`,
+				        if(range_values=8,`count_8070`,
+				            if(range_values=9,`count_9080`,
+				                if(range_values=10,`count_9590`,`count_9590`)
+				            )
+				        )
+				    )
+				)
+			    )
+			)
+		     )
+		  )
+		) as `no_of_values`
 
 		from (
 		select timestamp,host_id,minimum,maximum,
@@ -3279,16 +2929,17 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
 		SUM(if(sigStrength1 between '-95' and '-90',1,0)) as `count_9590`,
 		min(sigStrength1) as minimum,max(sigStrength1) as maximum
 		FROM `odu100_peerNodeStatusTable` 
-		where host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=12
+		where sigStrength1<>1 and  timestamp between hour_start and hour_end and timeSlotIndex=12
 		group by host_id,timeSlotIndex,DATE(timestamp)
 		) as t3
 		) as t4
 		)as t5 
 
 		set 
-		`sig1_index_12_Min`=t5.minimum,
-		`sig1_index_12_Max`=t5.maximum, 
-		`sig1_index_12_Range`=t5.`Most_values`  
+		`index_12_Min`=t5.minimum,
+		`index_12_Max`=t5.maximum, 
+		`index_12_Range`=t5.`Most_values`,
+		`index_12_Range_count`=t5.`no_of_values`
 
 		where DATE(t5.timestamp)=DATE(ap.timestamp) and 
 		t5.host_id=ap.host_id;
@@ -3314,7 +2965,27 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
                         )
                      )
                   )
-                ) as `Most_values`  
+                ) as `Most_values`,
+
+		if(range_values=1,`count_100`,
+		  if(range_values=2,`count_2010`,
+		    if(range_values=3,`count_3020`,
+			if(range_values=4,`count_4030`,
+			    if(range_values=5,`count_5040`,
+				if(range_values=6,`count_6050`,
+				    if(range_values=7,`count_7060`,
+				        if(range_values=8,`count_8070`,
+				            if(range_values=9,`count_9080`,
+				                if(range_values=10,`count_9590`,`count_9590`)
+				            )
+				        )
+				    )
+				)
+			    )
+			)
+		     )
+		  )
+		) as `no_of_values`
 
 		from (
 		select timestamp,host_id,minimum,maximum,
@@ -3337,16 +3008,17 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
 		SUM(if(sigStrength1 between '-95' and '-90',1,0)) as `count_9590`,
 		min(sigStrength1) as minimum,max(sigStrength1) as maximum
 		FROM `odu100_peerNodeStatusTable` 
-		where host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=13
+		where sigStrength1<>1 and  timestamp between hour_start and hour_end and timeSlotIndex=13
 		group by host_id,timeSlotIndex,DATE(timestamp)
 		) as t3
 		) as t4
 		)as t5 
 
 		set 
-		`sig1_index_13_Min`=t5.minimum,
-		`sig1_index_13_Max`=t5.maximum, 
-		`sig1_index_13_Range`=t5.`Most_values`  
+		`index_13_Min`=t5.minimum,
+		`index_13_Max`=t5.maximum, 
+		`index_13_Range`=t5.`Most_values`,
+		`index_13_Range_count`=t5.`no_of_values`
 
 		where DATE(t5.timestamp)=DATE(ap.timestamp) and 
 		t5.host_id=ap.host_id;
@@ -3372,7 +3044,27 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
                         )
                      )
                   )
-                ) as `Most_values`  
+                ) as `Most_values`,
+
+		if(range_values=1,`count_100`,
+		  if(range_values=2,`count_2010`,
+		    if(range_values=3,`count_3020`,
+			if(range_values=4,`count_4030`,
+			    if(range_values=5,`count_5040`,
+				if(range_values=6,`count_6050`,
+				    if(range_values=7,`count_7060`,
+				        if(range_values=8,`count_8070`,
+				            if(range_values=9,`count_9080`,
+				                if(range_values=10,`count_9590`,`count_9590`)
+				            )
+				        )
+				    )
+				)
+			    )
+			)
+		     )
+		  )
+		) as `no_of_values`
 
 		from (
 		select timestamp,host_id,minimum,maximum,
@@ -3395,16 +3087,17 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
 		SUM(if(sigStrength1 between '-95' and '-90',1,0)) as `count_9590`,
 		min(sigStrength1) as minimum,max(sigStrength1) as maximum
 		FROM `odu100_peerNodeStatusTable` 
-		where host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=14
+		where sigStrength1<>1 and  timestamp between hour_start and hour_end and timeSlotIndex=14
 		group by host_id,timeSlotIndex,DATE(timestamp)
 		) as t3
 		) as t4
 		)as t5 
 
 		set 
-		`sig1_index_14_Min`=t5.minimum,
-		`sig1_index_14_Max`=t5.maximum, 
-		`sig1_index_14_Range`=t5.`Most_values`  
+		`index_14_Min`=t5.minimum,
+		`index_14_Max`=t5.maximum, 
+		`index_14_Range`=t5.`Most_values`,
+		`index_14_Range_count`=t5.`no_of_values`
 
 		where DATE(t5.timestamp)=DATE(ap.timestamp) and 
 		t5.host_id=ap.host_id;
@@ -3430,7 +3123,27 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
                         )
                      )
                   )
-                ) as `Most_values`  
+                ) as `Most_values`,
+
+		if(range_values=1,`count_100`,
+		  if(range_values=2,`count_2010`,
+		    if(range_values=3,`count_3020`,
+			if(range_values=4,`count_4030`,
+			    if(range_values=5,`count_5040`,
+				if(range_values=6,`count_6050`,
+				    if(range_values=7,`count_7060`,
+				        if(range_values=8,`count_8070`,
+				            if(range_values=9,`count_9080`,
+				                if(range_values=10,`count_9590`,`count_9590`)
+				            )
+				        )
+				    )
+				)
+			    )
+			)
+		     )
+		  )
+		) as `no_of_values`
 
 		from (
 		select timestamp,host_id,minimum,maximum,
@@ -3453,16 +3166,17 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
 		SUM(if(sigStrength1 between '-95' and '-90',1,0)) as `count_9590`,
 		min(sigStrength1) as minimum,max(sigStrength1) as maximum
 		FROM `odu100_peerNodeStatusTable` 
-		where host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=15
+		where sigStrength1<>1 and  timestamp between hour_start and hour_end and timeSlotIndex=15
 		group by host_id,timeSlotIndex,DATE(timestamp)
 		) as t3
 		) as t4
 		)as t5 
 
 		set 
-		`sig1_index_15_Min`=t5.minimum,
-		`sig1_index_15_Max`=t5.maximum, 
-		`sig1_index_15_Range`=t5.`Most_values`  
+		`index_15_Min`=t5.minimum,
+		`index_15_Max`=t5.maximum, 
+		`index_15_Range`=t5.`Most_values`,
+		`index_15_Range_count`=t5.`no_of_values`
 
 		where DATE(t5.timestamp)=DATE(ap.timestamp) and 
 		t5.host_id=ap.host_id;
@@ -3488,7 +3202,27 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
                         )
                      )
                   )
-                ) as `Most_values`  
+                ) as `Most_values`,
+
+		if(range_values=1,`count_100`,
+		  if(range_values=2,`count_2010`,
+		    if(range_values=3,`count_3020`,
+			if(range_values=4,`count_4030`,
+			    if(range_values=5,`count_5040`,
+				if(range_values=6,`count_6050`,
+				    if(range_values=7,`count_7060`,
+				        if(range_values=8,`count_8070`,
+				            if(range_values=9,`count_9080`,
+				                if(range_values=10,`count_9590`,`count_9590`)
+				            )
+				        )
+				    )
+				)
+			    )
+			)
+		     )
+		  )
+		) as `no_of_values`
 
 		from (
 		select timestamp,host_id,minimum,maximum,
@@ -3511,958 +3245,22 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
 		SUM(if(sigStrength1 between '-95' and '-90',1,0)) as `count_9590`,
 		min(sigStrength1) as minimum,max(sigStrength1) as maximum
 		FROM `odu100_peerNodeStatusTable` 
-		where host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=16
+		where sigStrength1<>1 and  timestamp between hour_start and hour_end and timeSlotIndex=16
 		group by host_id,timeSlotIndex,DATE(timestamp)
 		) as t3
 		) as t4
 		)as t5 
 
 		set 
-		`sig1_index_16_Min`=t5.minimum,
-		`sig1_index_16_Max`=t5.maximum, 
-		`sig1_index_16_Range`=t5.`Most_values`  
+		`index_16_Min`=t5.minimum,
+		`index_16_Max`=t5.maximum, 
+		`index_16_Range`=t5.`Most_values`,
+		`index_16_Range_count`=t5.`no_of_values`
 
 		where DATE(t5.timestamp)=DATE(ap.timestamp) and 
 		t5.host_id=ap.host_id;
 
-		update `analyze_odu100_peerNodeStatusTable`  as ap ,
-		(select timestamp,host_id,minimum,maximum,
-		if(range_values=1,-5,
-                  if(range_values=2,-15,
-                    if(range_values=3,-25,
-                        if(range_values=4,-35,
-                            if(range_values=5,-45,
-                                if(range_values=6,-55,
-                                    if(range_values=7,-65,
-                                        if(range_values=8,-75,
-                                            if(range_values=9,-85,
-                                                if(range_values=10,-95,-95)
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                     )
-                  )
-                ) as `Most_values`
 
-		from (
-		select timestamp,host_id,minimum,maximum,
-		FIELD(GREATEST(`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`),
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`) as range_values,
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`
-		 from 
-		(
-		SELECT  
-		timestamp,host_id,
-		SUM(if(sigStrength2 between '-10' and '0',1,0))   as `count_100`,
-		SUM(if(sigStrength2 between '-20' and '-10',1,0)) as `count_2010`,
-		SUM(if(sigStrength2 between '-30' and '-20',1,0)) as `count_3020`,
-		SUM(if(sigStrength2 between '-40' and '-30',1,0)) as `count_4030`,
-		SUM(if(sigStrength2 between '-50' and '-40',1,0)) as `count_5040`,
-		SUM(if(sigStrength2 between '-60' and '-50',1,0)) as `count_6050`,
-		SUM(if(sigStrength2 between '-70' and '-60',1,0)) as `count_7060`,
-		SUM(if(sigStrength2 between '-80' and '-70',1,0)) as `count_8070`,
-		SUM(if(sigStrength2 between '-90' and '-80',1,0)) as `count_9080`,
-		SUM(if(sigStrength2 between '-95' and '-90',1,0)) as `count_9590`,
-		min(sigStrength2) as minimum,max(sigStrength2) as maximum
-		FROM `odu100_peerNodeStatusTable` 
-		where host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=1
-		group by host_id,timeSlotIndex,DATE(timestamp)
-		) as t3
-		) as t4
-		)as t5 
-
-		set 
-		`sig2_index_1_Min`=t5.minimum,
-		`sig2_index_1_Max`=t5.maximum, 
-		`sig2_index_1_Range`=t5.`Most_values`
-
-		where DATE(t5.timestamp)=DATE(ap.timestamp) and  
-		t5.host_id=ap.host_id;
-			
-	
-	
-	
-	
-	
-	
-	update `analyze_odu100_peerNodeStatusTable`  as ap ,
-		(select timestamp,host_id,minimum,maximum,
-		if(range_values=1,-5,
-                  if(range_values=2,-15,
-                    if(range_values=3,-25,
-                        if(range_values=4,-35,
-                            if(range_values=5,-45,
-                                if(range_values=6,-55,
-                                    if(range_values=7,-65,
-                                        if(range_values=8,-75,
-                                            if(range_values=9,-85,
-                                                if(range_values=10,-95,-95)
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                     )
-                  )
-                ) as `Most_values`
-
-		from (
-		select timestamp,host_id,minimum,maximum,
-		FIELD(GREATEST(`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`),
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`) as range_values,
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`
-		 from 
-		(
-		SELECT  
-		timestamp,host_id,
-		SUM(if(sigStrength2 between '-10' and '0',1,0))   as `count_100`,
-		SUM(if(sigStrength2 between '-20' and '-10',1,0)) as `count_2010`,
-		SUM(if(sigStrength2 between '-30' and '-20',1,0)) as `count_3020`,
-		SUM(if(sigStrength2 between '-40' and '-30',1,0)) as `count_4030`,
-		SUM(if(sigStrength2 between '-50' and '-40',1,0)) as `count_5040`,
-		SUM(if(sigStrength2 between '-60' and '-50',1,0)) as `count_6050`,
-		SUM(if(sigStrength2 between '-70' and '-60',1,0)) as `count_7060`,
-		SUM(if(sigStrength2 between '-80' and '-70',1,0)) as `count_8070`,
-		SUM(if(sigStrength2 between '-90' and '-80',1,0)) as `count_9080`,
-		SUM(if(sigStrength2 between '-95' and '-90',1,0)) as `count_9590`,
-		min(sigStrength2) as minimum,max(sigStrength2) as maximum
-		FROM `odu100_peerNodeStatusTable` 
-		where host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=2
-		group by host_id,timeSlotIndex,DATE(timestamp)
-		) as t3
-		) as t4
-		)as t5 
-
-		set 
-		`sig2_index_2_Min`=t5.minimum,
-		`sig2_index_2_Max`=t5.maximum, 
-		`sig2_index_2_Range`=t5.`Most_values`
-
-		where DATE(t5.timestamp)=DATE(ap.timestamp) and  
-		t5.host_id=ap.host_id;
-		
-		
-		
-				 
-
-		update `analyze_odu100_peerNodeStatusTable`  as ap ,
-		(select timestamp,host_id,minimum,maximum,
-		if(range_values=1,-5,
-                  if(range_values=2,-15,
-                    if(range_values=3,-25,
-                        if(range_values=4,-35,
-                            if(range_values=5,-45,
-                                if(range_values=6,-55,
-                                    if(range_values=7,-65,
-                                        if(range_values=8,-75,
-                                            if(range_values=9,-85,
-                                                if(range_values=10,-95,-95)
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                     )
-                  )
-                ) as `Most_values`  
-
-		from (
-		select timestamp,host_id,minimum,maximum,
-		FIELD(GREATEST(`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`),
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`) as range_values,
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`
-		 from 
-		(
-		SELECT  
-		timestamp,host_id,
-		SUM(if(sigStrength2 between '-10' and '0',1,0))   as `count_100`,
-		SUM(if(sigStrength2 between '-20' and '-10',1,0)) as `count_2010`,
-		SUM(if(sigStrength2 between '-30' and '-20',1,0)) as `count_3020`,
-		SUM(if(sigStrength2 between '-40' and '-30',1,0)) as `count_4030`,
-		SUM(if(sigStrength2 between '-50' and '-40',1,0)) as `count_5040`,
-		SUM(if(sigStrength2 between '-60' and '-50',1,0)) as `count_6050`,
-		SUM(if(sigStrength2 between '-70' and '-60',1,0)) as `count_7060`,
-		SUM(if(sigStrength2 between '-80' and '-70',1,0)) as `count_8070`,
-		SUM(if(sigStrength2 between '-90' and '-80',1,0)) as `count_9080`,
-		SUM(if(sigStrength2 between '-95' and '-90',1,0)) as `count_9590`,
-		min(sigStrength2) as minimum,max(sigStrength2) as maximum
-		FROM `odu100_peerNodeStatusTable` 
-		where host_id=NEW.host_id and  sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=3
-		group by host_id,timeSlotIndex,DATE(timestamp)
-		) as t3
-		) as t4
-		)as t5 
-
-		set 
-		`sig2_index_3_Min`=t5.minimum,
-		`sig2_index_3_Max`=t5.maximum, 
-		`sig2_index_3_Range`=t5.`Most_values`  
-
-		where DATE(t5.timestamp)=DATE(ap.timestamp) and  
-		t5.host_id=ap.host_id;
-
-
-
-		update `analyze_odu100_peerNodeStatusTable`  as ap ,
-		(select timestamp,host_id,minimum,maximum,
-		if(range_values=1,-5,
-                  if(range_values=2,-15,
-                    if(range_values=3,-25,
-                        if(range_values=4,-35,
-                            if(range_values=5,-45,
-                                if(range_values=6,-55,
-                                    if(range_values=7,-65,
-                                        if(range_values=8,-75,
-                                            if(range_values=9,-85,
-                                                if(range_values=10,-95,-95)
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                     )
-                  )
-                ) as `Most_values`  
-
-		from (
-		select timestamp,host_id,minimum,maximum,
-		FIELD(GREATEST(`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`),
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`) as range_values,
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`
-		 from 
-		(
-		SELECT  
-		timestamp,host_id,
-		SUM(if(sigStrength2 between '-10' and '0',1,0))   as `count_100`,
-		SUM(if(sigStrength2 between '-20' and '-10',1,0)) as `count_2010`,
-		SUM(if(sigStrength2 between '-30' and '-20',1,0)) as `count_3020`,
-		SUM(if(sigStrength2 between '-40' and '-30',1,0)) as `count_4030`,
-		SUM(if(sigStrength2 between '-50' and '-40',1,0)) as `count_5040`,
-		SUM(if(sigStrength2 between '-60' and '-50',1,0)) as `count_6050`,
-		SUM(if(sigStrength2 between '-70' and '-60',1,0)) as `count_7060`,
-		SUM(if(sigStrength2 between '-80' and '-70',1,0)) as `count_8070`,
-		SUM(if(sigStrength2 between '-90' and '-80',1,0)) as `count_9080`,
-		SUM(if(sigStrength2 between '-95' and '-90',1,0)) as `count_9590`,
-		min(sigStrength2) as minimum,max(sigStrength2) as maximum
-		FROM `odu100_peerNodeStatusTable` 
-		where  host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=4
-		group by host_id,timeSlotIndex,DATE(timestamp)
-		) as t3
-		) as t4
-		)as t5 
-
-		set 
-		`sig2_index_4_Min`=t5.minimum,
-		`sig2_index_4_Max`=t5.maximum, 
-		`sig2_index_4_Range`=t5.`Most_values`  
-
-		where DATE(t5.timestamp)=DATE(ap.timestamp) and  
-		t5.host_id=ap.host_id;
-
-
-
-		update `analyze_odu100_peerNodeStatusTable`  as ap ,
-		(select timestamp,host_id,minimum,maximum,
-		if(range_values=1,-5,
-                  if(range_values=2,-15,
-                    if(range_values=3,-25,
-                        if(range_values=4,-35,
-                            if(range_values=5,-45,
-                                if(range_values=6,-55,
-                                    if(range_values=7,-65,
-                                        if(range_values=8,-75,
-                                            if(range_values=9,-85,
-                                                if(range_values=10,-95,-95)
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                     )
-                  )
-                ) as `Most_values`  
-
-		from (
-		select timestamp,host_id,minimum,maximum,
-		FIELD(GREATEST(`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`),
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`) as range_values,
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`
-		 from 
-		(
-		SELECT  
-		timestamp,host_id,
-		SUM(if(sigStrength2 between '-10' and '0',1,0))   as `count_100`,
-		SUM(if(sigStrength2 between '-20' and '-10',1,0)) as `count_2010`,
-		SUM(if(sigStrength2 between '-30' and '-20',1,0)) as `count_3020`,
-		SUM(if(sigStrength2 between '-40' and '-30',1,0)) as `count_4030`,
-		SUM(if(sigStrength2 between '-50' and '-40',1,0)) as `count_5040`,
-		SUM(if(sigStrength2 between '-60' and '-50',1,0)) as `count_6050`,
-		SUM(if(sigStrength2 between '-70' and '-60',1,0)) as `count_7060`,
-		SUM(if(sigStrength2 between '-80' and '-70',1,0)) as `count_8070`,
-		SUM(if(sigStrength2 between '-90' and '-80',1,0)) as `count_9080`,
-		SUM(if(sigStrength2 between '-95' and '-90',1,0)) as `count_9590`,
-		min(sigStrength2) as minimum,max(sigStrength2) as maximum
-		FROM `odu100_peerNodeStatusTable` 
-		where  host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=5
-		group by host_id,timeSlotIndex,DATE(timestamp)
-		) as t3
-		) as t4
-		)as t5 
-
-		set 
-		`sig2_index_5_Min`=t5.minimum,
-		`sig2_index_5_Max`=t5.maximum, 
-		`sig2_index_5_Range`=t5.`Most_values`  
-
-		where DATE(t5.timestamp)=DATE(ap.timestamp) and  
-		t5.host_id=ap.host_id;
-
-
-
-		update `analyze_odu100_peerNodeStatusTable`  as ap ,
-		(select timestamp,host_id,minimum,maximum,
-		if(range_values=1,-5,
-                  if(range_values=2,-15,
-                    if(range_values=3,-25,
-                        if(range_values=4,-35,
-                            if(range_values=5,-45,
-                                if(range_values=6,-55,
-                                    if(range_values=7,-65,
-                                        if(range_values=8,-75,
-                                            if(range_values=9,-85,
-                                                if(range_values=10,-95,-95)
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                     )
-                  )
-                ) as `Most_values`  
-
-		from (
-		select timestamp,host_id,minimum,maximum,
-		FIELD(GREATEST(`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`),
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`) as range_values,
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`
-		 from 
-		(
-		SELECT  
-		timestamp,host_id,
-		SUM(if(sigStrength2 between '-10' and '0',1,0))   as `count_100`,
-		SUM(if(sigStrength2 between '-20' and '-10',1,0)) as `count_2010`,
-		SUM(if(sigStrength2 between '-30' and '-20',1,0)) as `count_3020`,
-		SUM(if(sigStrength2 between '-40' and '-30',1,0)) as `count_4030`,
-		SUM(if(sigStrength2 between '-50' and '-40',1,0)) as `count_5040`,
-		SUM(if(sigStrength2 between '-60' and '-50',1,0)) as `count_6050`,
-		SUM(if(sigStrength2 between '-70' and '-60',1,0)) as `count_7060`,
-		SUM(if(sigStrength2 between '-80' and '-70',1,0)) as `count_8070`,
-		SUM(if(sigStrength2 between '-90' and '-80',1,0)) as `count_9080`,
-		SUM(if(sigStrength2 between '-95' and '-90',1,0)) as `count_9590`,
-		min(sigStrength2) as minimum,max(sigStrength2) as maximum
-		FROM `odu100_peerNodeStatusTable` 
-		where  host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=6
-		group by host_id,timeSlotIndex,DATE(timestamp)
-		) as t3
-		) as t4
-		)as t5 
-
-		set 
-		`sig2_index_6_Min`=t5.minimum,
-		`sig2_index_6_Max`=t5.maximum, 
-		`sig2_index_6_Range`=t5.`Most_values`  
-
-		where DATE(t5.timestamp)=DATE(ap.timestamp) and  
-		t5.host_id=ap.host_id;
-
-
-
-		update `analyze_odu100_peerNodeStatusTable`  as ap ,
-		(select timestamp,host_id,minimum,maximum,
-		if(range_values=1,-5,
-                  if(range_values=2,-15,
-                    if(range_values=3,-25,
-                        if(range_values=4,-35,
-                            if(range_values=5,-45,
-                                if(range_values=6,-55,
-                                    if(range_values=7,-65,
-                                        if(range_values=8,-75,
-                                            if(range_values=9,-85,
-                                                if(range_values=10,-95,-95)
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                     )
-                  )
-                ) as `Most_values`  
-
-		from (
-		select timestamp,host_id,minimum,maximum,
-		FIELD(GREATEST(`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`),
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`) as range_values,
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`
-		 from 
-		(
-		SELECT  
-		timestamp,host_id,
-		SUM(if(sigStrength2 between '-10' and '0',1,0))   as `count_100`,
-		SUM(if(sigStrength2 between '-20' and '-10',1,0)) as `count_2010`,
-		SUM(if(sigStrength2 between '-30' and '-20',1,0)) as `count_3020`,
-		SUM(if(sigStrength2 between '-40' and '-30',1,0)) as `count_4030`,
-		SUM(if(sigStrength2 between '-50' and '-40',1,0)) as `count_5040`,
-		SUM(if(sigStrength2 between '-60' and '-50',1,0)) as `count_6050`,
-		SUM(if(sigStrength2 between '-70' and '-60',1,0)) as `count_7060`,
-		SUM(if(sigStrength2 between '-80' and '-70',1,0)) as `count_8070`,
-		SUM(if(sigStrength2 between '-90' and '-80',1,0)) as `count_9080`,
-		SUM(if(sigStrength2 between '-95' and '-90',1,0)) as `count_9590`,
-		min(sigStrength2) as minimum,max(sigStrength2) as maximum
-		FROM `odu100_peerNodeStatusTable` 
-		where host_id=NEW.host_id and  sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=7
-		group by host_id,timeSlotIndex,DATE(timestamp)
-		) as t3
-		) as t4
-		)as t5 
-
-		set 
-		`sig2_index_7_Min`=t5.minimum,
-		`sig2_index_7_Max`=t5.maximum, 
-		`sig2_index_7_Range`=t5.`Most_values`  
-
-		where DATE(t5.timestamp)=DATE(ap.timestamp) and  
-		t5.host_id=ap.host_id;
-
-
-
-		update `analyze_odu100_peerNodeStatusTable`  as ap ,
-		(select timestamp,host_id,minimum,maximum,
-		if(range_values=1,-5,
-                  if(range_values=2,-15,
-                    if(range_values=3,-25,
-                        if(range_values=4,-35,
-                            if(range_values=5,-45,
-                                if(range_values=6,-55,
-                                    if(range_values=7,-65,
-                                        if(range_values=8,-75,
-                                            if(range_values=9,-85,
-                                                if(range_values=10,-95,-95)
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                     )
-                  )
-                ) as `Most_values`  
-
-		from (
-		select timestamp,host_id,minimum,maximum,
-		FIELD(GREATEST(`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`),
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`) as range_values,
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`
-		 from 
-		(
-		SELECT  
-		timestamp,host_id,
-		SUM(if(sigStrength2 between '-10' and '0',1,0))   as `count_100`,
-		SUM(if(sigStrength2 between '-20' and '-10',1,0)) as `count_2010`,
-		SUM(if(sigStrength2 between '-30' and '-20',1,0)) as `count_3020`,
-		SUM(if(sigStrength2 between '-40' and '-30',1,0)) as `count_4030`,
-		SUM(if(sigStrength2 between '-50' and '-40',1,0)) as `count_5040`,
-		SUM(if(sigStrength2 between '-60' and '-50',1,0)) as `count_6050`,
-		SUM(if(sigStrength2 between '-70' and '-60',1,0)) as `count_7060`,
-		SUM(if(sigStrength2 between '-80' and '-70',1,0)) as `count_8070`,
-		SUM(if(sigStrength2 between '-90' and '-80',1,0)) as `count_9080`,
-		SUM(if(sigStrength2 between '-95' and '-90',1,0)) as `count_9590`,
-		min(sigStrength2) as minimum,max(sigStrength2) as maximum
-		FROM `odu100_peerNodeStatusTable` 
-		where  host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=8
-		group by host_id,timeSlotIndex,DATE(timestamp)
-		) as t3
-		) as t4
-		)as t5 
-
-		set 
-		`sig2_index_8_Min`=t5.minimum,
-		`sig2_index_8_Max`=t5.maximum, 
-		`sig2_index_8_Range`=t5.`Most_values`  
-
-		where DATE(t5.timestamp)=DATE(ap.timestamp) and  
-		t5.host_id=ap.host_id;
-
-
-
-		update `analyze_odu100_peerNodeStatusTable`  as ap ,
-		(select timestamp,host_id,minimum,maximum,
-		if(range_values=1,-5,
-                  if(range_values=2,-15,
-                    if(range_values=3,-25,
-                        if(range_values=4,-35,
-                            if(range_values=5,-45,
-                                if(range_values=6,-55,
-                                    if(range_values=7,-65,
-                                        if(range_values=8,-75,
-                                            if(range_values=9,-85,
-                                                if(range_values=10,-95,-95)
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                     )
-                  )
-                ) as `Most_values`  
-
-		from (
-		select timestamp,host_id,minimum,maximum,
-		FIELD(GREATEST(`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`),
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`) as range_values,
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`
-		 from 
-		(
-		SELECT  
-		timestamp,host_id,
-		SUM(if(sigStrength2 between '-10' and '0',1,0))   as `count_100`,
-		SUM(if(sigStrength2 between '-20' and '-10',1,0)) as `count_2010`,
-		SUM(if(sigStrength2 between '-30' and '-20',1,0)) as `count_3020`,
-		SUM(if(sigStrength2 between '-40' and '-30',1,0)) as `count_4030`,
-		SUM(if(sigStrength2 between '-50' and '-40',1,0)) as `count_5040`,
-		SUM(if(sigStrength2 between '-60' and '-50',1,0)) as `count_6050`,
-		SUM(if(sigStrength2 between '-70' and '-60',1,0)) as `count_7060`,
-		SUM(if(sigStrength2 between '-80' and '-70',1,0)) as `count_8070`,
-		SUM(if(sigStrength2 between '-90' and '-80',1,0)) as `count_9080`,
-		SUM(if(sigStrength2 between '-95' and '-90',1,0)) as `count_9590`,
-		min(sigStrength2) as minimum,max(sigStrength2) as maximum
-		FROM `odu100_peerNodeStatusTable` 
-		where  host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=9
-		group by host_id,timeSlotIndex,DATE(timestamp)
-		) as t3
-		) as t4
-		)as t5 
-
-		set 
-		`sig2_index_9_Min`=t5.minimum,
-		`sig2_index_9_Max`=t5.maximum, 
-		`sig2_index_9_Range`=t5.`Most_values`  
-
-		where DATE(t5.timestamp)=DATE(ap.timestamp) and  
-		t5.host_id=ap.host_id;
-
-
-		update `analyze_odu100_peerNodeStatusTable`  as ap ,
-		(select timestamp,host_id,minimum,maximum,
-		if(range_values=1,-5,
-                  if(range_values=2,-15,
-                    if(range_values=3,-25,
-                        if(range_values=4,-35,
-                            if(range_values=5,-45,
-                                if(range_values=6,-55,
-                                    if(range_values=7,-65,
-                                        if(range_values=8,-75,
-                                            if(range_values=9,-85,
-                                                if(range_values=10,-95,-95)
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                     )
-                  )
-                ) as `Most_values`  
-
-		from (
-		select timestamp,host_id,minimum,maximum,
-		FIELD(GREATEST(`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`),
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`) as range_values,
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`
-		 from 
-		(
-		SELECT  
-		timestamp,host_id,
-		SUM(if(sigStrength2 between '-10' and '0',1,0))   as `count_100`,
-		SUM(if(sigStrength2 between '-20' and '-10',1,0)) as `count_2010`,
-		SUM(if(sigStrength2 between '-30' and '-20',1,0)) as `count_3020`,
-		SUM(if(sigStrength2 between '-40' and '-30',1,0)) as `count_4030`,
-		SUM(if(sigStrength2 between '-50' and '-40',1,0)) as `count_5040`,
-		SUM(if(sigStrength2 between '-60' and '-50',1,0)) as `count_6050`,
-		SUM(if(sigStrength2 between '-70' and '-60',1,0)) as `count_7060`,
-		SUM(if(sigStrength2 between '-80' and '-70',1,0)) as `count_8070`,
-		SUM(if(sigStrength2 between '-90' and '-80',1,0)) as `count_9080`,
-		SUM(if(sigStrength2 between '-95' and '-90',1,0)) as `count_9590`,
-		min(sigStrength2) as minimum,max(sigStrength2) as maximum
-		FROM `odu100_peerNodeStatusTable` 
-		where  host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=10
-		group by host_id,timeSlotIndex,DATE(timestamp)
-		) as t3
-		) as t4
-		)as t5 
-
-		set 
-		`sig2_index_10_Min`=t5.minimum,
-		`sig2_index_10_Max`=t5.maximum, 
-		`sig2_index_10_Range`=t5.`Most_values`  
-
-		where DATE(t5.timestamp)=DATE(ap.timestamp) and  
-		t5.host_id=ap.host_id;
-
-		update `analyze_odu100_peerNodeStatusTable`  as ap ,
-		(select timestamp,host_id,minimum,maximum,
-		if(range_values=1,-5,
-                  if(range_values=2,-15,
-                    if(range_values=3,-25,
-                        if(range_values=4,-35,
-                            if(range_values=5,-45,
-                                if(range_values=6,-55,
-                                    if(range_values=7,-65,
-                                        if(range_values=8,-75,
-                                            if(range_values=9,-85,
-                                                if(range_values=10,-95,-95)
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                     )
-                  )
-                ) as `Most_values`  
-
-		from (
-		select timestamp,host_id,minimum,maximum,
-		FIELD(GREATEST(`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`),
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`) as range_values,
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`
-		 from 
-		(
-		SELECT  
-		timestamp,host_id,
-		SUM(if(sigStrength2 between '-10' and '0',1,0))   as `count_100`,
-		SUM(if(sigStrength2 between '-20' and '-10',1,0)) as `count_2010`,
-		SUM(if(sigStrength2 between '-30' and '-20',1,0)) as `count_3020`,
-		SUM(if(sigStrength2 between '-40' and '-30',1,0)) as `count_4030`,
-		SUM(if(sigStrength2 between '-50' and '-40',1,0)) as `count_5040`,
-		SUM(if(sigStrength2 between '-60' and '-50',1,0)) as `count_6050`,
-		SUM(if(sigStrength2 between '-70' and '-60',1,0)) as `count_7060`,
-		SUM(if(sigStrength2 between '-80' and '-70',1,0)) as `count_8070`,
-		SUM(if(sigStrength2 between '-90' and '-80',1,0)) as `count_9080`,
-		SUM(if(sigStrength2 between '-95' and '-90',1,0)) as `count_9590`,
-		min(sigStrength2) as minimum,max(sigStrength2) as maximum
-		FROM `odu100_peerNodeStatusTable` 
-		where host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=11
-		group by host_id,timeSlotIndex,DATE(timestamp)
-		) as t3
-		) as t4
-		)as t5 
-
-		set 
-		`sig2_index_11_Min`=t5.minimum,
-		`sig2_index_11_Max`=t5.maximum, 
-		`sig2_index_11_Range`=t5.`Most_values`  
-
-		where DATE(t5.timestamp)=DATE(ap.timestamp) and  
-		t5.host_id=ap.host_id;
-
-
-		update `analyze_odu100_peerNodeStatusTable`  as ap ,
-		(select timestamp,host_id,minimum,maximum,
-		if(range_values=1,-5,
-                  if(range_values=2,-15,
-                    if(range_values=3,-25,
-                        if(range_values=4,-35,
-                            if(range_values=5,-45,
-                                if(range_values=6,-55,
-                                    if(range_values=7,-65,
-                                        if(range_values=8,-75,
-                                            if(range_values=9,-85,
-                                                if(range_values=10,-95,-95)
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                     )
-                  )
-                ) as `Most_values`  
-
-		from (
-		select timestamp,host_id,minimum,maximum,
-		FIELD(GREATEST(`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`),
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`) as range_values,
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`
-		 from 
-		(
-		SELECT  
-		timestamp,host_id,
-		SUM(if(sigStrength2 between '-10' and '0',1,0))   as `count_100`,
-		SUM(if(sigStrength2 between '-20' and '-10',1,0)) as `count_2010`,
-		SUM(if(sigStrength2 between '-30' and '-20',1,0)) as `count_3020`,
-		SUM(if(sigStrength2 between '-40' and '-30',1,0)) as `count_4030`,
-		SUM(if(sigStrength2 between '-50' and '-40',1,0)) as `count_5040`,
-		SUM(if(sigStrength2 between '-60' and '-50',1,0)) as `count_6050`,
-		SUM(if(sigStrength2 between '-70' and '-60',1,0)) as `count_7060`,
-		SUM(if(sigStrength2 between '-80' and '-70',1,0)) as `count_8070`,
-		SUM(if(sigStrength2 between '-90' and '-80',1,0)) as `count_9080`,
-		SUM(if(sigStrength2 between '-95' and '-90',1,0)) as `count_9590`,
-		min(sigStrength2) as minimum,max(sigStrength2) as maximum
-		FROM `odu100_peerNodeStatusTable` 
-		where  host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=12
-		group by host_id,timeSlotIndex,DATE(timestamp)
-		) as t3
-		) as t4
-		)as t5 
-
-		set 
-		`sig2_index_12_Min`=t5.minimum,
-		`sig2_index_12_Max`=t5.maximum, 
-		`sig2_index_12_Range`=t5.`Most_values`  
-
-		where DATE(t5.timestamp)=DATE(ap.timestamp) and  
-		t5.host_id=ap.host_id;
-
-		update `analyze_odu100_peerNodeStatusTable`  as ap ,
-		(select timestamp,host_id,minimum,maximum,
-		if(range_values=1,-5,
-                  if(range_values=2,-15,
-                    if(range_values=3,-25,
-                        if(range_values=4,-35,
-                            if(range_values=5,-45,
-                                if(range_values=6,-55,
-                                    if(range_values=7,-65,
-                                        if(range_values=8,-75,
-                                            if(range_values=9,-85,
-                                                if(range_values=10,-95,-95)
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                     )
-                  )
-                ) as `Most_values`  
-
-		from (
-		select timestamp,host_id,minimum,maximum,
-		FIELD(GREATEST(`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`),
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`) as range_values,
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`
-		 from 
-		(
-		SELECT  
-		timestamp,host_id,
-		SUM(if(sigStrength2 between '-10' and '0',1,0))   as `count_100`,
-		SUM(if(sigStrength2 between '-20' and '-10',1,0)) as `count_2010`,
-		SUM(if(sigStrength2 between '-30' and '-20',1,0)) as `count_3020`,
-		SUM(if(sigStrength2 between '-40' and '-30',1,0)) as `count_4030`,
-		SUM(if(sigStrength2 between '-50' and '-40',1,0)) as `count_5040`,
-		SUM(if(sigStrength2 between '-60' and '-50',1,0)) as `count_6050`,
-		SUM(if(sigStrength2 between '-70' and '-60',1,0)) as `count_7060`,
-		SUM(if(sigStrength2 between '-80' and '-70',1,0)) as `count_8070`,
-		SUM(if(sigStrength2 between '-90' and '-80',1,0)) as `count_9080`,
-		SUM(if(sigStrength2 between '-95' and '-90',1,0)) as `count_9590`,
-		min(sigStrength2) as minimum,max(sigStrength2) as maximum
-		FROM `odu100_peerNodeStatusTable` 
-		where  host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=13
-		group by host_id,timeSlotIndex,DATE(timestamp)
-		) as t3
-		) as t4
-		)as t5 
-
-		set 
-		`sig2_index_13_Min`=t5.minimum,
-		`sig2_index_13_Max`=t5.maximum, 
-		`sig2_index_13_Range`=t5.`Most_values`  
-
-		where DATE(t5.timestamp)=DATE(ap.timestamp) and  
-		t5.host_id=ap.host_id;		
-
-
-		update `analyze_odu100_peerNodeStatusTable`  as ap ,
-		(select timestamp,host_id,minimum,maximum,
-		if(range_values=1,-5,
-                  if(range_values=2,-15,
-                    if(range_values=3,-25,
-                        if(range_values=4,-35,
-                            if(range_values=5,-45,
-                                if(range_values=6,-55,
-                                    if(range_values=7,-65,
-                                        if(range_values=8,-75,
-                                            if(range_values=9,-85,
-                                                if(range_values=10,-95,-95)
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                     )
-                  )
-                ) as `Most_values`  
-
-		from (
-		select timestamp,host_id,minimum,maximum,
-		FIELD(GREATEST(`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`),
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`) as range_values,
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`
-		 from 
-		(
-		SELECT  
-		timestamp,host_id,
-		SUM(if(sigStrength2 between '-10' and '0',1,0))   as `count_100`,
-		SUM(if(sigStrength2 between '-20' and '-10',1,0)) as `count_2010`,
-		SUM(if(sigStrength2 between '-30' and '-20',1,0)) as `count_3020`,
-		SUM(if(sigStrength2 between '-40' and '-30',1,0)) as `count_4030`,
-		SUM(if(sigStrength2 between '-50' and '-40',1,0)) as `count_5040`,
-		SUM(if(sigStrength2 between '-60' and '-50',1,0)) as `count_6050`,
-		SUM(if(sigStrength2 between '-70' and '-60',1,0)) as `count_7060`,
-		SUM(if(sigStrength2 between '-80' and '-70',1,0)) as `count_8070`,
-		SUM(if(sigStrength2 between '-90' and '-80',1,0)) as `count_9080`,
-		SUM(if(sigStrength2 between '-95' and '-90',1,0)) as `count_9590`,
-		min(sigStrength2) as minimum,max(sigStrength2) as maximum
-		FROM `odu100_peerNodeStatusTable` 
-		where  host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=14
-		group by host_id,timeSlotIndex,DATE(timestamp)
-		) as t3
-		) as t4
-		)as t5 
-
-		set 
-		`sig2_index_14_Min`=t5.minimum,
-		`sig2_index_14_Max`=t5.maximum, 
-		`sig2_index_14_Range`=t5.`Most_values`  
-
-		where DATE(t5.timestamp)=DATE(ap.timestamp) and  
-		t5.host_id=ap.host_id;		
-		
-
-		update `analyze_odu100_peerNodeStatusTable`  as ap ,
-		(select timestamp,host_id,minimum,maximum,
-		if(range_values=1,-5,
-                  if(range_values=2,-15,
-                    if(range_values=3,-25,
-                        if(range_values=4,-35,
-                            if(range_values=5,-45,
-                                if(range_values=6,-55,
-                                    if(range_values=7,-65,
-                                        if(range_values=8,-75,
-                                            if(range_values=9,-85,
-                                                if(range_values=10,-95,-95)
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                     )
-                  )
-                ) as `Most_values`  
-
-		from (
-		select timestamp,host_id,minimum,maximum,
-		FIELD(GREATEST(`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`),
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`) as range_values,
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`
-		 from 
-		(
-		SELECT  
-		timestamp,host_id,
-		SUM(if(sigStrength2 between '-10' and '0',1,0))   as `count_100`,
-		SUM(if(sigStrength2 between '-20' and '-10',1,0)) as `count_2010`,
-		SUM(if(sigStrength2 between '-30' and '-20',1,0)) as `count_3020`,
-		SUM(if(sigStrength2 between '-40' and '-30',1,0)) as `count_4030`,
-		SUM(if(sigStrength2 between '-50' and '-40',1,0)) as `count_5040`,
-		SUM(if(sigStrength2 between '-60' and '-50',1,0)) as `count_6050`,
-		SUM(if(sigStrength2 between '-70' and '-60',1,0)) as `count_7060`,
-		SUM(if(sigStrength2 between '-80' and '-70',1,0)) as `count_8070`,
-		SUM(if(sigStrength2 between '-90' and '-80',1,0)) as `count_9080`,
-		SUM(if(sigStrength2 between '-95' and '-90',1,0)) as `count_9590`,
-		min(sigStrength2) as minimum,max(sigStrength2) as maximum
-		FROM `odu100_peerNodeStatusTable` 
-		where host_id=NEW.host_id and  sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=15
-		group by host_id,timeSlotIndex,DATE(timestamp)
-		) as t3
-		) as t4
-		)as t5 
-
-		set 
-		`sig2_index_15_Min`=t5.minimum,
-		`sig2_index_15_Max`=t5.maximum, 
-		`sig2_index_15_Range`=t5.`Most_values`  
-
-		where DATE(t5.timestamp)=DATE(ap.timestamp) and  
-		t5.host_id=ap.host_id;
-
-		update `analyze_odu100_peerNodeStatusTable`  as ap ,
-		(select timestamp,host_id,minimum,maximum,
-		if(range_values=1,-5,
-                  if(range_values=2,-15,
-                    if(range_values=3,-25,
-                        if(range_values=4,-35,
-                            if(range_values=5,-45,
-                                if(range_values=6,-55,
-                                    if(range_values=7,-65,
-                                        if(range_values=8,-75,
-                                            if(range_values=9,-85,
-                                                if(range_values=10,-95,-95)
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                     )
-                  )
-                ) as `Most_values`  
-
-		from (
-		select timestamp,host_id,minimum,maximum,
-		FIELD(GREATEST(`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`),
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`) as range_values,
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`
-		 from 
-		(
-		SELECT  
-		timestamp,host_id,
-		SUM(if(sigStrength2 between '-10' and '0',1,0))   as `count_100`,
-		SUM(if(sigStrength2 between '-20' and '-10',1,0)) as `count_2010`,
-		SUM(if(sigStrength2 between '-30' and '-20',1,0)) as `count_3020`,
-		SUM(if(sigStrength2 between '-40' and '-30',1,0)) as `count_4030`,
-		SUM(if(sigStrength2 between '-50' and '-40',1,0)) as `count_5040`,
-		SUM(if(sigStrength2 between '-60' and '-50',1,0)) as `count_6050`,
-		SUM(if(sigStrength2 between '-70' and '-60',1,0)) as `count_7060`,
-		SUM(if(sigStrength2 between '-80' and '-70',1,0)) as `count_8070`,
-		SUM(if(sigStrength2 between '-90' and '-80',1,0)) as `count_9080`,
-		SUM(if(sigStrength2 between '-95' and '-90',1,0)) as `count_9590`,
-		min(sigStrength2) as minimum,max(sigStrength2) as maximum
-		FROM `odu100_peerNodeStatusTable` 
-		where  host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=16
-		group by host_id,timeSlotIndex,DATE(timestamp)
-		) as t3
-		) as t4
-		)as t5 
-
-		set 
-		`sig2_index_16_Min`=t5.minimum,
-		`sig2_index_16_Max`=t5.maximum, 
-		`sig2_index_16_Range`=t5.`Most_values`  
-
-		where DATE(t5.timestamp)=DATE(ap.timestamp) and  
-		t5.host_id=ap.host_id;		
-		
 
         END IF;
 
@@ -4472,7 +3270,7 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
                 SET hour_start=subdate(CONCAT(DATE_FORMAT(old_time,'%Y-%m-%d'),' 00:00:00'), INTERVAL DATE_FORMAT(CONCAT(DATE_FORMAT(old_time,'%Y-%m-%d'),' 00:00:00'), '%w') DAY);
                 SET hour_end= adddate(CONCAT(DATE_FORMAT(old_time,'%Y-%m-%d'),' 23:59:59'), INTERVAL 6-DATE_FORMAT(CONCAT(DATE_FORMAT(old_time,'%Y-%m-%d'),' 23:59:59'), '%w') DAY);
                 INSERT INTO `analyze_odu100_peerNodeStatusTable` (`analyze_odu100_peerNodeStatusTable_id`, `timestamp`, `host_id`,`type`,
-                `sig1_index_1_Min`, `sig1_index_1_Max`,`sig1_index_1_Range`  )
+                `index_1_Min`, `index_1_Max`,`index_1_Range` , `index_1_Range_count`)
                 select NULL,hour_start,host_id,'WEEKLY',minimum,maximum,
                 if(range_values=1,-5,
                   if(range_values=2,-15,
@@ -4492,7 +3290,27 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
                         )
                      )
                   )
-                ) as `Most_values`  
+                ) as `Most_values`,
+
+                if(range_values=1,`count_100`,
+                  if(range_values=2,`count_2010`,
+                    if(range_values=3,`count_3020`,
+                        if(range_values=4,`count_4030`,
+                            if(range_values=5,`count_5040`,
+                                if(range_values=6,`count_6050`,
+                                    if(range_values=7,`count_7060`,
+                                        if(range_values=8,`count_8070`,
+                                            if(range_values=9,`count_9080`,
+                                                if(range_values=10,`count_9590`,`count_9590`)
+                                            )
+                                        )
+                                    )
+                                )
+                            )
+                        )
+                     )
+                  )
+                ) as `no_of_values`
 
                 from (
                 select timestamp,host_id,minimum,maximum,
@@ -4515,7 +3333,7 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
                 SUM(if(sigStrength1 between '-95' and '-90',1,0)) as `count_9590`,
                 min(sigStrength1) as minimum,max(sigStrength1) as maximum
                 FROM `odu100_peerNodeStatusTable` 
-                where host_id=NEW.host_id and sigStrength1<>1111111 and timestamp between hour_start and hour_end and timeSlotIndex=1
+                where sigStrength1<>1 and timestamp between hour_start and hour_end and timeSlotIndex=1
                 group by host_id,timeSlotIndex,YEARWEEK(timestamp)
                 ) as t3
                 ) as t4;
@@ -4540,7 +3358,27 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
                         )
                      )
                   )
-                ) as `Most_values`  
+                ) as `Most_values`,
+
+		if(range_values=1,`count_100`,
+		  if(range_values=2,`count_2010`,
+		    if(range_values=3,`count_3020`,
+			if(range_values=4,`count_4030`,
+			    if(range_values=5,`count_5040`,
+				if(range_values=6,`count_6050`,
+				    if(range_values=7,`count_7060`,
+				        if(range_values=8,`count_8070`,
+				            if(range_values=9,`count_9080`,
+				                if(range_values=10,`count_9590`,`count_9590`)
+				            )
+				        )
+				    )
+				)
+			    )
+			)
+		     )
+		  )
+		) as `no_of_values`
 
 		from (
 		select timestamp,host_id,minimum,maximum,
@@ -4563,16 +3401,17 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
 		SUM(if(sigStrength1 between '-95' and '-90',1,0)) as `count_9590`,
 		min(sigStrength1) as minimum,max(sigStrength1) as maximum
 		FROM `odu100_peerNodeStatusTable` 
-		where host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=2
+		where sigStrength1<>1 and  timestamp between hour_start and hour_end and timeSlotIndex=2
 		group by host_id,timeSlotIndex,YEARWEEK(timestamp)
 		) as t3
 		) as t4
 		)as t5 
 
 		set 
-		`sig1_index_2_Min`=t5.minimum,
-		`sig1_index_2_Max`=t5.maximum, 
-		`sig1_index_2_Range`=t5.`Most_values`  
+		`index_2_Min`=t5.minimum,
+		`index_2_Max`=t5.maximum, 
+		`index_2_Range`=t5.`Most_values`,
+		`index_2_Range_count`=t5.`no_of_values`
 
 		where subdate(CONCAT(DATE_FORMAT(t5.timestamp,'%Y-%m-%d'),' 00:00:00'), INTERVAL DATE_FORMAT(CONCAT(DATE_FORMAT(t5.timestamp,'%Y-%m-%d'),' 00:00:00'), '%w') DAY)
                 =DATE(ap.timestamp) and t5.host_id=ap.host_id;
@@ -4601,7 +3440,27 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
                         )
                      )
                   )
-                ) as `Most_values`  
+                ) as `Most_values`,
+
+		if(range_values=1,`count_100`,
+		  if(range_values=2,`count_2010`,
+		    if(range_values=3,`count_3020`,
+			if(range_values=4,`count_4030`,
+			    if(range_values=5,`count_5040`,
+				if(range_values=6,`count_6050`,
+				    if(range_values=7,`count_7060`,
+				        if(range_values=8,`count_8070`,
+				            if(range_values=9,`count_9080`,
+				                if(range_values=10,`count_9590`,`count_9590`)
+				            )
+				        )
+				    )
+				)
+			    )
+			)
+		     )
+		  )
+		) as `no_of_values`
 
 		from (
 		select timestamp,host_id,minimum,maximum,
@@ -4624,16 +3483,17 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
 		SUM(if(sigStrength1 between '-95' and '-90',1,0)) as `count_9590`,
 		min(sigStrength1) as minimum,max(sigStrength1) as maximum
 		FROM `odu100_peerNodeStatusTable` 
-		where host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=3
+		where sigStrength1<>1 and  timestamp between hour_start and hour_end and timeSlotIndex=3
 		group by host_id,timeSlotIndex,YEARWEEK(timestamp)
 		) as t3
 		) as t4
 		)as t5 
 
 		set 
-		`sig1_index_3_Min`=t5.minimum,
-		`sig1_index_3_Max`=t5.maximum, 
-		`sig1_index_3_Range`=t5.`Most_values`  
+		`index_3_Min`=t5.minimum,
+		`index_3_Max`=t5.maximum, 
+		`index_3_Range`=t5.`Most_values`,
+		`index_3_Range_count`=t5.`no_of_values`
 
 		where subdate(CONCAT(DATE_FORMAT(t5.timestamp,'%Y-%m-%d'),' 00:00:00'), INTERVAL DATE_FORMAT(CONCAT(DATE_FORMAT(t5.timestamp,'%Y-%m-%d'),' 00:00:00'), '%w') DAY)
                 =DATE(ap.timestamp) and t5.host_id=ap.host_id;
@@ -4660,7 +3520,27 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
                         )
                      )
                   )
-                ) as `Most_values`  
+                ) as `Most_values`,
+
+		if(range_values=1,`count_100`,
+		  if(range_values=2,`count_2010`,
+		    if(range_values=3,`count_3020`,
+			if(range_values=4,`count_4030`,
+			    if(range_values=5,`count_5040`,
+				if(range_values=6,`count_6050`,
+				    if(range_values=7,`count_7060`,
+				        if(range_values=8,`count_8070`,
+				            if(range_values=9,`count_9080`,
+				                if(range_values=10,`count_9590`,`count_9590`)
+				            )
+				        )
+				    )
+				)
+			    )
+			)
+		     )
+		  )
+		) as `no_of_values`
 
 		from (
 		select timestamp,host_id,minimum,maximum,
@@ -4683,16 +3563,17 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
 		SUM(if(sigStrength1 between '-95' and '-90',1,0)) as `count_9590`,
 		min(sigStrength1) as minimum,max(sigStrength1) as maximum
 		FROM `odu100_peerNodeStatusTable` 
-		where host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=4
+		where sigStrength1<>1 and  timestamp between hour_start and hour_end and timeSlotIndex=4
 		group by host_id,timeSlotIndex,YEARWEEK(timestamp)
 		) as t3
 		) as t4
 		)as t5 
 
 		set 
-		`sig1_index_4_Min`=t5.minimum,
-		`sig1_index_4_Max`=t5.maximum, 
-		`sig1_index_4_Range`=t5.`Most_values`  
+		`index_4_Min`=t5.minimum,
+		`index_4_Max`=t5.maximum, 
+		`index_4_Range`=t5.`Most_values`,
+		`index_4_Range_count`=t5.`no_of_values`
 
 		where subdate(CONCAT(DATE_FORMAT(t5.timestamp,'%Y-%m-%d'),' 00:00:00'), INTERVAL DATE_FORMAT(CONCAT(DATE_FORMAT(t5.timestamp,'%Y-%m-%d'),' 00:00:00'), '%w') DAY)
                 =DATE(ap.timestamp) and t5.host_id=ap.host_id;
@@ -4719,7 +3600,27 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
                         )
                      )
                   )
-                ) as `Most_values`  
+                ) as `Most_values`,
+
+		if(range_values=1,`count_100`,
+		  if(range_values=2,`count_2010`,
+		    if(range_values=3,`count_3020`,
+			if(range_values=4,`count_4030`,
+			    if(range_values=5,`count_5040`,
+				if(range_values=6,`count_6050`,
+				    if(range_values=7,`count_7060`,
+				        if(range_values=8,`count_8070`,
+				            if(range_values=9,`count_9080`,
+				                if(range_values=10,`count_9590`,`count_9590`)
+				            )
+				        )
+				    )
+				)
+			    )
+			)
+		     )
+		  )
+		) as `no_of_values`
 
 		from (
 		select timestamp,host_id,minimum,maximum,
@@ -4742,16 +3643,17 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
 		SUM(if(sigStrength1 between '-95' and '-90',1,0)) as `count_9590`,
 		min(sigStrength1) as minimum,max(sigStrength1) as maximum
 		FROM `odu100_peerNodeStatusTable` 
-		where host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=5
+		where sigStrength1<>1 and  timestamp between hour_start and hour_end and timeSlotIndex=5
 		group by host_id,timeSlotIndex,YEARWEEK(timestamp)
 		) as t3
 		) as t4
 		)as t5 
 
 		set 
-		`sig1_index_5_Min`=t5.minimum,
-		`sig1_index_5_Max`=t5.maximum, 
-		`sig1_index_5_Range`=t5.`Most_values`  
+		`index_5_Min`=t5.minimum,
+		`index_5_Max`=t5.maximum, 
+		`index_5_Range`=t5.`Most_values`,
+		`index_5_Range_count`=t5.`no_of_values`
 
 		where subdate(CONCAT(DATE_FORMAT(t5.timestamp,'%Y-%m-%d'),' 00:00:00'), INTERVAL DATE_FORMAT(CONCAT(DATE_FORMAT(t5.timestamp,'%Y-%m-%d'),' 00:00:00'), '%w') DAY)
                 =DATE(ap.timestamp) and t5.host_id=ap.host_id;
@@ -4778,7 +3680,27 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
                         )
                      )
                   )
-                ) as `Most_values`  
+                ) as `Most_values`,
+
+		if(range_values=1,`count_100`,
+		  if(range_values=2,`count_2010`,
+		    if(range_values=3,`count_3020`,
+			if(range_values=4,`count_4030`,
+			    if(range_values=5,`count_5040`,
+				if(range_values=6,`count_6050`,
+				    if(range_values=7,`count_7060`,
+				        if(range_values=8,`count_8070`,
+				            if(range_values=9,`count_9080`,
+				                if(range_values=10,`count_9590`,`count_9590`)
+				            )
+				        )
+				    )
+				)
+			    )
+			)
+		     )
+		  )
+		) as `no_of_values`
 
 		from (
 		select timestamp,host_id,minimum,maximum,
@@ -4801,16 +3723,17 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
 		SUM(if(sigStrength1 between '-95' and '-90',1,0)) as `count_9590`,
 		min(sigStrength1) as minimum,max(sigStrength1) as maximum
 		FROM `odu100_peerNodeStatusTable` 
-		where host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=6
+		where sigStrength1<>1 and  timestamp between hour_start and hour_end and timeSlotIndex=6
 		group by host_id,timeSlotIndex,YEARWEEK(timestamp)
 		) as t3
 		) as t4
 		)as t5 
 
 		set 
-		`sig1_index_6_Min`=t5.minimum,
-		`sig1_index_6_Max`=t5.maximum, 
-		`sig1_index_6_Range`=t5.`Most_values`  
+		`index_6_Min`=t5.minimum,
+		`index_6_Max`=t5.maximum, 
+		`index_6_Range`=t5.`Most_values`,
+		`index_6_Range_count`=t5.`no_of_values`
 
 		where subdate(CONCAT(DATE_FORMAT(t5.timestamp,'%Y-%m-%d'),' 00:00:00'), INTERVAL DATE_FORMAT(CONCAT(DATE_FORMAT(t5.timestamp,'%Y-%m-%d'),' 00:00:00'), '%w') DAY)
                 =DATE(ap.timestamp) and t5.host_id=ap.host_id;
@@ -4837,7 +3760,27 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
                         )
                      )
                   )
-                ) as `Most_values`  
+                ) as `Most_values`,
+
+		if(range_values=1,`count_100`,
+		  if(range_values=2,`count_2010`,
+		    if(range_values=3,`count_3020`,
+			if(range_values=4,`count_4030`,
+			    if(range_values=5,`count_5040`,
+				if(range_values=6,`count_6050`,
+				    if(range_values=7,`count_7060`,
+				        if(range_values=8,`count_8070`,
+				            if(range_values=9,`count_9080`,
+				                if(range_values=10,`count_9590`,`count_9590`)
+				            )
+				        )
+				    )
+				)
+			    )
+			)
+		     )
+		  )
+		) as `no_of_values`
 
 		from (
 		select timestamp,host_id,minimum,maximum,
@@ -4860,16 +3803,17 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
 		SUM(if(sigStrength1 between '-95' and '-90',1,0)) as `count_9590`,
 		min(sigStrength1) as minimum,max(sigStrength1) as maximum
 		FROM `odu100_peerNodeStatusTable` 
-		where host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=7
+		where sigStrength1<>1 and  timestamp between hour_start and hour_end and timeSlotIndex=7
 		group by host_id,timeSlotIndex,YEARWEEK(timestamp)
 		) as t3
 		) as t4
 		)as t5 
 
 		set 
-		`sig1_index_7_Min`=t5.minimum,
-		`sig1_index_7_Max`=t5.maximum, 
-		`sig1_index_7_Range`=t5.`Most_values`  
+		`index_7_Min`=t5.minimum,
+		`index_7_Max`=t5.maximum, 
+		`index_7_Range`=t5.`Most_values`,
+		`index_7_Range_count`=t5.`no_of_values`
 
 		where subdate(CONCAT(DATE_FORMAT(t5.timestamp,'%Y-%m-%d'),' 00:00:00'), INTERVAL DATE_FORMAT(CONCAT(DATE_FORMAT(t5.timestamp,'%Y-%m-%d'),' 00:00:00'), '%w') DAY)
                 =DATE(ap.timestamp) and t5.host_id=ap.host_id;
@@ -4896,7 +3840,27 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
                         )
                      )
                   )
-                ) as `Most_values`  
+                ) as `Most_values`,
+
+		if(range_values=1,`count_100`,
+		  if(range_values=2,`count_2010`,
+		    if(range_values=3,`count_3020`,
+			if(range_values=4,`count_4030`,
+			    if(range_values=5,`count_5040`,
+				if(range_values=6,`count_6050`,
+				    if(range_values=7,`count_7060`,
+				        if(range_values=8,`count_8070`,
+				            if(range_values=9,`count_9080`,
+				                if(range_values=10,`count_9590`,`count_9590`)
+				            )
+				        )
+				    )
+				)
+			    )
+			)
+		     )
+		  )
+		) as `no_of_values`
 
 		from (
 		select timestamp,host_id,minimum,maximum,
@@ -4919,16 +3883,17 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
 		SUM(if(sigStrength1 between '-95' and '-90',1,0)) as `count_9590`,
 		min(sigStrength1) as minimum,max(sigStrength1) as maximum
 		FROM `odu100_peerNodeStatusTable` 
-		where host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=8
+		where sigStrength1<>1 and  timestamp between hour_start and hour_end and timeSlotIndex=8
 		group by host_id,timeSlotIndex,YEARWEEK(timestamp)
 		) as t3
 		) as t4
 		)as t5 
 
 		set 
-		`sig1_index_8_Min`=t5.minimum,
-		`sig1_index_8_Max`=t5.maximum, 
-		`sig1_index_8_Range`=t5.`Most_values`  
+		`index_8_Min`=t5.minimum,
+		`index_8_Max`=t5.maximum, 
+		`index_8_Range`=t5.`Most_values`,
+		`index_8_Range_count`=t5.`no_of_values`
 
 		where subdate(CONCAT(DATE_FORMAT(t5.timestamp,'%Y-%m-%d'),' 00:00:00'), INTERVAL DATE_FORMAT(CONCAT(DATE_FORMAT(t5.timestamp,'%Y-%m-%d'),' 00:00:00'), '%w') DAY)
                 =DATE(ap.timestamp) and t5.host_id=ap.host_id;
@@ -4955,7 +3920,27 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
                         )
                      )
                   )
-                ) as `Most_values`  
+                ) as `Most_values`,
+
+		if(range_values=1,`count_100`,
+		  if(range_values=2,`count_2010`,
+		    if(range_values=3,`count_3020`,
+			if(range_values=4,`count_4030`,
+			    if(range_values=5,`count_5040`,
+				if(range_values=6,`count_6050`,
+				    if(range_values=7,`count_7060`,
+				        if(range_values=8,`count_8070`,
+				            if(range_values=9,`count_9080`,
+				                if(range_values=10,`count_9590`,`count_9590`)
+				            )
+				        )
+				    )
+				)
+			    )
+			)
+		     )
+		  )
+		) as `no_of_values`
 
 		from (
 		select timestamp,host_id,minimum,maximum,
@@ -4978,16 +3963,17 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
 		SUM(if(sigStrength1 between '-95' and '-90',1,0)) as `count_9590`,
 		min(sigStrength1) as minimum,max(sigStrength1) as maximum
 		FROM `odu100_peerNodeStatusTable` 
-		where host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=9
+		where sigStrength1<>1 and  timestamp between hour_start and hour_end and timeSlotIndex=9
 		group by host_id,timeSlotIndex,YEARWEEK(timestamp)
 		) as t3
 		) as t4
 		)as t5 
 
 		set 
-		`sig1_index_9_Min`=t5.minimum,
-		`sig1_index_9_Max`=t5.maximum, 
-		`sig1_index_9_Range`=t5.`Most_values`  
+		`index_9_Min`=t5.minimum,
+		`index_9_Max`=t5.maximum, 
+		`index_9_Range`=t5.`Most_values`,
+		`index_9_Range_count`=t5.`no_of_values`
 
 		where subdate(CONCAT(DATE_FORMAT(t5.timestamp,'%Y-%m-%d'),' 00:00:00'), INTERVAL DATE_FORMAT(CONCAT(DATE_FORMAT(t5.timestamp,'%Y-%m-%d'),' 00:00:00'), '%w') DAY)
                 =DATE(ap.timestamp) and t5.host_id=ap.host_id;
@@ -5014,7 +4000,27 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
                         )
                      )
                   )
-                ) as `Most_values`  
+                ) as `Most_values`,
+
+		if(range_values=1,`count_100`,
+		  if(range_values=2,`count_2010`,
+		    if(range_values=3,`count_3020`,
+			if(range_values=4,`count_4030`,
+			    if(range_values=5,`count_5040`,
+				if(range_values=6,`count_6050`,
+				    if(range_values=7,`count_7060`,
+				        if(range_values=8,`count_8070`,
+				            if(range_values=9,`count_9080`,
+				                if(range_values=10,`count_9590`,`count_9590`)
+				            )
+				        )
+				    )
+				)
+			    )
+			)
+		     )
+		  )
+		) as `no_of_values`
 
 		from (
 		select timestamp,host_id,minimum,maximum,
@@ -5037,16 +4043,17 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
 		SUM(if(sigStrength1 between '-95' and '-90',1,0)) as `count_9590`,
 		min(sigStrength1) as minimum,max(sigStrength1) as maximum
 		FROM `odu100_peerNodeStatusTable` 
-		where host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=10
+		where sigStrength1<>1 and  timestamp between hour_start and hour_end and timeSlotIndex=10
 		group by host_id,timeSlotIndex,YEARWEEK(timestamp)
 		) as t3
 		) as t4
 		)as t5 
 
 		set 
-		`sig1_index_10_Min`=t5.minimum,
-		`sig1_index_10_Max`=t5.maximum, 
-		`sig1_index_10_Range`=t5.`Most_values`  
+		`index_10_Min`=t5.minimum,
+		`index_10_Max`=t5.maximum, 
+		`index_10_Range`=t5.`Most_values`,
+		`index_10_Range_count`=t5.`no_of_values`
 
 		where subdate(CONCAT(DATE_FORMAT(t5.timestamp,'%Y-%m-%d'),' 00:00:00'), INTERVAL DATE_FORMAT(CONCAT(DATE_FORMAT(t5.timestamp,'%Y-%m-%d'),' 00:00:00'), '%w') DAY)
                 =DATE(ap.timestamp) and t5.host_id=ap.host_id;
@@ -5072,7 +4079,27 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
                         )
                      )
                   )
-                ) as `Most_values`  
+                ) as `Most_values`,
+
+		if(range_values=1,`count_100`,
+		  if(range_values=2,`count_2010`,
+		    if(range_values=3,`count_3020`,
+			if(range_values=4,`count_4030`,
+			    if(range_values=5,`count_5040`,
+				if(range_values=6,`count_6050`,
+				    if(range_values=7,`count_7060`,
+				        if(range_values=8,`count_8070`,
+				            if(range_values=9,`count_9080`,
+				                if(range_values=10,`count_9590`,`count_9590`)
+				            )
+				        )
+				    )
+				)
+			    )
+			)
+		     )
+		  )
+		) as `no_of_values`
 
 		from (
 		select timestamp,host_id,minimum,maximum,
@@ -5095,75 +4122,17 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
 		SUM(if(sigStrength1 between '-95' and '-90',1,0)) as `count_9590`,
 		min(sigStrength1) as minimum,max(sigStrength1) as maximum
 		FROM `odu100_peerNodeStatusTable` 
-		where host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=11
+		where sigStrength1<>1 and  timestamp between hour_start and hour_end and timeSlotIndex=11
 		group by host_id,timeSlotIndex,YEARWEEK(timestamp)
 		) as t3
 		) as t4
 		)as t5 
 
 		set 
-		`sig1_index_11_Min`=t5.minimum,
-		`sig1_index_11_Max`=t5.maximum, 
-		`sig1_index_11_Range`=t5.`Most_values`  
-
-		where subdate(CONCAT(DATE_FORMAT(t5.timestamp,'%Y-%m-%d'),' 00:00:00'), INTERVAL DATE_FORMAT(CONCAT(DATE_FORMAT(t5.timestamp,'%Y-%m-%d'),' 00:00:00'), '%w') DAY)
-                =DATE(ap.timestamp) and t5.host_id=ap.host_id;
-
-
-
-		update `analyze_odu100_peerNodeStatusTable`  as ap ,
-		(select timestamp,host_id,minimum,maximum,
-		if(range_values=1,-5,
-                  if(range_values=2,-15,
-                    if(range_values=3,-25,
-                        if(range_values=4,-35,
-                            if(range_values=5,-45,
-                                if(range_values=6,-55,
-                                    if(range_values=7,-65,
-                                        if(range_values=8,-75,
-                                            if(range_values=9,-85,
-                                                if(range_values=10,-95,-95)
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                     )
-                  )
-                ) as `Most_values`  
-
-		from (
-		select timestamp,host_id,minimum,maximum,
-		FIELD(GREATEST(`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`),
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`) as range_values,
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`
-		 from 
-		(
-		SELECT  
-		timestamp,host_id,
-		SUM(if(sigStrength1 between '-10' and '0',1,0))   as `count_100`,
-		SUM(if(sigStrength1 between '-20' and '-10',1,0)) as `count_2010`,
-		SUM(if(sigStrength1 between '-30' and '-20',1,0)) as `count_3020`,
-		SUM(if(sigStrength1 between '-40' and '-30',1,0)) as `count_4030`,
-		SUM(if(sigStrength1 between '-50' and '-40',1,0)) as `count_5040`,
-		SUM(if(sigStrength1 between '-60' and '-50',1,0)) as `count_6050`,
-		SUM(if(sigStrength1 between '-70' and '-60',1,0)) as `count_7060`,
-		SUM(if(sigStrength1 between '-80' and '-70',1,0)) as `count_8070`,
-		SUM(if(sigStrength1 between '-90' and '-80',1,0)) as `count_9080`,
-		SUM(if(sigStrength1 between '-95' and '-90',1,0)) as `count_9590`,
-		min(sigStrength1) as minimum,max(sigStrength1) as maximum
-		FROM `odu100_peerNodeStatusTable` 
-		where host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=12
-		group by host_id,timeSlotIndex,YEARWEEK(timestamp)
-		) as t3
-		) as t4
-		)as t5 
-
-		set 
-		`sig1_index_12_Min`=t5.minimum,
-		`sig1_index_12_Max`=t5.maximum, 
-		`sig1_index_12_Range`=t5.`Most_values`  
+		`index_11_Min`=t5.minimum,
+		`index_11_Max`=t5.maximum, 
+		`index_11_Range`=t5.`Most_values`,
+		`index_11_Range_count`=t5.`no_of_values`
 
 		where subdate(CONCAT(DATE_FORMAT(t5.timestamp,'%Y-%m-%d'),' 00:00:00'), INTERVAL DATE_FORMAT(CONCAT(DATE_FORMAT(t5.timestamp,'%Y-%m-%d'),' 00:00:00'), '%w') DAY)
                 =DATE(ap.timestamp) and t5.host_id=ap.host_id;
@@ -5190,7 +4159,27 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
                         )
                      )
                   )
-                ) as `Most_values`  
+                ) as `Most_values`,
+
+		if(range_values=1,`count_100`,
+		  if(range_values=2,`count_2010`,
+		    if(range_values=3,`count_3020`,
+			if(range_values=4,`count_4030`,
+			    if(range_values=5,`count_5040`,
+				if(range_values=6,`count_6050`,
+				    if(range_values=7,`count_7060`,
+				        if(range_values=8,`count_8070`,
+				            if(range_values=9,`count_9080`,
+				                if(range_values=10,`count_9590`,`count_9590`)
+				            )
+				        )
+				    )
+				)
+			    )
+			)
+		     )
+		  )
+		) as `no_of_values`
 
 		from (
 		select timestamp,host_id,minimum,maximum,
@@ -5213,16 +4202,97 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
 		SUM(if(sigStrength1 between '-95' and '-90',1,0)) as `count_9590`,
 		min(sigStrength1) as minimum,max(sigStrength1) as maximum
 		FROM `odu100_peerNodeStatusTable` 
-		where host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=13
+		where sigStrength1<>1 and  timestamp between hour_start and hour_end and timeSlotIndex=12
 		group by host_id,timeSlotIndex,YEARWEEK(timestamp)
 		) as t3
 		) as t4
 		)as t5 
 
 		set 
-		`sig1_index_13_Min`=t5.minimum,
-		`sig1_index_13_Max`=t5.maximum, 
-		`sig1_index_13_Range`=t5.`Most_values`  
+		`index_12_Min`=t5.minimum,
+		`index_12_Max`=t5.maximum, 
+		`index_12_Range`=t5.`Most_values`,
+		`index_12_Range_count`=t5.`no_of_values`
+
+		where subdate(CONCAT(DATE_FORMAT(t5.timestamp,'%Y-%m-%d'),' 00:00:00'), INTERVAL DATE_FORMAT(CONCAT(DATE_FORMAT(t5.timestamp,'%Y-%m-%d'),' 00:00:00'), '%w') DAY)
+                =DATE(ap.timestamp) and t5.host_id=ap.host_id;
+
+
+
+		update `analyze_odu100_peerNodeStatusTable`  as ap ,
+		(select timestamp,host_id,minimum,maximum,
+		if(range_values=1,-5,
+                  if(range_values=2,-15,
+                    if(range_values=3,-25,
+                        if(range_values=4,-35,
+                            if(range_values=5,-45,
+                                if(range_values=6,-55,
+                                    if(range_values=7,-65,
+                                        if(range_values=8,-75,
+                                            if(range_values=9,-85,
+                                                if(range_values=10,-95,-95)
+                                            )
+                                        )
+                                    )
+                                )
+                            )
+                        )
+                     )
+                  )
+                ) as `Most_values`,
+
+		if(range_values=1,`count_100`,
+		  if(range_values=2,`count_2010`,
+		    if(range_values=3,`count_3020`,
+			if(range_values=4,`count_4030`,
+			    if(range_values=5,`count_5040`,
+				if(range_values=6,`count_6050`,
+				    if(range_values=7,`count_7060`,
+				        if(range_values=8,`count_8070`,
+				            if(range_values=9,`count_9080`,
+				                if(range_values=10,`count_9590`,`count_9590`)
+				            )
+				        )
+				    )
+				)
+			    )
+			)
+		     )
+		  )
+		) as `no_of_values`
+
+		from (
+		select timestamp,host_id,minimum,maximum,
+		FIELD(GREATEST(`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`),
+		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`) as range_values,
+		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`
+		 from 
+		(
+		SELECT  
+		timestamp,host_id,
+		SUM(if(sigStrength1 between '-10' and '0',1,0))   as `count_100`,
+		SUM(if(sigStrength1 between '-20' and '-10',1,0)) as `count_2010`,
+		SUM(if(sigStrength1 between '-30' and '-20',1,0)) as `count_3020`,
+		SUM(if(sigStrength1 between '-40' and '-30',1,0)) as `count_4030`,
+		SUM(if(sigStrength1 between '-50' and '-40',1,0)) as `count_5040`,
+		SUM(if(sigStrength1 between '-60' and '-50',1,0)) as `count_6050`,
+		SUM(if(sigStrength1 between '-70' and '-60',1,0)) as `count_7060`,
+		SUM(if(sigStrength1 between '-80' and '-70',1,0)) as `count_8070`,
+		SUM(if(sigStrength1 between '-90' and '-80',1,0)) as `count_9080`,
+		SUM(if(sigStrength1 between '-95' and '-90',1,0)) as `count_9590`,
+		min(sigStrength1) as minimum,max(sigStrength1) as maximum
+		FROM `odu100_peerNodeStatusTable` 
+		where sigStrength1<>1 and  timestamp between hour_start and hour_end and timeSlotIndex=13
+		group by host_id,timeSlotIndex,YEARWEEK(timestamp)
+		) as t3
+		) as t4
+		)as t5 
+
+		set 
+		`index_13_Min`=t5.minimum,
+		`index_13_Max`=t5.maximum, 
+		`index_13_Range`=t5.`Most_values`,
+		`index_13_Range_count`=t5.`no_of_values`
 
 		where subdate(CONCAT(DATE_FORMAT(t5.timestamp,'%Y-%m-%d'),' 00:00:00'), INTERVAL DATE_FORMAT(CONCAT(DATE_FORMAT(t5.timestamp,'%Y-%m-%d'),' 00:00:00'), '%w') DAY)
                 =DATE(ap.timestamp) and t5.host_id=ap.host_id;
@@ -5248,7 +4318,27 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
                         )
                      )
                   )
-                ) as `Most_values`  
+                ) as `Most_values`,
+
+		if(range_values=1,`count_100`,
+		  if(range_values=2,`count_2010`,
+		    if(range_values=3,`count_3020`,
+			if(range_values=4,`count_4030`,
+			    if(range_values=5,`count_5040`,
+				if(range_values=6,`count_6050`,
+				    if(range_values=7,`count_7060`,
+				        if(range_values=8,`count_8070`,
+				            if(range_values=9,`count_9080`,
+				                if(range_values=10,`count_9590`,`count_9590`)
+				            )
+				        )
+				    )
+				)
+			    )
+			)
+		     )
+		  )
+		) as `no_of_values`
 
 		from (
 		select timestamp,host_id,minimum,maximum,
@@ -5271,16 +4361,17 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
 		SUM(if(sigStrength1 between '-95' and '-90',1,0)) as `count_9590`,
 		min(sigStrength1) as minimum,max(sigStrength1) as maximum
 		FROM `odu100_peerNodeStatusTable` 
-		where host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=14
+		where sigStrength1<>1 and  timestamp between hour_start and hour_end and timeSlotIndex=14
 		group by host_id,timeSlotIndex,YEARWEEK(timestamp)
 		) as t3
 		) as t4
 		)as t5 
 
 		set 
-		`sig1_index_14_Min`=t5.minimum,
-		`sig1_index_14_Max`=t5.maximum, 
-		`sig1_index_14_Range`=t5.`Most_values`  
+		`index_14_Min`=t5.minimum,
+		`index_14_Max`=t5.maximum, 
+		`index_14_Range`=t5.`Most_values`,
+		`index_14_Range_count`=t5.`no_of_values`
 
 		where subdate(CONCAT(DATE_FORMAT(t5.timestamp,'%Y-%m-%d'),' 00:00:00'), INTERVAL DATE_FORMAT(CONCAT(DATE_FORMAT(t5.timestamp,'%Y-%m-%d'),' 00:00:00'), '%w') DAY)
                 =DATE(ap.timestamp) and t5.host_id=ap.host_id;
@@ -5306,7 +4397,27 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
                         )
                      )
                   )
-                ) as `Most_values`  
+                ) as `Most_values`,
+
+		if(range_values=1,`count_100`,
+		  if(range_values=2,`count_2010`,
+		    if(range_values=3,`count_3020`,
+			if(range_values=4,`count_4030`,
+			    if(range_values=5,`count_5040`,
+				if(range_values=6,`count_6050`,
+				    if(range_values=7,`count_7060`,
+				        if(range_values=8,`count_8070`,
+				            if(range_values=9,`count_9080`,
+				                if(range_values=10,`count_9590`,`count_9590`)
+				            )
+				        )
+				    )
+				)
+			    )
+			)
+		     )
+		  )
+		) as `no_of_values`
 
 		from (
 		select timestamp,host_id,minimum,maximum,
@@ -5329,16 +4440,17 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
 		SUM(if(sigStrength1 between '-95' and '-90',1,0)) as `count_9590`,
 		min(sigStrength1) as minimum,max(sigStrength1) as maximum
 		FROM `odu100_peerNodeStatusTable` 
-		where host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=15
+		where sigStrength1<>1 and  timestamp between hour_start and hour_end and timeSlotIndex=15
 		group by host_id,timeSlotIndex,YEARWEEK(timestamp)
 		) as t3
 		) as t4
 		)as t5 
 
 		set 
-		`sig1_index_15_Min`=t5.minimum,
-		`sig1_index_15_Max`=t5.maximum, 
-		`sig1_index_15_Range`=t5.`Most_values`  
+		`index_15_Min`=t5.minimum,
+		`index_15_Max`=t5.maximum, 
+		`index_15_Range`=t5.`Most_values`,
+		`index_15_Range_count`=t5.`no_of_values`
 
 		where subdate(CONCAT(DATE_FORMAT(t5.timestamp,'%Y-%m-%d'),' 00:00:00'), INTERVAL DATE_FORMAT(CONCAT(DATE_FORMAT(t5.timestamp,'%Y-%m-%d'),' 00:00:00'), '%w') DAY)
                 =DATE(ap.timestamp) and t5.host_id=ap.host_id;
@@ -5364,7 +4476,27 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
                         )
                      )
                   )
-                ) as `Most_values`  
+                ) as `Most_values`,
+
+		if(range_values=1,`count_100`,
+		  if(range_values=2,`count_2010`,
+		    if(range_values=3,`count_3020`,
+			if(range_values=4,`count_4030`,
+			    if(range_values=5,`count_5040`,
+				if(range_values=6,`count_6050`,
+				    if(range_values=7,`count_7060`,
+				        if(range_values=8,`count_8070`,
+				            if(range_values=9,`count_9080`,
+				                if(range_values=10,`count_9590`,`count_9590`)
+				            )
+				        )
+				    )
+				)
+			    )
+			)
+		     )
+		  )
+		) as `no_of_values`
 
 		from (
 		select timestamp,host_id,minimum,maximum,
@@ -5387,973 +4519,21 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
 		SUM(if(sigStrength1 between '-95' and '-90',1,0)) as `count_9590`,
 		min(sigStrength1) as minimum,max(sigStrength1) as maximum
 		FROM `odu100_peerNodeStatusTable` 
-		where host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=16
+		where sigStrength1<>1 and  timestamp between hour_start and hour_end and timeSlotIndex=16
 		group by host_id,timeSlotIndex,YEARWEEK(timestamp)
 		) as t3
 		) as t4
 		)as t5 
 
 		set 
-		`sig1_index_16_Min`=t5.minimum,
-		`sig1_index_16_Max`=t5.maximum, 
-		`sig1_index_16_Range`=t5.`Most_values`  
+		`index_16_Min`=t5.minimum,
+		`index_16_Max`=t5.maximum, 
+		`index_16_Range`=t5.`Most_values`,
+		`index_16_Range_count`=t5.`no_of_values`
 
 		where subdate(CONCAT(DATE_FORMAT(t5.timestamp,'%Y-%m-%d'),' 00:00:00'), INTERVAL DATE_FORMAT(CONCAT(DATE_FORMAT(t5.timestamp,'%Y-%m-%d'),' 00:00:00'), '%w') DAY)
                 =DATE(ap.timestamp) and t5.host_id=ap.host_id;
-		update `analyze_odu100_peerNodeStatusTable`  as ap ,
-		(select timestamp,host_id,minimum,maximum,
-		if(range_values=1,-5,
-                  if(range_values=2,-15,
-                    if(range_values=3,-25,
-                        if(range_values=4,-35,
-                            if(range_values=5,-45,
-                                if(range_values=6,-55,
-                                    if(range_values=7,-65,
-                                        if(range_values=8,-75,
-                                            if(range_values=9,-85,
-                                                if(range_values=10,-95,-95)
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                     )
-                  )
-                ) as `Most_values`
 
-		from (
-		select timestamp,host_id,minimum,maximum,
-		FIELD(GREATEST(`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`),
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`) as range_values,
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`
-		 from 
-		(
-		SELECT  
-		timestamp,host_id,
-		SUM(if(sigStrength2 between '-10' and '0',1,0))   as `count_100`,
-		SUM(if(sigStrength2 between '-20' and '-10',1,0)) as `count_2010`,
-		SUM(if(sigStrength2 between '-30' and '-20',1,0)) as `count_3020`,
-		SUM(if(sigStrength2 between '-40' and '-30',1,0)) as `count_4030`,
-		SUM(if(sigStrength2 between '-50' and '-40',1,0)) as `count_5040`,
-		SUM(if(sigStrength2 between '-60' and '-50',1,0)) as `count_6050`,
-		SUM(if(sigStrength2 between '-70' and '-60',1,0)) as `count_7060`,
-		SUM(if(sigStrength2 between '-80' and '-70',1,0)) as `count_8070`,
-		SUM(if(sigStrength2 between '-90' and '-80',1,0)) as `count_9080`,
-		SUM(if(sigStrength2 between '-95' and '-90',1,0)) as `count_9590`,
-		min(sigStrength2) as minimum,max(sigStrength2) as maximum
-		FROM `odu100_peerNodeStatusTable` 
-		where host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=1
-		group by host_id,timeSlotIndex,YEARWEEK(timestamp)
-		) as t3
-		) as t4
-		)as t5 
-
-		set 
-		`sig2_index_1_Min`=t5.minimum,
-		`sig2_index_1_Max`=t5.maximum, 
-		`sig2_index_1_Range`=t5.`Most_values`
-
-		where subdate(CONCAT(DATE_FORMAT(t5.timestamp,'%Y-%m-%d'),' 00:00:00'), INTERVAL DATE_FORMAT(CONCAT(DATE_FORMAT(t5.timestamp,'%Y-%m-%d'),' 00:00:00'), '%w') DAY)
-                =DATE(ap.timestamp) and  
-		t5.host_id=ap.host_id;
-			
-	
-	
-	
-	
-	
-	
-	update `analyze_odu100_peerNodeStatusTable`  as ap ,
-		(select timestamp,host_id,minimum,maximum,
-		if(range_values=1,-5,
-                  if(range_values=2,-15,
-                    if(range_values=3,-25,
-                        if(range_values=4,-35,
-                            if(range_values=5,-45,
-                                if(range_values=6,-55,
-                                    if(range_values=7,-65,
-                                        if(range_values=8,-75,
-                                            if(range_values=9,-85,
-                                                if(range_values=10,-95,-95)
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                     )
-                  )
-                ) as `Most_values`
-
-		from (
-		select timestamp,host_id,minimum,maximum,
-		FIELD(GREATEST(`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`),
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`) as range_values,
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`
-		 from 
-		(
-		SELECT  
-		timestamp,host_id,
-		SUM(if(sigStrength2 between '-10' and '0',1,0))   as `count_100`,
-		SUM(if(sigStrength2 between '-20' and '-10',1,0)) as `count_2010`,
-		SUM(if(sigStrength2 between '-30' and '-20',1,0)) as `count_3020`,
-		SUM(if(sigStrength2 between '-40' and '-30',1,0)) as `count_4030`,
-		SUM(if(sigStrength2 between '-50' and '-40',1,0)) as `count_5040`,
-		SUM(if(sigStrength2 between '-60' and '-50',1,0)) as `count_6050`,
-		SUM(if(sigStrength2 between '-70' and '-60',1,0)) as `count_7060`,
-		SUM(if(sigStrength2 between '-80' and '-70',1,0)) as `count_8070`,
-		SUM(if(sigStrength2 between '-90' and '-80',1,0)) as `count_9080`,
-		SUM(if(sigStrength2 between '-95' and '-90',1,0)) as `count_9590`,
-		min(sigStrength2) as minimum,max(sigStrength2) as maximum
-		FROM `odu100_peerNodeStatusTable` 
-		where host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=2
-		group by host_id,timeSlotIndex,YEARWEEK(timestamp)
-		) as t3
-		) as t4
-		)as t5 
-
-		set 
-		`sig2_index_2_Min`=t5.minimum,
-		`sig2_index_2_Max`=t5.maximum, 
-		`sig2_index_2_Range`=t5.`Most_values`
-
-		where subdate(CONCAT(DATE_FORMAT(t5.timestamp,'%Y-%m-%d'),' 00:00:00'), INTERVAL DATE_FORMAT(CONCAT(DATE_FORMAT(t5.timestamp,'%Y-%m-%d'),' 00:00:00'), '%w') DAY)
-                =DATE(ap.timestamp) and  
-		t5.host_id=ap.host_id;
-		
-		
-		
-				 
-
-		update `analyze_odu100_peerNodeStatusTable`  as ap ,
-		(select timestamp,host_id,minimum,maximum,
-		if(range_values=1,-5,
-                  if(range_values=2,-15,
-                    if(range_values=3,-25,
-                        if(range_values=4,-35,
-                            if(range_values=5,-45,
-                                if(range_values=6,-55,
-                                    if(range_values=7,-65,
-                                        if(range_values=8,-75,
-                                            if(range_values=9,-85,
-                                                if(range_values=10,-95,-95)
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                     )
-                  )
-                ) as `Most_values`  
-
-		from (
-		select timestamp,host_id,minimum,maximum,
-		FIELD(GREATEST(`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`),
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`) as range_values,
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`
-		 from 
-		(
-		SELECT  
-		timestamp,host_id,
-		SUM(if(sigStrength2 between '-10' and '0',1,0))   as `count_100`,
-		SUM(if(sigStrength2 between '-20' and '-10',1,0)) as `count_2010`,
-		SUM(if(sigStrength2 between '-30' and '-20',1,0)) as `count_3020`,
-		SUM(if(sigStrength2 between '-40' and '-30',1,0)) as `count_4030`,
-		SUM(if(sigStrength2 between '-50' and '-40',1,0)) as `count_5040`,
-		SUM(if(sigStrength2 between '-60' and '-50',1,0)) as `count_6050`,
-		SUM(if(sigStrength2 between '-70' and '-60',1,0)) as `count_7060`,
-		SUM(if(sigStrength2 between '-80' and '-70',1,0)) as `count_8070`,
-		SUM(if(sigStrength2 between '-90' and '-80',1,0)) as `count_9080`,
-		SUM(if(sigStrength2 between '-95' and '-90',1,0)) as `count_9590`,
-		min(sigStrength2) as minimum,max(sigStrength2) as maximum
-		FROM `odu100_peerNodeStatusTable` 
-		where host_id=NEW.host_id and  sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=3
-		group by host_id,timeSlotIndex,YEARWEEK(timestamp)
-		) as t3
-		) as t4
-		)as t5 
-
-		set 
-		`sig2_index_3_Min`=t5.minimum,
-		`sig2_index_3_Max`=t5.maximum, 
-		`sig2_index_3_Range`=t5.`Most_values`  
-
-		where subdate(CONCAT(DATE_FORMAT(t5.timestamp,'%Y-%m-%d'),' 00:00:00'), INTERVAL DATE_FORMAT(CONCAT(DATE_FORMAT(t5.timestamp,'%Y-%m-%d'),' 00:00:00'), '%w') DAY)
-                =DATE(ap.timestamp) and  
-		t5.host_id=ap.host_id;
-
-
-
-		update `analyze_odu100_peerNodeStatusTable`  as ap ,
-		(select timestamp,host_id,minimum,maximum,
-		if(range_values=1,-5,
-                  if(range_values=2,-15,
-                    if(range_values=3,-25,
-                        if(range_values=4,-35,
-                            if(range_values=5,-45,
-                                if(range_values=6,-55,
-                                    if(range_values=7,-65,
-                                        if(range_values=8,-75,
-                                            if(range_values=9,-85,
-                                                if(range_values=10,-95,-95)
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                     )
-                  )
-                ) as `Most_values`  
-
-		from (
-		select timestamp,host_id,minimum,maximum,
-		FIELD(GREATEST(`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`),
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`) as range_values,
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`
-		 from 
-		(
-		SELECT  
-		timestamp,host_id,
-		SUM(if(sigStrength2 between '-10' and '0',1,0))   as `count_100`,
-		SUM(if(sigStrength2 between '-20' and '-10',1,0)) as `count_2010`,
-		SUM(if(sigStrength2 between '-30' and '-20',1,0)) as `count_3020`,
-		SUM(if(sigStrength2 between '-40' and '-30',1,0)) as `count_4030`,
-		SUM(if(sigStrength2 between '-50' and '-40',1,0)) as `count_5040`,
-		SUM(if(sigStrength2 between '-60' and '-50',1,0)) as `count_6050`,
-		SUM(if(sigStrength2 between '-70' and '-60',1,0)) as `count_7060`,
-		SUM(if(sigStrength2 between '-80' and '-70',1,0)) as `count_8070`,
-		SUM(if(sigStrength2 between '-90' and '-80',1,0)) as `count_9080`,
-		SUM(if(sigStrength2 between '-95' and '-90',1,0)) as `count_9590`,
-		min(sigStrength2) as minimum,max(sigStrength2) as maximum
-		FROM `odu100_peerNodeStatusTable` 
-		where  host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=4
-		group by host_id,timeSlotIndex,YEARWEEK(timestamp)
-		) as t3
-		) as t4
-		)as t5 
-
-		set 
-		`sig2_index_4_Min`=t5.minimum,
-		`sig2_index_4_Max`=t5.maximum, 
-		`sig2_index_4_Range`=t5.`Most_values`  
-
-		where subdate(CONCAT(DATE_FORMAT(t5.timestamp,'%Y-%m-%d'),' 00:00:00'), INTERVAL DATE_FORMAT(CONCAT(DATE_FORMAT(t5.timestamp,'%Y-%m-%d'),' 00:00:00'), '%w') DAY)
-                =DATE(ap.timestamp) and  
-		t5.host_id=ap.host_id;
-
-
-
-		update `analyze_odu100_peerNodeStatusTable`  as ap ,
-		(select timestamp,host_id,minimum,maximum,
-		if(range_values=1,-5,
-                  if(range_values=2,-15,
-                    if(range_values=3,-25,
-                        if(range_values=4,-35,
-                            if(range_values=5,-45,
-                                if(range_values=6,-55,
-                                    if(range_values=7,-65,
-                                        if(range_values=8,-75,
-                                            if(range_values=9,-85,
-                                                if(range_values=10,-95,-95)
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                     )
-                  )
-                ) as `Most_values`  
-
-		from (
-		select timestamp,host_id,minimum,maximum,
-		FIELD(GREATEST(`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`),
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`) as range_values,
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`
-		 from 
-		(
-		SELECT  
-		timestamp,host_id,
-		SUM(if(sigStrength2 between '-10' and '0',1,0))   as `count_100`,
-		SUM(if(sigStrength2 between '-20' and '-10',1,0)) as `count_2010`,
-		SUM(if(sigStrength2 between '-30' and '-20',1,0)) as `count_3020`,
-		SUM(if(sigStrength2 between '-40' and '-30',1,0)) as `count_4030`,
-		SUM(if(sigStrength2 between '-50' and '-40',1,0)) as `count_5040`,
-		SUM(if(sigStrength2 between '-60' and '-50',1,0)) as `count_6050`,
-		SUM(if(sigStrength2 between '-70' and '-60',1,0)) as `count_7060`,
-		SUM(if(sigStrength2 between '-80' and '-70',1,0)) as `count_8070`,
-		SUM(if(sigStrength2 between '-90' and '-80',1,0)) as `count_9080`,
-		SUM(if(sigStrength2 between '-95' and '-90',1,0)) as `count_9590`,
-		min(sigStrength2) as minimum,max(sigStrength2) as maximum
-		FROM `odu100_peerNodeStatusTable` 
-		where  host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=5
-		group by host_id,timeSlotIndex,YEARWEEK(timestamp)
-		) as t3
-		) as t4
-		)as t5 
-
-		set 
-		`sig2_index_5_Min`=t5.minimum,
-		`sig2_index_5_Max`=t5.maximum, 
-		`sig2_index_5_Range`=t5.`Most_values`  
-
-		where subdate(CONCAT(DATE_FORMAT(t5.timestamp,'%Y-%m-%d'),' 00:00:00'), INTERVAL DATE_FORMAT(CONCAT(DATE_FORMAT(t5.timestamp,'%Y-%m-%d'),' 00:00:00'), '%w') DAY)
-                =DATE(ap.timestamp) and  
-		t5.host_id=ap.host_id;
-
-
-
-		update `analyze_odu100_peerNodeStatusTable`  as ap ,
-		(select timestamp,host_id,minimum,maximum,
-		if(range_values=1,-5,
-                  if(range_values=2,-15,
-                    if(range_values=3,-25,
-                        if(range_values=4,-35,
-                            if(range_values=5,-45,
-                                if(range_values=6,-55,
-                                    if(range_values=7,-65,
-                                        if(range_values=8,-75,
-                                            if(range_values=9,-85,
-                                                if(range_values=10,-95,-95)
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                     )
-                  )
-                ) as `Most_values`  
-
-		from (
-		select timestamp,host_id,minimum,maximum,
-		FIELD(GREATEST(`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`),
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`) as range_values,
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`
-		 from 
-		(
-		SELECT  
-		timestamp,host_id,
-		SUM(if(sigStrength2 between '-10' and '0',1,0))   as `count_100`,
-		SUM(if(sigStrength2 between '-20' and '-10',1,0)) as `count_2010`,
-		SUM(if(sigStrength2 between '-30' and '-20',1,0)) as `count_3020`,
-		SUM(if(sigStrength2 between '-40' and '-30',1,0)) as `count_4030`,
-		SUM(if(sigStrength2 between '-50' and '-40',1,0)) as `count_5040`,
-		SUM(if(sigStrength2 between '-60' and '-50',1,0)) as `count_6050`,
-		SUM(if(sigStrength2 between '-70' and '-60',1,0)) as `count_7060`,
-		SUM(if(sigStrength2 between '-80' and '-70',1,0)) as `count_8070`,
-		SUM(if(sigStrength2 between '-90' and '-80',1,0)) as `count_9080`,
-		SUM(if(sigStrength2 between '-95' and '-90',1,0)) as `count_9590`,
-		min(sigStrength2) as minimum,max(sigStrength2) as maximum
-		FROM `odu100_peerNodeStatusTable` 
-		where  host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=6
-		group by host_id,timeSlotIndex,YEARWEEK(timestamp)
-		) as t3
-		) as t4
-		)as t5 
-
-		set 
-		`sig2_index_6_Min`=t5.minimum,
-		`sig2_index_6_Max`=t5.maximum, 
-		`sig2_index_6_Range`=t5.`Most_values`  
-
-		where subdate(CONCAT(DATE_FORMAT(t5.timestamp,'%Y-%m-%d'),' 00:00:00'), INTERVAL DATE_FORMAT(CONCAT(DATE_FORMAT(t5.timestamp,'%Y-%m-%d'),' 00:00:00'), '%w') DAY)
-                =DATE(ap.timestamp) and  
-		t5.host_id=ap.host_id;
-
-
-
-		update `analyze_odu100_peerNodeStatusTable`  as ap ,
-		(select timestamp,host_id,minimum,maximum,
-		if(range_values=1,-5,
-                  if(range_values=2,-15,
-                    if(range_values=3,-25,
-                        if(range_values=4,-35,
-                            if(range_values=5,-45,
-                                if(range_values=6,-55,
-                                    if(range_values=7,-65,
-                                        if(range_values=8,-75,
-                                            if(range_values=9,-85,
-                                                if(range_values=10,-95,-95)
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                     )
-                  )
-                ) as `Most_values`  
-
-		from (
-		select timestamp,host_id,minimum,maximum,
-		FIELD(GREATEST(`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`),
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`) as range_values,
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`
-		 from 
-		(
-		SELECT  
-		timestamp,host_id,
-		SUM(if(sigStrength2 between '-10' and '0',1,0))   as `count_100`,
-		SUM(if(sigStrength2 between '-20' and '-10',1,0)) as `count_2010`,
-		SUM(if(sigStrength2 between '-30' and '-20',1,0)) as `count_3020`,
-		SUM(if(sigStrength2 between '-40' and '-30',1,0)) as `count_4030`,
-		SUM(if(sigStrength2 between '-50' and '-40',1,0)) as `count_5040`,
-		SUM(if(sigStrength2 between '-60' and '-50',1,0)) as `count_6050`,
-		SUM(if(sigStrength2 between '-70' and '-60',1,0)) as `count_7060`,
-		SUM(if(sigStrength2 between '-80' and '-70',1,0)) as `count_8070`,
-		SUM(if(sigStrength2 between '-90' and '-80',1,0)) as `count_9080`,
-		SUM(if(sigStrength2 between '-95' and '-90',1,0)) as `count_9590`,
-		min(sigStrength2) as minimum,max(sigStrength2) as maximum
-		FROM `odu100_peerNodeStatusTable` 
-		where host_id=NEW.host_id and  sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=7
-		group by host_id,timeSlotIndex,YEARWEEK(timestamp)
-		) as t3
-		) as t4
-		)as t5 
-
-		set 
-		`sig2_index_7_Min`=t5.minimum,
-		`sig2_index_7_Max`=t5.maximum, 
-		`sig2_index_7_Range`=t5.`Most_values`  
-
-		where subdate(CONCAT(DATE_FORMAT(t5.timestamp,'%Y-%m-%d'),' 00:00:00'), INTERVAL DATE_FORMAT(CONCAT(DATE_FORMAT(t5.timestamp,'%Y-%m-%d'),' 00:00:00'), '%w') DAY)
-                =DATE(ap.timestamp) and  
-		t5.host_id=ap.host_id;
-
-
-
-		update `analyze_odu100_peerNodeStatusTable`  as ap ,
-		(select timestamp,host_id,minimum,maximum,
-		if(range_values=1,-5,
-                  if(range_values=2,-15,
-                    if(range_values=3,-25,
-                        if(range_values=4,-35,
-                            if(range_values=5,-45,
-                                if(range_values=6,-55,
-                                    if(range_values=7,-65,
-                                        if(range_values=8,-75,
-                                            if(range_values=9,-85,
-                                                if(range_values=10,-95,-95)
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                     )
-                  )
-                ) as `Most_values`  
-
-		from (
-		select timestamp,host_id,minimum,maximum,
-		FIELD(GREATEST(`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`),
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`) as range_values,
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`
-		 from 
-		(
-		SELECT  
-		timestamp,host_id,
-		SUM(if(sigStrength2 between '-10' and '0',1,0))   as `count_100`,
-		SUM(if(sigStrength2 between '-20' and '-10',1,0)) as `count_2010`,
-		SUM(if(sigStrength2 between '-30' and '-20',1,0)) as `count_3020`,
-		SUM(if(sigStrength2 between '-40' and '-30',1,0)) as `count_4030`,
-		SUM(if(sigStrength2 between '-50' and '-40',1,0)) as `count_5040`,
-		SUM(if(sigStrength2 between '-60' and '-50',1,0)) as `count_6050`,
-		SUM(if(sigStrength2 between '-70' and '-60',1,0)) as `count_7060`,
-		SUM(if(sigStrength2 between '-80' and '-70',1,0)) as `count_8070`,
-		SUM(if(sigStrength2 between '-90' and '-80',1,0)) as `count_9080`,
-		SUM(if(sigStrength2 between '-95' and '-90',1,0)) as `count_9590`,
-		min(sigStrength2) as minimum,max(sigStrength2) as maximum
-		FROM `odu100_peerNodeStatusTable` 
-		where  host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=8
-		group by host_id,timeSlotIndex,YEARWEEK(timestamp)
-		) as t3
-		) as t4
-		)as t5 
-
-		set 
-		`sig2_index_8_Min`=t5.minimum,
-		`sig2_index_8_Max`=t5.maximum, 
-		`sig2_index_8_Range`=t5.`Most_values`  
-
-		where subdate(CONCAT(DATE_FORMAT(t5.timestamp,'%Y-%m-%d'),' 00:00:00'), INTERVAL DATE_FORMAT(CONCAT(DATE_FORMAT(t5.timestamp,'%Y-%m-%d'),' 00:00:00'), '%w') DAY)
-                =DATE(ap.timestamp) and  
-		t5.host_id=ap.host_id;
-
-
-
-		update `analyze_odu100_peerNodeStatusTable`  as ap ,
-		(select timestamp,host_id,minimum,maximum,
-		if(range_values=1,-5,
-                  if(range_values=2,-15,
-                    if(range_values=3,-25,
-                        if(range_values=4,-35,
-                            if(range_values=5,-45,
-                                if(range_values=6,-55,
-                                    if(range_values=7,-65,
-                                        if(range_values=8,-75,
-                                            if(range_values=9,-85,
-                                                if(range_values=10,-95,-95)
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                     )
-                  )
-                ) as `Most_values`  
-
-		from (
-		select timestamp,host_id,minimum,maximum,
-		FIELD(GREATEST(`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`),
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`) as range_values,
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`
-		 from 
-		(
-		SELECT  
-		timestamp,host_id,
-		SUM(if(sigStrength2 between '-10' and '0',1,0))   as `count_100`,
-		SUM(if(sigStrength2 between '-20' and '-10',1,0)) as `count_2010`,
-		SUM(if(sigStrength2 between '-30' and '-20',1,0)) as `count_3020`,
-		SUM(if(sigStrength2 between '-40' and '-30',1,0)) as `count_4030`,
-		SUM(if(sigStrength2 between '-50' and '-40',1,0)) as `count_5040`,
-		SUM(if(sigStrength2 between '-60' and '-50',1,0)) as `count_6050`,
-		SUM(if(sigStrength2 between '-70' and '-60',1,0)) as `count_7060`,
-		SUM(if(sigStrength2 between '-80' and '-70',1,0)) as `count_8070`,
-		SUM(if(sigStrength2 between '-90' and '-80',1,0)) as `count_9080`,
-		SUM(if(sigStrength2 between '-95' and '-90',1,0)) as `count_9590`,
-		min(sigStrength2) as minimum,max(sigStrength2) as maximum
-		FROM `odu100_peerNodeStatusTable` 
-		where  host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=9
-		group by host_id,timeSlotIndex,YEARWEEK(timestamp)
-		) as t3
-		) as t4
-		)as t5 
-
-		set 
-		`sig2_index_9_Min`=t5.minimum,
-		`sig2_index_9_Max`=t5.maximum, 
-		`sig2_index_9_Range`=t5.`Most_values`  
-
-		where subdate(CONCAT(DATE_FORMAT(t5.timestamp,'%Y-%m-%d'),' 00:00:00'), INTERVAL DATE_FORMAT(CONCAT(DATE_FORMAT(t5.timestamp,'%Y-%m-%d'),' 00:00:00'), '%w') DAY)
-                =DATE(ap.timestamp) and  
-		t5.host_id=ap.host_id;
-
-
-		update `analyze_odu100_peerNodeStatusTable`  as ap ,
-		(select timestamp,host_id,minimum,maximum,
-		if(range_values=1,-5,
-                  if(range_values=2,-15,
-                    if(range_values=3,-25,
-                        if(range_values=4,-35,
-                            if(range_values=5,-45,
-                                if(range_values=6,-55,
-                                    if(range_values=7,-65,
-                                        if(range_values=8,-75,
-                                            if(range_values=9,-85,
-                                                if(range_values=10,-95,-95)
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                     )
-                  )
-                ) as `Most_values`  
-
-		from (
-		select timestamp,host_id,minimum,maximum,
-		FIELD(GREATEST(`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`),
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`) as range_values,
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`
-		 from 
-		(
-		SELECT  
-		timestamp,host_id,
-		SUM(if(sigStrength2 between '-10' and '0',1,0))   as `count_100`,
-		SUM(if(sigStrength2 between '-20' and '-10',1,0)) as `count_2010`,
-		SUM(if(sigStrength2 between '-30' and '-20',1,0)) as `count_3020`,
-		SUM(if(sigStrength2 between '-40' and '-30',1,0)) as `count_4030`,
-		SUM(if(sigStrength2 between '-50' and '-40',1,0)) as `count_5040`,
-		SUM(if(sigStrength2 between '-60' and '-50',1,0)) as `count_6050`,
-		SUM(if(sigStrength2 between '-70' and '-60',1,0)) as `count_7060`,
-		SUM(if(sigStrength2 between '-80' and '-70',1,0)) as `count_8070`,
-		SUM(if(sigStrength2 between '-90' and '-80',1,0)) as `count_9080`,
-		SUM(if(sigStrength2 between '-95' and '-90',1,0)) as `count_9590`,
-		min(sigStrength2) as minimum,max(sigStrength2) as maximum
-		FROM `odu100_peerNodeStatusTable` 
-		where  host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=10
-		group by host_id,timeSlotIndex,YEARWEEK(timestamp)
-		) as t3
-		) as t4
-		)as t5 
-
-		set 
-		`sig2_index_10_Min`=t5.minimum,
-		`sig2_index_10_Max`=t5.maximum, 
-		`sig2_index_10_Range`=t5.`Most_values`  
-
-		where subdate(CONCAT(DATE_FORMAT(t5.timestamp,'%Y-%m-%d'),' 00:00:00'), INTERVAL DATE_FORMAT(CONCAT(DATE_FORMAT(t5.timestamp,'%Y-%m-%d'),' 00:00:00'), '%w') DAY)
-                =DATE(ap.timestamp) and  
-		t5.host_id=ap.host_id;
-
-		update `analyze_odu100_peerNodeStatusTable`  as ap ,
-		(select timestamp,host_id,minimum,maximum,
-		if(range_values=1,-5,
-                  if(range_values=2,-15,
-                    if(range_values=3,-25,
-                        if(range_values=4,-35,
-                            if(range_values=5,-45,
-                                if(range_values=6,-55,
-                                    if(range_values=7,-65,
-                                        if(range_values=8,-75,
-                                            if(range_values=9,-85,
-                                                if(range_values=10,-95,-95)
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                     )
-                  )
-                ) as `Most_values`  
-
-		from (
-		select timestamp,host_id,minimum,maximum,
-		FIELD(GREATEST(`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`),
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`) as range_values,
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`
-		 from 
-		(
-		SELECT  
-		timestamp,host_id,
-		SUM(if(sigStrength2 between '-10' and '0',1,0))   as `count_100`,
-		SUM(if(sigStrength2 between '-20' and '-10',1,0)) as `count_2010`,
-		SUM(if(sigStrength2 between '-30' and '-20',1,0)) as `count_3020`,
-		SUM(if(sigStrength2 between '-40' and '-30',1,0)) as `count_4030`,
-		SUM(if(sigStrength2 between '-50' and '-40',1,0)) as `count_5040`,
-		SUM(if(sigStrength2 between '-60' and '-50',1,0)) as `count_6050`,
-		SUM(if(sigStrength2 between '-70' and '-60',1,0)) as `count_7060`,
-		SUM(if(sigStrength2 between '-80' and '-70',1,0)) as `count_8070`,
-		SUM(if(sigStrength2 between '-90' and '-80',1,0)) as `count_9080`,
-		SUM(if(sigStrength2 between '-95' and '-90',1,0)) as `count_9590`,
-		min(sigStrength2) as minimum,max(sigStrength2) as maximum
-		FROM `odu100_peerNodeStatusTable` 
-		where host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=11
-		group by host_id,timeSlotIndex,YEARWEEK(timestamp)
-		) as t3
-		) as t4
-		)as t5 
-
-		set 
-		`sig2_index_11_Min`=t5.minimum,
-		`sig2_index_11_Max`=t5.maximum, 
-		`sig2_index_11_Range`=t5.`Most_values`  
-
-		where subdate(CONCAT(DATE_FORMAT(t5.timestamp,'%Y-%m-%d'),' 00:00:00'), INTERVAL DATE_FORMAT(CONCAT(DATE_FORMAT(t5.timestamp,'%Y-%m-%d'),' 00:00:00'), '%w') DAY)
-                =DATE(ap.timestamp) and  
-		t5.host_id=ap.host_id;
-
-
-		update `analyze_odu100_peerNodeStatusTable`  as ap ,
-		(select timestamp,host_id,minimum,maximum,
-		if(range_values=1,-5,
-                  if(range_values=2,-15,
-                    if(range_values=3,-25,
-                        if(range_values=4,-35,
-                            if(range_values=5,-45,
-                                if(range_values=6,-55,
-                                    if(range_values=7,-65,
-                                        if(range_values=8,-75,
-                                            if(range_values=9,-85,
-                                                if(range_values=10,-95,-95)
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                     )
-                  )
-                ) as `Most_values`  
-
-		from (
-		select timestamp,host_id,minimum,maximum,
-		FIELD(GREATEST(`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`),
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`) as range_values,
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`
-		 from 
-		(
-		SELECT  
-		timestamp,host_id,
-		SUM(if(sigStrength2 between '-10' and '0',1,0))   as `count_100`,
-		SUM(if(sigStrength2 between '-20' and '-10',1,0)) as `count_2010`,
-		SUM(if(sigStrength2 between '-30' and '-20',1,0)) as `count_3020`,
-		SUM(if(sigStrength2 between '-40' and '-30',1,0)) as `count_4030`,
-		SUM(if(sigStrength2 between '-50' and '-40',1,0)) as `count_5040`,
-		SUM(if(sigStrength2 between '-60' and '-50',1,0)) as `count_6050`,
-		SUM(if(sigStrength2 between '-70' and '-60',1,0)) as `count_7060`,
-		SUM(if(sigStrength2 between '-80' and '-70',1,0)) as `count_8070`,
-		SUM(if(sigStrength2 between '-90' and '-80',1,0)) as `count_9080`,
-		SUM(if(sigStrength2 between '-95' and '-90',1,0)) as `count_9590`,
-		min(sigStrength2) as minimum,max(sigStrength2) as maximum
-		FROM `odu100_peerNodeStatusTable` 
-		where  host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=12
-		group by host_id,timeSlotIndex,YEARWEEK(timestamp)
-		) as t3
-		) as t4
-		)as t5 
-
-		set 
-		`sig2_index_12_Min`=t5.minimum,
-		`sig2_index_12_Max`=t5.maximum, 
-		`sig2_index_12_Range`=t5.`Most_values`  
-
-		where subdate(CONCAT(DATE_FORMAT(t5.timestamp,'%Y-%m-%d'),' 00:00:00'), INTERVAL DATE_FORMAT(CONCAT(DATE_FORMAT(t5.timestamp,'%Y-%m-%d'),' 00:00:00'), '%w') DAY)
-                =DATE(ap.timestamp) and  
-		t5.host_id=ap.host_id;
-
-		update `analyze_odu100_peerNodeStatusTable`  as ap ,
-		(select timestamp,host_id,minimum,maximum,
-		if(range_values=1,-5,
-                  if(range_values=2,-15,
-                    if(range_values=3,-25,
-                        if(range_values=4,-35,
-                            if(range_values=5,-45,
-                                if(range_values=6,-55,
-                                    if(range_values=7,-65,
-                                        if(range_values=8,-75,
-                                            if(range_values=9,-85,
-                                                if(range_values=10,-95,-95)
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                     )
-                  )
-                ) as `Most_values`  
-
-		from (
-		select timestamp,host_id,minimum,maximum,
-		FIELD(GREATEST(`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`),
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`) as range_values,
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`
-		 from 
-		(
-		SELECT  
-		timestamp,host_id,
-		SUM(if(sigStrength2 between '-10' and '0',1,0))   as `count_100`,
-		SUM(if(sigStrength2 between '-20' and '-10',1,0)) as `count_2010`,
-		SUM(if(sigStrength2 between '-30' and '-20',1,0)) as `count_3020`,
-		SUM(if(sigStrength2 between '-40' and '-30',1,0)) as `count_4030`,
-		SUM(if(sigStrength2 between '-50' and '-40',1,0)) as `count_5040`,
-		SUM(if(sigStrength2 between '-60' and '-50',1,0)) as `count_6050`,
-		SUM(if(sigStrength2 between '-70' and '-60',1,0)) as `count_7060`,
-		SUM(if(sigStrength2 between '-80' and '-70',1,0)) as `count_8070`,
-		SUM(if(sigStrength2 between '-90' and '-80',1,0)) as `count_9080`,
-		SUM(if(sigStrength2 between '-95' and '-90',1,0)) as `count_9590`,
-		min(sigStrength2) as minimum,max(sigStrength2) as maximum
-		FROM `odu100_peerNodeStatusTable` 
-		where  host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=13
-		group by host_id,timeSlotIndex,YEARWEEK(timestamp)
-		) as t3
-		) as t4
-		)as t5 
-
-		set 
-		`sig2_index_13_Min`=t5.minimum,
-		`sig2_index_13_Max`=t5.maximum, 
-		`sig2_index_13_Range`=t5.`Most_values`  
-
-		where subdate(CONCAT(DATE_FORMAT(t5.timestamp,'%Y-%m-%d'),' 00:00:00'), INTERVAL DATE_FORMAT(CONCAT(DATE_FORMAT(t5.timestamp,'%Y-%m-%d'),' 00:00:00'), '%w') DAY)
-                =DATE(ap.timestamp) and  
-		t5.host_id=ap.host_id;		
-
-
-		update `analyze_odu100_peerNodeStatusTable`  as ap ,
-		(select timestamp,host_id,minimum,maximum,
-		if(range_values=1,-5,
-                  if(range_values=2,-15,
-                    if(range_values=3,-25,
-                        if(range_values=4,-35,
-                            if(range_values=5,-45,
-                                if(range_values=6,-55,
-                                    if(range_values=7,-65,
-                                        if(range_values=8,-75,
-                                            if(range_values=9,-85,
-                                                if(range_values=10,-95,-95)
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                     )
-                  )
-                ) as `Most_values`  
-
-		from (
-		select timestamp,host_id,minimum,maximum,
-		FIELD(GREATEST(`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`),
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`) as range_values,
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`
-		 from 
-		(
-		SELECT  
-		timestamp,host_id,
-		SUM(if(sigStrength2 between '-10' and '0',1,0))   as `count_100`,
-		SUM(if(sigStrength2 between '-20' and '-10',1,0)) as `count_2010`,
-		SUM(if(sigStrength2 between '-30' and '-20',1,0)) as `count_3020`,
-		SUM(if(sigStrength2 between '-40' and '-30',1,0)) as `count_4030`,
-		SUM(if(sigStrength2 between '-50' and '-40',1,0)) as `count_5040`,
-		SUM(if(sigStrength2 between '-60' and '-50',1,0)) as `count_6050`,
-		SUM(if(sigStrength2 between '-70' and '-60',1,0)) as `count_7060`,
-		SUM(if(sigStrength2 between '-80' and '-70',1,0)) as `count_8070`,
-		SUM(if(sigStrength2 between '-90' and '-80',1,0)) as `count_9080`,
-		SUM(if(sigStrength2 between '-95' and '-90',1,0)) as `count_9590`,
-		min(sigStrength2) as minimum,max(sigStrength2) as maximum
-		FROM `odu100_peerNodeStatusTable` 
-		where  host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=14
-		group by host_id,timeSlotIndex,YEARWEEK(timestamp)
-		) as t3
-		) as t4
-		)as t5 
-
-		set 
-		`sig2_index_14_Min`=t5.minimum,
-		`sig2_index_14_Max`=t5.maximum, 
-		`sig2_index_14_Range`=t5.`Most_values`  
-
-		where subdate(CONCAT(DATE_FORMAT(t5.timestamp,'%Y-%m-%d'),' 00:00:00'), INTERVAL DATE_FORMAT(CONCAT(DATE_FORMAT(t5.timestamp,'%Y-%m-%d'),' 00:00:00'), '%w') DAY)
-                =DATE(ap.timestamp) and  
-		t5.host_id=ap.host_id;		
-		
-
-		update `analyze_odu100_peerNodeStatusTable`  as ap ,
-		(select timestamp,host_id,minimum,maximum,
-		if(range_values=1,-5,
-                  if(range_values=2,-15,
-                    if(range_values=3,-25,
-                        if(range_values=4,-35,
-                            if(range_values=5,-45,
-                                if(range_values=6,-55,
-                                    if(range_values=7,-65,
-                                        if(range_values=8,-75,
-                                            if(range_values=9,-85,
-                                                if(range_values=10,-95,-95)
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                     )
-                  )
-                ) as `Most_values`  
-
-		from (
-		select timestamp,host_id,minimum,maximum,
-		FIELD(GREATEST(`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`),
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`) as range_values,
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`
-		 from 
-		(
-		SELECT  
-		timestamp,host_id,
-		SUM(if(sigStrength2 between '-10' and '0',1,0))   as `count_100`,
-		SUM(if(sigStrength2 between '-20' and '-10',1,0)) as `count_2010`,
-		SUM(if(sigStrength2 between '-30' and '-20',1,0)) as `count_3020`,
-		SUM(if(sigStrength2 between '-40' and '-30',1,0)) as `count_4030`,
-		SUM(if(sigStrength2 between '-50' and '-40',1,0)) as `count_5040`,
-		SUM(if(sigStrength2 between '-60' and '-50',1,0)) as `count_6050`,
-		SUM(if(sigStrength2 between '-70' and '-60',1,0)) as `count_7060`,
-		SUM(if(sigStrength2 between '-80' and '-70',1,0)) as `count_8070`,
-		SUM(if(sigStrength2 between '-90' and '-80',1,0)) as `count_9080`,
-		SUM(if(sigStrength2 between '-95' and '-90',1,0)) as `count_9590`,
-		min(sigStrength2) as minimum,max(sigStrength2) as maximum
-		FROM `odu100_peerNodeStatusTable` 
-		where host_id=NEW.host_id and  sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=15
-		group by host_id,timeSlotIndex,YEARWEEK(timestamp)
-		) as t3
-		) as t4
-		)as t5 
-
-		set 
-		`sig2_index_15_Min`=t5.minimum,
-		`sig2_index_15_Max`=t5.maximum, 
-		`sig2_index_15_Range`=t5.`Most_values`  
-
-		where subdate(CONCAT(DATE_FORMAT(t5.timestamp,'%Y-%m-%d'),' 00:00:00'), INTERVAL DATE_FORMAT(CONCAT(DATE_FORMAT(t5.timestamp,'%Y-%m-%d'),' 00:00:00'), '%w') DAY)
-                =DATE(ap.timestamp) and  
-		t5.host_id=ap.host_id;
-
-		update `analyze_odu100_peerNodeStatusTable`  as ap ,
-		(select timestamp,host_id,minimum,maximum,
-		if(range_values=1,-5,
-                  if(range_values=2,-15,
-                    if(range_values=3,-25,
-                        if(range_values=4,-35,
-                            if(range_values=5,-45,
-                                if(range_values=6,-55,
-                                    if(range_values=7,-65,
-                                        if(range_values=8,-75,
-                                            if(range_values=9,-85,
-                                                if(range_values=10,-95,-95)
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                     )
-                  )
-                ) as `Most_values`  
-
-		from (
-		select timestamp,host_id,minimum,maximum,
-		FIELD(GREATEST(`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`),
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`) as range_values,
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`
-		 from 
-		(
-		SELECT  
-		timestamp,host_id,
-		SUM(if(sigStrength2 between '-10' and '0',1,0))   as `count_100`,
-		SUM(if(sigStrength2 between '-20' and '-10',1,0)) as `count_2010`,
-		SUM(if(sigStrength2 between '-30' and '-20',1,0)) as `count_3020`,
-		SUM(if(sigStrength2 between '-40' and '-30',1,0)) as `count_4030`,
-		SUM(if(sigStrength2 between '-50' and '-40',1,0)) as `count_5040`,
-		SUM(if(sigStrength2 between '-60' and '-50',1,0)) as `count_6050`,
-		SUM(if(sigStrength2 between '-70' and '-60',1,0)) as `count_7060`,
-		SUM(if(sigStrength2 between '-80' and '-70',1,0)) as `count_8070`,
-		SUM(if(sigStrength2 between '-90' and '-80',1,0)) as `count_9080`,
-		SUM(if(sigStrength2 between '-95' and '-90',1,0)) as `count_9590`,
-		min(sigStrength2) as minimum,max(sigStrength2) as maximum
-		FROM `odu100_peerNodeStatusTable` 
-		where  host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=16
-		group by host_id,timeSlotIndex,YEARWEEK(timestamp)
-		) as t3
-		) as t4
-		)as t5 
-
-		set 
-		`sig2_index_16_Min`=t5.minimum,
-		`sig2_index_16_Max`=t5.maximum, 
-		`sig2_index_16_Range`=t5.`Most_values`  
-
-		where subdate(CONCAT(DATE_FORMAT(t5.timestamp,'%Y-%m-%d'),' 00:00:00'), INTERVAL DATE_FORMAT(CONCAT(DATE_FORMAT(t5.timestamp,'%Y-%m-%d'),' 00:00:00'), '%w') DAY)
-                =DATE(ap.timestamp) and  
-		t5.host_id=ap.host_id;		
-		
 
 
         END IF;
@@ -6365,7 +4545,7 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
                 SET hour_start=CONCAT(DATE_FORMAT(old_time,'%Y-%m'),'-01 00:00:00');
                 SET hour_end=CONCAT(DATE_FORMAT(old_time,'%Y-%m'),'-31 23:59:59');
                 INSERT INTO `analyze_odu100_peerNodeStatusTable` (`analyze_odu100_peerNodeStatusTable_id`, `timestamp`, `host_id`,`type`,
-                `sig1_index_1_Min`, `sig1_index_1_Max`,`sig1_index_1_Range`  )
+                `index_1_Min`, `index_1_Max`,`index_1_Range` , `index_1_Range_count`)
                 select NULL,CONCAT(DATE_FORMAT(timestamp, '%Y-%m'),'-01 00:00:00'),host_id,'MONTHLY',minimum,maximum,
                 if(range_values=1,-5,
                   if(range_values=2,-15,
@@ -6385,7 +4565,27 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
                         )
                      )
                   )
-                ) as `Most_values`  
+                ) as `Most_values`,
+
+                if(range_values=1,`count_100`,
+                  if(range_values=2,`count_2010`,
+                    if(range_values=3,`count_3020`,
+                        if(range_values=4,`count_4030`,
+                            if(range_values=5,`count_5040`,
+                                if(range_values=6,`count_6050`,
+                                    if(range_values=7,`count_7060`,
+                                        if(range_values=8,`count_8070`,
+                                            if(range_values=9,`count_9080`,
+                                                if(range_values=10,`count_9590`,`count_9590`)
+                                            )
+                                        )
+                                    )
+                                )
+                            )
+                        )
+                     )
+                  )
+                ) as `no_of_values`
 
                 from (
                 select timestamp,host_id,minimum,maximum,
@@ -6408,7 +4608,7 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
                 SUM(if(sigStrength1 between '-95' and '-90',1,0)) as `count_9590`,
                 min(sigStrength1) as minimum,max(sigStrength1) as maximum
                 FROM `odu100_peerNodeStatusTable` 
-                where host_id=NEW.host_id and sigStrength1<>1111111 and timestamp between hour_start and hour_end and timeSlotIndex=1
+                where sigStrength1<>1 and timestamp between hour_start and hour_end and timeSlotIndex=1
                 group by host_id,timeSlotIndex,DATE_FORMAT(timestamp, '%Y-%m')
                 ) as t3
                 ) as t4;
@@ -6433,7 +4633,27 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
                         )
                      )
                   )
-                ) as `Most_values`  
+                ) as `Most_values`,
+
+		if(range_values=1,`count_100`,
+		  if(range_values=2,`count_2010`,
+		    if(range_values=3,`count_3020`,
+			if(range_values=4,`count_4030`,
+			    if(range_values=5,`count_5040`,
+				if(range_values=6,`count_6050`,
+				    if(range_values=7,`count_7060`,
+				        if(range_values=8,`count_8070`,
+				            if(range_values=9,`count_9080`,
+				                if(range_values=10,`count_9590`,`count_9590`)
+				            )
+				        )
+				    )
+				)
+			    )
+			)
+		     )
+		  )
+		) as `no_of_values`
 
 		from (
 		select timestamp,host_id,minimum,maximum,
@@ -6456,16 +4676,17 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
 		SUM(if(sigStrength1 between '-95' and '-90',1,0)) as `count_9590`,
 		min(sigStrength1) as minimum,max(sigStrength1) as maximum
 		FROM `odu100_peerNodeStatusTable` 
-		where host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=2
+		where sigStrength1<>1 and  timestamp between hour_start and hour_end and timeSlotIndex=2
 		group by host_id,timeSlotIndex,DATE_FORMAT(timestamp, '%Y-%m')
 		) as t3
 		) as t4
 		)as t5 
 
 		set 
-		`sig1_index_2_Min`=t5.minimum,
-		`sig1_index_2_Max`=t5.maximum, 
-		`sig1_index_2_Range`=t5.`Most_values`  
+		`index_2_Min`=t5.minimum,
+		`index_2_Max`=t5.maximum, 
+		`index_2_Range`=t5.`Most_values`,
+		`index_2_Range_count`=t5.`no_of_values`
 
 		where DATE_FORMAT(t5.timestamp, '%Y-%m')=DATE_FORMAT(ap.timestamp, '%Y-%m') and t5.host_id=ap.host_id;
 		
@@ -6494,7 +4715,27 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
                         )
                      )
                   )
-                ) as `Most_values`  
+                ) as `Most_values`,
+
+		if(range_values=1,`count_100`,
+		  if(range_values=2,`count_2010`,
+		    if(range_values=3,`count_3020`,
+			if(range_values=4,`count_4030`,
+			    if(range_values=5,`count_5040`,
+				if(range_values=6,`count_6050`,
+				    if(range_values=7,`count_7060`,
+				        if(range_values=8,`count_8070`,
+				            if(range_values=9,`count_9080`,
+				                if(range_values=10,`count_9590`,`count_9590`)
+				            )
+				        )
+				    )
+				)
+			    )
+			)
+		     )
+		  )
+		) as `no_of_values`
 
 		from (
 		select timestamp,host_id,minimum,maximum,
@@ -6517,16 +4758,17 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
 		SUM(if(sigStrength1 between '-95' and '-90',1,0)) as `count_9590`,
 		min(sigStrength1) as minimum,max(sigStrength1) as maximum
 		FROM `odu100_peerNodeStatusTable` 
-		where host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=3
+		where sigStrength1<>1 and  timestamp between hour_start and hour_end and timeSlotIndex=3
 		group by host_id,timeSlotIndex,DATE_FORMAT(timestamp, '%Y-%m')
 		) as t3
 		) as t4
 		)as t5 
 
 		set 
-		`sig1_index_3_Min`=t5.minimum,
-		`sig1_index_3_Max`=t5.maximum, 
-		`sig1_index_3_Range`=t5.`Most_values`  
+		`index_3_Min`=t5.minimum,
+		`index_3_Max`=t5.maximum, 
+		`index_3_Range`=t5.`Most_values`,
+		`index_3_Range_count`=t5.`no_of_values`
 
 		where DATE_FORMAT(t5.timestamp, '%Y-%m')=DATE_FORMAT(ap.timestamp, '%Y-%m') and t5.host_id=ap.host_id;
 
@@ -6552,7 +4794,27 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
                         )
                      )
                   )
-                ) as `Most_values`  
+                ) as `Most_values`,
+
+		if(range_values=1,`count_100`,
+		  if(range_values=2,`count_2010`,
+		    if(range_values=3,`count_3020`,
+			if(range_values=4,`count_4030`,
+			    if(range_values=5,`count_5040`,
+				if(range_values=6,`count_6050`,
+				    if(range_values=7,`count_7060`,
+				        if(range_values=8,`count_8070`,
+				            if(range_values=9,`count_9080`,
+				                if(range_values=10,`count_9590`,`count_9590`)
+				            )
+				        )
+				    )
+				)
+			    )
+			)
+		     )
+		  )
+		) as `no_of_values`
 
 		from (
 		select timestamp,host_id,minimum,maximum,
@@ -6575,16 +4837,17 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
 		SUM(if(sigStrength1 between '-95' and '-90',1,0)) as `count_9590`,
 		min(sigStrength1) as minimum,max(sigStrength1) as maximum
 		FROM `odu100_peerNodeStatusTable` 
-		where host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=4
+		where sigStrength1<>1 and  timestamp between hour_start and hour_end and timeSlotIndex=4
 		group by host_id,timeSlotIndex,DATE_FORMAT(timestamp, '%Y-%m')
 		) as t3
 		) as t4
 		)as t5 
 
 		set 
-		`sig1_index_4_Min`=t5.minimum,
-		`sig1_index_4_Max`=t5.maximum, 
-		`sig1_index_4_Range`=t5.`Most_values`  
+		`index_4_Min`=t5.minimum,
+		`index_4_Max`=t5.maximum, 
+		`index_4_Range`=t5.`Most_values`,
+		`index_4_Range_count`=t5.`no_of_values`
 
 		where DATE_FORMAT(t5.timestamp, '%Y-%m')=DATE_FORMAT(ap.timestamp, '%Y-%m') and t5.host_id=ap.host_id;
 
@@ -6610,7 +4873,27 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
                         )
                      )
                   )
-                ) as `Most_values`  
+                ) as `Most_values`,
+
+		if(range_values=1,`count_100`,
+		  if(range_values=2,`count_2010`,
+		    if(range_values=3,`count_3020`,
+			if(range_values=4,`count_4030`,
+			    if(range_values=5,`count_5040`,
+				if(range_values=6,`count_6050`,
+				    if(range_values=7,`count_7060`,
+				        if(range_values=8,`count_8070`,
+				            if(range_values=9,`count_9080`,
+				                if(range_values=10,`count_9590`,`count_9590`)
+				            )
+				        )
+				    )
+				)
+			    )
+			)
+		     )
+		  )
+		) as `no_of_values`
 
 		from (
 		select timestamp,host_id,minimum,maximum,
@@ -6633,16 +4916,17 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
 		SUM(if(sigStrength1 between '-95' and '-90',1,0)) as `count_9590`,
 		min(sigStrength1) as minimum,max(sigStrength1) as maximum
 		FROM `odu100_peerNodeStatusTable` 
-		where host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=5
+		where sigStrength1<>1 and  timestamp between hour_start and hour_end and timeSlotIndex=5
 		group by host_id,timeSlotIndex,DATE_FORMAT(timestamp, '%Y-%m')
 		) as t3
 		) as t4
 		)as t5 
 
 		set 
-		`sig1_index_5_Min`=t5.minimum,
-		`sig1_index_5_Max`=t5.maximum, 
-		`sig1_index_5_Range`=t5.`Most_values`  
+		`index_5_Min`=t5.minimum,
+		`index_5_Max`=t5.maximum, 
+		`index_5_Range`=t5.`Most_values`,
+		`index_5_Range_count`=t5.`no_of_values`
 
 		where DATE_FORMAT(t5.timestamp, '%Y-%m')=DATE_FORMAT(ap.timestamp, '%Y-%m') and t5.host_id=ap.host_id;
 
@@ -6668,7 +4952,27 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
                         )
                      )
                   )
-                ) as `Most_values`  
+                ) as `Most_values`,
+
+		if(range_values=1,`count_100`,
+		  if(range_values=2,`count_2010`,
+		    if(range_values=3,`count_3020`,
+			if(range_values=4,`count_4030`,
+			    if(range_values=5,`count_5040`,
+				if(range_values=6,`count_6050`,
+				    if(range_values=7,`count_7060`,
+				        if(range_values=8,`count_8070`,
+				            if(range_values=9,`count_9080`,
+				                if(range_values=10,`count_9590`,`count_9590`)
+				            )
+				        )
+				    )
+				)
+			    )
+			)
+		     )
+		  )
+		) as `no_of_values`
 
 		from (
 		select timestamp,host_id,minimum,maximum,
@@ -6691,16 +4995,17 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
 		SUM(if(sigStrength1 between '-95' and '-90',1,0)) as `count_9590`,
 		min(sigStrength1) as minimum,max(sigStrength1) as maximum
 		FROM `odu100_peerNodeStatusTable` 
-		where host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=6
+		where sigStrength1<>1 and  timestamp between hour_start and hour_end and timeSlotIndex=6
 		group by host_id,timeSlotIndex,DATE_FORMAT(timestamp, '%Y-%m')
 		) as t3
 		) as t4
 		)as t5 
 
 		set 
-		`sig1_index_6_Min`=t5.minimum,
-		`sig1_index_6_Max`=t5.maximum, 
-		`sig1_index_6_Range`=t5.`Most_values`  
+		`index_6_Min`=t5.minimum,
+		`index_6_Max`=t5.maximum, 
+		`index_6_Range`=t5.`Most_values`,
+		`index_6_Range_count`=t5.`no_of_values`
 
 		where DATE_FORMAT(t5.timestamp, '%Y-%m')=DATE_FORMAT(ap.timestamp, '%Y-%m') and t5.host_id=ap.host_id;
 
@@ -6726,7 +5031,27 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
                         )
                      )
                   )
-                ) as `Most_values`  
+                ) as `Most_values`,
+
+		if(range_values=1,`count_100`,
+		  if(range_values=2,`count_2010`,
+		    if(range_values=3,`count_3020`,
+			if(range_values=4,`count_4030`,
+			    if(range_values=5,`count_5040`,
+				if(range_values=6,`count_6050`,
+				    if(range_values=7,`count_7060`,
+				        if(range_values=8,`count_8070`,
+				            if(range_values=9,`count_9080`,
+				                if(range_values=10,`count_9590`,`count_9590`)
+				            )
+				        )
+				    )
+				)
+			    )
+			)
+		     )
+		  )
+		) as `no_of_values`
 
 		from (
 		select timestamp,host_id,minimum,maximum,
@@ -6749,16 +5074,17 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
 		SUM(if(sigStrength1 between '-95' and '-90',1,0)) as `count_9590`,
 		min(sigStrength1) as minimum,max(sigStrength1) as maximum
 		FROM `odu100_peerNodeStatusTable` 
-		where host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=7
+		where sigStrength1<>1 and  timestamp between hour_start and hour_end and timeSlotIndex=7
 		group by host_id,timeSlotIndex,DATE_FORMAT(timestamp, '%Y-%m')
 		) as t3
 		) as t4
 		)as t5 
 
 		set 
-		`sig1_index_7_Min`=t5.minimum,
-		`sig1_index_7_Max`=t5.maximum, 
-		`sig1_index_7_Range`=t5.`Most_values`  
+		`index_7_Min`=t5.minimum,
+		`index_7_Max`=t5.maximum, 
+		`index_7_Range`=t5.`Most_values`,
+		`index_7_Range_count`=t5.`no_of_values`
 
 		where DATE_FORMAT(t5.timestamp, '%Y-%m')=DATE_FORMAT(ap.timestamp, '%Y-%m') and t5.host_id=ap.host_id;
 
@@ -6784,7 +5110,27 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
                         )
                      )
                   )
-                ) as `Most_values`  
+                ) as `Most_values`,
+
+		if(range_values=1,`count_100`,
+		  if(range_values=2,`count_2010`,
+		    if(range_values=3,`count_3020`,
+			if(range_values=4,`count_4030`,
+			    if(range_values=5,`count_5040`,
+				if(range_values=6,`count_6050`,
+				    if(range_values=7,`count_7060`,
+				        if(range_values=8,`count_8070`,
+				            if(range_values=9,`count_9080`,
+				                if(range_values=10,`count_9590`,`count_9590`)
+				            )
+				        )
+				    )
+				)
+			    )
+			)
+		     )
+		  )
+		) as `no_of_values`
 
 		from (
 		select timestamp,host_id,minimum,maximum,
@@ -6807,16 +5153,17 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
 		SUM(if(sigStrength1 between '-95' and '-90',1,0)) as `count_9590`,
 		min(sigStrength1) as minimum,max(sigStrength1) as maximum
 		FROM `odu100_peerNodeStatusTable` 
-		where host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=8
+		where sigStrength1<>1 and  timestamp between hour_start and hour_end and timeSlotIndex=8
 		group by host_id,timeSlotIndex,DATE_FORMAT(timestamp, '%Y-%m')
 		) as t3
 		) as t4
 		)as t5 
 
 		set 
-		`sig1_index_8_Min`=t5.minimum,
-		`sig1_index_8_Max`=t5.maximum, 
-		`sig1_index_8_Range`=t5.`Most_values`  
+		`index_8_Min`=t5.minimum,
+		`index_8_Max`=t5.maximum, 
+		`index_8_Range`=t5.`Most_values`,
+		`index_8_Range_count`=t5.`no_of_values`
 
 		where DATE_FORMAT(t5.timestamp, '%Y-%m')=DATE_FORMAT(ap.timestamp, '%Y-%m') and t5.host_id=ap.host_id;
 
@@ -6841,7 +5188,27 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
                         )
                      )
                   )
-                ) as `Most_values`  
+                ) as `Most_values`,
+
+		if(range_values=1,`count_100`,
+		  if(range_values=2,`count_2010`,
+		    if(range_values=3,`count_3020`,
+			if(range_values=4,`count_4030`,
+			    if(range_values=5,`count_5040`,
+				if(range_values=6,`count_6050`,
+				    if(range_values=7,`count_7060`,
+				        if(range_values=8,`count_8070`,
+				            if(range_values=9,`count_9080`,
+				                if(range_values=10,`count_9590`,`count_9590`)
+				            )
+				        )
+				    )
+				)
+			    )
+			)
+		     )
+		  )
+		) as `no_of_values`
 
 		from (
 		select timestamp,host_id,minimum,maximum,
@@ -6864,16 +5231,17 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
 		SUM(if(sigStrength1 between '-95' and '-90',1,0)) as `count_9590`,
 		min(sigStrength1) as minimum,max(sigStrength1) as maximum
 		FROM `odu100_peerNodeStatusTable` 
-		where host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=9
+		where sigStrength1<>1 and  timestamp between hour_start and hour_end and timeSlotIndex=9
 		group by host_id,timeSlotIndex,DATE_FORMAT(timestamp, '%Y-%m')
 		) as t3
 		) as t4
 		)as t5 
 
 		set 
-		`sig1_index_9_Min`=t5.minimum,
-		`sig1_index_9_Max`=t5.maximum, 
-		`sig1_index_9_Range`=t5.`Most_values`  
+		`index_9_Min`=t5.minimum,
+		`index_9_Max`=t5.maximum, 
+		`index_9_Range`=t5.`Most_values`,
+		`index_9_Range_count`=t5.`no_of_values`
 
 		where DATE_FORMAT(t5.timestamp, '%Y-%m')=DATE_FORMAT(ap.timestamp, '%Y-%m') and t5.host_id=ap.host_id;
 
@@ -6898,7 +5266,27 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
                         )
                      )
                   )
-                ) as `Most_values`  
+                ) as `Most_values`,
+
+		if(range_values=1,`count_100`,
+		  if(range_values=2,`count_2010`,
+		    if(range_values=3,`count_3020`,
+			if(range_values=4,`count_4030`,
+			    if(range_values=5,`count_5040`,
+				if(range_values=6,`count_6050`,
+				    if(range_values=7,`count_7060`,
+				        if(range_values=8,`count_8070`,
+				            if(range_values=9,`count_9080`,
+				                if(range_values=10,`count_9590`,`count_9590`)
+				            )
+				        )
+				    )
+				)
+			    )
+			)
+		     )
+		  )
+		) as `no_of_values`
 
 		from (
 		select timestamp,host_id,minimum,maximum,
@@ -6921,16 +5309,17 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
 		SUM(if(sigStrength1 between '-95' and '-90',1,0)) as `count_9590`,
 		min(sigStrength1) as minimum,max(sigStrength1) as maximum
 		FROM `odu100_peerNodeStatusTable` 
-		where host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=10
+		where sigStrength1<>1 and  timestamp between hour_start and hour_end and timeSlotIndex=10
 		group by host_id,timeSlotIndex,DATE_FORMAT(timestamp, '%Y-%m')
 		) as t3
 		) as t4
 		)as t5 
 
 		set 
-		`sig1_index_10_Min`=t5.minimum,
-		`sig1_index_10_Max`=t5.maximum, 
-		`sig1_index_10_Range`=t5.`Most_values`  
+		`index_10_Min`=t5.minimum,
+		`index_10_Max`=t5.maximum, 
+		`index_10_Range`=t5.`Most_values`,
+		`index_10_Range_count`=t5.`no_of_values`
 
 		where DATE_FORMAT(t5.timestamp, '%Y-%m')=DATE_FORMAT(ap.timestamp, '%Y-%m') and t5.host_id=ap.host_id;
 
@@ -6955,7 +5344,27 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
                         )
                      )
                   )
-                ) as `Most_values`  
+                ) as `Most_values`,
+
+		if(range_values=1,`count_100`,
+		  if(range_values=2,`count_2010`,
+		    if(range_values=3,`count_3020`,
+			if(range_values=4,`count_4030`,
+			    if(range_values=5,`count_5040`,
+				if(range_values=6,`count_6050`,
+				    if(range_values=7,`count_7060`,
+				        if(range_values=8,`count_8070`,
+				            if(range_values=9,`count_9080`,
+				                if(range_values=10,`count_9590`,`count_9590`)
+				            )
+				        )
+				    )
+				)
+			    )
+			)
+		     )
+		  )
+		) as `no_of_values`
 
 		from (
 		select timestamp,host_id,minimum,maximum,
@@ -6978,16 +5387,17 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
 		SUM(if(sigStrength1 between '-95' and '-90',1,0)) as `count_9590`,
 		min(sigStrength1) as minimum,max(sigStrength1) as maximum
 		FROM `odu100_peerNodeStatusTable` 
-		where host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=11
+		where sigStrength1<>1 and  timestamp between hour_start and hour_end and timeSlotIndex=11
 		group by host_id,timeSlotIndex,DATE_FORMAT(timestamp, '%Y-%m')
 		) as t3
 		) as t4
 		)as t5 
 
 		set 
-		`sig1_index_11_Min`=t5.minimum,
-		`sig1_index_11_Max`=t5.maximum, 
-		`sig1_index_11_Range`=t5.`Most_values`  
+		`index_11_Min`=t5.minimum,
+		`index_11_Max`=t5.maximum, 
+		`index_11_Range`=t5.`Most_values`,
+		`index_11_Range_count`=t5.`no_of_values`
 
 		where DATE_FORMAT(t5.timestamp, '%Y-%m')=DATE_FORMAT(ap.timestamp, '%Y-%m') and t5.host_id=ap.host_id;
 
@@ -7012,7 +5422,27 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
                         )
                      )
                   )
-                ) as `Most_values`  
+                ) as `Most_values`,
+
+		if(range_values=1,`count_100`,
+		  if(range_values=2,`count_2010`,
+		    if(range_values=3,`count_3020`,
+			if(range_values=4,`count_4030`,
+			    if(range_values=5,`count_5040`,
+				if(range_values=6,`count_6050`,
+				    if(range_values=7,`count_7060`,
+				        if(range_values=8,`count_8070`,
+				            if(range_values=9,`count_9080`,
+				                if(range_values=10,`count_9590`,`count_9590`)
+				            )
+				        )
+				    )
+				)
+			    )
+			)
+		     )
+		  )
+		) as `no_of_values`
 
 		from (
 		select timestamp,host_id,minimum,maximum,
@@ -7035,16 +5465,17 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
 		SUM(if(sigStrength1 between '-95' and '-90',1,0)) as `count_9590`,
 		min(sigStrength1) as minimum,max(sigStrength1) as maximum
 		FROM `odu100_peerNodeStatusTable` 
-		where host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=12
+		where sigStrength1<>1 and  timestamp between hour_start and hour_end and timeSlotIndex=12
 		group by host_id,timeSlotIndex,DATE_FORMAT(timestamp, '%Y-%m')
 		) as t3
 		) as t4
 		)as t5 
 
 		set 
-		`sig1_index_12_Min`=t5.minimum,
-		`sig1_index_12_Max`=t5.maximum, 
-		`sig1_index_12_Range`=t5.`Most_values`  
+		`index_12_Min`=t5.minimum,
+		`index_12_Max`=t5.maximum, 
+		`index_12_Range`=t5.`Most_values`,
+		`index_12_Range_count`=t5.`no_of_values`
 
 		where DATE_FORMAT(t5.timestamp, '%Y-%m')=DATE_FORMAT(ap.timestamp, '%Y-%m') and t5.host_id=ap.host_id;
 
@@ -7069,7 +5500,27 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
                         )
                      )
                   )
-                ) as `Most_values`  
+                ) as `Most_values`,
+
+		if(range_values=1,`count_100`,
+		  if(range_values=2,`count_2010`,
+		    if(range_values=3,`count_3020`,
+			if(range_values=4,`count_4030`,
+			    if(range_values=5,`count_5040`,
+				if(range_values=6,`count_6050`,
+				    if(range_values=7,`count_7060`,
+				        if(range_values=8,`count_8070`,
+				            if(range_values=9,`count_9080`,
+				                if(range_values=10,`count_9590`,`count_9590`)
+				            )
+				        )
+				    )
+				)
+			    )
+			)
+		     )
+		  )
+		) as `no_of_values`
 
 		from (
 		select timestamp,host_id,minimum,maximum,
@@ -7092,16 +5543,17 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
 		SUM(if(sigStrength1 between '-95' and '-90',1,0)) as `count_9590`,
 		min(sigStrength1) as minimum,max(sigStrength1) as maximum
 		FROM `odu100_peerNodeStatusTable` 
-		where host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=13
+		where sigStrength1<>1 and  timestamp between hour_start and hour_end and timeSlotIndex=13
 		group by host_id,timeSlotIndex,DATE_FORMAT(timestamp, '%Y-%m')
 		) as t3
 		) as t4
 		)as t5 
 
 		set 
-		`sig1_index_13_Min`=t5.minimum,
-		`sig1_index_13_Max`=t5.maximum, 
-		`sig1_index_13_Range`=t5.`Most_values`  
+		`index_13_Min`=t5.minimum,
+		`index_13_Max`=t5.maximum, 
+		`index_13_Range`=t5.`Most_values`,
+		`index_13_Range_count`=t5.`no_of_values`
 
 		where DATE_FORMAT(t5.timestamp, '%Y-%m')=DATE_FORMAT(ap.timestamp, '%Y-%m') and t5.host_id=ap.host_id;
 
@@ -7126,7 +5578,27 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
                         )
                      )
                   )
-                ) as `Most_values`  
+                ) as `Most_values`,
+
+		if(range_values=1,`count_100`,
+		  if(range_values=2,`count_2010`,
+		    if(range_values=3,`count_3020`,
+			if(range_values=4,`count_4030`,
+			    if(range_values=5,`count_5040`,
+				if(range_values=6,`count_6050`,
+				    if(range_values=7,`count_7060`,
+				        if(range_values=8,`count_8070`,
+				            if(range_values=9,`count_9080`,
+				                if(range_values=10,`count_9590`,`count_9590`)
+				            )
+				        )
+				    )
+				)
+			    )
+			)
+		     )
+		  )
+		) as `no_of_values`
 
 		from (
 		select timestamp,host_id,minimum,maximum,
@@ -7149,16 +5621,17 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
 		SUM(if(sigStrength1 between '-95' and '-90',1,0)) as `count_9590`,
 		min(sigStrength1) as minimum,max(sigStrength1) as maximum
 		FROM `odu100_peerNodeStatusTable` 
-		where host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=14
+		where sigStrength1<>1 and  timestamp between hour_start and hour_end and timeSlotIndex=14
 		group by host_id,timeSlotIndex,DATE_FORMAT(timestamp, '%Y-%m')
 		) as t3
 		) as t4
 		)as t5 
 
 		set 
-		`sig1_index_14_Min`=t5.minimum,
-		`sig1_index_14_Max`=t5.maximum, 
-		`sig1_index_14_Range`=t5.`Most_values`  
+		`index_14_Min`=t5.minimum,
+		`index_14_Max`=t5.maximum, 
+		`index_14_Range`=t5.`Most_values`,
+		`index_14_Range_count`=t5.`no_of_values`
 
 		where DATE_FORMAT(t5.timestamp, '%Y-%m')=DATE_FORMAT(ap.timestamp, '%Y-%m') and t5.host_id=ap.host_id;
 
@@ -7182,7 +5655,27 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
                         )
                      )
                   )
-                ) as `Most_values`  
+                ) as `Most_values`,
+
+		if(range_values=1,`count_100`,
+		  if(range_values=2,`count_2010`,
+		    if(range_values=3,`count_3020`,
+			if(range_values=4,`count_4030`,
+			    if(range_values=5,`count_5040`,
+				if(range_values=6,`count_6050`,
+				    if(range_values=7,`count_7060`,
+				        if(range_values=8,`count_8070`,
+				            if(range_values=9,`count_9080`,
+				                if(range_values=10,`count_9590`,`count_9590`)
+				            )
+				        )
+				    )
+				)
+			    )
+			)
+		     )
+		  )
+		) as `no_of_values`
 
 		from (
 		select timestamp,host_id,minimum,maximum,
@@ -7205,16 +5698,17 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
 		SUM(if(sigStrength1 between '-95' and '-90',1,0)) as `count_9590`,
 		min(sigStrength1) as minimum,max(sigStrength1) as maximum
 		FROM `odu100_peerNodeStatusTable` 
-		where host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=15
+		where sigStrength1<>1 and  timestamp between hour_start and hour_end and timeSlotIndex=15
 		group by host_id,timeSlotIndex,DATE_FORMAT(timestamp, '%Y-%m')
 		) as t3
 		) as t4
 		)as t5 
 
 		set 
-		`sig1_index_15_Min`=t5.minimum,
-		`sig1_index_15_Max`=t5.maximum, 
-		`sig1_index_15_Range`=t5.`Most_values`  
+		`index_15_Min`=t5.minimum,
+		`index_15_Max`=t5.maximum, 
+		`index_15_Range`=t5.`Most_values`,
+		`index_15_Range_count`=t5.`no_of_values`
 
 		where DATE_FORMAT(t5.timestamp, '%Y-%m')=DATE_FORMAT(ap.timestamp, '%Y-%m') and t5.host_id=ap.host_id;
 
@@ -7239,7 +5733,27 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
                         )
                      )
                   )
-                ) as `Most_values`  
+                ) as `Most_values`,
+
+		if(range_values=1,`count_100`,
+		  if(range_values=2,`count_2010`,
+		    if(range_values=3,`count_3020`,
+			if(range_values=4,`count_4030`,
+			    if(range_values=5,`count_5040`,
+				if(range_values=6,`count_6050`,
+				    if(range_values=7,`count_7060`,
+				        if(range_values=8,`count_8070`,
+				            if(range_values=9,`count_9080`,
+				                if(range_values=10,`count_9590`,`count_9590`)
+				            )
+				        )
+				    )
+				)
+			    )
+			)
+		     )
+		  )
+		) as `no_of_values`
 
 		from (
 		select timestamp,host_id,minimum,maximum,
@@ -7262,964 +5776,29 @@ CREATE TRIGGER `odu100_peerNodeStatusTable_trigger` BEFORE INSERT ON `odu100_pee
 		SUM(if(sigStrength1 between '-95' and '-90',1,0)) as `count_9590`,
 		min(sigStrength1) as minimum,max(sigStrength1) as maximum
 		FROM `odu100_peerNodeStatusTable` 
-		where host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=16
+		where sigStrength1<>1 and  timestamp between hour_start and hour_end and timeSlotIndex=16
 		group by host_id,timeSlotIndex,DATE_FORMAT(timestamp, '%Y-%m')
 		) as t3
 		) as t4
 		)as t5 
 
 		set 
-		`sig1_index_16_Min`=t5.minimum,
-		`sig1_index_16_Max`=t5.maximum, 
-		`sig1_index_16_Range`=t5.`Most_values`  
+		`index_16_Min`=t5.minimum,
+		`index_16_Max`=t5.maximum, 
+		`index_16_Range`=t5.`Most_values`,
+		`index_16_Range_count`=t5.`no_of_values`
 
 		where DATE_FORMAT(t5.timestamp, '%Y-%m')=DATE_FORMAT(ap.timestamp, '%Y-%m') and t5.host_id=ap.host_id;
 
-	update `analyze_odu100_peerNodeStatusTable`  as ap ,
-		(select timestamp,host_id,minimum,maximum,
-		if(range_values=1,-5,
-                  if(range_values=2,-15,
-                    if(range_values=3,-25,
-                        if(range_values=4,-35,
-                            if(range_values=5,-45,
-                                if(range_values=6,-55,
-                                    if(range_values=7,-65,
-                                        if(range_values=8,-75,
-                                            if(range_values=9,-85,
-                                                if(range_values=10,-95,-95)
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                     )
-                  )
-                ) as `Most_values`
 
-		from (
-		select timestamp,host_id,minimum,maximum,
-		FIELD(GREATEST(`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`),
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`) as range_values,
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`
-		 from 
-		(
-		SELECT  
-		timestamp,host_id,
-		SUM(if(sigStrength2 between '-10' and '0',1,0))   as `count_100`,
-		SUM(if(sigStrength2 between '-20' and '-10',1,0)) as `count_2010`,
-		SUM(if(sigStrength2 between '-30' and '-20',1,0)) as `count_3020`,
-		SUM(if(sigStrength2 between '-40' and '-30',1,0)) as `count_4030`,
-		SUM(if(sigStrength2 between '-50' and '-40',1,0)) as `count_5040`,
-		SUM(if(sigStrength2 between '-60' and '-50',1,0)) as `count_6050`,
-		SUM(if(sigStrength2 between '-70' and '-60',1,0)) as `count_7060`,
-		SUM(if(sigStrength2 between '-80' and '-70',1,0)) as `count_8070`,
-		SUM(if(sigStrength2 between '-90' and '-80',1,0)) as `count_9080`,
-		SUM(if(sigStrength2 between '-95' and '-90',1,0)) as `count_9590`,
-		min(sigStrength2) as minimum,max(sigStrength2) as maximum
-		FROM `odu100_peerNodeStatusTable` 
-		where host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=1
-		group by host_id,timeSlotIndex,DATE_FORMAT(timestamp, '%Y-%m')
-		) as t3
-		) as t4
-		)as t5 
-
-		set 
-		`sig2_index_1_Min`=t5.minimum,
-		`sig2_index_1_Max`=t5.maximum, 
-		`sig2_index_1_Range`=t5.`Most_values`
-
-		where DATE_FORMAT(t5.timestamp, '%Y-%m')=DATE_FORMAT(ap.timestamp, '%Y-%m') and  
-		t5.host_id=ap.host_id;
-			
-	
-	
-	
-	
-	
-	
-	update `analyze_odu100_peerNodeStatusTable`  as ap ,
-		(select timestamp,host_id,minimum,maximum,
-		if(range_values=1,-5,
-                  if(range_values=2,-15,
-                    if(range_values=3,-25,
-                        if(range_values=4,-35,
-                            if(range_values=5,-45,
-                                if(range_values=6,-55,
-                                    if(range_values=7,-65,
-                                        if(range_values=8,-75,
-                                            if(range_values=9,-85,
-                                                if(range_values=10,-95,-95)
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                     )
-                  )
-                ) as `Most_values`
-
-		from (
-		select timestamp,host_id,minimum,maximum,
-		FIELD(GREATEST(`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`),
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`) as range_values,
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`
-		 from 
-		(
-		SELECT  
-		timestamp,host_id,
-		SUM(if(sigStrength2 between '-10' and '0',1,0))   as `count_100`,
-		SUM(if(sigStrength2 between '-20' and '-10',1,0)) as `count_2010`,
-		SUM(if(sigStrength2 between '-30' and '-20',1,0)) as `count_3020`,
-		SUM(if(sigStrength2 between '-40' and '-30',1,0)) as `count_4030`,
-		SUM(if(sigStrength2 between '-50' and '-40',1,0)) as `count_5040`,
-		SUM(if(sigStrength2 between '-60' and '-50',1,0)) as `count_6050`,
-		SUM(if(sigStrength2 between '-70' and '-60',1,0)) as `count_7060`,
-		SUM(if(sigStrength2 between '-80' and '-70',1,0)) as `count_8070`,
-		SUM(if(sigStrength2 between '-90' and '-80',1,0)) as `count_9080`,
-		SUM(if(sigStrength2 between '-95' and '-90',1,0)) as `count_9590`,
-		min(sigStrength2) as minimum,max(sigStrength2) as maximum
-		FROM `odu100_peerNodeStatusTable` 
-		where host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=2
-		group by host_id,timeSlotIndex,DATE_FORMAT(timestamp, '%Y-%m')
-		) as t3
-		) as t4
-		)as t5 
-
-		set 
-		`sig2_index_2_Min`=t5.minimum,
-		`sig2_index_2_Max`=t5.maximum, 
-		`sig2_index_2_Range`=t5.`Most_values`
-
-		where DATE_FORMAT(t5.timestamp, '%Y-%m')=DATE_FORMAT(ap.timestamp, '%Y-%m') and  
-		t5.host_id=ap.host_id;
-		
-		
-		
-				 
-
-		update `analyze_odu100_peerNodeStatusTable`  as ap ,
-		(select timestamp,host_id,minimum,maximum,
-		if(range_values=1,-5,
-                  if(range_values=2,-15,
-                    if(range_values=3,-25,
-                        if(range_values=4,-35,
-                            if(range_values=5,-45,
-                                if(range_values=6,-55,
-                                    if(range_values=7,-65,
-                                        if(range_values=8,-75,
-                                            if(range_values=9,-85,
-                                                if(range_values=10,-95,-95)
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                     )
-                  )
-                ) as `Most_values`  
-
-		from (
-		select timestamp,host_id,minimum,maximum,
-		FIELD(GREATEST(`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`),
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`) as range_values,
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`
-		 from 
-		(
-		SELECT  
-		timestamp,host_id,
-		SUM(if(sigStrength2 between '-10' and '0',1,0))   as `count_100`,
-		SUM(if(sigStrength2 between '-20' and '-10',1,0)) as `count_2010`,
-		SUM(if(sigStrength2 between '-30' and '-20',1,0)) as `count_3020`,
-		SUM(if(sigStrength2 between '-40' and '-30',1,0)) as `count_4030`,
-		SUM(if(sigStrength2 between '-50' and '-40',1,0)) as `count_5040`,
-		SUM(if(sigStrength2 between '-60' and '-50',1,0)) as `count_6050`,
-		SUM(if(sigStrength2 between '-70' and '-60',1,0)) as `count_7060`,
-		SUM(if(sigStrength2 between '-80' and '-70',1,0)) as `count_8070`,
-		SUM(if(sigStrength2 between '-90' and '-80',1,0)) as `count_9080`,
-		SUM(if(sigStrength2 between '-95' and '-90',1,0)) as `count_9590`,
-		min(sigStrength2) as minimum,max(sigStrength2) as maximum
-		FROM `odu100_peerNodeStatusTable` 
-		where host_id=NEW.host_id and  sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=3
-		group by host_id,timeSlotIndex,DATE_FORMAT(timestamp, '%Y-%m')
-		) as t3
-		) as t4
-		)as t5 
-
-		set 
-		`sig2_index_3_Min`=t5.minimum,
-		`sig2_index_3_Max`=t5.maximum, 
-		`sig2_index_3_Range`=t5.`Most_values`  
-
-		where DATE_FORMAT(t5.timestamp, '%Y-%m')=DATE_FORMAT(ap.timestamp, '%Y-%m') and  
-		t5.host_id=ap.host_id;
-
-
-
-		update `analyze_odu100_peerNodeStatusTable`  as ap ,
-		(select timestamp,host_id,minimum,maximum,
-		if(range_values=1,-5,
-                  if(range_values=2,-15,
-                    if(range_values=3,-25,
-                        if(range_values=4,-35,
-                            if(range_values=5,-45,
-                                if(range_values=6,-55,
-                                    if(range_values=7,-65,
-                                        if(range_values=8,-75,
-                                            if(range_values=9,-85,
-                                                if(range_values=10,-95,-95)
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                     )
-                  )
-                ) as `Most_values`  
-
-		from (
-		select timestamp,host_id,minimum,maximum,
-		FIELD(GREATEST(`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`),
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`) as range_values,
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`
-		 from 
-		(
-		SELECT  
-		timestamp,host_id,
-		SUM(if(sigStrength2 between '-10' and '0',1,0))   as `count_100`,
-		SUM(if(sigStrength2 between '-20' and '-10',1,0)) as `count_2010`,
-		SUM(if(sigStrength2 between '-30' and '-20',1,0)) as `count_3020`,
-		SUM(if(sigStrength2 between '-40' and '-30',1,0)) as `count_4030`,
-		SUM(if(sigStrength2 between '-50' and '-40',1,0)) as `count_5040`,
-		SUM(if(sigStrength2 between '-60' and '-50',1,0)) as `count_6050`,
-		SUM(if(sigStrength2 between '-70' and '-60',1,0)) as `count_7060`,
-		SUM(if(sigStrength2 between '-80' and '-70',1,0)) as `count_8070`,
-		SUM(if(sigStrength2 between '-90' and '-80',1,0)) as `count_9080`,
-		SUM(if(sigStrength2 between '-95' and '-90',1,0)) as `count_9590`,
-		min(sigStrength2) as minimum,max(sigStrength2) as maximum
-		FROM `odu100_peerNodeStatusTable` 
-		where  host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=4
-		group by host_id,timeSlotIndex,DATE_FORMAT(timestamp, '%Y-%m')
-		) as t3
-		) as t4
-		)as t5 
-
-		set 
-		`sig2_index_4_Min`=t5.minimum,
-		`sig2_index_4_Max`=t5.maximum, 
-		`sig2_index_4_Range`=t5.`Most_values`  
-
-		where DATE_FORMAT(t5.timestamp, '%Y-%m')=DATE_FORMAT(ap.timestamp, '%Y-%m') and  
-		t5.host_id=ap.host_id;
-
-
-
-		update `analyze_odu100_peerNodeStatusTable`  as ap ,
-		(select timestamp,host_id,minimum,maximum,
-		if(range_values=1,-5,
-                  if(range_values=2,-15,
-                    if(range_values=3,-25,
-                        if(range_values=4,-35,
-                            if(range_values=5,-45,
-                                if(range_values=6,-55,
-                                    if(range_values=7,-65,
-                                        if(range_values=8,-75,
-                                            if(range_values=9,-85,
-                                                if(range_values=10,-95,-95)
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                     )
-                  )
-                ) as `Most_values`  
-
-		from (
-		select timestamp,host_id,minimum,maximum,
-		FIELD(GREATEST(`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`),
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`) as range_values,
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`
-		 from 
-		(
-		SELECT  
-		timestamp,host_id,
-		SUM(if(sigStrength2 between '-10' and '0',1,0))   as `count_100`,
-		SUM(if(sigStrength2 between '-20' and '-10',1,0)) as `count_2010`,
-		SUM(if(sigStrength2 between '-30' and '-20',1,0)) as `count_3020`,
-		SUM(if(sigStrength2 between '-40' and '-30',1,0)) as `count_4030`,
-		SUM(if(sigStrength2 between '-50' and '-40',1,0)) as `count_5040`,
-		SUM(if(sigStrength2 between '-60' and '-50',1,0)) as `count_6050`,
-		SUM(if(sigStrength2 between '-70' and '-60',1,0)) as `count_7060`,
-		SUM(if(sigStrength2 between '-80' and '-70',1,0)) as `count_8070`,
-		SUM(if(sigStrength2 between '-90' and '-80',1,0)) as `count_9080`,
-		SUM(if(sigStrength2 between '-95' and '-90',1,0)) as `count_9590`,
-		min(sigStrength2) as minimum,max(sigStrength2) as maximum
-		FROM `odu100_peerNodeStatusTable` 
-		where  host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=5
-		group by host_id,timeSlotIndex,DATE_FORMAT(timestamp, '%Y-%m')
-		) as t3
-		) as t4
-		)as t5 
-
-		set 
-		`sig2_index_5_Min`=t5.minimum,
-		`sig2_index_5_Max`=t5.maximum, 
-		`sig2_index_5_Range`=t5.`Most_values`  
-
-		where DATE_FORMAT(t5.timestamp, '%Y-%m')=DATE_FORMAT(ap.timestamp, '%Y-%m') and  
-		t5.host_id=ap.host_id;
-
-
-
-		update `analyze_odu100_peerNodeStatusTable`  as ap ,
-		(select timestamp,host_id,minimum,maximum,
-		if(range_values=1,-5,
-                  if(range_values=2,-15,
-                    if(range_values=3,-25,
-                        if(range_values=4,-35,
-                            if(range_values=5,-45,
-                                if(range_values=6,-55,
-                                    if(range_values=7,-65,
-                                        if(range_values=8,-75,
-                                            if(range_values=9,-85,
-                                                if(range_values=10,-95,-95)
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                     )
-                  )
-                ) as `Most_values`  
-
-		from (
-		select timestamp,host_id,minimum,maximum,
-		FIELD(GREATEST(`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`),
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`) as range_values,
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`
-		 from 
-		(
-		SELECT  
-		timestamp,host_id,
-		SUM(if(sigStrength2 between '-10' and '0',1,0))   as `count_100`,
-		SUM(if(sigStrength2 between '-20' and '-10',1,0)) as `count_2010`,
-		SUM(if(sigStrength2 between '-30' and '-20',1,0)) as `count_3020`,
-		SUM(if(sigStrength2 between '-40' and '-30',1,0)) as `count_4030`,
-		SUM(if(sigStrength2 between '-50' and '-40',1,0)) as `count_5040`,
-		SUM(if(sigStrength2 between '-60' and '-50',1,0)) as `count_6050`,
-		SUM(if(sigStrength2 between '-70' and '-60',1,0)) as `count_7060`,
-		SUM(if(sigStrength2 between '-80' and '-70',1,0)) as `count_8070`,
-		SUM(if(sigStrength2 between '-90' and '-80',1,0)) as `count_9080`,
-		SUM(if(sigStrength2 between '-95' and '-90',1,0)) as `count_9590`,
-		min(sigStrength2) as minimum,max(sigStrength2) as maximum
-		FROM `odu100_peerNodeStatusTable` 
-		where  host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=6
-		group by host_id,timeSlotIndex,DATE_FORMAT(timestamp, '%Y-%m')
-		) as t3
-		) as t4
-		)as t5 
-
-		set 
-		`sig2_index_6_Min`=t5.minimum,
-		`sig2_index_6_Max`=t5.maximum, 
-		`sig2_index_6_Range`=t5.`Most_values`  
-
-		where DATE_FORMAT(t5.timestamp, '%Y-%m')=DATE_FORMAT(ap.timestamp, '%Y-%m') and  
-		t5.host_id=ap.host_id;
-
-
-
-		update `analyze_odu100_peerNodeStatusTable`  as ap ,
-		(select timestamp,host_id,minimum,maximum,
-		if(range_values=1,-5,
-                  if(range_values=2,-15,
-                    if(range_values=3,-25,
-                        if(range_values=4,-35,
-                            if(range_values=5,-45,
-                                if(range_values=6,-55,
-                                    if(range_values=7,-65,
-                                        if(range_values=8,-75,
-                                            if(range_values=9,-85,
-                                                if(range_values=10,-95,-95)
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                     )
-                  )
-                ) as `Most_values`  
-
-		from (
-		select timestamp,host_id,minimum,maximum,
-		FIELD(GREATEST(`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`),
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`) as range_values,
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`
-		 from 
-		(
-		SELECT  
-		timestamp,host_id,
-		SUM(if(sigStrength2 between '-10' and '0',1,0))   as `count_100`,
-		SUM(if(sigStrength2 between '-20' and '-10',1,0)) as `count_2010`,
-		SUM(if(sigStrength2 between '-30' and '-20',1,0)) as `count_3020`,
-		SUM(if(sigStrength2 between '-40' and '-30',1,0)) as `count_4030`,
-		SUM(if(sigStrength2 between '-50' and '-40',1,0)) as `count_5040`,
-		SUM(if(sigStrength2 between '-60' and '-50',1,0)) as `count_6050`,
-		SUM(if(sigStrength2 between '-70' and '-60',1,0)) as `count_7060`,
-		SUM(if(sigStrength2 between '-80' and '-70',1,0)) as `count_8070`,
-		SUM(if(sigStrength2 between '-90' and '-80',1,0)) as `count_9080`,
-		SUM(if(sigStrength2 between '-95' and '-90',1,0)) as `count_9590`,
-		min(sigStrength2) as minimum,max(sigStrength2) as maximum
-		FROM `odu100_peerNodeStatusTable` 
-		where host_id=NEW.host_id and  sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=7
-		group by host_id,timeSlotIndex,DATE_FORMAT(timestamp, '%Y-%m')
-		) as t3
-		) as t4
-		)as t5 
-
-		set 
-		`sig2_index_7_Min`=t5.minimum,
-		`sig2_index_7_Max`=t5.maximum, 
-		`sig2_index_7_Range`=t5.`Most_values`  
-
-		where DATE_FORMAT(t5.timestamp, '%Y-%m')=DATE_FORMAT(ap.timestamp, '%Y-%m') and  
-		t5.host_id=ap.host_id;
-
-
-
-		update `analyze_odu100_peerNodeStatusTable`  as ap ,
-		(select timestamp,host_id,minimum,maximum,
-		if(range_values=1,-5,
-                  if(range_values=2,-15,
-                    if(range_values=3,-25,
-                        if(range_values=4,-35,
-                            if(range_values=5,-45,
-                                if(range_values=6,-55,
-                                    if(range_values=7,-65,
-                                        if(range_values=8,-75,
-                                            if(range_values=9,-85,
-                                                if(range_values=10,-95,-95)
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                     )
-                  )
-                ) as `Most_values`  
-
-		from (
-		select timestamp,host_id,minimum,maximum,
-		FIELD(GREATEST(`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`),
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`) as range_values,
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`
-		 from 
-		(
-		SELECT  
-		timestamp,host_id,
-		SUM(if(sigStrength2 between '-10' and '0',1,0))   as `count_100`,
-		SUM(if(sigStrength2 between '-20' and '-10',1,0)) as `count_2010`,
-		SUM(if(sigStrength2 between '-30' and '-20',1,0)) as `count_3020`,
-		SUM(if(sigStrength2 between '-40' and '-30',1,0)) as `count_4030`,
-		SUM(if(sigStrength2 between '-50' and '-40',1,0)) as `count_5040`,
-		SUM(if(sigStrength2 between '-60' and '-50',1,0)) as `count_6050`,
-		SUM(if(sigStrength2 between '-70' and '-60',1,0)) as `count_7060`,
-		SUM(if(sigStrength2 between '-80' and '-70',1,0)) as `count_8070`,
-		SUM(if(sigStrength2 between '-90' and '-80',1,0)) as `count_9080`,
-		SUM(if(sigStrength2 between '-95' and '-90',1,0)) as `count_9590`,
-		min(sigStrength2) as minimum,max(sigStrength2) as maximum
-		FROM `odu100_peerNodeStatusTable` 
-		where  host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=8
-		group by host_id,timeSlotIndex,DATE_FORMAT(timestamp, '%Y-%m')
-		) as t3
-		) as t4
-		)as t5 
-
-		set 
-		`sig2_index_8_Min`=t5.minimum,
-		`sig2_index_8_Max`=t5.maximum, 
-		`sig2_index_8_Range`=t5.`Most_values`  
-
-		where DATE_FORMAT(t5.timestamp, '%Y-%m')=DATE_FORMAT(ap.timestamp, '%Y-%m') and  
-		t5.host_id=ap.host_id;
-
-
-
-		update `analyze_odu100_peerNodeStatusTable`  as ap ,
-		(select timestamp,host_id,minimum,maximum,
-		if(range_values=1,-5,
-                  if(range_values=2,-15,
-                    if(range_values=3,-25,
-                        if(range_values=4,-35,
-                            if(range_values=5,-45,
-                                if(range_values=6,-55,
-                                    if(range_values=7,-65,
-                                        if(range_values=8,-75,
-                                            if(range_values=9,-85,
-                                                if(range_values=10,-95,-95)
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                     )
-                  )
-                ) as `Most_values`  
-
-		from (
-		select timestamp,host_id,minimum,maximum,
-		FIELD(GREATEST(`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`),
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`) as range_values,
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`
-		 from 
-		(
-		SELECT  
-		timestamp,host_id,
-		SUM(if(sigStrength2 between '-10' and '0',1,0))   as `count_100`,
-		SUM(if(sigStrength2 between '-20' and '-10',1,0)) as `count_2010`,
-		SUM(if(sigStrength2 between '-30' and '-20',1,0)) as `count_3020`,
-		SUM(if(sigStrength2 between '-40' and '-30',1,0)) as `count_4030`,
-		SUM(if(sigStrength2 between '-50' and '-40',1,0)) as `count_5040`,
-		SUM(if(sigStrength2 between '-60' and '-50',1,0)) as `count_6050`,
-		SUM(if(sigStrength2 between '-70' and '-60',1,0)) as `count_7060`,
-		SUM(if(sigStrength2 between '-80' and '-70',1,0)) as `count_8070`,
-		SUM(if(sigStrength2 between '-90' and '-80',1,0)) as `count_9080`,
-		SUM(if(sigStrength2 between '-95' and '-90',1,0)) as `count_9590`,
-		min(sigStrength2) as minimum,max(sigStrength2) as maximum
-		FROM `odu100_peerNodeStatusTable` 
-		where  host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=9
-		group by host_id,timeSlotIndex,DATE_FORMAT(timestamp, '%Y-%m')
-		) as t3
-		) as t4
-		)as t5 
-
-		set 
-		`sig2_index_9_Min`=t5.minimum,
-		`sig2_index_9_Max`=t5.maximum, 
-		`sig2_index_9_Range`=t5.`Most_values`  
-
-		where DATE_FORMAT(t5.timestamp, '%Y-%m')=DATE_FORMAT(ap.timestamp, '%Y-%m') and  
-		t5.host_id=ap.host_id;
-
-
-		update `analyze_odu100_peerNodeStatusTable`  as ap ,
-		(select timestamp,host_id,minimum,maximum,
-		if(range_values=1,-5,
-                  if(range_values=2,-15,
-                    if(range_values=3,-25,
-                        if(range_values=4,-35,
-                            if(range_values=5,-45,
-                                if(range_values=6,-55,
-                                    if(range_values=7,-65,
-                                        if(range_values=8,-75,
-                                            if(range_values=9,-85,
-                                                if(range_values=10,-95,-95)
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                     )
-                  )
-                ) as `Most_values`  
-
-		from (
-		select timestamp,host_id,minimum,maximum,
-		FIELD(GREATEST(`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`),
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`) as range_values,
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`
-		 from 
-		(
-		SELECT  
-		timestamp,host_id,
-		SUM(if(sigStrength2 between '-10' and '0',1,0))   as `count_100`,
-		SUM(if(sigStrength2 between '-20' and '-10',1,0)) as `count_2010`,
-		SUM(if(sigStrength2 between '-30' and '-20',1,0)) as `count_3020`,
-		SUM(if(sigStrength2 between '-40' and '-30',1,0)) as `count_4030`,
-		SUM(if(sigStrength2 between '-50' and '-40',1,0)) as `count_5040`,
-		SUM(if(sigStrength2 between '-60' and '-50',1,0)) as `count_6050`,
-		SUM(if(sigStrength2 between '-70' and '-60',1,0)) as `count_7060`,
-		SUM(if(sigStrength2 between '-80' and '-70',1,0)) as `count_8070`,
-		SUM(if(sigStrength2 between '-90' and '-80',1,0)) as `count_9080`,
-		SUM(if(sigStrength2 between '-95' and '-90',1,0)) as `count_9590`,
-		min(sigStrength2) as minimum,max(sigStrength2) as maximum
-		FROM `odu100_peerNodeStatusTable` 
-		where  host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=10
-		group by host_id,timeSlotIndex,DATE_FORMAT(timestamp, '%Y-%m')
-		) as t3
-		) as t4
-		)as t5 
-
-		set 
-		`sig2_index_10_Min`=t5.minimum,
-		`sig2_index_10_Max`=t5.maximum, 
-		`sig2_index_10_Range`=t5.`Most_values`  
-
-		where DATE_FORMAT(t5.timestamp, '%Y-%m')=DATE_FORMAT(ap.timestamp, '%Y-%m') and  
-		t5.host_id=ap.host_id;
-
-		update `analyze_odu100_peerNodeStatusTable`  as ap ,
-		(select timestamp,host_id,minimum,maximum,
-		if(range_values=1,-5,
-                  if(range_values=2,-15,
-                    if(range_values=3,-25,
-                        if(range_values=4,-35,
-                            if(range_values=5,-45,
-                                if(range_values=6,-55,
-                                    if(range_values=7,-65,
-                                        if(range_values=8,-75,
-                                            if(range_values=9,-85,
-                                                if(range_values=10,-95,-95)
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                     )
-                  )
-                ) as `Most_values`  
-
-		from (
-		select timestamp,host_id,minimum,maximum,
-		FIELD(GREATEST(`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`),
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`) as range_values,
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`
-		 from 
-		(
-		SELECT  
-		timestamp,host_id,
-		SUM(if(sigStrength2 between '-10' and '0',1,0))   as `count_100`,
-		SUM(if(sigStrength2 between '-20' and '-10',1,0)) as `count_2010`,
-		SUM(if(sigStrength2 between '-30' and '-20',1,0)) as `count_3020`,
-		SUM(if(sigStrength2 between '-40' and '-30',1,0)) as `count_4030`,
-		SUM(if(sigStrength2 between '-50' and '-40',1,0)) as `count_5040`,
-		SUM(if(sigStrength2 between '-60' and '-50',1,0)) as `count_6050`,
-		SUM(if(sigStrength2 between '-70' and '-60',1,0)) as `count_7060`,
-		SUM(if(sigStrength2 between '-80' and '-70',1,0)) as `count_8070`,
-		SUM(if(sigStrength2 between '-90' and '-80',1,0)) as `count_9080`,
-		SUM(if(sigStrength2 between '-95' and '-90',1,0)) as `count_9590`,
-		min(sigStrength2) as minimum,max(sigStrength2) as maximum
-		FROM `odu100_peerNodeStatusTable` 
-		where host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=11
-		group by host_id,timeSlotIndex,DATE_FORMAT(timestamp, '%Y-%m')
-		) as t3
-		) as t4
-		)as t5 
-
-		set 
-		`sig2_index_11_Min`=t5.minimum,
-		`sig2_index_11_Max`=t5.maximum, 
-		`sig2_index_11_Range`=t5.`Most_values`  
-
-		where DATE_FORMAT(t5.timestamp, '%Y-%m')=DATE_FORMAT(ap.timestamp, '%Y-%m') and  
-		t5.host_id=ap.host_id;
-
-
-		update `analyze_odu100_peerNodeStatusTable`  as ap ,
-		(select timestamp,host_id,minimum,maximum,
-		if(range_values=1,-5,
-                  if(range_values=2,-15,
-                    if(range_values=3,-25,
-                        if(range_values=4,-35,
-                            if(range_values=5,-45,
-                                if(range_values=6,-55,
-                                    if(range_values=7,-65,
-                                        if(range_values=8,-75,
-                                            if(range_values=9,-85,
-                                                if(range_values=10,-95,-95)
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                     )
-                  )
-                ) as `Most_values`  
-
-		from (
-		select timestamp,host_id,minimum,maximum,
-		FIELD(GREATEST(`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`),
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`) as range_values,
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`
-		 from 
-		(
-		SELECT  
-		timestamp,host_id,
-		SUM(if(sigStrength2 between '-10' and '0',1,0))   as `count_100`,
-		SUM(if(sigStrength2 between '-20' and '-10',1,0)) as `count_2010`,
-		SUM(if(sigStrength2 between '-30' and '-20',1,0)) as `count_3020`,
-		SUM(if(sigStrength2 between '-40' and '-30',1,0)) as `count_4030`,
-		SUM(if(sigStrength2 between '-50' and '-40',1,0)) as `count_5040`,
-		SUM(if(sigStrength2 between '-60' and '-50',1,0)) as `count_6050`,
-		SUM(if(sigStrength2 between '-70' and '-60',1,0)) as `count_7060`,
-		SUM(if(sigStrength2 between '-80' and '-70',1,0)) as `count_8070`,
-		SUM(if(sigStrength2 between '-90' and '-80',1,0)) as `count_9080`,
-		SUM(if(sigStrength2 between '-95' and '-90',1,0)) as `count_9590`,
-		min(sigStrength2) as minimum,max(sigStrength2) as maximum
-		FROM `odu100_peerNodeStatusTable` 
-		where  host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=12
-		group by host_id,timeSlotIndex,DATE_FORMAT(timestamp, '%Y-%m')
-		) as t3
-		) as t4
-		)as t5 
-
-		set 
-		`sig2_index_12_Min`=t5.minimum,
-		`sig2_index_12_Max`=t5.maximum, 
-		`sig2_index_12_Range`=t5.`Most_values`  
-
-		where DATE_FORMAT(t5.timestamp, '%Y-%m')=DATE_FORMAT(ap.timestamp, '%Y-%m') and  
-		t5.host_id=ap.host_id;
-
-		update `analyze_odu100_peerNodeStatusTable`  as ap ,
-		(select timestamp,host_id,minimum,maximum,
-		if(range_values=1,-5,
-                  if(range_values=2,-15,
-                    if(range_values=3,-25,
-                        if(range_values=4,-35,
-                            if(range_values=5,-45,
-                                if(range_values=6,-55,
-                                    if(range_values=7,-65,
-                                        if(range_values=8,-75,
-                                            if(range_values=9,-85,
-                                                if(range_values=10,-95,-95)
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                     )
-                  )
-                ) as `Most_values`  
-
-		from (
-		select timestamp,host_id,minimum,maximum,
-		FIELD(GREATEST(`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`),
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`) as range_values,
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`
-		 from 
-		(
-		SELECT  
-		timestamp,host_id,
-		SUM(if(sigStrength2 between '-10' and '0',1,0))   as `count_100`,
-		SUM(if(sigStrength2 between '-20' and '-10',1,0)) as `count_2010`,
-		SUM(if(sigStrength2 between '-30' and '-20',1,0)) as `count_3020`,
-		SUM(if(sigStrength2 between '-40' and '-30',1,0)) as `count_4030`,
-		SUM(if(sigStrength2 between '-50' and '-40',1,0)) as `count_5040`,
-		SUM(if(sigStrength2 between '-60' and '-50',1,0)) as `count_6050`,
-		SUM(if(sigStrength2 between '-70' and '-60',1,0)) as `count_7060`,
-		SUM(if(sigStrength2 between '-80' and '-70',1,0)) as `count_8070`,
-		SUM(if(sigStrength2 between '-90' and '-80',1,0)) as `count_9080`,
-		SUM(if(sigStrength2 between '-95' and '-90',1,0)) as `count_9590`,
-		min(sigStrength2) as minimum,max(sigStrength2) as maximum
-		FROM `odu100_peerNodeStatusTable` 
-		where  host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=13
-		group by host_id,timeSlotIndex,DATE_FORMAT(timestamp, '%Y-%m')
-		) as t3
-		) as t4
-		)as t5 
-
-		set 
-		`sig2_index_13_Min`=t5.minimum,
-		`sig2_index_13_Max`=t5.maximum, 
-		`sig2_index_13_Range`=t5.`Most_values`  
-
-		where DATE_FORMAT(t5.timestamp, '%Y-%m')=DATE_FORMAT(ap.timestamp, '%Y-%m') and  
-		t5.host_id=ap.host_id;		
-
-
-		update `analyze_odu100_peerNodeStatusTable`  as ap ,
-		(select timestamp,host_id,minimum,maximum,
-		if(range_values=1,-5,
-                  if(range_values=2,-15,
-                    if(range_values=3,-25,
-                        if(range_values=4,-35,
-                            if(range_values=5,-45,
-                                if(range_values=6,-55,
-                                    if(range_values=7,-65,
-                                        if(range_values=8,-75,
-                                            if(range_values=9,-85,
-                                                if(range_values=10,-95,-95)
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                     )
-                  )
-                ) as `Most_values`  
-
-		from (
-		select timestamp,host_id,minimum,maximum,
-		FIELD(GREATEST(`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`),
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`) as range_values,
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`
-		 from 
-		(
-		SELECT  
-		timestamp,host_id,
-		SUM(if(sigStrength2 between '-10' and '0',1,0))   as `count_100`,
-		SUM(if(sigStrength2 between '-20' and '-10',1,0)) as `count_2010`,
-		SUM(if(sigStrength2 between '-30' and '-20',1,0)) as `count_3020`,
-		SUM(if(sigStrength2 between '-40' and '-30',1,0)) as `count_4030`,
-		SUM(if(sigStrength2 between '-50' and '-40',1,0)) as `count_5040`,
-		SUM(if(sigStrength2 between '-60' and '-50',1,0)) as `count_6050`,
-		SUM(if(sigStrength2 between '-70' and '-60',1,0)) as `count_7060`,
-		SUM(if(sigStrength2 between '-80' and '-70',1,0)) as `count_8070`,
-		SUM(if(sigStrength2 between '-90' and '-80',1,0)) as `count_9080`,
-		SUM(if(sigStrength2 between '-95' and '-90',1,0)) as `count_9590`,
-		min(sigStrength2) as minimum,max(sigStrength2) as maximum
-		FROM `odu100_peerNodeStatusTable` 
-		where  host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=14
-		group by host_id,timeSlotIndex,DATE_FORMAT(timestamp, '%Y-%m')
-		) as t3
-		) as t4
-		)as t5 
-
-		set 
-		`sig2_index_14_Min`=t5.minimum,
-		`sig2_index_14_Max`=t5.maximum, 
-		`sig2_index_14_Range`=t5.`Most_values`  
-
-		where DATE_FORMAT(t5.timestamp, '%Y-%m')=DATE_FORMAT(ap.timestamp, '%Y-%m') and  
-		t5.host_id=ap.host_id;		
-		
-
-		update `analyze_odu100_peerNodeStatusTable`  as ap ,
-		(select timestamp,host_id,minimum,maximum,
-		if(range_values=1,-5,
-                  if(range_values=2,-15,
-                    if(range_values=3,-25,
-                        if(range_values=4,-35,
-                            if(range_values=5,-45,
-                                if(range_values=6,-55,
-                                    if(range_values=7,-65,
-                                        if(range_values=8,-75,
-                                            if(range_values=9,-85,
-                                                if(range_values=10,-95,-95)
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                     )
-                  )
-                ) as `Most_values`  
-
-		from (
-		select timestamp,host_id,minimum,maximum,
-		FIELD(GREATEST(`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`),
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`) as range_values,
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`
-		 from 
-		(
-		SELECT  
-		timestamp,host_id,
-		SUM(if(sigStrength2 between '-10' and '0',1,0))   as `count_100`,
-		SUM(if(sigStrength2 between '-20' and '-10',1,0)) as `count_2010`,
-		SUM(if(sigStrength2 between '-30' and '-20',1,0)) as `count_3020`,
-		SUM(if(sigStrength2 between '-40' and '-30',1,0)) as `count_4030`,
-		SUM(if(sigStrength2 between '-50' and '-40',1,0)) as `count_5040`,
-		SUM(if(sigStrength2 between '-60' and '-50',1,0)) as `count_6050`,
-		SUM(if(sigStrength2 between '-70' and '-60',1,0)) as `count_7060`,
-		SUM(if(sigStrength2 between '-80' and '-70',1,0)) as `count_8070`,
-		SUM(if(sigStrength2 between '-90' and '-80',1,0)) as `count_9080`,
-		SUM(if(sigStrength2 between '-95' and '-90',1,0)) as `count_9590`,
-		min(sigStrength2) as minimum,max(sigStrength2) as maximum
-		FROM `odu100_peerNodeStatusTable` 
-		where host_id=NEW.host_id and  sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=15
-		group by host_id,timeSlotIndex,DATE_FORMAT(timestamp, '%Y-%m')
-		) as t3
-		) as t4
-		)as t5 
-
-		set 
-		`sig2_index_15_Min`=t5.minimum,
-		`sig2_index_15_Max`=t5.maximum, 
-		`sig2_index_15_Range`=t5.`Most_values`  
-
-		where DATE_FORMAT(t5.timestamp, '%Y-%m')=DATE_FORMAT(ap.timestamp, '%Y-%m') and  
-		t5.host_id=ap.host_id;
-
-		update `analyze_odu100_peerNodeStatusTable`  as ap ,
-		(select timestamp,host_id,minimum,maximum,
-		if(range_values=1,-5,
-                  if(range_values=2,-15,
-                    if(range_values=3,-25,
-                        if(range_values=4,-35,
-                            if(range_values=5,-45,
-                                if(range_values=6,-55,
-                                    if(range_values=7,-65,
-                                        if(range_values=8,-75,
-                                            if(range_values=9,-85,
-                                                if(range_values=10,-95,-95)
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                     )
-                  )
-                ) as `Most_values`  
-
-		from (
-		select timestamp,host_id,minimum,maximum,
-		FIELD(GREATEST(`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`),
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`) as range_values,
-		`count_100`,`count_2010`,`count_3020`,`count_4030`,`count_5040`,`count_6050`,`count_7060`,`count_8070`,`count_9080`,`count_9590`
-		 from 
-		(
-		SELECT  
-		timestamp,host_id,
-		SUM(if(sigStrength2 between '-10' and '0',1,0))   as `count_100`,
-		SUM(if(sigStrength2 between '-20' and '-10',1,0)) as `count_2010`,
-		SUM(if(sigStrength2 between '-30' and '-20',1,0)) as `count_3020`,
-		SUM(if(sigStrength2 between '-40' and '-30',1,0)) as `count_4030`,
-		SUM(if(sigStrength2 between '-50' and '-40',1,0)) as `count_5040`,
-		SUM(if(sigStrength2 between '-60' and '-50',1,0)) as `count_6050`,
-		SUM(if(sigStrength2 between '-70' and '-60',1,0)) as `count_7060`,
-		SUM(if(sigStrength2 between '-80' and '-70',1,0)) as `count_8070`,
-		SUM(if(sigStrength2 between '-90' and '-80',1,0)) as `count_9080`,
-		SUM(if(sigStrength2 between '-95' and '-90',1,0)) as `count_9590`,
-		min(sigStrength2) as minimum,max(sigStrength2) as maximum
-		FROM `odu100_peerNodeStatusTable` 
-		where  host_id=NEW.host_id and sigStrength1<>1111111 and  timestamp between hour_start and hour_end and timeSlotIndex=16
-		group by host_id,timeSlotIndex,DATE_FORMAT(timestamp, '%Y-%m')
-		) as t3
-		) as t4
-		)as t5 
-
-		set 
-		`sig2_index_16_Min`=t5.minimum,
-		`sig2_index_16_Max`=t5.maximum, 
-		`sig2_index_16_Range`=t5.`Most_values`  
-
-		where DATE_FORMAT(t5.timestamp, '%Y-%m')=DATE_FORMAT(ap.timestamp, '%Y-%m') and  
-		t5.host_id=ap.host_id;		
-		
 
 
         END IF;
 
-    END
-//
-DELIMITER ;
+    END;
+|
+delimiter ;
+
 
 DROP TRIGGER IF EXISTS odu100_synchStatisticsTable_trigger;
 delimiter |
@@ -8243,11 +5822,11 @@ CREATE TRIGGER odu100_synchStatisticsTable_trigger BEFORE INSERT ON odu100_synch
 		SELECT 
 		if(t2.`syncLostCounter`>t1.`syncLostCounter`,t2.`syncLostCounter`-t1.`syncLostCounter`,0) as delta_synch_loss,
 		t2.host_id,t2.timestamp
-		FROM (select `syncLostCounter`,host_id,timestamp from `odu100_synchStatisticsTable` where host_id=NEW.host_id and timestamp between hour_start and hour_end ) as t1
-		inner join (select `syncLostCounter`,host_id,timestamp from `odu100_synchStatisticsTable` where host_id=NEW.host_id and timestamp between hour_start and hour_end ) as t2 
-		on t2.timestamp>t1.timestamp and t2.host_id=t1.host_id and t1.host_id=NEW.host_id
+		FROM `odu100_synchStatisticsTable`as t1
+		inner join (select `syncLostCounter`,host_id,timestamp from `odu100_synchStatisticsTable` where timestamp between hour_start and hour_end ) as t2 
+		on t2.timestamp>t1.timestamp and t2.host_id=t1.host_id 
 		where t1.timestamp between hour_start and hour_end 
-		and t2.timestamp between hour_start and hour_end and t2.`syncLostCounter`<>1111111 
+		and t2.timestamp between hour_start and hour_end and t2.`syncLostCounter`<>1 
 		group by t1.timestamp
 		order by t1.timestamp asc ,t1.host_id asc  ) as t3
 		group by t3.host_id,CONCAT(DATE(t3.timestamp),HOUR(t3.timestamp))
@@ -8266,11 +5845,11 @@ CREATE TRIGGER odu100_synchStatisticsTable_trigger BEFORE INSERT ON odu100_synch
 		SELECT 
 		if(t2.`syncLostCounter`>t1.`syncLostCounter`,t2.`syncLostCounter`-t1.`syncLostCounter`,0) as delta_synch_loss,
 		t2.host_id,t2.timestamp
-		FROM (select `syncLostCounter`,host_id,timestamp from `odu100_synchStatisticsTable` where host_id=NEW.host_id and timestamp between hour_start and hour_end ) as t1
-		inner join (select `syncLostCounter`,host_id,timestamp from `odu100_synchStatisticsTable` where host_id=NEW.host_id and timestamp between hour_start and hour_end ) as t2 
-		on t2.timestamp>t1.timestamp and t2.host_id=t1.host_id and t1.host_id=NEW.host_id
+		FROM `odu100_synchStatisticsTable`as t1
+		inner join (select `syncLostCounter`,host_id,timestamp from `odu100_synchStatisticsTable`) as t2 
+		on t2.timestamp>t1.timestamp and t2.host_id=t1.host_id 
 		where t1.timestamp between hour_start and hour_end 
-		and t2.timestamp between hour_start and hour_end and t2.`syncLostCounter`<>1111111 
+		and t2.timestamp between hour_start and hour_end and t2.`syncLostCounter`<>1 
 		group by t1.timestamp
 		order by t1.timestamp asc ,t1.host_id asc  ) as t3
 
@@ -8292,11 +5871,11 @@ CREATE TRIGGER odu100_synchStatisticsTable_trigger BEFORE INSERT ON odu100_synch
 		SELECT 
 		if(t2.`syncLostCounter`>t1.`syncLostCounter`,t2.`syncLostCounter`-t1.`syncLostCounter`,0) as delta_synch_loss,
 		t2.host_id,t2.timestamp
-		FROM (select `syncLostCounter`,host_id,timestamp from `odu100_synchStatisticsTable` where host_id=NEW.host_id and timestamp between hour_start and hour_end ) as t1
-		inner join (select `syncLostCounter`,host_id,timestamp from `odu100_synchStatisticsTable` where host_id=NEW.host_id and timestamp between hour_start and hour_end ) as t2 
-		on t2.timestamp>t1.timestamp and t2.host_id=t1.host_id and t1.host_id=NEW.host_id
+		FROM `odu100_synchStatisticsTable`as t1
+		inner join (select `syncLostCounter`,host_id,timestamp from `odu100_synchStatisticsTable`) as t2 
+		on t2.timestamp>t1.timestamp and t2.host_id=t1.host_id 
 		where t1.timestamp between hour_start and hour_end 
-		and t2.timestamp between hour_start and hour_end and t2.`syncLostCounter`<>1111111 
+		and t2.timestamp between hour_start and hour_end and t2.`syncLostCounter`<>1 
 		group by t1.timestamp
 		order by t1.timestamp asc ,t1.host_id asc  ) as t3
 
@@ -8319,11 +5898,11 @@ CREATE TRIGGER odu100_synchStatisticsTable_trigger BEFORE INSERT ON odu100_synch
 		SELECT 
 		if(t2.`syncLostCounter`>t1.`syncLostCounter`,t2.`syncLostCounter`-t1.`syncLostCounter`,0) as delta_synch_loss,
 		t2.host_id,t2.timestamp
-		FROM (select `syncLostCounter`,host_id,timestamp from `odu100_synchStatisticsTable` where host_id=NEW.host_id and timestamp between hour_start and hour_end ) as t1
-		inner join (select `syncLostCounter`,host_id,timestamp from `odu100_synchStatisticsTable` where host_id=NEW.host_id and timestamp between hour_start and hour_end ) as t2 
-		on t2.timestamp>t1.timestamp and t2.host_id=t1.host_id and t1.host_id=NEW.host_id
+		FROM `odu100_synchStatisticsTable`as t1
+		inner join (select `syncLostCounter`,host_id,timestamp from `odu100_synchStatisticsTable`) as t2 
+		on t2.timestamp>t1.timestamp and t2.host_id=t1.host_id 
 		where t1.timestamp between hour_start and hour_end 
-		and t2.timestamp between hour_start and hour_end and t2.`syncLostCounter`<>1111111 
+		and t2.timestamp between hour_start and hour_end and t2.`syncLostCounter`<>1 
 		group by t1.timestamp
 		order by t1.timestamp asc ,t1.host_id asc  ) as t3
 

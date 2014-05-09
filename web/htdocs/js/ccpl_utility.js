@@ -263,8 +263,7 @@ $.validator.addMethod("minWords", function(value, element, params) {
  */
 // jQuery validation library has a validation method which used to add custom validation with jQuery object.
 $.validator.addMethod("macAddress", function(value, element) { 
-	return this.optional(element) || value.match("^([0-9a-fA-F]{2}-){5}[0-9a-fA-F]{2}$|([0-9a-fA-F]{2}:){5}[0-9a-fA-F]{2}$|([0-9a-fA-F]{4}.){2}[0-9a-fA-F]{4}$"); 
-//	return this.optional(element) || value.match("^([0-9a-fA-F]{2}:){5}[0-9a-fA-F]{2}$"); 
+	return this.optional(element) || value.match("^([0-9a-fA-F]{2}:){5}[0-9a-fA-F]{2}$"); 
 }, $.validator.format("Please enter valid MAC Address"));
 
 /*

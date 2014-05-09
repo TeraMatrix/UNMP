@@ -12,7 +12,6 @@
 ### Please fill each value appropriately 
 ### for config_responce every value must be in "" i quotes 
 
-from copy import deepcopy
 
 config_responce = {'2077':"@@SERVERIP@@",				#FTP_SERVER_IP
    		'2072':"unmpftp",					#FTP_USER_NAME
@@ -23,9 +22,6 @@ config_responce = {'2077':"@@SERVERIP@@",				#FTP_SERVER_IP
 		'2069':"162",						#SNMP_TRAP_PORT
 		'2068':"161"						#SNMP_REQUEST_PORT
 	}		
-
-ccu_responce = deepcopy(config_responce)
-ccu_responce['2071'] = "public"
 
 ###### My SQL parameters #### used by all files that resides in /omd/daemon folder
 
@@ -46,4 +42,4 @@ schema = "@@SCHEMA@@"
 nms_ip = '127.0.0.1'             				# nms ip address used for nagios plugin that checks health of discovery server
 
 server_ip_addr = '@@SERVERIP@@'                                  # server ip address
-				
+# '10.113.247.69'				

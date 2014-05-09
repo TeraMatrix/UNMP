@@ -1,3 +1,4 @@
+// new
 var $spinLoading = null;
 var $spinMainLoading = null;
 var spIpAddress='';
@@ -6,14 +7,12 @@ var deviceTypeId='';
 var graph_type=1;
 var limitFlag=1;
 var spRecursionVar=null;
-var refresh_time=10;// default time for refreshing the hidden datatime value.
+var refresh_time=60000; // default time for refreshing the hidden datatime value.
 var spE1MainObj=null;
 var linkObj=null;
 var spEndDate='';
 var spEndTime='';
 var totalSelectedGraph="";
-var mozilBrowser=false;
-
 $(function(){
 	$spinLoading = $("div#spin_loading");		// create object that hold loading circle
 	$spinMainLoading = $("div#main_loading");	// create object that hold loading squire
@@ -21,24 +20,22 @@ $(function(){
 	$("input[id='current_rept_div']").attr("checked","checked");
 	refresh_time=$("#sp_refresh_time").val();
 	deviceTypeId=$("select[id='device_type']").val();
-	if (deviceTypeId!='ap25')
-		$("#client_rsl_table").parent().parent().css('display','none');
-
 	$("#device_type").change(function(){
 		$("#filter_ip").val("");
-		$("#filter_mac").val("");
+		$("#filter_mac").val("");		
 			});
 	$('#sp_start_date, #sp_start_time, #sp_end_date,  #sp_end_time').calendricalDateTimeRange({
 		isoTime:true
 	    });
 	$("input[id='filter_ip']").keypress(function(){
 		$("input[id='filter_mac']").val("");
-
+		
 	})
         $("input[id='btnSearch']").click(function(){
+	//call the device list function on click of search button
 		deviceList();
 	})
-
+        
 	$("input[id='filter_ip']").ccplAutoComplete("common_ip_mac_search.py?device_type="+deviceTypeId+"&ip_mac_search="+1,{
             dataType: 'json',
             max: 30,
@@ -47,7 +44,7 @@ $(function(){
                         ipSelectMacDeviceType(obj,1);
                 }
         });
-
+        
    $("input[id='filter_mac']").ccplAutoComplete("common_ip_mac_search.py?device_type="+deviceTypeId+"&ip_mac_search="+0,{
             dataType: 'json',
             max: 30,
@@ -57,18 +54,18 @@ $(function(){
             }
     });
 
-	$("input[id='filter_ip']").val($("input[id='filter_ip']").val());
+	$("input[id='filter_ip']").val($("input[id='filter_ip']").val());	
 	$("select[id='device_type']").val($("input[id='device_type']").val());
 	$("select[id='device_type']").val(deviceTypeId);
 
 
-	$("#up_down_search").toggle(function(){
-		//var $span = $(this);
-		//var $span = $this.find("span").eq(0);
-		$("#up_down_search").removeClass("dwn");
-		$("#up_down_search").addClass("up");
-		$("#filterOptions").show();
-		$("#hide_search").css({
+        $("#hide_search").toggle(function(){
+		var $this = $(this);
+		var $span = $this.find("span").eq(0);
+		$span.removeClass("up");
+		$span.addClass("dwn");
+		$("#filterOptions").hide();
+		$this.css({
 		        'background-color': "#F1F1F1",
                         'display': "block",
                         'height': '20px',
@@ -77,24 +74,30 @@ $(function(){
                         'width': "100%"});
 	},
 	function(){
-		//var $this = $(this);
-		//var $span = $this.find("span").eq(0);
-		$("#up_down_search").removeClass("up");
-		$("#up_down_search").addClass("dwn");
-		$("#filterOptions").hide();
-		$("#hide_search").css({
+		var $this = $(this);
+		var $span = $this.find("span").eq(0);
+		$span.removeClass("dwn");
+		$span.addClass("up");
+		$("#filterOptions").show();
+		$this.css({
 		        'background-color': "#F1F1F1",
                         'display': "block",
                         'height': '20px',
                         'overflow': 'hidden',
-                        'position': 'static',
+                        'position': 'relative',
+			'border-bottom':'1px solid #AAA',
                         'right': 1,
                         'top': 1,
                         'width': "100%",
                         'z-index': 1000});
-
+		
 	});
+//	$("#more_graph").toggle($('#more_graph_columns').attr('disabled',''),$('#more_graph_columns').attr('disabled',''));
+	//deviceList();
 	spIpAddress=$("input#filter_ip").val();
+	//oduGraphButtonClick();
+	//graphInitiator();   // calling the function for graph showing
+
 	$("#page_tip").colorbox(
 	{
 	href:"page_tip_sp_monitor_dashboard.py",
@@ -107,7 +110,7 @@ $(function(){
 	})
 
 	$('#sp_host_info_div').slideUp('fast');
-	// Slide up and slide down functionality starthere
+	// Slide up and slide down functionality starthere  
  	$("#tab_yo").slideUp('fast');
 	$("#sp_show_graph_list").toggle(
 				function(){
@@ -123,6 +126,10 @@ $(function(){
 	$("#sp_ad_graph").click(function(){
 		parent.main.location="get_ap_advanced_graph_value.py?ip_address='"+String(spIpAddress)+"'&device_type_id="+deviceTypeId;
 	});
+
+	// Slide up and slide down functionality end here
+	// This function bring the all graph information
+//	spUpdateDateTime();
 	specificGenericGraphJson();
 });
 
@@ -134,66 +141,126 @@ function hostInformation(){
 			  }, 1000, function()
 			  {
 			  	var $hostInfo = $("#host_info");
-				if ($hostInfo.attr('src')=="images/new_icons/round_minus.png")
+				if ($hostInfo.attr('src')=="images/new_icons/round_plus.png")
 				{
-					$hostInfo.attr('src',"images/new_icons/round_plus.png");
-					$hostInfo.attr('original-title','Show Status')
+					$hostInfo.attr('src',"images/new_icons/round_minus.png");
+					$hostInfo.attr('original-title','Hide Status')
 //					$("#host_info").html("original-title='Hide Status'");
 				}
 				else
 				{
-					$hostInfo.attr('src',"images/new_icons/round_minus.png");
-					$hostInfo.attr('original-title','Hide Status')
-
+					$hostInfo.attr('src',"images/new_icons/round_plus.png");
+					$hostInfo.attr('original-title','Show Status')
 				}
                }
              );
 }
 
-
-function backListing(){
-	if (deviceTypeId=='odu16' || deviceTypeId=='odu100')
-		redirectPath='odu_listing.py';
-	else if (deviceTypeId=='ap25')
-		redirectPath='ap_listing.py';
-	else if (deviceTypeId=='idu4')
-		redirectPath='idu_listing.py';
-	else if (deviceTypeId=='ccu')
-		redirectPath='ccu_listing.py';
-	else
-		redirectPath='odu_listing.py';
-	parent.main.location=redirectPath+"?device_type="+String(deviceTypeId)+"device_list_state=enabled&selected_device_type=";
+/*function toggle_options()
+{
+//		if(flag_more_options==false)
+//		{
+//		return;
+//		}	
+		if($("div#more_graph_columns").css("display")=="block")
+		{
+		 $("#more_graph_span").html("Expand");
+		  
+		}
+		else
+		{
+		  $("#more_graph_span").html("Collapse");
+		}
+		
+	  $("div#more_graph_columns").toggle();
 }
+*/
 
+
+
+
+/*
+// This function used for auto suggest search box.
+function HostIPSearch(){
+	var selected='';
+	var selectedText='';
+    $("#filter_ip").fcbkcomplete({
+        isID:'fb_host',
+        json_url: "show_ip_list.py",
+        width:'150px',
+        addontab: false,                   
+        maxitems: 10,
+	maxshownitems:10,
+	input_min_size:1,
+        height: 10,
+        cache: true,
+        newel: false,
+        filter_selected:true
+//        onselect: function(){
+//				$("#host_search option:selected").each(function() {
+				        //allHost.push($(this).val());
+//				        selected=$(this).val();
+//					selectedText=$(this).text();
+//				     });
+//					addSingleHost(selected,selectedText);
+//				}
+
+    });
+}*/
 
 function specificGenericGraphJson(){
 	$.ajax({
 		type:"post",
 		url:"sp_generic_json.py?device_type_id="+deviceTypeId+"&ip_address="+spIpAddress,
-		data:$(this).serialize(),
+		data:$(this).serialize(), // $(this).text?
 		cache:false,
 		success:function(result){
-				if (result.graphs.length==0)
-				   $().toastmessage('showErrorToast','Graph Information not exists in database for this User.');
-				else if (result.success==0){
-				   result.otherData=[{name:'start_date',value:function() { return $('input#sp_start_date').val();}},
-				   {name:'start_time',value:function() { return $('input#sp_start_time').val();}},
-				   {name:'end_date',value:function() { return $('input#sp_end_date').val();}},
-				   {name:'end_time',value:function() { return $('input#sp_end_time').val();}},
-				   {name:'flag',value:function() { return limitFlag; }},
-				   {name:'ip_address',value:function() { return spIpAddress; }},{name:'graph_type',value:function() { return graph_type; }}];
-				   spAddDateTime();
-	               		   result.graphColumn=2;
-	               		   spUpdateDateTime();
-	               		   $("#sp_main_graph").html("");
-	               		   spMainObj=$("#sp_main_graph").yoAllGenericDashboard(result);
-	               		   trapAlarmInformation('alarm');
+				var e1PortJsonDict={'graphs':[]};
+				var linkJosnDict={'graphs':[]};
+				
+				if (result.success==0){
+/*					var table_name='';
+					for (node in result.graphs){
+						table_name=String(result.graphs[node].ajax.data.table_name).split(",")[0];
+						if (table_name=="idu_e1PortStatusTable")
+						{
+							var temp_dic=result.graphs[node];
+							delete result.graphs[node];
+							result.graphs.shift();
+							e1PortJsonDict['graphs'][0]=temp_dic;
+							//alert(JSON.stringify(e1PortJsonDict));
+			               	e1PortJsonDict.graphColumn=2;       
+							e1PortJsonDict.otherData=[{name:'start_date',value:function() { return $('input#sp_start_date').val();}},{name:'start_time',value:function() { return $('input#sp_start_time').val();}},{name:'end_date',value:function() { return $('input#sp_end_date').val();}},{name:'end_time',value:function() { return $('input#sp_end_time').val();}},{name:'flag',value:function() { return limitFlag; }},{name:'ip_address',value:function() { return spIpAddress; }},{name:'graph_type',value:function() { return graph_type; }}];
+							spE1MainObj=$("#sp_e1_graph").yoAllGenericDashboard(e1PortJsonDict);
+						}				
+						else if(table_name=="idu_linkStatisticsTable")
+						{
+							var temp_dic=result.graphs[node];
+							delete result.graphs[node];
+							result.graphs.shift();
+							linkJosnDict['graphs'][0]=temp_dic;
+							//alert(JSON.stringify(e1PortJsonDict));
+			               	linkJosnDict.graphColumn=2;       
+							linkJosnDict.otherData=[{name:'start_date',value:function() { return $('input#sp_start_date').val();}},{name:'start_time',value:function() { return $('input#sp_start_time').val();}},{name:'end_date',value:function() { return $('input#sp_end_date').val();}},{name:'end_time',value:function() { return $('input#sp_end_time').val();}},{name:'flag',value:function() { return limitFlag; }},{name:'ip_address',value:function() { return spIpAddress; }},{name:'graph_type',value:function() { return graph_type; }}];
+							linkObj=$("#sp_e1_graph").yoAllGenericDashboard(e1PortJsonDict);
+						}
+					}*/
+				   result.otherData=[{name:'start_date',value:function() { return $('input#sp_start_date').val();}},{name:'start_time',value:function() { return $('input#sp_start_time').val();}},{name:'end_date',value:function() { return $('input#sp_end_date').val();}},{name:'end_time',value:function() { return $('input#sp_end_time').val();}},{name:'flag',value:function() { return limitFlag; }},{name:'ip_address',value:function() { return spIpAddress; }},{name:'graph_type',value:function() { return graph_type; }}];
+					spAddDateTime();
+	               	result.graphColumn=2;        
+					spUpdateDateTime(); // update date time in text box
+					$("#sp_main_graph").html("");
+					spMainObj=$("#sp_main_graph").yoAllGenericDashboard(result);
+					// $("#main_graph").html("");
+//					apDeviceDetail();
+//					updateDateTime();
+					trapAlarmInformation('alarm');
 				}
 				else{
-	               		   $().toastmessage('showErrorToast',result.error_msg);
+					$().toastmessage('showErrorToast',result.error_msg);
 				}
 		}
-	});
+	});  
 }
 
 
@@ -230,6 +297,7 @@ function enabledReportButton()
 
 function deviceList()
 {
+	//var deviceTypeId = "ap25";
 	// this retreive the value of ipaddress textbox
 	var ip_address = $("input[id='filter_ip']").val();
 	// this retreive the value of macaddress textbox
@@ -238,20 +306,25 @@ function deviceList()
 	var selected_device_type = $("select[id='device_type']").val();
 	var selectListElem=$("#device_type option:selected").text();
 	deviceTypeId=selected_device_type;
+
 	if (selectListElem=="" || selectListElem==undefined)
 		selectListElem=""
+	// this ajax return the call to function get_device_data_table which is in odu_view and pass the ipaddress,macaddress,devicetype with url  
 	if (selected_device_type=='odu16' || selected_device_type=='odu100')
 		redirectPath='odu_listing.py';
 	else if (selected_device_type=='ap25')
 		redirectPath='ap_listing.py';
-	else if (selected_device_type=='ccu')
-		redirectPath='ccu_listing.py';
 	else if (selected_device_type=='idu4')
 		redirectPath='idu_listing.py';
 	else
 		redirectPath='odu_listing.py';
 	apIpAddress=ip_address
 	deviceTypeId=$("select[id='device_type']").val();
+	//spinStop($spinLoading,$spinMainLoading);
+		//	}
+		//});
+	
+
 	$.ajax({
 		type:"post",
 		url:"get_device_list_ap_for_monitoring.py?&ip_address=" + ip_address + "&mac_address=" + mac_address + "&selected_device_type=" + selected_device_type,
@@ -261,7 +334,9 @@ function deviceList()
 					if (result == 0 || result == "0")
 					{
 						redirectOnListing(redirectPath);
-						 $("#adSrhap").hide();
+                         //clearTimeout(tempObj);
+//						 $("#sp_show_msg").html("No Data exist for this device.")
+						 $("#adSrhap").hide(); // hide the button
 						 $("#tab_yo").hide();
 						 $("#event_table").hide();
 						 $("#alarm_table").hide();
@@ -273,38 +348,42 @@ function deviceList()
 					else if (result==1 || result=="1")
 					{
 						parent.main.location = redirectPath+"?ip_address=" + ip_address + "&mac_address=" + mac_address + "&selected_device_type=" + selected_device_type;
-
+						
 					}
 					else if (result == 2 || result == "2")
 					{
 						redirectOnListing(redirectPath);
-						 $("#adSrhap").hide();
+//						 $("#sp_show_msg").html("Please Try Again.")
+						 $("#adSrhap").hide(); // hide the button
 						 $("#tab_yo").hide();
 						 $("#event_table").hide();
 						 $("#alarm_table").hide();
+						 //$("#ap_device_graph").hide();
 						 $("#main_host_info_div").hide();
 						 $("#sp_main_graph").html("");
 						disbaledReportButton();
 
 
 					}
-					else
-				 	{
+					else 
+				 	{	
 						$("#sp_show_msg").html("")
+					//	$("#adSrhap").show(); // show the button
 						$("#tab_yo").show();
 						$("input#filter_ip").val(result);
 						spIpAddress=result;
+						//$("#ap_device_graph").show();
 						 $("#event_table").show();
 						 $("#alarm_table").show();
 						$("#main_host_info_div").show();
 						$("#sp_main_graph").html("");
 						spDeviceDetail();
 						specificGenericGraphJson();
-						enabledReportButton();
+						enabledReportButton();						
 					}
 				}
 		});
-
+		
 }
 
 
@@ -332,7 +411,7 @@ function ipSelectMacDeviceType(obj,ipMacVal)
             }
             else
             {
-                 $().toastmessage('showErrorToast',result.error);
+                 $().toastmessage('showErrorToast',result.error);   
             }
         }
    });
@@ -342,7 +421,7 @@ function ipSelectMacDeviceType(obj,ipMacVal)
 function redirectOnListing(redirctPath){
 		 $().toastmessage('showWarningToast',"Searched Device Doesn't Exist");
 		setTimeout(function(){
-		parent.main.location = redirectPath+"?ip_address=" + "" + "&mac_address=" + "" + "&selected_device_type=" + "";
+		parent.main.location = redirectPath+"?ip_address=" + "" + "&mac_address=" + "" + "&selected_device_type=" + "";							
 		},1500);
 }
 
@@ -362,9 +441,9 @@ function spDeviceDetail()
 					}
 					else
 					{
-						$("#sp_host_info_div").html(result.device_table);
+						$("#sp_host_info_div").html(result.device_table);	
 					}
-			},
+			},		
 		error:function(req,status,err){
 		}
 	});
@@ -377,7 +456,7 @@ function advancedUpdateDateTime(){
     $.ajax({
         type:"post",
         url:"advanced_update_date_time.py?device_type_id="+deviceTypeId,
-		data:$(this).serialize(),
+		data:$(this).serialize(), // $(this).text?
 		cache:false,
 	    success:function(result){
 			if (result.success==1 || result.success=="1")
@@ -392,7 +471,7 @@ function advancedUpdateDateTime(){
 			}
         }
 	});
-   return false;
+   return false;	
 }
 
 
@@ -415,11 +494,11 @@ function spAddDateTime(){
 				$("#sp_end_date").val(result.end_date);
 				$("#sp_start_time").val(result.start_time);
 				$("#sp_end_time").val(result.end_time);
-				multiSelectColumns();
+				multiSelectColumns();				
 			}
     	}
 	});
-   return false;
+   return false; //always remamber this	
 }
 
 
@@ -427,43 +506,14 @@ function spAddDateTime(){
 
 function spUpdateDateTime(){
 	if(spRecursionVar!=null)
-	{
+	{	
 		clearInterval(spRecursionVar);
 	}
 	spDeviceDetail();
-	if (deviceTypeId=='ap25'){
-		clientInformation()
-		$("#client_rsl_table").parent().parent().removeAttr('display');
-	}
 	spAddDateTime();
 	trapAlarmInformation();
-	spRecursionVar=setInterval(function (){spUpdateDateTime();},refresh_time*60000);
+	spRecursionVar=setInterval(function (){spAddDateTime();},refresh_time*60000);
 }
-
-
-
-function clientInformation()
-{
-	$.ajax({
-		type:"post",
-		url:"sp_client_information.py?ip_address="+spIpAddress+"&device_type_id="+deviceTypeId,
-		data:$(this).serialize(),
-		cache:false,
-		success:function(result){
-			if (result.success>=1 || result.success>="1")
-			{
-				$().toastmessage('showErrorToast',result.error_msg);
-			}
-			else
-			{
-				$("#client_dashboard").html(result.client_table);
-			}
-		},
-		error:function(req,status,err){
-	}
-	});
-}
-
 
 
 
@@ -482,7 +532,10 @@ function trapAlarmInformation()
 					}
 					else
 					{
+						//$("#alarm_dashboard").html(result.alarm_table);
 						$("#event_dashboard").html(result.event_table);
+						
+
 					}
 				},
 				error:function(req,status,err){
@@ -497,9 +550,6 @@ function spExcelReportGeneration(){
 }
 // This is create the PDF Report.
 function spPDFReportGeneration(){
-	if($.browser.mozilla){
-		mozilBrowser=true;
-	}
 	spCommonReportCreating('sp_pdf_report_genrating.py','UBR_PDF_Report.pdf');
 }
 
@@ -510,6 +560,10 @@ function spCSVReportGeneration(){
 
 
 function spCommonReportCreating(redirectPath,file_name){
+	/*if (totalSelectedGraph==""){
+		$().toastmessage('showWarningToast', "Please select atleast one graph from dashboard configuration.");
+		return false;
+	}*/
 	graph_json={};
 	var field=[];
 	var cal_type=null;
@@ -522,64 +576,13 @@ function spCommonReportCreating(redirectPath,file_name){
 	var start_time=$("#sp_start_time").val();
 	var end_date=$("#sp_end_date").val();
 	var end_time=$("#sp_end_time").val();
-	var calculationType="";
-	var graphType="";
-	var tempFileds="";
-	var chartType1=null;
+	//var subObj=spMainObj.options.db;
+	
 	for (node in spMainObj.options.db)
 	{
-		// Create chart.
-		//svg = convertSVG(spMainObj.options.db[node]["options"]);
-		//chartCopy1 = new Highcharts.Chart(spMainObj.options.db[node]["options"]);
-		//alert(JSON.stringify(spMainObj.options.db[node]["options"]));
-		//svg = spMainObj.options.db[node]["options"].highChart.container.innerHTML;
-		if (redirectPath=='sp_pdf_report_genrating.py')
-		{
-			var drawType="";
-			for(var i=0;i<spMainObj.options.db[node].options.type.length;i++)
-			{
-				if(spMainObj.options.db[node].options.type[i].isChecked == 1)
-				{
-					drawType=spMainObj.options.db[node].options.type[i].name;
-				}
-			}
-
-			plotOptions1 = spMainObj.options.db[node]["options"].highChart.options.plotOptions;
-			chartType1 = plotOptions1[drawType];
-			try{
-				chartType1.animation = false;
-				chartType1.showCheckbox = false;
-				chartType1.visible = true;
-			}catch (err)
-			{ }
-
-			chartCopy1 = new Highcharts.Chart(spMainObj.options.db[node]["options"].highChart.options);
-			svg = chartCopy1.container.innerHTML;
-
-			//svg = spMainObj.options.db[node]["options"].highChart.container.innerHTML;
-			svg = convertSVG(svg);
-			$.ajax({
-				type:"post",
-				//url:"../../images/download.php",
-				url:"download.php",
-				data:{
-					"type":"image/png",
-					"svg1":svg,
-					"filename":spMainObj.options.db[node]["options"].name,
-					"download":"Download"
-				},
-				success:function(result){
-					//$().toastmessage('showErrorToast', result);
-				},
-				error:function(req,status,err){
-					$().toastmessage('showErrorToast', "Image creator not present on desired location.");
-				}
-			})
-		}
-		// End chart.
-
 		totalGraph+=1;
 		field=[];
+		//alert(spMainObj.options.db[node]["options"].calType[0].name);
 		var tempFileds = spMainObj.options.db[node]["options"].fields;
 		for (var i=0;i<tempFileds.length;i++ )
 			{
@@ -608,27 +611,64 @@ function spCommonReportCreating(redirectPath,file_name){
 
 		tab_option = spMainObj.options.db[node]["options"].tabList.selected;
 		ajaxData=spMainObj.options.db[node]["options"].ajax.data['table_name'];
-
+		
 		graphQuerySrting+= "&start"+String(totalGraph)+"="+spMainObj.options.db[node]["options"].startFrom;
 		graphQuerySrting+= "&limit"+String(totalGraph)+"="+spMainObj.options.db[node]["options"].itemLimit;
 
 		graphQuerySrting+= "&table_name" + String(totalGraph) + "=" + ajaxData;
 		graphQuerySrting+= "&type"+String(totalGraph)+"="+graph;
-
+		
 		graphQuerySrting+= "&field"+String(totalGraph)+"="+field;
 		graphQuerySrting+= "&cal"+String(totalGraph)+"="+cal_type;
-		graphQuerySrting+= "&graph_id"+String(totalGraph)+"="+spMainObj.options.db[node]["options"].name;
 		graphQuerySrting+= "&tab"+String(totalGraph)+"="+tab_option;
 		graphQuerySrting+= "&graph_name"+String(totalGraph)+"="+spMainObj.options.db[node]["options"].displayName;
 	}
 	graphQuerySrting+= "&total_graph=" + String(totalGraph)
 	var select_option=$("input[name='option']:checked").val();
 		if (select_option==0){
+//				endDateStr=spEndDate.split("/");
+//				endTimeStr=spEndTime.split(":");
+//				var cdate = new Date(endDateStr[2],parseInt(endDateStr[1])-1, endDateStr[0],endTimeStr[0],endTimeStr[1]); 
+
+/*			var cur_date=new Date();
+			var d=cur_date.getDate();
+			var y=cur_date.getFullYear();
+			var m=cur_date.getMonth();
+			var h = cur_date.getHours();
+			var mi = cur_date.getMinutes();
+			var cdate=new Date(y,m,d,h,mi);
+*/
+/*				var str1  = $("#sp_start_date").val();
+				var str2  = $("#sp_end_date").val();
+				var str3  = $("#sp_start_time").val();
+				var str4  = $("#sp_end_time").val();
+				str1=str1.split("/");
+				str2=str2.split("/");
+				str3=str3.split(":");
+				str4=str4.split(":");
+*/
+//				alert(String(cdate));
+//				alert(String(date1));
+//				alert(String(date2));
+
+/*				var date1 = new Date(str1[2],parseInt(str1[1])-1, str1[0],str3[0],str3[1]); 
+				var date2 = new Date(str2[2],parseInt(str2[1])-1, str2[0],str4[0],str4[1]);
+				if(date2 < date1)
+				{
+					 $().toastmessage('showWarningToast', "End Date can't be greater than Start Date");
+				}
+				else if(cdate<date1 || cdate<date2)
+					{
+
+					 	$().toastmessage('showWarningToast', "Dates can't be greater than current Date");
+					}
+				else 
+					{*/
 				    spinStart($spinLoading,$spinMainLoading);
 				    $.ajax({
 					type:"post",
 					url:"advanced_update_date_time.py?device_type_id="+deviceTypeId,
-						data:$(this).serialize(),
+						data:$(this).serialize(), // $(this).text?
 						cache:false,
 					    	success:function(result){
 							if (result.success==1 || result.success=="1")
@@ -657,7 +697,7 @@ function spCommonReportCreating(redirectPath,file_name){
 												spinStop($spinLoading,$spinMainLoading);
 
 										}
-								});
+								});  
 								}
 							}
 							});
@@ -683,77 +723,13 @@ function spCommonReportCreating(redirectPath,file_name){
 								}
 									spinStop($spinLoading,$spinMainLoading);
 							}
-					});
+					});  
 	}
 }
 
-
-/* Create chart code start here.
-*/
-   function convertSVG(svgTxt)
-   {
-      	var svg = svgTxt;
-	// sanitize
-
-	// sanitize
-		svg = svg
-			.replace(/zIndex="[^"]+"/g, '')
-			.replace(/isShadow="[^"]+"/g, '')
-			.replace(/symbolName="[^"]+"/g, '')
-			.replace(/jQuery[0-9]+="[^"]+"/g, '')
-			.replace(/isTracker="[^"]+"/g, '')
-			.replace(/url\([^#]+#/g, 'url(#')
-			.replace(/<svg /, '<svg xmlns:xlink="http://www.w3.org/1999/xlink" ')
-			.replace(/ href=/g," transform=\"translate(-15,-15)\" height=\"16\" width=\"16\" xlink:href=")
-			.replace(/\n/, ' ')
-			.replace(/<\/svg>.*?$/, '</svg>') // any HTML added to the container after the SVG (#894)
-			/* This fails in IE < 8
-			.replace(/([0-9]+)\.([0-9]+)/g, function(s1, s2, s3) { // round off to save weight
-				return s2 +'.'+ s3[0];
-			})*/
-
-			// Replace HTML entities, issue #347
-			.replace(/&nbsp;/g, '\u00A0') // no-break space
-			.replace(/&shy;/g,  '\u00AD') // soft hyphen
-
-			// IE specific
-			.replace(/<IMG /g, '<image ')
-			.replace(/height=([^" ]+)/g, 'height="$1"')
-			.replace(/width=([^" ]+)/g, 'width="$1"')
-			.replace(/hc-svg-href="([^"]+)">/g, 'xlink:href="$1"/>')
-			.replace(/id=([^" >]+)/g, 'id="$1"')
-			.replace(/class=([^" ]+)/g, 'class="$1"')
-			.replace(/ transform /g, ' ')
-			.replace(/:(path|rect)/g, '$1')
-			.replace(/style="([^"]+)"/g, function (s) {
-				return s.toLowerCase();
-			});
-
-		// IE9 beta bugs with innerHTML. Test again with final IE9.
-		svg = svg.replace(/(url\(#highcharts-[0-9]+)&quot;/g, '$1')
-			.replace(/&quot;/g, "'");
-		if (svg.match(/ xmlns="/g).length === 2) {
-			svg = svg.replace(/xmlns="[^"]+"/, '');
-		}
-
-	//console.log(svg)
-	if(mozilBrowser=true)
-	{
-		svg = svg.replace(/<image ([^>]*)([^\/])>/gi, '<image $1$2 />');
-	}
-
-	return svg;
-
-   }
-
-
-//  Chart code end.
-
-
-
-// Selectded list function start here
+// Selectded list function start here 
 function multiSelectColumns()
-{
+{       
 	$(".plus").click(function(){
 		plusHostParentOption(this);
 	})

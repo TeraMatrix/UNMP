@@ -19,8 +19,8 @@ var i=0
 $$ = $.noConflict();
 jQuery(function () {
 	var mapcanvas = document.getElementById("map_canvas");	
-    mapcanvas.style.height = '100%';//(screen.height) + 'px';
-    mapcanvas.style.width = '100%';//(screen.width) + 'px';	
+    mapcanvas.style.height = (screen.height) + 'px';
+    mapcanvas.style.width = (screen.width) + 'px';	
 });
 $$("#page_tip").colorbox(
 	{
@@ -266,7 +266,6 @@ function getNMSData(nmsName) {
 										    {
 										    newHostJson=eval(result.output);
 											newDiscoverDevice(eval(result.output),"tfbc");
-											newDiscoverDevice(result.disable_hosts,"dfbc");
 											//bindDragHandlerToNewHost();
 											updateHostInformation();
 										    }

@@ -30,8 +30,8 @@ $(document).ready(function(){
 		var str2  = $("#end_date").val();
 		str1=str1.split("/");
 		str2=str2.split("/");
-		var date1 = new Date(str1[2],parseInt(str1[1],10)-1, str1[0]); 
-		var date2 = new Date(str2[2],parseInt(str2[1],10)-1, str2[0]);
+		var date1 = new Date(str1[2],parseInt(str1[1])-1, str1[0]); 
+		var date2 = new Date(str2[2],parseInt(str2[1])-1, str2[0]);
 		if(date2 < date1)
 		{
 			 $().toastmessage('showErrorToast', "End Date can't be greater than Start Date");
@@ -149,8 +149,8 @@ $(document).ready(function(){
 		var str2  = $("#end_date").val();
 		str1=str1.split("/");
 		str2=str2.split("/");
-		var date1 = new Date(str1[2],parseInt(str1[1],10)-1, str1[0]); 
-		var date2 = new Date(str2[2],parseInt(str2[1],10)-1, str2[0]);
+		var date1 = new Date(str1[2],parseInt(str1[1])-1, str1[0]); 
+		var date2 = new Date(str2[2],parseInt(str2[1])-1, str2[0]);
 		if(date2 < date1)
 		{
 			 $().toastmessage('showErrorToast', "End Date can't be greater than Start Date");

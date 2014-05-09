@@ -30,8 +30,7 @@
 # | Lars Michelsen <lm@mathias-kettner.de>            Copyright 2010 |
 # +------------------------------------------------------------------+
 
-import views
-import defaults
+import views, defaults
 
 # Python 2.3 does not have 'set' in normal namespace.
 # But it can be imported from 'sets'
@@ -40,17 +39,14 @@ try:
 except NameError:
     from sets import Set as set
 
-
 def render_searchform():
     try:
         limit = config.quicksearch_dropdown_limit
     except:
         limit = 80
 
-    html.write(
-        '<div id="mk_side_search" class="content_center" onclick="mkSearchClose();">')
-    html.write(
-        '<input id="mk_side_search_field" type="text" name="search" autocomplete="off" />')
+    html.write('<div id="mk_side_search" class="content_center" onclick="mkSearchClose();">')
+    html.write('<input id="mk_side_search_field" type="text" name="search" autocomplete="off" />')
     html.write('</div>')
     html.write("<script type='text/javascript' src='js/search.js'></script>\n")
     html.write("<script type='text/javascript'>\n")
@@ -76,40 +72,35 @@ def render_searchform():
         html.write("aSearchHostgroups = %s;\n" % json.dumps(data))
         data = sort_data(html.live.query("GET servicegroups\nColumns: name\n"))
         html.write("aSearchServicegroups = %s;\n" % json.dumps(data))
-        data = sort_data(
-            html.live.query("GET services\nColumns: description\n"))
+        data = sort_data(html.live.query("GET services\nColumns: description\n"))
         html.write("aSearchServices = %s;\n" % json.dumps(data))
     except:
-        data = html.live.query(
-            "GET hosts\nColumns: name\n", "OutputFormat: json\n")
+        data = html.live.query("GET hosts\nColumns: name\n", "OutputFormat: json\n")
         html.write("aSearchHosts = %s;\n" % data)
-        data = html.live.query(
-            "GET hostgroups\nColumns: name\n", "OutputFormat: json\n")
+        data = html.live.query("GET hostgroups\nColumns: name\n", "OutputFormat: json\n")
         html.write("aSearchHostgroups = %s;\n" % data)
-        data = html.live.query(
-            "GET servicegroups\nColumns: name\n", "OutputFormat: json\n")
+        data = html.live.query("GET servicegroups\nColumns: name\n", "OutputFormat: json\n")
         html.write("aSearchServicegroups = %s;\n" % data)
-        data = html.live.query(
-            "GET services\nColumns: description\n", "OutputFormat: json\n")
+        data = html.live.query("GET services\nColumns: description\n", "OutputFormat: json\n")
         html.write("aSearchServices = %s;\n" % data)
     html.write("aSearchLimit = %d;\n" % limit)
     html.live.set_prepend_site(False)
 
     html.write("</script>\n")
 
-# sidebar_snapins["search"] = {
+#sidebar_snapins["search"] = {
 ##    "title" : "Quicksearch",
 #    "description" : "Interactive search field for direct access to hosts",
 #    "author" : "Lars Michelsen",
 #    "render" : render_searchform,
 #    "allowed" : [ "user", "admin", "guest" ],
 #    "styles" : """
-# div#mk_side_search {
+#div#mk_side_search {
 #    width: %dpx;
 #    padding: 0;
 #}
 
-# div#mk_side_search input {
+#div#mk_side_search input {
 #    margin:  0;
 #    padding: 0;
 #    font-size: 8pt;
@@ -123,7 +114,7 @@ def render_searchform():
 #    outline: 1px solid #fff;
 #}
 
-# div#mk_side_search #mk_search_results {
+#div#mk_side_search #mk_search_results {
 #    position: relative;
 #    border: 1px solid white;
 #    top: 1px;
@@ -133,7 +124,7 @@ def render_searchform():
 #    width:140px;
 #}
 
-# div#mk_side_search #mk_search_results a {
+#div#mk_side_search #mk_search_results a {
 #    display: block;
 #    color: #000;
 #    text-decoration: none;
@@ -142,8 +133,8 @@ def render_searchform():
 #    width: 135px;
 #}
 
-# div#mk_side_search #mk_search_results a:hover, div#mk_side_search #mk_search_results a.active {
-# background-color: #BFBFBF;
+#div#mk_side_search #mk_search_results a:hover, div#mk_side_search #mk_search_results a.active {
+#background-color: #BFBFBF;
 #}
 #
 #""" % (snapin_width - 4, snapin_width - 8)

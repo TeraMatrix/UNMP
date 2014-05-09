@@ -1,11 +1,5 @@
 var global_log="False";
 var tactical_call = null;
-var isLogged_in = 0;
-var last_accessed = Date.now();
-//@TODO: get these variables from server.
-var IDLE_TIMEOUT = 5*60;
-var GRACE_PERIOD = 60;
-
 // prototype tabs with jquery object
 $.fn.yoTabs = function(tabs) {
     this.each(function() {
@@ -47,7 +41,7 @@ $.fn.spin = function(opts) {
     return this;
 };
 
-// start spin loading
+// start spin loading 
 function spinStart(obj,objContainer,css,lines,length,width,radius,color,speed,trail,shadow) {
 	lines = lines != null?lines:12;
 	length = length != null?length:14;
@@ -76,7 +70,7 @@ function spinStart(obj,objContainer,css,lines,length,width,radius,color,speed,tr
 	}
 }
 
-// stop spin loading
+// stop spin loading 
 function spinStop(obj,objContainer)
 {
 	objContainer.hide();
@@ -84,7 +78,7 @@ function spinStop(obj,objContainer)
 	obj.stop();
 }
 
-// To start spin loading function call like that
+// To start spin loading function call like that 
 // spinStart(spinLoading,spinMainLoading);
 
 // To stop spin loading function call like that
@@ -97,7 +91,7 @@ $.fn.yoDashboard = function(options){
 		title: "My Dashboard Graph",						// use this if you want to change title of dashboard graph or dashboard table
 		width: "100%",										// use this if you want to change width of dashboard graph or dashboard table
 		height: "180px",									// use this if you want to change height of dashboard graph or dashboard table
-		className: "",										// use this if you want to add new class
+		className: "",										// use this if you want to add new class 
 		style: {},											// use this if you want to add new style sheet
 		showNextPreButton: false,							// use this if you want to show/hide next previous button on dashboard graph or dashboard table
 		autoRefresh: false,									// use this if you want dashboard make auto refresh
@@ -106,7 +100,7 @@ $.fn.yoDashboard = function(options){
 		totalItem: 0,
 		startFrom: 0,										// use this if you want to change start range
 		itemLimit: 5,										// use this if you want to change item limit
-		showTabOption: false,								// use this if you want to show/hide tab option
+		showTabOption: false,								// use this if you want to show/hide tab option 
 		tabList: {value:[],name:[],selected:null},			// use this to add tab options
 		ajaxRequest:function(div_obj,start,limit,tab_value){ return true },	// ajax request that create your dashboard graph or dashboard table
 		//spinStart(obj,objContainer,css,lines,length,width,radius,color,speed,trail,shadow)
@@ -129,61 +123,76 @@ $.fn.yoDashboard = function(options){
 	return this.each(function(){
 		var $this = $(this);
 		$this.options = options;
-
+		// change for tab list position
+		var tabRightPosition = 3;
+		if($this.options.showRefreshButton==true)
+		{
+			tabRightPosition += 20;
+		}
+		if($this.options.showNextPreButton==true)
+		{
+			tabRightPosition += 40;
+		}
+		if(tabRightPosition>3)
+		{
+			tabRightPosition += 3;
+		}
+		//End  change for tab list position
+		
 		// create dashboard head
 		var $dbHead = $("<div/>");
 		$dbHead.addClass("db-head");
-
+		
 		// create title span
 		var $span = $("<span/>");
 		$span.html($this.options.title);
 		$span.appendTo($dbHead);
-
+		
 		// create button container
 		var $aDiv = $("<div/>");
 		$aDiv.addClass("db-menu");
-
+		
         // create button options
 		// previous button
 		var $prevA = $("<a/>");
 		$prevA.addClass("ds");
 		$prevA.attr("href","#");
-
+		
 		var $prevASpan = $("<span/>");
 		$prevASpan.addClass("prv");
 		$prevASpan.appendTo($prevA);
-
+		
 		if($this.options.showNextPreButton)
 		{
 			$prevA.addClass("ft");
 			$prevA.appendTo($aDiv);
 		}
-
+		
 		// next button
 		var $nextA = $("<a/>");
 		$nextA.addClass("ds");
 		$nextA.attr("href","#");
-
-		var $nextASpan = $("<span/>");
+		
+		var $nextASpan = $("<span/>"); 
 		$nextASpan.addClass("nxt");
 		$nextASpan.appendTo($nextA);
-
+		
 		if(!$this.options.showRefreshButton)
 			$nextA.addClass("lt");
-
+		
 		if($this.options.showNextPreButton)
 			$nextA.appendTo($aDiv);
-
-
+		
+		
 		// refresh button
 		var $refeshA = $("<a/>");
 		$refeshA.addClass("ds");
 		$refeshA.attr("href","#");
-
-		var $refeshASpan = $("<span/>");
+		
+		var $refeshASpan = $("<span/>"); 
 		$refeshASpan.addClass("rf2");
 		$refeshASpan.appendTo($refeshA);
-
+		
 		if($this.options.showRefreshButton)
 		{
 			if($this.options.showNextPreButton)
@@ -194,53 +203,53 @@ $.fn.yoDashboard = function(options){
 			$refeshA.addClass("en");
 			$refeshA.appendTo($aDiv);
 		}
-
+		
 		// next-prev button enable or disable
 		$.yoDashboard.changeNextPrevState($this,$nextA,$prevA);
-
+		
 		// bind Event with next button
 		$nextA.click(function(e){
 			e.preventDefault();
 			if($(this).hasClass("en"))
 			{
 				$.yoDashboard.ajaxCall($this,true,1);
-			}
+			}			
 		});
-
+		
 		// bind Event with previous button
 		$prevA.click(function(e){
 			e.preventDefault();
 			if($(this).hasClass("en"))
 			{
 				$.yoDashboard.ajaxCall($this,true,2);
-			}
+			}			
 		});
-
+		
 		// bind Event with refresh button
 		$refeshA.click(function(e){
 			e.preventDefault();
 			// ajax call
 			$.yoDashboard.ajaxCall($this,true,0);
 		});
-
-		// bind Event with body
+		
+		// bind Event with body 
 		$(document).click(function (event) {
 				$.yoDashboard.clickOnBody($this);
 		});
-
+		
 		if($this.options.showTabOption && $this.options.tabList.value.length > 0)
 		{
 			// Create Tabs
-			var $tabs = $("<div/>");
+			var $tabs = $("<div/>").css({"right":String(tabRightPosition) + "px"});
 			$tabs.addClass("db-tab");
-
+			
 			var $aTabs = $("<a/>");
 			$aTabs.attr("href","#");
-
+			
 			// Create Tab List
-			var $tabList = $("<div/>");
+			var $tabList = $("<div/>").css({"right":String(tabRightPosition) + "px"});
 			$tabList.addClass("db-tab-list");
-
+			
 			var $ul = $("<ul/>");
 			for(var i=0 ;i<$this.options.tabList.value.length;i++)
 			{
@@ -276,7 +285,7 @@ $.fn.yoDashboard = function(options){
 			$ul.appendTo($tabList);
 			$tabList.hide();
 			$tabList.appendTo($dbHead);
-
+			
 			// bind Event on tabs
 			$aTabs.click(function(e){
 				e.preventDefault();
@@ -286,37 +295,37 @@ $.fn.yoDashboard = function(options){
 			$aTabs.appendTo($tabs);
 			$tabs.appendTo($dbHead);
 		}
-
+		
 		$aDiv.appendTo($dbHead);
-
-		// dashboard body
+		
+		// dashboard body 
 		$dbBody = $("<div/>");
 		$dbBody.addClass("db-body");
-
-		// dashboard body container
+		
+		// dashboard body container 
 		$dbBodyContainer = $("<div/>");
 		$dbBodyContainer.addClass("db-container");
 		$dbBodyContainer.attr("id","ccpl_" + $this.attr("id"));
 		$dbBodyContainer.css("height",$this.options.height);
 		$dbBodyContainer.appendTo($dbBody);
-
+		
 		// dashboard main loading
 		$dbMainLoading = $("<div/>");
 		$dbMainLoading.addClass("sm-loading");
 		$dbMainLoading.hide();
-
+		
 		// dashboard spin loading
 		$dbSpinLoading = $("<div/>");
 		$dbSpinLoading.addClass("sm-spin");
 		$dbSpinLoading.hide();
-
+		
 		// render html
 		$this.html("");
 		$dbHead.appendTo($this);
 		$dbBody.appendTo($this);
 		$dbMainLoading.appendTo($this);
 		$dbSpinLoading.appendTo($this);
-
+		
 		// ajax call
 		$.yoDashboard.ajaxCall($this,false,0);
 	});
@@ -334,12 +343,12 @@ var ccplDashboard = $.yoDashboard = {
 		else
 		{
 			$nextA.removeClass("en");
-			$nextA.addClass("ds");
+			$nextA.addClass("ds");	
 		}
 		if($this.options.startFrom > 0)
 		{
 			$prevA.removeClass("ds");
-			$prevA.addClass("en");
+			$prevA.addClass("en");	
 		}
 		else
 		{
@@ -355,7 +364,7 @@ var ccplDashboard = $.yoDashboard = {
 	clickOnPrevChangeNextPrevValue:function($this){
 		$this.options.startFrom = $this.options.startFrom - $this.options.itemLimit;
 		if($this.options.startFrom<0)
-			$this.options.startFrom = 0;
+			$this.options.startFrom = 0; 
 	},
 	clickOnBody:function($this){
 		$this.find("div.db-head > div.db-tab-list").hide();
@@ -376,7 +385,7 @@ var ccplDashboard = $.yoDashboard = {
 	},
 	hideLoading:function($this){
 		var $loading = $this.find("div.sm-loading");
-		var $spin = $this.find("div.sm-spin");
+		var $spin = $this.find("div.sm-spin"); 
 		spinStop($spin,$loading);
 	},
 	ajaxCall:function($this,showMsg,button,update){
@@ -407,7 +416,7 @@ var ccplDashboard = $.yoDashboard = {
 			}
 			else if(button ==2){
 				$.yoDashboard.clickOnPrevChangeNextPrevValue($this);
-				$.yoDashboard.changeNextPrevState($this,$this.find("div.db-head > div.db-menu > a:eq(1)"),$this.find("div.db-head > div.db-menu > a:eq(0)"));
+				$.yoDashboard.changeNextPrevState($this,$this.find("div.db-head > div.db-menu > a:eq(1)"),$this.find("div.db-head > div.db-menu > a:eq(0)"));				
 			}
 			//$.yoDashboard.hideLoading($this);
 		}
@@ -455,26 +464,24 @@ $.fn.yoAllGenericDashboard = function(options){
 			/*try{
 				if($this.options.otherData[7].name)
 				{
-
+					
 					if(isTableFunc != undefined || isTableFunc != null)
 					{
 						$this.options.graphs[i]["showSpinLoad"] = false;
-					}
+					}		
 				}
-
-
 			}
 			catch(ex)
 			{
 				$this.options.graphs[i]["showSpinLoad"] = true;
 			}*/
-			//
+			//			
 			dbVar[String($this.options.graphs[i].name)] = $div.yoGenericDashboard($this.options.graphs[i]);
 			$div.appendTo($td);
 			$td.appendTo($tr);
 		}
 		var extraTdCount = $this.options.graphs.length%$this.options.graphColumn;
-
+		
 		for(var j = 0;j<extraTdCount;j++)
 		{
 			var $td = $("<td/>");
@@ -515,7 +522,7 @@ $.fn.yoGenericDashboard = function(options){
 			height:"180px",
 			showRefreshButton: false,	// use this if you want to show/hide refresh button on dashboard graph or dashboard table
 			showNextPreButton: false,	// use this if you want to show/hide next previous button on dashboard graph or dashboard table
-			showTabOption: false,								// use this if you want to show/hide tab option
+			showTabOption: false,								// use this if you want to show/hide tab option 
 			showOption:false,
 			showType: false,
 			showFields:false,
@@ -528,7 +535,7 @@ $.fn.yoGenericDashboard = function(options){
 			data:{},
 			cache:false
 		},
-		className: "",										// use this if you want to add new class
+		className: "",										// use this if you want to add new class 
 		style: {},											// use this if you want to add new style sheet
 		totalItem: -1,
 		startFrom: 0,										// use this if you want to change start range
@@ -555,11 +562,11 @@ $.fn.yoGenericDashboard = function(options){
 		afterComplete:function(dbId){}
 	},options);
 	//alert(options.height);
-	//alert(options.displayName);root
+	//alert(options.displayName);
 	this.options = options;
 	return this.each(function(){
 		var tabRightPosition = 3;
-
+		
 		var $this = $(this);
 		$this.options = options;
 
@@ -578,56 +585,56 @@ $.fn.yoGenericDashboard = function(options){
 		// create dashboard head
 		var $dbHead = $("<div/>");
 		$dbHead.addClass("db-head");
-
+		
 		// create title span
 		var $span = $("<span/>");
 		$span.html($this.options.displayName);
-
+		
 		// create button container
 		var $aDiv = $("<div/>");
 		$aDiv.addClass("db-menu");
-
+		
         // create button options
 		// previous button
 		var $prevA = $("<a/>");
 		$prevA.addClass("ds");
 		$prevA.attr("href","#");
-
+		
 		var $prevASpan = $("<span/>");
 		$prevASpan.addClass("prv");
 		$prevASpan.appendTo($prevA);
-
+		
 		if($this.options.otherOption.showNextPreButton)
 		{
 			$prevA.addClass("ft");
 			$prevA.appendTo($aDiv);
 		}
-
+		
 		// next button
 		var $nextA = $("<a/>");
 		$nextA.addClass("ds");
 		$nextA.attr("href","#");
-
-		var $nextASpan = $("<span/>");
+		
+		var $nextASpan = $("<span/>"); 
 		$nextASpan.addClass("nxt");
 		$nextASpan.appendTo($nextA);
-
+		
 		if(!$this.options.otherOption.showRefreshButton)
 			$nextA.addClass("lt");
-
+		
 		if($this.options.otherOption.showNextPreButton)
 			$nextA.appendTo($aDiv);
-
-
+		
+		
 		// refresh button
 		var $refeshA = $("<a/>");
 		$refeshA.addClass("ds");
 		$refeshA.attr("href","#");
-
-		var $refeshASpan = $("<span/>");
+		
+		var $refeshASpan = $("<span/>"); 
 		$refeshASpan.addClass("rf2");
 		$refeshASpan.appendTo($refeshA);
-
+		
 		if($this.options.otherOption.showRefreshButton)
 		{
 			if($this.options.otherOption.showNextPreButton)
@@ -642,77 +649,77 @@ $.fn.yoGenericDashboard = function(options){
 			$refeshA.addClass("en");
 			$refeshA.appendTo($aDiv);
 		}
-
+		
 		// other option button
 		var $otherOptionDiv = $("<div/>");
 		$otherOptionDiv.addClass("opt-btn");
-
+		
 		var $otherOptionIns = $("<ins/>");
 		$otherOptionIns.addClass("oo");
 		$otherOptionIns.appendTo($otherOptionDiv);
-
-
+		
+		
 		// other options button list
 		var $optionListDiv = $("<div/>");
-
+		
 		if($this.options.otherOption.showOption && (($this.options.otherOption.showType && $this.options.type.length > 0) || ($this.options.otherOption.showFields && $this.options.fields.length > 0) || ($this.options.otherOption.showCalType && $this.options.calType.length > 0)))
 		{
 			$otherOptionDiv.appendTo($dbHead);
-
-			// for IE Browser Support
+			
+			// for IE Browser Support 
 			$span.appendTo($dbHead);
-
-			// click event
+			
+			// click event 
 			$otherOptionDiv.click(function(e){
 				e.stopPropagation();
 				var $this = $(this);
 				$this.next().next().show();
 			});
-
+			
 			// create options in the options button list
 			$optionListDiv.addClass("yo-contextmenu");
-
+			
 			// click event
 			$optionListDiv.click(function(e){
 				e.stopPropagation();
 			});
 			// option list ul
 			var $ul = $("<ul/>");
-
-
+			
+			
 			// li separator
 			var $li = $("<li/>");
 			$li.addClass("yo-separator");
 			$li.addClass("yo-separator-before");
-			$li.appendTo($ul);
-
+			$li.appendTo($ul);	
+			
 			// create graph type menu
 			if($this.options.otherOption.showType && $this.options.type.length > 0)
 			{
 				var $li = $("<li/>");
-
+				
 				var $ins = $("<ins/>");
 				$ins.html("&nbsp;");
 				$ins.appendTo($li);
-
+				
 				var $liA = $("<a/>");
 				$liA.attr({"href":"#","rel":"graph_type"});
 				$liA.html("Graph Type");
-
+				
 				var $liArrow = $("<span/>");
 				$liArrow.css({"line-height":"17px","position":"relative","right":"-20px"});
 				$liArrow.html("&raquo;");
 				$liArrow.appendTo($liA);
-
+				
 				$liA.appendTo($li);
-
+				
 				// li A click Event
 				$liA.click(function(e){
 					e.preventDefault();
 					var $this = $(this);
 					$this.parent().parent().find("ul").hide();
 					$this.next().show();
-
+					
 				});
 				// graph type sub menu
 				var $gtUl = $("<ul/>");
@@ -722,11 +729,11 @@ $.fn.yoGenericDashboard = function(options){
 					var $gtIns = $("<ins/>");
 					$gtIns.html("&nbsp;");
 					$gtIns.appendTo($gtLi);
-
+					
 					var $gtLiA = $("<a/>");
 					$gtLiA.attr({"href":"#","rel":$this.options.type[gtI].value});
 					$gtLiA.html($this.options.type[gtI].name);
-
+					
 					// Click Event for anchor
 					$gtLiA.click(function(e){
 						e.preventDefault();
@@ -778,34 +785,34 @@ $.fn.yoGenericDashboard = function(options){
 			}
 			$ul.appendTo($optionListDiv);
 			$optionListDiv.appendTo($dbHead);
-
+			
 			// create fields menu
 			if($this.options.otherOption.showFields && $this.options.fields.length > 0)
 			{
 				var $li = $("<li/>");
-
+				
 				var $ins = $("<ins/>");
 				$ins.html("&nbsp;");
 				$ins.appendTo($li);
-
+				
 				var $liA = $("<a/>");
 				$liA.attr({"href":"#","rel":"fields"});
 				$liA.html("Fields");
-
+				
 				var $liArrow = $("<span/>");
 				$liArrow.css({"line-height":"17px","position":"relative","right":"-20px"});
 				$liArrow.html("&raquo;");
 				$liArrow.appendTo($liA);
-
+				
 				$liA.appendTo($li);
-
+				
 				// li A click Event
 				$liA.click(function(e){
 					e.preventDefault();
 					var $this = $(this);
 					$this.parent().parent().find("ul").hide();
 					$this.next().show();
-
+					
 				});
 				// fields menu
 				var $gtUl = $("<ul/>");
@@ -818,11 +825,11 @@ $.fn.yoGenericDashboard = function(options){
 					var $gtIns = $("<ins/>");
 					$gtIns.html("&nbsp;");
 					$gtIns.appendTo($gtLi);
-
+					
 					var $gtLiA = $("<a/>");
 					$gtLiA.attr({"href":"#","rel":$this.options.fields[gtI].name});
 					$gtLiA.html($this.options.fields[gtI].displayName);
-
+					
 					// Click Event for anchor
 					$gtLiA.click(function(e){
 						e.preventDefault();
@@ -847,7 +854,7 @@ $.fn.yoGenericDashboard = function(options){
 						$.yoGenericDashboard.ajaxCall($this,true,0,"fields");
 						$.yoGenericDashboard.clickOnBody($this);
 					});
-
+					
 					var $liCheck = $("<div/>");
 					$liCheck.css({"width":"16px","height":"16px","position":"absolute","top":"0","right":"3px"});
 					$liCheck.addClass("ch");
@@ -865,42 +872,42 @@ $.fn.yoGenericDashboard = function(options){
 				}
 				$gtUl.appendTo($li);
 				$li.appendTo($ul);
-
-
+				
+				
 				// li separator
 				var $li = $("<li/>");
 				$li.addClass("yo-separator");
 				$li.addClass("yo-separator-before");
 				$li.appendTo($ul);
 			}
-
+			
 			// create calcutation menu
 			if($this.options.otherOption.showCalType && $this.options.calType.length > 0)
 			{
 				var $li = $("<li/>");
-
+				
 				var $ins = $("<ins/>");
 				$ins.html("&nbsp;");
 				$ins.appendTo($li);
-
+				
 				var $liA = $("<a/>");
 				$liA.attr({"href":"#","rel":"calc"});
 				$liA.html("Calc");
-
+				
 				var $liArrow = $("<span/>");
 				$liArrow.css({"line-height":"17px","position":"relative","right":"-20px"});
 				$liArrow.html("&raquo;");
 				$liArrow.appendTo($liA);
-
+				
 				$liA.appendTo($li);
-
+				
 				// li A click Event
 				$liA.click(function(e){
 					e.preventDefault();
 					var $this = $(this);
 					$this.parent().parent().find("ul").hide();
 					$this.next().show();
-
+					
 				});
 				// graph type sub menu
 				var $gtUl = $("<ul/>");
@@ -910,11 +917,11 @@ $.fn.yoGenericDashboard = function(options){
 					var $gtIns = $("<ins/>");
 					$gtIns.html("&nbsp;");
 					$gtIns.appendTo($gtLi);
-
+					
 					var $gtLiA = $("<a/>");
 					$gtLiA.attr({"href":"#","rel":$this.options.calType[gtI].name});
 					$gtLiA.html($this.options.calType[gtI].displayName);
-
+					
 					// Click Event for anchor
 					$gtLiA.click(function(e){
 						e.preventDefault();
@@ -962,7 +969,7 @@ $.fn.yoGenericDashboard = function(options){
 				}
 				$gtUl.appendTo($li);
 				$li.appendTo($ul);
-
+				
 				// li separator
 				var $li = $("<li/>");
 				$li.addClass("yo-separator");
@@ -970,29 +977,29 @@ $.fn.yoGenericDashboard = function(options){
 				$li.appendTo($ul);
 			}
 		}
-
-
+		
+		
 		// next-prev button enable or disable
 		$.yoGenericDashboard.changeNextPrevState($this,$nextA,$prevA);
-
+		
 		// bind Event with next button
 		$nextA.click(function(e){
 			e.preventDefault();
 			if($(this).hasClass("en"))
 			{
 				$.yoGenericDashboard.ajaxCall($this,true,1,"");
-			}
+			}			
 		});
-
+		
 		// bind Event with previous button
 		$prevA.click(function(e){
 			e.preventDefault();
 			if($(this).hasClass("en"))
 			{
 				$.yoGenericDashboard.ajaxCall($this,true,2,"");
-			}
+			}			
 		});
-
+		
 		// bind Event with refresh button
 		$refeshA.click(function(e){
 			e.preventDefault();
@@ -1032,25 +1039,25 @@ $.fn.yoGenericDashboard = function(options){
 				});
 			}
 		});
-
-		// bind Event with body
+		
+		// bind Event with body 
 		$(document).click(function (event) {
 				$.yoGenericDashboard.clickOnBody($this);
 		});
-
+		
 		if($this.options.otherOption.showTabOption && $this.options.tabList.value.length > 0)
 		{
 			// Create Tabs
 			var $tabs = $("<div/>").css({"right":String(tabRightPosition) + "px"});
 			$tabs.addClass("db-tab");
-
+			
 			var $aTabs = $("<a/>");
 			$aTabs.attr("href","#");
-
+			
 			// Create Tab List
 			var $tabList = $("<div/>").css({"right":String(tabRightPosition) + "px"});
 			$tabList.addClass("db-tab-list");
-
+			
 			var $ul = $("<ul/>");
 			for(var i=0 ;i<$this.options.tabList.value.length;i++)
 			{
@@ -1095,7 +1102,7 @@ $.fn.yoGenericDashboard = function(options){
 			$ul.appendTo($tabList);
 			$tabList.hide();
 			$tabList.appendTo($dbHead);
-
+			
 			// bind Event on tabs
 			$aTabs.click(function(e){
 				e.preventDefault();
@@ -1106,28 +1113,28 @@ $.fn.yoGenericDashboard = function(options){
 			$tabs.appendTo($dbHead);
 		}
 		$aDiv.appendTo($dbHead);
-
-		// dashboard body
+		
+		// dashboard body 
 		$dbBody = $("<div/>");
 		$dbBody.addClass("db-body");
-
-		// dashboard body container
+		
+		// dashboard body container 
 		$dbBodyContainer = $("<div/>");
 		$dbBodyContainer.addClass("db-container");
 		$dbBodyContainer.attr("id","ccpl_" + $this.attr("id"));
 		$dbBodyContainer.css("height",$this.options.otherOption.height);
 		$dbBodyContainer.appendTo($dbBody);
-
+		
 		// dashboard main loading
 		$dbMainLoading = $("<div/>");
 		$dbMainLoading.addClass("sm-loading");
 		$dbMainLoading.hide();
-
+		
 		// dashboard spin loading
 		$dbSpinLoading = $("<div/>");
 		$dbSpinLoading.addClass("sm-spin");
 		$dbSpinLoading.hide();
-
+		
 		// render html
 		$this.html("");
 		$dbHead.appendTo($this);
@@ -1135,7 +1142,7 @@ $.fn.yoGenericDashboard = function(options){
 		$dbMainLoading.appendTo($this);
 		$dbSpinLoading.appendTo($this);
 		// stop spin loading for table
-		if($this.options.showSpinLoad == true)
+		if($this.options.showSpinLoad == true)	
 		{
 			$dbSpinLoading.appendTo($this);
 		}
@@ -1155,12 +1162,12 @@ var ccplGenericDashboard = $.yoGenericDashboard = {
 		else
 		{
 			$nextA.removeClass("en");
-			$nextA.addClass("ds");
+			$nextA.addClass("ds");	
 		}
 		if($this.options.startFrom > 0)
 		{
 			$prevA.removeClass("ds");
-			$prevA.addClass("en");
+			$prevA.addClass("en");	
 		}
 		else
 		{
@@ -1176,7 +1183,7 @@ var ccplGenericDashboard = $.yoGenericDashboard = {
 	clickOnPrevChangeNextPrevValue:function($this){
 		$this.options.startFrom = $this.options.startFrom - $this.options.itemLimit;
 		if($this.options.startFrom<0)
-			$this.options.startFrom = 0;
+			$this.options.startFrom = 0; 
 	},
 	clickOnBody:function($this){
 		$this.find("div.db-head > div.db-tab-list").hide();
@@ -1199,7 +1206,7 @@ var ccplGenericDashboard = $.yoGenericDashboard = {
 	},
 	hideLoading:function($this){
 		var $loading = $this.find("div.sm-loading");
-		var $spin = $this.find("div.sm-spin");
+		var $spin = $this.find("div.sm-spin"); 
 		spinStop($spin,$loading);
 	},
 	ajaxCall:function($this,showMsg,button,update){
@@ -1229,7 +1236,7 @@ var ccplGenericDashboard = $.yoGenericDashboard = {
 			}
 		}
 		var fieldArr = new Array();
-
+		
 		for(var i=0;i<$this.options.fields.length;i++)
 		{
 			if($this.options.fields[i].isChecked == 1)
@@ -1251,7 +1258,7 @@ var ccplGenericDashboard = $.yoGenericDashboard = {
 			if($this.options.otherData[i].name == "is_table"){
 				$this.options.isTable=true;
 			}
-
+			
 		}
 		data["update"] = update;
 		if($this.options.ajax.url != null)
@@ -1329,12 +1336,6 @@ var ccplGenericDashboard = $.yoGenericDashboard = {
 						$table.appendTo(idObject);
 					}
 					else{
-						Highcharts.setOptions({
-							global: {
-								useUTC: false
-							}
-						});
-
 						$this.options.highChart = new Highcharts.Chart({
 							chart: {
 								zoomType: 'x',
@@ -1376,25 +1377,20 @@ var ccplGenericDashboard = $.yoGenericDashboard = {
 								categories: result.timestamp
 							},
 							yAxis: {
-								min : (result.range_min == undefined || result.range_min)?null:result.range_min,
-								max : (result.range_max == undefined || result.range_max ||result.range_max == 0)?null:result.range_max,
 								title: {
 									text: ''
 								}
 	/*							plotLines: [{
 									value: 0,
 									width: 1,
-									color: '#808080'
+									color: '#808080'  
 								}]*/
 							},
 							tooltip: {
 								crosshairs: true,
 								shared: true,
 								formatter: function() {
-								var s = '<b>'+
-								(Highcharts.dateFormat('%H:%M',this.x)=="00:00" ? Highcharts.dateFormat('%e. %b %Y', this.x):Highcharts.dateFormat('%e. %b %Y, %H:%M', this.x));
-								//Highcharts.dateFormat('%e. %b %Y, %H:%M', this.x)+
-								'</b>';
+								var s = '<b>'+ Highcharts.dateFormat('%e. %b %Y, %H:%M', this.x)+'</b>';
 								$.each(this.points, function(i, point) {
 								    s += '<br/><span style="color: ' + String(point.series.color) + '">'+ point.series.name +'</span>: '+
 									point.y;
@@ -1433,14 +1429,14 @@ var ccplGenericDashboard = $.yoGenericDashboard = {
 				{
 					$.prompt($this.options.errorMsg,{prefix:'jqismooth'});
 				}
-				if (button == 1)
+				if (button == 1) 
 				{
 					$.yoDashboard.clickOnNextChangeNextPrevValue($this);
 					$.yoDashboard.changeNextPrevState($this,$this.find("div.db-head > div.db-menu > a:eq(1)"),$this.find("div.db-head > div.db-menu > a:eq(0)"));
 				}
 				else if(button ==2){
 					$.yoDashboard.clickOnPrevChangeNextPrevValue($this);
-					$.yoDashboard.changeNextPrevState($this,$this.find("div.db-head > div.db-menu > a:eq(1)"),$this.find("div.db-head > div.db-menu > a:eq(0)"));
+					$.yoDashboard.changeNextPrevState($this,$this.find("div.db-head > div.db-menu > a:eq(1)"),$this.find("div.db-head > div.db-menu > a:eq(0)"));				
 				}
 				$.yoDashboard.hideLoading($this);
 			},
@@ -1463,15 +1459,15 @@ var ccplGenericDashboard = $.yoGenericDashboard = {
 // end prototype generic dashboard with jquery object
 
 
-// firefox debug
+// firefox debug 
 $.debug = function (log_txt) {
     if (window.console != undefined) {
         console.log(log_txt);
     }
 }
-// firefox debug
+// firefox debug 
 
-// firefox debug
+// firefox debug 
 function getOffset( el ) {
     var _x = 0;
     var _y = 0;
@@ -1482,35 +1478,25 @@ function getOffset( el ) {
     }
     return { top: _y, left: _x };
 }
-var serverDate = new Date();
 
 $(function(){
 	var spinLoading = $("div#spin_loading");		// create object that hold loading circle
 	var spinMainLoading = $("div#main_loading");	// create object that hold loading squire
-
+	/*
 	if($(window).width()<1100)
 	{
 		$("#container_body").css({"left":"0px"});
-		$("#container_nav").css({"z-index":100}).hide();
+		$("#container_nav").css({"z-index":103}).hide();
 		$("#header3_text").css({"left":"0px"});
-		$("#version_no","#footer").css("margin-left","100px");
-		var sideBarDiv = $("<div/>").addClass("sidebar-btn-div").attr({"title":"Show"});
-		if($().tipsy!=undefined)
-		{
-			sideBarDiv.tipsy({gravity: 'w'});
-		}
+		var sideBarDiv = $("<div/>").addClass("sidebar-btn-div").attr({"title":"Show"}).tipsy({gravity: 'w'});
 		$("<a/>").html("Side Menu").appendTo(sideBarDiv);
 		sideBarDiv.toggle(function(event){
 			event.stopPropagation();
 			$("#container_nav").show();
-			$("#container_body").css({"left":"260px"});
-			$("#header3_text").css({"left":"260px"});
 			sideBarDiv.attr({"original-title":"Hide"});
 		},function(event){
 			event.stopPropagation();
 			$("#container_nav").hide();
-			$("#container_body").css({"left":"0px"});
-			$("#header3_text").css({"left":"0px"});
 			sideBarDiv.attr({"original-title":"Show"});
 		});
 		sideBarDiv.appendTo($("#footer"));
@@ -1526,7 +1512,7 @@ $(function(){
 	{
 		$("#container_nav").show();
 		$("#container_body").show();
-	}
+	}*/
 	//login_user event
 	$("#login_user").click(function(e){
 		e.stopPropagation();
@@ -1542,15 +1528,7 @@ $(function(){
 	});
 	//logout
 	$("#logout").click(function(){
-		try
-		{
-			spinStart(spinLoading,spinMainLoading);
-		}
-		catch(err)
-		{
-			spinLoading.hide();
-			spinMainLoading.hide();
-		}
+		spinStart(spinLoading,spinMainLoading);
 		$.ajax({
 			type:"post",
 			url:"unmp_logout.py",
@@ -1565,7 +1543,6 @@ $(function(){
 				else
 				{
 					//$.prompt(String("There is some error in logout. Please Contact Your Administrator."),{prefix:'jqismooth'});
-					console.log("logout error");
 				 	parent.location.href =	parent.location.href;
 				}
 			}
@@ -1579,7 +1556,7 @@ $(function(){
 	{
 		$("div[rel='" + defaultLinkHref.split("\.py")[0] + "']" ,"#container_nav").show();
 	}
-
+	
 	//menu functionality
 	$("div#page_header a").click(function(e){
 		//e.preventDefault();
@@ -1593,7 +1570,7 @@ $(function(){
 		//e.preventDefault();
 		e.stopPropagation();
 	});
-	//show default selected menu
+	//show default selected menu 
 	$("body").click(function(){
 		$("div#icons_div div.icon").removeClass("active");
 		defaultSelectedLink.addClass("active");
@@ -1603,7 +1580,7 @@ $(function(){
 		// hide user options
 		$("#user_options,div.sub-sub-menu").hide();
 	});
-
+	
 	$("#toggle_events_logs_box").toggle(
 		function()
 		{
@@ -1618,24 +1595,14 @@ $(function(){
 			$(this).attr("src","images/new_icons/round_plus.png");
 			global_log="False";
 		});
-
+		
 	// close event and logs box @ footer
 	$("#close_events_logs_box").click(function(){
 		$("#toggle_events_logs_box").click();
 	});
-
+	
 	// show tactical view
 	tacticalView("#tactical_view");
-
-
-	get_server_time();
-
-	servertime = setInterval(function(){
-		get_server_time();
-	}, 15000);
-
-
-	idleTimer();
 
 	// tool tip
 	if($().tipsy!=undefined)
@@ -1648,168 +1615,8 @@ $(function(){
 	sideBarToggle();
 });
 
-function idleTimer(){
-	$(document).click(function(){
-		last_accessed = Date.now();
-	});
-
-	$(document).keydown(function(){
-		last_accessed = Date.now();
-	});
-}
 
 
-function showWillLogoutMsg(seconds) {
-    $().toastmessage('showToast', {
-        text     : '<div id="session_timeout" >\
-			<table class="display" style="margin-left: 5px;">\
-				<thead>\
-					<tr>\
-						<th colspan="2" class="ui-state-default">\
-							Your Session is about to expire\
-						</th>\
-					</tr>\
-				</thead>\
-			<table>"\
-        	There has been no activity on the UNMP interface, this session will be terminated in '+seconds+' seconds.<br> \
-        	Please choose from the options below to - <br/><br/>\
-        	<input type=button',
-        sticky   : true,
-        position : 'top-center',
-        type     : 'warning',
-        closeText: '',
-        close    : function () {
-        	last_accessed = Date.now();
-            console.log("toast is closed ...");
-        }
-	});
-}
-
-
-
-function showBox(seconds){
-	if (seconds < 1)
-		seconds = 1;
-
-	box_html = "<div id=\"session_timeout\" style=\"width:440px;\"> \
-		<table class=\"display\" style=\"margin-left: 5px;\"> \
-		    <thead> \
-		    <tr>\
-		        <th class=\"ui-state-default\"> \
-		            Your Session is about to expire \
-		        </th> \
-		    </tr> \
-		    </thead> \
-		    <tr> \
-		        <th style=\"font-size: 11px;\"> \
-		        	<br/>\
-		            <img src=\"images/new/alert.png\" alt=\"\"/> \
-		            There has been no activity on the UNMP interface, <br/>\
-		            this session will be terminated in <span id=\"timeout_seconds\">"+seconds+"<span> seconds.\
-		            <br/>  \
-		        </th> \
-		    </tr> \
-		</table> \
-		<div style=\"margin: 5px;\"> \
-			<br/><br/> \
-			<div style=\"border-bottom: 2px solid #73747B; color: #333;line-height: 1.6em;font-size: 12px; font-weight: bold;\"> \
-				Please choose from the options below to - \
-			<div> \
-			<div style=\"float:right;margin: 5px;\" > \
-				<button class=\"yo-small\" style=\"margin: 5px;margin-left: 10px;\" onclick=\"boxClose()\" type=\"button\"> \
-					<span>Yes, keep working</span> \
-				</button> \
-			    <button class=\"yo-small\" style=\"margin: 5px;margin-right: 15px;\" onclick=\"logmeout()\" type=\"button\"> \
-			    	<span>No, Logoff</span> \
-			    </button> \
-		    </div> \
-		</div> \
-		</div>"
-
-
-	$.colorbox({onLoad: function() {
-    	$('#cboxClose').remove();
-		},
-		html: box_html,
-//		html: "<div id=\"session_timeout\" > <table class=\"display\" style=\"margin-left: 5px;\"> <thead> <tr> <th class=\"ui-state-default\"> Your Session is about to expire </th> </tr> </thead> <tr> <th> <img src=\"images/new/alert.png\" alt=\"\"/> There has been no activity on the UNMP interface, this session will be terminated in <span id=\"timeout_seconds\">"+seconds+"<span> seconds.<br> Please choose from the options below to - <br/><br/> </th> </tr> <tr> <th> </th> </tr> <tr> <th class=\"ui-state-default\"> <table> <div> <button style=\"margin-left: 100px;\" type=\"button\" onclick=\"boxClose()\" disabled=\"\" value=\"Yes, keep working\"> </button> <button style=\"margin-left: 15px;\" type=\"button\" onclick=\"logmeout()\" disabled=\"\" value=\"No, Logoff\"> </button>  </div> </div>",
-    	opacity: 0.4,
-		width:"480px",
-		height:"246px"
-	});
-
-}
-
-function logmeout(){
-	$("#logout").click();
-}
-function boxClose(){
-	last_accessed = Date.now();
-	$.colorbox.close();
-}
-
-
-function get_server_time(){
-	var idleTime = parseInt((Date.now() - last_accessed)/1000);
-	if(idleTime > (IDLE_TIMEOUT-GRACE_PERIOD)){
-		//$('div.toast-container').remove();
-		//showWillLogoutMsg(135-idleTime);
-		showBox(IDLE_TIMEOUT-idleTime);
-	}
-	else{
-		// var taost_div = $('div.toast-container');
-		// if(taost_div != null)
-		// 	$('div.toast-container').remove();
-
-	}
-
-	$.ajax({//serverDate
-				type:"get",
-				url:"server_time.py?&idle_time="+idleTime,
-				cache: false,
-				success:function(result_complete){
-					try{
-						if(typeof result_complete=="string")
-						{
-							if(result_complete.length > 400 & isLogged_in){
-								isLogged_in = 0;
-								window.location = '';
-								//$("#logout").click();
-							}
-							else{
-								if(! isLogged_in){
-									var result_data = result_complete.split("\n");
-									result = JSON.parse(result_data[1]).date_time_server;
-									serverDate = new Date(result[0],result[1]-1,result[2],result[3],result[4],result[5]);
-									date_time($("#tactical_view"));
-								}
-
-								//mahipal's code
-								if(JSON.parse(result_data[0]).nagios=="stop")
-									$().toastmessage('showNoticeToast', "Nagios is stopped. Please start it.");
-								isLogged_in = 1;
-							}
-						}
-						else
-						{
-							if(! isLogged_in){
-								result = result_complete.date_time_server;
-								serverDate = new Date(result[0],result[1]-1,result[2],result[3],result[4],result[5]);
-								date_time($("#tactical_view"));
-							}
-							isLogged_in = 1;
-						}
-					}
-					catch(e){
-
-					}
-					/////
-					if(! isLogged_in){
-						clearInterval(servertime);
-					}
-
-				}
-		});
-}
 
 
 function toggle_log_data(a)
@@ -1824,7 +1631,7 @@ function toggle_log_data(a)
 		}
 }
 function get_log_data(a)
-{
+{		
 		if(a!=1 &&  !($("#user_log_a").hasClass("head-link-active")))
 		{
 			return false;
@@ -1832,15 +1639,15 @@ function get_log_data(a)
 		$("#user_log_a").addClass("head-link-active");
 		$("#alarm_log_a").removeClass("head-link-active");
 		var $fromObj = $("#get_current_log_data_form");
-		var url = $fromObj.attr("action");
+		var url = $fromObj.attr("action"); 
 		var method = $fromObj.attr("method");
 		var data = $fromObj.serialize();
-		$.ajax({
+		$.ajax({ 
 			type:method,
 			url:url,
 			data: data,
 			cache:false,
-			success:function(result){
+			success:function(result){ 
 				try
 				{
 					$("#log_user").html(result);
@@ -1860,23 +1667,23 @@ function get_log_data(a)
 
 
 function get_alarm_log_data(a)
-{
+{	
 		if(a!=1 &&  !($("#alarm_log_a").hasClass("head-link-active")))
 		{
 			return false;
-		}
+		}		
 		$("#user_log_a").removeClass("head-link-active");
 		$("#alarm_log_a").addClass("head-link-active");
 		var $fromObj = $("#get_current_log_data_form");
-		var url = "get_alarm_log_data_form.py";	//$fromObj.attr("action");
+		var url = "get_alarm_log_data_form.py";	//$fromObj.attr("action"); 
 		var method = $fromObj.attr("method");
 		var data = $fromObj.serialize();
-		$.ajax({
+		$.ajax({ 
 			type:method,
 			url:url,
 			data: data,
 			cache:false,
-			success:function(result){
+			success:function(result){ 
 				try
 				{
 					$("#log_user").html(result);
@@ -1898,41 +1705,11 @@ function get_alarm_log_data(a)
 
 
 
-function date_time(tacticalDivObj)
-{
-        var date = serverDate;
-        serverDate.setSeconds(serverDate.getSeconds() +1);
-        var year = date.getFullYear();
-        var month = date.getMonth();
-        var months = new Array('January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December');
-        var d = date.getDate();
-        var day = date.getDay();
-        var days = new Array('Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday');
-        var h = date.getHours();
-        if(h<10)
-        {
-                h = "0"+h;
-        }
-        var m = date.getMinutes();
-        if(m<10)
-        {
-                m = "0"+m;
-        }
-        var s = date.getSeconds();
-        if(s<10)
-        {
-                s = "0"+s;
-        }
-        var result = ''+days[day]+' '+months[month]+' '+d+' '+year+' '+h+':'+m+':'+s;
-        tacticalDivObj.html("<div style=\"margin-top:13px;\">" + result + "</div>");
-        setTimeout(function(){ date_time(tacticalDivObj) },'1000');
-        return true;
-}
 
 function tacticalView(tacticalDivObj)
 {
 	// call ajax function
-	/*$.ajax({
+	$.ajax({
 		type:"get",
 		url:"tactical_overview.py",
 		cache:false,
@@ -1977,7 +1754,7 @@ function tacticalView(tacticalDivObj)
 			$(tacticalDivObj).html(tacticalViewHtml);
 			tactical_call = setTimeout(function(){tacticalView(tacticalDivObj);},30000);
 		}
-	});*/
+	});
 }
 
 function sideBarToggle()

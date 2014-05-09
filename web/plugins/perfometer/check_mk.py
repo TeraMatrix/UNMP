@@ -34,7 +34,6 @@
 # 3. The parsed performance data as a list of 7-tuples of
 #    (varname, value, unit, warn, crit, min, max)
 
-
 def perfometer_check_mk(row, check_command, perf_data):
     # make maximum value at 90sec.
     exectime = float(perf_data[0][1])
@@ -51,13 +50,12 @@ def perfometer_check_mk(row, check_command, perf_data):
     return "%.1fs" % exectime, perfometer_linear(perc, color)
 perfometers["check-mk"] = perfometer_check_mk
 
-
 def perfometer_check_mk_df(row, check_command, perf_data):
     h = '<table><tr>'
     varname, value, unit, warn, crit, minn, maxx = perf_data[0]
     perc_used = 100 * (float(value) / float(maxx))
     perc_free = 100 - float(perc_used)
-    color = {0: "#0f8", 1: "#ff2", 2: "#f22", 3: "#fa2"}[row["service_state"]]
+    color = { 0: "#0f8", 1: "#ff2", 2: "#f22", 3: "#fa2" }[row["service_state"]]
     h += perfometer_td(perc_used, color)
     h += perfometer_td(perc_free, "white")
     h += "</tr></table>"
@@ -85,21 +83,19 @@ perfometers["check_mk-kernel.util"] = perfometer_check_mk_kernel_util
 perfometers["check_mk-vms_sys.util"] = perfometer_check_mk_kernel_util
 perfometers["check_mk-ucd_cpu_util"] = perfometer_check_mk_kernel_util
 
-
 def perfometer_check_mk_mem_used(row, check_command, perf_data):
     h = '<table><tr>'
-    ram_total = float(perf_data[0][6])
+    ram_total  = float(perf_data[0][6])
     swap_total = float(perf_data[1][6])
     virt_total = ram_total + swap_total
 
-    ram_used = float(perf_data[0][1])
-    swap_used = float(perf_data[1][1])
-    virt_used = ram_used + swap_used
+    ram_used   = float(perf_data[0][1])
+    swap_used  = float(perf_data[1][1])
+    virt_used  = ram_used + swap_used
 
     state = row["service_state"]
     # paint used ram and swap
-    ram_color, swap_color = {0: ("#80ff40", "#008030"), 1: (
-        "#ff2", "#dd0"), 2: ("#f44", "#d00"), 3: ("#fa2", "#d80")}[state]
+    ram_color, swap_color = { 0: ("#80ff40", "#008030"), 1: ("#ff2", "#dd0"), 2:("#f44", "#d00"), 3:("#fa2", "#d80") }[state]
     h += perfometer_td(100 * ram_used / virt_total, ram_color)
     h += perfometer_td(100 * swap_used / virt_total, swap_color)
 
@@ -115,13 +111,11 @@ def perfometer_check_mk_mem_used(row, check_command, perf_data):
 
 perfometers["check_mk-mem.used"] = perfometer_check_mk_mem_used
 
-
 def perfometer_check_mk_cpu_threads(row, check_command, perf_data):
-    color = {0: "#a4f", 1: "#ff2", 2: "#f22", 3: "#fa2"}[row["service_state"]]
+    color = { 0: "#a4f", 1: "#ff2", 2: "#f22", 3: "#fa2" }[row["service_state"]]
     return "%d" % int(perf_data[0][1]), perfometer_logarithmic(perf_data[0][1], 400, 2, color)
 
 perfometers["check_mk-cpu.threads"] = perfometer_check_mk_cpu_threads
-
 
 def perfometer_check_mk_kernel(row, check_command, perf_data):
     rate = float(perf_data[0][1])
@@ -131,7 +125,7 @@ perfometers["check_mk-kernel"] = perfometer_check_mk_kernel
 
 
 def perfometer_check_mk_cpu_loads(row, check_command, perf_data):
-    color = {0: "#68f", 1: "#ff2", 2: "#f22", 3: "#fa2"}[row["service_state"]]
+    color = { 0: "#68f", 1: "#ff2", 2: "#f22", 3: "#fa2" }[row["service_state"]]
     load = float(perf_data[0][1])
     return "%.1f" % load, perfometer_logarithmic(load, 4, 2, color)
 
@@ -139,8 +133,7 @@ def perfometer_check_mk_cpu_loads(row, check_command, perf_data):
 perfometers["check_mk-cpu.loads"] = perfometer_check_mk_cpu_loads
 perfometers["check_mk-ucd_cpu_load"] = perfometer_check_mk_cpu_loads
 
-
-def perfometer_check_mk_ntp(row, check_command, perf_data, unit="ms"):
+def perfometer_check_mk_ntp(row, check_command, perf_data, unit = "ms"):
     offset = float(perf_data[0][1])
     absoffset = abs(offset)
     warn = float(perf_data[0][3])
@@ -150,7 +143,7 @@ def perfometer_check_mk_ntp(row, check_command, perf_data, unit="ms"):
         absoffset = max
     rel = 50 * (absoffset / max)
 
-    color = {0: "#0f8", 1: "#ff2", 2: "#f22", 3: "#fa2"}[row["service_state"]]
+    color = { 0: "#0f8", 1: "#ff2", 2: "#f22", 3: "#fa2" }[row["service_state"]]
 
     h = '<table><tr>'
     if offset > 0:
@@ -165,28 +158,25 @@ def perfometer_check_mk_ntp(row, check_command, perf_data, unit="ms"):
 
     return "%.1f %s" % (offset, unit), h
 
-perfometers["check_mk-ntp"] = perfometer_check_mk_ntp
-perfometers["check_mk-ntp.time"] = perfometer_check_mk_ntp
-perfometers["check_mk-systemtime"] = lambda r, c, p: perfometer_check_mk_ntp(
-    r, c, p, "s")
-
+perfometers["check_mk-ntp"]        = perfometer_check_mk_ntp
+perfometers["check_mk-ntp.time"]   = perfometer_check_mk_ntp
+perfometers["check_mk-systemtime"] = lambda r, c, p: perfometer_check_mk_ntp(r, c, p, "s")
 
 def perfometer_check_mk_ipmi_sensors(row, check_command, perf_data):
     state = row["service_state"]
-    color = {0: "#06f", 1: "#ff2", 2: "#f22", 3: "#fa2"}[state]
+    color = { 0: "#06f", 1: "#ff2", 2: "#f22", 3: "#fa2" }[state]
     value = float(perf_data[0][1])
     crit = float(perf_data[0][4])
     perc = 100 * value / crit
-    # some sensors get critical if the value is < crit (fans), some if > crit
-    # (temp)
+    # some sensors get critical if the value is < crit (fans), some if > crit (temp)
     h = '<table><tr>'
     if value <= crit:
         h += perfometer_td(perc, color)
         h += perfometer_td(100 - perc, "#fff")
-    elif state == 0:  # fan, OK
+    elif state == 0: # fan, OK
         m = max(value, 10000.0)
         perc_crit = 100 * crit / m
-        perc_value = 100 * (value - crit) / m
+        perc_value = 100 * (value-crit) / m
         perc_free = 100 * (m - value) / m
         h += perfometer_td(perc_crit, color)
         h += perfometer_td(perc_value, color)
@@ -198,16 +188,15 @@ def perfometer_check_mk_ipmi_sensors(row, check_command, perf_data):
 perfometers["check_mk-ipmi_sensors"] = perfometer_check_mk_ipmi_sensors
 perfometers["check_mk-nvidia.temp"] = perfometer_check_mk_ipmi_sensors
 
-
 def performeter_check_mk_if(row, check_command, perf_data):
     # return str(perf_data), ""
     txt = []
     h = '<table><tr>'
     for name, perf, color in [
-        ("in", perf_data[0], "#0e6"),
-            ("out", perf_data[5], "#2af")]:
+          ("in", perf_data[0], "#0e6"),
+          ("out", perf_data[5], "#2af") ]:
         bytes = savefloat(perf[1])
-        bw = savefloat(perf[6])
+        bw    = savefloat(perf[6])
         if bw > 0.0:
             rrate = bytes / bw
         else:
@@ -216,11 +205,11 @@ def performeter_check_mk_if(row, check_command, perf_data):
         rperc = 100 * rrate
         dperc = 100 * drate
         a = perfometer_td(dperc / 2, color)
-        b = perfometer_td(50 - dperc / 2, "#fff")
+        b = perfometer_td(50 - dperc/2, "#fff")
         if name == "in":
-            h += b + a  # white left, color right
+            h += b + a # white left, color right
         else:
-            h += a + b  # color right, white left
+            h += a + b # color right, white left
         txt.append("%.1f%%" % rperc)
     h += '</tr></table>'
     return " &nbsp; ".join(txt), h
@@ -229,7 +218,6 @@ perfometers["check_mk-if"] = performeter_check_mk_if
 perfometers["check_mk-if64"] = performeter_check_mk_if
 perfometers["check_mk-hpux_if"] = performeter_check_mk_if
 
-
 def performeter_oracle_tablespaces(row, check_command, perf_data):
     current = float(perf_data[0][1])
     used = float(perf_data[1][1])
@@ -237,31 +225,29 @@ def performeter_oracle_tablespaces(row, check_command, perf_data):
     used_perc = used / max * 100
     curr_perc = (current / max * 100) - used_perc
     h = '<table><tr>'
-    h += perfometer_td(used_perc, "#f0b000")
-    h += perfometer_td(curr_perc, "#00ff80")
-    h += perfometer_td(100 - used_perc - curr_perc, "#80c0ff")
+    h += perfometer_td(used_perc, "#f0b000");
+    h += perfometer_td(curr_perc, "#00ff80");
+    h += perfometer_td(100 - used_perc - curr_perc, "#80c0ff");
     h += '</tr></table>'
     return "%.1f%%" % used_perc, h
 
 perfometers["check_mk-oracle_tablespaces"] = performeter_oracle_tablespaces
 
-
 def perfometer_oracle_sessions(row, check_command, perf_data):
     if check_command == "check_mk-oracle_sessions":
-        color = "#00ff48"
-        unit = ""
+	color = "#00ff48";
+        unit = "";
     else:
-        color = "#4800ff"
-        unit = "/h"
-    value = int(perf_data[0][1])
-    return "%d%s" % (value, unit), perfometer_logarithmic(value, 50, 2, color)
-
+	color = "#4800ff";
+        unit = "/h";
+    value = int(perf_data[0][1]);
+    return "%d%s" % (value, unit), perfometer_logarithmic(value, 50, 2, color);
+ 
 perfometers["check_mk-oracle_sessions"] = perfometer_oracle_sessions
 perfometers["check_mk-oracle_logswitches"] = perfometer_oracle_sessions
 
-
 def perfometer_h3c_lanswitch_cpu(row, check_command, perf_data):
-    util = float(perf_data[0][1])  # is already percentage
+    util = float(perf_data[0][1]) # is already percentage
     warn = float(perf_data[0][3])
     crit = float(perf_data[0][4])
     if util < warn:
@@ -273,5 +259,5 @@ def perfometer_h3c_lanswitch_cpu(row, check_command, perf_data):
 
     return "%.0f%%" % util, perfometer_linear(util, color)
 
-# perfometer_linear(perc, color)
+#perfometer_linear(perc, color)
 perfometers["check_mk-h3c_lanswitch_cpu"] = perfometer_h3c_lanswitch_cpu

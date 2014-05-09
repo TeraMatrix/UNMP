@@ -27,7 +27,7 @@
 
 ##################################################################################
 # Data sources
-##########################################################################
+##################################################################################
 
 # keys: columns which must be fetched in order to execute commands on
 # the items (= in order to identify the items and gather all information
@@ -35,112 +35,112 @@
 
 
 multisite_datasources["hosts"] = {
-    "title": "All hosts",
-    "table": "hosts",
-    "infos": ["host"],
-    "keys": ["host_name", "host_downtimes"],
+    "title"   : "All hosts",
+    "table"   : "hosts",
+    "infos"   : [ "host" ],
+    "keys"    : [ "host_name", "host_downtimes" ],
 }
 
 multisite_datasources["hostsbygroup"] = {
-    "title": "Hosts grouped by host groups",
-    "table": "hostsbygroup",
-    "infos": ["host", "hostgroup"],
-    "keys": ["host_name", "host_downtimes"],
+    "title"   : "Hosts grouped by host groups",
+    "table"   : "hostsbygroup",
+    "infos"   : [ "host", "hostgroup" ],
+    "keys"    : [ "host_name", "host_downtimes" ],
 }
 
 multisite_datasources["services"] = {
-    "title": "All services",
-    "table": "services",
-    "infos": ["service", "host"],
-    "keys": ["host_name", "service_description", "service_downtimes"],
+    "title"   : "All services",
+    "table"   : "services",
+    "infos"   : [ "service", "host" ],
+    "keys"    : [ "host_name", "service_description", "service_downtimes" ],
 }
 
 multisite_datasources["servicesbygroup"] = {
-    "title": "Services grouped by service groups",
-    "table": "servicesbygroup",
-    "infos": ["service", "host", "servicegroup"],
-    "keys": ["host_name", "service_description", "service_downtimes"],
+    "title"   : "Services grouped by service groups",
+    "table"   : "servicesbygroup",
+    "infos"   : [ "service", "host", "servicegroup" ],
+    "keys"    : [ "host_name", "service_description", "service_downtimes" ],
 }
 
 multisite_datasources["servicesbyhostgroup"] = {
-    "title": "Services grouped by host groups",
-    "table": "servicesbyhostgroup",
-    "infos": ["service", "host", "hostgroup"],
-    "keys": ["host_name", "service_description", "service_downtimes"],
+    "title"   : "Services grouped by host groups",
+    "table"   : "servicesbyhostgroup",
+    "infos"   : [ "service", "host", "hostgroup" ],
+    "keys"    : [ "host_name", "service_description", "service_downtimes" ],
 }
 
 multisite_datasources["hostgroups"] = {
-    "title": "Hostgroups",
-    "table": "hostgroups",
-    "infos": ["hostgroup"],
-    "keys": ["hostgroup_name"],
+    "title" : "Hostgroups",
+    "table" : "hostgroups",
+    "infos" : [ "hostgroup" ],
+    "keys"    : [ "hostgroup_name" ],
 }
 
 multisite_datasources["merged_hostgroups"] = {
-    "title": "Hostgroups, merged",
-    "table": "hostgroups",
-    "merge_by": "hostgroup_name",
-    "infos": ["hostgroup"],
-    "keys": ["hostgroup_name"],
+    "title"    : "Hostgroups, merged",
+    "table"    : "hostgroups",
+    "merge_by" : "hostgroup_name",
+    "infos"    : [ "hostgroup" ],
+    "keys"    : [ "hostgroup_name" ],
 }
 
 multisite_datasources["servicegroups"] = {
-    "title": "Servicegroups",
-    "table": "servicegroups",
-    "infos": ["servicegroup"],
-    "keys": ["servicegroup_name"],
+    "title"    : "Servicegroups",
+    "table"    : "servicegroups",
+    "infos"    : [ "servicegroup" ],
+    "keys"    : [ "servicegroup_name" ],
 }
 
 multisite_datasources["merged_servicegroups"] = {
-    "title": "Servicegroups, merged",
-    "table": "servicegroups",
-    "merge_by": "servicegroup_name",
-    "infos": ["servicegroup"],
-    "keys": ["servicegroup_name"],
+    "title"    : "Servicegroups, merged",
+    "table"    : "servicegroups",
+    "merge_by" : "servicegroup_name",
+    "infos"    : [ "servicegroup" ],
+    "keys"    : [ "servicegroup_name" ],
 }
 
 multisite_datasources["comments"] = {
-    "title": "Host- und Servicecomments",
-    "table": "comments",
-    "infos": ["comment", "host", "service"],
-    "keys": ["comment_id", "comment_type"],
+    "title"    : "Host- und Servicecomments",
+    "table"    : "comments",
+    "infos"    : [ "comment", "host", "service" ],
+    "keys"    : [ "comment_id", "comment_type" ],
 }
 
 multisite_datasources["downtimes"] = {
-    "title": "Schedules Downtimes",
-    "table": "downtimes",
-    "infos": ["downtime", "host", "service"],
-    "keys": ["downtime_id", "service_description"],
+    "title"    : "Schedules Downtimes",
+    "table"    : "downtimes",
+    "infos"    : [ "downtime", "host", "service" ],
+    "keys"    : [ "downtime_id", "service_description" ],
 }
 
 multisite_datasources["log"] = {
-    "title": "The Logfile",
-    "table": "log",
-    "infos": ["log", "host", "service", "contact", "command"],
-    "keys": [],
+    "title"    : "The Logfile",
+    "table"    : "log",
+    "infos"    : [ "log", "host", "service", "contact", "command" ],
+    "keys"     : [],
 }
 
 multisite_datasources["log_events"] = {
-    "title": "Host and Service Events",
-    "table": "log",
-    "add_headers": "Filter: class = 1\n",
-    "infos": ["log", "host", "service"],
-    "keys": [],
+    "title"       : "Host and Service Events",
+    "table"       : "log",
+    "add_headers" : "Filter: class = 1\n",
+    "infos"       : [ "log", "host", "service" ],
+    "keys"        : [],
 }
 
 multisite_datasources["log_host_events"] = {
-    "title": "Host Events",
-    "table": "log",
-    "add_headers": "Filter: class = 1\nFilter: service_description = \n",
-    "infos": ["log", "host"],
-    "keys": [],
+    "title"       : "Host Events",
+    "table"       : "log",
+    "add_headers" : "Filter: class = 1\nFilter: service_description = \n",
+    "infos"       : [ "log", "host" ],
+    "keys"        : [],
 }
 
 multisite_datasources["alert_stats"] = {
-    "title": "Alert Statistics",
-    "table": "log",
-    "add_headers": "Filter: class = 1\nStats: state = 0\nStats: state = 1\nStats: state = 2\nStats: state = 3\nStats: state != 0\n",
-    "add_columns": ["alerts_ok", "alerts_warn", "alerts_crit", "alerts_unknown", "alerts_problem"],
-    "infos": ["log", "host", "service", "contact", "command"],
-    "keys": [],
+    "title"       : "Alert Statistics",
+    "table"       : "log",
+    "add_headers" : "Filter: class = 1\nStats: state = 0\nStats: state = 1\nStats: state = 2\nStats: state = 3\nStats: state != 0\n",
+    "add_columns" : [ "alerts_ok", "alerts_warn", "alerts_crit", "alerts_unknown", "alerts_problem" ],
+    "infos"       : [ "log", "host", "service", "contact", "command" ],
+    "keys"        : [],
 }

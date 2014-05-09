@@ -6,7 +6,7 @@ var nmsShowStatus=true;
       iStuff = ua.match(/iPhone/i) || ua.match(/iPad/i),
       typeOfCanvas = typeof HTMLCanvasElement,
       nativeCanvasSupport = (typeOfCanvas == 'object' || typeOfCanvas == 'function'),
-      textSupport = nativeCanvasSupport
+      textSupport = nativeCanvasSupport 
         && (typeof document.createElement('canvas').getContext('2d').fillText == 'function');
   //I'm setting this based on the fact that ExCanvas provides text support for IE
   //and that as of today iPhone/iPad current text support is lame
@@ -14,13 +14,13 @@ var nmsShowStatus=true;
   nativeTextSupport = labelType == 'Native';
   useGradients = nativeCanvasSupport;
   animate = !(iStuff || !nativeCanvasSupport);
-
+  
 })();
 
 var Log = {
   elem: false,
   write: function(text){
-    if (!this.elem)
+    if (!this.elem) 
       this.elem = document.getElementById('log');
     this.elem.innerHTML = text;
     //this.elem.style.left = (500 - this.elem.offsetWidth / 2) + 'px';
@@ -30,7 +30,7 @@ var Log = {
 
 function init(){
     //init RGraph
-
+	
     var rgraph = new $jit.RGraph({
         //Where to append the visualization
         injectInto: 'infovis',
@@ -52,7 +52,7 @@ function init(){
         Node: {
             color: '#db4b38'
         },
-
+        
         Edge: {
           color: '#999',
           lineWidth:1.5
@@ -64,7 +64,7 @@ function init(){
             //This list is taken from the data property of each JSON node.
             $jit.id('inner_details').innerHTML = node.data.relation;
         },
-
+        
         //Add the name of the node in the correponding label
         //and a click handler to move the graph.
         //This method is called once, on label creation.
@@ -72,7 +72,7 @@ function init(){
             domElement.innerHTML = node.name;
             domElement.onclick = function(){
 				//alert(node.name);
-				showHostDetails(node.name); // function calling for host details
+				showHostDetails(node.name); // function calling for host details 
 				nmsInNetwork();
                 rgraph.onClick(node.id, {
                     onComplete: function() {
@@ -91,11 +91,11 @@ function init(){
             if (node._depth <= 1) {
                 style.fontSize = "0.8em";
                 style.color = "#0048CE";
-
+            
             } else if(node._depth == 2){
                 style.fontSize = "0.7em";
                 style.color = "#494949";
-
+            
             } else {
                 style.display = 'none';
             }
@@ -133,7 +133,7 @@ function init(){
 		{
 			$(this).removeClass('h').addClass('s');
 		}
-		else
+		else 
 		{
 			$(this).removeClass('s').addClass('h');
 		}
@@ -152,7 +152,7 @@ function nmsInNetwork() {
 		{
 			$(this).removeClass('h').addClass('s');
 		}
-		else
+		else 
 		{
 			$(this).removeClass('s').addClass('h');
 		}
@@ -218,7 +218,7 @@ function nmsInNetwork() {
 
 
 
-// This function copy the all host information result in global json variable.
+// This function copy the all host information result in global json variable. 
 function showNetworkGraph(nms_name) {
 	//get the nms detail
 	$("#host_details_div").hide();
@@ -281,10 +281,10 @@ function showHostDetails(ipAddress){
 							$("#host_details_div").show();
 							$("#inner_details").html(result.output);
 							$("#inner_details").css('display','block');
-						}
+						}	
 			}
 	});
-
+  
 }
 
 
@@ -301,7 +301,7 @@ $(function(){
 		{
 			$(this).removeClass('h').addClass('s');
 		}
-		else
+		else 
 		{
 			$(this).removeClass('s').addClass('h');
 		}
@@ -319,19 +319,3 @@ $(function(){
 		onComplte:function(){}
 	});
 });
-
-// change the state of device
-function enabledDevice(ip_address){
-	$.ajax({
-		type:"post",
-		url: "enabled_device_state.py?ip_address="+ip_address,
-		success:function(result){
-			if (result.success==1 || result.success=='1')
-				alert(result.error_msg);
-			else
-				alert('Host state update successfully.');
-		}
-	});
-}
-
-

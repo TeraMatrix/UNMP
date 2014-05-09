@@ -57,22 +57,22 @@ function deviceStatistics(){
 // Update the date time in text Box
 function advancedUpdateDateTime(){
     $.ajax({
-	type:"post",
-	url:"advanced_update_date_time.py?device_type_id="+device_type_id,
-	data:$(this).serialize(),
-	cache:false,
-	success:function(result){
-		if (result.success==1 || result.success=="1")
-		{
-			$().toastmessage('showWarningToast', "Date time not receving in proper format.");
-			return	;
-		}
-		else
-		{
-			endDate=result.end_date;
-			endTime=result.end_time;
-		}
-            }
+        type:"post",
+        url:"advanced_update_date_time.py?device_type_id="+device_type_id,
+		data:$(this).serialize(), // $(this).text?
+		cache:false,
+	    success:function(result){
+			if (result.success==1 || result.success=="1")
+			{
+				$().toastmessage('showWarningToast', "Date time not receving in proper format.");
+				return	;
+			}
+			else
+			{
+				endDate=result.end_date;
+				endTime=result.end_time;
+			}
+        	}
 	});
    return false;	
 }
@@ -80,103 +80,104 @@ function advancedUpdateDateTime(){
 
 // This function brings total graph showing in advanced graph
 function graphNameShow(){
-	$.ajax({
-	type:"post",
-	url:"ap_total_graph_name.py?device_type_id="+device_type_id+"&ip_address="+advancedAPIpAddress,
-	data:$(this).serialize(),
-	cache:false,
-	success:function(result){
-		if (result['success']==0){
-			$("#apGraphNameTable").html(result['result'])
-			deviceStatistics();
-			$('a','#graph_name_table').click(function(){
-			$tbody=$(this).parent().parent().parent();
-			$tbody.find("tr.tr-graph td").css("background-color","");
-			$(this).parent().css("background-color","#AAA");
-			advancedUpdateDateTime();
-			endDateStr=endDate.split("/");
-			endTimeStr=endTime.split(":");
-			var cdate = new Date(endDateStr[2],parseInt(endDateStr[1],10)-1, endDateStr[0],endTimeStr[0],endTimeStr[1]); 
+		$.ajax({
+		type:"post",
+		url:"ap_total_graph_name.py?device_type_id="+device_type_id+"&ip_address="+advancedAPIpAddress,
+		data:$(this).serialize(),
+		cache:false,
+		success:function(result){
+			if (result['success']==0){
+				$("#apGraphNameTable").html(result['result'])
+				deviceStatistics();
+				$('a','#graph_name_table').click(function(){
+				$tbody=$(this).parent().parent().parent();
+				$tbody.find("tr.tr-graph td").css("background-color","");
+				$(this).parent().css("background-color","#AAA");
+				advancedUpdateDateTime(); // This is function update datetime.					
+				endDateStr=endDate.split("/");
+				endTimeStr=endTime.split(":");
+				var cdate = new Date(endDateStr[2],parseInt(endDateStr[1])-1, endDateStr[0],endTimeStr[0],endTimeStr[1]); 
 
-				var str1  = $("#odu_start_date").val();
-				var str2  = $("#odu_end_date").val();
-				var str3  = $("#odu_start_time").val();
-				var str4  = $("#odu_end_time").val();
-				str1=str1.split("/");
-				str2=str2.split("/");
-				str3=str3.split(":");
-				str4=str4.split(":");
-				var date1 = new Date(str1[2],parseInt(str1[1],10)-1, str1[0],str3[0],str3[1]); 
-				var date2 = new Date(str2[2],parseInt(str2[1],10)-1, str2[0],str4[0],str4[1]);
-				if(date2 < date1)
-				{
-					 $().toastmessage('showWarningToast', "End Date can't be greater than Start Date");
-					return false; 
-				}
-				else if(cdate<date1 || cdate<date2)
+					var str1  = $("#odu_start_date").val();
+					var str2  = $("#odu_end_date").val();
+					var str3  = $("#odu_start_time").val();
+					var str4  = $("#odu_end_time").val();
+					str1=str1.split("/");
+					str2=str2.split("/");
+					str3=str3.split(":");
+					str4=str4.split(":");
+					var date1 = new Date(str1[2],parseInt(str1[1])-1, str1[0],str3[0],str3[1]); 
+					var date2 = new Date(str2[2],parseInt(str2[1])-1, str2[0],str4[0],str4[1]);
+					if(date2 < date1)
 					{
-					 	$().toastmessage('showWarningToast', "Dates can't be greater than current Date");
+						 $().toastmessage('showWarningToast', "End Date can't be greater than Start Date");
 						return false; 
 					}
-				else
-					{
-						var graph_id=$(this).attr('value');
-						advancedGraphDisplay(graph_id);
-						advancedGraphClickValue=graph_id;
-					}
-			});
-			$("#apGraphNameTable").find('a').eq(0).click();
+					else if(cdate<date1 || cdate<date2)
+						{
+						 	$().toastmessage('showWarningToast', "Dates can't be greater than current Date");
+							return false; 
+						}
+					else
+						{
+							var graph_id=$(this).attr('value');
+							advancedGraphDisplay(graph_id);
+							advancedGraphClickValue=graph_id;
+						}
+//					var graph_id=$(this).attr('value');
+//					advancedGraphDisplay(graph_id);
+//					advancedGraphClickValue=graph_id;
+					
+				});
+				$("#apGraphNameTable").find('a').eq(0).click();
+			}
+			else{
+					$().toastmessage('showErrorToast',result.error_msg);
+			}
 		}
-		else{
-			$().toastmessage('showErrorToast',result.error_msg);
-		}
-	    }
 	});
 }
 
 
 // Advanced Graph display function
 function advancedGraphDisplay(graph_id){
-	$.ajax({
-	type:"post",
-	url:"advanced_graph_json_creation.py?graph_id="+graph_id+"&device_type_id="+device_type_id+"&ip_address="+advancedAPIpAddress,
-	data:$(this).serialize(),
-	cache:false,
-	success:function(result){
-		if (result.graphs.length==0)
-		   $().toastmessage('showErrorToast','Graph Information not exists in database for this User.');
-		else if (result.success==0){
-		    result.graphColumn=1;
-		    var dbAr=$("#apAdvanceGraphDiv");
-		    result.otherData=[{name:'start_date',value:function() { return $('input#odu_start_date').val();}},
-		    {name:'start_time',value:function() { return $('input#odu_start_time').val();}},
-		    {name:'end_date',value:function() { return $('input#odu_end_date').val();}},
-		    {name:'end_time',value:function() { return $('input#odu_end_time').val();}},
-		    {name:'flag',value:function() { return limitFlag; }},{name:'ip_address',value:function() { return advancedAPIpAddress; }},
-		    {name:'graph_type',value:function() { return graph_type; }}];
-		    result.afterComplete=function(dbId){
-		        apDataTableGeneration();
-		      };
-		    $("#apAdvanceGraphDiv").html("");
-		    apAdvancedObject=dbAr.yoAllGenericDashboard(result);
+		$.ajax({
+		type:"post",
+		url:"advanced_graph_json_creation.py?graph_id="+graph_id+"&device_type_id="+device_type_id+"&ip_address="+advancedAPIpAddress,
+		data:$(this).serialize(),
+		cache:false,
+		success:function(result){
+			if (result['success']==0){
+				result.graphColumn=1;
+				var dbAr=$("#apAdvanceGraphDiv");
+//				dbAr.addClass('db-box');
+//			    result.otherData=[{name:'graph_type',value:function() { return graph_type; }}];
+	            result.otherData=[{name:'start_date',value:function() { return $('input#odu_start_date').val();}},{name:'start_time',value:function() { return $('input#odu_start_time').val();}},{name:'end_date',value:function() { return $('input#odu_end_date').val();}},{name:'end_time',value:function() { return $('input#odu_end_time').val();}},{name:'flag',value:function() { return limitFlag; }},{name:'ip_address',value:function() { return advancedAPIpAddress; }},{name:'graph_type',value:function() { return graph_type; }}];
+				result.afterComplete=function(dbId){
+					apDataTableGeneration();
+					};
+				$("#apAdvanceGraphDiv").html("");
+				apAdvancedObject=dbAr.yoAllGenericDashboard(result);
+			}
+			else{
+				$().toastmessage('showErrorToast',result.error_msg);
+			}
 		}
-		else{
-			$().toastmessage('showErrorToast',result.error_msg);
-		}
-	}
-    });
+	});
 }
 
 
 
 function disbaledReportButton()
 {
+
 	$("#excel_report").addClass("disabled");
 	$("#excel_report").attr("disabled",true);
 	$("#csv_report").addClass("disabled");
 	$("#csv_report").attr("disabled",true);
 	$("#advancedSrh").addClass("disabled");
 	$("#advancedSrh").attr("disabled",true);
+
 }
 
 function enabledReportButton()
@@ -211,6 +212,7 @@ function apDataTableGeneration(){
 	{
 		totalGraph+=1;
 		field=[];
+		//alert(mainObject.options.db[node]["options"].calType[0].name);
 		var tempFileds = apAdvancedObject.options.db[node]["options"].fields;
 		for (var i=0;i<tempFileds.length;i++ )
 			{
@@ -262,7 +264,7 @@ function apDataTableGeneration(){
 					column[column.length] ={ "sTitle": result['column'][i],"sClass": "center" };
 				var tableDivObj=$("#apAdvancedDataTable");
 				tableDivObj.html("<table id='apAdvancedGraphTableDiv' cellspacing=\"0\" cellpadding=\"0\" width=\"100%%\" class='display'>");
-				//$('#apAdvancedGraphTableDiv')
+				$('#apAdvancedGraphTableDiv')
 				$('#apAdvancedGraphTableDiv').dataTable({
 						"bDestroy":true,
 						"bJQueryUI": true,
@@ -279,74 +281,47 @@ function apDataTableGeneration(){
 							"sInfoEmpty":"0 - 0 of 0",
 							"sInfoFiltered":"(of _MAX_)"
 						},
-						"aoColumns": column,
-						"aaSorting":[[0,'desc']]
+						"aoColumns": column
 					});
-					enabledReportButton();
+					enabledReportButton(); // enabled the report button
 				}
 		});
 }
 
 
 function advancedSrchBtn(){
-	limitFlag=0;
-	var check_str_date ="";
-	var check_str_time ="";
-	var str1  = "";
-	var str2  = "";
-	var str3  = "";
-	var str4  = "";
-	$.ajax({
-		type:"post",
-		url:"advanced_update_date_time.py?device_type_id="+device_type_id,
-		data:$(this).serialize(),
-		cache:false,
-		success:function(result){
-			if (result.success==1 || result.success=="1")
+		limitFlag=0;
+		var cur_date=new Date();
+		var d=cur_date.getDate();
+		var y=cur_date.getFullYear();
+		var m=cur_date.getMonth();
+		var h = cur_date.getHours();
+		var mi = cur_date.getMinutes();
+		var cdate=new Date(y,m,d,h,mi);
+			var str1  = $("#odu_start_date").val();
+			var str2  = $("#odu_end_date").val();
+			var str3  = $("#odu_start_time").val();
+			var str4  = $("#odu_end_time").val();
+			str1=str1.split("/");
+			str2=str2.split("/");
+			str3=str3.split(":");
+			str4=str4.split(":");
+			var date1 = new Date(str1[2],parseInt(str1[1])-1, str1[0],str3[0],str3[1]); 
+			var date2 = new Date(str2[2],parseInt(str2[1])-1, str2[0],str4[0],str4[1]);
+			if(date2 < date1)
 			{
-				$().toastmessage('showWarningToast', "Error No: 121 Date time not receving in proper format.");
-				return	;
+				 $().toastmessage('showWarningToast', "End Date can't be greater than Start Date");
+				return false; 
 			}
-			else
-			{
-				check_str_date=String(result.end_date).split("/");
-				check_str_time=String(result.end_time).split(":");
-			
-				/*var cur_date=new Date();
-				var d=cur_date.getDate();
-				var y=cur_date.getFullYear();
-				var m=cur_date.getMonth();
-				var h = cur_date.getHours();
-				var mi = cur_date.getMinutes();
-				var cdate=new Date(y,m,d,h,mi);*/
-				var cdate = new Date(check_str_date[2],parseInt(check_str_date[1],10)-1, check_str_date[0],check_str_time[0],check_str_time[1]); 
-				str1  = $("#odu_start_date").val();
-				str2  = $("#odu_end_date").val();
-				str3  = $("#odu_start_time").val();
-				str4  = $("#odu_end_time").val();
-				str1=str1.split("/");
-				str2=str2.split("/");
-				str3=str3.split(":");
-				str4=str4.split(":");
-				var date1 = new Date(str1[2],parseInt(str1[1],10)-1, str1[0],str3[0],str3[1]); 
-				var date2 = new Date(str2[2],parseInt(str2[1],10)-1, str2[0],str4[0],str4[1]);
-				if(date2 < date1)
+			else if(cdate<date1 || cdate<date2)
 				{
-					 $().toastmessage('showWarningToast', "End Date can't be greater than Start Date");
+				 	$().toastmessage('showWarningToast', "Dates can't be greater than current Date");
 					return false; 
 				}
-				else if(cdate<date1 || cdate<date2)
-					{
-					 	$().toastmessage('showWarningToast', "Dates can't be greater than current Date");
-						return false; 
-					}
-				else
-					{
-						$("#apGraphNameTable").find('a[value="'+advancedGraphClickValue+'"]').click();
-					} 
-			}
-		}
-	});
+			else
+				{
+					$("#apGraphNameTable").find('a[value="'+advancedGraphClickValue+'"]').click();
+				} 
 } 
 
 
@@ -425,12 +400,25 @@ function reportCreation(reportType){
 		}
 		graphQuerySrting+= "&total_graph=" + String(totalGraph)
 	
+/*	if(odu16RecursionVar!=null)
+	{
+		clearTimeout(odu16RecursionVar);
+	}*/
 	var select_option=$("input[name='option']:checked").val();
 		if (select_option==0){
-				advancedUpdateDateTime(); 
+				advancedUpdateDateTime(); // This is function update datetime.					
+/*				var cur_date=new Date();
+				var d=cur_date.getDate();
+				var y=cur_date.getFullYear();
+				var m=cur_date.getMonth();
+				var h = cur_date.getHours();
+				var mi = cur_date.getMinutes();
+				var cdate=new Date(y,m,d,h,mi);
+
+*/				
 				endDateStr=endDate.split("/");
 				endTimeStr=endTime.split(":");
-				var cdate = new Date(endDateStr[2],parseInt(endDateStr[1],10)-1, endDateStr[0],endTimeStr[0],endTimeStr[1]); 
+				var cdate = new Date(endDateStr[2],parseInt(endDateStr[1])-1, endDateStr[0],endTimeStr[0],endTimeStr[1]); 
 				var str1  = $("#odu_start_date").val();
 				var str2  = $("#odu_end_date").val();
 				var str3  = $("#odu_start_time").val();
@@ -439,8 +427,8 @@ function reportCreation(reportType){
 				str2=str2.split("/");
 				str3=str3.split(":");
 				str4=str4.split(":");
-				var date1 = new Date(str1[2],parseInt(str1[1],10)-1, str1[0],str3[0],str3[1]); 
-				var date2 = new Date(str2[2],parseInt(str2[1],10)-1, str2[0],str4[0],str4[1]);
+				var date1 = new Date(str1[2],parseInt(str1[1])-1, str1[0],str3[0],str3[1]); 
+				var date2 = new Date(str2[2],parseInt(str2[1])-1, str2[0],str4[0],str4[1]);
 				if(date2 < date1)
 				{
 					 $().toastmessage('showWarningToast', "End Date can't be greater than Start Date");
@@ -472,8 +460,9 @@ function reportCreation(reportType){
 								}
 								else
 								{
-									$().toastmessage('showSuccessToast', result.output);
+									$().toastmessage('showSuccessToast', 'Report Generated Successfully');
 									window.location = "download/"+result.file_name;
+//									graphInitiator();
 								}
 								spinStop($spinLoading,$spinMainLoading);
 							}
@@ -502,8 +491,10 @@ function reportCreation(reportType){
 								}
 								else
 								{
-									$().toastmessage('showSuccessToast', result.output);
+									$().toastmessage('showSuccessToast', 'Report Generated Successfully');
 									window.location = "download/"+result.file_name;
+//									window.open("download/"+result.file_name,"_blank");
+//									graphInitiator();
 								}
 								spinStop($spinLoading,$spinMainLoading);
 

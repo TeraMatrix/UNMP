@@ -234,7 +234,7 @@ function deleteService(serviceName,hostName)
 {
 	if(parseInt($("input[id='totalService']").val()) < 2)
 	{
-		alert(" Deleting this service is restricted, because atleast one service must be in NMS.");
+		alert("You Could not Delete this service, because atleast one service must be in NMS.");
 	}
 	else
 	{

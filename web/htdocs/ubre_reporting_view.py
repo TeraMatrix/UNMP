@@ -10,20 +10,18 @@
 #<span class="search-input"><input type="text" /></span>
 # this is used for searching
 
-from datetime import datetime, timedelta
-
-
+from datetime import datetime,timedelta
 class Report(object):
     @staticmethod
     def ubre_create_crc_phy_form():
         try:
             now = datetime.now()
-            old = now + timedelta(days=-3)
-            cday = str(now.day) + "/" + str(now.month) + "/" + str(now.year)
-            ctime = str(now.hour) + ":" + str(now.minute)
-            oday = str(old.day) + "/" + str(old.month) + "/" + str(old.year)
-            otime = "00:00"
-            html_view = '\
+            old=now+timedelta(days=-3)
+            cday=str(now.day)+"/"+str(now.month)+"/"+str(now.year)
+            ctime=str(now.hour)+":"+str(now.minute)
+            oday=str(old.day)+"/"+str(old.month)+"/"+str(old.year)
+            otime="00:00"
+            html_view='\
             <table class=\"tt-table\" cellspacing=\"0\" cellpadding=\"0\" width=\"100%%\">\
                     <tr>\
                         <th id=\"form_title\" class=\"cell-title\">View/Save Report </th>\
@@ -92,21 +90,23 @@ class Report(object):
                         </tr>\
                     </table>\
             <table class="display" name="total_report_table" id="total_report_table" width="100%%" style=\"display: none;\">\
-            </table>' % (oday, otime, cday, ctime)
+            </table>'%(oday,otime,cday,ctime)
             return html_view
-        except Exception, e:
+        except Exception,e:
             return str(e)
+            
+            
 
     @staticmethod
     def ubre_create_rssi_form():
         try:
-            now = datetime.now()
-            old = now + timedelta(days=-3)
-            cday = str(now.day) + "/" + str(now.month) + "/" + str(now.year)
-            ctime = str(now.hour) + ":" + str(now.minute)
-            oday = str(old.day) + "/" + str(old.month) + "/" + str(old.year)
-            otime = "00:00"
-            html_view = '\
+	    now = datetime.now()
+	    old=now+timedelta(days=-3)
+            cday=str(now.day)+"/"+str(now.month)+"/"+str(now.year)
+	    ctime=str(now.hour)+":"+str(now.minute)
+	    oday=str(old.day)+"/"+str(old.month)+"/"+str(old.year)
+	    otime="00:00"
+            html_view='\
             <table class=\"tt-table\" cellspacing=\"0\" cellpadding=\"0\" width=\"100%%\">\
                     <tr>\
                         <th id=\"form_title\" class=\"cell-title\">View/Save Report </th>\
@@ -175,22 +175,22 @@ class Report(object):
 		            	</tr>\
                 	</table>\
 			<table class="display" name="total_report_table" id="total_report_table" width="100%%" style=\"display: none;\">\
-			</table>' % (oday, otime, cday, ctime)
+			</table>'%(oday,otime,cday,ctime)
             return html_view
-
-        except Exception, e:
+                    
+        except Exception,e:
             return str(e)
-
+            
     @staticmethod
     def ubre_create_network_usage_form():
         try:
-            now = datetime.now()
-            old = now + timedelta(days=-3)
-            cday = str(now.day) + "/" + str(now.month) + "/" + str(now.year)
-            ctime = str(now.hour) + ":" + str(now.minute)
-            oday = str(old.day) + "/" + str(old.month) + "/" + str(old.year)
-            otime = "00:00"
-            html_view = '\
+	    now = datetime.now()
+	    old=now+timedelta(days=-3)
+            cday=str(now.day)+"/"+str(now.month)+"/"+str(now.year)
+	    ctime=str(now.hour)+":"+str(now.minute)
+	    oday=str(old.day)+"/"+str(old.month)+"/"+str(old.year)
+	    otime="00:00"
+            html_view='\
             <table class=\"tt-table\" cellspacing=\"0\" cellpadding=\"0\" width=\"100%%\">\
                     <tr>\
                         <th id=\"form_title\" class=\"cell-title\">View/Save Report </th>\
@@ -252,80 +252,87 @@ class Report(object):
 		            	</tr>\
                 	</table>\
 			<table class="display" name="total_report_table" id="total_report_table" width="100%%" style=\"display: none;\">\
-			</table>' % (oday, otime, cday, ctime)
+			</table>'%(oday,otime,cday,ctime)
             return html_view
-
-        except Exception, e:
+                    
+        except Exception,e:
             return str(e)
+
+
 
     @staticmethod
     def ubre_page_tip_crc_phy():
         html_view = ""\
-            "<div id=\"help_container\">"\
-            "<h1>CRC PHY ERROR REPORT</h1>"\
-            "<div><strong></strong> This page generates reports for CRC/ PHY Errors occurring while communication.</div>"\
-            "<br/>"\
-            "<div>On this page you can View reports for different date and time periods .</div>"\
-            "<br/>"\
-            "<div><strong>Actions</strong></div>"\
-            "<div class=\"action-tip\"><div class=\"txt-div\"><button type=\"submit\" class=\"yo-small yo-button\"><span class=\"ok\">Submit</span></button> Click here to submit the data.</div></div>"\
-            "<div class=\"action-tip\"><div class=\"txt-div\"><button type=\"button\" class=\"yo-small yo-button\"><span class=\"report\">Report</span></button>Click here to download the report in EXCEL format.</div></div>"\
-            "<div><strong>Note:</strong> You can't choose dates greater than current date and start date sould be less than end date.</div>"\
-            "<br/>"\
-            "<div><b>Group Name</b>: This search box search the result on group name bases.</div>"\
-            "<br/>"\
-            "<div><b>Host Name</b>: This search box search the result on IP address,Host name or MAC address bases.</div>"\
-            "<br/>"\
-            "<div><b>No of device</b>:This provide the result on no of devices and you can adjust the no of devices value,default value is 10 .</div>"\
-            "<br/>"\
-            "<div><b>Important</b>: If you used searching for information(report) so you get information(report) on search based result instead of no of devices else you get result on no of devices bases.</div>"\
-            "</div>"
+        "<div id=\"help_container\">"\
+        "<h1>CRC PHY ERROR REPORT</h1>"\
+        "<div><strong></strong> This page generates reports for CRC/ PHY Errors occurring while communication.</div>"\
+        "<br/>"\
+        "<div>On this page you can View reports for different date and time periods .</div>"\
+        "<br/>"\
+        "<div><strong>Actions</strong></div>"\
+	"<div class=\"action-tip\"><div class=\"txt-div\"><button type=\"submit\" class=\"yo-small yo-button\"><span class=\"ok\">Submit</span></button> Click here to submit the data.</div></div>"\
+	"<div class=\"action-tip\"><div class=\"txt-div\"><button type=\"button\" class=\"yo-small yo-button\"><span class=\"report\">Report</span></button>Click here to download the report in EXCEL format.</div></div>"\
+        "<div><strong>Note:</strong> You can't choose dates greater than current date and start date sould be less than end date.</div>"\
+        "<br/>"\
+	"<div><b>Group Name</b>: This search box search the result on group name bases.</div>"\
+        "<br/>"\
+	"<div><b>Host Name</b>: This search box search the result on IP address,Host name or MAC address bases.</div>"\
+        "<br/>"\
+	"<div><b>No of device</b>:This provide the result on no of devices and you can adjust the no of devices value,default value is 10 .</div>"\
+        "<br/>"\
+	"<div><b>Important</b>: If you used searching for information(report) so you get information(report) on search based result instead of no of devices else you get result on no of devices bases.</div>"\
+        "</div>"
         return html_view
+
 
     @staticmethod
     def ubre_page_tip_rssi():
         html_view = ""\
-            "<div id=\"help_container\">"\
-            "<h1>RSSI REPORT</h1>"\
-            "<div><strong></strong> This page generates reports for RSSI Errors occurring while communication.</div>"\
-            "<br/>"\
-            "<div>On this page you can View reports for different date and time periods .</div>"\
-            "<br/>"\
-            "<div><strong>Actions</strong></div>"\
-            "<div class=\"action-tip\"><div class=\"txt-div\"><button type=\"submit\" class=\"yo-small yo-button\"><span class=\"ok\">Submit</span></button> Click here to submit the data.</div></div>"\
-            "<div class=\"action-tip\"><div class=\"txt-div\"><button type=\"button\" class=\"yo-small yo-button\"><span class=\"report\">Report</span></button>Click here to download the report in EXCEL format.</div></div>"\
-            "<div><strong>Note:</strong> You can't choose dates greater than current date and start date sould be less than end date.</div>"\
-            "<br/>"\
-            "<div><b>Group Name</b>: This search box search the result on group name bases.</div>"\
-            "<br/>"\
-            "<div><b>Host Name</b>: This search box search the result on IP address,Host name or MAC address bases.</div>"\
-            "<br/>"\
-            "<div><b>No of device</b>:This provide the result on no of devices and you can adjust the no of devices value,default value is 10 .</div>"\
-            "<br/>"\
-            "<div><b>Important</b>: If you used searching for information(report) so you get information(report) on search based result instead of no of devices else you get result on no of devices bases.</div>"\
-            "</div>"
+        "<div id=\"help_container\">"\
+        "<h1>RSSI REPORT</h1>"\
+        "<div><strong></strong> This page generates reports for RSSI Errors occurring while communication.</div>"\
+        "<br/>"\
+        "<div>On this page you can View reports for different date and time periods .</div>"\
+        "<br/>"\
+        "<div><strong>Actions</strong></div>"\
+	"<div class=\"action-tip\"><div class=\"txt-div\"><button type=\"submit\" class=\"yo-small yo-button\"><span class=\"ok\">Submit</span></button> Click here to submit the data.</div></div>"\
+	"<div class=\"action-tip\"><div class=\"txt-div\"><button type=\"button\" class=\"yo-small yo-button\"><span class=\"report\">Report</span></button>Click here to download the report in EXCEL format.</div></div>"\
+        "<div><strong>Note:</strong> You can't choose dates greater than current date and start date sould be less than end date.</div>"\
+        "<br/>"\
+	"<div><b>Group Name</b>: This search box search the result on group name bases.</div>"\
+        "<br/>"\
+	"<div><b>Host Name</b>: This search box search the result on IP address,Host name or MAC address bases.</div>"\
+        "<br/>"\
+	"<div><b>No of device</b>:This provide the result on no of devices and you can adjust the no of devices value,default value is 10 .</div>"\
+        "<br/>"\
+	"<div><b>Important</b>: If you used searching for information(report) so you get information(report) on search based result instead of no of devices else you get result on no of devices bases.</div>"\
+        "</div>"
         return html_view
+
+
 
     @staticmethod
     def ubre_page_tip_network_usage():
         html_view = ""\
-            "<div id=\"help_container\">"\
-            "<h1>NETWORK USAGE REPORT</h1>"\
-            "<div><strong></strong> This page generates reports for Network Usage.</div>"\
-            "<br/>"\
-            "<div>On this page you can View reports for different date and time periods .</div>"\
-            "<br/>"\
-            "<div><strong>Actions</strong></div>"\
-            "<div class=\"action-tip\"><div class=\"txt-div\"><button type=\"submit\" class=\"yo-small yo-button\"><span class=\"ok\">Submit</span></button> Click here to submit the data.</div></div>"\
-            "<div class=\"action-tip\"><div class=\"txt-div\"><button type=\"button\" class=\"yo-small yo-button\"><span class=\"report\">Report</span></button>Click here to download the report in EXCEL format.</div></div>"\
-            "<div><strong>Note:</strong> You can't choose dates greater than current date and start date sould be less than end date.</div>"\
-            "<br/>"\
-            "<div><b>Group Name</b>: This search box search the result on group name bases.</div>"\
-            "<br/>"\
-            "<div><b>Host Name</b>: This search box search the result on IP address,Host name or MAC address bases.</div>"\
-            "<br/>"\
-            "<div><b>No of device</b>:This provide the result on no of devices and you can adjust the no of devices value,default value is 10 .</div>"\
-            "<br/>"\
-            "<div><b>Important</b>: If you used searching for information(report) so you get information(report) on search based result instead of no of devices else you get result on no of devices bases.</div>"\
-            "</div>"
+        "<div id=\"help_container\">"\
+        "<h1>NETWORK USAGE REPORT</h1>"\
+        "<div><strong></strong> This page generates reports for Network Usage.</div>"\
+        "<br/>"\
+        "<div>On this page you can View reports for different date and time periods .</div>"\
+        "<br/>"\
+        "<div><strong>Actions</strong></div>"\
+	"<div class=\"action-tip\"><div class=\"txt-div\"><button type=\"submit\" class=\"yo-small yo-button\"><span class=\"ok\">Submit</span></button> Click here to submit the data.</div></div>"\
+	"<div class=\"action-tip\"><div class=\"txt-div\"><button type=\"button\" class=\"yo-small yo-button\"><span class=\"report\">Report</span></button>Click here to download the report in EXCEL format.</div></div>"\
+        "<div><strong>Note:</strong> You can't choose dates greater than current date and start date sould be less than end date.</div>"\
+        "<br/>"\
+	"<div><b>Group Name</b>: This search box search the result on group name bases.</div>"\
+        "<br/>"\
+	"<div><b>Host Name</b>: This search box search the result on IP address,Host name or MAC address bases.</div>"\
+        "<br/>"\
+	"<div><b>No of device</b>:This provide the result on no of devices and you can adjust the no of devices value,default value is 10 .</div>"\
+        "<br/>"\
+	"<div><b>Important</b>: If you used searching for information(report) so you get information(report) on search based result instead of no of devices else you get result on no of devices bases.</div>"\
+        "</div>"
         return html_view
+
+

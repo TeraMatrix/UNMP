@@ -9064,7 +9064,7 @@
 			 *      } );
 			 *    } );
 			 */
-			"sProcessing": "Processing Please Wait . . .",
+			"sProcessing": "Processing...",
 		
 		
 			/**

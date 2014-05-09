@@ -9,3 +9,10 @@ FORMAT $1|$2|$3|$4|$5|$6|$7|$8|$9|$10|$11
 SDESC
 TU Traps Notification
 EDESC
+
+EVENT apTraps iso.3.6.1.4.1.26149.10 "Status Events" Major
+FORMAT $1|$2|$3|$4|$5|$6|$7|$8|$9|$10|$11
+SDESC
+AP Traps Notification
+EDESC
+

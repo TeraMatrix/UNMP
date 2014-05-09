@@ -1,4 +1,3 @@
-// New trap.js
 var aSelectedAvg = [];
 var oTableAvg = null;
 var aSelectedTotal = [];
@@ -515,8 +514,8 @@ $(document).ready(function(){
 		var str2  = $("#end_date").val();
 		str1=str1.split("/");
 		str2=str2.split("/");
-		var date1 = new Date(str1[2],parseInt(str1[1],10)-1, str1[0]); 
-		var date2 = new Date(str2[2],parseInt(str2[1],10)-1, str2[0]);
+		var date1 = new Date(str1[2],parseInt(str1[1])-1, str1[0]); 
+		var date2 = new Date(str2[2],parseInt(str2[1])-1, str2[0]);
 		if(date2 < date1)
 		{
 			 $().toastmessage('showErrorToast', "End Date can't be smaller than Start Date");
@@ -527,21 +526,18 @@ $(document).ready(function(){
 			 	$().toastmessage('showErrorToast', "Dates can't be greater than current Date");
 				return false; 
 			} 
+		
 		str_paginate_table='<table cellpadding="0" cellspacing="0" border="0" class="display" id="table_paginate" style=\"text-align:center;\"><thead>\
 				<tr>\
-					<th>Timestamp</th>\
-					<th>IP Address</th>\
+					<th>Date</th>\
 					<th>Host Alias</th>\
+					<th>IP Address</th>\
 					<th>Hostgroup</th>\
-					<th>Device Type</th>\
-					<th>Severity</th>\
-					<th>Event Name</th>\
-					<th>Event ID</th>\
-					<th>Event Type</th>\
-					<th>Object ID</th>\
-					<th>Object Name</th>\
-					<th>Component ID</th>\
-					<th>Description</th>\
+					<th>Normal</th>\
+					<th>Informational</th>\
+					<th>Minor</th>\
+					<th>Major</th>\
+					<th>Critical</th>\
 				</tr>\
 				</thead>\
 				</table>';
@@ -571,23 +567,7 @@ $(document).ready(function(){
 		"bServerSide": true,
 		"sAjaxSource": url,//"data_table.py?yo=1",
 		"bRetrieve" : true,
-		"sScrollX": "100%"	,
-		 "aaSorting": [[ 0, "desc" ]],
-		 "aoColumns": [
-					{ "sWidth": "10%"},
-					{ "sWidth": "10%" },
-					{ "sWidth": "10%" },
-					{ "sWidth": "10%" },
-					{ "sWidth": "5%" },
-					{ "sWidth": "5%" },
-					{ "sWidth": "5%" },
-					{ "sWidth": "2%" },
-					{ "sWidth": "8%" },
-					{ "sWidth": "2%" },
-					{ "sWidth": "2%" },
-					{ "sWidth": "2%" },
-					{ "sWidth": "18%" }
-				]		
+		"sScrollX": "100%"
 		});
 		return false;
 		//$("#table_paginate").show();
@@ -634,8 +614,8 @@ $("#page_tip").colorbox(  			//page tip
 		var str2  = $("#end_date").val();
 		str1=str1.split("/");
 		str2=str2.split("/");
-		var date1 = new Date(str1[2],parseInt(str1[1],10)-1, str1[0]); 
-		var date2 = new Date(str2[2],parseInt(str2[1],10)-1, str2[0]);
+		var date1 = new Date(str1[2],parseInt(str1[1])-1, str1[0]); 
+		var date2 = new Date(str2[2],parseInt(str2[1])-1, str2[0]);
 		if(date2 < date1)
 		{
 			 $().toastmessage('showErrorToast', "End Date can't be smaller than Start Date");

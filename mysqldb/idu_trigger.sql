@@ -37,14 +37,13 @@ CREATE TRIGGER idu_portstatisticsTable_trigger BEFORE INSERT ON idu_portstatisti
 		if(idu.ingoodoctets=1,idu.ingoodoctets,if(idu.ingoodoctets>idu2.ingoodoctets,idu.ingoodoctets-idu2.ingoodoctets,0)) as ingoodoctets,  
 		if(idu.inbadoctet=1,idu.inbadoctet,if(idu.inbadoctet>idu2.inbadoctet,idu.inbadoctet-idu2.inbadoctet,0)) as inbadoctet,  
 		if(idu.outoctets=1,idu.outoctets,if(idu.outoctets>idu2.outoctets,idu.outoctets-idu2.outoctets,0)) as outoctets
-		from (select * from idu_portstatisticsTable where host_id=NEW.host_id and timestamp between  hour_start and hour_end
-		 and softwarestatportnum=NEW.softwarestatportnum ) as idu
-		join (select * from idu_portstatisticsTable where host_id=NEW.host_id and timestamp between  hour_start and hour_end
+		from idu_portstatisticsTable as idu
+		join(select * from idu_portstatisticsTable where host_id=NEW.host_id and timestamp between  hour_start and hour_end
 		 and softwarestatportnum=NEW.softwarestatportnum ) as idu2 on idu.timestamp>idu2.timestamp and idu.softwarestatportnum=idu2.softwarestatportnum 
 		and idu.host_id=idu2.host_id where  idu.timestamp between  hour_start and hour_end  
 		and idu.host_id=NEW.host_id
 		and idu2.timestamp between  hour_start and hour_end  and idu.softwarestatportnum =NEW.softwarestatportnum and idu.host_id=NEW.host_id
-		and idu.framerx<>1111111 and idu.frametx<>1111111  
+		and idu.framerx<>1 and idu.frametx<>1  
 		group by idu2.timestamp,idu2.softwarestatportnum
 		order by idu2.host_id asc ,  idu2.timestamp asc , idu2.softwarestatportnum asc ) as t3
 		group by t3.host_id,t3.software,CONCAT(DATE(t3.timestamp),HOUR(t3.timestamp))
@@ -82,14 +81,15 @@ CREATE TRIGGER idu_portstatisticsTable_trigger BEFORE INSERT ON idu_portstatisti
 		if(idu.ingoodoctets=1,idu.ingoodoctets,if(idu.ingoodoctets>idu2.ingoodoctets,idu.ingoodoctets-idu2.ingoodoctets,0)) as ingoodoctets,  
 		if(idu.inbadoctet=1,idu.inbadoctet,if(idu.inbadoctet>idu2.inbadoctet,idu.inbadoctet-idu2.inbadoctet,0)) as inbadoctet,  
 		if(idu.outoctets=1,idu.outoctets,if(idu.outoctets>idu2.outoctets,idu.outoctets-idu2.outoctets,0)) as outoctets
-		from (select * from idu_portstatisticsTable where host_id=NEW.host_id and timestamp between  hour_start and hour_end
-		 and softwarestatportnum=NEW.softwarestatportnum ) as idu
-		join (select * from idu_portstatisticsTable where host_id=NEW.host_id and timestamp between  hour_start and hour_end
-		 and softwarestatportnum=NEW.softwarestatportnum ) as idu2 on idu.timestamp>idu2.timestamp and idu.softwarestatportnum=idu2.softwarestatportnum 
+		from idu_portstatisticsTable as idu
+		join(select * from idu_portstatisticsTable
+		where host_id=NEW.host_id and timestamp between  hour_start and hour_end
+		 and softwarestatportnum=NEW.softwarestatportnum
+		 ) as idu2 on idu.timestamp>idu2.timestamp and idu.softwarestatportnum=idu2.softwarestatportnum 
 		 and idu.host_id=NEW.host_id
 		and idu.host_id=idu2.host_id where  idu.timestamp between  hour_start and hour_end  
 		and idu2.timestamp between  hour_start and hour_end  and idu.softwarestatportnum =NEW.softwarestatportnum
-		and idu.framerx<>1111111 and idu.frametx<>1111111  
+		and idu.framerx<>1 and idu.frametx<>1  
 		group by idu2.timestamp,idu2.softwarestatportnum
 		order by idu2.host_id asc ,  idu2.timestamp asc , idu2.softwarestatportnum asc ) as t3
 		group by t3.host_id,t3.software,DATE(t3.timestamp)
@@ -127,14 +127,15 @@ CREATE TRIGGER idu_portstatisticsTable_trigger BEFORE INSERT ON idu_portstatisti
 		if(idu.ingoodoctets=1,idu.ingoodoctets,if(idu.ingoodoctets>idu2.ingoodoctets,idu.ingoodoctets-idu2.ingoodoctets,0)) as ingoodoctets,  
 		if(idu.inbadoctet=1,idu.inbadoctet,if(idu.inbadoctet>idu2.inbadoctet,idu.inbadoctet-idu2.inbadoctet,0)) as inbadoctet,  
 		if(idu.outoctets=1,idu.outoctets,if(idu.outoctets>idu2.outoctets,idu.outoctets-idu2.outoctets,0)) as outoctets
-		from (select * from idu_portstatisticsTable where host_id=NEW.host_id and timestamp between  hour_start and hour_end
-		 and softwarestatportnum=NEW.softwarestatportnum ) as idu
-		join (select * from idu_portstatisticsTable where host_id=NEW.host_id and timestamp between  hour_start and hour_end
-		 and softwarestatportnum=NEW.softwarestatportnum ) as idu2 on idu.timestamp>idu2.timestamp and idu.softwarestatportnum=idu2.softwarestatportnum 
+		from idu_portstatisticsTable as idu
+		join(select * from idu_portstatisticsTable 
+		where host_id=NEW.host_id and timestamp between  hour_start and hour_end
+		 and softwarestatportnum=NEW.softwarestatportnum
+		 ) as idu2 on idu.timestamp>idu2.timestamp and idu.softwarestatportnum=idu2.softwarestatportnum 
 		 and idu.host_id=NEW.host_id
 		and idu.host_id=idu2.host_id where  idu.timestamp between  hour_start and hour_end  
 		and idu2.timestamp between  hour_start and hour_end  and idu.softwarestatportnum =NEW.softwarestatportnum
-		and idu.framerx<>1111111 and idu.frametx<>1111111  
+		and idu.framerx<>1 and idu.frametx<>1  
 		group by idu2.timestamp,idu2.softwarestatportnum
 		order by idu2.host_id asc ,  idu2.timestamp asc , idu2.softwarestatportnum asc ) as t3
 		group by t3.host_id,t3.software,YEARWEEK(t3.timestamp)
@@ -172,8 +173,7 @@ CREATE TRIGGER idu_portstatisticsTable_trigger BEFORE INSERT ON idu_portstatisti
 		if(idu.ingoodoctets=1,idu.ingoodoctets,if(idu.ingoodoctets>idu2.ingoodoctets,idu.ingoodoctets-idu2.ingoodoctets,0)) as ingoodoctets,  
 		if(idu.inbadoctet=1,idu.inbadoctet,if(idu.inbadoctet>idu2.inbadoctet,idu.inbadoctet-idu2.inbadoctet,0)) as inbadoctet,  
 		if(idu.outoctets=1,idu.outoctets,if(idu.outoctets>idu2.outoctets,idu.outoctets-idu2.outoctets,0)) as outoctets
-		from (select * from idu_portstatisticsTable where host_id=NEW.host_id and timestamp between  hour_start and hour_end
-		 and softwarestatportnum=NEW.softwarestatportnum ) as idu
+		from idu_portstatisticsTable as idu
 		join(select * from idu_portstatisticsTable 
 		where host_id=NEW.host_id and timestamp between  hour_start and hour_end
 		 and softwarestatportnum=NEW.softwarestatportnum
@@ -181,7 +181,7 @@ CREATE TRIGGER idu_portstatisticsTable_trigger BEFORE INSERT ON idu_portstatisti
 		 and idu.host_id=NEW.host_id
 		and idu.host_id=idu2.host_id where  idu.timestamp between  hour_start and hour_end  
 		and idu2.timestamp between  hour_start and hour_end  and idu.softwarestatportnum =NEW.softwarestatportnum
-		and idu.framerx<>1111111 and idu.frametx<>1111111  
+		and idu.framerx<>1 and idu.frametx<>1  
 		group by idu2.timestamp,idu2.softwarestatportnum
 		order by idu2.host_id asc ,  idu2.timestamp asc , idu2.softwarestatportnum asc ) as t3
 		group by t3.host_id,t3.software,DATE_FORMAT(t3.timestamp, '%Y-%m')
@@ -231,8 +231,7 @@ CREATE TRIGGER idu_swPrimaryPortStatisticsTable_trigger BEFORE INSERT ON idu_swP
 		if(idu.inGoodOctets=1,idu.inGoodOctets,if(idu.inGoodOctets>idu2.inGoodOctets,idu.inGoodOctets-idu2.inGoodOctets,0)) as inGoodOctets,  
 		if(idu.inBadOctets=1,idu.inBadOctets,if(idu.inBadOctets>idu2.inBadOctets,idu.inBadOctets-idu2.inBadOctets,0)) as inBadOctets,  
 		if(idu.outOctets=1,idu.outOctets,if(idu.outOctets>idu2.outOctets,idu.outOctets-idu2.outOctets,0)) as outOctets
-		from (select * from idu_swPrimaryPortStatisticsTable where host_id=NEW.host_id and timestamp between  hour_start and hour_end and swportnumber=NEW.swportnumber
-		 ) as idu
+		from idu_swPrimaryPortStatisticsTable as idu
 		join(select * from idu_swPrimaryPortStatisticsTable 
 		where host_id=NEW.host_id and timestamp between  hour_start and hour_end
 		 and swportnumber=NEW.swportnumber
@@ -240,7 +239,7 @@ CREATE TRIGGER idu_swPrimaryPortStatisticsTable_trigger BEFORE INSERT ON idu_swP
 		 and idu.host_id=NEW.host_id
 		and idu.host_id=idu2.host_id where  idu.timestamp between  hour_start and hour_end  
 		and idu2.timestamp between  hour_start and hour_end  and idu.swportnumber =NEW.swportnumber
-		and idu.framesRx<>1111111 and idu.framesTx<>1111111  
+		and idu.framesRx<>1 and idu.framesTx<>1  
 		group by idu2.timestamp,idu2.swportnumber
 		order by idu2.host_id asc ,  idu2.timestamp asc , idu2.swportnumber asc ) as t3
 		group by t3.host_id,t3.software,CONCAT(DATE(t3.timestamp),HOUR(t3.timestamp))
@@ -278,8 +277,7 @@ CREATE TRIGGER idu_swPrimaryPortStatisticsTable_trigger BEFORE INSERT ON idu_swP
 		if(idu.inGoodOctets=1,idu.inGoodOctets,if(idu.inGoodOctets>idu2.inGoodOctets,idu.inGoodOctets-idu2.inGoodOctets,0)) as inGoodOctets,  
 		if(idu.inBadOctets=1,idu.inBadOctets,if(idu.inBadOctets>idu2.inBadOctets,idu.inBadOctets-idu2.inBadOctets,0)) as inBadOctets,  
 		if(idu.outOctets=1,idu.outOctets,if(idu.outOctets>idu2.outOctets,idu.outOctets-idu2.outOctets,0)) as outOctets
-		from (select * from idu_swPrimaryPortStatisticsTable where host_id=NEW.host_id and timestamp between  hour_start and hour_end and swportnumber=NEW.swportnumber
-		 ) as idu
+		from idu_swPrimaryPortStatisticsTable as idu
 		join(select * from idu_swPrimaryPortStatisticsTable 
 		where host_id=NEW.host_id and timestamp between  hour_start and hour_end
 		 and swportnumber=NEW.swportnumber
@@ -287,7 +285,7 @@ CREATE TRIGGER idu_swPrimaryPortStatisticsTable_trigger BEFORE INSERT ON idu_swP
 		 and idu.host_id=NEW.host_id
 		and idu.host_id=idu2.host_id where  idu.timestamp between  hour_start and hour_end  
 		and idu2.timestamp between  hour_start and hour_end  and idu.swportnumber =NEW.swportnumber
-		and idu.framesRx<>1111111 and idu.framesTx<>1111111  
+		and idu.framesRx<>1 and idu.framesTx<>1  
 		group by idu2.timestamp,idu2.swportnumber
 		order by idu2.host_id asc ,  idu2.timestamp asc , idu2.swportnumber asc ) as t3
 		group by t3.host_id,t3.software,DATE(t3.timestamp)
@@ -325,15 +323,14 @@ CREATE TRIGGER idu_swPrimaryPortStatisticsTable_trigger BEFORE INSERT ON idu_swP
 		if(idu.inGoodOctets=1,idu.inGoodOctets,if(idu.inGoodOctets>idu2.inGoodOctets,idu.inGoodOctets-idu2.inGoodOctets,0)) as inGoodOctets,  
 		if(idu.inBadOctets=1,idu.inBadOctets,if(idu.inBadOctets>idu2.inBadOctets,idu.inBadOctets-idu2.inBadOctets,0)) as inBadOctets,  
 		if(idu.outOctets=1,idu.outOctets,if(idu.outOctets>idu2.outOctets,idu.outOctets-idu2.outOctets,0)) as outOctets
-		from (select * from idu_swPrimaryPortStatisticsTable where host_id=NEW.host_id and timestamp between  hour_start and hour_end and swportnumber=NEW.swportnumber
-		 ) as idu
+		from idu_swPrimaryPortStatisticsTable as idu
 		join(select * from idu_swPrimaryPortStatisticsTable where host_id=NEW.host_id and timestamp between  hour_start and hour_end
 		 and swportnumber=NEW.swportnumber
 		 ) as idu2 on idu.timestamp>idu2.timestamp and idu.swportnumber=idu2.swportnumber 
 		 and idu.host_id=NEW.host_id
 		and idu.host_id=idu2.host_id where  idu.timestamp between  hour_start and hour_end  
 		and idu2.timestamp between  hour_start and hour_end  and idu.swportnumber =NEW.swportnumber
-		and idu.framesRx<>1111111 and idu.framesTx<>1111111  
+		and idu.framesRx<>1 and idu.framesTx<>1  
 		group by idu2.timestamp,idu2.swportnumber
 		order by idu2.host_id asc ,  idu2.timestamp asc , idu2.swportnumber asc ) as t3
 		group by t3.host_id,t3.software,YEARWEEK(t3.timestamp)
@@ -371,15 +368,14 @@ CREATE TRIGGER idu_swPrimaryPortStatisticsTable_trigger BEFORE INSERT ON idu_swP
 		if(idu.inGoodOctets=1,idu.inGoodOctets,if(idu.inGoodOctets>idu2.inGoodOctets,idu.inGoodOctets-idu2.inGoodOctets,0)) as inGoodOctets,  
 		if(idu.inBadOctets=1,idu.inBadOctets,if(idu.inBadOctets>idu2.inBadOctets,idu.inBadOctets-idu2.inBadOctets,0)) as inBadOctets,  
 		if(idu.outOctets=1,idu.outOctets,if(idu.outOctets>idu2.outOctets,idu.outOctets-idu2.outOctets,0)) as outOctets
-		from (select * from idu_swPrimaryPortStatisticsTable where host_id=NEW.host_id and timestamp between  hour_start and hour_end and swportnumber=NEW.swportnumber
-		 ) as idu
+		from idu_swPrimaryPortStatisticsTable as idu
 		join(select * from idu_swPrimaryPortStatisticsTable where host_id=NEW.host_id and timestamp between  hour_start and hour_end
 		 and swportnumber=NEW.swportnumber
 		 ) as idu2 on idu.timestamp>idu2.timestamp and idu.swportnumber=idu2.swportnumber 
 		 and idu.host_id=NEW.host_id
 		and idu.host_id=idu2.host_id where  idu.timestamp between  hour_start and hour_end  
 		and idu2.timestamp between  hour_start and hour_end  and idu.swportnumber =NEW.swportnumber
-		and idu.framesRx<>1111111 and idu.framesTx<>1111111  
+		and idu.framesRx<>1 and idu.framesTx<>1  
 		group by idu2.timestamp,idu2.swportnumber
 		order by idu2.host_id asc ,  idu2.timestamp asc , idu2.swportnumber asc ) as t3
 		group by t3.host_id,t3.software,DATE_FORMAT(t3.timestamp, '%Y-%m')
@@ -470,8 +466,7 @@ CREATE TRIGGER idu_portSecondaryStatisticsTable_trigger BEFORE INSERT ON idu_por
 		if(idu.singleTx=1,idu.singleTx,if(idu.singleTx>idu2.singleTx,idu.singleTx-idu2.singleTx,0)) as singleTx,
 		if(idu.multipleTx=1,idu.multipleTx,if(idu.multipleTx>idu2.multipleTx,idu.multipleTx-idu2.multipleTx,0)) as multipleTx
 		
-		from (select * from idu_portSecondaryStatisticsTable where host_id=NEW.host_id and timestamp between  hour_start and hour_end
-		 and switchPortNum=NEW.switchPortNum ) as idu
+		from idu_portSecondaryStatisticsTable as idu
 		join(select * from idu_portSecondaryStatisticsTable 
 		where host_id=NEW.host_id and timestamp between  hour_start and hour_end
 		 and switchPortNum=NEW.switchPortNum
@@ -479,7 +474,7 @@ CREATE TRIGGER idu_portSecondaryStatisticsTable_trigger BEFORE INSERT ON idu_por
 		 and idu.host_id=NEW.host_id
 		and idu.host_id=idu2.host_id where  idu.timestamp between  hour_start and hour_end  
 		and idu2.timestamp between  hour_start and hour_end  and idu.switchPortNum =NEW.switchPortNum
-		and idu.inUnicast<>1111111 and idu.outUnicast<>1111111  
+		and idu.inUnicast<>1 and idu.outUnicast<>1  
 		group by idu2.timestamp,idu2.switchPortNum
 		order by idu2.host_id asc ,  idu2.timestamp asc , idu2.switchPortNum asc ) as t3
 		group by t3.host_id,t3.software,CONCAT(DATE(t3.timestamp),HOUR(t3.timestamp))
@@ -556,8 +551,7 @@ CREATE TRIGGER idu_portSecondaryStatisticsTable_trigger BEFORE INSERT ON idu_por
 		if(idu.exessiveTx=1,idu.exessiveTx,if(idu.exessiveTx>idu2.exessiveTx,idu.exessiveTx-idu2.exessiveTx,0)) as exessiveTx,  
 		if(idu.singleTx=1,idu.singleTx,if(idu.singleTx>idu2.singleTx,idu.singleTx-idu2.singleTx,0)) as singleTx,
 		if(idu.multipleTx=1,idu.multipleTx,if(idu.multipleTx>idu2.multipleTx,idu.multipleTx-idu2.multipleTx,0)) as multipleTx
-		from (select * from idu_portSecondaryStatisticsTable where host_id=NEW.host_id and timestamp between  hour_start and hour_end
-		 and switchPortNum=NEW.switchPortNum ) as idu
+		from idu_portSecondaryStatisticsTable as idu
 		join(select * from idu_portSecondaryStatisticsTable 
 		where host_id=NEW.host_id and timestamp between  hour_start and hour_end
 		 and switchPortNum=NEW.switchPortNum
@@ -565,7 +559,7 @@ CREATE TRIGGER idu_portSecondaryStatisticsTable_trigger BEFORE INSERT ON idu_por
 		 and idu.host_id=NEW.host_id
 		and idu.host_id=idu2.host_id where  idu.timestamp between  hour_start and hour_end  
 		and idu2.timestamp between  hour_start and hour_end  and idu.switchPortNum =NEW.switchPortNum
-		and idu.inUnicast<>1111111 and idu.outUnicast<>1111111  
+		and idu.inUnicast<>1 and idu.outUnicast<>1  
 		group by idu2.timestamp,idu2.switchPortNum
 		order by idu2.host_id asc ,  idu2.timestamp asc , idu2.switchPortNum asc ) as t3
 		group by t3.host_id,t3.software,DATE(t3.timestamp)
@@ -642,8 +636,7 @@ CREATE TRIGGER idu_portSecondaryStatisticsTable_trigger BEFORE INSERT ON idu_por
 		if(idu.exessiveTx=1,idu.exessiveTx,if(idu.exessiveTx>idu2.exessiveTx,idu.exessiveTx-idu2.exessiveTx,0)) as exessiveTx,  
 		if(idu.singleTx=1,idu.singleTx,if(idu.singleTx>idu2.singleTx,idu.singleTx-idu2.singleTx,0)) as singleTx,
 		if(idu.multipleTx=1,idu.multipleTx,if(idu.multipleTx>idu2.multipleTx,idu.multipleTx-idu2.multipleTx,0)) as multipleTx
-		from (select * from idu_portSecondaryStatisticsTable where host_id=NEW.host_id and timestamp between  hour_start and hour_end
-		 and switchPortNum=NEW.switchPortNum ) as idu
+		from idu_portSecondaryStatisticsTable as idu
 		join(select * from idu_portSecondaryStatisticsTable
 		 where host_id=NEW.host_id and timestamp between  hour_start and hour_end
 		 and switchPortNum=NEW.switchPortNum
@@ -651,7 +644,7 @@ CREATE TRIGGER idu_portSecondaryStatisticsTable_trigger BEFORE INSERT ON idu_por
 		 and idu.host_id=NEW.host_id
 		and idu.host_id=idu2.host_id where  idu.timestamp between  hour_start and hour_end  
 		and idu2.timestamp between  hour_start and hour_end  and idu.switchPortNum =NEW.switchPortNum
-		and idu.inUnicast<>1111111 and idu.outUnicast<>1111111  
+		and idu.inUnicast<>1 and idu.outUnicast<>1  
 		group by idu2.timestamp,idu2.switchPortNum
 		order by idu2.host_id asc ,  idu2.timestamp asc , idu2.switchPortNum asc ) as t3
 		group by t3.host_id,t3.software,YEARWEEK(t3.timestamp)
@@ -728,8 +721,7 @@ CREATE TRIGGER idu_portSecondaryStatisticsTable_trigger BEFORE INSERT ON idu_por
 		if(idu.exessiveTx=1,idu.exessiveTx,if(idu.exessiveTx>idu2.exessiveTx,idu.exessiveTx-idu2.exessiveTx,0)) as exessiveTx,  
 		if(idu.singleTx=1,idu.singleTx,if(idu.singleTx>idu2.singleTx,idu.singleTx-idu2.singleTx,0)) as singleTx,
 		if(idu.multipleTx=1,idu.multipleTx,if(idu.multipleTx>idu2.multipleTx,idu.multipleTx-idu2.multipleTx,0)) as multipleTx
-		from (select * from idu_portSecondaryStatisticsTable where host_id=NEW.host_id and timestamp between  hour_start and hour_end
-		 and switchPortNum=NEW.switchPortNum ) as idu
+		from idu_portSecondaryStatisticsTable as idu
 		join(select * from idu_portSecondaryStatisticsTable 
 		where host_id=NEW.host_id and timestamp between  hour_start and hour_end
 		 and switchPortNum=NEW.switchPortNum
@@ -737,7 +729,7 @@ CREATE TRIGGER idu_portSecondaryStatisticsTable_trigger BEFORE INSERT ON idu_por
 		 and idu.host_id=NEW.host_id
 		and idu.host_id=idu2.host_id where  idu.timestamp between  hour_start and hour_end  
 		and idu2.timestamp between  hour_start and hour_end  and idu.switchPortNum =NEW.switchPortNum
-		and idu.inUnicast<>1111111 and idu.outUnicast<>1111111  
+		and idu.inUnicast<>1 and idu.outUnicast<>1  
 		group by idu2.timestamp,idu2.switchPortNum
 		order by idu2.host_id asc ,  idu2.timestamp asc , idu2.switchPortNum asc ) as t3
 		group by t3.host_id,t3.software,DATE_FORMAT(t3.timestamp, '%Y-%m')

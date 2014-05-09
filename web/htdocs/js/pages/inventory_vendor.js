@@ -96,6 +96,10 @@ function gridViewVendor()
 				"bPaginate":true,
 				"bStateSave": false,
 				"aaData": result,
+				"aLengthMenu": [[20, 40, 60, -1],[20, 40, 60, "All"]],
+				"bLengthChange":true,
+				"sScrollY":String($("div#container_body").height()-115),
+				"iDisplayLength":20,
 				"oLanguage":{
 					"sInfo":"_START_ - _END_ of _TOTAL_",
 					"sInfoEmpty":"0 - 0 of 0",

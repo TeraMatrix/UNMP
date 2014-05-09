@@ -22,72 +22,70 @@ echo
 echo "		[34mUnified Network Management Platform[0m"
 case "$1" in
     start)
-	    echo
-	    echo " Starting All Services  [ Please Wait ]"
-	    echo " ========================================="
-	    service snmptt start
-	    service snmpd start
-	    service snmptrapd start	
-	    omd start UNMP
-	    #service ndo2db start
-	
-	    service unmp-ds start
-	    echo
-	    echo " ========================================="
-	    echo
+	echo
+	echo " Starting All Services  [ Please Wait ]"
+	echo " ========================================="
+	service snmptt start
+	service snmpd start
+	service snmptrapd start
+	service unmp-alarm start
+	service unmp-local start
+	service ndo2db start
+	omd start UNMP
+	service unmp-ds start
+	echo
+	echo " ========================================="
+	echo
     ;;
     stop)
-	    echo
-	    echo " *Stopping All Services  [ Please Wait ]"
-	    echo " ========================================="
-        omd stop UNMP
-	    service snmptt stop
-	    service snmpd stop
-	    service snmptrapd stop
-	    service ndo2db stop
-	
-	    echo
-	    echo " ========================================="
-	    echo
+	echo
+	echo " *Stopping All Services  [ Please Wait ]"
+	echo " ========================================="
+	service unmp-ds stop
+	service snmptt stop
+	service snmpd stop
+	service snmptrapd stop
+	service unmp-alarm stop
+	service unmp-local stop
+	service ndo2db stop
+	omd stop UNMP
+	echo
+	echo " ========================================="
+	echo
     ;;
     help)
-	    echo
-	    echo "          *** Unified Network Management Platform ***"
-	    echo
-	    echo
-	    echo "  Author: Rahul Gautam "
-	    echo
-	    echo "  Provider:  CodeScape Consultants Pvt. Ltd."
-	    echo
-	    echo "     Usage: unmp-all start | stop | help | status "
-	    echo
-	    echo
+	echo
+	echo "          *** Unified Network Management Platform ***"
+	echo
+	echo
+	echo "  Author: Rahul Gautam "
+	echo
+	echo "  Provider:  CodeScape Consultants Pvt. Ltd."
+	echo
+	echo "     Usage: unmp-all start | stop | help | status "
+	echo
+	echo
     ;;
     status)
-	    echo
-	    echo " Status UNMP Services"
-	    echo
-        omd status UNMP
-	    service snmptt status
-	    service snmpd status
-	    service snmptrapd status
-	    #service ndo2db status
-	    echo
+	echo
+	echo " Status \/ have to be filled"
+	echo
+	echo
     ;;
     '')
-	    echo
-	    echo "  usage: unmp-all start | stop | help | log | status "
-	    echo
-	    echo " Please use help option if you are using it first time "
-	    exit 1
+	echo
+	echo "  usage: unmp-all start | stop | help | log | status "
+	echo
+	echo " Please use help option if you are using it first time "
+	exit 1
     ;;
     *)
 	echo        
         echo " Wrong Arguments "
-	    echo "  usage: unmp-all start | stop | help | log | status "
-	    echo
-	    echo " Please use help option if you are using it first time "
-	    exit 1
+	echo "  usage: unmp-all start | stop | help | log | status "
+	echo
+	echo " Please use help option if you are using it first time "
+	exit 1
     ;;
 esac
 

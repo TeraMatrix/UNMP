@@ -402,7 +402,7 @@ function odu100CommonDashboardSyncLostGraph(div,start,limit)
 						},
 						series: [{
 							color:"#DCCC21",
-							name: 'Sync Loss',
+							name: 'Sync Lost',
 							data: result.counter
 						}]
 					});
@@ -490,7 +490,7 @@ function getNumberOfODU100()
 						});
 
 						errorGraph=$("#dashboard1").yoDashboard({
-							title:"CRC PHY Error Graph",
+							title:"Crc/Phy Error Graph",
 							showRefreshButton:true,
 							showNextPreButton:true,
 							startFrom:0,
@@ -516,11 +516,11 @@ function getNumberOfODU100()
 							},
 							getTotalItem:function(){return totalODUInTheSystem},
 							showTabOption:true,
-							tabList: {value:[1,2,3,4,5,6,7,8],name:["peer1","peer2","peer3","peer4","peer5","peer6","peer7","peer8"],selected:1},
+							tabList: {value:[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16],name:["peer1","peer2","peer3","peer4","peer5","peer6","peer7","peer8","peer9","peer10","peer11","peer12","peer13","peer14","peer15","peer16"],selected:1},
 							height:"180px"
 						});
 						syncLost=$("#dashboard2").yoDashboard({
-							title:"Sync Loss Graph",
+							title:"Sync Lost Graph",
 							showRefreshButton:true,
 							showNextPreButton:true,
 							startFrom:0,

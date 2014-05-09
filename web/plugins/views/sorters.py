@@ -67,7 +67,6 @@ def cmp_atoms(s1, s2):
     else:
         return 1
 
-
 def cmp_state_equiv(r):
     if r["service_has_been_checked"] == 0:
         return -1
@@ -75,8 +74,7 @@ def cmp_state_equiv(r):
     if s <= 1:
         return s
     else:
-        return 5 - s  # swap crit and unknown
-
+        return 5 - s # swap crit and unknown
 
 def cmp_host_state_equiv(r):
     if r["host_has_been_checked"] == 0:
@@ -85,16 +83,13 @@ def cmp_host_state_equiv(r):
     if s == 0:
         return 0
     else:
-        return 2 - s  # swap down und unreachable
-
+        return 2 - s # swap down und unreachable
 
 def cmp_svc_states(r1, r2):
     return cmp_atoms(cmp_state_equiv(r1), cmp_state_equiv(r2))
 
-
 def cmp_hst_states(r1, r2):
     return cmp_atoms(cmp_host_state_equiv(r1), cmp_host_state_equiv(r2))
-
 
 def cmp_simple_string(column, r1, r2):
     v1, v2 = r1[column], r2[column]
@@ -106,22 +101,20 @@ def cmp_simple_string(column, r1, r2):
     else:
         return c
 
-
 def cmp_simple_number(column, r1, r2):
     return cmp_atoms(r1[column], r2[column])
 
 multisite_sorters["svcstate"] = {
-    "title": "Service state",
-    "columns": ["service_state", "service_has_been_checked"],
-    "cmp": cmp_svc_states
+    "title"   : "Service state",
+    "columns" : ["service_state", "service_has_been_checked"],
+    "cmp"     : cmp_svc_states
 }
 
 multisite_sorters["hoststate"] = {
-    "title": "Host state",
-    "columns": ["host_state", "host_has_been_checked"],
-    "cmp": cmp_hst_states
+    "title"   : "Host state",
+    "columns" : ["host_state", "host_has_been_checked"],
+    "cmp"     : cmp_hst_states
 }
-
 
 def cmp_site_host(r1, r2):
     c = cmp_atoms(r1["site"], r2["site"])
@@ -131,58 +124,40 @@ def cmp_site_host(r1, r2):
         return cmp_simple_string("host_name", r1, r2)
 
 multisite_sorters["site_host"] = {
-    "title": "Host",
-    "columns": ["site", "host_name"],
-    "cmp": cmp_site_host
+    "title"   : "Host",
+    "columns" : ["site", "host_name" ],
+    "cmp"     : cmp_site_host
 }
-
 
 def declare_simple_sorter(name, title, column, func):
     multisite_sorters[name] = {
-        "title": title,
-        "columns": [column],
-        "cmp": lambda r1, r2: func(column, r1, r2)
+        "title"   : title,
+        "columns" : [ column ],
+        "cmp"     : lambda r1, r2: func(column, r1, r2)
     }
 
-# name           title                    column
-# sortfunction
-declare_simple_sorter("svcdescr", "Service description",
-                      "service_description", cmp_simple_string)
-declare_simple_sorter("svcoutput", "Service plugin output",
-                      "service_plugin_output", cmp_simple_string)
-declare_simple_sorter("site", "Site", "site",
-                      cmp_simple_string)
-declare_simple_sorter("stateage", "Service state age",
-                      "service_last_state_change", cmp_simple_number)
-declare_simple_sorter("servicegroup", "Servicegroup",
-                      "servicegroup_alias", cmp_simple_string)
-declare_simple_sorter("hostgroup", "Hostgroup",
-                      "hostgroup_alias", cmp_simple_string)
+#                      name           title                    column                       sortfunction
+declare_simple_sorter("svcdescr",     "Service description",   "service_description",       cmp_simple_string)
+declare_simple_sorter("svcoutput",    "Service plugin output", "service_plugin_output",     cmp_simple_string)
+declare_simple_sorter("site",         "Site",                  "site",                      cmp_simple_string)
+declare_simple_sorter("stateage",     "Service state age",     "service_last_state_change", cmp_simple_number)
+declare_simple_sorter("servicegroup", "Servicegroup",          "servicegroup_alias",        cmp_simple_string)
+declare_simple_sorter("hostgroup",    "Hostgroup",             "hostgroup_alias",           cmp_simple_string)
 
 # Comments
-declare_simple_sorter("comment_author", "Comment author",
-                      "comment_author", cmp_simple_string)
-declare_simple_sorter("comment_type", "Comment type",
-                      "comment_type", cmp_simple_number)
+declare_simple_sorter("comment_author", "Comment author",      "comment_author",            cmp_simple_string)
+declare_simple_sorter("comment_type",   "Comment type",        "comment_type",              cmp_simple_number)
 
 # Downtimes
-declare_simple_sorter("downtime_what", "Downtime type (host/service)",
-                      "is_service", cmp_simple_number)
-declare_simple_sorter("downtime_start_time", "Downtime start",
-                      "downtime_start_time", cmp_simple_number)
-declare_simple_sorter("downtime_end_time", "Downtime end",
-                      "downtime_end_time", cmp_simple_number)
-declare_simple_sorter("downtime_entry_time", "Downtime entry time",
-                      "downtime_entry_time", cmp_simple_number)
+declare_simple_sorter("downtime_what",   "Downtime type (host/service)",  "is_service",   cmp_simple_number)
+declare_simple_sorter("downtime_start_time",   "Downtime start",    "downtime_start_time",            cmp_simple_number)
+declare_simple_sorter("downtime_end_time",     "Downtime end",       "downtime_end_time",             cmp_simple_number)
+declare_simple_sorter("downtime_entry_time", "Downtime entry time",  "downtime_entry_time", cmp_simple_number)
 
 # Alert statistics
-declare_simple_sorter("alerts_ok", "Number of recoveries",
-                      "alerts_ok", cmp_simple_number)
-declare_simple_sorter("alerts_warn", "Number of warnings",
-                      "alerts_warn", cmp_simple_number)
-declare_simple_sorter("alerts_crit", "Number of critical alerts",
-                      "alerts_crit", cmp_simple_number)
-declare_simple_sorter("alerts_unknown", "Number of unknown alerts",
-                      "alerts_unknown", cmp_simple_number)
-declare_simple_sorter("alerts_problem", "Number of problem alerts",
-                      "alerts_problem", cmp_simple_number)
+declare_simple_sorter("alerts_ok",       "Number of recoveries",      "alerts_ok",      cmp_simple_number)
+declare_simple_sorter("alerts_warn",     "Number of warnings",        "alerts_warn",    cmp_simple_number)
+declare_simple_sorter("alerts_crit",     "Number of critical alerts", "alerts_crit",    cmp_simple_number)
+declare_simple_sorter("alerts_unknown",  "Number of unknown alerts",  "alerts_unknown", cmp_simple_number)
+declare_simple_sorter("alerts_problem",  "Number of problem alerts",  "alerts_problem", cmp_simple_number)
+

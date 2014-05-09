@@ -39,7 +39,7 @@ function show_scheduling_status()
 					     }
 					     else
 					     {
-					     $('#scheduled_action_status_table').html("<tr></tr><tr><td style=\"text-align:center\">No scheduling records exist.</td></tr>");
+					     $('#scheduled_action_status_table').html("<tr></tr><tr><td>No scheduling records exist.</td></tr>");
 					     }
 				}
 		});
@@ -105,41 +105,6 @@ function multiselect_device_func()
 {
 		device_select_list_html=$("#device_select_list").html();
 		$("#device_select_list").multiselect({selectedList: 1,multiple:false,noneSelectedText: 'Select Device Type',header:"Available Device Types",minWidth:296});
-		
-		var sel2=$("#device_select_list").val();
-		if(sel2!=null)
-			{
-				if(sel2=="idu4")
-							{
-								$("#radioDown_label").html("Admin State Down");
-								$("#radioUp_label").html("Admin State Up");
-							}
-							else
-							{
-								$("#radioDown_label").html("Radio Down");
-								$("#radioUp_label").html("Radio Up");
-							}
-				$.ajax({ 
-				type:"get",
-				url:"odu_scheduling_get_device_info.py"+'?device_type='+sel2,
-				data:"",
-				cache:false,
-				success:function(result){ 
-					try
-					{
-						//result=eval("("+result+")");
-						$("#multi_select_list_inner_div").html(result);
-						$("#multi_select_list_inner_div").css("display","block");
-						multiSelectAccessPoint("odu");
-					}	
-					catch(err)
-					{
-						//alert(err);
-						result = [];
-					}
-				 }
-				});
-			}
 		$("#device_select_list").bind("multiselectclick", function(event, ui){
 			var sel=$("#device_select_list").val();
 					if(ui.value=="idu4")
@@ -152,24 +117,22 @@ function multiselect_device_func()
 								$("#radioDown_label").html("Radio Down");
 								$("#radioUp_label").html("Radio Up");
 							}
-			if(sel!=null && sel!=ui.value)
+			if(sel!=null)
 			{
 				$.ajax({ 
 				type:"get",
-				url:"odu_scheduling_get_device_info.py"+'?device_type='+ui.value,
+				url:"odu_scheduling_get_device_info.py"+'?device_type='+sel,
 				data:"",
 				cache:false,
 				success:function(result){ 
 					try
 					{
 						//result=eval("("+result+")");
-						$("#multi_select_list_inner_div").html(result);
-						$("#multi_select_list_inner_div").css("display","block");
-						multiSelectAccessPoint("odu");
+						$("#multiselectlist_div").html(result);
 					}	
 					catch(err)
 					{
-						//alert(err);
+						alert(err);
 						result = [];
 					}
 				 }
@@ -178,7 +141,7 @@ function multiselect_device_func()
 		});
 
 
-		/*$("#device_select_list").bind("multiselectclose", function(event, ui){
+		$("#device_select_list").bind("multiselectclose", function(event, ui){
 			var sel=$("#device_select_list").val();
 			if(sel!=null)
 			{
@@ -197,14 +160,14 @@ function multiselect_device_func()
 					}	
 					catch(err)
 					{
-						//alert(err);
+						alert(err);
 						result = [];
 					}
 				 }
 				});
 
 			}	
-			});*/
+			});
 			
 }
 
@@ -1062,8 +1025,7 @@ function createEvent()
 	$("#device_select_list").html(device_select_list_html);
 	$("#device_select_list").multiselect("refresh");
 	$("#device_select_list").multiselect("enable");
-	$("#multi_select_list_inner_div").css("display","block");
-	multiselect_device_func();
+	$("#multi_select_list_inner_div").css("display","none");
 }
 function eventSubmit()
 {
@@ -1077,12 +1039,12 @@ function eventSubmit()
 	if (startDate.length == 3 && endDate.length == 3 && startTime.length == 2 && endTime.length == 2)
 	{	
 		now = new Date();
-		sDateObj = new Date(startDate[2],parseInt(startDate[1],10)-1,startDate[0],startTime[0],startTime[1],0);
-		eDateObj = new Date(endDate[2],parseInt(endDate[1],10)-1,endDate[0],endTime[0],endTime[1],0);
-		if((sDateObj.getTime() < now.getTime() || eDateObj.getTime() < now.getTime()) && ( sDateObj.getDate()<now.getDate() || eDateObj.getDate()<now.getDate()))
+		sDateObj = new Date(startDate[2],parseInt(startDate[1])-1,startDate[0],startTime[0],startTime[1],0);
+		eDateObj = new Date(endDate[2],parseInt(endDate[1])-1,endDate[0],endTime[0],endTime[1],0);
+		if(sDateObj.getTime() < now.getTime() || eDateObj.getTime() < now.getTime())
 		{
 			//alert("");
-				$().toastmessage('showErrorToast', "Date Should be Today or Greater then Today");
+			$().toastmessage('showErrorToast', "Date Should be Today or Greater then Today");
 		}
 		else if(sDateObj.getTime()< eDateObj.getTime())
 		{
@@ -1166,8 +1128,8 @@ function addSchedule()
 					var eDate = $("#endDate").val().split("/");
 					var sTime = $("#startTime").val().split(":");
 					var eTime = $("#endTime").val().split(":");
-					var start = new Date(sDate[2],(parseInt(sDate[1],10) - 1),sDate[0],sTime[0],sTime[1]);
-					var end = new Date(eDate[2],(parseInt(eDate[1],10) - 1),eDate[0],eTime[0],eTime[1]);
+					var start = new Date(sDate[2],(parseInt(sDate[1]) - 1),sDate[0],sTime[0],sTime[1]);
+					var end = new Date(eDate[2],(parseInt(eDate[1]) - 1),eDate[0],eTime[0],eTime[1]);
 					calendar.fullCalendar('renderEvent',
 						{
 							id: result,
@@ -1390,9 +1352,9 @@ function eventUpdate()
 	if (startDate.length == 3 && endDate.length == 3 && startTime.length == 2 && endTime.length == 2)
 	{
 		now = new Date();
-		sDateObj = new Date(startDate[2],parseInt(startDate[1],10)-1,startDate[0],startTime[0],startTime[1],0);
-		eDateObj = new Date(endDate[2],parseInt(endDate[1],10)-1,endDate[0],endTime[0],endTime[1],0);
-		if((sDateObj.getTime() < now.getTime() || eDateObj.getTime() < now.getTime()) && ( sDateObj.getDate()<now.getDate() || eDateObj.getDate()<now.getDate()))
+		sDateObj = new Date(startDate[2],parseInt(startDate[1])-1,startDate[0],startTime[0],startTime[1],0);
+		eDateObj = new Date(endDate[2],parseInt(endDate[1])-1,endDate[0],endTime[0],endTime[1],0);
+		if(sDateObj.getTime() < now.getTime() || eDateObj.getTime() < now.getTime())
 		{
 		
 			//alert("");
@@ -1557,7 +1519,7 @@ function plusHostParentOption(accessPoint, Obj)
 		$(Obj).parent().parent().parent().parent().find("input[name='hd" + accessPoint + "']").val(hdval + "," +$(Obj).attr("id"))
 	}
 	countParent = $(Obj).parent().parent().parent().parent().find("span#count").html();
-	$(Obj).parent().parent().parent().parent().find("span#count").html(parseInt(countParent,10) + 1);
+	$(Obj).parent().parent().parent().parent().find("span#count").html(parseInt(countParent) + 1);
 	$(Obj).parent().remove();
 	check_count();
 }

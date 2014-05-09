@@ -4,8 +4,6 @@ var reconcileState = 0;
 var timecheck = 60000;
 var ipMacChange = 0;
 var callB = null;
-var chkPing = 0;
-var anchorObj = null;
 function deviceList()
 {
 	$spinLoading = $("div#spin_loading");		// create object that hold loading circle
@@ -26,10 +24,6 @@ function deviceList()
 	{
 	        parent.main.location = "odu_listing.py?ip_address=" + ip_address + "&mac_address=" + mac_address + "&device_type=" + selected_device_type;
 	}
-        else if(device_type == "ccu")
-        {
-	       parent.main.location = "ccu_listing.py?ip_address=" + ip_address + "&mac_address=" + mac_address + "&device_type=" + selected_device_type;
-        }
 	else
 	{
 	        // this ajax return the call to function get_device_data_table which is in odu_view and pass the ipaddress,macaddress,devicetype with url  
@@ -202,8 +196,8 @@ $(function(){
 	$("#hide_search").toggle(function(){
 		var $this = $(this);
 		var $span = $this.find("span").eq(0);
-		$span.removeClass("dwn");
-		$span.addClass("up");
+		$span.removeClass("up");
+		$span.addClass("dwn");
 		$("#filterOptions").show();
 		$this.css({
 		        'background-color': "#F1F1F1",
@@ -217,8 +211,8 @@ $(function(){
 	function(){
 		var $this = $(this);
 		var $span = $this.find("span").eq(0);
-		$span.removeClass("up");
-		$span.addClass("dwn");
+		$span.removeClass("dwn");
+		$span.addClass("up");
 		$("#filterOptions").hide();
 		$this.css({
 		        'background-color': "#F1F1F1",
@@ -239,7 +233,7 @@ $(function(){
 	//spinStop($spinLoading,$spinMainLoading);
 	$("#page_tip").colorbox(
 	{
-		href:"page_tip_idu_profiling.py",
+		href:"page_tip_odu_profiling.py",
 		title: "Page Tip",
 		opacity: 0.4,
 		maxWidth: "80%",
@@ -710,7 +704,7 @@ function CommonSetRequest(formObj,btn)
 								{
 								        url = "update_e1_port_table.py?host_id="+host_id+"&selected_device="+selected_device;
 									method = "get";
-									showdiv = "#content1_2";
+									showdiv = "#content1_1";
 									$.ajax({
 										type:method,
 										url:url,
@@ -1072,7 +1066,6 @@ function reboot(v,m)
 							//console.log(json[node]);
 							if(json[node]==0 || parseInt(node)==53)
 							{
-							        chkPing = 0;
 								pingCheck();
 							}
 							else
@@ -1097,7 +1090,6 @@ function reboot(v,m)
 //var timeInterval = 1000
 function pingCheck()
 {	
-        chkPing = chkPing + 1
 	var host_id = $("input[id='host_id']").val();
 	$.ajax({
 		type:"post",
@@ -1116,15 +1108,7 @@ function pingCheck()
 			}
 			else
 			{
-			        if(chkPing<30)
-			        {
-				        pingCheck();
-				}
-				else
-				{
-				        $().toastmessage('showErrorToast','Device Not Responding');
-        				spinStop($spinLoading,$spinMainLoading);
-				}
+				pingCheck();
 			}
 		}
 	});
@@ -1134,12 +1118,13 @@ function pingCheck()
 
 function reconciliationConfirm()
 {
-        var host_id = $("input[id='host_id']").val();
 	if(reconcileState == 0 || reconcileState == null)
 	{
 		if(sysAdminState == 0 || sysAdminState == null)
 		{
-                        chk_common_rec(host_id);
+			
+			$.prompt('Device Configuration data would be Synchronized with the UNMP server Database. \n Click Ok to confirm.',{ 
+			buttons:{Ok:true,Cancel:false}, prefix:'jqismooth',callback:reconciliation});			
 		}
 		else
 		{
@@ -1153,51 +1138,6 @@ function reconciliationConfirm()
 
 }
 
-function chk_common_rec(host_id)
-{
-        $.ajax({
-                type: "get",
-                url : "chk_common_reconcile.py?host_id="+host_id,
-                success:function(result){
-                        if(parseInt(result.success)==0)
-                        {
-                                common_rec()
-                        }  
-                        else
-                        {
-                                $().toastmessage('showWarningToast',result.result);
-                        }      
-                }
-               });
-            return false;
-}
-function common_rec()
-{        
-        hrefAttr = $("a.active").attr("href");
-        anchorObj = $(hrefAttr).find("a.active");
-        text_name = $(anchorObj).text();
-        var text_val = text_name.replace(/\s/g,"%20");
-        $.colorbox(
-	{
-		href:"local_reconciliation.py?textname="+text_val,
-		title: "Form Reconciliation",
-		opacity: 0.4,
-		maxWidth: "80%",
-		width:"500px",
-		height:"250px"
-	});
-}
-
-function reconcileForm(obj,formid)
-{
-        formObj = $(obj);
-        formId = $("#"+formid);
-        $.prompt('Device Configuration data would be Synchronized with the UNMP server Database',{ buttons:{Ok:true,Cancel:false}, prefix:'jqismooth',callback: reconciliation});
-        return false;
-}
-
-
-
 function reconciliation(v,m)
 {
 	if(v != undefined && v==true)
@@ -1205,192 +1145,45 @@ function reconciliation(v,m)
 		spinStart($spinLoading,$spinMainLoading);
 		var host_id = $("input[id='host_id']").val();
 		var device_type_id = $("input[id='device_type_id']").val();
-		data = $(formId).serialize();
-	        form_rec = $("input[name='form_rec']:checked").val();
-	        var divId = $(anchorObj).attr("href");
-	        //var divId = attrText.replace("#","");
-	        formName = $(divId).find("input[name='common_rec']").attr("form_name");
-	        tableName = $(divId).find("input[name='common_rec']").attr("tablename");
 		var table_prefix = "idu_";
-		if(parseInt(form_rec)==0)
-                {
-                        $.ajax({
-			                type: "get",
-			                url : "common_reconcile.py?host_id="+host_id+"&device_type="+device_type_id+"&tableName="+tableName,
-			                data:data,
-			                success:function(result)
-			                {
-			                                if(parseInt(result.success)==0)
-			                                {
-		                                                $.ajax({
-			                                                type: "get",
-			                                                url : "idu_form_reconcile.py?formName="+formName+"&host_id="+host_id+"&device_type="+device_type_id,
-			                                                success:function(htmlResult){
-			                                                        $(divId).html();
-			                                                        $(divId).html(htmlResult);
-			                                                        getAdminStateIdu(host_id,device_type_id);
-			                                                }
-			                                              });
-                                                                $().toastmessage('showSuccessToast', text_name+" Reconciliation done successfully");
-                                                        }
-                                                        else
-			                                {
-			                                        $().toastmessage('showErrorToast',result.result);
-			                                }
-			                                $.colorbox.close();
-			                                spinStop($spinLoading,$spinMainLoading);
-                                        }
-                                     });
-                }
-                else if(form_rec==undefined)
-                {
-                        $().toastmessage('showErrorToast',"Please select the reconciliation mode");
-                        spinStop($spinLoading,$spinMainLoading);
-                }
-                else
-                {
-		        $.ajax({
-				        type:"post",
-				        url:"device_update_reconciliation.py?host_id=" + host_id +"&device_type_id="+ device_type_id + "&table_prefix="+table_prefix,
-				        success:function(result)
-				        {
-					        if(result.success==0)
-					        {
-						        var json = result.result
-						        for(var node in json)
-						        {
-							        if(node<=35)
-							        {
-								        $().toastmessage('showWarningToast',node+"% reconciliation done. \n Please reconcile the device again");
-							        }
-							        else if(node<=90)
-							        {
+		$.ajax({
+				type:"post",
+				url:"device_update_reconciliation.py?host_id=" + host_id +"&device_type_id="+ device_type_id + "&table_prefix="+table_prefix,
+				success:function(result)
+				{
+					if(result.success==0)
+					{
+						var json = result.result
+						for(var node in json)
+						{
+							if(node<=35)
+							{
+								$().toastmessage('showWarningToast',node+"% reconciliation done. \n Please reconcile the device again");
+							}
+							else if(node<=90)
+							{
 								
-								        $().toastmessage('showWarningToast',node+"% reconciliation done. \n Please reconcile the device again");
-							        }
-							        else
-							        {
+								$().toastmessage('showWarningToast',node+"% reconciliation done. \n Please reconcile the device again");
+							}
+							else
+							{
 								
-								        $().toastmessage('showSuccessToast',"Reconciliation done successfully");
-							        }
-							        break;
-						        }
-						        getAdminStateIdu(host_id,device_type_id);
-						        $.colorbox.close();
-						        deviceList();
-					        }
-					        else
-					        {
-						        $().toastmessage('showErrorToast',result.result);
-					        }
-					        spinStop($spinLoading,$spinMainLoading);
-				        }
-		        });
-		        return false;
-	        }
-	 $.colorbox.close();
+								$().toastmessage('showSuccessToast',"Reconciliation done successfully");
+							}
+							break;
+						}
+						deviceList();
+					}
+					else
+					{
+						$().toastmessage('showErrorToast',result.result);
+					}
+					spinStop($spinLoading,$spinMainLoading);
+				}
+		});
+		return false
 	}
 }
-
-function getAdminStateIdu(hostId,deviceType)
-{
-
-        $.ajax({
-	        type:"get",
-	        url:"global_admin.py?host_id="+hostId,
-	        success:function(result){
-					        if(parseInt(result.success)==0)
-					        {
-					                json = result.result;
-					                for(var node in json)
-						        {  
-						                var adminDivObj = $("#admin_div");
-						                var objTable = $(adminDivObj); 
-						                for(var item in json[node][0])
-						                {
-						                        var imgRec = $(adminDivObj).find("a:eq("+item+")");  
-						                        var imgbtn = $(imgRec);
-						                        var port = parseInt(item)+1;
-						                        tdObj = $("#content1_2").find("table").find("tr:eq("+port+")").find("td:eq(3)");
-						                        if(parseInt(json[node][0][item])==1 && parseInt(json[node][2][item])==1)
-						                        {
-						                                imgbtn.attr({"class":"green"});
-						                                imgbtn.html("E1"+" "+"Port"+(parseInt(item)+1)+" "+"Unlocked");
-						                                tdObj.html("Unlocked");        	                                                
-						                        }
-						                        else if(parseInt(json[node][0][item])==1 && parseInt(json[node][2][item])==0)
-						                        {
-						                                imgbtn.attr({"class":"red"});
-						                                imgbtn.html("E1"+" "+"Port"+(parseInt(item)+1)+" "+"Unlocked");
-						                                tdObj.html("Unlocked");        	                                                
-						                        }
-						                        else
-						                        {
-						                                imgbtn.attr({"class":"red"});
-						                                imgbtn.html("E1"+" "+"Port"+(parseInt(item)+1)+" "+"Locked");
-						                                tdObj.html("Locked");
-						                        }
-						                } 
-						                
-					                        var imgRec = $(adminDivObj).find("a:eq(4)"); 
-					                        var imgbtn = $(imgRec);
-						                if(parseInt(json[node][1]) == 1)
-							        {
-							                imgbtn.html("IDU Admin Unlocked");
-						                        imgbtn.attr({"class":"green"});
-						                }
-						                else
-						                {
-						                        imgbtn.attr({"class":"red"});
-						                        imgbtn.html("IDU Admin Locked");
-						                }
-						                for(var item in json[node][2])
-						                {
-						                        var port = parseInt(item)+1;
-						                        tdObj = $("#content1_3").find("table").find("tr:eq("+port+")").find("td:eq(9)");
-						                        imgbtn = $(tdObj).find("a");
-						                        if(parseInt(json[node][2][item])==1)
-						                        {
-						                                imgbtn.attr({"class":"green"});
-						                                imgbtn.html("Unlocked");        	                                                
-						                        }
-						                        else
-						                        {
-						                                imgbtn.attr({"class":"red"});
-						                                imgbtn.html("Locked");
-						                        }
-						                }
-                                                                /*var imgRec = $(recTableObj).find("td:eq(7)").find("a:eq(5)"); 
-					                        var imgbtn = $(imgRec);
-					                        if(json[node][2]=="No Link Exists")
-					                        {
-					                                imgbtn.attr({"original-title":"No Link Exists"});
-					                        }
-					                        else
-					                        {
-						                        if(parseInt(json[node][2]) <= 35)
-							                {
-						                                imgbtn.attr({"class":"red"});
-						                                imgbtn.attr({"original-title":json[node][2]+"% Links Unlocked"});
-						                        }
-						                        else if(parseInt(json[node][2]) < 90)
-							                {
-						                                imgbtn.attr({"class":"yellow"});
-						                                imgbtn.attr({"original-title":json[node][2]+"% Links Unlocked"});
-						                        }
-						                        else
-						                        {
-					                                       imgbtn.attr({"class":"green"});
-						                               imgbtn.attr({"original-title":json[node][2]+"% Links Unlocked"});
-						                        }
-						                 }*/
-						        }
-					        }
-				        }
-	        });
-}
-
-
 
 function adminStateConfirm()
 {
@@ -1436,17 +1229,14 @@ function main_admin_state_change(event,obj,hostId,adminStateName)
 	                        {
 	                                if(attrValue==1)
 	                                {
-	                                      //  $(obj).attr({"class":"green"});
+	                                        $(obj).attr({"class":"green"});
 	                                        $(obj).attr({"state":1});
 	                                }
 	                                else
 	                                {
-	                                        //$(obj).attr({"class":"red"});
+	                                        $(obj).attr({"class":"red"});
 	                                        $(obj).attr({"state":0});
 	                                }
-	                                clearTimeout(callA);
-                                        callA=null;
-                                        adminStatusCheck();
 	                        }
 	                        else
 	                        {
@@ -1489,10 +1279,10 @@ function idu_admin_state_change(event,obj,hostId,primaryId,portNum,adminStateNam
 	                        {
 	                                if(attrValue==1)
 	                                {
-	                                        //$(obj).attr({"class":"green"});
+	                                        $(obj).attr({"class":"green"});
 	                                        $(obj).attr({"state":1});
 
-	                                        /*if(parseInt(adminType)==0)
+	                                        if(parseInt(adminType)==0)
 	                                        {
 	                                                $(obj).html("E1 Port"+portNum+" "+"Unlocked");
         	                                        tdObj = $("#content1_2").find("table").find("tr:eq("+portNum+")").find("td:eq(3)");	                                                
@@ -1501,13 +1291,13 @@ function idu_admin_state_change(event,obj,hostId,primaryId,portNum,adminStateNam
 	                                        else
 	                                        {
 	                                                $(obj).html("Unlocked");
-	                                        }*/
+	                                        }
 	                                }
 	                                else
 	                                {
-	                                        //$(obj).attr({"class":"red"});
+	                                        $(obj).attr({"class":"red"});
 	                                        $(obj).attr({"state":0});
-	                                       /* if(parseInt(adminType)==0)
+	                                        if(parseInt(adminType)==0)
 	                                        {
 	                                                $(obj).html("E1 Port"+portNum+" "+"Locked");
 	                                                tdObj = $("#content1_2").find("table").find("tr:eq("+portNum+")").find("td:eq(3)");	                                                
@@ -1516,10 +1306,9 @@ function idu_admin_state_change(event,obj,hostId,primaryId,portNum,adminStateNam
 	                                        else
 	                                        {
 	                                                $(obj).html("Locked");
-	                                        }*/
+	                                        }
 	                                        
 	                                }
-	                                
 	                                /*if(parseInt(adminType)!=0)
 	                                {
 	                                        $.ajax({
@@ -1551,9 +1340,6 @@ function idu_admin_state_change(event,obj,hostId,primaryId,portNum,adminStateNam
 	                                                }
 	                                            });
 	                                 }*/
-	                                 clearTimeout(callA);
-                                         callA=null;
-                                         adminStatusCheck();
 	                        }
 	                        else
 	                        {
@@ -1587,15 +1373,9 @@ function adminStatusCheck()
 							                var imgbtn = $(imgRec);
 							                var port = parseInt(item)+1;
 							                tdObj = $("#content1_2").find("table").find("tr:eq("+port+")").find("td:eq(3)");
-							                if(parseInt(json[node][0][item])==1 && parseInt(json[node][2][item])==1)
+							                if(parseInt(json[node][0][item])==1)
 							                {
 							                        imgbtn.attr({"class":"green"});
-							                        imgbtn.html("E1"+" "+"Port"+(parseInt(item)+1)+" "+"Unlocked");
-							                        tdObj.html("Unlocked");        	                                                
-							                }
-							                else if(parseInt(json[node][0][item])==1 && parseInt(json[node][2][item])==0)
-							                {
-							                        imgbtn.attr({"class":"red"});
 							                        imgbtn.html("E1"+" "+"Port"+(parseInt(item)+1)+" "+"Unlocked");
 							                        tdObj.html("Unlocked");        	                                                
 							                }

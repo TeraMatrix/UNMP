@@ -144,6 +144,10 @@ function gridViewActiveHost()
 				"bPaginate":true,
 				"bStateSave": false,
 				"aaData": result,
+				"aLengthMenu": [[20, 40, 60, -1],[20, 40, 60, "All"]],
+				"bLengthChange":true,
+				"sScrollY":String($("div#container_body").height()-150),
+				"iDisplayLength":20,
 				"oLanguage":{
 					"sInfo":"_START_ - _END_ of _TOTAL_",
 					"sInfoEmpty":"0 - 0 of 0",
@@ -205,6 +209,10 @@ function gridViewDisableHost()
 				"bPaginate":true,
 				"bStateSave": false,
 				"aaData": result,
+				"aLengthMenu": [[20, 40, 60, -1],[20, 40, 60, "All"]],
+				"bLengthChange":true,
+				"sScrollY":String($("div#container_body").height()-150),
+				"iDisplayLength":20,
 				"oLanguage":{
 					"sInfo":"_START_ - _END_ of _TOTAL_",
 					"sInfoEmpty":"0 - 0 of 0",
@@ -230,6 +238,7 @@ function gridViewDiscoveredHost()
 {
 
 			$gridViewDiscoveredHostDataTable = $gridViewDiscoveredHostTableObj.dataTable({
+				//"sScrollY": "250px",
 				"bServerSide": true,
 				"sAjaxSource": "grid_view_discovered_host.py",
 				"bDestroy":true,
@@ -238,6 +247,8 @@ function gridViewDiscoveredHost()
 				"sPaginationType": "full_numbers",
 				"bPaginate":true,
 				"bStateSave": false,
+				//"aaData": result,
+				//"aLengthMenu": [[20, 40, 60, -1],[20, 40, 60, "All"]],
 				"bLengthChange":true
 			});
 			$gridViewDiscoveredHostDataTable.fnSetColumnVis( 0, false,false );
@@ -265,6 +276,10 @@ function gridViewDiscoveredHost()
 				"bPaginate":true,
 				"bStateSave": false,
 				"aaData": result,
+				"aLengthMenu": [[20, 40, 60, -1],[20, 40, 60, "All"]],
+				"bLengthChange":true,
+				"sScrollY":String($("div#container_body").height()-150),
+				"iDisplayLength":20,
 				"oLanguage":{
 					"sInfo":"_START_ - _END_ of _TOTAL_",
 					"sInfoEmpty":"0 - 0 of 0",
@@ -286,6 +301,7 @@ function gridViewDiscoveredHost()
 function gridViewDeletedHost()
 {
 			$gridViewDeletedHostDataTable = $gridViewDeletedHostTableObj.dataTable({
+				//"sScrollY": "250px",
 				"bServerSide": true,
 				"sAjaxSource": "grid_view_deleted_host.py",
 				"bDestroy":true,
@@ -294,6 +310,8 @@ function gridViewDeletedHost()
 				"sPaginationType": "full_numbers",
 				"bPaginate":true,
 				"bStateSave": false,
+				//"aaData": result,
+				//"aLengthMenu": [[20, 40, 60, -1],[20, 40, 60, "All"]],
 				"bLengthChange":true
 			});
 			$gridViewDeletedHostDataTable.fnSetColumnVis( 0, false,false );
@@ -322,6 +340,10 @@ function gridViewDeletedHost()
 				"bPaginate":true,
 				"bStateSave": false,
 				"aaData": result,
+				"aLengthMenu": [[20, 40, 60, -1],[20, 40, 60, "All"]],
+				"bLengthChange":true,
+				"sScrollY":String($("div#container_body").height()-150),
+				"iDisplayLength":20,
 				"oLanguage":{
 					"sInfo":"_START_ - _END_ of _TOTAL_",
 					"sInfoEmpty":"0 - 0 of 0",

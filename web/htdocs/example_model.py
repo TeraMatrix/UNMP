@@ -16,9 +16,8 @@
 ##################################################################
 
 """
-This File Use To Show Example of Web UI and CSS which Help Developers to Make Good and User Friendly UI Interface [Author : Yogesh Kumar].
+This File Use To Show Example of Web UI and CSS which Help Developers to Make Good and User Friendly UI Interface [Author : Yogesh Kumar]. 
 """
-
 
 class host(object):
     host_id = ''
@@ -30,8 +29,9 @@ class host(object):
     output_of_host_check = ''
     host_performance_data = ''
     check_attempt = ''
-    check_type = ''
-    age = ''
+    check_type=''
+    age=''
     last_check = ''
     next_scheduled_check = ''
     no_of_service = 0
+    

@@ -1,0 +1,83 @@
+105a106
+>                     "<label for=\"host_alias\" generated=\"true\" class=\"error\"></label>"\
+109a111
+>                     "<label for=\"ip_address\" generated=\"true\" class=\"error\"></label>"\
+113a116
+>                     "<label for=\"mac_address\" generated=\"true\" class=\"error\"></label>"\
+570d572
+<     
+575,581c577,587
+<         "<div id=\"grid_view_div\">"\
+<        "<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"display\" id=\"grid_view\" style=\"text-align:center;\">\
+<                     <thead><tr><th></th><th></th><th>IP Address</th>\
+<                     <th>Host Alias</th>\
+<                     <th>Services</th>\
+<                     </tr></thead>\
+<                     </table>"\
+---
+>         "<div id=\"form_div\" class=\"form-div\">"\
+>         	"<div id=\"grid_view_div\">"\
+>        			"<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"display\" id=\"grid_view\" style=\"text-align:center;\">\
+>                     	    <thead><tr><th></th><th></th><th>IP Address</th>\
+>                     	    <th>Host Alias</th>\
+> 			    <th>Hostgroup</th>\
+> 			    <th>Device type</th>\
+> 			    <th>Services</th>\
+> 			    <th>Edit</th>\
+> 			    </tr></thead>\
+> 			 </table>"\
+583c589,594
+<         "<div id=\"form_div\" style=\"display:none;\"></div>"
+---
+>         "</div>"\
+>         "<div class=\"form-div-footer\">\
+>              <div class=\"user-header-icon\">\
+>                <button class=\"yo-small yo-button\" id=\"apply_changes_services_button\" disabled=\"disabled\" type=\"button\" onclick=\"applyChanges();\">Apply Changes</button>\
+>               </div>\
+>         </div>"
+584a596,621
+>         
+>     @staticmethod
+>     def edit_service_details(host_alias,service_obj):
+>         html_view='<div style="display:block;overflow:hidden"><h2>%s</h2>'%str(host_alias)
+>         service_names=""
+>         for service in service_obj:
+>             html_view+='<div class=\"row-elem\"><h3>%s:</h3></div>'%(service[0])
+>             html_view+='<div class=\"row-elem\">\
+> 	   	<label class=\"lbl lbl-big\" style="width:100px;" >service check time:</label>\
+> 	   	<select name="%s" id="%s" class="multiselect" title="Click to select an option">'%(service[0].replace(" ","_"),service[0].replace(" ","_"))
+> 	    if service[0].lower().find("uptime")!=-1:
+> 	    	html_view+='<option value=%s>%s</option></select></div>'%(str(service[1]),str(service[1]))
+> 	    else:
+> 	        html_view+='\
+> 	        <option value=%s>%s mins</option>\
+> 		<option value=5>5 mins</option>\
+> 		<option value=10>10 mins</option>\
+> 		<option value=15>15 mins</option>\
+> 		<option value=30>30 mins</option>\
+> 		<option value=45>45 mins</option>\
+> 		<option value=60>60 mins</option>\
+> 		</select>\
+> 		</div>'%(str(service[1]),str(service[1]))
+> 	    service_names+=str(service[0])+","
+>         html_view+='<input type="hidden" id="service_names" value="%s"/></div>'%(service_names)
+>         return html_view        
+590,593c627,630
+<         "<h1>Service</h1>"\
+<         "<div><strong>Service</strong> Every network element has service associated with it.User can manage and monitor it.</div>"\
+<         "<br/>"\
+<         "<div>On this page you can Add new Service under a Host, Update Details and Delete Existing Service.</div>"\
+---
+>         "<h1> Service</h1>"\
+>         "<div> Every network element has service associated with it.User can manage and monitor it.</div>"\
+>         "<div> On this page service time can be modified in the interval of 5, 10, 15, 30 and 60 minutes.</div>"\
+>         "<div> After making all modifications click on Apply changes to save them.</div>"\
+596,598c633,636
+<         "<div class=\"action-tip\"><div class=\"img-div\"><img style=\"width:16px;height:16px;\" src=\"images/new_icons/round_plus.png\"/></div><div class=\"txt-div\">Add New Service</div></div>"\
+<         "<div class=\"action-tip\"><div class=\"img-div\"><img style=\"width:16px;height:16px;\" src=\"images/new_icons/doc_edit.png\"/></div><div class=\"txt-div\">Update Service Details</div></div>"\
+<         "<div class=\"action-tip\"><div class=\"img-div\"><img style=\"width:16px;height:16px;\" src=\"images/new_icons/round_minus.png\"/></div><div class=\"txt-div\">Delete Service</div></div>"\
+---
+>         "<div class=\"action-tip\"><div class=\"txt-div\"><img style=\"height=\"15\" width=\"15\" \" src=\"images/done.gif\"/></div><div class=\"txt-div\"> Service is in 'ok' state</div></div>"\
+>         "<div class=\"action-tip\"><div class=\"txt-div\"><img style=\"height=\"15\" width=\"15\" \" src=\"images/new/alert.png\"/></div><div class=\"txt-div\"> Service is in 'warning' or 'critical' state</div></div>"\
+>         "<div class=\"action-tip\"><div class=\"txt-div\"><img style=\"height=\"15\" width=\"15\" \" src=\"images/new/edit.png\"/></div><div class=\"txt-div\"> Edit service time</div></div>"\
+>         "<div class=\"action-tip\"><button class=\"yo-small yo-button\" disabled=\"disabled\" type=\"button\" >Apply Changes</button> Apply all modifications of service time to the system.</div>"\

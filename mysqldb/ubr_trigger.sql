@@ -42,12 +42,12 @@ CREATE TRIGGER get_odu16_ra_tdd_mac_statistics_entry_trigger BEFORE INSERT ON ge
 	                    if(t2.`rx_dropped`>t1.`rx_dropped`,t2.`rx_dropped`-t1.`rx_dropped`,0) as delta_rx_dropped,
 	                    if(t2.`tx_dropped`>t1.`tx_dropped`,t2.`tx_dropped`-t1.`tx_dropped`,0) as delta_tx_dropped,
 	                    t2.host_id,t2.timestamp
-                    FROM (select * from `get_odu16_ra_tdd_mac_statistics_entry` where host_id=NEW.host_id and timestamp between hour_start and hour_end ) as t1
-                    inner join (select * from `get_odu16_ra_tdd_mac_statistics_entry` where host_id=NEW.host_id and timestamp between hour_start and hour_end ) as t2 
+                    FROM `get_odu16_ra_tdd_mac_statistics_entry`as t1
+                    inner join (select `rx_packets`, `tx_packets`, `rx_bytes`, `tx_bytes`, `rx_errors`, `tx_errors`, `rx_dropped`, `tx_dropped`, `rx_crc_errors`, `rx_phy_error`,host_id,timestamp from `get_odu16_ra_tdd_mac_statistics_entry` where host_id=NEW.host_id and timestamp between hour_start and hour_end ) as t2 
                         on t2.timestamp>t1.timestamp and t2.host_id=t1.host_id and t1.host_id=NEW.host_id
                     where  t1.timestamp between hour_start and hour_end
          	           and t2.timestamp between hour_start and hour_end 
-         	           and t2.`rx_crc_errors`<>1111111 and t2.`rx_phy_error`<>1111111  
+         	           and t2.`rx_crc_errors`<>1 and t2.`rx_phy_error`<>1  
                     group by t1.timestamp
                     order by t1.timestamp asc ,t1.host_id asc 
                 ) as t3
@@ -87,12 +87,12 @@ CREATE TRIGGER get_odu16_ra_tdd_mac_statistics_entry_trigger BEFORE INSERT ON ge
 	                    if(t2.`rx_dropped`>t1.`rx_dropped`,t2.`rx_dropped`-t1.`rx_dropped`,0) as delta_rx_dropped,
 	                    if(t2.`tx_dropped`>t1.`tx_dropped`,t2.`tx_dropped`-t1.`tx_dropped`,0) as delta_tx_dropped,
 	                    t2.host_id,t2.timestamp
-                     FROM (select * from `get_odu16_ra_tdd_mac_statistics_entry` where host_id=NEW.host_id and timestamp between hour_start and hour_end ) as t1
-                    inner join (select * from `get_odu16_ra_tdd_mac_statistics_entry` where host_id=NEW.host_id and timestamp between hour_start and hour_end ) as t2 
+                    FROM `get_odu16_ra_tdd_mac_statistics_entry`as t1
+                    inner join (select `rx_packets`, `tx_packets`, `rx_bytes`, `tx_bytes`, `rx_errors`, `tx_errors`, `rx_dropped`, `tx_dropped`, `rx_crc_errors`, `rx_phy_error`,host_id,timestamp from `get_odu16_ra_tdd_mac_statistics_entry`  where host_id=NEW.host_id and timestamp between hour_start and hour_end ) as t2 
                         on t2.timestamp>t1.timestamp and t2.host_id=t1.host_id and t1.host_id=NEW.host_id
                     where t1.timestamp between hour_start and hour_end
          	           and t2.timestamp between hour_start and hour_end 
-         	           and t2.`rx_crc_errors`<>1111111 and t2.`rx_phy_error`<>1111111  
+         	           and t2.`rx_crc_errors`<>1 and t2.`rx_phy_error`<>1  
                     group by t1.timestamp
                     order by t1.timestamp asc ,t1.host_id asc 
                 ) as t3
@@ -133,12 +133,12 @@ CREATE TRIGGER get_odu16_ra_tdd_mac_statistics_entry_trigger BEFORE INSERT ON ge
 	                    if(t2.`rx_dropped`>t1.`rx_dropped`,t2.`rx_dropped`-t1.`rx_dropped`,0) as delta_rx_dropped,
 	                    if(t2.`tx_dropped`>t1.`tx_dropped`,t2.`tx_dropped`-t1.`tx_dropped`,0) as delta_tx_dropped,
 	                    t2.host_id,t2.timestamp
-                     FROM (select * from `get_odu16_ra_tdd_mac_statistics_entry` where host_id=NEW.host_id and timestamp between hour_start and hour_end ) as t1
-                    inner join (select * from `get_odu16_ra_tdd_mac_statistics_entry` where host_id=NEW.host_id and timestamp between hour_start and hour_end ) as t2 
+                    FROM `get_odu16_ra_tdd_mac_statistics_entry`as t1
+                    inner join (select `rx_packets`, `tx_packets`, `rx_bytes`, `tx_bytes`, `rx_errors`, `tx_errors`, `rx_dropped`, `tx_dropped`, `rx_crc_errors`, `rx_phy_error`,host_id,timestamp from `get_odu16_ra_tdd_mac_statistics_entry`  where host_id=NEW.host_id and timestamp between hour_start and hour_end ) as t2 
                         on t2.timestamp>t1.timestamp and t2.host_id=t1.host_id and t1.host_id=NEW.host_id
                     where   t1.timestamp between hour_start and hour_end
          	           and t2.timestamp between hour_start and hour_end 
-         	           and t2.`rx_crc_errors`<>1111111 and t2.`rx_phy_error`<>1111111  
+         	           and t2.`rx_crc_errors`<>1 and t2.`rx_phy_error`<>1  
                     group by t1.timestamp
                     order by t1.timestamp asc ,t1.host_id asc 
                 ) as t3
@@ -178,12 +178,12 @@ CREATE TRIGGER get_odu16_ra_tdd_mac_statistics_entry_trigger BEFORE INSERT ON ge
 	                    if(t2.`rx_dropped`>t1.`rx_dropped`,t2.`rx_dropped`-t1.`rx_dropped`,0) as delta_rx_dropped,
 	                    if(t2.`tx_dropped`>t1.`tx_dropped`,t2.`tx_dropped`-t1.`tx_dropped`,0) as delta_tx_dropped,
 	                    t2.host_id,t2.timestamp
-                     FROM (select * from `get_odu16_ra_tdd_mac_statistics_entry` where host_id=NEW.host_id and timestamp between hour_start and hour_end ) as t1
-                    inner join (select * from `get_odu16_ra_tdd_mac_statistics_entry` where host_id=NEW.host_id and timestamp between hour_start and hour_end ) as t2 
+                    FROM `get_odu16_ra_tdd_mac_statistics_entry`as t1
+                    inner join (select `rx_packets`, `tx_packets`, `rx_bytes`, `tx_bytes`, `rx_errors`, `tx_errors`, `rx_dropped`, `tx_dropped`, `rx_crc_errors`, `rx_phy_error`,host_id,timestamp from `get_odu16_ra_tdd_mac_statistics_entry`  where host_id=NEW.host_id and timestamp between hour_start and hour_end ) as t2 
                         on t2.timestamp>t1.timestamp and t2.host_id=t1.host_id and t1.host_id=NEW.host_id
                     where t1.timestamp between hour_start and hour_end
          	           and t2.timestamp between hour_start and hour_end 
-         	           and t2.`rx_crc_errors`<>1111111 and t2.`rx_phy_error`<>1111111  
+         	           and t2.`rx_crc_errors`<>1 and t2.`rx_phy_error`<>1  
                     group by t1.timestamp
                     order by t1.timestamp asc ,t1.host_id asc
                 ) as t3
@@ -248,12 +248,12 @@ CREATE TRIGGER get_odu16_nw_interface_statistics_table_trigger BEFORE INSERT ON 
 	                    if(t2.`rx_multicast`>t1.`rx_multicast`,t2.`rx_multicast`-t1.`rx_multicast`,0) as delta_rx_multicast,
 	                    if(t2.`colisions`>t1.`colisions`,t2.`colisions`-t1.`colisions`,0) as delta_colisions,
 	                    t2.host_id,t2.`index`,t2.timestamp
-                    FROM (select * from `get_odu16_nw_interface_statistics_table` where host_id=NEW.host_id and timestamp between hour_start and hour_end and `index`=1) as t1
-                    inner join (select * from `get_odu16_nw_interface_statistics_table` where host_id=NEW.host_id and timestamp between hour_start and hour_end and `index`=1) as t2 
+                    FROM `get_odu16_nw_interface_statistics_table`as t1
+                    inner join (select `rx_packets`, `tx_packets`, `rx_bytes`, `tx_bytes`, `rx_errors`, `tx_errors`, `rx_dropped`, `tx_dropped`, `rx_multicast`, `colisions`,host_id,`index`,timestamp from `get_odu16_nw_interface_statistics_table` where host_id=NEW.host_id and timestamp between hour_start and hour_end and `index`=1) as t2 
                         on t2.timestamp>t1.timestamp and t2.host_id=t1.host_id and t2.`index`=t1.`index`
                     where t1.host_id=NEW.host_id and t1.`index`=1 and t1.timestamp between hour_start and hour_end
          	           and t2.timestamp between hour_start and hour_end 
-         	           and t2.`rx_bytes`<>1111111 and t2.`tx_bytes`<>1111111  
+         	           and t2.`rx_bytes`<>1 and t2.`tx_bytes`<>1  
                     group by t1.timestamp,t1.`index`
                     order by t1.timestamp asc ,t1.host_id asc , t1.`index` asc
                 ) as t3
@@ -294,12 +294,12 @@ CREATE TRIGGER get_odu16_nw_interface_statistics_table_trigger BEFORE INSERT ON 
 	                    if(t2.`rx_multicast`>t1.`rx_multicast`,t2.`rx_multicast`-t1.`rx_multicast`,0) as delta_rx_multicast,
 	                    if(t2.`colisions`>t1.`colisions`,t2.`colisions`-t1.`colisions`,0) as delta_colisions,
                     t2.host_id,t2.`index`,t2.timestamp
-                    FROM (select * from `get_odu16_nw_interface_statistics_table` where host_id=NEW.host_id and timestamp between hour_start and hour_end and `index`=2) as t1
-                    inner join (select * from `get_odu16_nw_interface_statistics_table` where host_id=NEW.host_id and timestamp between hour_start and hour_end and `index`=2) as t2 
+                    FROM `get_odu16_nw_interface_statistics_table` as t1
+                    inner join (select `rx_packets`, `tx_packets`, `rx_bytes`, `tx_bytes`, `rx_errors`, `tx_errors`, `rx_dropped`, `tx_dropped`, `rx_multicast`, `colisions`,host_id,`index`,timestamp from `get_odu16_nw_interface_statistics_table` where host_id=NEW.host_id and  timestamp between hour_start and hour_end and `index`=2) as t2 
                     on t2.timestamp>t1.timestamp and t2.host_id=t1.host_id and t2.`index`=t1.`index`
                     where t1.host_id=NEW.host_id and t1.`index`=2 and t1.timestamp between hour_start and hour_end 
                                        and t2.timestamp between hour_start and hour_end 
-                                       and t2.`rx_bytes`<>1111111 and t2.`rx_bytes`<>1111111 
+                                       and t2.`rx_bytes`<>1 and t2.`rx_bytes`<>1 
                     group by t1.timestamp,t1.`index`
                     order by t1.timestamp asc ,t1.host_id asc , t1.`index` asc ) as t3
                     group by t3.host_id,t3.`index`,CONCAT(DATE(t3.timestamp),HOUR(t3.timestamp))
@@ -382,12 +382,12 @@ CREATE TRIGGER get_odu16_nw_interface_statistics_table_trigger BEFORE INSERT ON 
 	                    if(t2.`rx_multicast`>t1.`rx_multicast`,t2.`rx_multicast`-t1.`rx_multicast`,0) as delta_rx_multicast,
 	                    if(t2.`colisions`>t1.`colisions`,t2.`colisions`-t1.`colisions`,0) as delta_colisions,
                     t2.host_id,t2.`index`,t2.timestamp
-                   FROM (select * from `get_odu16_nw_interface_statistics_table` where host_id=NEW.host_id and timestamp between hour_start and hour_end and `index`=3) as t1
-                    inner join (select * from `get_odu16_nw_interface_statistics_table` where host_id=NEW.host_id and timestamp between hour_start and hour_end and `index`=3) as t2 
+                    FROM `get_odu16_nw_interface_statistics_table`as t1
+                    inner join (select `rx_packets`, `tx_packets`, `rx_bytes`, `tx_bytes`, `rx_errors`, `tx_errors`, `rx_dropped`, `tx_dropped`, `rx_multicast`, `colisions`,host_id,`index`,timestamp from `get_odu16_nw_interface_statistics_table` where host_id=NEW.host_id and  timestamp between hour_start and hour_end and `index`=1) as t2 
                         on t2.timestamp>t1.timestamp and t2.host_id=t1.host_id and t2.`index`=t1.`index`
                     where t1.host_id=NEW.host_id and t1.`index`=3 and t1.timestamp between hour_start and hour_end 
                                        and t2.timestamp between hour_start and hour_end 
-                                       and t2.`rx_bytes`<>1111111 and t2.`rx_bytes`<>1111111 
+                                       and t2.`rx_bytes`<>1 and t2.`rx_bytes`<>1 
                     group by t1.timestamp,t1.`index`
                     order by t1.timestamp asc ,t1.host_id asc , t1.`index` asc ) as t3
                     group by t3.host_id,t3.`index`,CONCAT(DATE(t3.timestamp),HOUR(t3.timestamp))
@@ -436,7 +436,7 @@ CREATE TRIGGER get_odu16_nw_interface_statistics_table_trigger BEFORE INSERT ON 
                     where CONCAT_WS(' ',DATE(t5.timestamp),HOUR(t5.timestamp))=CONCAT_WS(' ',DATE(ap.timestamp),HOUR(ap.timestamp)) 
                         and t5.host_id=ap.host_id;
         END IF;
-        ## DAILY 
+        ## DAILY
         IF (DATE(NEW.timestamp)>DATE(old_time)) 
             THEN
                 SET hour_start=CONCAT(DATE_FORMAT(old_time,'%Y-%m-%d'),' 00:00:00');
@@ -476,12 +476,12 @@ CREATE TRIGGER get_odu16_nw_interface_statistics_table_trigger BEFORE INSERT ON 
 	                    if(t2.`rx_multicast`>t1.`rx_multicast`,t2.`rx_multicast`-t1.`rx_multicast`,0) as delta_rx_multicast,
 	                    if(t2.`colisions`>t1.`colisions`,t2.`colisions`-t1.`colisions`,0) as delta_colisions,
 	                    t2.host_id,t2.`index`,t2.timestamp
-                    FROM  (select * from `get_odu16_nw_interface_statistics_table` where host_id=NEW.host_id and  timestamp between hour_start and hour_end and `index`=1) as t1
-                    inner join (select * from `get_odu16_nw_interface_statistics_table` where host_id=NEW.host_id and  timestamp between hour_start and hour_end and `index`=1) as t2 
+                    FROM `get_odu16_nw_interface_statistics_table`as t1
+                    inner join (select `rx_packets`, `tx_packets`, `rx_bytes`, `tx_bytes`, `rx_errors`, `tx_errors`, `rx_dropped`, `tx_dropped`, `rx_multicast`, `colisions`,host_id,`index`,timestamp from `get_odu16_nw_interface_statistics_table` where host_id=NEW.host_id and  timestamp between hour_start and hour_end and `index`=1) as t2 
                         on t2.timestamp>t1.timestamp and t2.host_id=t1.host_id and t2.`index`=t1.`index`
                     where t1.host_id=NEW.host_id and  t1.`index`=1 and t1.timestamp between hour_start and hour_end
          	           and t2.timestamp between hour_start and hour_end 
-         	           and t2.`rx_bytes`<>1111111 and t2.`tx_bytes`<>1111111  
+         	           and t2.`rx_bytes`<>1 and t2.`tx_bytes`<>1  
                     group by t1.timestamp,t1.`index`
                     order by t1.timestamp asc ,t1.host_id asc , t1.`index` asc
                 ) as t3
@@ -522,12 +522,12 @@ CREATE TRIGGER get_odu16_nw_interface_statistics_table_trigger BEFORE INSERT ON 
 	                    if(t2.`rx_multicast`>t1.`rx_multicast`,t2.`rx_multicast`-t1.`rx_multicast`,0) as delta_rx_multicast,
 	                    if(t2.`colisions`>t1.`colisions`,t2.`colisions`-t1.`colisions`,0) as delta_colisions,
                     t2.host_id,t2.`index`,t2.timestamp
-                    FROM  (select * from `get_odu16_nw_interface_statistics_table` where host_id=NEW.host_id and  timestamp between hour_start and hour_end and `index`=2) as t1
-                    inner join (select * from `get_odu16_nw_interface_statistics_table` where host_id=NEW.host_id and  timestamp between hour_start and hour_end and `index`=2) as t2 
+                    FROM `get_odu16_nw_interface_statistics_table` as t1
+                    inner join (select `rx_packets`, `tx_packets`, `rx_bytes`, `tx_bytes`, `rx_errors`, `tx_errors`, `rx_dropped`, `tx_dropped`, `rx_multicast`, `colisions`,host_id,`index`,timestamp from `get_odu16_nw_interface_statistics_table` where host_id=NEW.host_id and timestamp between hour_start and hour_end and `index`=2) as t2 
                     on t2.timestamp>t1.timestamp and t2.host_id=t1.host_id and t2.`index`=t1.`index`
                     where t1.host_id=NEW.host_id and  t1.`index`=2 and t1.timestamp between hour_start and hour_end 
                                        and t2.timestamp between hour_start and hour_end 
-                                       and t2.`rx_bytes`<>1111111 and t2.`rx_bytes`<>1111111 
+                                       and t2.`rx_bytes`<>1 and t2.`rx_bytes`<>1 
                     group by t1.timestamp,t1.`index`
                     order by t1.timestamp asc ,t1.host_id asc , t1.`index` asc ) as t3
                     group by t3.host_id,t3.`index`,DATE(t3.timestamp)
@@ -610,12 +610,12 @@ CREATE TRIGGER get_odu16_nw_interface_statistics_table_trigger BEFORE INSERT ON 
 	                    if(t2.`rx_multicast`>t1.`rx_multicast`,t2.`rx_multicast`-t1.`rx_multicast`,0) as delta_rx_multicast,
 	                    if(t2.`colisions`>t1.`colisions`,t2.`colisions`-t1.`colisions`,0) as delta_colisions,
                     t2.host_id,t2.`index`,t2.timestamp
-                    FROM  (select * from `get_odu16_nw_interface_statistics_table` where host_id=NEW.host_id and  timestamp between hour_start and hour_end and `index`=3) as t1
-                    inner join (select * from `get_odu16_nw_interface_statistics_table` where host_id=NEW.host_id and  timestamp between hour_start and hour_end and `index`=3) as t2 
+                    FROM `get_odu16_nw_interface_statistics_table`as t1
+                    inner join (select `rx_packets`, `tx_packets`, `rx_bytes`, `tx_bytes`, `rx_errors`, `tx_errors`, `rx_dropped`, `tx_dropped`, `rx_multicast`, `colisions`,host_id,`index`,timestamp from `get_odu16_nw_interface_statistics_table` where host_id=NEW.host_id and timestamp between hour_start and hour_end and `index`=3) as t2 
                         on t2.timestamp>t1.timestamp and t2.host_id=t1.host_id and t2.`index`=t1.`index`
                     where t1.host_id=NEW.host_id and  t1.`index`=3 and t1.timestamp between hour_start and hour_end 
                                        and t2.timestamp between hour_start and hour_end 
-                                       and t2.`rx_bytes`<>1111111 and t2.`rx_bytes`<>1111111 
+                                       and t2.`rx_bytes`<>1 and t2.`rx_bytes`<>1 
                     group by t1.timestamp,t1.`index`
                     order by t1.timestamp asc ,t1.host_id asc , t1.`index` asc ) as t3
                     group by t3.host_id,t3.`index`,DATE(t3.timestamp)
@@ -705,12 +705,12 @@ CREATE TRIGGER get_odu16_nw_interface_statistics_table_trigger BEFORE INSERT ON 
 	                    if(t2.`rx_multicast`>t1.`rx_multicast`,t2.`rx_multicast`-t1.`rx_multicast`,0) as delta_rx_multicast,
 	                    if(t2.`colisions`>t1.`colisions`,t2.`colisions`-t1.`colisions`,0) as delta_colisions,
 	                    t2.host_id,t2.`index`,t2.timestamp
-                    FROM (select * from `get_odu16_nw_interface_statistics_table` where host_id=NEW.host_id and timestamp between hour_start and hour_end and `index`=1) as t1
-                    inner join (select * from `get_odu16_nw_interface_statistics_table` where host_id=NEW.host_id and timestamp between hour_start and hour_end and `index`=1) as t2 
+                    FROM `get_odu16_nw_interface_statistics_table`as t1
+                    inner join (select `rx_packets`, `tx_packets`, `rx_bytes`, `tx_bytes`, `rx_errors`, `tx_errors`, `rx_dropped`, `tx_dropped`, `rx_multicast`, `colisions`,host_id,`index`,timestamp from `get_odu16_nw_interface_statistics_table` where host_id=NEW.host_id and timestamp between hour_start and hour_end and `index`=1) as t2 
                         on t2.timestamp>t1.timestamp and t2.host_id=t1.host_id and t2.`index`=t1.`index`
                     where t1.host_id=NEW.host_id and t1.`index`=1 and t1.timestamp between hour_start and hour_end
          	           and t2.timestamp between hour_start and hour_end 
-         	           and t2.`rx_bytes`<>1111111 and t2.`tx_bytes`<>1111111  
+         	           and t2.`rx_bytes`<>1 and t2.`tx_bytes`<>1  
                     group by t1.timestamp,t1.`index`
                     order by t1.timestamp asc ,t1.host_id asc , t1.`index` asc
                 ) as t3
@@ -751,15 +751,15 @@ CREATE TRIGGER get_odu16_nw_interface_statistics_table_trigger BEFORE INSERT ON 
 	                    if(t2.`rx_multicast`>t1.`rx_multicast`,t2.`rx_multicast`-t1.`rx_multicast`,0) as delta_rx_multicast,
 	                    if(t2.`colisions`>t1.`colisions`,t2.`colisions`-t1.`colisions`,0) as delta_colisions,
                     t2.host_id,t2.`index`,t2.timestamp
-                     FROM (select * from `get_odu16_nw_interface_statistics_table` where host_id=NEW.host_id and timestamp between hour_start and hour_end and `index`=2) as t1
-                    inner join (select * from `get_odu16_nw_interface_statistics_table` where host_id=NEW.host_id and timestamp between hour_start and hour_end and `index`=2) as t2 
+                    FROM `get_odu16_nw_interface_statistics_table` as t1
+                    inner join (select `rx_packets`, `tx_packets`, `rx_bytes`, `tx_bytes`, `rx_errors`, `tx_errors`, `rx_dropped`, `tx_dropped`, `rx_multicast`, `colisions`,host_id,`index`,timestamp from `get_odu16_nw_interface_statistics_table` where host_id=NEW.host_id and timestamp between hour_start and hour_end and `index`=2) as t2 
                     on t2.timestamp>t1.timestamp and t2.host_id=t1.host_id and t2.`index`=t1.`index`
                     where t1.host_id=NEW.host_id and  t1.`index`=2 and t1.timestamp between hour_start and hour_end 
                                        and t2.timestamp between hour_start and hour_end 
-                                       and t2.`rx_bytes`<>1111111 and t2.`rx_bytes`<>1111111 
+                                       and t2.`rx_bytes`<>1 and t2.`rx_bytes`<>1 
                     group by t1.timestamp,t1.`index`
                     order by t1.timestamp asc ,t1.host_id asc , t1.`index` asc ) as t3
-                     group by t3.host_id,YEARWEEK(t3.timestamp)
+                    group by t3.host_id,t3.`index`,DATE(t3.timestamp)
                     order by t3.timestamp,t3.`index`,t3.host_id) as t5
                 set 
                     `index_2_rx_packets_Avg` =delta_rx_packets_Avg,
@@ -839,15 +839,15 @@ CREATE TRIGGER get_odu16_nw_interface_statistics_table_trigger BEFORE INSERT ON 
 	                    if(t2.`rx_multicast`>t1.`rx_multicast`,t2.`rx_multicast`-t1.`rx_multicast`,0) as delta_rx_multicast,
 	                    if(t2.`colisions`>t1.`colisions`,t2.`colisions`-t1.`colisions`,0) as delta_colisions,
                     t2.host_id,t2.`index`,t2.timestamp
-                    FROM (select * from `get_odu16_nw_interface_statistics_table` where host_id=NEW.host_id and timestamp between hour_start and hour_end and `index`=3) as t1
-                    inner join (select * from `get_odu16_nw_interface_statistics_table` where host_id=NEW.host_id and timestamp between hour_start and hour_end and `index`=3) as t2 
+                    FROM `get_odu16_nw_interface_statistics_table`as t1
+                    inner join (select `rx_packets`, `tx_packets`, `rx_bytes`, `tx_bytes`, `rx_errors`, `tx_errors`, `rx_dropped`, `tx_dropped`, `rx_multicast`, `colisions`,host_id,`index`,timestamp from `get_odu16_nw_interface_statistics_table` where host_id=NEW.host_id and timestamp between hour_start and hour_end and `index`=3) as t2 
                         on t2.timestamp>t1.timestamp and t2.host_id=t1.host_id and t2.`index`=t1.`index`
                     where t1.host_id=NEW.host_id and t1.`index`=3 and t1.timestamp between hour_start and hour_end 
                                        and t2.timestamp between hour_start and hour_end 
-                                       and t2.`rx_bytes`<>1111111 and t2.`rx_bytes`<>1111111 
+                                       and t2.`rx_bytes`<>1 and t2.`rx_bytes`<>1 
                     group by t1.timestamp,t1.`index`
                     order by t1.timestamp asc ,t1.host_id asc , t1.`index` asc ) as t3
-                     group by t3.host_id,YEARWEEK(t3.timestamp)
+                    group by t3.host_id,t3.`index`,DATE(t3.timestamp)
                     order by t3.timestamp,t3.`index`,t3.host_id) as t5
                     set 
                     `index_3_rx_packets_Avg` =delta_rx_packets_Avg,
@@ -933,12 +933,12 @@ CREATE TRIGGER get_odu16_nw_interface_statistics_table_trigger BEFORE INSERT ON 
 	                    if(t2.`rx_multicast`>t1.`rx_multicast`,t2.`rx_multicast`-t1.`rx_multicast`,0) as delta_rx_multicast,
 	                    if(t2.`colisions`>t1.`colisions`,t2.`colisions`-t1.`colisions`,0) as delta_colisions,
 	                    t2.host_id,t2.`index`,t2.timestamp
-                     FROM (select * from `get_odu16_nw_interface_statistics_table` where host_id=NEW.host_id and timestamp between hour_start and hour_end and `index`=1) as t1
-                    inner join (select * from `get_odu16_nw_interface_statistics_table` where host_id=NEW.host_id and timestamp between hour_start and hour_end and `index`=1) as t2 
+                    FROM `get_odu16_nw_interface_statistics_table`as t1
+                    inner join (select rx_packets, `tx_packets`, `rx_bytes`, `tx_bytes`, `rx_errors`, `tx_errors`, `rx_dropped`, `tx_dropped`, `rx_multicast`, `colisions`,host_id,`index`,timestamp from `get_odu16_nw_interface_statistics_table` where host_id=NEW.host_id and timestamp between hour_start and hour_end and `index`=1 ) as t2 
                         on t2.timestamp>t1.timestamp and t2.host_id=t1.host_id and t2.`index`=t1.`index`
                     where t1.host_id=NEW.host_id and t1.`index`=1 and t1.timestamp between hour_start and hour_end
          	           and t2.timestamp between hour_start and hour_end 
-         	           and t2.`rx_bytes`<>1111111 and t2.`tx_bytes`<>1111111  
+         	           and t2.`rx_bytes`<>1 and t2.`tx_bytes`<>1  
                     group by t1.timestamp,t1.`index`
                     order by t1.timestamp asc ,t1.host_id asc , t1.`index` asc
                 ) as t3
@@ -979,12 +979,12 @@ CREATE TRIGGER get_odu16_nw_interface_statistics_table_trigger BEFORE INSERT ON 
 	                    if(t2.`rx_multicast`>t1.`rx_multicast`,t2.`rx_multicast`-t1.`rx_multicast`,0) as delta_rx_multicast,
 	                    if(t2.`colisions`>t1.`colisions`,t2.`colisions`-t1.`colisions`,0) as delta_colisions,
                     t2.host_id,t2.`index`,t2.timestamp
-                     FROM (select * from `get_odu16_nw_interface_statistics_table` where host_id=NEW.host_id and timestamp between hour_start and hour_end and `index`=2) as t1
-                    inner join (select * from `get_odu16_nw_interface_statistics_table` where host_id=NEW.host_id and timestamp between hour_start and hour_end and `index`=2) as t2 
+                    FROM `get_odu16_nw_interface_statistics_table` as t1
+                    inner join (select rx_packets, `tx_packets`, `rx_bytes`, `tx_bytes`, `rx_errors`, `tx_errors`, `rx_dropped`, `tx_dropped`, `rx_multicast`, `colisions`,host_id,`index`,timestamp from `get_odu16_nw_interface_statistics_table` where host_id=NEW.host_id and timestamp between hour_start and hour_end and `index`=2 ) as t2 
                     on t2.timestamp>t1.timestamp and t2.host_id=t1.host_id and t2.`index`=t1.`index`
                     where t1.host_id=NEW.host_id and t1.`index`=2 and t1.timestamp between hour_start and hour_end 
                                        and t2.timestamp between hour_start and hour_end 
-                                       and t2.`rx_bytes`<>1111111 and t2.`rx_bytes`<>1111111 
+                                       and t2.`rx_bytes`<>1 and t2.`rx_bytes`<>1 
                     group by t1.timestamp,t1.`index`
                     order by t1.timestamp asc ,t1.host_id asc , t1.`index` asc ) as t3
                     group by t3.host_id,t3.`index`,DATE_FORMAT(t3.timestamp, '%Y-%m')
@@ -1067,12 +1067,12 @@ CREATE TRIGGER get_odu16_nw_interface_statistics_table_trigger BEFORE INSERT ON 
 	                    if(t2.`rx_multicast`>t1.`rx_multicast`,t2.`rx_multicast`-t1.`rx_multicast`,0) as delta_rx_multicast,
 	                    if(t2.`colisions`>t1.`colisions`,t2.`colisions`-t1.`colisions`,0) as delta_colisions,
                     t2.host_id,t2.`index`,t2.timestamp
-                     FROM (select * from `get_odu16_nw_interface_statistics_table` where host_id=NEW.host_id and timestamp between hour_start and hour_end and `index`=3) as t1
-                    inner join (select * from `get_odu16_nw_interface_statistics_table` where host_id=NEW.host_id and timestamp between hour_start and hour_end and `index`=3) as t2 
+                    FROM `get_odu16_nw_interface_statistics_table`as t1
+                    inner join (select `rx_packets`, `tx_packets`, `rx_bytes`, `tx_bytes`, `rx_errors`, `tx_errors`, `rx_dropped`, `tx_dropped`, `rx_multicast`, `colisions`,host_id,`index`,timestamp from `get_odu16_nw_interface_statistics_table` where host_id=NEW.host_id and timestamp between hour_start and hour_end and `index`=3 ) as t2 
                         on t2.timestamp>t1.timestamp and t2.host_id=t1.host_id and t2.`index`=t1.`index`
                     where t1.host_id=NEW.host_id and t1.`index`=3 and t1.timestamp between hour_start and hour_end 
                                        and t2.timestamp between hour_start and hour_end 
-                                       and t2.`rx_bytes`<>1111111 and t2.`rx_bytes`<>1111111 
+                                       and t2.`rx_bytes`<>1 and t2.`rx_bytes`<>1 
                     group by t1.timestamp,t1.`index`
                     order by t1.timestamp asc ,t1.host_id asc , t1.`index` asc ) as t3
                     group by t3.host_id,t3.`index`,DATE_FORMAT(t3.timestamp, '%Y-%m')
@@ -1212,7 +1212,7 @@ CREATE TRIGGER get_odu16_peer_node_status_table_trigger BEFORE INSERT ON get_odu
                 SUM(if(sig_strength between '-95' and '-90',1,0)) as `count_9590`,
                 min(sig_strength) as minimum,max(sig_strength) as maximum
                 FROM `get_odu16_peer_node_status_table` 
-                where host_id=NEW.host_id and sig_strength<>1111111 and  timestamp between hour_start and hour_end and timeslot_index=1 
+                where host_id=NEW.host_id and sig_strength<>1 and  timestamp between hour_start and hour_end and timeslot_index=1 
                 group by host_id,timeslot_index,CONCAT(DATE(timestamp),HOUR(timestamp))
                 ) as t3
                 ) as t4;
@@ -1280,7 +1280,7 @@ CREATE TRIGGER get_odu16_peer_node_status_table_trigger BEFORE INSERT ON get_odu
 		SUM(if(sig_strength between '-95' and '-90',1,0)) as `count_9590`,
 		min(sig_strength) as minimum,max(sig_strength) as maximum
 		FROM `get_odu16_peer_node_status_table` 
-		where host_id=NEW.host_id and sig_strength<>1111111 and  timestamp between hour_start and hour_end and timeslot_index=2
+		where host_id=NEW.host_id and sig_strength<>1 and  timestamp between hour_start and hour_end and timeslot_index=2
 		group by host_id,timeslot_index,CONCAT(DATE(timestamp),HOUR(timestamp))
 		) as t3
 		) as t4
@@ -1362,7 +1362,7 @@ CREATE TRIGGER get_odu16_peer_node_status_table_trigger BEFORE INSERT ON get_odu
 		SUM(if(sig_strength between '-95' and '-90',1,0)) as `count_9590`,
 		min(sig_strength) as minimum,max(sig_strength) as maximum
 		FROM `get_odu16_peer_node_status_table` 
-		where host_id=NEW.host_id and sig_strength<>1111111 and  timestamp between hour_start and hour_end and timeslot_index=3
+		where host_id=NEW.host_id and sig_strength<>1 and  timestamp between hour_start and hour_end and timeslot_index=3
 		group by host_id,timeslot_index,CONCAT(DATE(timestamp),HOUR(timestamp))
 		) as t3
 		) as t4
@@ -1442,7 +1442,7 @@ CREATE TRIGGER get_odu16_peer_node_status_table_trigger BEFORE INSERT ON get_odu
 		SUM(if(sig_strength between '-95' and '-90',1,0)) as `count_9590`,
 		min(sig_strength) as minimum,max(sig_strength) as maximum
 		FROM `get_odu16_peer_node_status_table` 
-		where host_id=NEW.host_id and sig_strength<>1111111 and  timestamp between hour_start and hour_end and timeslot_index=4
+		where host_id=NEW.host_id and sig_strength<>1 and  timestamp between hour_start and hour_end and timeslot_index=4
 		group by host_id,timeslot_index,CONCAT(DATE(timestamp),HOUR(timestamp))
 		) as t3
 		) as t4
@@ -1522,7 +1522,7 @@ CREATE TRIGGER get_odu16_peer_node_status_table_trigger BEFORE INSERT ON get_odu
 		SUM(if(sig_strength between '-95' and '-90',1,0)) as `count_9590`,
 		min(sig_strength) as minimum,max(sig_strength) as maximum
 		FROM `get_odu16_peer_node_status_table` 
-		where host_id=NEW.host_id and sig_strength<>1111111 and  timestamp between hour_start and hour_end and timeslot_index=5
+		where host_id=NEW.host_id and sig_strength<>1 and  timestamp between hour_start and hour_end and timeslot_index=5
 		group by host_id,timeslot_index,CONCAT(DATE(timestamp),HOUR(timestamp))
 		) as t3
 		) as t4
@@ -1602,7 +1602,7 @@ CREATE TRIGGER get_odu16_peer_node_status_table_trigger BEFORE INSERT ON get_odu
 		SUM(if(sig_strength between '-95' and '-90',1,0)) as `count_9590`,
 		min(sig_strength) as minimum,max(sig_strength) as maximum
 		FROM `get_odu16_peer_node_status_table` 
-		where host_id=NEW.host_id and sig_strength<>1111111 and  timestamp between hour_start and hour_end and timeslot_index=6
+		where host_id=NEW.host_id and sig_strength<>1 and  timestamp between hour_start and hour_end and timeslot_index=6
 		group by host_id,timeslot_index,CONCAT(DATE(timestamp),HOUR(timestamp))
 		) as t3
 		) as t4
@@ -1682,7 +1682,7 @@ CREATE TRIGGER get_odu16_peer_node_status_table_trigger BEFORE INSERT ON get_odu
 		SUM(if(sig_strength between '-95' and '-90',1,0)) as `count_9590`,
 		min(sig_strength) as minimum,max(sig_strength) as maximum
 		FROM `get_odu16_peer_node_status_table` 
-		where host_id=NEW.host_id and sig_strength<>1111111 and  timestamp between hour_start and hour_end and timeslot_index=7
+		where host_id=NEW.host_id and sig_strength<>1 and  timestamp between hour_start and hour_end and timeslot_index=7
 		group by host_id,timeslot_index,CONCAT(DATE(timestamp),HOUR(timestamp))
 		) as t3
 		) as t4
@@ -1762,7 +1762,7 @@ CREATE TRIGGER get_odu16_peer_node_status_table_trigger BEFORE INSERT ON get_odu
 		SUM(if(sig_strength between '-95' and '-90',1,0)) as `count_9590`,
 		min(sig_strength) as minimum,max(sig_strength) as maximum
 		FROM `get_odu16_peer_node_status_table` 
-		where host_id=NEW.host_id and sig_strength<>1111111 and  timestamp between hour_start and hour_end and timeslot_index=8
+		where host_id=NEW.host_id and sig_strength<>1 and  timestamp between hour_start and hour_end and timeslot_index=8
 		group by host_id,timeslot_index,CONCAT(DATE(timestamp),HOUR(timestamp))
 		) as t3
 		) as t4
@@ -1849,7 +1849,7 @@ CREATE TRIGGER get_odu16_peer_node_status_table_trigger BEFORE INSERT ON get_odu
                 SUM(if(sig_strength between '-95' and '-90',1,0)) as `count_9590`,
                 min(sig_strength) as minimum,max(sig_strength) as maximum
                 FROM `get_odu16_peer_node_status_table` 
-                where host_id=NEW.host_id and sig_strength<>1111111 and  timestamp between hour_start and hour_end and timeslot_index=1
+                where host_id=NEW.host_id and sig_strength<>1 and  timestamp between hour_start and hour_end and timeslot_index=1
                 group by host_id,timeslot_index,DATE(timestamp)
                 ) as t3
                 ) as t4;
@@ -1918,7 +1918,7 @@ CREATE TRIGGER get_odu16_peer_node_status_table_trigger BEFORE INSERT ON get_odu
 		SUM(if(sig_strength between '-95' and '-90',1,0)) as `count_9590`,
 		min(sig_strength) as minimum,max(sig_strength) as maximum
 		FROM `get_odu16_peer_node_status_table` 
-		where host_id=NEW.host_id and sig_strength<>1111111 and  timestamp between hour_start and hour_end and timeslot_index=2
+		where host_id=NEW.host_id and sig_strength<>1 and  timestamp between hour_start and hour_end and timeslot_index=2
 		group by host_id,timeslot_index,DATE(timestamp)
 		) as t3
 		) as t4
@@ -2000,7 +2000,7 @@ CREATE TRIGGER get_odu16_peer_node_status_table_trigger BEFORE INSERT ON get_odu
 		SUM(if(sig_strength between '-95' and '-90',1,0)) as `count_9590`,
 		min(sig_strength) as minimum,max(sig_strength) as maximum
 		FROM `get_odu16_peer_node_status_table` 
-		where host_id=NEW.host_id and sig_strength<>1111111 and  timestamp between hour_start and hour_end and timeslot_index=3
+		where host_id=NEW.host_id and sig_strength<>1 and  timestamp between hour_start and hour_end and timeslot_index=3
 		group by host_id,timeslot_index,DATE(timestamp)
 		) as t3
 		) as t4
@@ -2080,7 +2080,7 @@ CREATE TRIGGER get_odu16_peer_node_status_table_trigger BEFORE INSERT ON get_odu
 		SUM(if(sig_strength between '-95' and '-90',1,0)) as `count_9590`,
 		min(sig_strength) as minimum,max(sig_strength) as maximum
 		FROM `get_odu16_peer_node_status_table` 
-		where host_id=NEW.host_id and sig_strength<>1111111 and  timestamp between hour_start and hour_end and timeslot_index=4
+		where host_id=NEW.host_id and sig_strength<>1 and  timestamp between hour_start and hour_end and timeslot_index=4
 		group by host_id,timeslot_index,DATE(timestamp)
 		) as t3
 		) as t4
@@ -2160,7 +2160,7 @@ CREATE TRIGGER get_odu16_peer_node_status_table_trigger BEFORE INSERT ON get_odu
 		SUM(if(sig_strength between '-95' and '-90',1,0)) as `count_9590`,
 		min(sig_strength) as minimum,max(sig_strength) as maximum
 		FROM `get_odu16_peer_node_status_table` 
-		where host_id=NEW.host_id and sig_strength<>1111111 and  timestamp between hour_start and hour_end and timeslot_index=5
+		where host_id=NEW.host_id and sig_strength<>1 and  timestamp between hour_start and hour_end and timeslot_index=5
 		group by host_id,timeslot_index,DATE(timestamp)
 		) as t3
 		) as t4
@@ -2240,7 +2240,7 @@ CREATE TRIGGER get_odu16_peer_node_status_table_trigger BEFORE INSERT ON get_odu
 		SUM(if(sig_strength between '-95' and '-90',1,0)) as `count_9590`,
 		min(sig_strength) as minimum,max(sig_strength) as maximum
 		FROM `get_odu16_peer_node_status_table` 
-		where host_id=NEW.host_id and sig_strength<>1111111 and  timestamp between hour_start and hour_end and timeslot_index=6
+		where host_id=NEW.host_id and sig_strength<>1 and  timestamp between hour_start and hour_end and timeslot_index=6
 		group by host_id,timeslot_index,DATE(timestamp)
 		) as t3
 		) as t4
@@ -2320,7 +2320,7 @@ CREATE TRIGGER get_odu16_peer_node_status_table_trigger BEFORE INSERT ON get_odu
 		SUM(if(sig_strength between '-95' and '-90',1,0)) as `count_9590`,
 		min(sig_strength) as minimum,max(sig_strength) as maximum
 		FROM `get_odu16_peer_node_status_table` 
-		where host_id=NEW.host_id and sig_strength<>1111111 and  timestamp between hour_start and hour_end and timeslot_index=7
+		where host_id=NEW.host_id and sig_strength<>1 and  timestamp between hour_start and hour_end and timeslot_index=7
 		group by host_id,timeslot_index,DATE(timestamp)
 		) as t3
 		) as t4
@@ -2400,7 +2400,7 @@ CREATE TRIGGER get_odu16_peer_node_status_table_trigger BEFORE INSERT ON get_odu
 		SUM(if(sig_strength between '-95' and '-90',1,0)) as `count_9590`,
 		min(sig_strength) as minimum,max(sig_strength) as maximum
 		FROM `get_odu16_peer_node_status_table` 
-		where host_id=NEW.host_id and sig_strength<>1111111 and  timestamp between hour_start and hour_end and timeslot_index=8
+		where host_id=NEW.host_id and sig_strength<>1 and  timestamp between hour_start and hour_end and timeslot_index=8
 		group by host_id,timeslot_index,DATE(timestamp)
 		) as t3
 		) as t4
@@ -2487,7 +2487,7 @@ CREATE TRIGGER get_odu16_peer_node_status_table_trigger BEFORE INSERT ON get_odu
                 SUM(if(sig_strength between '-95' and '-90',1,0)) as `count_9590`,
                 min(sig_strength) as minimum,max(sig_strength) as maximum
                 FROM `get_odu16_peer_node_status_table` 
-                where host_id=NEW.host_id and sig_strength<>1111111 and  timestamp between hour_start and hour_end and timeslot_index=1
+                where host_id=NEW.host_id and sig_strength<>1 and  timestamp between hour_start and hour_end and timeslot_index=1
                 group by host_id,timeslot_index,YEARWEEK(timestamp)
                 ) as t3
                 ) as t4;
@@ -2555,7 +2555,7 @@ CREATE TRIGGER get_odu16_peer_node_status_table_trigger BEFORE INSERT ON get_odu
 		SUM(if(sig_strength between '-95' and '-90',1,0)) as `count_9590`,
 		min(sig_strength) as minimum,max(sig_strength) as maximum
 		FROM `get_odu16_peer_node_status_table` 
-		where host_id=NEW.host_id and sig_strength<>1111111 and  timestamp between hour_start and hour_end and timeslot_index=2
+		where host_id=NEW.host_id and sig_strength<>1 and  timestamp between hour_start and hour_end and timeslot_index=2
 		group by host_id,timeslot_index,YEARWEEK(timestamp)
 		) as t3
 		) as t4
@@ -2637,7 +2637,7 @@ CREATE TRIGGER get_odu16_peer_node_status_table_trigger BEFORE INSERT ON get_odu
 		SUM(if(sig_strength between '-95' and '-90',1,0)) as `count_9590`,
 		min(sig_strength) as minimum,max(sig_strength) as maximum
 		FROM `get_odu16_peer_node_status_table` 
-		where host_id=NEW.host_id and sig_strength<>1111111 and  timestamp between hour_start and hour_end and timeslot_index=3
+		where host_id=NEW.host_id and sig_strength<>1 and  timestamp between hour_start and hour_end and timeslot_index=3
 		group by host_id,timeslot_index,YEARWEEK(timestamp)
 		) as t3
 		) as t4
@@ -2717,7 +2717,7 @@ CREATE TRIGGER get_odu16_peer_node_status_table_trigger BEFORE INSERT ON get_odu
 		SUM(if(sig_strength between '-95' and '-90',1,0)) as `count_9590`,
 		min(sig_strength) as minimum,max(sig_strength) as maximum
 		FROM `get_odu16_peer_node_status_table` 
-		where host_id=NEW.host_id and sig_strength<>1111111 and  timestamp between hour_start and hour_end and timeslot_index=4
+		where host_id=NEW.host_id and sig_strength<>1 and  timestamp between hour_start and hour_end and timeslot_index=4
 		group by host_id,timeslot_index,YEARWEEK(timestamp)
 		) as t3
 		) as t4
@@ -2797,7 +2797,7 @@ CREATE TRIGGER get_odu16_peer_node_status_table_trigger BEFORE INSERT ON get_odu
 		SUM(if(sig_strength between '-95' and '-90',1,0)) as `count_9590`,
 		min(sig_strength) as minimum,max(sig_strength) as maximum
 		FROM `get_odu16_peer_node_status_table` 
-		where host_id=NEW.host_id and sig_strength<>1111111 and  timestamp between hour_start and hour_end and timeslot_index=5
+		where host_id=NEW.host_id and sig_strength<>1 and  timestamp between hour_start and hour_end and timeslot_index=5
 		group by host_id,timeslot_index,YEARWEEK(timestamp)
 		) as t3
 		) as t4
@@ -2877,7 +2877,7 @@ CREATE TRIGGER get_odu16_peer_node_status_table_trigger BEFORE INSERT ON get_odu
 		SUM(if(sig_strength between '-95' and '-90',1,0)) as `count_9590`,
 		min(sig_strength) as minimum,max(sig_strength) as maximum
 		FROM `get_odu16_peer_node_status_table` 
-		where host_id=NEW.host_id and sig_strength<>1111111 and  timestamp between hour_start and hour_end and timeslot_index=6
+		where host_id=NEW.host_id and sig_strength<>1 and  timestamp between hour_start and hour_end and timeslot_index=6
 		group by host_id,timeslot_index,YEARWEEK(timestamp)
 		) as t3
 		) as t4
@@ -2957,7 +2957,7 @@ CREATE TRIGGER get_odu16_peer_node_status_table_trigger BEFORE INSERT ON get_odu
 		SUM(if(sig_strength between '-95' and '-90',1,0)) as `count_9590`,
 		min(sig_strength) as minimum,max(sig_strength) as maximum
 		FROM `get_odu16_peer_node_status_table` 
-		where host_id=NEW.host_id and sig_strength<>1111111 and  timestamp between hour_start and hour_end and timeslot_index=7
+		where host_id=NEW.host_id and sig_strength<>1 and  timestamp between hour_start and hour_end and timeslot_index=7
 		group by host_id,timeslot_index,YEARWEEK(timestamp)
 		) as t3
 		) as t4
@@ -3037,7 +3037,7 @@ CREATE TRIGGER get_odu16_peer_node_status_table_trigger BEFORE INSERT ON get_odu
 		SUM(if(sig_strength between '-95' and '-90',1,0)) as `count_9590`,
 		min(sig_strength) as minimum,max(sig_strength) as maximum
 		FROM `get_odu16_peer_node_status_table` 
-		where host_id=NEW.host_id and sig_strength<>1111111 and  timestamp between hour_start and hour_end and timeslot_index=8
+		where host_id=NEW.host_id and sig_strength<>1 and  timestamp between hour_start and hour_end and timeslot_index=8
 		group by host_id,timeslot_index,YEARWEEK(timestamp)
 		) as t3
 		) as t4
@@ -3126,7 +3126,7 @@ CREATE TRIGGER get_odu16_peer_node_status_table_trigger BEFORE INSERT ON get_odu
                 SUM(if(sig_strength between '-95' and '-90',1,0)) as `count_9590`,
                 min(sig_strength) as minimum,max(sig_strength) as maximum
                 FROM `get_odu16_peer_node_status_table` 
-                where host_id=NEW.host_id and sig_strength<>1111111 and  timestamp between hour_start and hour_end and timeslot_index=1
+                where host_id=NEW.host_id and sig_strength<>1 and  timestamp between hour_start and hour_end and timeslot_index=1
                 group by host_id,timeslot_index,DATE_FORMAT(timestamp, '%Y-%m')
                 ) as t3
                 ) as t4;
@@ -3194,7 +3194,7 @@ CREATE TRIGGER get_odu16_peer_node_status_table_trigger BEFORE INSERT ON get_odu
 		SUM(if(sig_strength between '-95' and '-90',1,0)) as `count_9590`,
 		min(sig_strength) as minimum,max(sig_strength) as maximum
 		FROM `get_odu16_peer_node_status_table` 
-		where host_id=NEW.host_id and sig_strength<>1111111 and  timestamp between hour_start and hour_end and timeslot_index=2
+		where host_id=NEW.host_id and sig_strength<>1 and  timestamp between hour_start and hour_end and timeslot_index=2
 		group by host_id,timeslot_index,DATE_FORMAT(timestamp, '%Y-%m')
 		) as t3
 		) as t4
@@ -3275,7 +3275,7 @@ CREATE TRIGGER get_odu16_peer_node_status_table_trigger BEFORE INSERT ON get_odu
 		SUM(if(sig_strength between '-95' and '-90',1,0)) as `count_9590`,
 		min(sig_strength) as minimum,max(sig_strength) as maximum
 		FROM `get_odu16_peer_node_status_table` 
-		where host_id=NEW.host_id and sig_strength<>1111111 and  timestamp between hour_start and hour_end and timeslot_index=3
+		where host_id=NEW.host_id and sig_strength<>1 and  timestamp between hour_start and hour_end and timeslot_index=3
 		group by host_id,timeslot_index,DATE_FORMAT(timestamp, '%Y-%m')
 		) as t3
 		) as t4
@@ -3354,7 +3354,7 @@ CREATE TRIGGER get_odu16_peer_node_status_table_trigger BEFORE INSERT ON get_odu
 		SUM(if(sig_strength between '-95' and '-90',1,0)) as `count_9590`,
 		min(sig_strength) as minimum,max(sig_strength) as maximum
 		FROM `get_odu16_peer_node_status_table` 
-		where host_id=NEW.host_id and sig_strength<>1111111 and  timestamp between hour_start and hour_end and timeslot_index=4
+		where host_id=NEW.host_id and sig_strength<>1 and  timestamp between hour_start and hour_end and timeslot_index=4
 		group by host_id,timeslot_index,DATE_FORMAT(timestamp, '%Y-%m')
 		) as t3
 		) as t4
@@ -3433,7 +3433,7 @@ CREATE TRIGGER get_odu16_peer_node_status_table_trigger BEFORE INSERT ON get_odu
 		SUM(if(sig_strength between '-95' and '-90',1,0)) as `count_9590`,
 		min(sig_strength) as minimum,max(sig_strength) as maximum
 		FROM `get_odu16_peer_node_status_table` 
-		where host_id=NEW.host_id and sig_strength<>1111111 and  timestamp between hour_start and hour_end and timeslot_index=5
+		where host_id=NEW.host_id and sig_strength<>1 and  timestamp between hour_start and hour_end and timeslot_index=5
 		group by host_id,timeslot_index,DATE_FORMAT(timestamp, '%Y-%m')
 		) as t3
 		) as t4
@@ -3512,7 +3512,7 @@ CREATE TRIGGER get_odu16_peer_node_status_table_trigger BEFORE INSERT ON get_odu
 		SUM(if(sig_strength between '-95' and '-90',1,0)) as `count_9590`,
 		min(sig_strength) as minimum,max(sig_strength) as maximum
 		FROM `get_odu16_peer_node_status_table` 
-		where host_id=NEW.host_id and sig_strength<>1111111 and  timestamp between hour_start and hour_end and timeslot_index=6
+		where host_id=NEW.host_id and sig_strength<>1 and  timestamp between hour_start and hour_end and timeslot_index=6
 		group by host_id,timeslot_index,DATE_FORMAT(timestamp, '%Y-%m')
 		) as t3
 		) as t4
@@ -3591,7 +3591,7 @@ CREATE TRIGGER get_odu16_peer_node_status_table_trigger BEFORE INSERT ON get_odu
 		SUM(if(sig_strength between '-95' and '-90',1,0)) as `count_9590`,
 		min(sig_strength) as minimum,max(sig_strength) as maximum
 		FROM `get_odu16_peer_node_status_table` 
-		where host_id=NEW.host_id and sig_strength<>1111111 and  timestamp between hour_start and hour_end and timeslot_index=7
+		where host_id=NEW.host_id and sig_strength<>1 and  timestamp between hour_start and hour_end and timeslot_index=7
 		group by host_id,timeslot_index,DATE_FORMAT(timestamp, '%Y-%m')
 		) as t3
 		) as t4
@@ -3670,7 +3670,7 @@ CREATE TRIGGER get_odu16_peer_node_status_table_trigger BEFORE INSERT ON get_odu
 		SUM(if(sig_strength between '-95' and '-90',1,0)) as `count_9590`,
 		min(sig_strength) as minimum,max(sig_strength) as maximum
 		FROM `get_odu16_peer_node_status_table` 
-		where host_id=NEW.host_id and sig_strength<>1111111 and  timestamp between hour_start and hour_end and timeslot_index=8
+		where host_id=NEW.host_id and sig_strength<>1 and  timestamp between hour_start and hour_end and timeslot_index=8
 		group by host_id,timeslot_index,DATE_FORMAT(timestamp, '%Y-%m')
 		) as t3
 		) as t4
@@ -3716,11 +3716,12 @@ CREATE TRIGGER get_odu16_synch_statistics_table_trigger BEFORE INSERT ON get_odu
 		SELECT 
 		if(t2.`sysc_lost_counter`>t1.`sysc_lost_counter`,t2.`sysc_lost_counter`-t1.`sysc_lost_counter`,0) as delta_synch_loss,
 		t2.host_id,t2.timestamp
-		FROM (select * from `get_odu16_synch_statistics_table` where host_id=NEW.host_id and  timestamp between hour_start and hour_end ) as t1
-		inner join (select * from `get_odu16_synch_statistics_table` where host_id=NEW.host_id and  timestamp between hour_start and hour_end ) as t2 
+		FROM `get_odu16_synch_statistics_table`as t1
+		inner join (select `sysc_lost_counter`,host_id,timestamp from `get_odu16_synch_statistics_table` 
+		where host_id=NEW.host_id and  timestamp between hour_start and hour_end ) as t2 
 		on t2.timestamp>t1.timestamp and t2.host_id=t1.host_id 
 		where t1.host_id=NEW.host_id and t1.timestamp between hour_start and hour_end 
-		and t2.timestamp between hour_start and hour_end and t2.`sysc_lost_counter`<>1111111 
+		and t2.timestamp between hour_start and hour_end and t2.`sysc_lost_counter`<>1 
 		group by t1.timestamp
 		order by t1.timestamp asc ,t1.host_id asc  ) as t3
 		group by t3.host_id,CONCAT(DATE(t3.timestamp),HOUR(t3.timestamp))
@@ -3739,11 +3740,13 @@ CREATE TRIGGER get_odu16_synch_statistics_table_trigger BEFORE INSERT ON get_odu
 		SELECT 
 		if(t2.`sysc_lost_counter`>t1.`sysc_lost_counter`,t2.`sysc_lost_counter`-t1.`sysc_lost_counter`,0) as delta_synch_loss,
 		t2.host_id,t2.timestamp
-		FROM (select * from `get_odu16_synch_statistics_table` where host_id=NEW.host_id and  timestamp between hour_start and hour_end ) as t1
-		inner join (select * from `get_odu16_synch_statistics_table` where host_id=NEW.host_id and  timestamp between hour_start and hour_end ) as t2 
+		FROM `get_odu16_synch_statistics_table`as t1
+		inner join (select `sysc_lost_counter`,host_id,timestamp from `get_odu16_synch_statistics_table`
+		where host_id=NEW.host_id and  timestamp between hour_start and hour_end
+		) as t2 
 		on t2.timestamp>t1.timestamp and t2.host_id=t1.host_id 
 		where t1.host_id=NEW.host_id and t1.timestamp between hour_start and hour_end 
-		and t2.timestamp between hour_start and hour_end and t2.`sysc_lost_counter`<>1111111 
+		and t2.timestamp between hour_start and hour_end and t2.`sysc_lost_counter`<>1 
 		group by t1.timestamp
 		order by t1.timestamp asc ,t1.host_id asc  ) as t3
 
@@ -3765,11 +3768,13 @@ CREATE TRIGGER get_odu16_synch_statistics_table_trigger BEFORE INSERT ON get_odu
 		SELECT 
 		if(t2.`sysc_lost_counter`>t1.`sysc_lost_counter`,t2.`sysc_lost_counter`-t1.`sysc_lost_counter`,0) as delta_synch_loss,
 		t2.host_id,t2.timestamp
-		FROM (select * from `get_odu16_synch_statistics_table` where host_id=NEW.host_id and  timestamp between hour_start and hour_end ) as t1
-		inner join (select * from `get_odu16_synch_statistics_table` where host_id=NEW.host_id and  timestamp between hour_start and hour_end ) as t2 
+		FROM `get_odu16_synch_statistics_table`as t1
+		inner join (select `sysc_lost_counter`,host_id,timestamp from `get_odu16_synch_statistics_table`
+		where host_id=NEW.host_id and  timestamp between hour_start and hour_end
+		) as t2 
 		on t2.timestamp>t1.timestamp and t2.host_id=t1.host_id 
 		where t1.host_id=NEW.host_id and t1.timestamp between hour_start and hour_end 
-		and t2.timestamp between hour_start and hour_end and t2.`sysc_lost_counter`<>1111111 
+		and t2.timestamp between hour_start and hour_end and t2.`sysc_lost_counter`<>1 
 		group by t1.timestamp
 		order by t1.timestamp asc ,t1.host_id asc  ) as t3
 
@@ -3792,11 +3797,13 @@ CREATE TRIGGER get_odu16_synch_statistics_table_trigger BEFORE INSERT ON get_odu
 		SELECT 
 		if(t2.`sysc_lost_counter`>t1.`sysc_lost_counter`,t2.`sysc_lost_counter`-t1.`sysc_lost_counter`,0) as delta_synch_loss,
 		t2.host_id,t2.timestamp
-		FROM (select * from `get_odu16_synch_statistics_table` where host_id=NEW.host_id and  timestamp between hour_start and hour_end ) as t1
-		inner join (select * from `get_odu16_synch_statistics_table` where host_id=NEW.host_id and  timestamp between hour_start and hour_end ) as t2 
+		FROM `get_odu16_synch_statistics_table`as t1
+		inner join (select `sysc_lost_counter`,host_id,timestamp from `get_odu16_synch_statistics_table` 
+		where host_id=NEW.host_id and  timestamp between hour_start and hour_end
+		) as t2 
 		on t2.timestamp>t1.timestamp and t2.host_id=t1.host_id 
 		where  t1.host_id=NEW.host_id and t1.timestamp between hour_start and hour_end 
-		and t2.timestamp between hour_start and hour_end and t2.`sysc_lost_counter`<>1111111 
+		and t2.timestamp between hour_start and hour_end and t2.`sysc_lost_counter`<>1 
 		group by t1.timestamp
 		order by t1.timestamp asc ,t1.host_id asc  ) as t3
 
