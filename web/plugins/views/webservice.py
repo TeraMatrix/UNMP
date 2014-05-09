@@ -24,17 +24,15 @@
 # to the Free Software Foundation, Inc., 51 Franklin St,  Fifth Floor,
 # Boston, MA 02110-1301 USA.
 
-
 def render_python_raw(data, view, group_painters, painters, num_columns):
     html.write(repr(data))
 
 multisite_layouts["python-raw"] = {
-    "title": "Python raw data output",
-    "render": render_python_raw,
-    "group": False,
-    "hide": True,
+    "title"  : "Python raw data output",
+    "render" : render_python_raw,
+    "group"  : False,
+    "hide"   : True,
 }
-
 
 def render_python(data, view, group_painters, painters, num_columns):
     rows = data[1]
@@ -51,18 +49,16 @@ def render_python(data, view, group_painters, painters, num_columns):
     html.write("\n]\n")
 
 multisite_layouts["python"] = {
-    "title": "Python data output",
-    "render": render_python,
-    "group": False,
-    "hide": True,
+    "title"  : "Python data output",
+    "render" : render_python,
+    "group"  : False,
+    "hide"   : True,
 }
 
 
 json_escape = re.compile(r'[\\"\r\n\t\b\f\x00-\x1f]')
 json_encoding_table = dict([(chr(i), '\\u%04x' % i) for i in range(32)])
-json_encoding_table.update({'\b': '\\b', '\f': '\\f', '\n': '\\n', '\r':
-                           '\\r', '\t': '\\t', '\\': '\\\\', '"': '\\"'})
-
+json_encoding_table.update({'\b': '\\b', '\f': '\\f', '\n': '\\n', '\r': '\\r', '\t': '\\t', '\\': '\\\\', '"': '\\"' })
 
 def encode_string_json(s):
     return '"' + json_escape.sub(lambda m: json_encoding_table[m.group(0)], s) + '"'
@@ -88,8 +84,8 @@ def render_json(data, view, group_painters, painters, num_columns):
     html.write("\n]\n")
 
 multisite_layouts["json"] = {
-    "title": "JSON data output",
-    "render": render_json,
-    "group": False,
-    "hide": True,
+    "title"  : "JSON data output",
+    "render" : render_json,
+    "group"  : False,
+    "hide"   : True,
 }

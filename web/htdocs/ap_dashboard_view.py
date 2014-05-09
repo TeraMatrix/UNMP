@@ -1,12 +1,10 @@
 #!/usr/bin/python2.6
 from datetime import datetime
-
-
 class APView(object):
     @staticmethod
     def ap_footer_tab(flag):
-        if int(flag) == 0:
-            html_page = '<div id=\"report_button_div\" class=\"form-div-footer\">\
+        if int(flag)==0:
+            html_page='<div id=\"report_button_div\" class=\"form-div-footer\">\
             <table cellspacing="9px" cellpadding="0">\
             <tr>\
             <td style="vertical-align:middle;"><input type=\"radio\" value=\"0\" name=\"option\" id=\"current_rept_div\" class=\"table_option\" width=\"12px\"/></td>\
@@ -24,11 +22,10 @@ class APView(object):
             </div></div>\
             '
         else:
-            html_page = '</div>'
+            html_page='</div>'
         return html_page
-
     @staticmethod
-    def ap_table(ip_address, odu_start_date, odu_start_time, odu_end_date, odu_end_time, ap_refresh_time, total_count):
+    def ap_table(ip_address,odu_start_date,odu_start_time,odu_end_date,odu_end_time,ap_refresh_time,total_count):
         dash_str = '\
         <input type=\"hidden\" id=\"refresh_time\" name=\"refresh_time\" value=\"%s\" />\
         <input type=\"hidden\" id=\"ip_address\" name=\"ip_address\" value=\"%s\" />\
@@ -43,24 +40,26 @@ class APView(object):
        </div>\
         </div>\
         <div id="ap_host_info_div"></div>\
-        <div id="main_graph"></div>' % (ap_refresh_time, ip_address, total_count, odu_start_date, odu_start_time, odu_end_date, odu_end_time)
+        <div id="main_graph"></div>'% (ap_refresh_time,ip_address,total_count,odu_start_date,odu_start_time,odu_end_date,odu_end_time)
         return dash_str
 
+
+
+
+
+
     @staticmethod
-    def device_information_view(result, ip_address, no_of_user):
-        channel = [
-            'channel-01', 'channel-02', 'channel-03', 'channel-04', 'channel-05', 'channel-06',
-            'channel-07', 'channel-08', 'channel-09', 'channel-10', 'channel-11', 'channel-12', 'channel-13', 'channel-14']
-        wifi = ['wifi11g', 'wifi11gnHT20', 'wifi11gnHT40plus',
-                'wifi11gnHT40minus']
-        radio = ['disabled', 'enabled']
-        device_detail = ''
-        if len(result) > 0:
-            device_detail = '<table class="tt-table" cellspacing="0" cellpadding="0" width="100%">'
-            device_detail += '<tbody>\
+    def device_information_view(result,ip_address,no_of_user):
+        channel=['channel-01','channel-02','channel-03','channel-04','channel-05','channel-06','channel-07','channel-08','channel-09','channel-10','channel-11','channel-12','channel-13','channel-14']
+        wifi=['wifi11g','wifi11gnHT20','wifi11gnHT40plus','wifi11gnHT40minus']
+        radio=['disabled','enabled']
+        device_detail=''
+        if len(result) >0:
+            device_detail='<table class="tt-table" cellspacing="0" cellpadding="0" width="100%">'
+            device_detail+='<tbody>\
                         <tr>\
                         <th class="cell-title" colspan="4">\
-                            ' + str(ip_address) + '\
+                            '+str(ip_address)+'\
                         </th>\
                         </tr>\
                         <tr>\
@@ -72,47 +71,47 @@ class APView(object):
                         <td class="cell-label">\
                             Radio Status\
                         </td>\
-                        <td class="cell-info">' + str('--' if result[0][0] == None or result[0][0] == ""  else radio[int(result[0][0])]) + '</td>\
+                        <td class="cell-info">'+str('--' if result[0][0]==None or result[0][0]==""  else radio[int(result[0][0])])+'</td>\
                         <td class="cell-label">\
                             Radio Channel\
                         </td>\
-                        <td class="cell-info">' + str('--' if result[0][1] == None or result[0][1] == ""  else channel[int(result[0][1]) - 1]) + '</td>\
+                        <td class="cell-info">'+str('--' if result[0][1]==None or result[0][1]==""  else channel[int(result[0][1])-1])+'</td>\
                         </tr>\
                         <tr>\
                         <td class="cell-label">\
                             No of VAPs\
                         </td>\
-                        <td class="cell-info">' + str('--' if result[0][2] == None or result[0][2] == ""  else result[0][2]) + '</td>\
+                        <td class="cell-info">'+str('--' if result[0][2]==None or result[0][2]==""  else result[0][2])+'</td>\
                         <td class="cell-label">\
                             Software Version\
                         </td>\
-                        <td class="cell-info">' + str('--' if result[0][3] == None or result[0][3] == ""  else result[0][3]) + '</td>\
+                        <td class="cell-info">'+str('--' if result[0][3]==None or result[0][3]==""  else result[0][3])+'</td>\
                         </tr>\
                         <tr>\
                         <td class="cell-label">\
                             Hardware Version\
                         </td>\
-                        <td class="cell-info">' + str('--' if result[0][4] == None or result[0][4] == ""  else result[0][4]) + '</td>\
+                        <td class="cell-info">'+str('--' if result[0][4]==None or result[0][4]==""  else result[0][4])+'</td>\
                         <td class="cell-label">\
                             BootLoader Version\
                         </td>\
-                        <td class="cell-info">' + str('--' if result[0][5] == None or result[0][5] == ""  else result[0][5]) + '</td>\
+                        <td class="cell-info">'+str('--' if result[0][5]==None or result[0][5]==""  else result[0][5])+'</td>\
                         </tr>\
                         <tr>\
                         <td class="cell-label">\
                             WiFi Mode\
                         </td>\
-                        <td class="cell-info">' + str('--' if result[0][6] == None or result[0][6] == ""  else wifi[int(result[0][6])]) + '</td>\
+                        <td class="cell-info">'+str('--' if result[0][6]==None or result[0][6]==""  else wifi[int(result[0][6])])+'</td>\
                         <td class="cell-label">\
                             MAC Address\
                         </td>\
-                        <td class="cell-info">' + str('--' if result[0][7] == None or result[0][7] == ""  else result[0][7]) + '</td>\
+                        <td class="cell-info">'+str('--' if result[0][7]==None or result[0][7]==""  else result[0][7])+'</td>\
                         </tr>\
                         <tr>\
                         <td class="cell-label">\
                             No of Connected User\
                         </td>\
-                        <td class="cell-info" colspan="3">' + str(0 if no_of_user[0][0] == None or no_of_user[0][0] == ""  else no_of_user[0][0]) + '</td>\
+                        <td class="cell-info" colspan="3">'+str(0 if no_of_user[0][0]==None or no_of_user[0][0]==""  else no_of_user[0][0])+'</td>\
                         </tr>\
                         <tr>\
                         <th class="cell-title" colspan="4">\
@@ -123,13 +122,13 @@ class APView(object):
         return device_detail
 
     @staticmethod
-    def device_information_view_default(ip_address, user):
-        device_detail = ''
-        device_detail = '<table class="tt-table" cellspacing="0" cellpadding="0" width="100%">'
-        device_detail += '<tbody>\
+    def device_information_view_default(ip_address,user):
+        device_detail=''
+        device_detail='<table class="tt-table" cellspacing="0" cellpadding="0" width="100%">'
+        device_detail+='<tbody>\
                     <tr>\
                     <th class="cell-title" colspan="4">\
-                        ' + str(ip_address) + '\
+                        '+str(ip_address)+'\
                     </th>\
                     </tr>\
                     <tr>\
@@ -187,7 +186,7 @@ class APView(object):
                         Graphs\
                     </th>\
                     </tr>\
-                <tbody></table>' % str(user[0][0])
+                <tbody></table>'%str(user[0][0])
         return device_detail
 
 

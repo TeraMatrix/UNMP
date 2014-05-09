@@ -101,7 +101,7 @@ function homeDashboardCreation(){
 	});
 	
 	yo4 = $("#dashboard4").yoDashboard({
-		title:"Last 7 Current Alarms<span style=\"float:right;margin-right: .5em;\"><a href=\"status_snmptt.py\">More>></a></span>",
+		title:"Last 7 Current Events<span style=\"float:right;margin-right: .5em;\"><a href=\"status_snmptt.py\">More>></a></span>",
 		ajaxRequest:function(div_obj){
 			eventHtmlTable(div_obj);
 			return true;

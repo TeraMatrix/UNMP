@@ -1,52 +1,26 @@
 #!/usr/bin/python2.6
 
-import config
-import htmllib
-import pprint
-import sidebar
-import views
-import time
-import defaults
-import os
-import cgi
-import xml.dom.minidom
-import subprocess
-import commands
-import MySQLdb
-import datetime
-import urllib2
-import base64
-import socket
-import sys
+import config, htmllib, pprint, sidebar, views, time, defaults, os, cgi, xml.dom.minidom, subprocess, commands, MySQLdb, datetime, urllib2, base64, socket, sys
 from lib import *
 
-################################## Scheduling ############################
-
-
+################################## Scheduling #####################################
 def ap_scheduling(h):
     global html
     html = h
-    css_list = ["css/style.css", "facebox/facebox.css",
-                "calendrical/calendrical.css", "fullcalendar/fullcalendar.css"]
-    js_list = [
-        "js/jquery-ui-1.8.6.custom.min.js", "fullcalendar/fullcalendar.min.js",
-        "facebox/facebox.js", "calendrical/calendrical.js", "js/ap_scheduling.js"]
-    html.new_header("Access Point Scheduling", "", "", css_list, js_list)
-    html.write(
-        "<div id='calendar' style=\"width:900px;margin:0 auto;\"></div>")
+    css_list = ["css/style.css","facebox/facebox.css","calendrical/calendrical.css","fullcalendar/fullcalendar.css"]
+    js_list = ["js/jquery-ui-1.8.6.custom.min.js","fullcalendar/fullcalendar.min.js","facebox/facebox.js","calendrical/calendrical.js","js/ap_scheduling.js"]
+    html.new_header("Access Point Scheduling","","",css_list,js_list)
+    html.write("<div id='calendar' style=\"width:900px;margin:0 auto;\"></div>")
     html.write("<div id=\"eventForm\" style=\"display:none;margin:10px;\">")
     html.write("<form id=\"schedulingForm\">")
     html.write("<table width=\"100%\">")
     html.write("<colgroup><col width='20%'/><col width='80%'/></colgroup>")
     html.write("<tr>")
-    html.write(
-        "<td>Event<input type=\"hidden\" id=\"scheduleId\" name=\"scheduleId\" value=\"0\" /></td>")
+    html.write("<td>Event<input type=\"hidden\" id=\"scheduleId\" name=\"scheduleId\" value=\"0\" /></td>")
     html.write("<td>")
-    html.write(
-        "<input type=\"radio\" id=\"radioDown\" name=\"radio\" value=\"Down\" checked/>")
+    html.write("<input type=\"radio\" id=\"radioDown\" name=\"radio\" value=\"Down\" checked/>")
     html.write("<label for=\"radioDown\">Down</label>")
-    html.write(
-        "<input type=\"radio\" id=\"radioUp\" name=\"radio\" value=\"Up\"/>")
+    html.write("<input type=\"radio\" id=\"radioUp\" name=\"radio\" value=\"Up\"/>")
     html.write("<label for=\"radioUp\">UP</label>")
     html.write("</td>")
     html.write("</tr>")
@@ -54,19 +28,16 @@ def ap_scheduling(h):
     html.write("<tr>")
     html.write("<td>Range</td>")
     html.write("<td>")
-    html.write(
-        "<input type=\"text\" id=\"startDate\" name=\"startDate\" /> <input type=\"text\" id=\"startTime\" name=\"startTime\" style=\"width:100px;\" /> To")
+    html.write("<input type=\"text\" id=\"startDate\" name=\"startDate\" /> <input type=\"text\" id=\"startTime\" name=\"startTime\" style=\"width:100px;\" /> To")
     html.write(" <input type=\"text\" id=\"endDate\" name=\"endDate\" /> <input type=\"text\" id=\"endTime\" name=\"endTime\" style=\"width:100px;\" />")
-    html.write(
-        "<label style=\"color:red;display:none;\" id=\"dateError\"> Please enter correct date time range</label>")
+    html.write("<label style=\"color:red;display:none;\" id=\"dateError\"> Please enter correct date time range</label>")
     html.write("</td>")
     html.write("</tr>")
 
     html.write("<tr>")
     html.write("<td>Repeat</td>")
     html.write("<td>")
-    html.write(
-        "<input type=\"checkbox\" id=\"repeat\" name=\"repeat\" value=\"1\" />")
+    html.write("<input type=\"checkbox\" id=\"repeat\" name=\"repeat\" value=\"1\" />")
     html.write("</td>")
     html.write("</tr>")
 
@@ -86,23 +57,17 @@ def ap_scheduling(h):
     html.write("<td>")
     html.write(" <input type=\"checkbox\" id=\"daysun\" name=\"daysun\" value=\"1\" class=\"day\" />")
     html.write(" <label for=\"daysun\">S</label>")
-    html.write(
-        " <input type=\"checkbox\" id=\"daymon\" name=\"daymon\" value=\"1\" class=\"day\"/>")
+    html.write(" <input type=\"checkbox\" id=\"daymon\" name=\"daymon\" value=\"1\" class=\"day\"/>")
     html.write(" <label for=\"daymon\">M</label>")
-    html.write(
-        " <input type=\"checkbox\" id=\"daytue\" name=\"daytue\" value=\"1\" class=\"day\"/>")
+    html.write(" <input type=\"checkbox\" id=\"daytue\" name=\"daytue\" value=\"1\" class=\"day\"/>")
     html.write(" <label for=\"daytue\">T</label>")
-    html.write(
-        " <input type=\"checkbox\" id=\"daywed\" name=\"daywed\" value=\"1\" class=\"day\"/>")
+    html.write(" <input type=\"checkbox\" id=\"daywed\" name=\"daywed\" value=\"1\" class=\"day\"/>")
     html.write(" <label for=\"daywed\">W</label>")
-    html.write(
-        " <input type=\"checkbox\" id=\"daythu\" name=\"daythu\" value=\"1\" class=\"day\"/>")
+    html.write(" <input type=\"checkbox\" id=\"daythu\" name=\"daythu\" value=\"1\" class=\"day\"/>")
     html.write(" <label for=\"daythu\">T</label>")
-    html.write(
-        " <input type=\"checkbox\" id=\"dayfri\" name=\"dayfri\" value=\"1\" class=\"day\"/>")
+    html.write(" <input type=\"checkbox\" id=\"dayfri\" name=\"dayfri\" value=\"1\" class=\"day\"/>")
     html.write(" <label for=\"dayfri\">F</label>")
-    html.write(
-        " <input type=\"checkbox\" id=\"daysat\" name=\"daysat\" value=\"1\" class=\"day\"/>")
+    html.write(" <input type=\"checkbox\" id=\"daysat\" name=\"daysat\" value=\"1\" class=\"day\"/>")
     html.write(" <label for=\"daysat\">S</label>")
     html.write("</td>")
     html.write("</tr>")
@@ -110,7 +75,7 @@ def ap_scheduling(h):
     html.write("<tr id=\"trDate\" style=\"display:none;\">")
     html.write("<td></td>")
     html.write("<td>Dates: <select id=\"dates\" name=\"dates\">")
-    for k in range(1, 32):
+    for k in range(1,32):
         html.write("<option value=\"" + str(k) + "\">" + str(k) + "</option>")
     html.write("</select></td>")
     html.write("</tr>")
@@ -119,41 +84,29 @@ def ap_scheduling(h):
     html.write("<td></td>")
     html.write("<td>")
     html.write("Months:<br/>")
-    html.write(
-        " <input type=\"checkbox\" id=\"monthjan\" name=\"monthjan\" value=\"1\" class=\"month\"/>")
+    html.write(" <input type=\"checkbox\" id=\"monthjan\" name=\"monthjan\" value=\"1\" class=\"month\"/>")
     html.write(" <label for=\"monthjan\">Jan</label>")
-    html.write(
-        " <input type=\"checkbox\" id=\"monthfeb\" name=\"monthfeb\" value=\"1\" class=\"month\"/>")
+    html.write(" <input type=\"checkbox\" id=\"monthfeb\" name=\"monthfeb\" value=\"1\" class=\"month\"/>")
     html.write(" <label for=\"monthfeb\">Feb</label>")
-    html.write(
-        " <input type=\"checkbox\" id=\"monthmar\" name=\"monthmar\" value=\"1\" class=\"month\"/>")
+    html.write(" <input type=\"checkbox\" id=\"monthmar\" name=\"monthmar\" value=\"1\" class=\"month\"/>")
     html.write(" <label for=\"monthmar\">Mar</label>")
-    html.write(
-        " <input type=\"checkbox\" id=\"monthapr\" name=\"monthapr\" value=\"1\" class=\"month\"/>")
+    html.write(" <input type=\"checkbox\" id=\"monthapr\" name=\"monthapr\" value=\"1\" class=\"month\"/>")
     html.write(" <label for=\"monthapr\">Apr</label>")
-    html.write(
-        " <input type=\"checkbox\" id=\"monthmay\" name=\"monthmay\" value=\"1\" class=\"month\"/>")
+    html.write(" <input type=\"checkbox\" id=\"monthmay\" name=\"monthmay\" value=\"1\" class=\"month\"/>")
     html.write(" <label for=\"monthmay\">May</label>")
-    html.write(
-        " <input type=\"checkbox\" id=\"monthjun\" name=\"monthjun\" value=\"1\" class=\"month\"/>")
+    html.write(" <input type=\"checkbox\" id=\"monthjun\" name=\"monthjun\" value=\"1\" class=\"month\"/>")
     html.write(" <label for=\"monthjun\">Jun</label>")
-    html.write(
-        " <input type=\"checkbox\" id=\"monthjul\" name=\"monthjul\" value=\"1\" class=\"month\"/>")
+    html.write(" <input type=\"checkbox\" id=\"monthjul\" name=\"monthjul\" value=\"1\" class=\"month\"/>")
     html.write(" <label for=\"monthjul\">Jul</label>")
-    html.write(
-        " <input type=\"checkbox\" id=\"monthaug\" name=\"monthaug\" value=\"1\" class=\"month\"/>")
+    html.write(" <input type=\"checkbox\" id=\"monthaug\" name=\"monthaug\" value=\"1\" class=\"month\"/>")
     html.write(" <label for=\"monthaug\">Aug</label>")
-    html.write(
-        " <input type=\"checkbox\" id=\"monthsep\" name=\"monthsep\" value=\"1\" class=\"month\"/>")
+    html.write(" <input type=\"checkbox\" id=\"monthsep\" name=\"monthsep\" value=\"1\" class=\"month\"/>")
     html.write(" <label for=\"monthsep\">Sep</label>")
-    html.write(
-        " <input type=\"checkbox\" id=\"monthoct\" name=\"monthoct\" value=\"1\" class=\"month\"/>")
+    html.write(" <input type=\"checkbox\" id=\"monthoct\" name=\"monthoct\" value=\"1\" class=\"month\"/>")
     html.write(" <label for=\"monthoct\">Oct</label>")
-    html.write(
-        " <input type=\"checkbox\" id=\"monthnov\" name=\"monthnov\" value=\"1\" class=\"month\"/>")
+    html.write(" <input type=\"checkbox\" id=\"monthnov\" name=\"monthnov\" value=\"1\" class=\"month\"/>")
     html.write(" <label for=\"monthnov\">Nov</label>")
-    html.write(
-        " <input type=\"checkbox\" id=\"monthdec\" name=\"monthdec\" value=\"1\" class=\"month\"/>")
+    html.write(" <input type=\"checkbox\" id=\"monthdec\" name=\"monthdec\" value=\"1\" class=\"month\"/>")
     html.write(" <label for=\"monthdec\">Dec</label>")
     html.write("</td>")
     html.write("</tr>")
@@ -169,12 +122,9 @@ def ap_scheduling(h):
     html.write("<td>")
     html.write("</td>")
     html.write("<td>")
-    html.write(
-        "<input type=\"button\" id=\"submitEve\" onclick=\"eventSubmit()\" value=\"Submit\" />")
-    html.write(
-        "<input type=\"button\" id=\"updateEve\" style=\"display:none;\" onclick=\"eventUpdate()\" value=\"Update\" />")
-    html.write(
-        "<input type=\"button\" onclick=\"eventCancel()\" value=\"Cancel\" />")
+    html.write("<input type=\"button\" id=\"submitEve\" onclick=\"eventSubmit()\" value=\"Submit\" />")
+    html.write("<input type=\"button\" id=\"updateEve\" style=\"display:none;\" onclick=\"eventUpdate()\" value=\"Update\" />")
+    html.write("<input type=\"button\" onclick=\"eventCancel()\" value=\"Cancel\" />")
     html.write("</td>")
     html.write("</tr>")
 
@@ -186,22 +136,18 @@ def ap_scheduling(h):
     html.write("<div class=\"calender-pop-up\" style=\"min-height:20px;width:150px;\" id=\"cEvent\"><a href=\"javascript:createEvent();\">Create Event</a></div>")
     html.write("<div class=\"calender-pop-up\" id=\"dEvent\"><input type=\"hidden\" id=\"scheduleId\" name=\"scheduleId\" value=\"0\" /><a href=\"#viewApDiv\" id=\"showAP\"  rel=\"facebox\">View Access point</a><br/><a href=\"javascript:editSchedule();\">Edit</a><br/><a href=\"javascript:deleteSchedule();\">Delete</a></div>")
     # image uploader div
-    # html.write("<div class=\"loading\"></div>")
-    # html.write("<div id=\"viewApDiv\" style=\"min-
-    # width:500px;height:400px;z-index:2000;position:absolute;top:100px;
-    # left:10%;display:none;overflow-x:hidden;overflow-y:auto;\" >")
+    #html.write("<div class=\"loading\"></div>")
+    #html.write("<div id=\"viewApDiv\" style=\"min-width:500px;height:400px;z-index:2000;position:absolute;top:100px; left:10%;display:none;overflow-x:hidden;overflow-y:auto;\" >")
     html.write("<div id=\"viewApDiv\">")
     html.write("</div>")
     html.new_footer()
-
 
 def add_ap_scheduler(h):
     global html
     html = h
     event = "Down"
     startDateTemp = html.var("startDate").split("/")
-    startDate = startDateTemp[2] + "-" + startDateTemp[1] + "-" + \
-        startDateTemp[0]
+    startDate = startDateTemp[2] + "-" + startDateTemp[1] + "-" + startDateTemp[0]
     endDateTemp = html.var("endDate").split("/")
     endDate = endDateTemp[2] + "-" + endDateTemp[1] + "-" + endDateTemp[0]
     startTime = html.var("startTime")
@@ -273,30 +219,28 @@ def add_ap_scheduler(h):
         monthdec = "1"
 
     # Open database connection
-    db = MySQLdb.connect("localhost", "root", "root", "nms")
+    db = MySQLdb.connect("localhost","root","root","nms")
     # prepare a cursor object using cursor() method
     try:
         cursor = db.cursor()
         # prepare SQL query to insert the scheduling details
-        sql = "INSERT INTO schedule (event, startdate, enddate, starttime, endtime, isrepeat, repeattype, sun, mon, tue, wed, thu, fri, sat, jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dece, dates) VALUES ('%s','%s','%s','%s','%s',%s,'%s', %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, '%s')" % (
-            event, startDate, endDate, startTime, endTime, repeat, repeatType, daysun, daymon, daytue, daywed, daythu, dayfri, daysat, monthjan, monthfeb, monthmar, monthapr, monthmay, monthjun, monthjul, monthaug, monthsep, monthoct, monthnov, monthdec, dates)
+        sql = "INSERT INTO schedule (event, startdate, enddate, starttime, endtime, isrepeat, repeattype, sun, mon, tue, wed, thu, fri, sat, jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dece, dates) VALUES ('%s','%s','%s','%s','%s',%s,'%s', %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, '%s')" % (event, startDate, endDate, startTime, endTime, repeat, repeatType, daysun, daymon, daytue, daywed, daythu, dayfri, daysat, monthjan, monthfeb, monthmar, monthapr, monthmay, monthjun, monthjul, monthaug, monthsep, monthoct, monthnov, monthdec, dates)
         cursor.execute(sql)
-        newId = cursor.lastrowid
+        newId = cursor.lastrowid;
         for apId in accessPoint:
             if apId.strip() != "":
-                sql = "INSERT INTO ap_schedule(scheduleid,deviceid) VALUE(%s,%s)" % (
-                    newId, apId)
+                sql = "INSERT INTO ap_schedule(scheduleid,deviceid) VALUE(%s,%s)" % (newId,apId)
                 cursor.execute(sql)
 
         db.commit()
 
-        # fileData = ""
+        #fileData = ""
         # prepare SQL query to get scheduling data
-        # sql = "SELECT * FROM schedule"
-        # cursor.execute(sql)
-        # schedule = cursor.fetchall()
+        #sql = "SELECT * FROM schedule"
+        #cursor.execute(sql)
+        #schedule = cursor.fetchall()
 
-        # for srow in schedule:
+        #for srow in schedule:
         #     sql = "SELECT * FROM ap_schedule WHERE scheduleid = %s" % srow[0]
         #     cursor.execute(sql)
         #     apschedule = cursor.fetchall()
@@ -305,7 +249,7 @@ def add_ap_scheduler(h):
         #          cursor.execute(sql)
         #          device = cursor.fetchall()
 
-        create_crontab_file()
+        create_crontab_file()     
         html.write(str(newId))
     except():
         # Rollback in case there is any error
@@ -318,7 +262,7 @@ def add_ap_scheduler(h):
 def access_point_multiple_select_list(accessPoints, selectListId):
     selectList = ""
     # Open database connection
-    db = MySQLdb.connect("localhost", "root", "root", "nms")
+    db = MySQLdb.connect("localhost","root","root","nms")
     # prepare a cursor object using cursor() method
     cursor = db.cursor()
     # prepare SQL query to get total access points in this system
@@ -330,27 +274,19 @@ def access_point_multiple_select_list(accessPoints, selectListId):
 
     liList = ""
     for row in result:
-        liList += "<li>" + row[1] + "<img src=\"images/add16.png\" class=\"plus plus" + selectListId + \
-            "\" alt=\"+\" title=\"Add\" id=\"" + str(
-                row[0]) + "\" name=\"" + row[1] + "\"/></li>"
+        liList += "<li>" + row[1] + "<img src=\"images/add16.png\" class=\"plus plus" + selectListId + "\" alt=\"+\" title=\"Add\" id=\"" + str(row[0]) + "\" name=\"" + row[1] + "\"/></li>"
 
-    selectList += "<div class=\"multiSelectList\" id=\"multiSelectList" + \
-        selectListId + "\" style=\"position:;\">"
-    selectList += "<input type=\"hidden\" id=\"hd" + selectListId + \
-        "\" name=\"hd" + selectListId + "\" value=\"\" />"
-    selectList += "<input type=\"hidden\" id=\"hdTemp" + selectListId + "\" name=\"hdTemp" + \
-        selectListId + "\" value=\"" + accessPoints + "\" />"
+    selectList += "<div class=\"multiSelectList\" id=\"multiSelectList" + selectListId + "\" style=\"position:;\">"
+    selectList += "<input type=\"hidden\" id=\"hd" + selectListId + "\" name=\"hd" + selectListId + "\" value=\"\" />"
+    selectList += "<input type=\"hidden\" id=\"hdTemp" + selectListId + "\" name=\"hdTemp" + selectListId + "\" value=\"" + accessPoints + "\" />"
     selectList += "<div class=\"selected\">"
-    selectList += "<div class=\"shead\"><span id=\"count\">0</span><span> Access Point(s)</span><a href=\"#\" id=\"rm" + \
-        selectListId + \
-        "\">Remove all</a>"
+    selectList += "<div class=\"shead\"><span id=\"count\">0</span><span> Access Point(s)</span><a href=\"#\" id=\"rm" + selectListId + "\">Remove all</a>"
     selectList += "</div>"
-    selectList += "<ul>"  # <li>asdf<img src=\"images/minus16.png\" class=\"minus\" alt=\"-\" title=\"Remove\" /></li>
+    selectList += "<ul>" #<li>asdf<img src=\"images/minus16.png\" class=\"minus\" alt=\"-\" title=\"Remove\" /></li>
     selectList += "</ul>"
     selectList += "</div>"
     selectList += "<div class=\"nonSelected\">"
-    selectList += "<div class=\"shead\"><a href=\"#\" id=\"add" + \
-        selectListId + "\">Add all</a>"
+    selectList += "<div class=\"shead\"><a href=\"#\" id=\"add" + selectListId + "\">Add all</a>"
     selectList += "</div>"
     selectList += "<ul>" + liList
     selectList += "</ul>"
@@ -358,12 +294,11 @@ def access_point_multiple_select_list(accessPoints, selectListId):
     selectList += "</div>"
     return selectList
 
-
 def load_non_repeative_events(h):
     global html
     html = h
     # Open database connection
-    db = MySQLdb.connect("localhost", "root", "root", "nms")
+    db = MySQLdb.connect("localhost","root","root","nms")
     # prepare a cursor object using cursor() method
     cursor = db.cursor()
     jsonData = "{events:["
@@ -384,10 +319,8 @@ def load_non_repeative_events(h):
             jsonData += "{"
             jsonData += "id:" + str(srow[0]) + ","
             jsonData += "title:\"" + srow[1] + "\","
-            jsonData += "start: new Date(" + sDate[0] + "," + str(
-                int(sDate[1]) - 1) + "," + sDate[2] + "," + sTime[0] + "," + sTime[1] + "),"
-            jsonData += "end: new Date(" + eDate[0] + "," + str(
-                int(eDate[1]) - 1) + "," + eDate[2] + "," + eTime[0] + "," + eTime[1] + "),"
+            jsonData += "start: new Date(" + sDate[0] + ","+ str(int(sDate[1]) - 1 ) + ","+ sDate[2] + ","+ sTime[0] + ","+ sTime[1] + "),"
+            jsonData += "end: new Date(" + eDate[0] + ","+ str(int(eDate[1]) - 1 ) + ","+ eDate[2] + ","+ eTime[0] + ","+ eTime[1] + "),"
             jsonData += "allDay: false"
             jsonData += "}"
 
@@ -398,12 +331,11 @@ def load_non_repeative_events(h):
         html.write("{events:[]}")
     db.close()
 
-
 def load_repeative_events(h):
     global html
     html = h
     # Open database connection
-    db = MySQLdb.connect("localhost", "root", "root", "nms")
+    db = MySQLdb.connect("localhost","root","root","nms")
     # prepare a cursor object using cursor() method
     cursor = db.cursor()
     daily = "daily:["
@@ -425,7 +357,7 @@ def load_repeative_events(h):
                 daily += "{"
                 daily += "id:" + str(srow[0]) + ","
                 daily += "title:\"" + srow[1] + "\","
-                daily += "start:\"" + str(srow[4]) + "\","
+                daily += "start:\"" + str(srow[4]) + "\"," 
                 daily += "end: \"" + str(srow[5]) + "\","
                 daily += "allDay: false"
                 daily += "}"
@@ -437,7 +369,7 @@ def load_repeative_events(h):
                 weekly += "{"
                 weekly += "id:" + str(srow[0]) + ","
                 weekly += "title:\"" + srow[1] + "\","
-                weekly += "start:\"" + str(srow[4]) + "\","
+                weekly += "start:\"" + str(srow[4]) + "\"," 
                 weekly += "end: \"" + str(srow[5]) + "\","
                 weekly += "sun: " + str(srow[8]) + ","
                 weekly += "mon: " + str(srow[9]) + ","
@@ -456,7 +388,7 @@ def load_repeative_events(h):
                 monthly += "{"
                 monthly += "id:" + str(srow[0]) + ","
                 monthly += "title:\"" + srow[1] + "\","
-                monthly += "start:\"" + str(srow[4]) + "\","
+                monthly += "start:\"" + str(srow[4]) + "\"," 
                 monthly += "end: \"" + str(srow[5]) + "\","
                 monthly += "date: " + str(srow[27]) + ","
                 monthly += "jan: " + str(srow[15]) + ","
@@ -480,7 +412,6 @@ def load_repeative_events(h):
         html.write("{daily:[],weekly:[],monthly:[]}")
         db.close()
 
-
 def event_resize(h):
     global html
     html = h
@@ -488,7 +419,7 @@ def event_resize(h):
     day = html.var("day")
     minute = html.var("minute")
     # Open database connection
-    db = MySQLdb.connect("localhost", "root", "root", "nms")
+    db = MySQLdb.connect("localhost","root","root","nms")
     # prepare a cursor object using cursor() method
     cursor = db.cursor()
     # prepare SQL query to get scheduling data
@@ -506,21 +437,19 @@ def event_resize(h):
     if i != 0:
         eDate = str(endDate).split("-")
         eTime = str(endTime).split(":")
-        eDateObj = datetime.datetime(int(eDate[0]), int(eDate[1]), int(
-            eDate[2]), int(eTime[0]), int(eTime[1]), int(eTime[2]))
-        eDateObj = eDateObj + datetime.timedelta(minutes=int(minute))
-        eDateObj = eDateObj + datetime.timedelta(days=int(day))
+        eDateObj = datetime.datetime(int(eDate[0]),int(eDate[1]),int(eDate[2]),int(eTime[0]),int(eTime[1]),int(eTime[2]))
+        eDateObj = eDateObj + datetime.timedelta(minutes = int(minute))
+        eDateObj = eDateObj + datetime.timedelta(days = int(day))
         sql = "UPDATE schedule SET \
                  enddate = '%s', \
                  endtime = '%s' \
-                 WHERE scheduleid = %s" % ((str(eDateObj.year) + "-" + str(eDateObj.month) + "-" + str(eDateObj.day)), (str(eDateObj.hour) + ":" + str(eDateObj.minute) + ":00"), scheduleId)
+                 WHERE scheduleid = %s" %((str(eDateObj.year) + "-" + str(eDateObj.month) + "-" + str(eDateObj.day)),(str(eDateObj.hour) + ":" + str(eDateObj.minute) + ":00"),scheduleId)
         cursor.execute(sql)
         db.commit()
         create_crontab_file()
         html.write("0")
     else:
         html.write("1")
-
 
 def event_drop(h):
     global html
@@ -529,7 +458,7 @@ def event_drop(h):
     day = html.var("day")
     minute = html.var("minute")
     # Open database connection
-    db = MySQLdb.connect("localhost", "root", "root", "nms")
+    db = MySQLdb.connect("localhost","root","root","nms")
     # prepare a cursor object using cursor() method
     cursor = db.cursor()
     # prepare SQL query to get scheduling data
@@ -580,18 +509,16 @@ def event_drop(h):
         sTime = str(startTime).split(":")
         eDate = str(endDate).split("-")
         eTime = str(endTime).split(":")
-        sDateObj = datetime.datetime(int(sDate[0]), int(sDate[1]), int(
-            sDate[2]), int(sTime[0]), int(sTime[1]), int(sTime[2]))
-        sDateObj = sDateObj + datetime.timedelta(minutes=int(minute))
-        sDateObj = sDateObj + datetime.timedelta(days=int(day))
-        eDateObj = datetime.datetime(int(eDate[0]), int(eDate[1]), int(
-            eDate[2]), int(eTime[0]), int(eTime[1]), int(eTime[2]))
-        eDateObj = eDateObj + datetime.timedelta(minutes=int(minute))
-        eDateObj = eDateObj + datetime.timedelta(days=int(day))
+        sDateObj = datetime.datetime(int(sDate[0]),int(sDate[1]),int(sDate[2]),int(sTime[0]),int(sTime[1]),int(sTime[2]))
+        sDateObj = sDateObj + datetime.timedelta(minutes = int(minute))
+        sDateObj = sDateObj + datetime.timedelta(days = int(day))
+        eDateObj = datetime.datetime(int(eDate[0]),int(eDate[1]),int(eDate[2]),int(eTime[0]),int(eTime[1]),int(eTime[2]))
+        eDateObj = eDateObj + datetime.timedelta(minutes = int(minute))
+        eDateObj = eDateObj + datetime.timedelta(days = int(day))
         if int(day) != 0:
             if int(isRepeat) == 1:
                 if repeatType == "Weekly":
-                    for i in range(0, int(day)):
+                    for i in range(0,int(day)):
                         tempSun = sat
                         tempMon = sun
                         tempTue = mon
@@ -606,7 +533,7 @@ def event_drop(h):
                         thu = tempThu
                         fri = tempFri
                         sat = tempSat
-                    for i in range(int(day), 0):
+                    for i in range(int(day),0):
                         tempSun = mon
                         tempMon = tue
                         tempTue = wed
@@ -637,7 +564,7 @@ def event_drop(h):
                  fri = %s, \
                  sat = %s, \
                  dates = %s \
-                 WHERE scheduleid = %s" % ((str(sDateObj.year) + "-" + str(sDateObj.month) + "-" + str(sDateObj.day)), (str(sDateObj.hour) + ":" + str(sDateObj.minute) + ":00"), (str(eDateObj.year) + "-" + str(eDateObj.month) + "-" + str(eDateObj.day)), (str(eDateObj.hour) + ":" + str(eDateObj.minute) + ":00"), sun, mon, tue, wed, thu, fri, sat, dates, scheduleId)
+                 WHERE scheduleid = %s" %((str(sDateObj.year) + "-" + str(sDateObj.month) + "-" + str(sDateObj.day)),(str(sDateObj.hour) + ":" + str(sDateObj.minute) + ":00"),(str(eDateObj.year) + "-" + str(eDateObj.month) + "-" + str(eDateObj.day)),(str(eDateObj.hour) + ":" + str(eDateObj.minute) + ":00"),sun,mon,tue,wed,thu,fri,sat,dates,scheduleId)
         cursor.execute(sql)
         db.commit()
         create_crontab_file()
@@ -645,13 +572,12 @@ def event_drop(h):
     else:
         html.write("1")
 
-
 def delete_ap_scheduler(h):
     global html
     html = h
     scheduleId = html.var("scheduleId")
     # Open database connection
-    db = MySQLdb.connect("localhost", "root", "root", "nms")
+    db = MySQLdb.connect("localhost","root","root","nms")
     # prepare a cursor object using cursor() method
     cursor = db.cursor()
     # prepare SQL query to get scheduling data
@@ -663,13 +589,12 @@ def delete_ap_scheduler(h):
     create_crontab_file()
     html.write("0")
 
-
 def view_access_point_list(h):
     global html
     html = h
     scheduleId = html.var("scheduleId")
     # Open database connection
-    db = MySQLdb.connect("localhost", "root", "root", "nms")
+    db = MySQLdb.connect("localhost","root","root","nms")
     # prepare a cursor object using cursor() method
     cursor = db.cursor()
     # prepare SQL query to get scheduling data
@@ -689,22 +614,19 @@ def view_access_point_list(h):
 			<th>Host Name</th>
 		</tr>
 """
-    i = 0
+    i = 0;
     for row in result:
         i += 1
-        tableString += "<tr><td>" + str(i) + "</td><td>" + row[1] + "</td><td>" + \
-            row[0] + "</td><td>" + \
-            row[2] + "</td></tr>"
+        tableString += "<tr><td>" + str(i) + "</td><td>" + row[1]+ "</td><td>" + row[0]+ "</td><td>" + row[2]+ "</td></tr>"
     tableString += "</tbody></table>"
     html.write(tableString)
-
 
 def get_ap_schedule_details(h):
     global html
     html = h
     scheduleId = html.var("scheduleId")
     # Open database connection
-    db = MySQLdb.connect("localhost", "root", "root", "nms")
+    db = MySQLdb.connect("localhost","root","root","nms")
     # prepare a cursor object using cursor() method
     cursor = db.cursor()
     # prepare SQL query to get scheduling data
@@ -742,7 +664,7 @@ def get_ap_schedule_details(h):
         jsonData += "nov:" + str(row[25]) + ","
         jsonData += "dece:" + str(row[26]) + ","
         jsonData += "dates:\"" + str(row[27]) + "\""
-        break
+        break;
     sql = "SELECT * FROM ap_schedule \
             WHERE scheduleid = %s" % scheduleId
     cursor.execute(sql)
@@ -759,7 +681,6 @@ def get_ap_schedule_details(h):
     jsonData += "}"
     html.write(jsonData)
 
-
 def update_ap_scheduler(h):
     global html
     html = h
@@ -767,8 +688,7 @@ def update_ap_scheduler(h):
     scheduleId = html.var("scheduleId")
     event = "Down"
     startDateTemp = html.var("startDate").split("/")
-    startDate = startDateTemp[2] + "-" + startDateTemp[1] + "-" + \
-        startDateTemp[0]
+    startDate = startDateTemp[2] + "-" + startDateTemp[1] + "-" + startDateTemp[0]
     endDateTemp = html.var("endDate").split("/")
     endDate = endDateTemp[2] + "-" + endDateTemp[1] + "-" + endDateTemp[0]
     startTime = html.var("startTime")
@@ -840,13 +760,12 @@ def update_ap_scheduler(h):
         monthdec = "1"
 
     # Open database connection
-    db = MySQLdb.connect("localhost", "root", "root", "nms")
+    db = MySQLdb.connect("localhost","root","root","nms")
     # prepare a cursor object using cursor() method
     try:
         cursor = db.cursor()
         # prepare SQL query to update the scheduling details
-        sql = "UPDATE schedule SET event = '%s', startdate = '%s', enddate = '%s', starttime = '%s', endtime = '%s', isrepeat = %s, repeattype = '%s', sun = %s, mon = %s, tue = %s, wed = %s, thu = %s, fri = %s, sat = %s, jan = %s, feb = %s, mar = %s, apr = %s, may = %s, jun = %s, jul = %s, aug = %s, sep = %s, oct = %s, nov = %s, dece = %s, dates = '%s' WHERE scheduleid = %s" % (
-            event, startDate, endDate, startTime, endTime, repeat, repeatType, daysun, daymon, daytue, daywed, daythu, dayfri, daysat, monthjan, monthfeb, monthmar, monthapr, monthmay, monthjun, monthjul, monthaug, monthsep, monthoct, monthnov, monthdec, dates, scheduleId)
+        sql = "UPDATE schedule SET event = '%s', startdate = '%s', enddate = '%s', starttime = '%s', endtime = '%s', isrepeat = %s, repeattype = '%s', sun = %s, mon = %s, tue = %s, wed = %s, thu = %s, fri = %s, sat = %s, jan = %s, feb = %s, mar = %s, apr = %s, may = %s, jun = %s, jul = %s, aug = %s, sep = %s, oct = %s, nov = %s, dece = %s, dates = '%s' WHERE scheduleid = %s" % (event, startDate, endDate, startTime, endTime, repeat, repeatType, daysun, daymon, daytue, daywed, daythu, dayfri, daysat, monthjan, monthfeb, monthmar, monthapr, monthmay, monthjun, monthjul, monthaug, monthsep, monthoct, monthnov, monthdec, dates, scheduleId)
         cursor.execute(sql)
 
         sql = "DELETE FROM ap_schedule WHERE scheduleid = %s" % (scheduleId)
@@ -854,8 +773,7 @@ def update_ap_scheduler(h):
 
         for apId in accessPoint:
             if apId.strip() != "":
-                sql = "INSERT INTO ap_schedule(scheduleid,deviceid) VALUE(%s,%s)" % (
-                    scheduleId, apId)
+                sql = "INSERT INTO ap_schedule(scheduleid,deviceid) VALUE(%s,%s)" % (scheduleId,apId)
                 cursor.execute(sql)
         db.commit()
         create_crontab_file()
@@ -866,10 +784,9 @@ def update_ap_scheduler(h):
         html.write("-1")
     db.close()
 
-
 def create_crontab_file():
     # Open database connection
-    db = MySQLdb.connect("localhost", "root", "root", "nms")
+    db = MySQLdb.connect("localhost","root","root","nms")
 
     commands = "python /omd/deamon/scheduling.py "
     crontabString = ""
@@ -899,15 +816,12 @@ def create_crontab_file():
             eDate = str(row[3]).split("-")
             eTime = str(row[5]).split(":")
             now = datetime.datetime.now()
-            sDateObj = datetime.datetime(int(sDate[0]), int(sDate[1]), int(
-                sDate[2]), int(sTime[0]), int(sTime[1]), int(sTime[2]))
-            eDateObj = datetime.datetime(int(eDate[0]), int(eDate[1]), int(
-                eDate[2]), int(eTime[0]), int(eTime[1]), int(eTime[2]))
+            sDateObj = datetime.datetime(int(sDate[0]),int(sDate[1]),int(sDate[2]),int(sTime[0]),int(sTime[1]),int(sTime[2]))
+            eDateObj = datetime.datetime(int(eDate[0]),int(eDate[1]),int(eDate[2]),int(eTime[0]),int(eTime[1]),int(eTime[2]))
 
             if row[6] == 0:			# this is for non repeated scheduling
                 if sDateObj > now:
-                    commandString = sTime[1] + " " + \
-                        sTime[0] + " " + sDate[2] + " " + sDate[1] + " * "
+                    commandString = sTime[1] + " " + sTime[0] + " " + sDate[2] + " " + sDate[1] + " * "
                     sql = "SELECT nms_devices.ipaddress, nms_devices.username, nms_devices.password, nms_devices.port FROM ap_schedule \
                                 INNER JOIN nms_devices on ap_schedule.deviceid = nms_devices.id \
                                 WHERE ap_schedule.scheduleid = %s" % (row[0])
@@ -928,16 +842,12 @@ def create_crontab_file():
                             password = str(aprow[2])
                         if str(aprow[3]).strip() != "":
                             port = str(aprow[3]).strip()
-                        crontabString += commandString + commands + \
-                            username + " " + \
-                            password + \
-                            " " + port + " " + ip + " " + event1
+                        crontabString += commandString + commands + username + " " + password + " " + port + " " + ip + " "  + event1
                         apI1 += 1
                     crontabString += " 1 -1\n"
 
                 if eDateObj > now:
-                    commandString = eTime[1] + " " + \
-                        eTime[0] + " " + eDate[2] + " " + eDate[1] + " * "
+                    commandString = eTime[1] + " " + eTime[0] + " " + eDate[2] + " " + eDate[1] + " * "
                     sql = "SELECT nms_devices.ipaddress, nms_devices.username, nms_devices.password, nms_devices.port FROM ap_schedule \
                                 INNER JOIN nms_devices on ap_schedule.deviceid = nms_devices.id \
                                 WHERE ap_schedule.scheduleid = %s" % (row[0])
@@ -958,9 +868,7 @@ def create_crontab_file():
                             password = str(aprow[2])
                         if str(aprow[3]).strip() != "":
                             port = str(aprow[3]).strip()
-                        crontabString += commandString + commands + \
-                            username + " " + \
-                            password + " " + port + " " + ip + " " + event2
+                        crontabString += commandString + commands + username + " " + password + " " + port + " " + ip + " " + event2
                         apI2 += 1
                     crontabString += " 1 -1\n"
 
@@ -986,12 +894,8 @@ def create_crontab_file():
                             password = str(aprow[2])
                         if str(aprow[3]).strip() != "":
                             port = str(aprow[3]).strip()
-                        crontabString += commandString1 + commands + username + " " + \
-                            password + " " + \
-                            port + " " + ip + " " + event1 + " 0 -1\n"
-                        crontabString += commandString2 + commands + username + " " + \
-                            password + " " + \
-                            port + " " + ip + " " + event2 + " 0 -1\n"
+                        crontabString += commandString1 + commands + username + " " + password + " " + port + " " + ip + " " + event1 + " 0 -1\n"
+                        crontabString += commandString2 + commands + username + " " + password + " " + port + " " + ip + " " + event2 + " 0 -1\n"
 
                 elif row[7] == "Weekly":
                     sql = "SELECT nms_devices.ipaddress, nms_devices.username, nms_devices.password, nms_devices.port FROM ap_schedule \
@@ -1017,61 +921,57 @@ def create_crontab_file():
                         commandString1 = sTime[1] + " " + sTime[0] + " * * "
                         commandString2 = eTime[1] + " " + eTime[0] + " * * "
                         dayI = 0
-                        if row[8] == 1:  # sunday
+                        if row[8] == 1:	# sunday
                             if dayI > 0:
                                 commandString1 += ","
                                 commandString2 += ","
-                            commandString1 += "0"
-                            commandString2 += "0"
+                            commandString1 += "0" 
+                            commandString2 += "0" 
                             dayI += 1
-                        if row[9] == 1:  # monday
+                        if row[9] == 1:	# monday
                             if dayI > 0:
                                 commandString1 += ","
                                 commandString2 += ","
-                            commandString1 += "1"
+                            commandString1 += "1" 
                             commandString2 += "1"
-                        if row[10] == 1:  # tuesday
+                        if row[10] == 1:	# tuesday
                             if dayI > 0:
                                 commandString1 += ","
                                 commandString2 += ","
-                            commandString1 += "2"
-                            commandString2 += "2"
+                            commandString1 += "2" 
+                            commandString2 += "2" 
                             dayI += 1
-                        if row[11] == 1:  # wednusday
+                        if row[11] == 1:	# wednusday
                             if dayI > 0:
                                 commandString1 += ","
                                 commandString2 += ","
-                            commandString1 += "3"
+                            commandString1 += "3" 
                             commandString2 += "3"
                             dayI += 1
-                        if row[12] == 1:  # thrusday
+                        if row[12] == 1:	# thrusday
                             if dayI > 0:
                                 commandString1 += ","
                                 commandString2 += ","
-                            commandString1 += "4"
-                            commandString2 += "4"
+                            commandString1 += "4" 
+                            commandString2 += "4" 
                             dayI += 1
-                        if row[13] == 1:  # friday
+                        if row[13] == 1:	# friday
                             if dayI > 0:
                                 commandString1 += ","
                                 commandString2 += ","
-                            commandString1 += "5"
-                            commandString2 += "5"
+                            commandString1 += "5" 
+                            commandString2 += "5" 
                             dayI += 1
-                        if row[14] == 1:  # saturday
+                        if row[14] == 1:	# saturday
                             if dayI > 0:
                                 commandString1 += ","
                                 commandString2 += ","
-                            commandString1 += "6"
-                            commandString2 += "6"
+                            commandString1 += "6" 
+                            commandString2 += "6" 
                             dayI += 1
 
-                        crontabString += commandString1 + " " + commands + username + " " + \
-                            password + " " + \
-                            port + " " + ip + " " + event1 + " 0 -1\n"
-                        crontabString += commandString2 + " " + commands + username + " " + \
-                            password + " " + \
-                            port + " " + ip + " " + event2 + " 0 -1\n"
+                        crontabString += commandString1 + " " + commands + username + " " + password + " " + port + " " + ip + " " + event1 + " 0 -1\n"
+                        crontabString += commandString2 + " " + commands + username + " " + password + " " + port + " " + ip + " " + event2 + " 0 -1\n"
 
                 elif row[7] == "Monthly":
                     sql = "SELECT nms_devices.ipaddress, nms_devices.username, nms_devices.password, nms_devices.port FROM ap_schedule \
@@ -1095,101 +995,95 @@ def create_crontab_file():
                             port = str(aprow[3]).strip()
 
                         monthI = 0
-                        commandString1 = sTime[1] + \
-                            " " + sTime[0] + " " + row[27] + " "
-                        commandString2 = sTime[1] + \
-                            " " + sTime[0] + " " + row[27] + " "
-                        if row[15] == 1:  # jan
+                        commandString1 = sTime[1] + " " + sTime[0] + " " + row[27] + " "
+                        commandString2 = sTime[1] + " " + sTime[0] + " " + row[27] + " "
+                        if row[15] == 1:	# jan
                             if monthI > 0:
                                 commandString1 += ","
                                 commandString2 += ","
-                            commandString1 += "1"
+                            commandString1 += "1" 
                             commandString2 += "1"
                             monthI += 1
-                        if row[16] == 1:  # feb
+                        if row[16] == 1:	# feb
                             if monthI > 0:
                                 commandString1 += ","
                                 commandString2 += ","
-                            commandString1 += "2"
+                            commandString1 += "2" 
                             commandString2 += "2"
                             monthI += 1
-                        if row[17] == 1:  # mar
+                        if row[17] == 1:	# mar
                             if monthI > 0:
                                 commandString1 += ","
                                 commandString2 += ","
-                            commandString1 += "3"
+                            commandString1 += "3" 
                             commandString2 += "3"
                             monthI += 1
-                        if row[18] == 1:  # apr
+                        if row[18] == 1:	# apr
                             if monthI > 0:
                                 commandString1 += ","
                                 commandString2 += ","
-                            commandString1 += "4"
-                            commandString2 += "4"
+                            commandString1 += "4" 
+                            commandString2 += "4" 
                             monthI += 1
-                        if row[19] == 1:  # may
+                        if row[19] == 1:	# may
                             if monthI > 0:
                                 commandString1 += ","
                                 commandString2 += ","
-                            commandString1 += "5"
-                            commandString2 += "5"
+                            commandString1 += "5" 
+                            commandString2 += "5" 
                             monthI += 1
-                        if row[20] == 1:  # jun
+                        if row[20] == 1:	# jun
                             if monthI > 0:
                                 commandString1 += ","
                                 commandString2 += ","
-                            commandString1 += "6"
-                            commandString2 += "6"
+                            commandString1 += "6" 
+                            commandString2 += "6" 
                             monthI += 1
-                        if row[21] == 1:  # jul
+                        if row[21] == 1:	# jul
                             if monthI > 0:
                                 commandString1 += ","
                                 commandString2 += ","
-                            commandString1 += "7"
-                            commandString2 += "7"
+                            commandString1 += "7" 
+                            commandString2 += "7" 
                             monthI += 1
-                        if row[22] == 1:  # aug
+                        if row[22] == 1:	# aug
                             if monthI > 0:
                                 commandString1 += ","
                                 commandString2 += ","
-                            commandString1 += "8"
-                            commandString2 += "8"
+                            commandString1 += "8" 
+                            commandString2 += "8" 
                             monthI += 1
-                        if row[23] == 1:  # sep
+                        if row[23] == 1:	# sep
                             if monthI > 0:
                                 commandString1 += ","
                                 commandString2 += ","
-                            commandString1 += "9"
-                            commandString2 += "9"
+                            commandString1 += "9" 
+                            commandString2 += "9" 
                             monthI += 1
-                        if row[24] == 1:  # oct
+                        if row[24] == 1:	# oct
                             if monthI > 0:
                                 commandString1 += ","
                                 commandString2 += ","
-                            commandString1 += "10"
-                            commandString2 += "10"
+                            commandString1 += "10" 
+                            commandString2 += "10" 
                             monthI += 1
-                        if row[25] == 1:  # nov
+                        if row[25] == 1:	# nov
                             if monthI > 0:
                                 commandString1 += ","
                                 commandString2 += ","
-                            commandString1 += "11"
-                            commandString2 += "11"
+                            commandString1 += "11" 
+                            commandString2 += "11" 
                             monthI += 1
-                        if row[26] == 1:  # dec
+                        if row[26] == 1:	# dec
                             if monthI > 0:
                                 commandString1 += ","
                                 commandString2 += ","
-                            commandString1 += "12"
-                            commandString2 += "12"
+                            commandString1 += "12" 
+                            commandString2 += "12" 
                             monthI += 1
 
-                        crontabString += commandString1 + " * " + commands + username + " " + \
-                            password + " " + \
-                            port + " " + ip + " " + event1 + " 0 -1\n"
-                        crontabString += commandString2 + " * " + commands + username + " " + \
-                            password + " " + \
-                            port + " " + ip + " " + event2 + " 0 -1\n"
+                        crontabString += commandString1 + " * " + commands + username + " " + password + " " + port + " " + ip + " " + event1 + " 0 -1\n"
+                        crontabString += commandString2 + " * " + commands + username + " " + password + " " + port + " " + ip + " " + event2 + " 0 -1\n"
 
         # prepare SQL query to create crontab
         sql = "SELECT repeat_ap_schedule.repeatapscheduleid, repeat_ap_schedule.datestamp, repeat_ap_schedule.timestamp, nms_devices.ipaddress, nms_devices.username, nms_devices.password, nms_devices.port, repeat_ap_schedule.message, repeat_ap_schedule.event FROM repeat_ap_schedule \
@@ -1205,8 +1099,7 @@ def create_crontab_file():
 
             sDate = str(row[1]).split("-")
             sTime = str(row[2]).split(":")
-            commandString = sTime[1] + " " + sTime[0] + " " + \
-                sDate[2] + " " + sDate[1] + " * "
+            commandString = sTime[1] + " " + sTime[0] + " " + sDate[2] + " " + sDate[1] + " * "
 
             if str(row[3]) != "":
                 ip = str(row[3])
@@ -1218,33 +1111,28 @@ def create_crontab_file():
                 port = str(row[6]).strip()
             if str(row[8]).strip() != "":
                 event = str(row[8]).strip()
-            crontabString += commandString + commands + username + " " + password + \
-                " " + port + " " + ip + " "  + event + \
-                " 0 " + str(row[0]) + "\n"
+            crontabString += commandString + commands + username + " " + password + " " + port + " " + ip + " "  + event + " 0 " + str(row[0]) + "\n"
 
-        fobj = open("/omd/deamon/crontab", "w")
+        fobj = open("/omd/deamon/crontab","w")
         fobj.write(crontabString)
         fobj.close()
     except:
         error = "some error occur"
     db.close()
 
-################################## Scheduling ############################
+################################## Scheduling #####################################
 
-#################################### AP Radio Status #####################
-
-
+#################################### AP Radio Status ##############################
 def radio_status(h):
     socket.setdefaulttimeout(1)
     global html
     html = h
-    css_list = ["css/style.css", "fullcalendar/fullcalendar.css"]
-    js_list = ["js/jquery-ui-1.8.6.custom.min.js",
-               "fullcalendar/fullcalendar.min.js", "js/radio_status.js"]
-    html.new_header("Radio Status", "", "", css_list, js_list)
+    css_list = ["css/style.css","fullcalendar/fullcalendar.css"]
+    js_list = ["js/jquery-ui-1.8.6.custom.min.js","fullcalendar/fullcalendar.min.js","js/radio_status.js"]
+    html.new_header("Radio Status","","",css_list,js_list)
 
     # Open database connection
-    db = MySQLdb.connect("localhost", "root", "root", "nms")
+    db = MySQLdb.connect("localhost","root","root","nms")
 
     # prepare a cursor object using cursor() method
     cursor = db.cursor()
@@ -1254,7 +1142,7 @@ def radio_status(h):
     cursor.execute(sql)
     result = cursor.fetchall()
 
-    tableString = "<table style=\"margin-bottom: 0px;\" id=\"iconmeaningtable\" class=\"addform\"><colgroup><col width=\"auto\"><col width=\"1%\"><col width=\"6%\"><col width=\"1%\"><col width=\"6%\"><col width=\"1%\"><col width=\"6%\"></colgroup><tbody><tr><th></th><th style=\"padding: 5px 0px 5px 10px;\"><img width=\"10px\" alt=\"enable\" src=\"images/status-0.png\"></th><th>enable</th><th style=\"padding: 5px 0px 5px 10px;\"><img width=\"10px\" alt=\"disable\" src=\"images/status-2.png\"></th><th>disable</th><th style=\"padding: 5px 0px 5px 10px;\"><img width=\"10px\" alt=\"unknown\" src=\"images/status-3.png\"></th><th>unknown</th></tr></tbody></table>"
+    tableString ="<table style=\"margin-bottom: 0px;\" id=\"iconmeaningtable\" class=\"addform\"><colgroup><col width=\"auto\"><col width=\"1%\"><col width=\"6%\"><col width=\"1%\"><col width=\"6%\"><col width=\"1%\"><col width=\"6%\"></colgroup><tbody><tr><th></th><th style=\"padding: 5px 0px 5px 10px;\"><img width=\"10px\" alt=\"enable\" src=\"images/status-0.png\"></th><th>enable</th><th style=\"padding: 5px 0px 5px 10px;\"><img width=\"10px\" alt=\"disable\" src=\"images/status-2.png\"></th><th>disable</th><th style=\"padding: 5px 0px 5px 10px;\"><img width=\"10px\" alt=\"unknown\" src=\"images/status-3.png\"></th><th>unknown</th></tr></tbody></table>"
 
     tableString += "<table class=\"addform\"><colgroup><col width=\"5%\"><col width=\"25%\"><col width=\"5%\"><col width=\"25%\"><col width=\"35%\"><col width=\"5%\"></colgroup><tbody>"
     tableString += "<tr><th>S.No.</th><th>IP Address</th><th>Status</th><th>Retry Action Time</th><th>Action Msg</th><th></th></tr>"
@@ -1268,14 +1156,15 @@ def radio_status(h):
         tempUrl = "/cgi-bin/ServerFuncs?Method=RadioStatus"
         url = "http://" + row[2] + tempUrl
 
+
         try:
             req = urllib2.Request(url)
-            auth_string = base64.encodestring("%s:%s" % (username, password))
+            auth_string = base64.encodestring("%s:%s" % (username,password))
             req.add_header("Authorization", "Basic %s" % auth_string)
             f = urllib2.urlopen(req)
             response = f.read()
         except urllib2.HTTPError, e:
-            response = str(e.code)  # send http error code
+            response = str(e.code)	# send http error code
         except:
             response = "Notwork Unreachable"
 
@@ -1288,7 +1177,7 @@ def radio_status(h):
         elif response == "501":
             message = "Server Error"
         else:
-            message = "Access Point not connected"
+            message = "Access Point not connected"          
 
         currentStatus = ""
         if response.find("RadioStatus = 11") != -1:
@@ -1315,21 +1204,14 @@ def radio_status(h):
             tableString += "<td><img width=\"10px\" alt=\"enable\" title=\"Enable\" src=\"images/status-0.png\"></td>"
             tableString += "<td>" + retryTime + "</td>"
             tableString += "<td>" + retryMsg + "</td>"
-            tableString += "<td><a href=\"javascript:disableRadio('" + row[2] + "','" + username + "','" + \
-                password + "','" + \
-                port + \
-                "')\">Disable</a></td>"
+            tableString += "<td><a href=\"javascript:disableRadio('" + row[2] + "','" + username + "','" + password + "','" + port + "')\">Disable</a></td>"
         elif currentStatus == "Disable":
             tableString += "<td><img width=\"10px\" alt=\"disable\" title=\"Disable\" src=\"images/status-2.png\"></td>"
             tableString += "<td>" + retryTime + "</td>"
             tableString += "<td>" + retryMsg + "</td>"
-            tableString += "<td><a href=\"javascript:enableRadio('" + row[2] + "','" + username + "','" + \
-                password + "','" + \
-                port + \
-                "')\">Enable</a></td>"
+            tableString += "<td><a href=\"javascript:enableRadio('" + row[2] + "','" + username + "','" + password + "','" + port + "')\">Enable</a></td>"
         else:
-            tableString += "<td><img width=\"10px\" alt=\"unknown\" title=\"" + \
-                message + "\" src=\"images/status-3.png\"></td>"
+            tableString += "<td><img width=\"10px\" alt=\"unknown\" title=\"" + message + "\" src=\"images/status-3.png\"></td>"
             tableString += "<td>-</td>"
             tableString += "<td>" + message + "</td>"
             tableString += "<td>-</td>"
@@ -1338,10 +1220,8 @@ def radio_status(h):
     tableString += "</tbody></table>"
     html.write(tableString)
     # image uploader div
-    html.write(
-        "<div class=\"loading\"><img src='images/loading.gif' alt='loading...'/></div>")
+    html.write("<div class=\"loading\"><img src='images/loading.gif' alt='loading...'/></div>")
     html.new_footer()
-
 
 def change_redio(h):
     global html
@@ -1360,12 +1240,12 @@ def change_redio(h):
     url = "http://" + ipaddress + tempUrl
     try:
         req = urllib2.Request(url)
-        auth_string = base64.encodestring("%s:%s" % (username, password))
+        auth_string = base64.encodestring("%s:%s" % (username,password))
         req.add_header("Authorization", "Basic %s" % auth_string)
         f = urllib2.urlopen(req)
         response = f.read()
     except urllib2.HTTPError, e:
-        response = str(e.code)  # send http error code
+        response = str(e.code)	# send http error code
     except urllib2.URLError, e:
         if action != "Enable":
             action = "Disable"
@@ -1389,6 +1269,6 @@ def change_redio(h):
         message = "Server Error"
     else:
         message = "Access Point not connected"
-    html.write(message)
+    html.write(message);
 
-#################################### AP Radio Status #####################
+#################################### AP Radio Status ##############################

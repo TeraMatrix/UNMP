@@ -18,7 +18,6 @@ var alarmDetail100=null;
 var trapDetail100=null;
 var trapAllDetail=null;
 
-
 $(function(){
 	$spinLoading = $("div#spin_loading");		// create object that hold loading circle
 	$spinMainLoading = $("div#main_loading");	// create object that hold loading squire

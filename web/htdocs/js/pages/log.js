@@ -70,6 +70,14 @@ $(document).ready(function(){
 	});
 	
 	searchEvents();
+	/*oTable = $('#log_table').dataTable({
+		"bJQueryUI": true,
+		"sPaginationType": "full_numbers",
+		"bProcessing": true,
+		"bServerSide": true,
+		"sAjaxSource": "get_log_data.py",
+		"aaSorting": [[0,'desc']]
+	});*/
 	
 	$("#page_tip").colorbox(  			//page tip
 	    {
@@ -149,12 +157,6 @@ function searchEvents()
 		"sAjaxSource": "get_log_data.py?month="+month+"&log_type="+log_type+"&user_name="+user_name+"&start_date="+start_date+"&end_date="+end_date+"&start_time="+start_time+"&end_time="+end_time,
 		"aaSorting": [[0,'desc']]
 	});
-	
-	if(log_type != "3" && log_type != "10")
-	{
-	    oTable.fnSetColumnVis(1, false );
-		oTable.fnAdjustColumnSizing();
-	}
 }
 
 // reporting function start

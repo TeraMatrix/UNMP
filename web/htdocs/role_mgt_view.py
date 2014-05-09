@@ -3,26 +3,22 @@
 from htmllib import *
 import role_bll
 
-special_check = lambda x: 1 if set(
-    "\"\`~!#$%^&*(){}[]+=|?<>:;").intersection(x) else 0
-space_check = lambda x: 1 if set(" ").intersection(x) else 0
-
-
-def validate_name(nm, type):
+special_check = lambda x:  1 if set("\"\`~!#$%^&*(){}[]+=|?<>:;").intersection(x) else 0
+space_check = lambda x:  1 if set(" ").intersection(x) else 0
+def validate_name(nm,type):
     if len(nm) < 5:
         return 1
     if special_check(nm) == 1:
         return 1
     if space_check(nm) == 0:
-        if type == "role":  # role
-            result = role_bll.check_rolename(nm, "role")
+        if type == "role": # role
+            result = role_bll.check_rolename(nm,"role")
         else:
             result = 1
-        if result == 0:
+        if result == 0:         
             return 0
         return 1
     return 1
-
 
 def check_rolename(h):
     global html
@@ -34,19 +30,19 @@ def check_rolename(h):
     if space_check(name) == 0:
         __space = 0
     if __space == 0:
-        if type == "role":  # role
-            result = role_bll.check_rolename(name, "role")
+        if type == "role": # role
+            result = role_bll.check_rolename(name,"role")
         else:
             result = 1
     else:
         result = 1
 
     if result == 0:
-        result = {'success': 0}
+        result = {'success':0}
     else:
-        result = {'success': 1}
+        result = {'success':1}  
 
-    html.write(str(result))
+    html.write(str(result))  
 
 
 def role_table(h):
@@ -55,19 +51,18 @@ def role_table(h):
     role_str = ""
     table = role_bll.get_role_details("list")
     if table == 1:
-        role_str += "<p style=\"border-bottom:1px solid #DDD;padding:5px 10px;height:18px;> Well ! its really embarasing But it seems there is No data availabe.</p>"
+        role_str +="<p style=\"border-bottom:1px solid #DDD;padding:5px 10px;height:18px;> Well ! its really embarasing But it seems there is No data availabe.</p>"
     elif table == 111 or table == 11:
-        role_str += "<p style=\"border-bottom:1px solid #DDD;padding:5px 10px;height:18px;> Well ! its really embarasing : UnExpected Error.</p>"
+        role_str +="<p style=\"border-bottom:1px solid #DDD;padding:5px 10px;height:18px;> Well ! its really embarasing : UnExpected Error.</p>"
     else:
         for tup in table:
-            role_str += "<p class=\"role-name\" style=\"border-bottom:1px solid #DDD;padding:5px 10px;height:18px;\" id=\"%s\" >%s</p>" % tup
+            role_str += "<p class=\"role-name\" style=\"border-bottom:1px solid #DDD;padding:5px 10px;height:18px;\" id=\"%s\" >%s</p>"%tup
     html.write(role_str)
-
 
 def role_info(h):
     global html
     html = h
-    table = role_bll.get_role_details("details", html.var("role_id"))
+    table = role_bll.get_role_details("details",html.var("role_id"))
     role_str = ""
     role_str += "<table cellspacing=\"0\" width=\"100%\" cellpadding=\"0\" class=\"tt-table\">\
                              <tbody><tr>\
@@ -77,31 +72,27 @@ def role_info(h):
                                         <td class=\"cell-label\" style=\"text-align:left;\">Creation Time</td>\
                                      </tr>"
     if table == 1:
-        role_str += "<tr> Well ! its really embarasing But it seems there is No data availabe. </tr>"
+        role_str +="<tr> Well ! its really embarasing But it seems there is No data availabe. </tr>"
     else:
         role_str += "<tr>"
         for tup in table[0]:
-            role_str += "<td class=\"cell-info1\">%s</td>" % str(tup)
+            role_str += "<td class=\"cell-info1\">%s</td>"%str(tup)
         role_str += "</tr>"
-    role_str += "</tbody></table> "
+    role_str +="</tbody></table> "
     html.write(role_str)
 
 
 def role_view1(h):
     global html
     html = h
-    # css_list =
-    # ["css/role.css","css/demo_page.css","css/demo_table_jui.css","css
-    # /jquery-ui-1.8.4.custom.css","css/divya.css"]
-    css_list = ["css/role.css"]
-        #,"css/demo_page.css","css/demo_table_jui.css","css/jquery-ui-1.8.4.custom.css","css/divya.css"]
+    #css_list = ["css/role.css","css/demo_page.css","css/demo_table_jui.css","css/jquery-ui-1.8.4.custom.css","css/divya.css"]
+    css_list = ["css/role.css"]#,"css/demo_page.css","css/demo_table_jui.css","css/jquery-ui-1.8.4.custom.css","css/divya.css"]
     javascript_list = ["js/pages/manage_role.js"]
     add_btn = "<div class=\"header-icon\"><img onclick=\"addRole();\" class=\"n-tip-image\" src=\"images/%s/round_plus.png\" id=\"add_role\" name=\"add_role\" style=\"width: 16px; height: 16px; margin: 6px 20px 6px 10px;\" title=\"Add Role\"></div>" % theme
     edit_btn = "<div class=\"header-icon\"><img onclick=\"editRole();\" class=\"n-tip-image\" src=\"images/%s/doc_edit.png\" id=\"edit_role\" name=\"edit_role\" style=\"width: 16px; height: 16px; margin: 6px 20px 6px 10px;\" title=\"Edit Role\"></div>" % theme
     del_btn = "<div class=\"header-icon\"><img onclick=\"delRole();\" class=\"n-tip-image\" src=\"images/%s/round_minus.png\" id=\"del_role\" name=\"del_role\" style=\"width: 16px; height: 16px; margin: 6px 20px 6px 10px;\" title=\"Delete Role\"></div>" % theme
     all_btn = del_btn + edit_btn + add_btn
-    html.new_header("Role Management", "manage_role.py", all_btn,
-                    css_list, javascript_list)
+    html.new_header("Role Management","manage_role.py",all_btn,css_list,javascript_list)
     html.write("<table id=\"role_datatable\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\">\
         <colgroup>\
             <col width=\"150px\" style=\"width:150px;\"/>\
@@ -151,7 +142,7 @@ def role_view1(h):
     html.new_footer()
 
 
-def dict_page(snapin, pages):
+def dict_page(snapin,pages):
     '''
     used in add_role_view
     '''
@@ -160,12 +151,11 @@ def dict_page(snapin, pages):
         li = []
         for j in pages:
             if i[0] == j[3]:
-                li.append((j[0], j[1], j[2]))
+                li.append((j[0],j[1],j[2]))
         dik[i[0]] = li
-    return dik
+    return dik   
 
-
-def dict_module(pageid_list, module):
+def dict_module(pageid_list,module):
     '''
     used in add_role_view
     '''
@@ -174,9 +164,9 @@ def dict_module(pageid_list, module):
         li = []
         for j in module:
             if i == j[2]:
-                li.append((j[0], j[1]))
+                li.append((j[0],j[1]))
         dik[i] = li
-    return dik
+    return dik   
 
 
 def add_roleview(h):
@@ -200,7 +190,7 @@ def add_roleview(h):
                                 <textarea id=\"description\" name=\"description\" title=\"Role Description\"></textarea>\
                             </div>\
                             <div class=\"row-elem\">\
-                               <label class=\"lbl lbl-big\" for=\"role\" title=\"Select Parent Role\" >Select Parent Role</label>" + roles_select_list("", "") + "\
+                               <label class=\"lbl lbl-big\" for=\"role\" title=\"Select Parent Role\" >Select Parent Role</label>" + roles_select_list("","") + "\
                             </div>"
                         # form-body and form-div is not closed
     html_str += "\
@@ -209,13 +199,13 @@ def add_roleview(h):
                         <button onclick=\"roleformSubmit();\" class=\"yo-small yo-button\"><span class=\"add\"></span><strong>Add</strong></button>\
                         <button type=\"reset\" class=\"yo-small yo-button\" id=\"close_role\"><span class=\"cancel\">Cancel</span></button>\
                     </div>\
-            </div>"
-    html.write(html_str)
+            </div>"                   
+    html.write(html_str) 
 #    snapin_tuple = role_bll.get_snapindata()
 #    if type(snapin_tuple) == type_tuple:
 #        flag = 0
 #    elif snapin_tuple == 11:
-#        flag = 1
+#        flag = 1 
 #    if flag == 0:
 #        page_tuple = role_bll.get_pagedata(snapin_tuple)
 #        if type(page_tuple) == type_tuple:
@@ -224,12 +214,12 @@ def add_roleview(h):
 #                page_list.append(i[2])
 #        else:
 #            flag = 1
-#
+#    
 #        if flag == 0 and len(page_list) > 0:
 #            module_tuple = role_bll.get_moduledata(page_list)
 #        else:
 #            flag = 1 # 2
-#
+#    
 #    if flag == 0:
 #        snapins = dict(snapin_tuple)
 #        snapin_pages = dict_page(snapin_tuple,page_tuple)
@@ -245,41 +235,41 @@ def add_roleview(h):
 #                            <span id=\"snapin_name\" style=\"padding:1px; \">\
 #                                    %(snapin_name)s\
 #                            </span>"%dik_s
-#
+#            
 #            inner_list = snapin_pages[snap]
 #            for page_tuple in inner_list:
 #                page_id = page_tuple[2]
 #                dik_p = {}
 #                dik_p['plink_id'] = page_tuple[0]
 #                dik_p['page_name'] = page_tuple[1]
-#
+#                    
 #                html_str += "<ul><li style=\"margin-left:25px; float:none; \"><div id=\"page\" class=\"page\" style=\"padding:1px; \" >\
 #                                        <input type=\"checkbox\" style=\"margin:0px; float:none; padding:none; \" name=\"plink_id\" value=\"%(plink_id)s\" >\
 #                                        <span id=\"page_name\" style=\"padding:1px; \">\
 #                                                %(page_name)s\
 #                                        </span>"%dik_p
-#
-#
+#                    
+#        
 #                inner_list2 = page_modules[page_id]
 #                if len(inner_list2) > 0:
 #                    for module_tuple in inner_list2:
 #                        dik_m = {}
 #                        dik_m['module_name'] = module_tuple[0]
 #                        dik_m['plink_id'] = module_tuple[1]
-#
+#                        
 #                        html_str += "<ul><li style=\"margin-left:25px; float:none; \"> <div id=\"module\" class=\"module\" style=\"padding:1px; \">\
 #                                        <input type=\"checkbox\" style=\"margin:0px; float:none; padding:none; \" name=\"plink_id\" value=\"%(plink_id)s\" >\
 #                                        <span id=\"module_name\" style=\"padding:1px; \">\
 #                                                %(module_name)s\
 #                                        </span></div></li></ul>"%dik_m
-#
+#                        
 #                    html_str += "</div></li></ul>" # page div close
-#
+#                    
 #                else:
 #                    html_str += "</div></li></ul>" # page div close
-#
+#                    
 #            html_str += "</div></li></li>" # span div close
-#
+#        
 #    if flag == 0:
 #        html_str += "</div>\
 #                    </div>\
@@ -303,17 +293,17 @@ def add_role(h):
     var_dict = {}
     name_not = 0
     sel_page_link = 0
-    prole = 0
+    prole = 0 
     role_name = html.var("role_name")
-    # plinks = html.var("plink_ids")
+    #plinks = html.var("plink_ids")
     description = html.var("descp")
     prole_id = html.var("prole_id")
     if description == None:
         description = ""
     if role_name == None:
-        name_not = 1
+        name_not = 1                   
     else:
-        if validate_name(role_name, "role") == 0:
+        if validate_name(role_name,"role") == 0:
             pass
         else:
             name_not = 1
@@ -332,28 +322,28 @@ def add_role(h):
     result_json = {}
     if name_not == 1:
         result_json['success'] = 1
-        result_json[
-            'result'] = " Name Not valid, Choose Unique Name, No space, Min 5 character"
+        result_json['result'] = " Name Not valid, Choose Unique Name, No space, Min 5 character"
     elif prole == 1:
         result_json['success'] = 1
-        result_json['result'] = " Please select Parent Role"
+        result_json['result'] = " Please select Parent Role"        
 #    elif sel_page_link == 1:
 #        result_json['success'] = 1
 #        result_json['result'] = " No page or module is selected "
     else:
-        # plink_list = plinks.split(",")
-        # result = role_bll.add_role(role_name,prole_id,description,plink_list)
-        result = role_bll.add_role(role_name, prole_id, description)
+        #plink_list = plinks.split(",")
+        #result = role_bll.add_role(role_name,prole_id,description,plink_list)
+        result = role_bll.add_role(role_name,prole_id,description)
 #        result_json['success'] = 1
 #        result_json['result'] = " Message :   "+str(result)+" : "+str(role_name)
-#        result = 1
+#        result = 1 
         if result == 0:
             result_json['success'] = 0
         else:
             result_json['success'] = 1
-            result_json['result'] = " Message :   " + str(result)
+            result_json['result'] = " Message :   "+str(result)
 
     html.write(str(result_json))
+
 
 
 def edit_roleview(h):
@@ -363,7 +353,7 @@ def edit_roleview(h):
     flag = -1
     html_str = ""
     role_id = html.var("role_id")
-    role_tuple = role_bll.get_role_details("form", role_id)
+    role_tuple = role_bll.get_role_details("form",role_id)
     if type(role_tuple) == type_tuple:
         flag = 0
     elif role_tuple == 11:
@@ -371,8 +361,8 @@ def edit_roleview(h):
     else:
         flag = 1
     if flag == 0:
-        list_role = ['role_id', 'role_name', 'prole_id', 'description']
-        dik_role = dict(zip(list_role, role_tuple[0]))
+        list_role = ['role_id','role_name','prole_id','description']
+        dik_role = dict(zip(list_role,role_tuple[0]))
         html_str = "<div id=\"edit_role_form\" name=\"edit_role_form\">\
                         <div class=\"form-div\">\
                             <div class=\"form-body\">\
@@ -385,11 +375,11 @@ def edit_roleview(h):
                                     <label class=\"lbl lbl-big\" for=\"description\">Description</label>\
                                     <textarea id=\"description\" name=\"description\" title=\"Role Description\">%(description)s</textarea>\
                                 </div>\
-                                " % dik_role
+                                "%dik_role
         prole_id = dik_role['prole_id']
 
         html_str += "<div class=\"row-elem\">\
-                       <label class=\"lbl lbl-big\" for=\"role\" title=\"Select Parent Role\" >Select Parent Role</label>" + roles_select_list(prole_id, role_id) + "\
+                       <label class=\"lbl lbl-big\" for=\"role\" title=\"Select Parent Role\" >Select Parent Role</label>" + roles_select_list(prole_id,role_id) + "\
                     </div>"
                             # form-body and form-div is not closed
 
@@ -399,27 +389,27 @@ def edit_roleview(h):
                         <button onclick=\"editformSubmit();\" class=\"yo-small yo-button\"><span class=\"edit\"></span><strong>Edit</strong></button>\
                         <button type=\"reset\" class=\"yo-small yo-button\" id=\"close_role\"><span class=\"cancel\">Cancel</span></button>\
                     </div>\
-            </div>"
-        html.write(html_str)
+            </div>"                   
+        html.write(html_str) 
 #    else:
 #        pass
-#
+#    
 #    pagelink_tuple = role_bll.get_page_links(role_id)
 #    #html.write(str(pagelink_tuple))
-#    html_str += "<ul id=\"treeList\">"
+#    html_str += "<ul id=\"treeList\">"    
 #    if type(pagelink_tuple) == type_tuple:
 #        flag = 0
 #        pagelink_list = []
 #        for i in pagelink_tuple:
 #            pagelink_list.append(i[0])
 #    else:
-#        pagelink_list = []
+#        pagelink_list = []   
 #    snapin_tuple = role_bll.get_snapindata()
 #    if type(snapin_tuple) == type_tuple:
 #        flag = 0
 #    elif snapin_tuple == 11:
 #        flag = 1
-#
+#    
 #    if flag == 0:
 #        page_tuple = role_bll.get_pagedata(snapin_tuple)
 #        if type(page_tuple) == type_tuple:
@@ -428,12 +418,12 @@ def edit_roleview(h):
 #                page_list.append(i[2])
 #        else:
 #            flag = 1
-#
+#    
 #        if flag == 0 and len(page_list) > 0:
 #            module_tuple = role_bll.get_moduledata(page_list)
 #        else:
 #            flag = 1 # 2
-#
+#    
 #    if flag == 0:
 #        snapins = dict(snapin_tuple)
 #        snapin_pages = dict_page(snapin_tuple,page_tuple)
@@ -443,7 +433,7 @@ def edit_roleview(h):
 #        for snap in snapins:
 #            dik_s = {}
 #            dik_s['snapin_name'] = snapins[snap]
-#
+#            
 #            inner_list = snapin_pages[snap]
 #            s_flag = 1
 #            pages_str = ""
@@ -453,7 +443,7 @@ def edit_roleview(h):
 #                dik_p['plink_id'] = page_tuple[0]
 #                dik_p['page_name'] = page_tuple[1]
 #                page_str = ""
-#
+#                
 #                if pagelink_list.count(page_tuple[0]) > 0:
 #                    s_flag = 0
 #                    #html.write(page_tuple[1])
@@ -469,8 +459,8 @@ def edit_roleview(h):
 #                                        <span id=\"page_name\" >\
 #                                                %(page_name)s\
 #                                        </span>"%dik_p
-#
-#
+#                    
+#        
 #                inner_list2 = page_modules[page_id]
 #                if len(inner_list2) > 0:
 #                    for module_tuple in inner_list2:
@@ -492,14 +482,14 @@ def edit_roleview(h):
 #                                            <span id=\"module_name\" >\
 #                                                    %(module_name)s\
 #                                            </span></div></li></ul>"%dik_m
-#
-#
+#                            
+#                        
 #                    page_str += "</div></li></ul>" # page div close
 #                    pages_str += page_str
 #                else:
 #                    page_str += "</div></li></ul>" # page div close
 #                    pages_str += page_str
-#
+#            
 #            if s_flag == 0:
 #                html_str += "<li style=\"margin-left:25px; float:none;\"><div id=\"snapin\" class=\"snapin\" >\
 #                            <input type=\"checkbox\" checked=\"checked\" style=\"margin:0px; float:none; padding:none; \" name=\"snapin_id\">\
@@ -515,7 +505,7 @@ def edit_roleview(h):
 #                            </span>"%dik_s
 #                html_str += pages_str
 #            html_str += "</div>" # span div close
-#
+#     
 #    #html_str += "</ul>"
 #    if flag == 0:
 #        html_str += "</div>\
@@ -525,12 +515,13 @@ def edit_roleview(h):
 #                        <button type=\"reset\" class=\"yo-small yo-button\" id=\"close_role\"><span class=\"cancel\">Cancel</span></button>\
 #                    </div>\
 #            </div>"
-#
+#        
 #        html.write(html_str)
     elif flag == 1:
         html.write(" No data in DB ")
     else:
         html.write("Sorry for the inconvenience : UnExpected Error ")
+
 
 
 def edit_role(h):
@@ -544,14 +535,14 @@ def edit_role(h):
     role_id = html.var("role_id")
     description = html.var("descp")
     prole_id = html.var("prole_id")
-    # plinks = html.var("plink_ids")
-    # plink_list = plinks.split(",")
+    #plinks = html.var("plink_ids")
+    #plink_list = plinks.split(",")
 
     if role_id == None:
         name_not = 1
 #    if len(plinks) < 6:
 #        sel_page = 1
-#
+#        
     if len(prole_id) < 6:
         prole = 1
 
@@ -561,21 +552,21 @@ def edit_role(h):
         result_json['result'] = " No role exists pls refresh"
     elif prole == 1:
         result_json['success'] = 1
-        result_json['result'] = " Please select Parent Role"
+        result_json['result'] = " Please select Parent Role"        
     elif sel_page == 1:
         result_json['success'] = 1
         result_json['result'] = " No page or module is selected "
     else:
-        # result = role_bll.edit_role(role_id,description,prole_id,plink_list)
-        result = role_bll.edit_role(role_id, description, prole_id)
-        # result_json['success'] = 1
-        # result_json['result'] = " Message :   "+str(result)
-        # result = 1
+        #result = role_bll.edit_role(role_id,description,prole_id,plink_list)
+        result = role_bll.edit_role(role_id,description,prole_id)
+        #result_json['success'] = 1
+        #result_json['result'] = " Message :   "+str(result)
+        #result = 1 
         if result == 0:
             result_json['success'] = 0
         else:
             result_json['success'] = 1
-            result_json['result'] = " Message :   " + str(result)
+            result_json['result'] = " Message :   "+str(result)
 
     html.write(str(result_json))
 
@@ -600,15 +591,16 @@ def del_role(h):
             result_json['success'] = 0
         else:
             result_json['success'] = 1
-            result_json['result'] = " Message :   " + str(result)
+            result_json['result'] = " Message :   "+str(result)
 
     html.write(str(result_json))
 
 
-def roles_select_list(selectedRole, notRole):
+
+def roles_select_list(selectedRole,notRole):
     selectString = "<select id=\"role\" name=\"role\" title=\"Select Parent Role\"><option value=\"\" class='required' >-- Select Parent Role --</option>"
     role_tuple = role_bll.get_role_details("list")
-    # role_list = ['Admin','Operator','Guest']
+    #role_list = ['Admin','Operator','Guest']
     if role_tuple == 1:
         pass
     else:
@@ -616,11 +608,9 @@ def roles_select_list(selectedRole, notRole):
             if notRole == str(roleName[0]):
                 pass
             elif selectedRole == str(roleName[0]):
-                selectString += "<option value=\"" + str(
-                    roleName[0]) + "\" selected=\"selected\">" + str(roleName[1]) + "</option>"
+                selectString += "<option value=\"" + str(roleName[0]) + "\" selected=\"selected\">" + str(roleName[1]) + "</option>"
             else:
-                selectString += "<option value=\"" + str(
-                    roleName[0]) + "\">" + str(roleName[1]) + "</option>"
+                selectString += "<option value=\"" + str(roleName[0]) + "\">" + str(roleName[1]) + "</option>"
     selectString += "</select>"
     return selectString
 
@@ -638,7 +628,7 @@ def roles_select_list(selectedRole, notRole):
 
 
 
-# addrole form
+#addrole form
 #<form action=\"add_role.py\" method=\"get\" id=\"add_role_form\" name=\"add_role_form\">\
 #                        <div class=\"form-div\">\
 #                            <div class=\"form-body\">\
@@ -663,7 +653,7 @@ def roles_select_list(selectedRole, notRole):
 
 
 #
-# for snap in snapin:
+#for snap in snapin:
 #    dik_s = {}
 #    dik_s['snapin_name'] = snapin[snap]
 #    html_str += "<div id=\"snapin\" class=\"snapin\" >\
@@ -671,20 +661,20 @@ def roles_select_list(selectedRole, notRole):
 #                    <span id=\"snapin_name\" >\
 #                            \"%(snapin_name)s\"\
 #                    </span>"%dik_s
-#
+#    
 #    inner_list = snapin_pages[snap]
 #    for page_tuple in inner_list:
 #        page_id = page_tuple[2]
 #        dik_p = {}
 #        dik_p['plink_id'] = page_tuple[0]
 #        dik_p['page_name'] = page_tuple[1]
-#
+#            
 #        html_str += "<div id=\"page\" class=\"page\" >\
 #                                <input type=\"checkbox\" name=\"plink_id\" value=\"%(plink_id)s\" >\
 #                                <span id=\"page_name\" >\
 #                                        \"%(page_name)s\"\
 #                                </span>"%dik_p
-#
+#            
 #
 #        inner_list2 = page_module[page_id]
 #        if len(inner_list2) > 0:
@@ -692,17 +682,17 @@ def roles_select_list(selectedRole, notRole):
 #                dik_m = {}
 #                dik_m['module_name'] = module_tuple[0]
 #                dik_m['plink_id'] = module_tuple[1]
-#
-#                html_str += "<div id=\"module\" class=\"module\" >\
+#                
+#                html_str += "<div id=\"module\" class=\"module\" >\        
 #                                <input type=\"checkbox\" name=\"plink_id\" value=\"%(plink_id)s\" >\
 #                                <span id=\"module_name\" >\
 #                                        \"%(module_name)s\"\
 #                                </span></div>"%dik_m
-#
+#                
 #            html_str += "</div>" # page div close
-#
+#            
 #        else:
 #            html_str += "</div>" # page div close
-#
+#            
 #    html_str += "</div>" # span div close
 #

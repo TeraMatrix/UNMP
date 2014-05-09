@@ -56,7 +56,7 @@ $(function(){
                         'top': 1,
                         'width': "100%",
                         'z-index': 1000});
-
+		
 	});
 	$("#page_tip").colorbox(
 	{
@@ -100,15 +100,15 @@ function hostInformation(){
 			  }, 1000, function()
 			  {
 			  	var $hostInfo = $("#host_info");
-				if ($hostInfo.attr('src')=="images/new_icons/round_minus.png")
+				if ($hostInfo.attr('src')=="images/new_icons/round_plus.png")
 				{
-					$hostInfo.attr('src',"images/new_icons/round_plus.png");
-					$hostInfo.attr('original-title','Show Status');
+					$hostInfo.attr('src',"images/new_icons/round_minus.png");
+					$hostInfo.attr('original-title','Hide Status')
 				}
 				else
 				{
-					$hostInfo.attr('src',"images/new_icons/round_minus.png");
-					$hostInfo.attr('original-title','Hide Status');
+					$hostInfo.attr('src',"images/new_icons/round_plus.png");
+					$hostInfo.attr('original-title','Show Status')
 				}
                }
              );
@@ -132,7 +132,7 @@ function clientGenericGraphJson(){
 				   {name:'end_time',value:function() { return $('input#sp_end_time').val();}},
 				   {name:'flag',value:function() { return limitFlag; }},{name:'mac_address',value:function() { return apMACAddress; }},
 				   {name:'graph_type',value:function() { return graph_type; }}];
-				   result.graphColumn=1;
+				   result.graphColumn=1;        
 				   clientUpdateDateTime();
 				   $("#sp_main_graph").html("");
 				   spMainObj=$("#sp_main_graph").yoAllGenericDashboard(result);
@@ -141,7 +141,7 @@ function clientGenericGraphJson(){
 				   $().toastmessage('showErrorToast',result.error_msg);
 			}
 		}
-	});
+	});  
 }
 
 
@@ -179,7 +179,7 @@ function enabledReportButton()
 function redirectOnListing(redirctPath){
 		 $().toastmessage('showWarningToast',"Searched Device Doesn't Exist");
 		setTimeout(function(){
-		parent.main.location = redirectPath+"?ip_address=" + "" + "&mac_address=" + "" + "&selected_device_type=" + "";
+		parent.main.location = redirectPath+"?ip_address=" + "" + "&mac_address=" + "" + "&selected_device_type=" + "";							
 		},1500);
 }
 
@@ -197,9 +197,9 @@ function clientDeviceDetail()
 			}
 			else
 			{
-				$("#sp_host_info_div").html(result.device_table);
+				$("#sp_host_info_div").html(result.device_table);	
 			}
-			},
+			},		
 		error:function(req,status,err){
 		}
 	});
@@ -226,7 +226,7 @@ function advancedUpdateDateTime(){
 		}
             }
 	});
-   return false;
+   return false;	
 }
 
 
@@ -252,7 +252,7 @@ function spAddDateTime(){
 				$("#sp_end_time").val(result.end_time);
 			}
 			flag=0;
-			multiSelectColumns();
+			multiSelectColumns();				
 		}
     	    }
 	});
@@ -263,7 +263,7 @@ function spAddDateTime(){
 
 function clientUpdateDateTime(){
 	if(spRecursionVar!=null)
-	{
+	{	
 		clearInterval(spRecursionVar);
 	}
 	clientStateInformation()
@@ -295,7 +295,7 @@ function advancedSrchBtn(){
 				{
 					check_str_date=String(result.end_date).split("/");
 					check_str_time=String(result.end_time).split(":");
-					var cdate = new Date(check_str_date[2],parseInt(check_str_date[1],10)-1, check_str_date[0],check_str_time[0],check_str_time[1]);
+					var cdate = new Date(check_str_date[2],parseInt(check_str_date[1],10)-1, check_str_date[0],check_str_time[0],check_str_time[1]); 
 					str1 = $("#sp_start_date").val();
 					str2  = $("#sp_end_date").val();
 					str3  = $("#sp_start_time").val();
@@ -304,27 +304,27 @@ function advancedSrchBtn(){
 					str2=str2.split("/");
 					str3=str3.split(":");
 					str4=str4.split(":");
-					var date1 = new Date(str1[2],parseInt(str1[1],10)-1, str1[0],str3[0],str3[1]);
+					var date1 = new Date(str1[2],parseInt(str1[1],10)-1, str1[0],str3[0],str3[1]); 
 					var date2 = new Date(str2[2],parseInt(str2[1],10)-1, str2[0],str4[0],str4[1]);
 					if(date2 < date1)
 					{
 						 $().toastmessage('showWarningToast', "End Date can't be greater than Start Date");
-						return false;
+						return false; 
 					}
 					else if(cdate<date1 || cdate<date2)
 						{
 						 	$().toastmessage('showWarningToast', "Dates can't be greater than current Date");
-							return false;
+							return false; 
 						}
 					else
 						{
 							clientGenericGraphJson();
 							flag=1;
-						}
+						} 
 				}
 			}
 		});
-}
+} 
 
 
 function clientStateInformation()
@@ -379,7 +379,7 @@ function spCommonReportCreating(redirectPath,file_name){
 	var start_time=$("#sp_start_time").val();
 	var end_date=$("#sp_end_date").val();
 	var end_time=$("#sp_end_time").val();
-
+	
 	for (node in spMainObj.options.db)
 	{
 		totalGraph+=1;
@@ -412,13 +412,13 @@ function spCommonReportCreating(redirectPath,file_name){
 
 		tab_option = spMainObj.options.db[node]["options"].tabList.selected;
 		ajaxData=spMainObj.options.db[node]["options"].ajax.data['table_name'];
-
+		
 		graphQuerySrting+= "&start"+String(totalGraph)+"="+spMainObj.options.db[node]["options"].startFrom;
 		graphQuerySrting+= "&limit"+String(totalGraph)+"="+spMainObj.options.db[node]["options"].itemLimit;
 
 		graphQuerySrting+= "&table_name" + String(totalGraph) + "=" + ajaxData;
 		graphQuerySrting+= "&type"+String(totalGraph)+"="+graph;
-
+		
 		graphQuerySrting+= "&field"+String(totalGraph)+"="+field;
 		graphQuerySrting+= "&cal"+String(totalGraph)+"="+cal_type;
 		graphQuerySrting+= "&tab"+String(totalGraph)+"="+tab_option;
@@ -460,7 +460,7 @@ function spCommonReportCreating(redirectPath,file_name){
 												spinStop($spinLoading,$spinMainLoading);
 
 										}
-								});
+								});  
 								}
 							}
 							});
@@ -486,13 +486,13 @@ function spCommonReportCreating(redirectPath,file_name){
 								}
 									spinStop($spinLoading,$spinMainLoading);
 							}
-					});
+					});  
 	}
 }
 
-// Selectded list function start here
+// Selectded list function start here 
 function multiSelectColumns()
-{
+{       
 	$(".plus").click(function(){
 		plusHostParentOption(this);
 	})

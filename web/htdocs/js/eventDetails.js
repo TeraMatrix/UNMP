@@ -2,8 +2,8 @@ var option=3;
 //var starting_pag="alarm_option"
 
 var last_execution_time=0;
-var change_img_dict={'Normal':'images/gr.png','Minor':'images/yel.png','Major':'images/or.png','Critical':'images/red.png'};
-var main_img_dict={'Normal':'images/gr.png','Minor':'images/yel.png','Major':'images/or.png','Critical':'images/red.png'};
+var change_img_dict={'Normal':'images/normal1.png','Minor':'images/minor1.png','Major':'images/major1.png','Critical':'images/critical1.png'};
+var main_img_dict={'Normal':'images/status-0.png','Minor':'images/minor.png','Major':'images/status-1.png','Critical':'images/critical.png'};
 var serevity_id={'Informational':'#serevity1','Normal':'#serevity2','Minor':'#serevity3','Major':'#serevity4','Critical':'#serevity5'};
 var image_div_id={1:'#informational_div',2:'#normal_div',3:'#minor_div',4:'#major_div',5:'#critical_div'};
 var serevity_value=['None','None','None','None',4,5];

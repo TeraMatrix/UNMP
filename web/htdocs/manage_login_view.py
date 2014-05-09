@@ -8,9 +8,7 @@
 """
 
 
-from datetime import datetime, timedelta
-
-
+from datetime import datetime,timedelta
 class ManageLogin(object):
     @staticmethod
     def create_form():
@@ -23,7 +21,7 @@ class ManageLogin(object):
         @note		: This function creates form for displaying all logs to the user.
         '''
         try:
-            html_view = "\
+            html_view="\
             		<table class=\"tt-table\" cellspacing=\"0\" cellpadding=\"0\" width=\"100%%\" style=\"margin-bottom:0px;\">\
                         <tr>\
                             <th id=\"form_title\" class=\"cell-title\">Details of Logged in Users</th>\
@@ -32,8 +30,9 @@ class ManageLogin(object):
 			<table class=\"display\" name=\"login_user_table\" id=\"login_user_table\" width=\"100%%\" >\
 			</table>"
             return html_view
-        except Exception, e:
+        except Exception,e:
             return str(e)
+
 
     @staticmethod
     def view_page_tip_manage_login():
@@ -47,4 +46,4 @@ class ManageLogin(object):
             "<div><strong>Actions</strong></div>"\
             "<div class=\"action-tip\"><div class=\"txt-div\"><div class=\"user-header-icon\"><button class=\"destroy-button\" disabled=\"disabled\"  >Destroy</button>\
 	Destroy the Session of the user.  </div></div></div>"
-        return html_view
+        return html_view 

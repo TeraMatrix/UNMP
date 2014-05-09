@@ -30,14 +30,10 @@ import math
 perfometers = {}
 
 # Helper functions for perfometers
-
-
 def perfometer_td(perc, color):
     return '<td class="inner" style="background-color: %s; width: %d%%;"></td>' % (color, int(float(perc)))
 
 # Paint linear performeter with one value
-
-
 def perfometer_linear(perc, color):
     return "<table><tr>" + \
            perfometer_td(perc, color) + \
@@ -46,15 +42,13 @@ def perfometer_linear(perc, color):
 
 # Paint logarithm with base 10, half_value is being
 # displayed at 50% of the width
-
-
 def perfometer_logarithmic(value, half_value, base, color):
     value = float(value)
     if value == 0.0:
         pos = 0
     else:
         half_value = float(half_value)
-        h = math.log(half_value, base)  # value to be displayed at 50%
+        h = math.log(half_value, base) # value to be displayed at 50%
         pos = 50 + 10.0 * (math.log(value, base) - h)
         if pos < 2:
             pos = 2
@@ -72,8 +66,7 @@ for fn in os.listdir(perfometer_plugins_dir):
     if fn.endswith(".py"):
         execfile(perfometer_plugins_dir + "/" + fn)
 if defaults.omd_root:
-    local_perfometer_plugins_dir = defaults.omd_root + \
-        "/local/share/check_mk/web/plugins/perfometer"
+    local_perfometer_plugins_dir = defaults.omd_root + "/local/share/check_mk/web/plugins/perfometer"
     if os.path.exists(local_perfometer_plugins_dir):
         for fn in os.listdir(local_perfometer_plugins_dir):
             if fn.endswith(".py"):
@@ -102,7 +95,7 @@ def paint_perfometer(row):
     # Python's isdigit() works only on str. We deal with unicode since
     # we deal with data coming from Livestatus
     def isdigit(x):
-        return x in ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+        return x in [ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' ]
 
     # Parse performance data, at least try
     try:
@@ -139,8 +132,8 @@ def paint_perfometer(row):
         return "perfometer", ("invalid data: %s" % e)
 
 multisite_painters["perfometer"] = {
-    "title": "Service Perf-O-Meter",
-    "short": "Perf-O-Meter",
-    "columns": ["service_perf_data", "service_state", "service_check_command"],
-    "paint": paint_perfometer
+    "title" : "Service Perf-O-Meter",
+    "short" : "Perf-O-Meter",
+    "columns" : [ "service_perf_data", "service_state", "service_check_command" ],
+    "paint" : paint_perfometer
 }

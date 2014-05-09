@@ -1,8 +1,8 @@
 //var starting_pag="alarm_option"
 var option=3;
 var last_execution_time=0;
-var change_img_dict={'Normal':'images/gr.png','Minor':'images/yel.png.png','Major':'images/or.png','Critical':'images/red.png'};
-var main_img_dict={'Normal':'images/gr.png','Minor':'images/yel.png.png','Major':'images/or.png','Critical':'images/red.png'};
+var change_img_dict={'Normal':'images/status-6.png','Minor':'images/status-5.png','Major':'images/minor1.png','Critical':'images/critical1.png'};
+var main_img_dict={'Normal':'images/status-7.png','Minor':'images/status-4.png','Major':'images/minor.png','Critical':'images/critical.png'};
 var serevity_id={'Informational':'#serevity1','Normal':'#serevity2','Minor':'#serevity3','Major':'#serevity4','Critical':'#serevity5'};
 var image_div_id={1:'#informational_div',2:'#normal_div',3:'#minor_div',4:'#major_div',5:'#critical_div'};
 var serevity_value=['0','1','2','3','4' ,'5'];
@@ -17,7 +17,7 @@ var option_value=null;
 var endDate=null;
 
 $(document).ready(function(){
-	$('#event_start_date, #event_start_time, #event_end_date,  #event_end_time').calendricalDateTimeRange({
+	$('#event_start_date, #odu_start_time, #event_end_date,  #odu_end_time').calendricalDateTimeRange({
 		isoTime:true
 	    });
 	option_value=$("input[name='option']:checked").val();	
@@ -231,26 +231,16 @@ $("#alarm_info_form").submit(function()
 					var cdate= new Date();
 					var str1  = $("#event_start_date").val();
 					var str2  = $("#event_end_date").val();
-					var str3  = $("#event_start_time").val();
-					var str4  = $("#event_end_time").val();
 					str1=str1.split("/");
 					str2=str2.split("/");
-					str3=str3.split(":");
-					str4=str4.split(":");
-					last_minute = String(parseInt(str4[1])-5) // this variable is used for less 5 minutes from current time
-					
-					var date1 = new Date(str1[2],parseInt(str1[1],10)-1, str1[0],str3[0],str3[1]); 
-					var date2 = new Date(str2[2],parseInt(str2[1],10)-1, str2[0],str4[0],last_minute);
-
-					//var date1 = new Date(str1[2],parseInt(str1[1],10)-1, str1[0]); 
-					//var date2 = new Date(str2[2],parseInt(str2[1],10)-1, str2[0]);
-					
+					var date1 = new Date(str1[2],parseInt(str1[1],10)-1, str1[0]); 
+					var date2 = new Date(str2[2],parseInt(str2[1],10)-1, str2[0]);
 					if(date2 < date1)
 					{
 						 $().toastmessage('showWarningToast', "End Date can't be greater than Start Date");
 						return false; 
 					}
-					else if(cdate < date1 || cdate < date2)
+					else if(cdate<date1 || cdate<date2)
 						{
 						 	$().toastmessage('showWarningToast', "Dates can't be greater than current Date");
 							return false; 
@@ -274,7 +264,7 @@ $("#alarm_info_form").submit(function()
 								</tr>\
 							</thead></table>';
 				        	url="trap_filter_function.py?"+"&option="+option+"&"+$(this).serialize()+"&serevity1="+serevity_value[1]+"&serevity2="+serevity_value[2]+"&serevity3="+serevity_value[3]+"&serevity4="+serevity_value[4]+"&serevity5="+serevity_value[5]+"&searchFlag="+searchFlag+"&countTimes="+countTimes+"&last_execution_time="+"";
-				        	$('#div_table_paginate').html(str_paginate_table)+"&start_date="+str1+"&end_date="+str2+"&start_time="+str3+"&end_time="+str4;
+				        	$('#div_table_paginate').html(str_paginate_table)+"&start_date="+str1+"&end_date="+str2;
 						oTable = $('#table_paginate').dataTable({
 						"bJQueryUI": true,
 						"sPaginationType": "full_numbers",
@@ -297,7 +287,7 @@ $("#alarm_info_form").submit(function()
 				      { "sWidth": "25%" }
 				    ]
 						});
-			/*$('#table_paginate').dataTable().fnAddData([["<label style='display:none;'>4</label><img src='images/yel.png' alt='Major' title='Major' class='imgbutton' style='width:12px' onclick='alarmDetail('728800')'/>", '29-Jun-2012 07:20:39 PM', 'DEVICE_UNREACHABLE', 'unmpSystemTrap', 'AP25', '172.22.0.156', '172.22.0.156', '601', 'device', '701', 'No response received from device before timeout', 4, 728800]]);
+			/*$('#table_paginate').dataTable().fnAddData([["<label style='display:none;'>4</label><img src='images/minor.png' alt='Major' title='Major' class='imgbutton' style='width:12px' onclick='alarmDetail('728800')'/>", '29-Jun-2012 07:20:39 PM', 'DEVICE_UNREACHABLE', 'unmpSystemTrap', 'AP25', '172.22.0.156', '172.22.0.156', '601', 'device', '701', 'No response received from device before timeout', 4, 728800]]);
 
 				$('#table_paginate').show();*/
 			return false;
@@ -309,7 +299,7 @@ $("#alarm_info_form").submit(function()
 		
 	});
 }
-/*[["<label style=\"display:none;\">4</label><img src=\"images/yel.png\" alt=\"Major\" title=\"Major\" class=\"imgbutton\" style=\"width:12px\" onclick=\"alarmDetail('728800')\"/>", "29-Jun-2012 07:20:39 PM", "DEVICE_UNREACHABLE", "unmpSystemTrap", "AP25", "172.22.0.156", "172.22.0.156", "601", "device", "701", "No response received from device before timeout", 4, 728800]]*/
+/*[["<label style=\"display:none;\">4</label><img src=\"images/minor.png\" alt=\"Major\" title=\"Major\" class=\"imgbutton\" style=\"width:12px\" onclick=\"alarmDetail('728800')\"/>", "29-Jun-2012 07:20:39 PM", "DEVICE_UNREACHABLE", "unmpSystemTrap", "AP25", "172.22.0.156", "172.22.0.156", "601", "device", "701", "No response received from device before timeout", 4, 728800]]*/
 
 				/*spinStart($spinLoading,$spinMainLoading);
 				$.ajax({
@@ -498,19 +488,7 @@ function formValidation()
 			camponent_id: {
 				number:true,
 				min : 1
-				},
-			event_start_date:{
-				required:true
-			},
-			event_start_time:{
-				required:true
-			},
-			event_end_date:{
-				required:true
-			},
-			event_end_time:{
-				required:true
-			}
+				}
 		},
 		messages: {
 			agent_id: "Please enter valid IP.",
@@ -522,19 +500,7 @@ function formValidation()
 				  },
 			camponent_id: { number: " It must be a number",
 				    min: " It must be > 0 "
-				  },
-			event_start_date:{
-				required:"Start Date is a required field"
-			},
-			event_start_time:{
-				required:"Start Time is a required field"
-			},
-			event_end_date:{
-				required:"End Date is a required field"
-			},
-			event_end_time:{
-				required:"End Time is a required field"
-			}
+				  }
 		}
 	});
 }
@@ -554,7 +520,6 @@ function trapCSVReportGeneration(){
 
 // commmon report creating function.
 function trapReportCreating(reportType){
-		
 		var start_date  = $("#event_start_date").val();
 		var end_date  = $("#event_end_date").val();
 		var option=$("input[name='option']:checked").val();
@@ -567,15 +532,10 @@ function trapReportCreating(reportType){
 		var cdate= new Date();
 		var str1  = $("#event_start_date").val();
 		var str2  = $("#event_end_date").val();
-		var str3  = $("#event_start_time").val();
-		var str4  = $("#event_end_time").val();
-
 		str1=str1.split("/");
 		str2=str2.split("/");
-		str3=str3.split(":");
-		str4=str4.split(":");
-		var date1 = new Date(str1[2],parseInt(str1[1],10)-1, str1[0],str3[0],str3[1]); 
-		var date2 = new Date(str2[2],parseInt(str2[1],10)-1, str2[0],str4[0],str4[1]);
+		var date1 = new Date(str1[2],parseInt(str1[1],10)-1, str1[0]); 
+		var date2 = new Date(str2[2],parseInt(str2[1],10)-1, str2[0]);
 		if(date2 < date1)
 		{
 			 $().toastmessage('showWarningToast', "End Date can't be greater than Start Date");
@@ -589,7 +549,7 @@ function trapReportCreating(reportType){
 		else{
 			$.ajax({
 				type:"post",
-				url:"trap_report_creating.py?option="+option+"&serevity1="+serevity_value[1]+"&serevity2="+serevity_value[2]+"&serevity3="+serevity_value[3]+"&serevity4="+serevity_value[4]+"&serevity5="+serevity_value[5]+"&agentId="+agentId+"&eventType="+eventType+"&M_obj="+M_obj+"&M_name="+M_name+"&camponent_id="+camponent_id+"&report_type="+reportType+"&start_date="+start_date+"&end_date="+end_date+"&start_time="+$("#event_start_time").val()+"&end_time="+$("#event_end_time").val(),
+				url:"trap_report_creating.py?option="+option+"&serevity1="+serevity_value[1]+"&serevity2="+serevity_value[2]+"&serevity3="+serevity_value[3]+"&serevity4="+serevity_value[4]+"&serevity5="+serevity_value[5]+"&agentId="+agentId+"&eventType="+eventType+"&M_obj="+M_obj+"&M_name="+M_name+"&camponent_id="+camponent_id+"&report_type="+reportType+"&start_date="+start_date+"&end_date="+end_date,
 				cache:false,
 				success:function(result){
 					if (result.success==1 || result.success=="1")
@@ -600,7 +560,7 @@ function trapReportCreating(reportType){
 					{
 						$().toastmessage('showSuccessToast', 'Report Generated Successfully');
 						window.location = "download/"+result.file_name;
-						setTimeout("$('#alarm_info_form').submit()",1250);
+						$("#alarm_info_form").submit();
 					}
 				},
 				error:function(req,status,err){}
@@ -608,4 +568,7 @@ function trapReportCreating(reportType){
 		}			
 		spinStop($spinLoading,$spinMainLoading);
 }
+
+
+
 

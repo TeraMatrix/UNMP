@@ -24,38 +24,27 @@
 # to the Free Software Foundation, Inc., 51 Franklin St,  Fifth Floor,
 # Boston, MA 02110-1301 USA.
 
-import grp
-import defaults
-import pprint
-import os
+import grp, defaults, pprint, os
 
-nagios_state_names = {0: "OK", 1: "WARNING", 2: "CRITICAL", 3: "UNKNOWN",
-                      4: "DEPENDENT"}
-nagios_short_state_names = {0: "OK", 1: "WARN", 2: "CRIT", 3: "UNKN", 4:
-                            "DEP"}
-nagios_short_host_state_names = {0: "UP", 1: "DOWN", 2: "UNREACH"}
-
+nagios_state_names = { 0: "OK", 1: "WARNING", 2: "CRITICAL", 3: "UNKNOWN", 4: "DEPENDENT" }
+nagios_short_state_names = { 0: "OK", 1: "WARN", 2: "CRIT", 3: "UNKN", 4: "DEP" }
+nagios_short_host_state_names = { 0: "UP", 1: "DOWN", 2: "UNREACH" }
 
 class MKGeneralException(Exception):
     def __init__(self, reason):
         self.reason = reason
-
     def __str__(self):
         return str(self.reason)
-
 
 class MKAuthException(Exception):
     def __init__(self, reason):
         self.reason = reason
-
     def __str__(self):
         return str(self.reason)
-
 
 class MKConfigError(Exception):
     def __init__(self, msg):
         Exception.__init__(self, msg)
-
 
 class MKUserError(Exception):
     def __init__(self, varname, msg):
@@ -63,28 +52,16 @@ class MKUserError(Exception):
         self.message = msg
         Exception.__init__(self, msg)
 
-
 class MKInternalError(Exception):
     def __init__(self, msg):
         Exception.__init__(self, msg)
-
 
 class MKConfigLoginBox(Exception):
     def __init__(self, msg):
         Exception.__init__(self, msg)
 
-class MKLoggedOut(Exception):
-    """
-    @note: for redirect to unmp_logout
-    @author: RahulGautam
-    """
-    def __init__(self, msg):
-        Exception.__init__(self, msg)
-
 # Create directory owned by common group of Nagios and webserver,
 # and make it writable for the group
-
-
 def make_nagios_directory(path):
     if not os.path.exists(path):
         try:
@@ -99,7 +76,6 @@ def make_nagios_directory(path):
                                 "<li>Both Nagios and the web server are in the group <tt>%s</tt>.</ul>Reason: %s" % (
                                     path, defaults.www_group, defaults.www_group, e))
 
-
 def create_user_file(path, mode):
     f = file(path, mode, 0)
     gid = grp.getgrnam(defaults.www_group).gr_gid
@@ -113,10 +89,8 @@ def create_user_file(path, mode):
         pass
     return f
 
-
 def write_settings_file(path, content):
     create_user_file(path, "w").write(pprint.pformat(content) + "\n")
-
 
 def savefloat(f):
     try:

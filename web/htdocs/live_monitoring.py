@@ -4,17 +4,16 @@
 @author: Yogesh Kumar
 @since: 23-Oct-2011
 @version: 0.1
-@note: All Views Related with Inventory.
+@note: All Views Related with Inventory. 
 @organization: Codescape Consultants Pvt. Ltd.
 @copyright: 2011 Yogesh Kumar for Codescape Consultants Pvt. Ltd.
 @see: http://www.codescape.in
 '''
 
-
 class LiveMonitoring(object):
     @staticmethod
     def header_buttons():
-        add_btn = "<div class=\"header-icon\"><img onclick=\"liveSettings();\" class=\"n-tip-image\" src=\"images/%s/wrench.png\" id=\"add_host\" style=\"width: 16px; height: 16px; margin: 6px 20px 6px 10px;\" original-title=\"Settings\"></div>" % theme
+        add_btn = "<div class=\"header-icon\"><img onclick=\"liveSettings();\" class=\"n-tip-image\" src=\"images/%s/wrench.png\" id=\"add_host\" style=\"width: 16px; height: 16px; margin: 6px 20px 6px 10px;\" original-title=\"Settings\"></div>"%theme
         header_btn = add_btn
         return header_btn
 
@@ -37,7 +36,7 @@ class LiveMonitoring(object):
         return html_view
 
     @staticmethod
-    def settings_live_monitoring(device_type_select_list, protocol_select_list, dataset_select_list, ds_show_select_list, refresh_rate_select_list):
+    def settings_live_monitoring(device_type_select_list,protocol_select_list,dataset_select_list,ds_show_select_list,refresh_rate_select_list):
         html_view = ""\
             "<div action=\"#\" id=\"form_settings_live_monitoring\" method=\"get\"> "\
             "<div class=\"form-div\">"\

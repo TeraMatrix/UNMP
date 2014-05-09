@@ -12,7 +12,7 @@
 # Short-Description: Unicast Discovery Server for different devices (Using TCP Port 6790)
 # Description:       Start and stop the sites of the Discovery Server
 #
-# Acronym:           unmp-ds := Unified Network Management Platform Discovery Server
+# Acronym:           unmpds := Unified Network Management Platform Discovery Server
 # ServiceName:
 #
 ### END INIT INFO
@@ -23,50 +23,61 @@ AUTOSTART=1
 PROGNAME=$0
 stopds="/omd/daemon/stop-ds"
 unmpds="/omd/daemon/unmp-discovery.py"
-log="/omd/daemon/unmp-discovery.log"
+log="/omd/daemon/log/unmp-discovery.log"
+echo "		[34mDiscovery Server[0m"
 case "$1" in
     start)
-    	$unmpds "$1"
+	echo
+	$unmpds "$1"
+	echo
     ;;
     stop)
+	echo
         $unmpds "$1" 
-    	$stopds
+	sleep 3
+	$stopds
+	echo
     ;;
     restart)
+	echo
         $unmpds "$1" 
+	echo
     ;;
     help)
-	    echo
-	    echo "          *** Unified Network Management Platform ***"
-	    echo
-        echo "  Daemon: Unicast Discovery Server for different devices (Using TCP Port 6790 )"
-	    echo
-	    echo "  Author: Rahul Gautam "
-	    echo
-	    echo "  Provider:  CodeScape Consultants Pvt. Ltd."
-	    echo
-	    echo "     Usage: unmp-ds start | stop | restart | help | log | status "
-	    echo
-	    echo "     use log option to see the Discovery Server's log file "
-	    echo
+	echo
+	echo "          *** Unified Network Management Platform ***"
+	echo
+        echo "  Daemon: Unicast Discovery Server for different devices ( Using TCP Port 6790 )"
+	echo
+	echo "  Author: Rahul Gautam "
+	echo
+	echo "  Provider:  CodeScape Consultants Pvt. Ltd."
+	echo
+	echo "     Usage: unmp-ds start | stop | restart | help | log | status "
+	echo
+	echo "     use log option to see the Discovery Server's log file "
+	echo
     ;;
     status)
-    	$unmpds "$1" 
-    	exit $?
+	echo
+	echo " Discovery Server Status \/ "
+	echo
+        $unmpds "$1" 
+	echo
     ;;
     log)        
-	    echo
-	    echo "  opening Discovery Server's Log File, Path is  $log  ..."
-	    echo "                                                          ............"
+	echo
+	echo "  opening Discovery Server's Log File, Path is  $log  ..."
+	echo "                                                          ............"
         tail -n 30 $log
-	    echo 
+	echo 
     ;;
     '')
-	    echo
-	    echo "  usage: unmp start | stop | restart | help | log | status "
-	    echo
-	    echo " Please use help option if you are using it first time "
-	    exit 1
+	echo
+	echo "  usage: unmp start | stop | restart | help | log | status "
+	echo
+	echo " Please use help option if you are using it first time "
+	exit 1
     ;;
     *)
 	echo        

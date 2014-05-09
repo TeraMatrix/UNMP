@@ -21,7 +21,7 @@
 # Output:
 # edit serives.cfg file which is placed in conf.d folder
 #
-#=========================================================================
+#================================================================================================
 
 
 # import modules
@@ -37,11 +37,9 @@ from nms_config import *
 # |  # return 1             : if service not deleted (function execution failed)                |
 # |                                                                                             |
 # +---------------------------------------------------------------------------------------------+
-
-
-def delete_service_for_graph(host_name, service_name):
+def delete_service_for_graph(host_name,service_name):
     site_name = __file__.split("/")[3]
-    check_command = "%s!%s" % (service_name, site_name)
+    check_command = "%s!%s" % (service_name,site_name)
     service_file_path = "/omd/sites/%s/etc/nagios/conf.d/services.cfg" % site_name
     temp_file_path = "/omd/sites/%s/tmp/temp.cfg" % site_name
     try:
@@ -49,8 +47,8 @@ def delete_service_for_graph(host_name, service_name):
             startCheckLine = "#service-" + host_name + "-" + check_command
             endCheckLine = "#endservice-" + host_name + "-" + check_command
             checkfile = 0
-            fr = open(service_file_path, "r")
-            ftw = open(temp_file_path, "w")
+            fr = open(service_file_path,"r")
+            ftw = open(temp_file_path,"w")
             for line in fr:
                 if(line.strip() != startCheckLine.strip() and checkfile == 0):
                     ftw.write(line)
@@ -60,8 +58,8 @@ def delete_service_for_graph(host_name, service_name):
                 checkfile = 0
             fr.close()
             ftw.close()
-            ftr = open(temp_file_path, "r")
-            fw = open(service_file_path, "w")
+            ftr = open(temp_file_path,"r")
+            fw = open(service_file_path,"w")
             for line in ftr:
                 fw.write(line)
             ftr.close()
@@ -82,16 +80,14 @@ def delete_service_for_graph(host_name, service_name):
 # |  # return 1             : if service not created (function execution failed)                |
 # |                                                                                             |
 # +---------------------------------------------------------------------------------------------+
-
-
-def create_service_for_graph(host_name, service_name):
+def create_service_for_graph(host_name,service_name):
     site_name = __file__.split("/")[3]
     refresh_time = get_refresh_time()
-    check_command = "%s!%s" % (service_name, site_name)
+    check_command = "%s!%s" % (service_name,site_name)
     service_file_path = "/omd/sites/%s/etc/nagios/conf.d/services.cfg" % site_name
     try:
         if(os.path.isfile(service_file_path)):
-            fw = open(service_file_path, "a")
+            fw = open(service_file_path,"a")
             fw.write("\n#service-" + host_name + "-" + check_command)
             fw.write("\ndefine service {")
             fw.write("\n\tuse\t\t\tgeneric-service")
@@ -104,6 +100,6 @@ def create_service_for_graph(host_name, service_name):
             fw.close()
             return 0
         else:
-            return 1
+            return 1 
     except:
         return 1

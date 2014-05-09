@@ -4,12 +4,11 @@
 @author: Yogesh Kumar
 @since: 20-Apr-2012
 @version: 0.1
-@note: All Views Related with Logs and Events.
+@note: All Views Related with Logs and Events. 
 @organization: Codescape Consultants Pvt. Ltd.
 @copyright: 2011 Yogesh Kumar for Codescape Consultants Pvt. Ltd.
 @see: http://www.codescape.in
 '''
-
 
 class LogsEvents(object):
     @staticmethod
@@ -75,7 +74,7 @@ class LogsEvents(object):
         return html_view
 
     @staticmethod
-    def manage_events(host="", service="", log_plugin_output="", logtime_sec=0, logtime_min=0, logtime_hours=0, logtime_days=1, logtime="since"):
+    def manage_events(host="",service="",log_plugin_output="",logtime_sec=0,logtime_min=0,logtime_hours=0,logtime_days=1,logtime="since"):
         logtime_since = ""
         logtime_before = ""
         if logtime == "before":
@@ -134,5 +133,5 @@ class LogsEvents(object):
         <div id=\"grid_view_events_div\">\
                 <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"display\" id=\"grid_view_events_table\" style=\"text-align:center;\">\
                  </table>\
-        </div>" % (host, service, log_plugin_output, logtime_sec, logtime_min, logtime_hours, logtime_days, logtime_before, logtime_since)
+        </div>" % (host,service,log_plugin_output,logtime_sec,logtime_min,logtime_hours,logtime_days,logtime_before,logtime_since)
         return html_view

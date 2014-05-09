@@ -23,8 +23,7 @@ var messages = {
 	"edit":"Hostgroup details Updated successfully.",
 	"del":"Selected Hostgroup(s) deleted successfully",
 	"delConfirm":"Are You Sure want to delete Selected Hostgroup(s)?",
-	"duplicateNameError":"Hostgroup Name already exists, Please Enter different Hostgroup Name.",
-	"duplicateAliasError":"Hostgroup Alias already exists, Please Enter different Hostgroup Alias.",
+	"duplicateError":"Please Enter different Hostgroup Name and Hostgroup Alias.",
 	"noneSelectedError":"Please select atleast one Hostgroup.",
 	"multiSelectedError":"Please select single Hostgroup.",
 	"defaultDelError":"Deletion of Default Hostgroup is restricted.",
@@ -46,13 +45,13 @@ $(function(){
 
 	/* create object of divs */
 	$gridViewDiv = $("div#grid_view_div");
-	$formDiv = $("div#form_div");
+	$formDiv = $("div#form_div");	
 	$manageGroupDiv = $("div#manage_group_div");
-
+	
 	/* show grid view only hide other */
 	$gridViewDiv.show();
 	$formDiv.hide();
-
+	
 	/* page tip [for page tip write this code on each page please dont forget to change "href" value because this link create your help tip page] */
 	$("#page_tip").colorbox(
 	{
@@ -64,23 +63,23 @@ $(function(){
 		height:"450px",
 		onComplte:function(){}
 	});
-
+	
 	/* create grid view */
 	gridViewHostgroup();
-
+	
 	/* Click event handler for grid view */
 	$('#grid_view tbody tr').live('click', function (event) {
 		var id = this.id;
 		if(event.target.nodeName.toLowerCase() != 'img')
 		{
 			var index = jQuery.inArray(id, aSelected);
-
+		
 			if ( index === -1 ) {
 				aSelected.push( id );
 			} else {
 				aSelected.splice( index, 1 );
 			}
-
+		
 			$(this).toggleClass('row_selected');
 		}
 	});
@@ -200,128 +199,128 @@ function createHostgroupDetailsTable(hostgroupDetails)
 	$img.click(function(){
 		hideManageGroupDiv();
 		gridViewHostgroup();
-
+		
 	});
 	$img.css({"float":"right","margin-right":"10px"});
 	$img.tipsy({gravity: 'n'});
-
+	
 	$table.attr({"class":"tt-table","cellspacing":"0","cellpadding":"0","width":"100%"})
-
+	
 	// store hostgroup id in hidden field.
 	$hidden.attr({"type":"hidden","id":"hostgroup_id2","name":"hostgroup_id2"})
 	$hidden.val(hostgroupDetails[0]);
 	$hidden.appendTo($tr);
-
+	
 	$th.attr({"colspan":4,"class":"cell-title"});
 	$th.html("Hostgroup Details");
 	$img.appendTo($th);
 	$th.appendTo($tr);
 	$tr.appendTo($table);
-
+	
 	// creating new row
 	$tr = $("<tr/>");
-
+	
 	// creating Hostgroup Name Label [column]
 	$td = $("<td/>");
 	$td.attr("class","cell-label");
 	$td.html("Hostgroup Name");
 	$td.appendTo($tr);
-
+	
 	// creating Hostgroup Name [column]
 	$td = $("<td/>");
 	$td.attr("class","cell-info");
 	$td.html(hostgroupDetails[1]);
 	selectedHGName = hostgroupDetails[1];
 	$td.appendTo($tr);
-
+	
 	// creating Hostgroup Alias Label [column]
 	$td = $("<td/>");
 	$td.attr("class","cell-label");
 	$td.html("Hostgroup Alias");
 	$td.appendTo($tr);
-
+	
 	// creating Hostgroup Name [column]
 	$td = $("<td/>");
 	$td.attr("class","cell-info");
 	$td.html(hostgroupDetails[2]);
 	$td.appendTo($tr);
-
+	
 	// append row to table
 	$tr.appendTo($table);
-
-
+	
+	
 	// creating new row
 	$tr = $("<tr/>");
-
+	
 	// creating Hostgroup Name Label [column]
 	$td = $("<td/>");
 	$td.attr("class","cell-label");
 	$td.html("Created By");
 	$td.appendTo($tr);
-
+	
 	// creating Hostgroup Name [column]
 	$td = $("<td/>");
 	$td.attr("class","cell-info");
 	$td.html(hostgroupDetails[4]);
 	$td.appendTo($tr);
-
+	
 	// creating Hostgroup Alias Label [column]
 	$td = $("<td/>");
 	$td.attr("class","cell-label");
 	$td.html("Creation Time");
 	$td.appendTo($tr);
-
+	
 	// creating Hostgroup Name [column]
 	$td = $("<td/>");
 	$td.attr("class","cell-info");
 	$td.html(hostgroupDetails[5]);
 	$td.appendTo($tr);
-
+	
 	// append row to table
 	$tr.appendTo($table);
-
+	
 	// creating new row
 	$tr = $("<tr/>");
-
+	
 	// creating Hostgroup Name Label [column]
 	$td = $("<td/>");
 	$td.attr("class","cell-label");
 	$td.html("Updated By");
 	$td.appendTo($tr);
-
+	
 	// creating Hostgroup Name [column]
 	$td = $("<td/>");
 	$td.attr("class","cell-info");
 	$td.html(hostgroupDetails[6]);
 	$td.appendTo($tr);
-
+	
 	// creating Hostgroup Alias Label [column]
 	$td = $("<td/>");
 	$td.attr("class","cell-label");
 	$td.html("Update Time");
 	$td.appendTo($tr);
-
+	
 	// creating Hostgroup Name [column]
 	$td = $("<td/>");
 	$td.attr("class","cell-info");
 	$td.html(hostgroupDetails[3]);
 	$td.appendTo($tr);
-
+	
 	// append row to table
 	$tr.appendTo($table);
-
+	
 	$table.appendTo($manageGroupDiv);
 
 
 	$table = $("<table/>");
 	$table.attr({"class":"tt-table","cellspacing":"0","cellpadding":"0","width":"100%"});
 	$table.css("margin-bottom","0px");
-
+	
 	$tr = $("<tr/>");
 	$th = $("<th/>");
 	$th.attr({"class":"cell-title"});
 	$th.html("Assigned Group Details");
-
+	
 	$img = $("<img/>");
 	$img.attr({"class":"img-link","src":"images/new/update.png","title":"Move Group"});
 	$img.click(function(){
@@ -330,7 +329,7 @@ function createHostgroupDetailsTable(hostgroupDetails)
 	$img.css({"float":"right","margin-right":"10px"});
 	$img.tipsy({gravity: 'n'});
 	$img.appendTo($th);
-
+	
 	$img = $("<img/>");
 	$img.attr({"class":"img-link","src":"images/new/user-delete.png","title":"Delete Group"});
 	$img.click(function(){
@@ -339,7 +338,7 @@ function createHostgroupDetailsTable(hostgroupDetails)
 	$img.css({"float":"right","margin-right":"10px"});
 	$img.tipsy({gravity: 'n'});
 	$img.appendTo($th);
-
+	
 	$img = $("<img/>");
 	$img.attr({"class":"img-link","src":"images/new/user-add.png","title":"Add Group"});
 	$img.css({"float":"right","margin-right":"10px"});
@@ -355,7 +354,7 @@ function createHostgroupDetailsTable(hostgroupDetails)
                     $(this).find("span").text('uncheck all');
                 },function(){
                     $('div#groups_in_hg').find('input:checkbox').removeAttr('checked');
-                    $(this).find("span").text('check all');
+                    $(this).find("span").text('check all');        
                 });
 		},
 		title: "Assign/Add Groups To Hostgroup",
@@ -365,12 +364,12 @@ function createHostgroupDetailsTable(hostgroupDetails)
 		height:"450px"
 	});
 	$img.appendTo($th);
-
+	
 	$th.appendTo($tr);
 	$tr.appendTo($table);
-
+	
 	$table.appendTo($manageGroupDiv);
-
+	
 	$table = $("<table/>");
 	$table.attr({"cellpadding":"0", "cellspacing":"0", "border":"0", "class":"display", "id":"grid_view_group"});
 	$table.appendTo($manageGroupDiv);
@@ -404,7 +403,7 @@ function searchEvent()
 {
 	$("input#search_grp").keyup(function(){
 		 grpSearch($.trim($(this).val()));
-	});
+	});	
 }
 function grpSearch(searchGrp)
 {
@@ -425,14 +424,14 @@ function grpSearch(searchGrp)
 		$grpTr.appendTo($grpTable);
 		$div_btn.attr('disabled',true).addClass("disabled");
 		if ($("button#selectAll").find("span").text() == 'uncheck all')
-		{
-    		$("button#selectAll").click();
-    	}
+		{   
+    		$("button#selectAll").click();	
+    	}	
 		flag_search = 1
-
+		
 	}
 	for (i in grpData)
-	{
+	{	
 		if (String(grpData[i][1]).indexOf(searchGrp) >= 0 )
 		{
 			flag_search = 2;
@@ -447,18 +446,18 @@ function grpSearch(searchGrp)
 				$grpInput.appendTo($grpTd);
 				$grpTd.append("<span style=\"line-height:1.8em;\">" + (String(grpData[i][1])) + "</span>");
 				$grpTd.appendTo($grpTr);
-				j = j+1;
-
+				j = j+1; 
+				
 			}
 			if(j == 3)
 			{
 				$grpTr.appendTo($grpTable);
-				j = 0;
-			}
-		}
-
+				j = 0;							
+			}	
+		}  
+		
 	} // end of outer for
-
+	
 	if (j != 0)
 	{	j = 3 - j;
 		while(j != 0)
@@ -467,31 +466,31 @@ function grpSearch(searchGrp)
 			$grpTd.appendTo($grpTr);
 			j = j -1
 		}
-		$grpTr.appendTo($grpTable);
+		$grpTr.appendTo($grpTable);	
 	}
-
+	
 	if (flag_search == 0)
 	{
 		var $grpTr = $("<tr/>");
 		var $grpTd = $("<td class=\"cell-info1\" > No matching records found</td>");
 		$grpTd.appendTo($grpTr);
-		$grpTr.appendTo($grpTable);
+		$grpTr.appendTo($grpTable);	
 		if ($("button#selectAll").find("span").text() == 'uncheck all')
-		{
-    		$("button#selectAll").click();
+		{   
+    		$("button#selectAll").click();	
     	}
-
+    	
     	$div_btn.attr('disabled',true).addClass("disabled");
 	}
 	if (flag_search == 2)
 	{
 	    if ($("button#selectAll").find("span").text() == 'uncheck all')
-		    {
-        		$("button#selectAll").click();
+		    {   
+        		$("button#selectAll").click();	
         	}
     	$div_btn.removeAttr('disabled').removeClass("disabled");
 	}
-
+	
 	$("div#groups_in_hg").html($grpTable);
 }
 function boxAddGrp()
@@ -509,9 +508,9 @@ function boxAddGrp()
 	}
 	else
 	{
-		$.prompt('Are you sure, you want to Add group(s) to this Hostgroup?',{ buttons:{Yes:true,No:false}, prefix:'jqismooth',callback:boxAddGrpCallback });
+		$.prompt('Are you sure, you want to Add group(s) to this Hostgroup?',{ buttons:{Yes:true,No:false}, prefix:'jqismooth',callback:boxAddGrpCallback });	
 	}
-
+	
 }
 
 function boxAddGrpCallback(v,m)
@@ -545,7 +544,7 @@ function boxAddGrpCallback(v,m)
 }
 
 function delGrpFrmHg()
-{
+{	
 	grpArray = [];
 	grpNameArray  = [];
 	$.each($("input[name='group_check']:checked"), function(i,obj){
@@ -559,8 +558,8 @@ function delGrpFrmHg()
 	}
 	else
 	{
-		$.prompt('Are you sure, you want to delete Group(s) from this Hostgroup?',{ buttons:{Yes:true,No:false}, prefix:'jqismooth',callback:delGrpCallback });
-	}
+		$.prompt('Are you sure, you want to delete Group(s) from this Hostgroup?',{ buttons:{Yes:true,No:false}, prefix:'jqismooth',callback:delGrpCallback });	
+	}	
 }
 
 function delGrpCallback(v,m)
@@ -613,21 +612,21 @@ function moveGrpToHg()
 		{
 			href:"move_gptohg_view.py?hg_id="+$("input#hostgroup_id2").val(),
 			onComplete:function(){
-				$('select#groups').change(function()
+				$('select#groups').change(function() 
 				{		boxHGroupId = "";
 						var $this = $(this);
 						boxHGroupId = $this.val();
 					});
-
+					
 				},
 			title: "Move User Group to Another Hostgroup",
 			opacity: 0.4,
 			maxWidth: "80%",
 			width:"400px",
 			height:"150px"
-		});
+		});	
 	}
-
+		
 }
 
 
@@ -635,7 +634,7 @@ function boxMoveGrp()
 {
 	if(boxHGroupId == "" || boxHGroupId == null)
 	{
-			$.prompt("Select at least one HostGroup",{prefix:'jqismooth'});
+			$.prompt("Select at least one HostGroup",{prefix:'jqismooth'});		
 	}
 	else if(grpArray.length==0)
 	{
@@ -644,9 +643,9 @@ function boxMoveGrp()
 	else
 	{
 
-		$.prompt('Are you sure, you want to Move Group(s) from this Hostgroup?',{ buttons:{Yes:true,No:false}, prefix:'jqismooth',callback:boxMoveGrpCallback });
+		$.prompt('Are you sure, you want to Move Group(s) from this Hostgroup?',{ buttons:{Yes:true,No:false}, prefix:'jqismooth',callback:boxMoveGrpCallback });	
 	}
-
+	
 }
 
 function boxMoveGrpCallback(v,m)
@@ -727,16 +726,16 @@ function viewGroupDetails(gid)
 		width:"550px",
 		height:"450px"
 	});
-
+	
 }
 function user_get_log(hgId)
 {
 	spinStart($spinLoading,$spinMainLoading);
-	$.ajax({
+	$.ajax({ 
 		type:"get",
 		url:"show_groups_user.py?hostgroup_id="+ hgId,
 		cache:false,
-		success:function(result){
+		success:function(result){ 
 			try
 			{
 				result = eval("(" + result + ")");
@@ -808,8 +807,6 @@ function hideForm()
 	$gridViewDiv.show();
 	$formDiv.hide();
 	$manageGroupDiv.hide();
-	$("img#del_hostgroup").show();
-	$("img#add_hostgroup").show();
 	/* this is bcoz when validation unsuccess and you click on cancel button then tooltip visible so this code will hide that. */
 	if($tooltip)
 		$tooltip.tooltip().hide();
@@ -819,9 +816,7 @@ function showForm()
 	$gridViewDiv.hide();
 	$formDiv.show();
 	$manageGroupDiv.hide();
-	$("img#del_hostgroup").hide();
-	$("img#add_hostgroup").hide();
-
+	
 }
 function showManageGroupDiv()
 {
@@ -835,7 +830,7 @@ function hideManageGroupDiv()
 	$gridViewDiv.show();
 	$formDiv.hide();
 	$manageGroupDiv.hide();
-
+	
 }
 function submitForm($formObj)
 {
@@ -917,8 +912,8 @@ function addForm()
 	$form.attr("action","add_hostgroup.py");
 	$formInput.val("");
 	$formAddButton.css({"display":"inline-block"});
-	$formEditButton.hide();
-	showForm();
+	$formEditButton.hide();	
+	showForm();	
 	if($("#hostgroup_id").val()==undefined || $("#hostgroup_id").val()=="")
 		$("#advanced_settings").hide();
 }
@@ -961,7 +956,7 @@ function addHostgroup()
 	if(formStatus == 0)
 	{
 		createForm(actionName);
-		formStatus = 1;
+		formStatus = 1;		
 	}
 	else
 	{
@@ -995,7 +990,7 @@ function delHostgroup()
 	actionName = "delConfirm";
 	hideForm();
 	var selectedRow= fnGetSelected(oTable);
-	var rLength = selectedRow.length;
+	var rLength = selectedRow.length; 
 	if(rLength==0)
 	{
 		$.prompt(messages["noneSelectedError"],{prefix:'jqismooth'});
@@ -1003,7 +998,7 @@ function delHostgroup()
 	else
 	{
 		$.prompt(messages[actionName],{ buttons:{Ok:true,Cancel:false}, prefix:'jqismooth',callback:delHostgroupCallback });
-	}
+	}	
 }
 
 function delHostgroupCallback(v,m){
@@ -1081,7 +1076,7 @@ function fnGetSelected( oTableLocal )
 {
 	var aReturn = new Array();
 	var aTrs = oTableLocal.fnGetNodes();
-
+	
 	for ( var i=0 ; i<aTrs.length ; i++ )
 	{
 		if ( $(aTrs[i]).hasClass('row_selected') )

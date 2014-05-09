@@ -99,10 +99,10 @@ function validateUserForm(formid, action)
 				},
 				userRole: "required",
 				password: {
-					minlength: 8
+					minlength: 6
 				},
 				cpassword: {
-					minlength: 8,
+					minlength: 6,
 					equalTo: "#password"
 				},
 				},
@@ -113,10 +113,10 @@ function validateUserForm(formid, action)
 				},
 				userRole: "*",
 				password: {
-					minlength: " Your password must be at least 8 characters long"
+					minlength: " Your password must be at least 6 characters long"
 				},
 				cpassword: {
-					minlength: " Your password must be at least 8 characters long",
+					minlength: " Your password must be at least 6 characters long",
 					equalTo: " Please enter the same password as above"
 				},
 				}
@@ -132,11 +132,11 @@ function validateUserForm(formid, action)
 				},
 				password: {
 					required: true,
-					minlength: 8
+					minlength: 6
 				},
 				cpassword: {
 					required: true,
-					minlength: 8,
+					minlength: 6,
 					equalTo: "#password"
 				},
 				userRole: "required"
@@ -148,11 +148,11 @@ function validateUserForm(formid, action)
 				},
 				password: {
 					required: "*",
-					minlength: " Your password must be at least 8 characters long"
+					minlength: " Your password must be at least 6 characters long"
 				},
 				cpassword: {
 					required: "*",
-					minilength: " Your password must be at least 8 characters long",
+					minilength: " Your password must be at least 6 characters long",
 					equalTo: " Please enter the same password as above"
 				},
 				userRole: "*"

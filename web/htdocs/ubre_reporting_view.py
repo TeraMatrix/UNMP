@@ -10,20 +10,18 @@
 #<span class="search-input"><input type="text" /></span>
 # this is used for searching
 
-from datetime import datetime, timedelta
-
-
+from datetime import datetime,timedelta
 class Report(object):
     @staticmethod
     def ubre_create_crc_phy_form():
         try:
             now = datetime.now()
-            old = now + timedelta(days=-3)
-            cday = str(now.day) + "/" + str(now.month) + "/" + str(now.year)
-            ctime = str(now.hour) + ":" + str(now.minute)
-            oday = str(old.day) + "/" + str(old.month) + "/" + str(old.year)
-            otime = "00:00"
-            html_view = '\
+            old=now+timedelta(days=-3)
+            cday=str(now.day)+"/"+str(now.month)+"/"+str(now.year)
+            ctime=str(now.hour)+":"+str(now.minute)
+            oday=str(old.day)+"/"+str(old.month)+"/"+str(old.year)
+            otime="00:00"
+            html_view='\
             <table class=\"tt-table\" cellspacing=\"0\" cellpadding=\"0\" width=\"100%%\">\
                     <tr>\
                         <th id=\"form_title\" class=\"cell-title\">View/Save Report </th>\
@@ -92,21 +90,23 @@ class Report(object):
                         </tr>\
                     </table>\
             <table class="display" name="total_report_table" id="total_report_table" width="100%%" style=\"display: none;\">\
-            </table>' % (oday, otime, cday, ctime)
+            </table>'%(oday,otime,cday,ctime)
             return html_view
-        except Exception, e:
+        except Exception,e:
             return str(e)
+
+
 
     @staticmethod
     def ubre_create_rssi_form():
         try:
             now = datetime.now()
-            old = now + timedelta(days=-3)
-            cday = str(now.day) + "/" + str(now.month) + "/" + str(now.year)
-            ctime = str(now.hour) + ":" + str(now.minute)
-            oday = str(old.day) + "/" + str(old.month) + "/" + str(old.year)
-            otime = "00:00"
-            html_view = '\
+            old=now+timedelta(days=-3)
+            cday=str(now.day)+"/"+str(now.month)+"/"+str(now.year)
+            ctime=str(now.hour)+":"+str(now.minute)
+            oday=str(old.day)+"/"+str(old.month)+"/"+str(old.year)
+            otime="00:00"
+            html_view='\
             <table class=\"tt-table\" cellspacing=\"0\" cellpadding=\"0\" width=\"100%%\">\
                     <tr>\
                         <th id=\"form_title\" class=\"cell-title\">View/Save Report </th>\
@@ -175,22 +175,22 @@ class Report(object):
 		            	</tr>\
                 	</table>\
 			<table class="display" name="total_report_table" id="total_report_table" width="100%%" style=\"display: none;\">\
-			</table>' % (oday, otime, cday, ctime)
+			</table>'%(oday,otime,cday,ctime)
             return html_view
 
-        except Exception, e:
+        except Exception,e:
             return str(e)
 
     @staticmethod
     def ubre_create_network_usage_form():
         try:
             now = datetime.now()
-            old = now + timedelta(days=-3)
-            cday = str(now.day) + "/" + str(now.month) + "/" + str(now.year)
-            ctime = str(now.hour) + ":" + str(now.minute)
-            oday = str(old.day) + "/" + str(old.month) + "/" + str(old.year)
-            otime = "00:00"
-            html_view = '\
+            old=now+timedelta(days=-3)
+            cday=str(now.day)+"/"+str(now.month)+"/"+str(now.year)
+            ctime=str(now.hour)+":"+str(now.minute)
+            oday=str(old.day)+"/"+str(old.month)+"/"+str(old.year)
+            otime="00:00"
+            html_view='\
             <table class=\"tt-table\" cellspacing=\"0\" cellpadding=\"0\" width=\"100%%\">\
                     <tr>\
                         <th id=\"form_title\" class=\"cell-title\">View/Save Report </th>\
@@ -252,11 +252,13 @@ class Report(object):
 		            	</tr>\
                 	</table>\
 			<table class="display" name="total_report_table" id="total_report_table" width="100%%" style=\"display: none;\">\
-			</table>' % (oday, otime, cday, ctime)
+			</table>'%(oday,otime,cday,ctime)
             return html_view
 
-        except Exception, e:
+        except Exception,e:
             return str(e)
+
+
 
     @staticmethod
     def ubre_page_tip_crc_phy():
@@ -282,6 +284,7 @@ class Report(object):
             "</div>"
         return html_view
 
+
     @staticmethod
     def ubre_page_tip_rssi():
         html_view = ""\
@@ -306,6 +309,8 @@ class Report(object):
             "</div>"
         return html_view
 
+
+
     @staticmethod
     def ubre_page_tip_network_usage():
         html_view = ""\
@@ -329,3 +334,4 @@ class Report(object):
             "<div><b>Important</b>: If you used searching for information(report) so you get information(report) on search based result instead of no of devices else you get result on no of devices bases.</div>"\
             "</div>"
         return html_view
+

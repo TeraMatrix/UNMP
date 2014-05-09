@@ -1,5 +1,5 @@
 <?xml version="1.0" ?><unmp>
-	<aboutus installation_datetime="22-09-2012 13:30:00" version="Version 1.9.2"/>
+	<aboutus installation_datetime="22-09-2012 13:30:00" version="Version 1.9.0"/>
 	<mysql driver="mysql" hostname="localhost" password="root" port="3306" schema="nms" username="root"/>
 	<dashboard refresh="5"/>
 	<page refresh="1" start="main.py" title="Unified Network Management Platform"/>
@@ -14,5 +14,4 @@
 	<pingdiscovery ip_base="192.168.1" ip_base_end="40" ip_base_start="20" service="2" timeout="10"/>
 	<snmpdiscovery community="public" ip_base="192.168.1" ip_base_end="40" ip_base_start="20" port="161" service="2" timeout="10" version="2c"/>
 	<upnpdiscovery service="2" timeout="10"/>
-	<password_expiry enable="True" expiry_age="45" warning_time="5" auto_password="False"/>
 </unmp>

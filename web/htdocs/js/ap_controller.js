@@ -1507,10 +1507,7 @@ function apScan()
                     maxWidth: "80%",
                     width:"700px",
                     height:"400px",
-                    overlayClose:false,
-                    onComplete : function(){
-	                    $("#ap_scan_calculate").html("<span>Rescan</span>");
-                    }
+                    overlayClose:false
             });
 }
 
@@ -1525,12 +1522,8 @@ function apScanCalculate()
                     maxWidth: "80%",
                     width:"700px",
                     height:"400px",
-                    overlayClose:false,
-                    onComplete : function(){
-	                    $("#ap_scan_calculate").html("<span>Rescan</span>");
-                    }
+                    overlayClose:false
             });
-            
 }
 
 
@@ -1712,19 +1705,6 @@ function wifiMode()
 	{
 		$("div#gradingIndex").css({"display":"block"});
 		$("input[name='radioSetup.radioGatingIndex']").removeAttr('disabled');
-		//var i = 2.457;
-		//var last = 2.479;
-
-		/*if (tempWifiModeValue == "3"){
-		    for(var j=10;j<=13;i++){
-			    var channelOption = $("select[id='vapSelection.selectVap'] option[value=Channel-'"+ (j) +":"+ i + "']");
-		    	    i=i+0.005;
-		    	    channelOption.hide();
-		    	    channelOption.attr("disabled",true);
-		    }
-
-		}*/
-
 	}
 }
 

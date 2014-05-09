@@ -124,13 +124,6 @@ rpm -ev --nodeps MySQL-shared-compat-5.1.60-1.rhel5.i386
 rpm -ev --nodeps MySQL-devel-community-5.1.60-1.rhel5.i386
 rpm -ev --nodeps MySQL-client-community-5.1.60-1.rhel5.i386
 rpm -ev --nodeps MySQL-server-community-5.1.60-1.rhel5.i386
-
-# rpm -ev --nodeps MySQL-shared-compat-5.6.10-1.rhel5
-# rpm -ev --nodeps MySQL-shared-5.6.10-1.rhel5
-# rpm -ev --nodeps MySQL-devel-5.6.10-1.rhel5
-# rpm -ev --nodeps MySQL-client-5.6.10-1.rhel5
-# rpm -ev --nodeps MySQL-server-5.6.10-1.rhel5
-
 #rpm -ev --nodeps postgresql-libs-8.1.11-1.el5_1.1.i386
 a=$( rpm -qa | grep postgresql-libs | awk '{ print $1 }' ); for i in $a; do rpm -ev --nodeps $i; done;
 #rpm -ev --nodeps php-5.1.6-23.el5.i386

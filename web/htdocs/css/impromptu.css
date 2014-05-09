@@ -259,7 +259,7 @@ div.extblue button{ padding: 1px 4px; margin: 0 10px; background-color:#cccccc; 
 */
 .jqismoothfade{ position: absolute; 
 /*background-color: #333333; */
-background:#777;
+background: url("../images/overlay.png") repeat scroll 0 0 transparent;
 }
 div.jqismooth{ 
 	width: 350px; 
@@ -280,11 +280,11 @@ div.jqismooth .jqismoothbuttons
 { 
 	text-align: right; 
 	padding: 5px 0 5px 0; 
-	/*border: solid 1px #AAAAAA; 
+	border: solid 1px #AAAAAA; 
 	background: -moz-linear-gradient(10% 90% 90deg, #DDDDDD, #CCCCCC) repeat scroll 0 0 transparent;
 	background: -webkit-gradient(linear, center bottom, center top, from(#DDDDDD), to(#CCCCCC));
 	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#CCCCCC', endColorstr='#DDDDDD');
-	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#CCCCCC', EndColorStr='#DDDDDD')";*/
+	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#CCCCCC', EndColorStr='#DDDDDD')";
 	display:block;
 }
 div.jqismooth button{ padding: 3px 10px; margin: 0 10px; background-color: #2F6073; border: solid 1px #f4f4f4; color: #ffffff; font-weight: bold; font-size: 12px; }

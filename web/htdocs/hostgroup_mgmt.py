@@ -28,7 +28,7 @@ class HostgroupMgmt(object):
         @note		: This function creates form for displaying all logs to the user.
         '''
         try:
-            html_view = "\
+            html_view="\
             <div id=\"mahipal\">\
             <form name=\"get_hostgroup_data\" id=\"get_hostgroup_data\" action=\"get_hostgroup_data.py\" method=\"get\"> </form>\
             		<table class=\"tt-table\" cellspacing=\"0\" cellpadding=\"0\" width=\"100%%\" style=\"margin-bottom:0px;\">\
@@ -78,8 +78,10 @@ class HostgroupMgmt(object):
 			</div>\
 			<div id=\"form_div\" style=\"display:none;\"></div>"
             return html_view
-        except Exception, e:
+        except Exception,e:
             return str(e)
+
+
 
     @staticmethod
     def viewGroupDetails(res):
@@ -96,14 +98,14 @@ class HostgroupMgmt(object):
 		    			<th>Mobile Number</th>\
 		    			<th>Email ID</th>\
 		    		</tr>'
-        for i in range(0, len(res)):
-            html_str += '<tr>\
+        for i in range(0,len(res)):
+            html_str+='<tr>\
 		   <td class=" vertline">%s</td>\
 		   <td class=" vertline">%s</td>\
 		   <td class=" vertline">%s</td>\
-		   </tr>' % (res[i][0], res[i][1], res[i][2])
+		   </tr>'%(res[i][0],res[i][1],res[i][2])
 
-        html_str += "</div>"
+        html_str+="</div>"
         return html_str
 
     @staticmethod

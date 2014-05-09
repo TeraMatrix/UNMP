@@ -28,7 +28,6 @@ from lib import *
 import time
 import config
 
-
 def ajax_action(h):
     global html
     html = h
@@ -36,8 +35,8 @@ def ajax_action(h):
     try:
         action = html.var("action")
         if action == "reschedule":
-            view_type = html.var("view_type", "")
-            if view_type == "UNMP":
+            view_type = html.var("view_type","")
+            if view_type=="UNMP":
                 action_reschedule_modified()
             else:
                 action_reschedule()
@@ -49,26 +48,23 @@ def ajax_action(h):
 
 def get_time_tick(timetick):
     import datetime
-    last_check = ""
-    if datetime.datetime.now() > datetime.datetime.fromtimestamp(timetick):
-        delta = datetime.datetime.now(
-        ) - datetime.datetime.fromtimestamp(timetick)
+    last_check=""
+    if datetime.datetime.now()>datetime.datetime.fromtimestamp(timetick):
+        delta=datetime.datetime.now()-datetime.datetime.fromtimestamp(timetick)
     else:
-        delta = datetime.datetime.fromtimestamp(
-            timetick) - datetime.datetime.now()
-    second = delta.seconds
-    if second < 60:
-        last_check = str(second) + " sec"
-    elif second < 3600:
-        minute = int(second / 60)
-        second = second % 60
-        last_check = str(minute) + " min," + str(second) + " sec"
+        delta=datetime.datetime.fromtimestamp(timetick)-datetime.datetime.now()
+    second=delta.seconds
+    if second<60:
+        last_check=str(second)+" sec"
+    elif second<3600:
+        minute=int(second/60)
+        second=second%60
+        last_check=str(minute)+" min,"+str(second)+" sec"
     else:
-        hour = int(second / 3600)
-        minute = int((second - hour * 3600) / 60)
-        last_check = str(hour) + " hour," + str(minute) + " min"
+        hour=int(second/3600)
+        minute=int((second-hour*3600)/60)
+        last_check=str(hour)+" hour,"+str(minute)+" min"	    
     return last_check
-
 
 def paint_age(timestamp, has_been_checked, bold_if_younger_than):
     """
@@ -100,8 +96,7 @@ def paint_age(timestamp, has_been_checked, bold_if_younger_than):
         age_class = "age recent"
     else:
         age_class = "age"
-    return prefix + html.age_text(age)
-
+    return prefix + html.age_text(age)        
 
 def action_reschedule():
     if not config.may("action.reschedule"):
@@ -125,8 +120,7 @@ def action_reschedule():
 
     try:
         now = int(time.time())
-        html.live.command("[%d] SCHEDULE_FORCED_%s_CHECK;%s;%d" % (
-            now, cmd, spec, now), site)
+        html.live.command("[%d] SCHEDULE_FORCED_%s_CHECK;%s;%d" % (now, cmd, spec, now), site)
         html.live.set_only_sites([site])
         row = html.live.query_row(
             "GET %ss\n"
@@ -134,32 +128,24 @@ def action_reschedule():
             "WaitCondition: last_check >= %d\n"
             "WaitTimeout: %d\n"
             "WaitTrigger: check\n"
-            "Columns: last_check state plugin_output service_last_state_change service_last_check service_next_check service_execution_time service_plugin_output service_long_plugin_output state \n"  # "Columns: last_check state plugin_output \n"#
+            "Columns: last_check state plugin_output service_last_state_change service_last_check service_next_check service_execution_time service_plugin_output service_long_plugin_output state \n"# "Columns: last_check state plugin_output \n"# 
             "Filter: host_name = %s\n%s"
             % (what, host, service, now, config.reschedule_timeout * 1000, host, add_filter))
         html.live.set_only_sites()
-        # str('0' if host_age==0 else paint_age(host_age, checked == 1, 60 *
-        # 10))
+        #str('0' if host_age==0 else paint_age(host_age, checked == 1, 60 * 10))
         last_check = row[0]
-        if last_check < now:
-            html.write("['TIMEOUT', 'Check not executed within %d seconds %s %s']\n" % (
-                config.reschedule_timeout), now, last_check)
+        if last_check < now :
+            html.write("['TIMEOUT', 'Check not executed within %d seconds %s %s']\n" % (config.reschedule_timeout),now,last_check)
 
         else:
-            output = row[7]
-            all_output = row[8]
-            all_device_detail = ' (' + str(all_output).replace('\\n', '') + ')'
-            html.write("['OK', %d, %d, %r]\n" % (row[0], row[
-                       1], row[2].encode("utf-8")))
-            # f=open("/home/cscape/Desktop/acb.txt","a")
-            # f.write(str("['OK', %d, %d, %r,'%s','%s','%s','%s','%s','%s']" % (row[0], row[1], row[2].encode("utf-8"),str(row[9]), str(str('0' if row[3]==0 else paint_age(row[3], True, 60 * 10))), str(get_time_tick(row[4])), str(get_time_tick(row[5])), str(row[6]),output+str('' if all_device_detail.strip()=='()' else all_device_detail) )))
-            # f.close()
-            # html.write("['OK', %d, %d, %r,'%s','%s','%s','%s','%s','%s']" %
-            # (row[0], row[1], row[2].encode("utf-8"),str(row[9]), str(str('0'
-            # if row[3]==0 else paint_age(row[3], True, 60 * 10))),
-            # str(get_time_tick(row[4])), str(get_time_tick(row[5])),
-            # str(row[6]),output+str('' if all_device_detail.strip()=='()' else
-            # all_device_detail) ))
+            output=row[7]
+            all_output=row[8]
+            all_device_detail=' ('+str(all_output).replace('\\n','')+')'
+            html.write("['OK', %d, %d, %r]\n" % (row[0], row[1], row[2].encode("utf-8")))
+            #f=open("/home/cscape/Desktop/acb.txt","a")
+            #f.write(str("['OK', %d, %d, %r,'%s','%s','%s','%s','%s','%s']" % (row[0], row[1], row[2].encode("utf-8"),str(row[9]), str(str('0' if row[3]==0 else paint_age(row[3], True, 60 * 10))), str(get_time_tick(row[4])), str(get_time_tick(row[5])), str(row[6]),output+str('' if all_device_detail.strip()=='()' else all_device_detail) )))
+            #f.close()
+            #html.write("['OK', %d, %d, %r,'%s','%s','%s','%s','%s','%s']" % (row[0], row[1], row[2].encode("utf-8"),str(row[9]), str(str('0' if row[3]==0 else paint_age(row[3], True, 60 * 10))), str(get_time_tick(row[4])), str(get_time_tick(row[5])), str(row[6]),output+str('' if all_device_detail.strip()=='()' else all_device_detail) ))
 
     except Exception, e:
         html.live.set_only_sites()
@@ -188,9 +174,8 @@ def action_reschedule_modified():
 
     try:
         now = int(time.time())
-        time1 = now
-        html.live.command("[%d] SCHEDULE_FORCED_%s_CHECK;%s;%d" % (
-            now, cmd, spec, now), site)
+        time1=now
+        html.live.command("[%d] SCHEDULE_FORCED_%s_CHECK;%s;%d" % (now, cmd, spec, now), site)
         html.live.set_only_sites([site])
         row = html.live.query_row(
             "GET %ss\n"
@@ -198,28 +183,27 @@ def action_reschedule_modified():
             "WaitCondition: last_check >= %d\n"
             "WaitTimeout: %d\n"
             "WaitTrigger: check\n"
-            "Columns: last_check state plugin_output service_last_state_change service_last_check service_next_check service_execution_time service_plugin_output service_long_plugin_output state \n"  # "Columns: last_check state plugin_output \n"#
+            "Columns: last_check state plugin_output service_last_state_change service_last_check service_next_check service_execution_time service_plugin_output service_long_plugin_output state \n"# "Columns: last_check state plugin_output \n"# 
             "Filter: host_name = %s\n%s"
             % (what, host, service, now, config.reschedule_timeout * 1000, host, add_filter))
         html.live.set_only_sites()
-        # str('0' if host_age==0 else paint_age(host_age, checked == 1, 60 *
-        # 10))
+        #str('0' if host_age==0 else paint_age(host_age, checked == 1, 60 * 10))
         last_check = row[0]
-        if last_check < now:  # and (time.time()-time1)>100:
-            html.write("['TIMEOUT', 'Check not executed within %d seconds',%s,%s]\n" %
-                       (config.reschedule_timeout, str(now), str(time.time() - time1)))
+        if last_check < now :#and (time.time()-time1)>100:
+            html.write("['TIMEOUT', 'Check not executed within %d seconds',%s,%s]\n" % (config.reschedule_timeout,str(now),str(time.time()-time1)))
 
         else:
-            output = row[7]
-            all_output = row[8]
-            all_device_detail = ' (' + str(all_output).replace('\\n', '') + ')'
-            # html.write("['OK', %d, %d, %r]\n" % (row[0], row[1], row[2].encode("utf-8")))
-            # f=open("/home/cscape/Desktop/acb.txt","a")
-            # f.write(str("['OK', %d, %d, %r,'%s','%s','%s','%s','%s','%s']" % (row[0], row[1], row[2].encode("utf-8"),str(row[9]), str(str('0' if row[3]==0 else paint_age(row[3], True, 60 * 10))), str(get_time_tick(row[4])), str(get_time_tick(row[5])), str(row[6]),output+str('' if all_device_detail.strip()=='()' else all_device_detail) )))
-            # f.close()
-            html.write("['OK', %d, %d, %r,'%s','%s','%s','%s','%s','%s']" % (row[0], row[1], row[2].encode(
-                "utf-8"), str(row[9]), str(str('0' if row[3] == 0 else paint_age(row[3], True, 60 * 10))), str(get_time_tick(row[4])), str(get_time_tick(row[5])), str(row[6]), output + str('' if all_device_detail.strip() == '()' else all_device_detail)))
+            output=row[7]
+            all_output=row[8]
+            all_device_detail=' ('+str(all_output).replace('\\n','')+')'
+            #html.write("['OK', %d, %d, %r]\n" % (row[0], row[1], row[2].encode("utf-8")))
+            #f=open("/home/cscape/Desktop/acb.txt","a")
+            #f.write(str("['OK', %d, %d, %r,'%s','%s','%s','%s','%s','%s']" % (row[0], row[1], row[2].encode("utf-8"),str(row[9]), str(str('0' if row[3]==0 else paint_age(row[3], True, 60 * 10))), str(get_time_tick(row[4])), str(get_time_tick(row[5])), str(row[6]),output+str('' if all_device_detail.strip()=='()' else all_device_detail) )))
+            #f.close()
+            html.write("['OK', %d, %d, %r,'%s','%s','%s','%s','%s','%s']" % (row[0], row[1], row[2].encode("utf-8"),str(row[9]), str(str('0' if row[3]==0 else paint_age(row[3], True, 60 * 10))), str(get_time_tick(row[4])), str(get_time_tick(row[5])), str(row[6]),output+str('' if all_device_detail.strip()=='()' else all_device_detail) ))
 
     except Exception, e:
         html.live.set_only_sites()
         raise MKGeneralException("Cannot reschedule check: %s" % e)
+
+

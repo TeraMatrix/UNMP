@@ -28,6 +28,3 @@ strong {
 }
 input[type=text],input[type=password]{height:15px !important}
 select{height:20px !important}
-#inputs input{
-height:25px !important;
-}
