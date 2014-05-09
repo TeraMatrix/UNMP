@@ -29,7 +29,8 @@ from utility import Validation
 from common_bll import Essential
 
 # Exception class for own created exception.
-
+import defaults
+nms_instance = defaults.site
 
 class SelfException(Exception):
     """
@@ -1540,8 +1541,10 @@ def odu100_device_report(h):
         odu100_report = []
         MARGIN_SIZE = 14 * mm
         PAGE_SIZE = A4
-        nms_instance = __file__.split("/")[3]
-        pdfdoc = '/omd/sites/%s/share/check_mk/web/htdocs/report/odutable.pdf' % nms_instance
+        # nms_instance = __file__.split("/")[3]
+        # pdfdoc = '/omd/sites/%s/share/check_mk/web/htdocs/report/odutable.pdf' % nms_instance
+        save_file_name = "odutable.pdf"
+        pdfdoc = defaults.get_config_path(configname="isfolder", folder="report") + save_file_name
         pdf_doc = BaseDocTemplate(pdfdoc, pagesize=PAGE_SIZE,
                                   leftMargin=MARGIN_SIZE, rightMargin=MARGIN_SIZE,
                                   topMargin=MARGIN_SIZE, bottomMargin=MARGIN_SIZE)
@@ -1553,8 +1556,11 @@ def odu100_device_report(h):
         main_template = PageTemplate(
             id='main_template', frames=[main_frame])
         pdf_doc.addPageTemplates([main_template])
-        im = Image("/omd/sites/%s/share/check_mk/web/htdocs/images/new/logo.png" %
-                   nms_instance, width=1.5 * inch, height=.5 * inch)
+        # im = Image("/omd/sites/%s/share/check_mk/web/htdocs/images/new/logo.png" %
+        #            nms_instance, width=1.5 * inch, height=.5 * inch)
+        im = Image(
+            defaults.get_config_path(configname="isfolder", folder="images")+ theme + "/logo.png",
+            width=1.5 * inch, height=.5 * inch)
         im.hAlign = 'LEFT'
         odu100_report.append(im)
         odu100_report.append(Spacer(1, 1))
@@ -1585,7 +1591,10 @@ def odu100_device_report(h):
         if len(result) > 0:
             host_id = result[0]
             #----- This Query provide the some device informaion ------#
-            sql = "SELECT fm.frequency,ts.peerNodeStatusNumSlaves,sw.activeVersion ,hw.hwVersion,lrb.lastRebootReason,cb.channelBandwidth ,cb.opState ,cb.defaultNodeType,hs.mac_address,hs.ip_address FROM\
+            sql = "SELECT fm.frequency,ts.peerNodeStatusNumSlaves,sw.activeVersion ," \
+                  "hw.hwVersion,lrb.lastRebootReason," \
+                  "cb.channelBandwidth ,cb.opState ,cb.defaultNodeType," \
+                  "hs.mac_address,hs.ip_address FROM\
                         hosts as hs \
                         LEFT JOIN odu100_raChannelListTable as fm ON fm.host_id = hs.host_id\
                         LEFT JOIN odu100_peerNodeStatusTable as ts ON ts.host_id = hs.host_id\
@@ -1597,7 +1606,9 @@ def odu100_device_report(h):
             #--- execute the query ------#
             cursor.execute(sql)
             result = cursor.fetchall()
-            sel_query = "SELECT count(*) FROM  odu100_peerNodeStatusTable WHERE  linkStatus=2 and tunnelStatus=1 and  host_id=='%s' group by timeSlotIndex limit 1" % host_id
+            sel_query = "SELECT count(*) FROM  odu100_peerNodeStatusTable " \
+                        "WHERE  linkStatus=2 and tunnelStatus=1 " \
+                        "and  host_id=='%s' group by timeSlotIndex limit 1" % host_id
             cursor.execute(sql)
             slave = cursor.fetchall()
             if len(slave) > 1:
@@ -1610,7 +1621,10 @@ def odu100_device_report(h):
                 result, 'ODU Device Information', no_of_slave)
 
         #---- Query for get the last reboot time of particular device ------#
-        sql = "SELECT trap_receive_date from trap_alarms where trap_event_type = 'NODE_UP' and agent_id='%s' order by timestamp desc limit 1" % ip_address
+        sql = "SELECT trap_receive_date from trap_alarms " \
+              "where trap_event_type = 'NODE_UP' " \
+              "and agent_id='%s' " \
+              "order by timestamp desc limit 1" % ip_address
 
         #----- store the last reboot time value in variable ----- #
         if cursor.execute(sql):
@@ -1627,8 +1641,9 @@ def odu100_device_report(h):
         t.setStyle(
             TableStyle(
                 [(
-                    'BACKGROUND', (1, 0), (1, 0), (0.35, 0.35, 0.35)), ('FONT', (0,
-                                                                                 0), (1, 0), 'Helvetica', 11), ('TEXTCOLOR', (1, 0), (2, 0), colors.white)]))
+                    'BACKGROUND', (1, 0), (1, 0), (0.35, 0.35, 0.35)),
+                 ('FONT', (0,0), (1, 0), 'Helvetica', 11),
+                 ('TEXTCOLOR', (1, 0), (2, 0), colors.white)]))
         odu100_report.append(t)
 
         data = table_output
@@ -1681,7 +1696,11 @@ def odu100_device_report(h):
         cursor = db.cursor()
         result1 = ''
         if int(select_option) == 0:
-            sel_query = "select IFNULL((odu.rxCrcErrors),0),IFNULL((odu.rxPhyError),0),odu.timestamp from  odu100_raTddMacStatisticsTable as odu INNER JOIN hosts as h  on  odu.host_id = h.host_id  where h.ip_address='%s' AND odu.timestamp <='%s' AND odu.timestamp >= '%s' order by odu.timestamp desc" % (
+            sel_query = "select IFNULL((odu.rxCrcErrors),0),IFNULL((odu.rxPhyError),0),odu.timestamp " \
+                        "from  odu100_raTddMacStatisticsTable as odu " \
+                        "INNER JOIN hosts as h  " \
+                        "on  odu.host_id = h.host_id  where h.ip_address='%s' " \
+                        "AND odu.timestamp <='%s' AND odu.timestamp >= '%s' order by odu.timestamp desc" % (
                 ip_address, end_time, start_time)
             if int(limitFlag) == 0:
                 limit_data = ''
@@ -1690,7 +1709,14 @@ def odu100_device_report(h):
             sel_query += limit_data
 
         else:
-            sel_query = "select IFNULL((odu.rxCrcErrors),0),IFNULL((odu.rxPhyError),0),odu.timestamp from  odu100_raTddMacStatisticsTable as odu INNER JOIN hosts as h  on  odu.host_id = h.host_id  where h.ip_address='%s' AND date(odu.timestamp) <=current_date() AND date(odu.timestamp) >= current_date()-%s order by odu.timestamp desc" % (
+            sel_query = "select IFNULL((odu.rxCrcErrors),0),IFNULL((odu.rxPhyError),0),odu.timestamp " \
+                        "from  odu100_raTddMacStatisticsTable " \
+                        "as odu INNER JOIN hosts as h  " \
+                        "on  odu.host_id = h.host_id  " \
+                        "where h.ip_address='%s' " \
+                        "AND date(odu.timestamp) <=current_date() " \
+                        "AND date(odu.timestamp) >= current_date()-%s " \
+                        "order by odu.timestamp desc" % (
                 ip_address, total_days)
         cursor.execute(sel_query)
         result1 = cursor.fetchall()
@@ -1705,8 +1731,9 @@ def odu100_device_report(h):
         t.setStyle(
             TableStyle(
                 [(
-                    'BACKGROUND', (1, 0), (1, 0), (0.35, 0.35, 0.35)), ('FONT', (0,
-                                                                                 0), (1, 0), 'Helvetica', 11), ('TEXTCOLOR', (1, 0), (2, 0), colors.white)]))
+                    'BACKGROUND', (1, 0), (1, 0), (0.35, 0.35, 0.35)),
+                 ('FONT', (0,0), (1, 0), 'Helvetica', 11),
+                 ('TEXTCOLOR', (1, 0), (2, 0), colors.white)]))
         odu100_report.append(t)
         data = table_output
         t = Table(data, [2.7 * inch, 2.2 * inch, 2.2 * inch])
@@ -1756,7 +1783,14 @@ def odu100_device_report(h):
         cursor = db.cursor()
         result1 = ''
         if int(select_option) == 0:
-            sel_query = "select IFNULL((odu.syncLostCounter),0),odu.timestamp from  odu100_synchStatisticsTable as odu INNER JOIN hosts as h  on  odu.host_id = h.host_id  where h.ip_address='%s' AND odu.timestamp >= '%s' AND odu.timestamp <='%s' order by odu.timestamp desc" % (
+            sel_query = "select IFNULL((odu.syncLostCounter),0),odu.timestamp " \
+                        "from  odu100_synchStatisticsTable as odu " \
+                        "INNER JOIN hosts as h  " \
+                        "on  odu.host_id = h.host_id  " \
+                        "where h.ip_address='%s' " \
+                        "AND odu.timestamp >= '%s' " \
+                        "AND odu.timestamp <='%s' " \
+                        "order by odu.timestamp desc" % (
                 ip_address, start_time, end_time)
 
             if int(limitFlag) == 0:
@@ -1766,7 +1800,14 @@ def odu100_device_report(h):
             sel_query += limit_data
 
         else:
-            sel_query = "select IFNULL((odu.syncLostCounter),0),odu.timestamp from  odu100_synchStatisticsTable as odu INNER JOIN hosts as h  on  odu.host_id = h.host_id  where h.ip_address='%s' AND date(odu.timestamp) <=current_date() AND date(odu.timestamp) >= current_date()-%s order by odu.timestamp desc" % (ip_address, total_days)
+            sel_query = "select IFNULL((odu.syncLostCounter),0),odu.timestamp " \
+                        "from  odu100_synchStatisticsTable " \
+                        "as odu INNER JOIN hosts as h  " \
+                        "on  odu.host_id = h.host_id  " \
+                        "where h.ip_address='%s' " \
+                        "AND date(odu.timestamp) <=current_date() " \
+                        "AND date(odu.timestamp) >= current_date()-%s " \
+                        "order by odu.timestamp desc" % (ip_address, total_days)
         cursor.execute(sel_query)
         result1 = cursor.fetchall()
         table_output = sync_table_list_creation(
@@ -1779,8 +1820,9 @@ def odu100_device_report(h):
         t.setStyle(
             TableStyle(
                 [(
-                    'BACKGROUND', (1, 0), (1, 0), (0.35, 0.35, 0.35)), ('FONT', (0,
-                                                                                 0), (1, 0), 'Helvetica', 11), ('TEXTCOLOR', (1, 0), (2, 0), colors.white)]))
+                    'BACKGROUND', (1, 0), (1, 0), (0.35, 0.35, 0.35)),
+                 ('FONT', (0, 0), (1, 0), 'Helvetica', 11),
+                 ('TEXTCOLOR', (1, 0), (2, 0), colors.white)]))
         odu100_report.append(t)
         data = table_output
         t = Table(data, [3.55 * inch, 3.55 * inch])
@@ -1849,7 +1891,11 @@ def odu100_device_report(h):
         signal_interface16 = []
         time_stamp_signal1 = []
 
-        sel_query = "SELECT default_node_type FROM get_odu16_ru_conf_table as def INNER JOIN hosts ON hosts.host_id=def.host_id WHERE hosts.ip_address='%s'" % (ip_address)
+        sel_query = "SELECT default_node_type " \
+                    "FROM get_odu16_ru_conf_table as def " \
+                    "INNER JOIN hosts " \
+                    "ON hosts.host_id=def.host_id " \
+                    "WHERE hosts.ip_address='%s'" % (ip_address)
         cursor.execute(sel_query)
         status_result = cursor.fetchall()
         status = 0
@@ -1858,7 +1904,14 @@ def odu100_device_report(h):
         status_name = 'Master' if int(status) == 0 else 'Slave'
 
         if int(select_option) == 0:
-            sel_query = "select odu.raScanIndex,(IFNULL((odu.signalStrength),0)),odu.timestamp from  odu100_raScanListTable as odu INNER JOIN hosts as h  on  odu.host_id = h.host_id  where h.ip_address='%s' AND odu.timestamp >= '%s' AND odu.timestamp <='%s' order by odu.timestamp desc" % (
+            sel_query = "select odu.raScanIndex,(IFNULL((odu.signalStrength),0)),odu.timestamp " \
+                        "from  odu100_raScanListTable as odu " \
+                        "INNER JOIN hosts as h  " \
+                        "on  odu.host_id = h.host_id  " \
+                        "where h.ip_address='%s' " \
+                        "AND odu.timestamp >= '%s' " \
+                        "AND odu.timestamp <='%s' " \
+                        "order by odu.timestamp desc" % (
                 ip_address, start_time, end_time)
             signal_flag = 0
             if int(limitFlag) == 0:
@@ -1867,7 +1920,14 @@ def odu100_device_report(h):
                 limit_data = ' limit 40'
             sel_query += limit_data
         else:
-            sel_query = "select odu.raScanIndex,(IFNULL((odu.signalStrength),0)),odu.timestamp from  odu100_raScanListTable as odu INNER JOIN hosts as h  on  odu.host_id = h.host_id  where h.ip_address='%s' AND date(odu.timestamp) <=current_date() AND date(odu.timestamp) >= current_date()-%s order by odu.timestamp desc" % (ip_address, total_days)
+            sel_query = "select odu.raScanIndex,(IFNULL((odu.signalStrength),0)),odu.timestamp " \
+                        "from  odu100_raScanListTable as odu " \
+                        "INNER JOIN hosts as h  " \
+                        "on  odu.host_id = h.host_id  " \
+                        "where h.ip_address='%s' " \
+                        "AND date(odu.timestamp) <=current_date() " \
+                        "AND date(odu.timestamp) >= current_date()-%s " \
+                        "order by odu.timestamp desc" % (ip_address, total_days)
         cursor.execute(sel_query)
         signal_strength = cursor.fetchall()
         count = 0
@@ -2258,10 +2318,18 @@ def odu100_device_report(h):
         # create the cursor
         cursor = db.cursor()
         if int(select_option) == 0:
-            sql = "SELECT ta.serevity,ta.trap_event_id,ta.trap_event_type,ta.trap_receive_date FROM trap_alarms as ta WHERE ta.agent_id='%s' AND ta.timestamp>='%s' AND  ta.timestamp<='%s' order by ta.timestamp" % (
+            sql = "SELECT ta.serevity,ta.trap_event_id,ta.trap_event_type,ta.trap_receive_date " \
+                  "FROM trap_alarms as ta " \
+                  "WHERE ta.agent_id='%s' " \
+                  "AND ta.timestamp>='%s' " \
+                  "AND  ta.timestamp<='%s' order by ta.timestamp" % (
                 ip_address, start_time, end_time)
         else:
-            sql = "SELECT ta.serevity,ta.trap_event_id,ta.trap_event_type,ta.trap_receive_date FROM trap_alarms as ta WHERE ta.agent_id='%s' AND date(ta.timestamp)<=current_date() and  date(ta.timestamp)>current_date()-%s order by ta.timestamp " % (
+            sql = "SELECT ta.serevity,ta.trap_event_id,ta.trap_event_type,ta.trap_receive_date " \
+                  "FROM trap_alarms as ta " \
+                  "WHERE ta.agent_id='%s' " \
+                  "AND date(ta.timestamp)<=current_date() " \
+                  "and  date(ta.timestamp)>current_date()-%s order by ta.timestamp " % (
                 ip_address, trap_days)
         cursor.execute(sql)
         result1 = cursor.fetchall()
@@ -2398,7 +2466,14 @@ def odu100_device_report(h):
             # cursor.callproc("odu100_network_interface",(start_time,end_time,refresh_time,interface_index,ip_address))
             # result1=cursor.fetchall()
             if int(select_option) == 0:
-                sel_query = "select (odu.rxBytes),(odu.txBytes),odu.timestamp from odu100_nwInterfaceStatisticsTable as odu INNER JOIN hosts as h  on  odu.host_id = h.host_id  where  h.ip_address='%s' AND  odu.timestamp >= '%s' AND odu.timestamp <='%s' and odu.nwStatsIndex = '%s' order by timestamp desc" % (
+                sel_query = "select (odu.rxBytes),(odu.txBytes),odu.timestamp " \
+                            "from odu100_nwInterfaceStatisticsTable as odu " \
+                            "INNER JOIN hosts as h  " \
+                            "on  odu.host_id = h.host_id  " \
+                            "where  h.ip_address='%s' " \
+                            "AND  odu.timestamp >= '%s' " \
+                            "AND odu.timestamp <='%s' and odu.nwStatsIndex = '%s' " \
+                            "order by timestamp desc" % (
                     ip_address, start_time, end_time, interface_index)
                 if int(limitFlag) == 0:
                     limit_data = ''
@@ -2406,7 +2481,14 @@ def odu100_device_report(h):
                     limit_data = ' limit 16'
                 sel_query += limit_data
             else:
-                sel_query = "select (odu.rxBytes),(odu.txBytes),odu.timestamp from odu100_nwInterfaceStatisticsTable as odu INNER JOIN hosts as h  on  odu.host_id = h.host_id where  h.ip_address='%s' AND  date(odu.timestamp) <=current_date() AND date(odu.timestamp) >= current_date()-%s and odu.nwStatsIndex = '%s' order by timestamp desc" % (
+                sel_query = "select (odu.rxBytes),(odu.txBytes),odu.timestamp " \
+                            "from odu100_nwInterfaceStatisticsTable as odu " \
+                            "INNER JOIN hosts as h  " \
+                            "on  odu.host_id = h.host_id " \
+                            "where  h.ip_address='%s' " \
+                            "AND  date(odu.timestamp) <=current_date() " \
+                            "AND date(odu.timestamp) >= current_date()-%s " \
+                            "and odu.nwStatsIndex = '%s' order by timestamp desc" % (
                     ip_address, total_days, interface_index)
             cursor.execute(sel_query)
             result1 = cursor.fetchall()
@@ -2859,8 +2941,8 @@ def odu100_excel_report_genrating(h):
         raise SelfException(
             'This UBR devices not exists so excel report can not be generated.')  # Check msg
     try:
-        nms_instance = __file__.split(
-            "/")[3]       # it gives instance name of nagios system
+        # nms_instance = __file__.split(
+        #     "/")[3]       # it gives instance name of nagios system
         # create the start datetime and end datatime
         start_time = datetime.strptime(
             odu_start_date + ' ' + odu_start_time, "%d/%m/%Y %H:%M")
@@ -2924,7 +3006,11 @@ def odu100_excel_report_genrating(h):
         # -----------   End of style ---------#
 
         # we get the host inforamtion.
-        sel_query = "SELECT device_type.device_name,hosts.host_alias FROM hosts INNER JOIN device_type ON hosts.device_type_id=device_type.device_type_id WHERE hosts.ip_address='%s'" % (
+        sel_query = "SELECT device_type.device_name,hosts.host_alias " \
+                    "FROM hosts " \
+                    "INNER JOIN device_type " \
+                    "ON hosts.device_type_id=device_type.device_type_id " \
+                    "WHERE hosts.ip_address='%s'" % (
             ip_address)
         cursor.execute(sel_query)
         host_result = cursor.fetchall()
@@ -2944,7 +3030,10 @@ def odu100_excel_report_genrating(h):
         if len(result) > 0:
             host_id = result[0][0]
             #----- This Query provide the some device informaion ------#
-            sql = "SELECT fm.frequency,ts.peerNodeStatusNumSlaves,sw.activeVersion ,hw.hwVersion,lrb.lastRebootReason,cb.channelBandwidth ,cb.opState ,cb.defaultNodeType,hs.mac_address,hs.ip_address FROM\
+            sql = "SELECT fm.frequency,ts.peerNodeStatusNumSlaves,sw.activeVersion ," \
+                  "hw.hwVersion,lrb.lastRebootReason," \
+                  "cb.channelBandwidth ,cb.opState ,cb.defaultNodeType," \
+                  "hs.mac_address,hs.ip_address FROM\
                         hosts as hs \
                         LEFT JOIN odu100_raChannelListTable as fm ON fm.host_id = hs.host_id\
                         LEFT JOIN odu100_peerNodeStatusTable as ts ON ts.host_id = hs.host_id\
@@ -2956,7 +3045,10 @@ def odu100_excel_report_genrating(h):
             #--- execute the query ------#
             cursor.execute(sql)
             result1 = cursor.fetchall()
-            sel_query = "SELECT count(*) FROM  odu100_peerNodeStatusTable WHERE  linkStatus=2 and tunnelStatus=1 and  host_id=='%s' group by timeSlotIndex limit 1" % host_id
+            sel_query = "SELECT count(*) " \
+                        "FROM  odu100_peerNodeStatusTable " \
+                        "WHERE  linkStatus=2 and tunnelStatus=1 " \
+                        "and  host_id=='%s' group by timeSlotIndex limit 1" % host_id
             cursor.execute(sql)
             slave = cursor.fetchall()
             if len(slave) > 1:
@@ -2967,7 +3059,10 @@ def odu100_excel_report_genrating(h):
             table_output = device_information_function(
                 result1, 'ODU Device Information', no_of_slave)
         #---- Query for get the last reboot time of particular device ------#
-        sql = "SELECT trap_receive_date from trap_alarms where trap_event_type = 'NODE_UP' and agent_id='%s' order by timestamp desc limit 1" % ip_address
+        sql = "SELECT trap_receive_date " \
+              "from trap_alarms " \
+              "where trap_event_type = 'NODE_UP' " \
+              "and agent_id='%s' order by timestamp desc limit 1" % ip_address
 
         #----- store the last reboot time value in variable ----- #
         cursor.execute(sql)
@@ -3009,7 +3104,14 @@ def odu100_excel_report_genrating(h):
 
         # CRC PHY Excel Creation start here.
         if int(select_option) == 0:
-            sel_query = "select IFNULL((odu.rxCrcErrors),0),IFNULL((odu.rxPhyError),0),odu.timestamp from  odu100_raTddMacStatisticsTable as odu INNER JOIN hosts as h  on  odu.host_id = h.host_id  where h.ip_address='%s' AND odu.timestamp <='%s' AND odu.timestamp >= '%s' order by odu.timestamp desc" % (
+            sel_query = "select IFNULL((odu.rxCrcErrors),0),IFNULL((odu.rxPhyError),0),odu.timestamp " \
+                        "from  odu100_raTddMacStatisticsTable as odu " \
+                        "INNER JOIN hosts as h  " \
+                        "on  odu.host_id = h.host_id  " \
+                        "where h.ip_address='%s' " \
+                        "AND odu.timestamp <='%s' " \
+                        "AND odu.timestamp >= '%s' " \
+                        "order by odu.timestamp desc" % (
                 ip_address, end_time, start_time)
             if int(limitFlag) == 0:
                 limit_data = ''
@@ -3018,7 +3120,13 @@ def odu100_excel_report_genrating(h):
             sel_query += limit_data
 
         else:
-            sel_query = "select IFNULL((odu.rxCrcErrors),0),IFNULL((odu.rxPhyError),0),odu.timestamp from  odu100_raTddMacStatisticsTable as odu INNER JOIN hosts as h  on  odu.host_id = h.host_id  where h.ip_address='%s' AND date(odu.timestamp) <=current_date() AND date(odu.timestamp) >= current_date()-%s order by odu.timestamp desc" % (
+            sel_query = "select IFNULL((odu.rxCrcErrors),0),IFNULL((odu.rxPhyError),0),odu.timestamp " \
+                        "from  odu100_raTddMacStatisticsTable as odu " \
+                        "INNER JOIN hosts as h  on  odu.host_id = h.host_id  " \
+                        "where h.ip_address='%s' " \
+                        "AND date(odu.timestamp) <=current_date() " \
+                        "AND date(odu.timestamp) >= current_date()-%s " \
+                        "order by odu.timestamp desc" % (
                 ip_address, total_days)
         cursor.execute(sel_query)
         crc_result = cursor.fetchall()
@@ -3060,7 +3168,14 @@ def odu100_excel_report_genrating(h):
 
         # Sync Lost Excel Creation start here.
         if int(select_option) == 0:
-            sel_query = "select IFNULL((odu.syncLostCounter),0),odu.timestamp from  odu100_synchStatisticsTable as odu INNER JOIN hosts as h  on  odu.host_id = h.host_id  where h.ip_address='%s' AND odu.timestamp >= '%s' AND odu.timestamp <='%s' order by odu.timestamp desc" % (
+            sel_query = "select IFNULL((odu.syncLostCounter),0),odu.timestamp " \
+                        "from  odu100_synchStatisticsTable as odu " \
+                        "INNER JOIN hosts as h  " \
+                        "on  odu.host_id = h.host_id  " \
+                        "where h.ip_address='%s' " \
+                        "AND odu.timestamp >= '%s' " \
+                        "AND odu.timestamp <='%s' " \
+                        "order by odu.timestamp desc" % (
                 ip_address, start_time, end_time)
 
             if int(limitFlag) == 0:
@@ -3070,7 +3185,14 @@ def odu100_excel_report_genrating(h):
             sel_query += limit_data
 
         else:
-            sel_query = "select IFNULL((odu.syncLostCounter),0),odu.timestamp from  odu100_synchStatisticsTable as odu INNER JOIN hosts as h  on  odu.host_id = h.host_id  where h.ip_address='%s' AND date(odu.timestamp) <=current_date() AND date(odu.timestamp) >= current_date()-%s order by odu.timestamp desc" % (ip_address, total_days)
+            sel_query = "select IFNULL((odu.syncLostCounter),0),odu.timestamp " \
+                        "from  odu100_synchStatisticsTable as odu " \
+                        "INNER JOIN hosts as h  " \
+                        "on  odu.host_id = h.host_id  " \
+                        "where h.ip_address='%s' " \
+                        "AND date(odu.timestamp) <=current_date() " \
+                        "AND date(odu.timestamp) >= current_date()-%s " \
+                        "order by odu.timestamp desc" % (ip_address, total_days)
         cursor.execute(sel_query)
         sync_result = cursor.fetchall()
 
@@ -3114,7 +3236,15 @@ def odu100_excel_report_genrating(h):
         network_bandwidth = ['eth0', 'eth1']
         for index in range(1, 3):
             if int(select_option) == 0:
-                sel_query = "select (odu.rxBytes),(odu.txBytes),odu.timestamp from odu100_nwInterfaceStatisticsTable as odu INNER JOIN hosts as h  on  odu.host_id = h.host_id  where  h.ip_address='%s' AND  odu.timestamp >= '%s' AND odu.timestamp <='%s' and odu.nwStatsIndex = '%s' order by timestamp desc" % (
+                sel_query = "select (odu.rxBytes),(odu.txBytes),odu.timestamp " \
+                            "from odu100_nwInterfaceStatisticsTable as odu " \
+                            "INNER JOIN hosts as h  " \
+                            "on  odu.host_id = h.host_id  " \
+                            "where  h.ip_address='%s' " \
+                            "AND  odu.timestamp >= '%s' " \
+                            "AND odu.timestamp <='%s' " \
+                            "and odu.nwStatsIndex = '%s' " \
+                            "order by timestamp desc" % (
                     ip_address, start_time, end_time, index)
                 if int(limitFlag) == 0:
                     limit_data = ''
@@ -3122,7 +3252,14 @@ def odu100_excel_report_genrating(h):
                     limit_data = ' limit 16'
                 sel_query += limit_data
             else:
-                sel_query = "select (odu.rxBytes),(odu.txBytes),odu.timestamp from odu100_nwInterfaceStatisticsTable as odu INNER JOIN hosts as h  on  odu.host_id = h.host_id where  h.ip_address='%s' AND  date(odu.timestamp) <=current_date() AND date(odu.timestamp) >= current_date()-%s and odu.nwStatsIndex = '%s' order by timestamp desc" % (
+                sel_query = "select (odu.rxBytes),(odu.txBytes),odu.timestamp " \
+                            "from odu100_nwInterfaceStatisticsTable " \
+                            "as odu INNER JOIN hosts as h  " \
+                            "on  odu.host_id = h.host_id " \
+                            "where  h.ip_address='%s' " \
+                            "AND  date(odu.timestamp) <=current_date() " \
+                            "AND date(odu.timestamp) >= current_date()-%s and odu.nwStatsIndex = '%s' " \
+                            "order by timestamp desc" % (
                     ip_address, total_days, index)
             cursor.execute(sel_query)
             nw_result = cursor.fetchall()
@@ -3186,7 +3323,10 @@ def odu100_excel_report_genrating(h):
         signal_interface16 = []
         time_stamp_signal1 = []
 
-        sel_query = "SELECT default_node_type FROM get_odu16_ru_conf_table as def INNER JOIN hosts ON hosts.host_id=def.host_id WHERE hosts.ip_address='%s'" % (ip_address)
+        sel_query = "SELECT default_node_type " \
+                    "FROM get_odu16_ru_conf_table as def " \
+                    "INNER JOIN hosts ON hosts.host_id=def.host_id " \
+                    "WHERE hosts.ip_address='%s'" % (ip_address)
         cursor.execute(sel_query)
         status_result = cursor.fetchall()
         status = 0
@@ -3195,7 +3335,13 @@ def odu100_excel_report_genrating(h):
         status_name = 'Master' if int(status) == 0 else 'Slave'
 
         if int(select_option) == 0:
-            sel_query = "select odu.raScanIndex,(IFNULL((odu.signalStrength),0)),odu.timestamp from  odu100_raScanListTable as odu INNER JOIN hosts as h  on  odu.host_id = h.host_id  where h.ip_address='%s' AND odu.timestamp >= '%s' AND odu.timestamp <='%s' order by odu.timestamp desc" % (
+            sel_query = "select odu.raScanIndex,(IFNULL((odu.signalStrength),0)),odu.timestamp " \
+                        "from  odu100_raScanListTable as odu " \
+                        "INNER JOIN hosts as h  " \
+                        "on  odu.host_id = h.host_id  where h.ip_address='%s' " \
+                        "AND odu.timestamp >= '%s' " \
+                        "AND odu.timestamp <='%s' " \
+                        "order by odu.timestamp desc" % (
                 ip_address, start_time, end_time)
             signal_flag = 0
             if int(limitFlag) == 0:
@@ -3204,7 +3350,14 @@ def odu100_excel_report_genrating(h):
                 limit_data = ' limit 40'
             sel_query += limit_data
         else:
-            sel_query = "select odu.raScanIndex,(IFNULL((odu.signalStrength),0)),odu.timestamp from  odu100_raScanListTable as odu INNER JOIN hosts as h  on  odu.host_id = h.host_id  where h.ip_address='%s' AND date(odu.timestamp) <=current_date() AND date(odu.timestamp) >= current_date()-%s order by odu.timestamp desc" % (ip_address, total_days)
+            sel_query = "select odu.raScanIndex,(IFNULL((odu.signalStrength),0)),odu.timestamp " \
+                        "from  odu100_raScanListTable as odu " \
+                        "INNER JOIN hosts as h  " \
+                        "on  odu.host_id = h.host_id  " \
+                        "where h.ip_address='%s' " \
+                        "AND date(odu.timestamp) <=current_date() " \
+                        "AND date(odu.timestamp) >= current_date()-%s " \
+                        "order by odu.timestamp desc" % (ip_address, total_days)
         cursor.execute(sel_query)
         signal_strength = cursor.fetchall()
         count = 0
@@ -3425,7 +3578,13 @@ def odu100_excel_report_genrating(h):
         critical = []
         time_stamp = []
 
-        sql = "SELECT count(ta.trap_event_id),date(ta.timestamp) ,ta.serevity FROM trap_alarms as ta  where  date(ta.timestamp)<=current_date() and  date(ta.timestamp)>current_date()-%s AND ta.agent_id='%s'  group by serevity,date(ta.timestamp) order by  timestamp desc" % (total_days, ip_address)
+        sql = "SELECT count(ta.trap_event_id),date(ta.timestamp) ,ta.serevity " \
+              "FROM trap_alarms as ta  " \
+              "where  date(ta.timestamp)<=current_date() " \
+              "and  date(ta.timestamp)>current_date()-%s " \
+              "AND ta.agent_id='%s'  " \
+              "group by serevity,date(ta.timestamp) " \
+              "order by  timestamp desc" % (total_days, ip_address)
         cursor.execute(sql)
         trap_result = cursor.fetchall()
         if trap_result is not None:
@@ -3503,11 +3662,20 @@ def odu100_excel_report_genrating(h):
 # ta.serevity,ta.trap_event_id,ta.trap_event_type,ta.trap_receive_date
 # FROM trap_alarm_current as ta WHERE ta.agent_id='%s' AND
 # date(ta.timestamp)=current_date()  order by ta.timestamp "%(ip_address)
-            sql = "SELECT ta.serevity,ta.trap_event_id,ta.trap_event_type,ta.trap_receive_date FROM trap_alarm_current as ta WHERE ta.agent_id='%s' AND ta.timestamp>='%s' AND ta.timestamp<='%s' order by ta.timestamp " % (
+            sql = "SELECT ta.serevity,ta.trap_event_id,ta.trap_event_type,ta.trap_receive_date " \
+                  "FROM trap_alarm_current as ta " \
+                  "WHERE ta.agent_id='%s' " \
+                  "AND ta.timestamp>='%s' " \
+                  "AND ta.timestamp<='%s' order by ta.timestamp " % (
                 ip_address, start_time, end_time)
 
         else:
-            sql = "SELECT ta.serevity,ta.trap_event_id,ta.trap_event_type,ta.trap_receive_date FROM trap_alarm_current as ta WHERE ta.agent_id='%s' AND date(ta.timestamp)=current_date() and  date(ta.timestamp)>current_date()-%s order by ta.timestamp " % (
+            sql = "SELECT ta.serevity,ta.trap_event_id,ta.trap_event_type,ta.trap_receive_date " \
+                  "FROM trap_alarm_current as ta " \
+                  "WHERE ta.agent_id='%s' " \
+                  "AND date(ta.timestamp)=current_date() " \
+                  "and  date(ta.timestamp)>current_date()-%s " \
+                  "order by ta.timestamp " % (
                 ip_address, trap_days)
         cursor.execute(sql)
         trap_result = cursor.fetchall()
@@ -3552,10 +3720,18 @@ def odu100_excel_report_genrating(h):
 
         # event Information excel start here.
         if int(select_option) == 0:
-            sql = "SELECT ta.serevity,ta.trap_event_id,ta.trap_event_type,ta.trap_receive_date FROM trap_alarms as ta WHERE ta.agent_id='%s' AND ta.timestamp>='%s' AND  ta.timestamp<='%s' order by ta.timestamp " % (
+            sql = "SELECT ta.serevity,ta.trap_event_id,ta.trap_event_type,ta.trap_receive_date " \
+                  "FROM trap_alarms as ta " \
+                  "WHERE ta.agent_id='%s' " \
+                  "AND ta.timestamp>='%s' " \
+                  "AND  ta.timestamp<='%s' order by ta.timestamp " % (
                 ip_address, start_time, end_time)
         else:
-            sql = "SELECT ta.serevity,ta.trap_event_id,ta.trap_event_type,ta.trap_receive_date FROM trap_alarms as ta WHERE ta.agent_id='%s' AND date(ta.timestamp)<=current_date() and  date(ta.timestamp)>current_date()-%s order by ta.timestamp " % (
+            sql = "SELECT ta.serevity,ta.trap_event_id,ta.trap_event_type,ta.trap_receive_date " \
+                  "FROM trap_alarms as ta " \
+                  "WHERE ta.agent_id='%s' " \
+                  "AND date(ta.timestamp)<=current_date() " \
+                  "and  date(ta.timestamp)>current_date()-%s order by ta.timestamp " % (
                 ip_address, trap_days)
         cursor.execute(sql)
         trap_result = cursor.fetchall()
@@ -3622,18 +3798,25 @@ def odu100_excel_report_genrating(h):
             days=-(total_days))) + " 23:59:59", '%Y-%m-%d %H:%M:%S')  # convert the string in  datetime.
 
         sql = "SELECT  nagios_hosts.address,nagios_statehistory.state_time,nagios_statehistory.state\
-		    FROM nagios_hosts INNER JOIN nagios_statehistory ON nagios_statehistory.object_id = nagios_hosts.host_object_id\
-		   where nagios_statehistory.state_time between '%s'  and '%s' and nagios_hosts.address='%s'\
-		    order by nagios_statehistory.state_time " % (current_datetime, last_datetime, ip_address)
+                FROM nagios_hosts " \
+                "INNER JOIN nagios_statehistory " \
+                "ON nagios_statehistory.object_id = nagios_hosts.host_object_id\
+                where nagios_statehistory.state_time between '%s'  " \
+                "and '%s' and nagios_hosts.address='%s'\
+                order by nagios_statehistory.state_time " % (current_datetime, last_datetime, ip_address)
         # Execute the query.
         cursor.execute(sql)
         result = cursor.fetchall()
 
         # this query get last status of device
         sel_sql = "SELECT  nagios_hosts.address,nagios_statehistory.state_time,nagios_statehistory.state\
-		    FROM nagios_hosts INNER JOIN nagios_statehistory ON nagios_statehistory.object_id = nagios_hosts.host_object_id\
-		   where nagios_statehistory.state_time between '%s'  and '%s' and nagios_hosts.address='%s'\
-		    order by nagios_statehistory.state_time  desc limit 1" % (last_status_current_time, last_status_end_time, ip_address)
+                    FROM nagios_hosts " \
+                    "INNER JOIN nagios_statehistory " \
+                    "ON nagios_statehistory.object_id = nagios_hosts.host_object_id\
+                    where nagios_statehistory.state_time between '%s'  and '%s' " \
+                    "and nagios_hosts.address='%s'\
+                    order by nagios_statehistory.state_time  desc limit 1" % (
+                    last_status_current_time, last_status_end_time, ip_address)
         # Execute the query.
         cursor.execute(sel_sql)
         last_state = cursor.fetchall()
@@ -3740,9 +3923,13 @@ def odu100_excel_report_genrating(h):
                         down_state.append(0)
             else:
                 sel_sql = "SELECT  nagios_hosts.address,nagios_hoststatus.status_update_time,nagios_hoststatus.current_state\
-				    FROM nagios_hosts INNER JOIN nagios_hoststatus ON nagios_hoststatus.host_object_id = nagios_hosts.host_object_id\
-				   where nagios_hoststatus.status_update_time between '%s'  and '%s' and nagios_hosts.address='%s'\
-				    order by nagios_hoststatus.status_update_time " % (current_datetime, last_datetime, ip_address)
+                            FROM nagios_hosts " \
+                            "INNER JOIN nagios_hoststatus " \
+                            "ON nagios_hoststatus.host_object_id = nagios_hosts.host_object_id\
+                            where nagios_hoststatus.status_update_time between '%s'  " \
+                            "and '%s' and nagios_hosts.address='%s'\
+                            order by nagios_hoststatus.status_update_time " % (
+                    current_datetime, last_datetime, ip_address)
                 cursor.execute(sel_sql)
                 result = cursor.fetchall()
                 for i in range((total_days + 1)):
@@ -3812,8 +3999,9 @@ def odu100_excel_report_genrating(h):
         db.close()
 
 #		if len(crc_result)>0:
-        xls_book.save('/omd/sites/%s/share/check_mk/web/htdocs/download/ubre_specific_report.xls' %
-                      nms_instance)
+        # xls_book.save('/omd/sites/%s/share/check_mk/web/htdocs/download/ubre_specific_report.xls' %
+        #               nms_instance)
+        xls_book.save(defaults.get_config_path(configname="isfolder", folder="download") + "ubre_specific_report.xls")
         output_dict = {"success": 0, 'output': 'file succesfully downloaded'}
         html.write(str(output_dict))
 
@@ -3840,23 +4028,35 @@ def page_tip_ubre_monitor_dashboard(h):
     global html
     html = h
     html_view = ""\
-        "<div id=\"help_container\">"\
-        "<h1>UBR Dashboard</h1>"\
-        "<div>This <strong>Dashboard</strong> show all device silver statistics by graph.</div>"\
-        "<br/>"\
-        "<div>On this page you can see network bandwidth graph,signal strength graph,sync lost graph,outage graph , Crc/Phy Error graph ,Latest trap and latest alarm etc.</div>"\
-        "<br/>"\
-        "<div><input class=\"yo-button yo-small\" type=\"button\" style=\"width: 30px;\" value=\"Advaced Graph\" name=\"odu_graph_show\"> This button open a window on self click event and show more information according to data and time.</div>"\
-        "<div><input class=\"yo-button yo-small\" type=\"button\" style=\"width: 30px;\" value=\"Search\" name=\"odu_graph_show\"> Search the devices.</div>"\
-        "<div><button id=\"odu_report_btn\" class=\"yo-button\" style=\"margin-top: 5px;\" type=\"submit\"><span class=\"save\">Report</span></button>Download the PDF report.</div>"\
-        "<br/>"\
-        "<div><button id=\"odu_report_btn\" class=\"yo-button\" style=\"margin-top: 5px;\" type=\"submit\"><span class=\"report\">Report</span></button>Download the Excel report.</div>"\
-        "<br/>\
-	<br/>\
-        <div><strong>Note:</strong>This page show real time information of ubr device and it page refresh on 5 min time interval.\
-	Search button search device by MAC address and IP address and show information by graph.\
-	Graph button display the graph according to time interval show,this time interval also change by user.\
-	report button provide PDF of all display information by graph \
-        </div>"\
-        "</div>"
+            "<div id=\"help_container\">"\
+            "<h1>UBR Dashboard</h1>"\
+            "<div>This <strong>Dashboard</strong> show all device silver statistics by graph.</div>"\
+            "<br/>"\
+            "<div>On this page you can see network bandwidth graph," \
+            "signal strength graph,sync lost graph,outage graph , " \
+            "Crc/Phy Error graph ,Latest trap and latest alarm etc.</div>"\
+            "<br/>"\
+            "<div>" \
+            "<input class=\"yo-button yo-small\" type=\"button\" style=\"width: 30px;\" value=\"Advaced Graph\" name=\"odu_graph_show\">" \
+            " This button open a window on self click event and show more information according to data and time.</div>"\
+            "<div>" \
+            "<input class=\"yo-button yo-small\" type=\"button\" style=\"width: 30px;\" value=\"Search\" name=\"odu_graph_show\">" \
+            " Search the devices.</div>"\
+            "<div>" \
+            "<button id=\"odu_report_btn\" class=\"yo-button\" style=\"margin-top: 5px;\" type=\"submit\">" \
+            "<span class=\"save\">Report</span></button>Download the PDF report.</div>"\
+            "<br/>"\
+            "<div>" \
+            "<button id=\"odu_report_btn\" class=\"yo-button\" style=\"margin-top: 5px;\" type=\"submit\">" \
+            "<span class=\"report\">Report</span></button>Download the Excel report.</div>"\
+            "<br/>\
+            <br/>\
+            <div><strong>Note:</strong>This page show real time information of " \
+            "ubr device and it page refresh on 5 min time interval.\
+            Search button search device by MAC address and IP address and show information by graph.\
+            Graph button display the graph according to time interval show," \
+            "this time interval also change by user.\
+            report button provide PDF of all display information by graph \
+            </div>"\
+            "</div>"
     html.write(str(html_view))

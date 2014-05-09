@@ -65,14 +65,8 @@ class User_bll(object):
                          `mobile_no` ="%s", \
                          `email_id` ="%s" \
                      WHERE `user_id` = "%s"' % (
-                        first_name, 
-                        last_name, 
-                        company, 
-                        designation, 
-                        address, 
-                        mobile, 
-                        email_id, 
-                        user_id)
+                     first_name, last_name, company, designation, 
+                     address, mobile, email_id, user_id)
 
             cursor.execute(query)
             conn.commit()
@@ -104,9 +98,8 @@ class User_bll(object):
         try:
             conn = MySQLdb.connect(*SystemConfig.get_mysql_credentials())
             cursor = conn.cursor()
-            password = conn.escape_string(password)
             query = """UPDATE `user_login`
-                       SET `old_password`= `password` , `password` = SHA('%s'), `change_password_date` = NOW()
+                       SET `password` = SHA('%s')
                        WHERE `user_id` ="%s"
                     """ %(password, user_id)
             cursor.execute(query)
@@ -139,7 +132,6 @@ class User_bll(object):
     def check_password(user_id, pwd):
         try:
             conn = MySQLdb.connect (*SystemConfig.get_mysql_credentials())
-            pwd = conn.escape_string(pwd)
             cursor = conn.cursor()
             query="""SELECT user_name,user_id  
                       FROM user_login 

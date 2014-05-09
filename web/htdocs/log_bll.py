@@ -19,6 +19,7 @@ from unmp_config import SystemConfig
 from common_bll import EventLog
 from datetime import datetime
 
+import defaults
 
 class Log_bll(object):
 # Required data for given user_id
@@ -254,8 +255,8 @@ class Log_bll(object):
     def get_log_data_report(self, month, log_type, report_type, username, selected_user, date_start, date_end, time_start, time_end):
         try:
             time1 = datetime.now()
-            nms_instance = __file__.split(
-                "/")[3]       # it gives instance name of nagios system
+            # nms_instance = __file__.split(
+            #     "/")[3]       # it gives instance name of nagios system
 
             conn = MySQLdb.connect(*SystemConfig.get_mysql_credentials())
             cursor = conn.cursor()
@@ -310,7 +311,7 @@ class Log_bll(object):
                     "main_title": "Log report",
                     "second_title": "",
                     "headings": ["Time", "Time taken (in sec)", "Username", "Description"],
-                    "path_report": '/omd/sites/%s/share/check_mk/web/htdocs/download/' % nms_instance,
+                    "path_report": defaults.get_config_path(configname="isfolder", folder="download"),
                     "name_report": "log_report.csv",
                     "data_report": log_list,
                 }
@@ -325,7 +326,7 @@ class Log_bll(object):
                     "main_title": "Log report",
                     "second_title": "",
                     "headings": ["Time", "Time taken (in sec)", "Username", "Description"],
-                    "path_report": '/omd/sites/%s/share/check_mk/web/htdocs/download/' % nms_instance,
+                    "path_report":defaults.get_config_path(configname="isfolder", folder="download"),
                     "name_report": "log_report.xls",
                     "data_report": log_list,
                 }

@@ -26,6 +26,8 @@ from datetime import datetime
 
 ccu_bll_obj = CcuCommonSetValidation()
 
+import defaults
+nms_instance = sitename = defaults.site
 
 def ccu_listing(h):
     try:
@@ -52,7 +54,7 @@ def ccu_listing(h):
         """
         global html
         html = h
-        sitename = __file__.split("/")[3]
+        # sitename = __file__.split("/")[3]
         css_list = ["css/custom.css", "css/demo_table_jui.css",
                     "css/jquery-ui-1.8.4.custom.css", 'css/ccpl_jquery_combobox.css']
         javascript_list = ["js/jquery.dataTables.min.js",

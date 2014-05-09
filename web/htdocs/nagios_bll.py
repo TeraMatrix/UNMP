@@ -22,7 +22,9 @@ from unmp_config import SystemConfig
 from json import JSONEncoder
 from common_bll import EventLog, Essential
 
-nms_instance = __file__.split("/")[3]
+import defaults
+nms_instance = defaults.site
+#__file__.split("/")[3]
 
 # Main Nagios Class
 

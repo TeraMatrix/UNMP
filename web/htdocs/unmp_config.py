@@ -14,10 +14,10 @@
 # import packages
 import MySQLdb
 import xml.dom.minidom
-import sys
 import os
 from sqlalchemy import create_engine
 
+import defaults
 
 class SystemConfig(object):
     '''
@@ -41,13 +41,18 @@ class SystemConfig(object):
         load_config_file()     return: [dom object]
         load_config_file()     return: Exception object or None
         '''
-        nms_instance = __file__.split(
-            "/")[3]       					# it gives instance name of nagios system
-        xml_config_file = "/omd/sites/%s/share/check_mk/web/htdocs/xml/config.xml" % nms_instance						# config.xml file path
+        # it gives instance name of nagios system
+        #nms_instance = sitename #__file__.split("/")[3]
+        # we are looking for config file in local directory not in the main directorysitenam
+        xml_config_file = defaults.get_config_path("config", folder="xml")
+        #"/omd/sites/%s/local/share/check_mk/web/htdocs/xml/config.xml" % nms_instance
+        # config.xml file path
         try:
-            if(os.path.isfile(xml_config_file)):						# check config.xml file exist or not
+            if(os.path.isfile(xml_config_file)):
+            # check config.xml file exist or not
                 dom = xml.dom.minidom.parse(
-                    xml_config_file)			# create xml dom object of config.xml file
+                    xml_config_file)
+                    # create xml dom object of config.xml file
                 return dom
             else:
                 print xml_config_file
@@ -125,10 +130,21 @@ class SystemConfig(object):
         get_mysql_credentials()     return: ("localhost","root","root","nms")
         '''
         # return ("localhost","root","root","nms")
+        # credentials = SystemConfig.get_config_attributes(
+        #     "mysql", ["hostname", "username", "password", "schema"], False)
+        # if len(credentials) > 0:
+        #     return tuple(credentials[0])
         credentials = SystemConfig.get_config_attributes(
-            "mysql", ["hostname", "username", "password", "schema"], False)
+            "mysql", ["hostname", "username", "password", "schema", "port", "unix_socket"], False)
         if len(credentials) > 0:
-            return tuple(credentials[0])
+            return tuple([
+                credentials[0][0],
+                credentials[0][1],
+                credentials[0][2],
+                credentials[0][3],
+                int (credentials[0][4]),
+                credentials[0][5]
+            ])
         else:
             return ("localhost", "root", "root", "nms")		# Default Configuration
 
@@ -146,7 +162,8 @@ class SystemConfig(object):
         '''
         # return ("mysql","root","root","localhost","nms")
         credentials = SystemConfig.get_config_attributes(
-            "mysql", ["driver", "username", "password", "hostname", "schema"], False)
+            "mysql", ["driver", "username", "password", "hostname","port",
+                      "schema", "unix_socket"], False)
         if len(credentials) > 0:
             return tuple(credentials[0])
         else:
@@ -181,14 +198,19 @@ class SystemConfig(object):
         @rtype: dictionary
         @note: This function gives you the page credentials.
         @summary: How To use:
-        get_page_credentials()     return: {start_page:"main.py",title:"Network Management System",refresh:1}
+        get_page_credentials()
+        return: {start_page:"main.py",title:"Network Management System",refresh:1}
         '''
         credentials = SystemConfig.get_config_attributes(
             "page", ["start", "title", "refresh"], False)
         if len(credentials) > 0 and len(credentials[0]) > 2:
-            return {"start_page": credentials[0][0], "title": credentials[0][1], "refresh": int(credentials[0][2])}
+            return {"start_page": credentials[0][0],
+                    "title": credentials[0][1],
+                    "refresh": int(credentials[0][2])}
         else:
-            return {"start_page": "main.py", "title": "Network Management System", "refresh": 5}		# Default Configuration
+            return {"start_page": "main.py",
+                    "title": "Network Management System",
+                    "refresh": 5}		# Default Configuration
 
     @staticmethod
     def get_company_details():
@@ -200,14 +222,18 @@ class SystemConfig(object):
         @rtype: dictionary
         @note: This function gives you the company details.
         @summary: How To use:
-        get_company_details()     return: {name:"CCPL","website":"http://www.codescape.in"}
+        get_company_details()
+        return: {name:"CCPL","website":"http://www.codescape.in"}
         '''
         credentials = SystemConfig.get_config_attributes(
             "company", ["name", "website"], False)
         if len(credentials) > 0 and len(credentials[0]) > 1:
-            return {"name": credentials[0][0], "website": credentials[0][1]}
+            return {"name": credentials[0][0],
+                    "website": credentials[0][1]}
         else:
-            return {"name": "CCPL", "website": "http://www.codescape.in"}		# Default Configuration
+            return {"name": "CCPL",
+                    "website": "http://www.codescape.in"}
+            # Default Configuration
 
     @staticmethod
     def get_system_about_us():
@@ -276,14 +302,23 @@ class SystemConfig(object):
         @rtype: dictionary
         @note: This function gives you default snmp read/write community,version and port for hosts.
         @summary: How To use:
-        get_host_snmp_details()     return: {read_comm:"public",write_comm:"private",version:"2c",get_set_port:"161",trap_port:"162"}
+        get_host_snmp_details()
+        return: {read_comm:"public",write_comm:"private",version:"2c",get_set_port:"161",trap_port:"162"}
         '''
         credentials = SystemConfig.get_config_attributes(
             "snmp", ["readcomm", "writecomm", "version", "getsetport", "trapport"], False)
         if len(credentials) > 0 and len(credentials[0]) > 0:
-            return {"read_comm": credentials[0][0], "write_comm": credentials[0][1], "version": credentials[0][2], "get_set_port": credentials[0][3], "trap_port": credentials[0][4]}
+            return {"read_comm": credentials[0][0],
+                    "write_comm": credentials[0][1],
+                    "version": credentials[0][2],
+                    "get_set_port": credentials[0][3],
+                    "trap_port": credentials[0][4]}
         else:
-            return {"read_comm": "public", "write_comm": "private", "version": "2c", "get_set_port": "161", "trap_port": "162"}		# Default Configuration
+            return {"read_comm": "public",
+                    "write_comm": "private",
+                    "version": "2c",
+                    "get_set_port": "161",
+                    "trap_port": "162"}		# Default Configuration
 
     @staticmethod
     def get_host_other_details():
@@ -300,9 +335,11 @@ class SystemConfig(object):
         credentials = SystemConfig.get_config_attributes(
             "host", ["state", "priority"], False)
         if len(credentials) > 0 and len(credentials[0]) > 0:
-            return {"host_state": credentials[0][0], "host_priority": credentials[0][1]}
+            return {"host_state": credentials[0][0],
+                    "host_priority": credentials[0][1]}
         else:
-            return {"host_state": "e", "host_priority": "normal"}		# Default Configuration
+            return {"host_state": "e",
+                    "host_priority": "normal"}		# Default Configuration
 
     @staticmethod
     def get_host_config_details():
@@ -319,9 +356,11 @@ class SystemConfig(object):
         credentials = SystemConfig.get_config_attributes(
             "hostconfig", ["use_template", "check_command"], False)
         if len(credentials) > 0 and len(credentials[0]) > 0:
-            return {"use_template": credentials[0][0], "check_command": credentials[0][1]}
+            return {"use_template": credentials[0][0],
+                    "check_command": credentials[0][1]}
         else:
-            return {"use_template": "generic-host", "check_command": "check-host-alive"}		# Default Configuration
+            return {"use_template": "generic-host",
+                    "check_command": "check-host-alive"}		# Default Configuration
 
     @staticmethod
     def get_service_config_details():
@@ -336,11 +375,22 @@ class SystemConfig(object):
         get_host_other_details()     return: {host_state:"e",host_priority:"normal"}
         '''
         credentials = SystemConfig.get_config_attributes(
-            "serviceconfig", ["use_template", "max_check_attempts", "normal_check_interval", "retry_check_interval"], False)
+            "serviceconfig",
+            ["use_template",
+             "max_check_attempts",
+             "normal_check_interval",
+             "retry_check_interval"],
+            False)
         if len(credentials) > 0 and len(credentials[0]) > 0:
-            return {"use_template": credentials[0][0], "max_check_attempts": credentials[0][1], "normal_check_interval": credentials[0][2], "retry_check_interval": credentials[0][3]}
+            return {"use_template": credentials[0][0],
+                    "max_check_attempts": credentials[0][1],
+                    "normal_check_interval": credentials[0][2],
+                    "retry_check_interval": credentials[0][3]}
         else:
-            return {"use_template": "generic-service", "max_check_attempts": "1", "normal_check_interval": "5", "retry_check_interval": "5"}		# Default Configuration
+            return {"use_template": "generic-service",
+                    "max_check_attempts": "1",
+                    "normal_check_interval": "5",
+                    "retry_check_interval": "5"}		# Default Configuration
 
     @staticmethod
     def get_ping_details():
@@ -352,15 +402,33 @@ class SystemConfig(object):
         @rtype: dictionary
         @note: This function gives you default values of ping discovery.
         @summary: How To use:
-        get_ping_details()     return: {"ping_ip_base":"192.168.0","ping_ip_base_start":"0","ping_ip_base_end":"50","ping_timeout":"5","ping_service_mng":"2"}
+        get_ping_details()
+        return: {"ping_ip_base":"192.168.0",
+        "ping_ip_base_start":"0",
+        "ping_ip_base_end":"50",
+        "ping_timeout":"5",
+        "ping_service_mng":"2"}
         '''
         credentials = SystemConfig.get_config_attributes(
-            "pingdiscovery", ["ip_base", "ip_base_start",
-                              "ip_base_end", "timeout", "service"], False)
+            "pingdiscovery",
+            ["ip_base",
+             "ip_base_start",
+             "ip_base_end",
+             "timeout",
+             "service"],
+            False)
         if len(credentials) > 0 and len(credentials[0]) > 0:
-            return {"ping_ip_base": credentials[0][0], "ping_ip_base_start": credentials[0][1], "ping_ip_base_end": credentials[0][2], "ping_timeout": credentials[0][3], "ping_service_mng": credentials[0][4]}
+            return {"ping_ip_base": credentials[0][0],
+                    "ping_ip_base_start": credentials[0][1],
+                    "ping_ip_base_end": credentials[0][2],
+                    "ping_timeout": credentials[0][3],
+                    "ping_service_mng": credentials[0][4]}
         else:
-            return {"ping_ip_base": "192.168.0", "ping_ip_base_start": "0", "ping_ip_base_end": "50", "ping_timeout": "5", "ping_service_mng": "2"}		# Default Configuration
+            return {"ping_ip_base": "192.168.0",
+                    "ping_ip_base_start": "0",
+                    "ping_ip_base_end": "50",
+                    "ping_timeout": "5",
+                    "ping_service_mng": "2"}		# Default Configuration
 
     @staticmethod
     def get_snmp_details():
@@ -372,14 +440,39 @@ class SystemConfig(object):
         @rtype: dictionary
         @note: This function gives you default values of snmp discovery.
         @summary: How To use:
-        get_snmp_details()     return: {"snmp_ip_base":"192.168.0","snmp_ip_base_start":"0","snmp_ip_base_end":"50","snmp_timeout":"5","snmp_service_mng":"2","snmp_community":"public","snmp_port":"22","snmp_version":"2c"}
+        get_snmp_details()
+        return: {"snmp_ip_base":"192.168.0",
+        "snmp_ip_base_start":"0",
+        "snmp_ip_base_end":"50",
+        "snmp_timeout":"5",
+        "snmp_service_mng":"2",
+        "snmp_community":"public",
+        "snmp_port":"22",
+        "snmp_version":"2c"}
         '''
         credentials = SystemConfig.get_config_attributes(
-            "snmpdiscovery", ["ip_base", "ip_base_start", "ip_base_end", "timeout", "service", "community", "port", "version"], False)
+            "snmpdiscovery",
+            ["ip_base", "ip_base_start", "ip_base_end",
+             "timeout", "service", "community", "port", "version"],
+            False)
         if len(credentials) > 0 and len(credentials[0]) > 0:
-            return {"snmp_ip_base": credentials[0][0], "snmp_ip_base_start": credentials[0][1], "snmp_ip_base_end": credentials[0][2], "snmp_timeout": credentials[0][3], "snmp_service_mng": credentials[0][4], "snmp_community": credentials[0][5], "snmp_port": credentials[0][6], "snmp_version": credentials[0][7]}
+            return {"snmp_ip_base": credentials[0][0],
+                    "snmp_ip_base_start": credentials[0][1],
+                    "snmp_ip_base_end": credentials[0][2],
+                    "snmp_timeout": credentials[0][3],
+                    "snmp_service_mng": credentials[0][4],
+                    "snmp_community": credentials[0][5],
+                    "snmp_port": credentials[0][6],
+                    "snmp_version": credentials[0][7]}
         else:
-            return {"snmp_ip_base": "192.168.0", "snmp_ip_base_start": "0", "snmp_ip_base_end": "50", "snmp_timeout": "5", "snmp_service_mng": "2", "snmp_community": "public", "snmp_port": "22", "snmp_version": "2c"}		# Default Configuration
+            return {"snmp_ip_base": "192.168.0",
+                    "snmp_ip_base_start": "0",
+                    "snmp_ip_base_end": "50",
+                    "snmp_timeout": "5",
+                    "snmp_service_mng": "2",
+                    "snmp_community": "public",
+                    "snmp_port": "22",
+                    "snmp_version": "2c"}		# Default Configuration
 
     @staticmethod
     def get_upnp_details():
@@ -394,8 +487,12 @@ class SystemConfig(object):
         get_upnp_details()     return: {"upnp_timeout":"5","upnp_service_mng":"2"}
         '''
         credentials = SystemConfig.get_config_attributes(
-            "upnpdiscovery", ["timeout", "service"], False)
+            "upnpdiscovery",
+            ["timeout", "service"],
+            False)
         if len(credentials) > 0 and len(credentials[0]) > 0:
-            return {"upnp_timeout": credentials[0][0], "upnp_service_mng": credentials[0][1]}
+            return {"upnp_timeout": credentials[0][0],
+                    "upnp_service_mng": credentials[0][1]}
         else:
-            return {"upnp_timeout": "5", "upnp_service_mng": "2"}		# Default Configuration
+            return {"upnp_timeout": "5",
+                    "upnp_service_mng": "2"}		# Default Configuration

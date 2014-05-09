@@ -13,6 +13,9 @@ from mod_python import apache, util
 from datetime import datetime
 from utility import UNMPDeviceType
 
+import defaults
+
+nms_instance = sitename = defaults.site
 
 def firmware_update_device_show(h):
     """
@@ -201,8 +204,8 @@ def firmware_file_upload(h):
     global html
     html = h
     objbll = FirmwareUpdate()
-    nms_instance = __file__.split(
-        "/")[3]       # it gives instance name of nagios system
+    # nms_instance = __file__.split(
+    #     "/")[3]       # it gives instance name of nagios system
     flag = 0
     upload_file = {}
     device_type = html.req.session['device_type']
@@ -221,8 +224,9 @@ def firmware_file_upload(h):
                 folder_name = "odu16"
             elif device_type == UNMPDeviceType.odu100:
                 folder_name = "odu100"
-            file_path = "/omd/sites/%s/share/check_mk/web/htdocs/download/firmware_downloads/%s/%s" % (
-                nms_instance, folder_name, filename)
+            file_path = defaults.get_config_path(configname="isfolder", folder="download/firmware_downloads") + filename
+                # "/omd/sites/%s/share/check_mk/web/htdocs/download/firmware_downloads/%s/%s" % (
+                # nms_instance, folder_name, filename)
             try:
                 fobj = open(file_path, 'w')  # 'w' is for 'write'
             except Exception as e:

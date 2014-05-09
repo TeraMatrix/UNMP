@@ -15,6 +15,8 @@ from common_bll import host_status_dict
 global err_obj
 err_obj = ErrorMessageClass()
 
+import defaults
+nms_instance = defaults.site
 
 class SelfException(Exception):
     """
@@ -741,8 +743,8 @@ class SPStatusBll(object):
             if master_slave_status['success'] == 0 and master_slave_status['status'] > 0:
                 device_postfix = '(Slave)'
             table_output = []
-            nms_instance = __file__.split(
-                "/")[3]       # it gives instance name of nagios system
+            # nms_instance = __file__.split(
+            #     "/")[3]       # it gives instance name of nagios system
 
             # create the excel file
             xls_book = xlwt.Workbook(encoding='ascii')
@@ -795,7 +797,7 @@ class SPStatusBll(object):
 
             # save file name of excel
             save_file_name = str(device_name[device_type]) + '_' + str(
-                login_user_name) + '_from_'+ str(start_date) + '_to_' + str(end_date) + '.xls'
+                login_user_name) + '_' + str(start_date) + '.xls'
 
 # save_file_name=str(start_date)+'_'str(end_date)+'_'+str(device_name[device_type])+'(%s)_excel.xls'%ip_address
 
@@ -1051,10 +1053,11 @@ class SPStatusBll(object):
                         xls_sheet.write(l, j, str(merge_result[k][j]), style1)
                         xls_sheet.col(j).width = width
                     l = l + 1
-            xls_book.save('/omd/sites/%s/share/check_mk/web/htdocs/download/%s' % (
-                nms_instance, save_file_name))
-            output_dict = {'success': 0, 'output':
-                           'report created successfully.', 'file_name': save_file_name}
+            xls_book.save(defaults.get_config_path(configname="isfolder", folder="download") +  save_file_name)
+            output_dict = {'success': 0,
+                           'output': 'report created successfully.',
+                           'file_name': save_file_name
+            }
             return output_dict
         except MySQLdb as e:
             output_dict = {'success': 1, 'error_msg': 'Error No : 102 ' + str(
@@ -1093,8 +1096,8 @@ class SPStatusBll(object):
             if master_slave_status['success'] == 0 and master_slave_status['status'] > 0:
                 device_postfix = '(Slave)'
             table_output = []
-            nms_instance = __file__.split(
-                "/")[3]       # it gives instance name of nagios system
+            # nms_instance = __file__.split(
+            #     "/")[3]       # it gives instance name of nagios system
             import csv
 
             device_name = {'ap25': 'AP25', 'odu16': 'RM18',
@@ -1290,8 +1293,7 @@ class SPStatusBll(object):
                         hour) + "Hr " + str(minute) + "Min " + str(second) + "Sec"))])
 
             # create the csv file.
-            path = '/omd/sites/%s/share/check_mk/web/htdocs/download/%s' % (
-                nms_instance, save_file_name)
+            path = defaults.get_config_path(configname="isfolder", folder="download") +  save_file_name
             ofile = open(path, "wb")
             writer = csv.writer(ofile, delimiter=',', quotechar='"')
             headings = ['Fields', 'Fields Value']
@@ -1448,10 +1450,9 @@ class SPStatusBll(object):
             ubr_report = []
             MARGIN_SIZE = 14 * mm
             PAGE_SIZE = A4
-            nms_instance = __file__.split("/")[3]
+            # nms_instance = __file__.split("/")[3]
 # pdfdoc="/omd/sites/%s/share/check_mk/web/htdocs/download/IDU4_PDF_Report.pdf"%(nms_instance,start_time,end_time)
-            pdfdoc = "/omd/sites/%s/share/check_mk/web/htdocs/download/%s" % (
-                nms_instance, save_file_name)
+            pdfdoc = defaults.get_config_path(configname="isfolder", folder="download") + save_file_name
             pdf_doc = BaseDocTemplate(pdfdoc, pagesize=PAGE_SIZE,
                 leftMargin=MARGIN_SIZE, rightMargin=MARGIN_SIZE,
                 topMargin=MARGIN_SIZE, bottomMargin=MARGIN_SIZE)
@@ -1463,8 +1464,8 @@ class SPStatusBll(object):
                 id='main_template', frames=[main_frame])
             pdf_doc.addPageTemplates([main_template])
             im = Image(
-                "/omd/sites/%s/share/check_mk/web/htdocs/images/%s/logo.png" % (nms_instance,
-                       theme), width=1.5 * inch, height=.5 * inch)
+                defaults.get_config_path(configname="isfolder", folder="images")+ theme + "/logo.png",
+                width=1.5 * inch, height=.5 * inch)
             im.hAlign = 'LEFT'
             ubr_report.append(im)
             ubr_report.append(Spacer(1, 1))

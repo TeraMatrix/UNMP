@@ -19,7 +19,8 @@ from error_message import ErrorMessageClass
 from specific_dashboard_bll import SPDashboardBll, get_master_slave_value
 err_obj = ErrorMessageClass()
 
-
+import defaults
+nms_instance = defaults.site
 class SelfException(Exception):
     """
     @return: this class return the exception msg.
@@ -324,9 +325,9 @@ class APAdvancedGraph(object):
                     time_list = []
 
             elif table_name.strip() == 'outage':
-                # if (end_date - start_date).days < 5:
-                #     start_date = datetime.strptime(datetime.strftime(datetime.now(
-                #     ) + timedelta(days=-4), "%Y-%m-%d %H:%M:%S"), "%Y-%m-%d %H:%M:%S")
+                if (end_date - start_date).days < 5:
+                    start_date = datetime.strptime(datetime.strftime(datetime.now(
+                    ) + timedelta(days=-4), "%Y-%m-%d %H:%M:%S"), "%Y-%m-%d %H:%M:%S")
                 outage_result = sp_bll_obj.sp_advanced_outage_graph(
                     display_type, ip_address, start_date, end_date)
                 if int(outage_result['success']) != 0:
@@ -644,7 +645,7 @@ class APAdvancedGraph(object):
             import xlwt
             from xlwt import Workbook, easyxf
             xls_book = Workbook(encoding='ascii')
-            nms_instance = __file__.split("/")[3]
+            # nms_instance = __file__.split("/")[3]
             # Excel reproting Style part
             style = xlwt.XFStyle()
             borders = xlwt.Borders()
@@ -820,14 +821,17 @@ class APAdvancedGraph(object):
                         for colx, value in enumerate(headings):
                             xls_sheet.write(i - 1, colx, value, heading_xf)
                     i = i + 1
-                path = '/omd/sites/%s/share/check_mk/web/htdocs/download/%s' % (
-                    nms_instance, save_file_name)
+                #path = '/omd/sites/%s/share/check_mk/web/htdocs/download/%s' % (nms_instance, save_file_name)
+                path = defaults.get_config_path(configname="isfolder", folder="download")
+                path = path + save_file_name
                 xls_book.save(path)
             elif report_type == 'csvReport':
                 save_file_name = str(device_name_list[device_type_id]) + '_' + str(
                     login_user_name) + '_' + str(start_date) + '.csv'
-                path = '/omd/sites/%s/share/check_mk/web/htdocs/download/%s' % (
-                    nms_instance, save_file_name)
+                # path = '/omd/sites/%s/share/check_mk/web/htdocs/download/%s' % (
+                #     nms_instance, save_file_name)
+                path = defaults.get_config_path(configname="isfolder", folder="download")
+                path = path + save_file_name
                 ofile = open(path, "wb")
                 writer = csv.writer(ofile, delimiter=',', quotechar='"')
                 blank_row = ["", "", ""]

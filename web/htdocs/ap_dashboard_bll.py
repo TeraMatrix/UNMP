@@ -16,7 +16,8 @@ from unmp_dashboard_config import DashboardConfig
 from operator import itemgetter
 from utility import Validation
 
-
+import defaults
+nms_instance = defaults.site
 class SelfException(Exception):
     """
     @return: this class return the exception msg.
@@ -453,8 +454,8 @@ class APDashboard(object):
             raise SelfException(
                 'This UBR devices not exists so excel report can not be generated.')  # Check msg
         try:
-            nms_instance = __file__.split(
-                "/")[3]       # it gives instance name of nagios system
+            # nms_instance = __file__.split(
+            #     "/")[3]       # it gives instance name of nagios system
             import xlwt
             from xlwt import Workbook, easyxf
 
@@ -662,7 +663,7 @@ class APDashboard(object):
                     xls_sheet.col(j).width = width
                 i = i + 1
             xls_book.save(
-                '/omd/sites/%s/share/check_mk/web/htdocs/download/AP_excel.xls' % nms_instance)
+                defaults.get_config_path(configname="isfolder", folder="download") + 'AP_excel.xls')
             output_dict = {'success': 0}
             return output_dict
 #    (self,user_id,table_name,x_axis_value,flag,start_date,end_date,ip_address,graph,update_field_name,interface=1,value_cal=1,*column_name):

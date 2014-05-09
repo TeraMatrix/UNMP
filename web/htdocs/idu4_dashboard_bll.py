@@ -1,5 +1,6 @@
 #!/usr/bin/python2.6
 # import the packeges
+from gnome_sudoku import defaults
 import config
 import htmllib
 import time
@@ -16,7 +17,8 @@ from unmp_dashboard_config import DashboardConfig
 from operator import itemgetter
 from utility import Validation
 
-
+import defaults
+nms_instance = sitename =  defaults.site
 class SelfException(Exception):
     """
     @return: this class return the exception msg.
@@ -727,8 +729,8 @@ class IDUDashboard(object):
             raise SelfException(
                 'This UBR devices not exists so excel report can not be generated.')  # Check msg
         try:
-            nms_instance = __file__.split(
-                "/")[3]       # it gives instance name of nagios system
+            # nms_instance = __file__.split(
+            #     "/")[3]       # it gives instance name of nagios system
             # create the start datetime and end datatime
             start_time = datetime.strptime(
                 odu_start_date + ' ' + odu_start_time, "%d/%m/%Y %H:%M")
@@ -1355,8 +1357,10 @@ class IDUDashboard(object):
             # Outage excel end here.
 
             # excel creatig end for network bandwidth
-            xls_book.save(
-                '/omd/sites/%s/share/check_mk/web/htdocs/download/IDU4_excel.xls' % nms_instance)
+            # path = defaults.get_config_path(configname="isfolder", folder="downloads")
+            # path = path + save_file_name
+            #
+            xls_book.save(defaults.get_config_path(configname="isfolder", folder="download") + 'IDU4_excel.xls')
             output_dict = {'success': 0, 'output': str(sel_query)}
             return output_dict
         # Exception Handling
@@ -1376,8 +1380,8 @@ class IDUDashboard(object):
             raise SelfException(
                 'This UBR devices not exists so excel report can not be generated.')  # Check msg
         try:
-            nms_instance = __file__.split(
-                "/")[3]       # it gives instance name of nagios system
+            # nms_instance = __file__.split(
+            #     "/")[3]       # it gives instance name of nagios system
             # create the start datetime and end datatime
             start_time = datetime.strptime(
                 odu_start_date + ' ' + odu_start_time, "%d/%m/%Y %H:%M")
@@ -1412,10 +1416,11 @@ class IDUDashboard(object):
             idu4_report = []
             MARGIN_SIZE = 14 * mm
             PAGE_SIZE = A4
-            nms_instance = __file__.split("/")[3]
+            # nms_instance = defaults.site
 # pdfdoc="/omd/sites/%s/share/check_mk/web/htdocs/download/IDU4_PDF_Report.pdf"%(nms_instance,start_time,end_time)
-            pdfdoc = "/omd/sites/%s/share/check_mk/web/htdocs/download/IDU4_PDF_Report.pdf" % (
-                nms_instance)
+            #xls_book.save(defaults.get_config_path(configname="isfolder", folder="downloads") + 'IDU4_excel.xls')
+            pdfdoc = defaults.get_config_path(configname="isfolder", folder="download") +\
+                     "IDU4_PDF_Report.pdf"
 
             pdf_doc = BaseDocTemplate(pdfdoc, pagesize=PAGE_SIZE,
                                       leftMargin=MARGIN_SIZE, rightMargin=MARGIN_SIZE,
@@ -1428,8 +1433,9 @@ class IDUDashboard(object):
             main_template = PageTemplate(
                 id='main_template', frames=[main_frame])
             pdf_doc.addPageTemplates([main_template])
-            im = Image("/omd/sites/%s/share/check_mk/web/htdocs/images/new/logo.png" %
-                       nms_instance, width=1.5 * inch, height=.5 * inch)
+            im = Image(defaults.get_config_path(configname="isfolder", folder="images/new") + "logo.png",
+                       width=1.5 * inch, height=.5 * inch)
+            #@TODO: PDF function needs to be rechecked in all the reports
             im.hAlign = 'LEFT'
             idu4_report.append(im)
             idu4_report.append(Spacer(1, 1))

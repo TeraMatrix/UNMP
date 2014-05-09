@@ -35,7 +35,8 @@ from common_bll import Essential
 json = ""
 # host chain contain the all host.
 host_chain2 = []
-
+import defaults
+nms_instance = defaults.site
 
 # Exception class for own exception handling.
 class SelfException(Exception):
@@ -77,7 +78,7 @@ def recursive_function(graph, start, parent_len, temp_len):
 def graph(h):
     global html
     html = h
-    nms_instance = __file__.split("/")[3]
+    # nms_instance = __file__.split("/")[3]
     css_list = ["css/base.css", "css/RGraph.css", "css/sidepanel.css"]
     js_list = ["js/excanvas.js", "js/jit.js", "js/RGraph.js"]
     # snapin_list =

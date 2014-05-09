@@ -25,8 +25,11 @@ from json import JSONEncoder
 import traceback
 import time
 
+import defaults
+
 essential_obj = Essential()
 
+nms_instance = sitename = defaults.site
 
 def ap_listing(h):
     try:
@@ -53,7 +56,7 @@ def ap_listing(h):
         """
         global html
         html = h
-        sitename = __file__.split("/")[3]
+        # sitename = __file__.split("/")[3]
         css_list = ["css/demo_table_jui.css",
                     "css/jquery-ui-1.8.4.custom.css", 'css/ccpl_jquery_combobox.css']
         javascript_list = ["js/jquery.dataTables.min.js",

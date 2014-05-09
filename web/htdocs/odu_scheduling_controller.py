@@ -12,7 +12,8 @@ from common_bll import Essential
 from odu_scheduling import OduScheduling
 from odu_scheduling_bll import OduSchedulingBll
 
-
+import defaults
+nms_instance = sitename = defaults.site
 ################################## Scheduling ############################
 def odu_scheduling(h):
     global html
@@ -416,7 +417,7 @@ def get_odu_schedule_details(h):
 def update_odu_scheduler(h):
     global html
     html = h
-    sitename = __file__.split("/")[3]
+    # sitename = __file__.split("/")[3]
     scheduleId = html.var("scheduleId")
     event = "Down"
     startDateTemp = html.var("startDate").split("/")
@@ -519,11 +520,13 @@ def scheduling_firmware_file_upload(h):
     try:
         global html
         html = h
-        nms_instance = __file__.split(
-            "/")[3]       # it gives instance name of nagios system
+        # nms_instance = __file__.split(
+        #     "/")[3]       # it gives instance name of nagios system
         user_id = html.req.session["user_id"]
-        file_path = "/omd/sites/%s/share/check_mk/web/htdocs/download/%s%s.img" % (
-            nms_instance, str(datetime.datetime.now()), user_id)
+        # file_path = "/omd/sites/%s/share/check_mk/web/htdocs/download/%s%s.img" % (
+        #     nms_instance, str(datetime.datetime.now()), user_id)
+        file_path = defaults.get_config_path(configname="isfolder", folder="download") + \
+                    str(datetime.datetime.now()) + "." + user_id + ".img"
         form = util.FieldStorage(h.req, keep_blank_values=1)
         upfile = form.getlist('file_uploader')[0]
         filename = upfile.filename
@@ -535,10 +538,12 @@ def scheduling_firmware_file_upload(h):
             filesplit = filename.split(".")
         if filename == None or filename == "":
             html.write(
-                "<p style=\"font-size:10px;\">Please Choose the file for Upgrade<br/><br/><a href=\"javascript:history.go(-1)\">Back</a><p/>")
+                "<p style=\"font-size:10px;\">Please Choose the file for Upgrade<br/><br/>"
+                "<a href=\"javascript:history.go(-1)\">Back</a><p/>")
         elif filesplit[-1] != "img":
             html.write(
-                "<p style=\"font-size:10px;\">Please Choose right image file for upgrade<br/><br/><a href=\"javascript:history.go(-1)\">Back</a><p/>")
+                "<p style=\"font-size:10px;\">Please Choose right image file for upgrade<br/><br/>"
+                "<a href=\"javascript:history.go(-1)\">Back</a><p/>")
         else:
             html.write(
                 "<p style=\"font-size:10px;\">Firmware Uploading....<br/>Please Wait....<p/>")
@@ -547,7 +552,8 @@ def scheduling_firmware_file_upload(h):
                 "<p style=\"font-size:10px;\">Firmware Upload Successfully<p/>")
             time.sleep(1)
             html.write(
-                "<p style=\"font-size:10px;\">Image Verified Successfully.. you can continue with scheduling..<p/><div id=\"file_uploader_div\" name=\"file_uploader_div\" style=\"display:none\">hello</div>")
+                "<p style=\"font-size:10px;\">Image Verified Successfully.. you can continue with scheduling..<p/>"
+                "<div id=\"file_uploader_div\" name=\"file_uploader_div\" style=\"display:none\">hello</div>")
             html.req.session["firmware_file"] = file_path
             html.req.session.save()
         # time.sleep(3)
@@ -574,7 +580,7 @@ def create_crontab_file(user_name):
     apI1 = 0
     apI2 = 0
     device_type = ""
-    sitename = __file__.split("/")[3]
+    # sitename = __file__.split("/")[3]
     odu_bll_obj = OduSchedulingBll()
     schedule_id = "0"
     try:

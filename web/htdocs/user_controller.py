@@ -24,9 +24,8 @@ def user_settings(h):
     html.new_header("User Settings","user_settings","",css_list,js_list)
     
     is_first_login = html.var('is_first_login')
-    is_password_expired = html.var('is_password_expired')
-    if is_first_login or is_password_expired:
-        html.write(User.change_password(is_first_login, is_password_expired))
+    if is_first_login:
+        html.write(User.change_password())
     else:
         html.write(User.create_settings_form())
         usr=User_bll()

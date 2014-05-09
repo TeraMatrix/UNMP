@@ -39,6 +39,8 @@ host_chain2 = []
 global err_obj
 err_obj = ErrorMessageClass()
 
+import defaults
+nms_instance = sitename = defaults.site
 
 # Exception class for own exception handling.
 class SelfException(Exception):
@@ -112,7 +114,7 @@ def google_host_graph(h):
     html = h
     global json
     global host_chain2
-    sitename = __file__.split("/")[3]
+    # sitename = __file__.split("/")[3]
     service_dic = {}
     relation_dic = {}
     temp = []

@@ -20,7 +20,9 @@ import json
 from json import JSONEncoder
 from operator import itemgetter
 from inventory_bll import HostBll
-from main_reporting_bll import MainOutage
+
+import defaults
+nms_instance = defaults.site
 
 class Report_bll(object):
 # AVERAGE DATA FOR GIVEN DATE PERIOD
@@ -38,12 +40,18 @@ class Report_bll(object):
             if all_host == "" and all_group == "":
                 while(d1 <= d2):
                     date_temp = str(d1)[:10]
-                    query = "Select date(go16.timestamp),hosts.host_name ,hosts.ip_address, AVG(go16.rx_phy_error) , AVG(go16.rx_crc_errors),hostgroups.hostgroup_name\
+                    query = "Select date(go16.timestamp),hosts.host_name ,hosts.ip_address, " \
+                            "AVG(go16.rx_phy_error) , AVG(go16.rx_crc_errors),hostgroups.hostgroup_name\
         	               from get_odu16_ra_tdd_mac_statistics_entry  as go16\
-        	               join ( select host_id,host_name,ip_address,mac_address,host_alias from hosts where device_type_id like 'ODU16%%' group by host_id) as hosts\
+        	               join ( select host_id,host_name,ip_address,mac_address,host_alias " \
+                            "from hosts " \
+                            "where device_type_id like 'ODU16%%' " \
+                            "group by host_id) as hosts\
                            INNER JOIN hosts_hostgroups ON hosts_hostgroups.host_id = hosts.host_id\
                            INNER JOIN hostgroups ON hostgroups.hostgroup_id = hosts_hostgroups.hostgroup_id\
-        	               where go16.host_id=hosts.host_id and go16.timestamp between '%s 00:00:00' and '%s 23:59:59' and go16.rx_phy_error<>123456789 and go16.rx_phy_error<>987654321\
+        	               where go16.host_id=hosts.host_id " \
+                            "and go16.timestamp between '%s 00:00:00' and '%s 23:59:59' " \
+                            "and go16.rx_phy_error<>123456789 and go16.rx_phy_error<>987654321\
         	               group by go16.host_id limit %s " % (date_temp, date_temp, no_of_devices)
                     cursor.execute(query)
                     avg_result = cursor.fetchall()
@@ -55,12 +63,16 @@ class Report_bll(object):
                     date_temp = str(d1)[:10]
                     host_data = str(all_host.split(
                         ',')).replace('[', '(').replace(']', ')')
-                    query = "Select date(go16.timestamp),hosts.host_name,hosts.ip_address, AVG(go16.rx_phy_error) , AVG(go16.rx_crc_errors),hostgroups.hostgroup_name\
+                    query = "Select date(go16.timestamp),hosts.host_name,hosts.ip_address, " \
+                            "AVG(go16.rx_phy_error) , AVG(go16.rx_crc_errors),hostgroups.hostgroup_name\
         	               from get_odu16_ra_tdd_mac_statistics_entry  as go16\
-        	               join ( select host_id,host_name,ip_address,mac_address,host_alias from hosts where device_type_id like 'ODU16%%' group by host_id) as hosts\
+        	               join ( select host_id,host_name,ip_address,mac_address," \
+                            "host_alias from hosts where device_type_id like 'ODU16%%' group by host_id) as hosts\
                            INNER JOIN hosts_hostgroups ON hosts_hostgroups.host_id = hosts.host_id\
                            INNER JOIN hostgroups ON hostgroups.hostgroup_id = hosts_hostgroups.hostgroup_id\
-        	               where go16.host_id=hosts.host_id and go16.timestamp between '%s 00:00:00' and '%s 23:59:59' and go16.rx_phy_error<>123456789 and go16.rx_phy_error<>987654321\
+        	               where go16.host_id=hosts.host_id and go16.timestamp between '%s 00:00:00' " \
+                            "and '%s 23:59:59' and go16.rx_phy_error<>123456789 " \
+                            "and go16.rx_phy_error<>987654321\
 				AND hosts.host_id IN %s\
         	               group by go16.host_id " % (date_temp, date_temp, host_data)
                     cursor.execute(query)
@@ -97,11 +109,16 @@ class Report_bll(object):
             date_temp_1 = str(d1)
             date_temp_2 = str(d2)
             if all_group == '' and all_host == '':
-                query = "Select go16.timestamp,hst.host_name,hst.ip_address,go16.rx_phy_error,go16.rx_crc_errors,hostgroups.hostgroup_name from get_odu16_ra_tdd_mac_statistics_entry  as go16\
-                        join ( select host_id,host_name,ip_address,host_alias from hosts where device_type_id like 'ODU16%%' group by host_id limit %s) as hst\
+                query = "Select go16.timestamp,hst.host_name,hst.ip_address," \
+                        "go16.rx_phy_error,go16.rx_crc_errors,hostgroups.hostgroup_name " \
+                        "from get_odu16_ra_tdd_mac_statistics_entry  as go16\
+                        join ( select host_id,host_name,ip_address,host_alias " \
+                        "from hosts where device_type_id like 'ODU16%%' " \
+                        "group by host_id limit %s) as hst\
                         on go16.host_id=hst.host_id\
                        INNER JOIN hosts_hostgroups ON hosts_hostgroups.host_id = hst.host_id\
-                       INNER JOIN hostgroups ON hostgroups.hostgroup_id = hosts_hostgroups.hostgroup_id\
+                       INNER JOIN hostgroups " \
+                        "ON hostgroups.hostgroup_id = hosts_hostgroups.hostgroup_id\
                         where go16.timestamp between '%s' and '%s' \
                        order by hst.host_id,go16.timestamp asc  " % (no_of_devices, date_temp_1, date_temp_2)
                 cursor.execute(query)
@@ -150,11 +167,17 @@ class Report_bll(object):
             else:
                 host_data = str(
                     all_host.split(',')).replace('[', '(').replace(']', ')')
-                query = "Select go16.timestamp,hst.host_name,hst.ip_address,go16.rx_phy_error,go16.rx_crc_errors,hostgroups.hostgroup_name from get_odu16_ra_tdd_mac_statistics_entry  as go16 \
-                    join ( select host_id,host_name,ip_address from hosts where device_type_id like 'ODU16%%' group by host_id) as hst on go16.host_id=hst.host_id \
+                query = "Select go16.timestamp,hst.host_name,hst.ip_address,go16.rx_phy_error," \
+                        "go16.rx_crc_errors,hostgroups.hostgroup_name " \
+                        "from get_odu16_ra_tdd_mac_statistics_entry  as go16 \
+                    join ( select host_id,host_name,ip_address " \
+                        "from hosts where device_type_id like 'ODU16%%' group by host_id) as hst " \
+                        "on go16.host_id=hst.host_id \
                     INNER JOIN hosts_hostgroups ON hosts_hostgroups.host_id = hst.host_id \
                     INNER JOIN hostgroups ON hostgroups.hostgroup_id = hosts_hostgroups.hostgroup_id\
-                    where go16.timestamp between '%s' and '%s' AND hst.host_id IN %s order by hst.host_id,go16.timestamp asc " % (date_temp_1, date_temp_2, host_data)
+                    where go16.timestamp between '%s' and '%s' " \
+                        "AND hst.host_id IN %s " \
+                        "order by hst.host_id,go16.timestamp asc " % (date_temp_1, date_temp_2, host_data)
                 cursor.execute(query)
                 res = cursor.fetchall()
                 if(len(res) == 0):
@@ -227,8 +250,13 @@ class Report_bll(object):
             date_temp_1 = str(d1)
             date_temp_2 = str(d2)
             if all_group == '' and all_host == '':
-                query = " Select go16.timestamp,hst.host_name,hst.ip_address,hst.host_alias,go16.sysc_lost_counter,hostgroups.hostgroup_name from get_odu16_synch_statistics_table  as go16\
-                        join ( select host_id,host_name,ip_address from hosts where device_type_id like 'ODU16%%' group by host_id limit %s) as hst\
+                query = " Select go16.timestamp,hst.host_name,hst.ip_address,hst.host_alias," \
+                        "go16.sysc_lost_counter,hostgroups.hostgroup_name " \
+                        "from get_odu16_synch_statistics_table  as go16\
+                        join ( select host_id,host_name,ip_address " \
+                        "from hosts " \
+                        "where device_type_id like 'ODU16%%' " \
+                        "group by host_id limit %s) as hst\
                         on go16.host_id=hst.host_id\
                        INNER JOIN hosts_hostgroups ON hosts_hostgroups.host_id = hst.host_id\
                        INNER JOIN hostgroups ON hostgroups.hostgroup_id = hosts_hostgroups.hostgroup_id\
@@ -266,8 +294,12 @@ class Report_bll(object):
             else:
                 host_data = str(
                     all_host.split(',')).replace('[', '(').replace(']', ')')
-                query = " Select go16.timestamp,hst.host_name,hst.ip_address,hst.host_alias,go16.sysc_lost_counter,hostgroups.hostgroup_name from get_odu16_synch_statistics_table  as go16\
-                        join ( select host_id,host_name,ip_address,host_alias from hosts where device_type_id like 'ODU16%%' group by host_id limit %s) as hst\
+                query = " Select go16.timestamp,hst.host_name,hst.ip_address," \
+                        "hst.host_alias,go16.sysc_lost_counter,hostgroups.hostgroup_name " \
+                        "from get_odu16_synch_statistics_table  as go16\
+                        join ( select host_id,host_name,ip_address,host_alias " \
+                        "from hosts where device_type_id like 'ODU16%%' " \
+                        "group by host_id limit %s) as hst\
                         on go16.host_id=hst.host_id\
                        INNER JOIN hosts_hostgroups ON hosts_hostgroups.host_id = hst.host_id\
                        INNER JOIN hostgroups ON hostgroups.hostgroup_id = hosts_hostgroups.hostgroup_id\
@@ -343,12 +375,16 @@ class Report_bll(object):
                 while(d1 <= d2):
                     flag = 0
                     date_temp = str(d1)[:10]
-                    query = "Select date(go16.timestamp), hosts.host_name , hosts.ip_address , AVG(go16.sig_strength), go16.timeslot_index , hostgroups.hostgroup_name , go16.ssidentifier \
+                    query = "Select date(go16.timestamp), hosts.host_name , hosts.ip_address , " \
+                            "AVG(go16.sig_strength), go16.timeslot_index , hostgroups.hostgroup_name , go16.ssidentifier \
                     from get_odu16_peer_node_status_table AS go16\
-                    join ( select host_id,host_name,ip_address from hosts where device_type_id like 'ODU16%%' group by host_id limit %s ) as hosts\
+                    join ( select host_id,host_name,ip_address " \
+                            "from hosts where device_type_id like 'ODU16%%' " \
+                            "group by host_id limit %s ) as hosts\
                     INNER JOIN hosts_hostgroups ON hosts_hostgroups.host_id = hosts.host_id\
                     INNER JOIN hostgroups ON hostgroups.hostgroup_id = hosts_hostgroups.hostgroup_id\
-                    where go16.host_id=hosts.host_id and go16.timestamp between '%s 00:00:00' and '%s 23:59:59' and go16.sig_strength<>'-110' and go16.sig_strength<>'-111' \
+                    where go16.host_id=hosts.host_id and go16.timestamp between '%s 00:00:00' " \
+                            "and '%s 23:59:59' and go16.sig_strength<>'-110' and go16.sig_strength<>'-111' \
                     group by go16.host_id,go16.timeslot_index " % (no_of_devices, date_temp, date_temp)
                     cursor.execute(query)
                     signal_strength = cursor.fetchall()
@@ -469,13 +505,21 @@ class Report_bll(object):
                 while(d1 <= d2):
                     flag = 0
                     date_temp = str(d1)[:10]
-                    query = "Select date(go16.timestamp), hosts.host_name , hosts.ip_address , AVG(go16.sig_strength), go16.timeslot_index,hostgroups.hostgroup_name,go16.ssidentifier \
-			       from get_odu16_peer_node_status_table AS go16\
-			       join ( select host_id,host_name,ip_address from hosts where device_type_id like 'ODU16%%' group by host_id ) as hosts\
-			       INNER JOIN hosts_hostgroups ON hosts_hostgroups.host_id = hosts.host_id\
-			       INNER JOIN hostgroups ON hostgroups.hostgroup_id = hosts_hostgroups.hostgroup_id\
-			       where go16.host_id=hosts.host_id and go16.timestamp between '%s 00:00:00' and '%s 23:59:59' and go16.sig_strength<>'-110' and go16.sig_strength<>'-111' \
-			       AND hosts.host_id IN %s group by go16.host_id,go16.timeslot_index " % (date_temp, date_temp, host_data)
+                    query = "Select date(go16.timestamp), hosts.host_name , hosts.ip_address , " \
+                                "AVG(go16.sig_strength), go16.timeslot_index,hostgroups.hostgroup_name,go16.ssidentifier \
+                        from get_odu16_peer_node_status_table AS go16\
+                        join ( select host_id,host_name,ip_address " \
+                                "from hosts where device_type_id like 'ODU16%%' " \
+                                "group by host_id ) as hosts\
+                        INNER JOIN hosts_hostgroups " \
+                                "ON hosts_hostgroups.host_id = hosts.host_id\
+                        INNER JOIN hostgroups " \
+                                "ON hostgroups.hostgroup_id = hosts_hostgroups.hostgroup_id\
+                        where go16.host_id=hosts.host_id and go16.timestamp between '%s 00:00:00' " \
+                                "and '%s 23:59:59' and go16.sig_strength<>'-110' " \
+                                "and go16.sig_strength<>'-111' \
+                        AND hosts.host_id IN %s " \
+                                "group by go16.host_id,go16.timeslot_index " % (date_temp, date_temp, host_data)
                     cursor.execute(query)
                     signal_strength = cursor.fetchall()
                     d1 = d1 + timedelta(days=1)
@@ -632,10 +676,16 @@ class Report_bll(object):
             date_temp_1 = str(d1)
             date_temp_2 = str(d2)
             if all_group == '' and all_host == '':
-                query = "Select go16.timestamp , hst.host_name , hst.ip_address , go16.sig_strength, go16.timeslot_index,hostgroups.hostgroup_name,go16.ssidentifier from get_odu16_peer_node_status_table  as go16\
-                    join ( select host_id,host_name,ip_address from hosts where device_type_id like 'ODU16%%' group by host_id limit %s) as hst ON go16.host_id=hst.host_id\
-                    INNER JOIN hosts_hostgroups ON hosts_hostgroups.host_id = hst.host_id\
-                    INNER JOIN hostgroups ON hostgroups.hostgroup_id = hosts_hostgroups.hostgroup_id\
+                query = "Select go16.timestamp , hst.host_name , hst.ip_address , " \
+                        "go16.sig_strength, go16.timeslot_index,hostgroups.hostgroup_name," \
+                        "go16.ssidentifier from get_odu16_peer_node_status_table  as go16\
+                    join ( select host_id,host_name,ip_address from hosts " \
+                        "where device_type_id like 'ODU16%%' " \
+                        "group by host_id limit %s) as hst ON go16.host_id=hst.host_id\
+                    INNER JOIN hosts_hostgroups " \
+                        "ON hosts_hostgroups.host_id = hst.host_id\
+                    INNER JOIN hostgroups " \
+                        "ON hostgroups.hostgroup_id = hosts_hostgroups.hostgroup_id\
                     where go16.timestamp between '%s' and '%s'\
                     order by go16.timestamp asc,hst.host_name asc,go16.timeslot_index asc" % (no_of_devices, date_temp_1, date_temp_2)
                 cursor.execute(query)
@@ -774,11 +824,18 @@ class Report_bll(object):
             else:
                 host_data = str(
                     all_host.split(',')).replace('[', '(').replace(']', ')')
-                query = "Select go16.timestamp , hst.host_name , hst.ip_address , go16.sig_strength, go16.timeslot_index,hostgroups.hostgroup_name,go16.ssidentifier from get_odu16_peer_node_status_table  as go16\
-                join ( select host_id,host_name,ip_address from hosts where device_type_id like 'ODU16%%' group by host_id) as hst ON go16.host_id=hst.host_id\
-                INNER JOIN hosts_hostgroups ON hosts_hostgroups.host_id = hst.host_id\
-                INNER JOIN hostgroups ON hostgroups.hostgroup_id = hosts_hostgroups.hostgroup_id\
-                where go16.timestamp between '%s' and '%s' AND hst.host_id IN %s order by go16.timestamp asc ,hst.host_name asc, go16.timeslot_index asc" % (date_temp_1, date_temp_2, host_data)
+                query = "Select go16.timestamp , hst.host_name , hst.ip_address , " \
+                        "go16.sig_strength, go16.timeslot_index,hostgroups.hostgroup_name," \
+                        "go16.ssidentifier from get_odu16_peer_node_status_table  as go16\
+                join ( select host_id,host_name,ip_address from hosts " \
+                        "where device_type_id like 'ODU16%%' group by host_id) as hst ON go16.host_id=hst.host_id\
+                INNER JOIN hosts_hostgroups " \
+                        "ON hosts_hostgroups.host_id = hst.host_id\
+                INNER JOIN hostgroups " \
+                        "ON hostgroups.hostgroup_id = hosts_hostgroups.hostgroup_id\
+                where go16.timestamp between '%s' and '%s' " \
+                        "AND hst.host_id IN %s order by go16.timestamp asc ,hst.host_name asc, go16.timeslot_index asc" % (
+                    date_temp_1, date_temp_2, host_data)
                 cursor.execute(query)
                 signal_strength = cursor.fetchall()
                 i = 0
@@ -1471,8 +1528,8 @@ class Report_bll(object):
 
     # reporting create fucntionaltiy started from here.
     def crc_excel_creating(self, crc_avg, crc_total):
-        nms_instance = __file__.split(
-            "/")[3]       # it gives instance name of nagios system
+        # nms_instance = __file__.split(
+        #     "/")[3]       # it gives instance name of nagios system
         try:
             flag = 0
             if(crc_avg["success"] == 1):
@@ -1713,14 +1770,14 @@ class Report_bll(object):
 
             # total crc and phy error creation end .
             xls_book.save(
-                '/omd/sites/%s/share/check_mk/web/htdocs/download/error_excel.xls' % nms_instance)
+                defaults.get_config_path(configname="isfolder", folder="download") + "error_excel.xls")
             return '0'
         except Exception, e:
             return str(e)
 
     def nw_bandwith_excel_creating(self, nw_total):
-        nms_instance = __file__.split(
-            "/")[3]       # it gives instance name of nagios system
+        # nms_instance = __file__.split(
+        #     "/")[3]       # it gives instance name of nagios system
         try:
             flag = 0
             if(nw_total["success"] == 1):
@@ -1859,15 +1916,15 @@ class Report_bll(object):
                     xls_sheet.write(
                         i, j, nw_total[len(nw_total) - 1][j], style1)
                     xls_sheet.col(j).width = width
-            xls_book.save(
-                '/omd/sites/%s/share/check_mk/web/htdocs/download/nw_bandwidth_excel.xls' % nms_instance)
+            xls_book.save(defaults.get_config_path(configname="isfolder", folder="download") + "nw_bandwidth_excel.xls")
+                # '/omd/sites/%s/share/check_mk/web/htdocs/download/nw_bandwidth_excel.xls' % nms_instance)
             return '0'
         except Exception, e:
             return str(e[-1])
 
     def rssi_excel_creating(self, rssi_avg, rssi_total):
-        nms_instance = __file__.split(
-            "/")[3]       # it gives instance name of nagios system
+        # nms_instance = __file__.split(
+        #     "/")[3]       # it gives instance name of nagios system
         try:
             flag = 0
             if(rssi_avg["success"] == 1):
@@ -2085,15 +2142,15 @@ class Report_bll(object):
                         i, j, rssi_total[len(rssi_total) - 1][j], style1)
                     xls_sheet.col(j).width = width
 
-            xls_book.save(
-                '/omd/sites/%s/share/check_mk/web/htdocs/download/rssi_excel.xls' % nms_instance)
+            xls_book.save(defaults.get_config_path(configname="isfolder", folder="download") + "rssi_excel.xls")
+            #'/omd/sites/%s/share/check_mk/web/htdocs/download/rssi_excel.xls' % nms_instance)
             return '0'
         except Exception, e:
             return str(e)
 
     def outage_excel_creating(self, outage_total):
-        nms_instance = __file__.split(
-            "/")[3]       # it gives instance name of nagios system
+        # nms_instance = __file__.split(
+        #     "/")[3]       # it gives instance name of nagios system
         try:
             flag = 0
             if(outage_total["success"] == 1):
@@ -2225,8 +2282,8 @@ class Report_bll(object):
                         i, j, outage_total[len(outage_total) - 1][j], style1)
                     xls_sheet.col(j).width = width
             # save the excel report
-            xls_book.save(
-                '/omd/sites/%s/share/check_mk/web/htdocs/download/outage_excel.xls' % nms_instance)
+            xls_book.save(defaults.get_config_path(configname="isfolder", folder="download") + "outage_excel.xls")
+            # '/omd/sites/%s/share/check_mk/web/htdocs/download/outage_excel.xls' % nms_instance)
             return '0'
         except Exception, e:
             return str(e)
@@ -2436,8 +2493,8 @@ class Report_bll(object):
             conn.close()
 
     def event_excel_creating(self, event_total, alarm_result):
-        nms_instance = __file__.split(
-            "/")[3]       # it gives instance name of nagios system
+        # nms_instance = __file__.split(
+        #     "/")[3]       # it gives instance name of nagios system
         try:
             if len(event_total) == 0:
                 return 1
@@ -2700,8 +2757,8 @@ class Report_bll(object):
                         xls_sheet.write(i, j, alarm_result[k][j], style1)
                         xls_sheet.col(j).width = width
                 i = i + 1
-            xls_book.save(
-                '/omd/sites/%s/share/check_mk/web/htdocs/download/Event_excel_report.xls' % nms_instance)
+            xls_book.save(defaults.get_config_path(configname="isfolder", folder="download") + "Event_excel_report.xls")
+                # '/omd/sites/%s/share/check_mk/web/htdocs/download/Event_excel_report.xls' % nms_instance)
             return '0'
         except Exception, e:
             return str(e)
@@ -2772,8 +2829,8 @@ class Report_bll(object):
 
     def inventory_excel_report_creation(self, user_id):
         try:
-            nms_instance = __file__.split(
-                "/")[3]       # it gives instance name of nagios system
+            # nms_instance = __file__.split(
+            #     "/")[3]       # it gives instance name of nagios system
             # create the excel file
             xls_book = Workbook(encoding='ascii')
 
@@ -3182,9 +3239,9 @@ class Report_bll(object):
                     xls_sheet.write(i, j, discovered_host[k][j], style1)
                     xls_sheet.col(j).width = width
                 i = i + 1
-
-            xls_book.save(
-                '/omd/sites/%s/share/check_mk/web/htdocs/download/inventory_report.xls' % nms_instance)
+            xls_book.save(defaults.get_config_path(configname="isfolder", folder="download") + "inventory_report.xls")
+            # xls_book.save(
+            #     '/omd/sites/%s/share/check_mk/web/htdocs/download/inventory_report.xls' % nms_instance)
             return 0
             # Exception Handling
         except Exception as e:
@@ -3518,12 +3575,8 @@ def get_outage(no_of_devices, date1, date2, time1, time2, all_group, all_host):
                 t_list = ((status_result[0][0], status_result[0][1], t_date, status_result[0][3], status_result[0][
                           4], status_result[0][5], status_result[0][6]),)
                 result = t_list + result
-
-            m = MainOutage(result, datetime.strptime(end_date, "%Y-%m-%d %H:%M:%S"), datetime.strptime(
-                    start_date, "%Y-%m-%d %H:%M:%S"))
-            temp_res = m.get_outage()
-            # temp_res = main_outage(
-            #     result, datetime.strptime(end_date, "%Y-%m-%d %H:%M:%S"))
+            temp_res = main_outage(
+                result, datetime.strptime(end_date, "%Y-%m-%d %H:%M:%S"))
             if str(temp_res['success']) == "0":
                 li_res = temp_res['result']
                 tr = []

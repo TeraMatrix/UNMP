@@ -28,6 +28,7 @@ from operator import itemgetter
 from utility import Validation
 from common_bll import Essential
 
+import defaults
 
 def get_dashboard_data():
     devcie_type_attr = ['id', 'refresh_time', 'time_diffrence']
@@ -1477,8 +1478,13 @@ def odu_device_report(h):
         odu_report = []
         MARGIN_SIZE = 14 * mm
         PAGE_SIZE = A4
-        nms_instance = __file__.split("/")[3]
-        pdfdoc = '/omd/sites/%s/share/check_mk/web/htdocs/report/odutable.pdf' % nms_instance
+        # nms_instance = __file__.split("/")[3]
+        # pdfdoc = '/omd/sites/%s/share/check_mk/web/htdocs/report/odutable.pdf' % nms_instance
+
+        save_file_name = "odutable.pdf"
+        pdfdoc = defaults.get_config_path(configname="isfolder", folder="report") + save_file_name
+
+
         pdf_doc = BaseDocTemplate(pdfdoc, pagesize=PAGE_SIZE,
                                   leftMargin=MARGIN_SIZE, rightMargin=MARGIN_SIZE,
                                   topMargin=MARGIN_SIZE, bottomMargin=MARGIN_SIZE)
@@ -1490,8 +1496,9 @@ def odu_device_report(h):
         main_template = PageTemplate(
             id='main_template', frames=[main_frame])
         pdf_doc.addPageTemplates([main_template])
-        im = Image("/omd/sites/%s/share/check_mk/web/htdocs/images/new/logo.png" %
-                   nms_instance, width=1.5 * inch, height=.5 * inch)
+        im = Image(
+            defaults.get_config_path(configname="isfolder", folder="images")+ theme + "/logo.png",
+            width=1.5 * inch, height=.5 * inch)
         im.hAlign = 'LEFT'
         odu_report.append(im)
         odu_report.append(Spacer(1, 1))
@@ -3538,8 +3545,10 @@ def odu_excel_report_genrating(h):
         db.close()
 
 #		if len(crc_result)>0:
-        xls_book.save('/omd/sites/%s/share/check_mk/web/htdocs/download/odu_specific_excel_report.xls' %
-                      nms_instance)
+        xls_book.save(defaults.get_config_path(configname="isfolder", folder="download") + "odu_specific_excel_report.xls")
+
+        # xls_book.save('/omd/sites/%s/share/check_mk/web/htdocs/download/odu_specific_excel_report.xls' %
+        #               nms_instance)
         output_dict = {"success": 0, 'output':
             'Report Generated Successfully.'}
         html.write(str(output_dict))
@@ -3568,7 +3577,8 @@ def page_tip_ubr_monitor_dashboard(h):
         "<h1>UBR Dashboard</h1>"\
         "<div>This <strong>Dashboard</strong> show all device silver statistics by graph.</div>"\
         "<br/>"\
-        "<div>On this page you can see network bandwidth graph,signal strength graph,sync lost graph,outage graph , Crc/Phy Error graph ,Latest trap and latest alarm etc.</div>"\
+        "<div>On this page you can see network bandwidth graph,signal strength graph,sync lost graph,outage graph , " \
+        "Crc/Phy Error graph ,Latest trap and latest alarm etc.</div>"\
         "<br/>"\
         "<div><input class=\"yo-button yo-small\" type=\"button\" style=\"width: 30px;\" value=\"Advaced Graph\" name=\"odu_graph_show\"> This button open a window on self click event and show more information according to data and time.</div>"\
         "<div><input class=\"yo-button yo-small\" type=\"button\" style=\"width: 30px;\" value=\"Search\" name=\"odu_graph_show\"> Search the devices.</div>"\

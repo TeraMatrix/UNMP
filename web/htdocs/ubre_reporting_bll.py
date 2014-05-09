@@ -19,6 +19,7 @@ from json import JSONEncoder
 from operator import itemgetter
 from inventory_bll import HostBll
 
+import defaults
 
 class Report_bll(object):
 # AVERAGE DATA FOR GIVEN DATE PERIOD
@@ -1122,8 +1123,7 @@ class Report_bll(object):
 
     # reporting create fucntionaltiy started from here.
     def ubre_crc_excel_creating(self, crc_avg, crc_total):
-        nms_instance = __file__.split(
-            "/")[3]       # it gives instance name of nagios system
+        nms_instance = defaults.site
         try:
             flag = 0
             if(crc_avg["success"] == 1):
@@ -1364,15 +1364,13 @@ class Report_bll(object):
                     xls_sheet.col(j).width = width
 
             # total crc and phy error creation end .
-            xls_book.save(
-                '/omd/sites/%s/share/check_mk/web/htdocs/download/error_excel.xls' % nms_instance)
+            xls_book.save(defaults.get_config_path("isfolder",folder="download") + "error_excel.xls")
             return '0'
         except Exception, e:
             return str(e)
 
     def ubre_nw_bandwith_excel_creating(self, nw_total):
-        nms_instance = __file__.split(
-            "/")[3]       # it gives instance name of nagios system
+        nms_instance = defaults.site
         try:
             flag = 0
             if(nw_total["success"] == 1):
@@ -1511,15 +1509,13 @@ class Report_bll(object):
                     xls_sheet.write(
                         i, j, nw_total[len(nw_total) - 1][j], style1)
                     xls_sheet.col(j).width = width
-            xls_book.save(
-                '/omd/sites/%s/share/check_mk/web/htdocs/download/nw_bandwidth_excel.xls' % nms_instance)
+            xls_book.save(defaults.get_config_path("isfolder",folder="download") + "nw_bandwidth_excel.xls")
             return '0'
         except Exception, e:
             return str(e[-1])
 
     def ubre_rssi_excel_creating(self, rssi_avg, rssi_total):
-        nms_instance = __file__.split(
-            "/")[3]       # it gives instance name of nagios system
+        nms_instance = defaults.site
         try:
             flag = 0
             if(rssi_avg["success"] == 1):
@@ -1739,9 +1735,7 @@ class Report_bll(object):
                     xls_sheet.write(
                         i, j, rssi_total[len(rssi_total) - 1][j], style1)
                     xls_sheet.col(j).width = width
-
-            xls_book.save(
-                '/omd/sites/%s/share/check_mk/web/htdocs/download/rssi_excel.xls' % nms_instance)
+            xls_book.save(defaults.get_config_path(configname="isfolder", folder="download") + "rssi_excel.xls")
             return '0'
         except Exception, e:
             return str(e)

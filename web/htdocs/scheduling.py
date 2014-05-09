@@ -22,6 +22,7 @@ from lib import *
 
 ################################## Scheduling ############################
 
+sitename = defaults.site
 
 def ap_scheduling(h):
     global html
@@ -763,7 +764,7 @@ def get_ap_schedule_details(h):
 def update_ap_scheduler(h):
     global html
     html = h
-    sitename = __file__.split("/")[3]
+    # sitename = __file__.split("/")[3]
     scheduleId = html.var("scheduleId")
     event = "Down"
     startDateTemp = html.var("startDate").split("/")

@@ -38,9 +38,7 @@ class ManageLoginBll(object):
             # user_login) as ul on lg.user_name=ul.user_name join (select
             # first_name,last_name,user_id from users ) as users on
             # users.user_id=ul.user_id order by lg.login_time"
-            query = "SELECT lg.user_name , CONCAT(CONCAT(users.first_name,' '),users.last_name) , \
-                            groups.group_name, lg.login_time ,lg.is_logged_in, lg.last_accessed_time  \
-                    FROM `login_info` as lg\
+            query = "SELECT lg.user_name , CONCAT(CONCAT(users.first_name,' '),users.last_name) , groups.group_name, lg.login_time ,lg.is_logged_in  FROM `login_info` as lg\
 			 JOIN (select user_id ,user_name from user_login) as ul on lg.user_name=ul.user_name \
 			 JOIN (select first_name,last_name,user_id from users ) as users  on users.user_id=ul.user_id \
 			 JOIN (select user_id, group_id from users_groups) as ug on ug.user_id= users.user_id \

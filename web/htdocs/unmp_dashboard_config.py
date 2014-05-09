@@ -11,12 +11,15 @@
 @see: http://www.codescape.in
 '''
 
+#@TODO : REMOVE THIS FILE from Project
+
 # import packages
 import MySQLdb
 import xml.dom.minidom
 import sys
 import os
 
+import unmp_config
 
 class DashboardConfig(object):
     '''
@@ -40,9 +43,9 @@ class DashboardConfig(object):
                     load_config_file()     return: [dom object]
                     load_config_file()     return: Exception object or None
         '''
-        nms_instance = __file__.split(
-            "/")[3]                           # it gives instance name of nagios system
-        xml_config_file = "/omd/sites/%s/share/check_mk/web/htdocs/xml/dashboard_config.xml" % nms_instance                        # config.xml file path
+        import defaults
+        nms_instance = defaults.site
+        xml_config_file = defaults.get_config_path(configname="dashboard_config", folder="xml")
         try:
             if(os.path.isfile(xml_config_file)):                        # check config.xml file exist or not
                 dom = xml.dom.minidom.parse(

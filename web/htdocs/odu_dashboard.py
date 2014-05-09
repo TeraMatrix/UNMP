@@ -5,6 +5,7 @@ import htmllib
 import time
 import cgi
 import MySQLdb
+import defaults
 from nms_config import *
 from datetime import datetime
 from datetime import timedelta
@@ -572,8 +573,12 @@ def odu_common_dashboard_report_generating(h):
         odu_common_report = []
         MARGIN_SIZE = 14 * mm
         PAGE_SIZE = A4
-        nms_instance = __file__.split("/")[3]
-        pdfdoc = '/omd/sites/%s/share/check_mk/web/htdocs/report/odu_common_table.pdf' % nms_instance
+        # nms_instance = __file__.split("/")[3]
+        # pdfdoc = '/omd/sites/%s/share/check_mk/web/htdocs/report/odu_common_table.pdf' % nms_instance
+
+        save_file_name = "odu_common_table.pdf"
+        pdfdoc = defaults.get_config_path(configname="isfolder", folder="report") + save_file_name
+
         pdf_doc = BaseDocTemplate(pdfdoc, pagesize=PAGE_SIZE,
                                   leftMargin=MARGIN_SIZE, rightMargin=MARGIN_SIZE,
                                   topMargin=MARGIN_SIZE, bottomMargin=MARGIN_SIZE)
@@ -585,8 +590,11 @@ def odu_common_dashboard_report_generating(h):
         main_template = PageTemplate(
             id='main_template', frames=[main_frame])
         pdf_doc.addPageTemplates([main_template])
-        im = Image("/omd/sites/%s/share/check_mk/web/htdocs/images/new/logo.png" %
-                   nms_instance, width=1.5 * inch, height=.5 * inch)
+        # im = Image("/omd/sites/%s/share/check_mk/web/htdocs/images/new/logo.png" %
+        #            nms_instance, width=1.5 * inch, height=.5 * inch)
+        im = Image(
+            defaults.get_config_path(configname="isfolder", folder="images")+ theme + "/logo.png",
+            width=1.5 * inch, height=.5 * inch)
         im.hAlign = 'LEFT'
         odu_common_report.append(im)
         odu_common_report.append(Spacer(1, 1))

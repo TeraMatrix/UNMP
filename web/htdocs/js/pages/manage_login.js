@@ -1,18 +1,18 @@
 /*
- *
+ * 
  * Author			:	Mahipal Choudhary
  * Version			:	0.1
  * Modify Date			:	07-Dec-2011
  * Purpose			:	Define All Required Javascript Functions for report of log viewing
  * Require Library		:	jquery 1.4 or higher version and jquery.validate
  * Browser			:	Mozila FireFox [3.x or higher] and Chrome [all versions]
- *
+ * 
  * Copyright (c) 2011 Codescape Consultant Private Limited
- *
+ * 
  */
-
+ 
 var aSelectedLog = [];				// initialize parameters for table
-var oTableLogh = null;
+var oTableLogh = null;		
 var $spinLoading = null;
 var $spinMainLoading  = null;
 var delUserName=null;
@@ -21,7 +21,7 @@ $(document).ready(function(){
 	$spinLoading = $("div#spin_loading");        // create object that hold loading circle
 	$spinMainLoading = $("div#main_loading");    // create object that hold loading square
 	get_log();
-
+	
 	$('#login_user_table tbody tr').live('click', function () {
 		var id = this.id;
 		var index = jQuery.inArray(id, aSelectedLog);
@@ -73,24 +73,14 @@ function log_data(tabledata)
 				}
 				return nRow;
 			},
-			"aoColumnDefs": [
-				{ "aTargets": [0], "sTitle": "User Id","sClass": "center","sWidth": "15%" },
-				{ "aTargets": [1], "sTitle": "User Name" , "sClass": "center","sWidth": "20%" },
-				{ "aTargets": [2], "sTitle": "Usergroup" , "sClass": "center","sWidth": "12%" },
-				{ "aTargets": [3],  "sTitle": "Last Login", "sClass": "center","sWidth": "15%"},
-				{ "aTargets": [4], "sTitle": "Is Logged in", "sClass": "center","sWidth": "10%" },
-				{ "aTargets": [5], "sTitle": "Last Activity" , "sClass": "center","sWidth": "15%" },
-				{ "aTargets": [6], "sTitle": "Destroy Session", "sClass": "center","sWidth": "15%" },
+			"aoColumns": [
+				{ "sTitle": "User Id","sClass": "center","sWidth": "15%" },
+				{ "sTitle": "User Name" , "sClass": "center","sWidth": "20%"},
+				{ "sTitle": "Usergroup" , "sClass": "center","sWidth": "20%"},
+				{ "sTitle": "Last Login Time", "sClass": "center","sWidth": "15%" },
+				{ "sTitle": "Currently Logged in", "sClass": "center","sWidth": "15%" },
+				{ "sTitle": "Destroy Session", "sClass": "center","sWidth": "15%" }
 			]
-			// "aoColumns": [
-			// 	{ "sTitle": "User Id","sClass": "center","sWidth": "15%" },
-			// 	{ "sTitle": "User Name" , "sClass": "center","sWidth": "20%"},
-			// 	{ "sTitle": "Usergroup" , "sClass": "center","sWidth": "12%"},
-			// 	{ "sTitle": "Last Activity" , "sClass": "center","sWidth": "15%"},
-			// 	{ "sTitle": "Last Login", "sClass": "center","sWidth": "15%" },
-			// 	{ "sTitle": "Is Logged in", "sClass": "center","sWidth": "10%" },
-			// 	{ "sTitle": "Destroy Session", "sClass": "center","sWidth": "15%" }
-			// ]
 		});
 	//oTableAvg.fnDraw();
 };
@@ -98,15 +88,15 @@ function log_data(tabledata)
 function get_log()
 {							// create table for logs
 		var result2=[];
-		var url = "get_login_data.py";
+		var url = "get_login_data.py"; 
 		var method = "get";
 		var data = {};
-		$.ajax({
+		$.ajax({ 
 			type:method,
 			url:url,
 			data: data,
 			cache:false,
-			success:function(result){
+			success:function(result){ 
 				try
 				{
 					result2 = eval("(" + result + ")");
@@ -126,7 +116,7 @@ function get_log()
 function fnGetSelected( oTableLog )
 {
 	var aReturn = new Array();
-	var aTrs = oTableLog.fnGetNodes();
+	var aTrs = oTableLog.fnGetNodes();	
 	for ( var i=0 ; i<aTrs.length ; i++ )
 	{
 		if ( $(aTrs[i]).hasClass('row_selected') )
@@ -181,20 +171,20 @@ function deleteUserCallback(v,m){
 						$().toastmessage('showSuccessToast',"User Session Destroy Successfully");//"Session of User Destroyed successfully");
 						$("#del_user_"+delUserName).hide();
 						get_log();
-
+						
 					}
-					else
+					else 
 					{
 					$().toastmessage('showErrorToast', "Some Error Occurred");
 					}
-				}
+				}	
 				catch(err)
 				{
 					$().toastmessage('showErrorToast', err);
 				}
-			   }
+			   }	
 			});
-	}
+	}				
 	else
 	{
 		$().toastmessage('showNoticeToast', "Remain Unchanged.");

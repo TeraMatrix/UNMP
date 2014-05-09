@@ -38,6 +38,7 @@ from unmp_config import SystemConfig
 # guest_users=[]
 # guest_users_pass=[]
 
+nms_instance = sitename = defaults.site
 
 # Python 2.3 does not have 'set' in normal namespace.
 # But it can be imported from 'sets'
@@ -404,7 +405,7 @@ def update_user(user_name, user_role):
 
 
 def addUserInFile(user_name, user_role):
-    sitename = __file__.split("/")[3]
+    # sitename = __file__.split("/")[3]
     fr = open("/omd/sites/%s/etc/check_mk/multisite.mk" % sitename, "r")
     fw = open("/omd/sites/%s/etc/check_mk/multisite_temp.mk" % sitename, "w")
     check_writer = 1
@@ -472,7 +473,7 @@ def addUserInFile(user_name, user_role):
 
 
 def deleteUserInFile(user_name, user_role):
-    sitename = __file__.split("/")[3]
+    # sitename = __file__.split("/")[3]
     fr = open("/omd/sites/%s/etc/check_mk/multisite.mk" % sitename, "r")
     fw = open("/omd/sites/%s/etc/check_mk/multisite_temp.mk" % sitename, "w")
     check_writer = 1

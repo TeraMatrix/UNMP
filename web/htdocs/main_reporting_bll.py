@@ -27,9 +27,11 @@ import csv
 from common_bll import EventLog
 from operator import itemgetter
 from config_report import get_configuration_details
-from common_controller import logme
 # import main_reporting_controller
 
+import defaults
+
+nms_instance = defaults.site
 
 class MainReportBll(object):
     # get sql data using query dict
@@ -437,8 +439,8 @@ class MainReportBll(object):
             date_temp_1 = str(d1)
             date_temp_2 = str(d2)
             aaData = []
-            nms_instance = __file__.split(
-                "/")[3]       # it gives instance name of nagios system
+            # nms_instance = __file__.split(
+            #     "/")[3]       # it gives instance name of nagios system
             # creating the object
             re = MainReportBll()
             #	   getting values column_selected,column_non_selected,mapping_selected,mapping_non_selected
@@ -515,11 +517,19 @@ class MainReportBll(object):
                         # 2 . get the data for the report
                         # res_sql=re.get_sql_data(query_dict["result"])
                         if(view_type == "data_table"):
-                            dict_shelve = shelve.open(
-                                '/omd/sites/%s/share/check_mk/web/htdocs/download/%s.db' % (nms_instance,
-                                                                                            new_user_report_dict["user_id"]))
-                            dict_shelve_data = shelve.open('/omd/sites/%s/share/check_mk/web/htdocs/download/%s_data.db' %
-                                                           (nms_instance, new_user_report_dict["user_id"]))
+                            #@TODO : change the location of the file jus be;ow in the  dict_shelve
+                            dict_shelve = shelve.open(defaults.get_config_path(configname="isfolder",
+                                                                               folder="download") +
+                                                      new_user_report_dict["user_id"] + ".db")
+                            # shelve.open(
+                            # '/omd/sites/%s/share/check_mk/web/htdocs/download/%s.db' % (nms_instance,
+                            #                                           new_user_report_dict["user_id"]))
+
+                            dict_shelve_data = shelve.open(defaults.get_config_path(configname="isfolder",
+                                                                                    folder="download") +
+                                                           new_user_report_dict["user_id"] + "_data.db")
+                            # shelve.open('/omd/sites/%s/share/check_mk/web/htdocs/download/%s_data.db' %
+                            #                            (nms_instance, new_user_report_dict["user_id"]))
                             if("user_info_dict" in dict_shelve):
                                 user_report_dict = dict_shelve[
                                     "user_info_dict"]
@@ -674,7 +684,7 @@ class MainReportBll(object):
                         "main_title": result_columns["result"][5],
                         "second_title": result_columns["result"][6],
                         "headings": column_user,
-                        "path_report": '/omd/sites/%s/share/check_mk/web/htdocs/download/' % nms_instance,
+                        "path_report": defaults.get_config_path(configname="isfolder", folder="download"),
                         "name_report": result_columns["result"][7],
                         "data_report": report_data_list,
                         "date1": date1,
@@ -697,7 +707,7 @@ class MainReportBll(object):
                         "main_title": result_columns["result"][5],
                         "second_title": result_columns["result"][6],
                         "headings": column_user,
-                        "path_report": '/omd/sites/%s/share/check_mk/web/htdocs/download/' % nms_instance,
+                        "path_report": defaults.get_config_path(configname="isfolder", folder="download"),
                         "name_report": result_columns["result"][7],
                         "data_report": report_data_list,
                         "date1": date1,
@@ -778,11 +788,11 @@ class MainReportBll(object):
                 time1 = sheet_dict["time1"]
                 time2 = sheet_dict["time2"]
                 device_type = sheet_dict["device_type"]
-                dat1 = date1.replace("/", "-")
-                dat2 = date2.replace("/", "-")
-                # dat1 = dat1 + "(" + time1 + ")"
-                # dat2 = dat2 + "(" + time2 + ")"
-                name_report = main_title + "_from_" + str(dat1) + ' ' + str(time1) + ' to_' + str(dat2) + ' ' + str(time2) + "_excel.xls"
+                dat1 = date1.replace("/", "_")
+                dat2 = date2.replace("/", "_")
+                dat1 = dat1 + "(" + time1 + ")"
+                dat2 = dat2 + "(" + time2 + ")"
+                name_report = main_title + "_" + dat1 + dat2 + "_excel.xls"
                 if data_report == []:
                     continue
                 else:
@@ -1057,8 +1067,8 @@ class MainReportBll(object):
             date_temp_1 = str(d1)
             date_temp_2 = str(d2)
             aaData = []
-            nms_instance = __file__.split(
-                "/")[3]       # it gives instance name of nagios system
+            # nms_instance = __file__.split(
+            #     "/")[3]       # it gives instance name of nagios system
             re = MainReportBll()
             # report_obj=UbrReportBll()
             trap_data = trap_get_total_data_trap(
@@ -1105,7 +1115,7 @@ class MainReportBll(object):
                         "main_title": "Event Report(%s)" % (report_type[0].upper() + report_type[1:]),
                         "second_title": device_name,
                         "headings": ["Timestamp", "IP Address", "Host Alias", "Hostgroup", "Device Type", "Severity", "Event Name", "Event ID", "Event Type", "Manage Object ID", "Manage Object Name", "Component ID", "Description"],
-                        "path_report": '/omd/sites/%s/share/check_mk/web/htdocs/download/' % nms_instance,
+                        "path_report": defaults.get_config_path(configname="isfolder", folder="download"),
                         "name_report": "event_report.xls",
                         "data_report": report_data_list,
                         "date1": date1,
@@ -1126,7 +1136,7 @@ class MainReportBll(object):
                         "main_title": "Event Report(%s)" % (report_type[0].upper() + report_type[1:]),
                         "second_title": device_name,
                         "headings": ["Timestamp", "IP Address", "Host Alias", "Hostgroup", "Device Type", "Severity", "Event Name", "Event ID", "Event Type", "Manage Object ID", "Manage Object Name", "Component ID", "Description"],
-                        "path_report": '/omd/sites/%s/share/check_mk/web/htdocs/download/' % nms_instance,
+                        "path_report": defaults.get_config_path(configname="isfolder", folder="download"),
                         "name_report": "event_report.csv",
                         "data_report": report_data_list,
                         "date1": date1,
@@ -1149,7 +1159,7 @@ class MainReportBll(object):
                         "main_title": "Event Report(%s)" % (report_type[0].upper() + report_type[1:]),
                         "second_title": device_name,
                         "headings": ["Timestamp", "IP Address", "Host Alias", "Hostgroup", "Device Type", "Severity", "Event Name", "Event ID", "Event Type", "Manage Object ID", "Manage Object Name", "Component ID", "Description"],
-                        "path_report": '/omd/sites/%s/share/check_mk/web/htdocs/download/' % nms_instance,
+                        "path_report": defaults.get_config_path(configname="isfolder", folder="download"),
                         "name_report": "event_report.xls",
                         "data_report": report_data_dict["current"],
                         "date1": date1,
@@ -1162,7 +1172,7 @@ class MainReportBll(object):
                         "main_title": "Event Report(%s)" % (report_type[0].upper() + report_type[1:]),
                         "second_title": device_name,
                         "headings": ["Timestamp", "IP Address", "Host Alias", "Hostgroup", "Device Type", "Severity", "Event Name", "Event ID", "Event Type", "Manage Object ID", "Manage Object Name", "Component ID", "Description"],
-                        "path_report": '/omd/sites/%s/share/check_mk/web/htdocs/download/' % nms_instance,
+                        "path_report":defaults.get_config_path(configname="isfolder", folder="download"),
                         "name_report": "event_report.xls",
                         "data_report": report_data_dict["clear"],
                         "date1": date1,
@@ -1175,7 +1185,7 @@ class MainReportBll(object):
                         "main_title": "Event Report(%s)" % (report_type[0].upper() + report_type[1:]),
                         "second_title": device_name,
                         "headings": ["Timestamp", "IP Address", "Host Alias", "Hostgroup", "Device Type", "Severity", "Event Name", "Event ID", "Event Type", "Manage Object ID", "Manage Object Name", "Component ID", "Description"],
-                        "path_report": '/omd/sites/%s/share/check_mk/web/htdocs/download/' % nms_instance,
+                        "path_report": defaults.get_config_path(configname="isfolder", folder="download"),
                         "name_report": "event_report.xls",
                         "data_report": report_data_dict["history"],
                         "date1": date1,
@@ -1197,7 +1207,7 @@ class MainReportBll(object):
                         "main_title": "Event Report(%s)" % (report_type[0].upper() + report_type[1:]),
                         "second_title": device_name,
                         "headings": ["Timestamp", "IP Address", "Host Alias", "Hostgroup", "Device Type", "Severity", "Event Name", "Event ID", "Event Type", "Manage Object ID", "Manage Object Name", "Component ID", "Description"],
-                        "path_report": '/omd/sites/%s/share/check_mk/web/htdocs/download/' % nms_instance,
+                        "path_report": defaults.get_config_path(configname="isfolder", folder="download"),
                         "name_report": "event_report.csv",
                         "data_report": report_data_dict["current"],
                         "date1": date1,
@@ -1210,7 +1220,7 @@ class MainReportBll(object):
                         "main_title": "Event Report(%s)" % (report_type[0].upper() + report_type[1:]),
                         "second_title": device_name,
                         "headings": ["Timestamp", "IP Address", "Host Alias", "Hostgroup", "Device Type", "Severity", "Event Name", "Event ID", "Event Type", "Manage Object ID", "Manage Object Name", "Component ID", "Description"],
-                        "path_report": '/omd/sites/%s/share/check_mk/web/htdocs/download/' % nms_instance,
+                        "path_report": defaults.get_config_path(configname="isfolder", folder="download"),
                         "name_report": "event_report.csv",
                         "data_report": report_data_dict["clear"],
                         "date1": date1,
@@ -1223,7 +1233,7 @@ class MainReportBll(object):
                         "main_title": "Event Report(%s)" % (report_type[0].upper() + report_type[1:]),
                         "second_title": device_name,
                         "headings": ["Timestamp", "IP Address", "Host Alias", "Hostgroup", "Device Type", "Severity", "Event Name", "Event ID", "Event Type", "Manage Object ID", "Manage Object Name", "Component ID", "Description"],
-                        "path_report": '/omd/sites/%s/share/check_mk/web/htdocs/download/' % nms_instance,
+                        "path_report": defaults.get_config_path(configname="isfolder", folder="download"),
                         "name_report": "event_report.csv",
                         "data_report": report_data_dict["history"],
                         "date1": date1,
@@ -1453,12 +1463,8 @@ def get_outage(no_of_devices, date1, date2, time1, time2, all_group, all_host):
                 t_list = ((status_result[0][0], status_result[0][1], t_date, status_result[0][3], status_result[0][
                           4], status_result[0][5], status_result[0][6]),)
                 result = t_list
-
-            m = MainOutage(result, datetime.strptime(end_date, "%Y-%m-%d %H:%M:%S"), datetime.strptime(
-                    start_date, "%Y-%m-%d %H:%M:%S"))
-            temp_res = m.get_outage()
-            # temp_res = main_outage(
-            #     result, datetime.strptime(end_date, "%Y-%m-%d %H:%M:%S"))
+            temp_res = main_outage(
+                result, datetime.strptime(end_date, "%Y-%m-%d %H:%M:%S"))
             if str(temp_res['success']) == "0":
                 li_res = temp_res['result']
                 tr = []
@@ -1868,232 +1874,3 @@ order by ap.client_id"
         result_dict["success"] = 1
         result_dict["result"] = str(e)
         return result_dict
-
-
-class MainOutage(object):
-    def __init__(self, result_tuple, end_date, start_date):
-        self.prev_value = None
-        self.prev_date = None
-        self.prev_ip = None
-        self.main_list = []
-        self.prev_tpl = None
-        self.result_tuple = result_tuple
-        self.end_date = end_date
-        if self.result_tuple and start_date < result_tuple[0][2]:
-            self.start_date = result_tuple[0][2]
-        else:
-            self.start_date = start_date
-        # logme(" result_tuple  = "+str(result_tuple))
-        # logme(" end_date  = "+repr(end_date))
-        # logme(" start_date  = "+repr(start_date))
-
-    def fill_leftout_dates(self, leftout_days, mid_date, temp_date, is_last_call):
-        for i in range(leftout_days):
-            self.prev_date = mid_date + timedelta(days = i + 1)
-            uptime, downtime = None, None
-            if self.prev_tpl[0] == '50002':
-                uptime = timedelta(0, 86399)
-            else:
-                downtime = timedelta(0, 86399)
-            if not is_last_call:
-                if self.prev_date.year == temp_date.year and self.prev_date.month == temp_date.month and self.prev_date.day == temp_date.day:
-                    continue
-            # logme(" left "+str(self.prev_date)+ "  || "+str(self.prev_value) + "  || "+str(self.prev_tpl[0]) + "\n")
-            self.main_list.append([self.prev_date, self.prev_tpl[4],
-                         self.prev_tpl[5], self.prev_tpl[6], uptime, downtime])
-
-        if is_last_call:
-            if self.prev_date and self.prev_date < self.end_date:
-                uptime, downtime = None, None
-                logme(str(self.prev_value)+" ---------  "+str(self.prev_tpl))
-                if self.prev_value == '50002':
-                    uptime = timedelta(0, 86399)
-                else:
-                    downtime = timedelta(0, 86399)
-                #if (self.end_date - temp_date) > timedelta(0, 86399):
-                if self.main_list[-1][0].year == self.end_date.year and self.main_list[-1][0].month == self.end_date.month and self.main_list[-1][0].day == self.end_date.day:
-                    logme(" in in ")
-                    pass
-                else:
-                    # logme(repr(self.main_list[-1][0])+ "  ***  "+ repr(temp_date))
-                    self.main_list.append([self.end_date, self.prev_tpl[4],
-                        self.prev_tpl[5], self.prev_tpl[6], uptime, downtime])
-
-
-    def fill_first(self, temp_date, uptime, downtime):
-        date_to_use = temp_date - timedelta(days = 1)
-        mid_date = datetime(date_to_use.year,
-                            date_to_use.month, date_to_use.day, 23, 59, 59)
-
-        if self.prev_value == '50002':
-            if uptime == None:
-                uptime = (temp_date - mid_date)
-            else:
-                uptime += (temp_date - mid_date)
-
-        elif self.prev_value == '50001':
-            if downtime == None:
-                downtime = (temp_date - mid_date)
-            else:
-                downtime += (temp_date - mid_date)
-        return uptime, downtime
-
-    def fill_end_dates(self, temp_date, temp_value, uptime, downtime):
-        deduct_date = temp_date
-        if self.start_date > temp_date:
-            deduct_date = self.start_date
-        if self.end_date.month > temp_date.month or self.end_date.day > temp_date.day:
-            mid_date = datetime(temp_date.year,
-                            temp_date.month, temp_date.day, 23, 59, 59)
-        else:
-            if self.end_date.hour >= temp_date.hour:
-                mid_date = self.end_date
-            else:
-                mid_date = None
-
-        if mid_date:
-            if temp_value == '50002':
-                if uptime:
-                    uptime += (mid_date - deduct_date)
-                else:
-                    uptime = (mid_date - deduct_date)
-
-            elif temp_value == '50001':
-                if downtime:
-                    downtime += (mid_date - deduct_date)
-                else:
-                    downtime = (mid_date - deduct_date)
-            # logme(" END "+str(temp_date) + "\n")
-            self.main_list.append([temp_date, self.prev_tpl[4],
-                             self.prev_tpl[5], self.prev_tpl[6], uptime, downtime])
-
-
-    def get_outage(self):
-        try:
-            uptime = None
-            downtime = None
-            for tpl in self.result_tuple:
-                temp_ip = tpl[4]
-                temp_date = tpl[2]
-                temp_value = tpl[0]
-                if self.prev_tpl:
-                    self.prev_value = self.prev_tpl[0]
-                    self.prev_date = self.prev_tpl[2]
-
-                if temp_ip == self.prev_ip:
-                    if temp_date.month > self.prev_date.month or temp_date.day > self.prev_date.day:
-                        is_date = 1
-                    else:
-                        # logme('\n')
-                        # logme(" self.st, temp_date, uptime, self.prev_value, downtime "+ str(self.start_date)+ " || " + str(temp_date)+ " || " + str(uptime)+ " || " + str(self.prev_value)+ " || " + str(downtime))
-                        # logme('\n')
-                        if self.prev_value == '50002':
-                            if uptime == None:
-                                if self.start_date < temp_date and (temp_date - self.start_date ) < timedelta(0, 86399):
-                                    uptime = (temp_date - self.start_date)
-                                else:
-                                    uptime = (temp_date - self.prev_date)
-                            else:
-                                uptime += (temp_date - self.prev_date)
-
-                        elif self.prev_value == '50001':
-                            if downtime == None:
-                                if self.start_date < temp_date and (temp_date - self.start_date ) < timedelta(0, 86399):
-                                    downtime = (temp_date - self.start_date)
-                                else:
-                                    downtime = (temp_date - self.prev_date)
-                            else:
-                                downtime += (temp_date - self.prev_date)
-
-
-                        self.prev_date = temp_date  # print "jump1"
-
-                else:
-                    is_new = 1
-
-                if is_new:
-                    is_new = 0
-                    self.prev_ip = temp_ip
-                    is_date = 1
-                    if self.prev_value:
-                        # print " IS NEW TESTED "
-                        uptime, downtime = self.fill_first(temp_date, uptime, downtime)
-                        self.fill_end_dates(temp_date, temp_value, uptime, downtime)
-
-                    self.prev_value = None
-                    self.prev_date = None
-
-
-                if is_date:
-                    if uptime == None and downtime == None and not self.prev_value:
-                        if self.start_date < temp_date and (temp_date - self.start_date ) < timedelta(0, 86399):
-                            # date_to_use = temp_date - timedelta(days = 1)
-                            # mid_date = datetime(date_to_use.year,
-                            #                 date_to_use.month, date_to_use.day, 23, 59, 59)
-                            mid_date = self.start_date
-                            delta = temp_date - mid_date
-                            # print "IF temp_date, delta ", temp_date,' || ',  delta
-                            if temp_value == '50001':
-                                uptime = delta
-                            elif temp_value == '50002':
-                                downtime = delta
-                    else:
-                        mid_date = datetime(self.prev_date.year,
-                                            self.prev_date.month, self.prev_date.day, 23, 59, 59)
-                        delta = mid_date - self.prev_date
-                        # print ">>>ELSE temp_date, delta ", mid_date, " || ",self.prev_date,' || ',  temp_date,' || ',  uptime, ' || ', downtime
-                        if self.prev_value == '50002':
-                            if uptime == None:
-                                uptime = delta
-                            else:
-                                uptime += delta
-
-                        elif self.prev_value == '50001':
-                            if downtime == None:
-                                downtime = delta
-                            else:
-                                downtime += delta
-
-                        # print "ELSE temp_date, delta ", self.prev_date,' || ',  temp_date,' || ',  uptime, ' || ', downtime
-
-                    if self.prev_value:
-                        # print " ______________ ", self.prev_date,' || ',  uptime,' || ',  downtime
-                        self.main_list.append([self.prev_date, self.prev_tpl[4],
-                                             self.prev_tpl[5], self.prev_tpl[6], uptime, downtime])
-                        uptime = None
-                        downtime = None
-
-                        #leftout_days = (temp_date - self.prev_date).days
-                        #self.fill_leftout_dates((temp_date - self.prev_date).days, self.prev_date + timedelta(days = 1))
-                        self.fill_leftout_dates((temp_date - self.prev_date).days, self.prev_date, temp_date, 0)
-
-                        uptime, downtime = None, None
-
-                if is_date and self.prev_value:
-                    # print " ^^^^^^^^^^^^^^^^^^^^^  ", uptime,' || ', temp_date,' || ',  downtime
-                    uptime, downtime = self.fill_first(temp_date, uptime, downtime)
-                    # print " >>>>>>>>>>>>>>>>>  ", uptime,' || ',  temp_date,' || ',  downtime
-
-                is_date = 0
-                self.prev_tpl = tpl[:]
-
-            if self.result_tuple:
-                if uptime is None and downtime is None:
-                    uptime, downtime = self.fill_first(temp_date, uptime, downtime)
-
-                self.fill_end_dates(temp_date, temp_value, uptime, downtime)
-                self.fill_leftout_dates((self.end_date - temp_date).days, temp_date, temp_date, 1)
-
-            main_dict = {}
-            main_dict['success'] = 0
-            main_dict['result'] = self.main_list
-            main_dict['outage'] = "main_outage"
-            # logme(" ^^^^^^^^^^  ", main_dict)
-            return  main_dict
-        except Exception:
-            import traceback
-            main_dict = {}
-            main_dict['success'] = 1
-            main_dict['result'] = traceback.format_exc()
-            logme(traceback.format_exc())
-            return main_dict

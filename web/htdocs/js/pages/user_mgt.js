@@ -6,7 +6,7 @@ var oTable = null;
 // Default Selected Link
 var defaultSelectedLink = null;
 
-// selected row
+// selected row 
 var aSelected = [];
 
 var $tooltip = null;
@@ -19,6 +19,7 @@ function userDataTable()
 		url:"user_detail_table.py",
 		cache:false,
 		success:function(result){
+			
 				oTable = $('#user_table').dataTable({
 					"bDestroy":true,
 					"bJQueryUI": true,
@@ -44,15 +45,15 @@ function userDataTable()
 					]
 				});
 				oTable.fnDraw();
-
+			
 			}
 	});
-}
+} 
 
 function fnGetSelected( oTableLocal )
 {
 	var aReturn = new Array();
-	var aTrs = oTableLocal.fnGetNodes();
+	var aTrs = oTableLocal.fnGetNodes();	
 	for ( var i=0 ; i<aTrs.length ; i++ )
 	{
 		if ( $(aTrs[i]).hasClass('row_selected') )
@@ -64,71 +65,70 @@ function fnGetSelected( oTableLocal )
 }
 
 $(document).ready(function() {
-
+	
 	// spin loading object
 	$spinLoading = $("div#spin_loading");		// create object that hold loading circle
 	$spinMainLoading = $("div#main_loading");	// create object that hold loading squire
-
+		
 /* Click event handler */
 	$('#user_table tbody tr').live('click', function () {
 		var id = this.id;
 		var index = jQuery.inArray(id, aSelected);
-
+		
 		if ( index === -1 ) {
 			aSelected.push( id );
 		} else {
 			aSelected.splice( index, 1 );
 		}
-
+		
 		$(this).toggleClass('row_selected');
-		});
-		userDataTable();
+	});
+	userDataTable();
 
-
-		$("#close_add_user").click(function(){
-		$("label#check_result").html(" ");
-		if($tooltip)
-			$tooltip.tooltip().hide();
+	 
+	 $("#close_add_user").click(function(){
+	 	$("label#check_result").html(" ");
+        if($tooltip)
+	    	$tooltip.tooltip().hide();
 		$("div#user_form").hide();
 		$("div#edit_usr_form").hide();
 		$("div#user_datatable").show();
 		$("img#edit_user").show();
-		$("img#del_user").show();
-		$("img#add_user").show();
+    	$("img#del_user").show();
 
 	});
 	// add tool tip
 	 $tooltip = $("#add_user_form input[type='text'], \
-				 			   #add_user_form input[type='password'], \
-				 			   #add_user_form textarea, \
-				 			   #add_user_form select"
+	 			   #add_user_form input[type='password'], \
+	 			   #add_user_form textarea, \
+	 			   #add_user_form select"
 	 			  ).tooltip({
-							// place tooltip on the right edge
-							position: "center right",
-							// a little tweaking of the position
-							offset: [-2, 10],
-							// use the built-in fadeIn/fadeOut effect
-							effect: "fade",
-							// custom opacity setting
-							opacity: 0.7
+		// place tooltip on the right edge
+		position: "center right",
+		// a little tweaking of the position
+		offset: [-2, 10],
+		// use the built-in fadeIn/fadeOut effect
+		effect: "fade",
+		// custom opacity setting
+		opacity: 0.7
 	});
-
+	
 	// Edit start Title: "User Management Password Complexity"
-	// Redmine Issue: Features
+	// Redmine Issue: Features 
 	// 687: "User Management Password Complexity"
-	// Added code to implement: Password 2 num, 2 alpha, 2 special,
+	// Added code to implement: Password 2 num, 2 alpha, 2 special, 
 	// and min 8 characters
 	// By: Grijesh Chauhan, Date: 6, Feb 2013
-
+	
 	$.validator.addMethod(
         "passwd",
         function(value, element, regexp) {
-            var re = new RegExp(/((?=(.*\d.*){2,})(?=(.*[a-zA-Z].*){2,})(?=(.*[\\\@\#\$\(\)\{\;\_\&\}\[\]\!\~\,\.\!\*\^\?\/\|\<\:\>\+\=\-\_\%\"\'].*){2,}).{8,20})/);
+            var re = new RegExp(regexp);
             return this.optional(element) || re.test(value);
         },
         "Invalid input"
 	);
-
+	
 	$("#add_user_form").validate({
 		rules:{
 			user_name: {
@@ -140,16 +140,16 @@ $(document).ready(function() {
 			password: {
 				required: true,
 				minlength: 8,
-				passwd: ".*"
+				passwd: "((?=(.*\\d.*){2,})(?=(.*[a-zA-Z].*){2,})(?=(.*[@#$(){}!~,.!^?/|<>+=-_%].*){2,}).{8,20})"
 			},
 			cpassword: {
 				required: true,
 				minlength: 8,
 				equalTo: "#password"
-
+				
 			},
 			groups : "required",
-
+			
 			first_name: {
 				minlength: 1,
 				alpha: true,
@@ -168,7 +168,7 @@ $(document).ready(function() {
 			email_id: {
 				email: true
 			}
-
+			
 		},
 		messages:{
 			user_name: {
@@ -177,35 +177,35 @@ $(document).ready(function() {
 				maxlenght: " only 15 characters",
 				noSpace: " No space Please"
 			},
-
+			
 			password: {
 				required: "*",
 				minlength: "Your password must be at least 8 characters long. Please try",
 				passwd: " Password should consist of 2 Numeric, 2 alpha, 2 special"
 			},
-
+			
 			cpassword: {
 				required: "*",
 				minlength: "Your password must be at least 8 characters long. Please try",
 				equalTo: " Passwords doesn't match"
 			},
-
+			
 			groups: {
-				required: "*"
+				required: "*"	
 			},
-
+			
 			mobile: {
 				minlength: "Please enter no more than 10 numbers",
 				maxlength: "Please enter no more than 10 numbers"
 			},
-
+			
 			email_id: {
 				email: "Please enter a valid email address"
 			}
 		}
 	});
 
-
+	
 	$("#add_user_form").submit(function(){
 		if($(this).valid())
 		{
@@ -213,7 +213,7 @@ $(document).ready(function() {
 			var form = $(this);
 			var method = form.attr("method");
 			var action = form.attr("action");
-	    var group_name = form.find("select#groups option:selected").text();
+		    var group_name = form.find("select#groups option:selected").text();		
 			var data = form.serialize();
 			//alert(data);
 			$.ajax({
@@ -222,18 +222,18 @@ $(document).ready(function() {
 				data:data+"&grp_name="+group_name,
 				cache:false,
 				success:function(result)
-				{
+				{ 
 					result = eval("("+ result +")");
 					if(result.success == 0)
 					{
 						$().toastmessage('showSuccessToast', "User Added Successfully.");
 						userDataTable();
 						$("#close_add_user").click();
-
+						
 					}
 					else if(result.success == 1)
 					{
-
+						
 						$().toastmessage('showErrorToast', String(result["result"]));
 					}
 					else
@@ -245,7 +245,7 @@ $(document).ready(function() {
 						}
 						$().toastmessage('showErrorToast', "Please Fill in all the required fields");
 					}
-
+				
 					spinStop($spinLoading,$spinMainLoading);
 				}
 			});
@@ -256,7 +256,7 @@ $(document).ready(function() {
 		}
 		return false;
 	});
-
+	
 	$("#page_tip").colorbox(
 	{
 		href:"help_users_main.py",
@@ -277,16 +277,16 @@ $(document).ready(function() {
 function name_chk()
 {
 	if($("form").attr('id') == "add_user_form")
-	{
+	{	
 		val_ = $("input#user_name").val();
 		type_ = "get";
-		func_type = "user";
+		func_type = "user";	
 	}
 	else if($("form").attr('id') == "add_group_form")
 	{
 		val = $("input#group_name");
 		type_ = "get";
-		func_type = 0;
+		func_type = 0;	
 	}
 	if(val_.length > 4)
 	{
@@ -297,26 +297,26 @@ function name_chk()
 				success:function(result)
 				{
 					result = eval("("+ result +")");
-
+					
 					if(result.success == 0)
 					{
-					  $("input[name='user_name']").removeClass("error").addClass("valid");
+					    $("input[name='user_name']").removeClass("error").addClass("valid");
 						$("label#check_result").css("color","green");
 						$("label#check_result").html("Name is available ");
 					}
 					else
 					{
-					  $("input[name='user_name']").removeClass("valid").addClass("error");
+					    $("input[name='user_name']").removeClass("valid").addClass("error");
 						$("label#check_result").css("color","red");
-						$("label#check_result").html("  Username already exists");
+						$("label#check_result").html("  Please choose a unique user name");
 					}
-
+					
 				}
 		});
 	}
 	else
 	{
-		$("label#check_result").html("");
+		$("label#check_result").html("");	
 	}
 }
 
@@ -327,7 +327,6 @@ function addUser()
 	$("div#edit_usr_form").hide();
 	$("div#user_form").show();
 	$("img#edit_user").hide();
-	$("img#add_user").hide();
 	$("img#del_user").hide();
 }
 
@@ -335,7 +334,7 @@ function addUser()
 function editUser()
 {
 	var selectedRow= fnGetSelected(oTable);
-	var rLength = selectedRow.length;
+	var rLength = selectedRow.length; 
 	if(rLength==0)
 	{
 		$.prompt("Please Select Atleast one user",{prefix:'jqismooth'});
@@ -347,7 +346,7 @@ function editUser()
 		var aData = oTable.fnGetData(iRow);
 		var id = aData[0];
 		var usr = aData[1];
-
+		
 		$.ajax({
 			type:"get",
 			url:"edit_user_view.py?&user_id="+id+"&user_name="+usr,
@@ -358,22 +357,22 @@ function editUser()
 				{
 							$().toastmessage('showErrorToast', 'No such User found');
 							userDataTable();
-
+					
 				}
 				else if (result.indexOf("SUPERADMINCANNOTEDIT") >= 0)
 				{
 					$().toastmessage('showWarningToast', ' Editing SuperAdmin type user is not allowed ');
-							userDataTable();
+							userDataTable();	
 				}
 				else if (result.indexOf("SOMEERROROCCURMAYBEDBERROR") >= 0)
 				{
 					$().toastmessage('showErrorToast', ' UNMP server has encounterd an error./n Please REFRESH your page & try again/n Still having problem contact please support team');
-							userDataTable();
+							userDataTable();	
 				}
 				else if (result.indexOf("CANNOTEDITYOURSELF") >= 0)
 				{
 					$().toastmessage('showWarningToast', ' Self updation is restricted ');
-							userDataTable();
+							userDataTable();	
 				}
 				else
 				{
@@ -383,8 +382,7 @@ function editUser()
 					$("div#edit_usr_form").show();
     				$("img#edit_user").hide();
                 	$("img#del_user").hide();
-                	$("img#add_user").hide();
-
+				
 					$("#close_edit_user").click(function(){
 						//if($tooltip)
 				       		//	$tooltip.tooltip().hide();
@@ -393,10 +391,9 @@ function editUser()
 						$("div#user_datatable").show();
 						$("img#edit_user").show();
                     	$("img#del_user").show();
-                    	$("img#add_user").show();
-
+                
 					});
-
+				
 					$tooltip = $("#edit_usr_form input[type='text'],#edit_usr_form  textarea,#edit_usr_form  select,#edit_usr_form input[type='password']").tooltip({
 						// place tooltip on the right edge
 						position: "center right",
@@ -407,8 +404,8 @@ function editUser()
 						// custom opacity setting
 						opacity: 0.7
 					});
-
-
+							
+						
 					$("#edit_user_form").validate({
 						rules:{
 							groups : "required",
@@ -432,7 +429,7 @@ function editUser()
 							},
 							new_password: {
 								minlength: 8,
-								passwd: ".*"
+								passwd: "((?=(.*\\d.*){2,})(?=(.*[a-zA-Z].*){2,})(?=(.*[@#$(){}!~,.!^?/|<>+=-_%].*){2,}).{8,20})"
 							},
 							cpassword: {
 								minlength: 8,
@@ -471,7 +468,7 @@ function editUser()
 								cache:false,
 								success:function(result)
 								{
-									//alert(result);
+									//alert(result); 
 									result = eval("("+ result +")");
 									if(result.success == 0)
 									{
@@ -481,7 +478,7 @@ function editUser()
 									}
 									else if(result.success == 1)
 									{
-
+										
 										$().toastmessage('showErrorToast', String(result["result"]));
 									}
 									else
@@ -502,9 +499,9 @@ function editUser()
 						{
 							$().toastmessage('showErrorToast', "Please Fill in all the required fields");
 						}
-
-					});
-
+						
+					});	
+									
 				}
 				spinStop($spinLoading,$spinMainLoading);
 			}
@@ -522,7 +519,7 @@ function editUser()
 function deleteUserCallback(v,m){
 	if(v != undefined && v==true)
 	{
-
+		
 		spinStart($spinLoading,$spinMainLoading);
 		var selectedRow= fnGetSelected(oTable);
 		var rLength = selectedRow.length;
@@ -542,7 +539,7 @@ function deleteUserCallback(v,m){
 			usrStr += String(aData[1]);
 			selectedDeletedRowArray.push(iRow);
 			// if delete successfully then call this function
-
+			
 		}
 		var action = "del_user.py";
 		var data = "user_ids=" + idStr + "&user_names=" +usrStr;
@@ -565,7 +562,7 @@ function deleteUserCallback(v,m){
 				else
 				{
 					$().toastmessage('showWarningToast',result.result);
-							userDataTable();
+							userDataTable();	
 				}
 				spinStop($spinLoading,$spinMainLoading);
 			}
@@ -579,7 +576,7 @@ function deleteUserCallback(v,m){
 function delUser()
 {
 	var selectedRow= fnGetSelected(oTable);
-	var rLength = selectedRow.length;
+	var rLength = selectedRow.length; 
 	if(rLength==0)
 	{
 		$.prompt("Select Atleast one user",{prefix:'jqismooth'});
@@ -587,5 +584,5 @@ function delUser()
 	else
 	{
 		$.prompt('Are you sure, you want to delete this user?',{ buttons:{Ok:true,Cancel:false}, prefix:'jqismooth',callback:deleteUserCallback });
-	}
+	}	
 }

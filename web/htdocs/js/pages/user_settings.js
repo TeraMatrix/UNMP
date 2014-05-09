@@ -1,7 +1,6 @@
 /*
  * 
  * Author			:	Mahipal Choudhary
- 
  * Version			:	0.1
  * Modify Date			:	12-September-2011
  * Purpose			:	Define All Required Javascript Functions
@@ -23,32 +22,29 @@ $(document).ready(function() {
 
    	var page_tip_href;
 	$("a#personal_information_tab").click(function(e){
-			e.preventDefault();
-			currentTab = "active";
-			$("#edit_user_form").show();
-			$("#edit_password_form").hide();
-			page_tip_href = "help_change_user_setting.py";	    
+		e.preventDefault();
+		currentTab = "active";
+		$("#edit_user_form").show();
+	    $("#edit_password_form").hide();
+	    page_tip_href = "help_change_user_setting.py";	    
 	});
 	
 	/* Disable Host Tab*/
 	$("a#change_password_tab").click(function(e){
-			e.preventDefault();
-			currentTab = "active";
-			$("#edit_user_form").hide();
-			$("#edit_password_form").show();
-			page_tip_href = "help_change_password.py";
+		e.preventDefault();
+		currentTab = "active";
+		$("#edit_user_form").hide();
+	    $("#edit_password_form").show();
+	    page_tip_href = "help_change_password.py";
 	});
 	
 	$("div#grid_view_div").find('.active').click();
 	
 	if(($("div#is_first_login").length != 0)) {
-		$().toastmessage('showNoticeToast', "You have logged in for first time, kindly change your password!");
-		page_tip_href = "help_change_password.py";
-  }
-	if(($("div#is_password_expired").length != 0)) {
-		$().toastmessage('showNoticeToast', "Your password has been expired, kindly change your password!");
-		page_tip_href = "help_change_password.py";	
-	}
+        $().toastmessage('showNoticeToast', "You have first time logged in, kindly change your password!");
+        page_tip_href = "help_change_password.py";
+    }
+
 	
 	$("#edit_user_form").validate({
 		rules:{
@@ -84,10 +80,10 @@ $(document).ready(function() {
 	// and min 8 characters
 	// By: Grijesh Chauhan, Date: 8, Feb 2013
 	
-	
-	$.validator.addMethod("passwd",
+	$.validator.addMethod(
+        "passwd",
         function(value, element, regexp) {
-            var re = new RegExp(/((?=(.*\d.*){2,})(?=(.*[a-zA-Z].*){2,})(?=(.*[\\\@\#\$\(\)\{\;\_\&\}\[\]\!\~\,\.\!\*\^\?\/\|\<\:\>\+\=\-\_\%\"\'].*){2,}).{8,20})/);
+            var re = new RegExp(regexp);
             return this.optional(element) || re.test(value);
         },
         "Invalid input"
@@ -129,13 +125,13 @@ $(document).ready(function() {
 		rules:{
 			password: {
 				required: true,
-				passwd: ".*"
+				passwd: "((?=(.*\\d.*){2,})(?=(.*[a-zA-Z].*){2,})(?=(.*[@#$(){}!~,.!^?/|+=-_%].*){2,}).{8,20})"
 			},
 			confirm_password_1: {
 				required: true,
 				minlength: 8,
 				notEqualTo: "#password", 
-				passwd: ".*"
+				passwd: "((?=(.*\\d.*){2,})(?=(.*[a-zA-Z].*){2,})(?=(.*[@#$(){}!~,.!^?/|+=-_%].*){2,}).{8,20})"
 			},
 			confirm_password_2: {
 				required: true,
@@ -246,17 +242,10 @@ $(document).ready(function() {
 		window.history.go(-1);
 	});
 	
-		
-	/* Removed due to Redmine Issue #1065: UNMP CRASH ON LOGIN for new user
-	// Removing this function Causes to an non-uniform behaviour of cancel 
-	// button in UNMP system
-	
+				
 	$("#close_edit_password").click(function(){
 		window.history.go(-1);
 	});
-	*/
-	
-	
 	// add tool tip
 	$tooltipEditPassword = $("form#edit_password_form input[type='password']").tooltip({
 		// place tooltip on the right edge

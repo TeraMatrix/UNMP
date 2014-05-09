@@ -27,18 +27,6 @@ from unmp_model import *
 
 
 class DB():
-    """
-    db = DB()
-    db.ready()
-    rows, get_result = db.execute(query)
-    db.close()
-    if rows == -1:
-        raise db.error
-    db.done()
-
-    TODO: just use db init and db close functions
-    and look for how many cursor objects are open
-    """
     def __init__(self):
         self.error = None
         self.cursor = None
@@ -55,24 +43,24 @@ class DB():
 
     def ready(self):
         try:
-            self.cursor = self.db.cursor()
+            self.c = self.db.cursor()
         except Exception:
             raise
 
     def execute(self, query):
         try:
-            row_affected = self.cursor.execute(query)
+            row_affected = self.c.execute(query)
         except Exception, e:
             self.error = e
             return -1, self.empty
         else:
-            return row_affected, self.cursor.fetchall()
+            return row_affected, self.c.fetchall
 
     def execute_dui(self, query):
         """dui: delete, update, insert
         """
         try:
-            row_affected = self.cursor.execute(query)
+            row_affected = self.c.execute(query)
             self.db.commit()
         except Exception, e:
             self.error = e
@@ -81,36 +69,27 @@ class DB():
             return row_affected
 
     def done(self):
-        if self.cursor:
-            self.cursor.close()
-            self.cursor = None
+        self.c.close()
 
     def close(self):
-        if self.cursor:
-            self.cursor.close()
-            self.cursor = None
-        if self.db.open:
-            self.db.close()
-
-    def __del__(self):
-        self.close()
+        self.db.close()
 
 
 host_status_dict = {
-    0: 'No operation',
+    0: 'No operation', 
     1: 'Firmware download',
-    2: 'Firmware upgrade',
+    2: 'Firmware upgrade', 
     3: 'Restore default config',
-    4: 'Flash commit',
-    5: 'Reboot',
+    4: 'Flash commit', 
+    5: 'Reboot', 
     6: 'Site survey',
-    7: 'Calculate BW',
+    7: 'Calculate BW', 
     8: 'Uptime service',
-    9: 'Statistics gathering',
+    9: 'Statistics gathering', 
     10: 'Reconciliation',
-    11: 'Table reconciliation',
+    11: 'Table reconciliation', 
     12: 'Set operation',
-    13: 'Live monitoring',
+    13: 'Live monitoring', 
     14: 'Status capturing',
     15: 'Alarm Reconciliation'
 }

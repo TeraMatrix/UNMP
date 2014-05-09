@@ -18,6 +18,9 @@ from unmp_config import SystemConfig
 from utility import UNMPDeviceType
 import time
 
+import defaults
+nms_instance = sitename = defaults.site
+
 # session=session_db()
 """
 Common Controller : All Common functions For NMS
@@ -27,27 +30,6 @@ Author : Anuj Samaria
 (CodeScape Consultants Pvt. Ltd.)
 """
 
-# mapping of firmware model with mib object model
-# {'device_type': {'firmware_model': 'object_model'} }
-object_model_di = {
-  'odu100': {
-    '7.2.20' : '7.2.20',
-    '7.2.25' : '7.2.25',
-    '7.2.29' : '7.2.29',
-    '7.2.30' : '7.2.29'
-  },
-  'odu16': {
-    '7.2.10' : '7.2.10',
-  },
-  'ap25': {
-    '1.2.12' : '1.2.12',
-  },
-  'idu4': {
-    '2.0.5' : '2.0.5',
-  }
-}
-
-# snmp error status
 errorStatus = {0: 'noError',
                1: 'Device Unresponsive',
                2: 'Parameter is out of range',
@@ -149,8 +131,7 @@ def webssh(h):
                     'nms')  # hard coded. need to be changed
                 if db == 1:
                     Exception(cursor)
-                sel_query = "SELECT `ip_address`, `ssh_username`, `ssh_password`, `ssh_port` \
-                  FROM `hosts` WHERE `host_id` = '%s'" % (host)
+                sel_query = "SELECT `ip_address`, `ssh_username`, `ssh_password`, `ssh_port` FROM `hosts` WHERE `host_id` = '%s'" % (host)
                 cursor.execute(sel_query)
                 result = cursor.fetchall()
                 cursor.close()
@@ -170,13 +151,12 @@ def webssh(h):
             if ssh_dict['ip']:
                 html.write("""
                 <div id="gateone_container">
-                    <input name='ssh_url' id='ssh_url' value='ssh://%(uname)s@%(ip)s:%(port)s\n' type='hidden'/>
-                     <div id="gateone" style="background-color:rgba(0, 0, 0, 0.85);font-size:1.4em;">
-                     </div>
-                     <div id="sshactions" style="position:absolute;top:5px;right:10px;z-index:1;background-color:#fff;display:none;">
-                        <p> ok </p>
-                    </div>
-                </div>
+                                    <input name='ssh_url' id='ssh_url' value='ssh://%(uname)s@%(ip)s:%(port)s\n' type='hidden'/>
+                                     <div id="gateone" style="background-color:rgba(0, 0, 0, 0.85);font-size:1.4em;">
+                                     </div><div id="sshactions" style="position:absolute;top:5px;right:10px;z-index:1;background-color:#fff;display:none;">
+                                        <p> ok </p>
+                                    </div>
+                        </div>
                 """ % ssh_dict)
                # html.write("""<!DOCTYPE html>
                #     <html>
@@ -240,7 +220,7 @@ class SqlAlchemyDBConnection(object):
             self.error = 1
 
     def get_sqlalchemy_credentials(self):
-        sitename = __file__.split("/")[3]  # get site name
+        # sitename = __file__.split("/")[3]  # get site name
         # sitename='nms2'
         # set parameter and default values
         sqlalchemy_host = "localhost"
@@ -250,7 +230,7 @@ class SqlAlchemyDBConnection(object):
         sqlalchemy_driver = "mysql"
 
         # config.xml file path
-        xml_config_file = "/omd/sites/%s/share/check_mk/web/htdocs/xml/config.xml" % sitename
+        xml_config_file = defaults.get_config_path("config", folder="xml")
         # xml_config_file = "nms2"
         try:
             # check config.xml file exist or not
@@ -1881,12 +1861,12 @@ import logging
 logging.basicConfig(filename='/omd/daemon/log/debug_log.log',
                     format='%(levelname)s: %(asctime)s >> %(message)s', level=logging.DEBUG)
 
-def logme(*msg):
-    logging.info(' ;; '.join(map(str,msg)))
 
-
+def logme(msg):
+    logging.info(msg)
 
 from common_bll import DB
+
 
 def get_select_list(selected_field, select_list_id, table_name, is_enabled=True, is_readonly=False, attr={}):
     """
@@ -1913,7 +1893,7 @@ def get_select_list(selected_field, select_list_id, table_name, is_enabled=True,
         raise db.error
 
     # i = (m.value, m.name) for example ('disabled', '0')
-    for i in get_result:
+    for i in get_result():
         if str(i[1]) == str(selected_field):
             option_li.append('\
                 <option value="{0}" selected="selected">\
@@ -1924,6 +1904,7 @@ def get_select_list(selected_field, select_list_id, table_name, is_enabled=True,
                 <option value="{0}" >\
                     {1}\
                 </option>'.format(i[1], i[0]))
+    db.done()
 
     return '<select id="{0}" name="{0}" {2} > \
                 {1} \

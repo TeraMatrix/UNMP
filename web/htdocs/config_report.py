@@ -5,8 +5,11 @@ from unmp_config import SystemConfig
 import xlwt
 from xlwt import Workbook, easyxf
 import csv
+
+import defaults
+nms_instance = sitename = defaults.site
+
 from copy import deepcopy
-from common_controller import object_model_di
 # db=MySQLdb.connect("localhost","root","root","nms")
 # cursor=db.cursor()
 # q=" SELECT table_name,column_name FROM information_schema.columns WHERE
@@ -952,8 +955,8 @@ def get_configuration_details(ip_address_list=[]):
 
     # db=MySQLdb.connect("localhost","root","root","nms")
     host_info_list = []
-    nms_instance = __file__.split(
-        "/")[3]       # it gives instance name of nagios system
+    # nms_instance = __file__.split(
+    #     "/")[3]       # it gives instance name of nagios system
     global_device_dict = {}
 # get_configuration_details(ip_address_list)#['172.22.0.121'])#,'172.22.0.121'])
     try:
@@ -989,7 +992,7 @@ def get_configuration_details(ip_address_list=[]):
             # -------------- ################### ----------------------------
 
             if device_type_id == 'odu100':
-                table_device = object_model_di['odu100'].get(firmware_mapping_id)
+                table_device = firmware_mapping_id
             if device_type_id == 'idu4':
                 device = 'idu'
                 table_device = 'idu'
@@ -1066,7 +1069,8 @@ def get_configuration_details(ip_address_list=[]):
                 di['headings'] = [column_report_names_dict[device][j]
                     for j in report_dict[device][device_status][param]]
                 name_report = device_type_name + "_config.xls"
-                path_report = '/omd/sites/%s/share/check_mk/web/htdocs/download/' % nms_instance
+                path_report = defaults.get_config_path(configname="isfolder", folder="download")
+                #'/omd/sites/%s/share/check_mk/web/htdocs/download/' % nms_instance
                 data_report = [complete_dict[device][j]
                     for j in report_dict[device][device_status][param]]
                 m = max(map(len, [j for j in data_report]))
@@ -1107,8 +1111,8 @@ complete_dict, order_report_dict, global_device_dict, ip_address_list, device_ty
         flag = 0
         # print __file__
         i = 4
-        nms_instance = __file__.split(
-            "/")[3]       # it gives instance name of nagios system
+        # nms_instance = __file__.split(
+        #     "/")[3]       # it gives instance name of nagios system
         style = xlwt.XFStyle()  # Create Style
         borders = xlwt.Borders()  # Create Borders
         borders.left = xlwt.Borders.THIN  # May be: NO_LINE, THIN, MEDIUM, DASHED, DOTTED, THICK, DOUBLE, HAIR, MEDIUM_DASHED, THIN_DASH_DOTTED, MEDIUM_DASH_DOTTED, THIN_DASH_DOT_DOTTED, MEDIUM_DASH_DOT_DOTTED, SLANTED_MEDIUM_DASH_DOTTED, or 0x00 through 0x0D.
@@ -1159,7 +1163,7 @@ complete_dict, order_report_dict, global_device_dict, ip_address_list, device_ty
             headings = ['Host Alias', 'IP Address'] + [column_report_names_dict[
                 device][j] for j in report_dict[device][device_status][param]]
             name_report = second_title + "_config.xls"
-            path_report = '/omd/sites/%s/share/check_mk/web/htdocs/download/' % nms_instance
+            path_report = defaults.get_config_path(configname="isfolder", folder="download")
             data_report = []
             for ip_address in ip_address_list:
                 if data_report == []:
@@ -1249,8 +1253,8 @@ complete_dict, order_report_dict, global_device_dict, ip_address_list, device_ty
         global device_status
         flag = 1
         device_status = 'master'
-        nms_instance = __file__.split(
-            "/")[3]       # it gives instance name of nagios system
+        # nms_instance = __file__.split(
+        #     "/")[3]       # it gives instance name of nagios system
         for param in order_report_dict[table_device]:
             sheet_name = param
             main_title = param
@@ -1262,7 +1266,7 @@ complete_dict, order_report_dict, global_device_dict, ip_address_list, device_ty
             headings = ['Host Alias', 'IP Address'] + [column_report_names_dict[
                 device][j] for j in report_dict[device][device_status][param]]
             name_report = second_title + "_config.csv"
-            path_report = '/omd/sites/%s/share/check_mk/web/htdocs/download/' % nms_instance
+            path_report = defaults.get_config_path(configname="isfolder", folder="download")
             data_report = []
             for ip_address in ip_address_list:
                 if data_report == []:

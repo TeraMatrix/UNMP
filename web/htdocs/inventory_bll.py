@@ -39,6 +39,8 @@ from nagios_bll import NagiosBll
 # if set to 0 means call old nagios functions
 flag_nagios_call = 0
 
+import defaults
+nms_instance = defaults.site
 
 class HostgroupBll(object):
     def get_data_table_sqlalchemy(self, a_columns, table_columns, table_classes, table_join, other_conditions, i_display_start, i_display_length, s_search, sEcho, sSortDir_0, iSortCol_0, req_vars, join_conditions=[], group_by=False, diff_count=3):
@@ -369,8 +371,7 @@ class HostgroupBll(object):
             lic = LicenseBll()
             if lic.check_license_for_hostgroup() == True:
                 if self.validate(hostgroup_name, hostgroup_alias):
-                    is_duplicate = self.is_duplicate_hostgroup_for_add(hostgroup_name, hostgroup_alias)
-                    if is_duplicate == 0:
+                    if self.is_duplicate_hostgroup_for_add(hostgroup_name, hostgroup_alias):
                         hostgroup = Hostgroups(
                             hostgroup_name, hostgroup_alias, timestamp,
                             created_by, creation_time, is_deleted, updated_by, is_default)
@@ -420,13 +421,9 @@ class HostgroupBll(object):
                             err = ErrorMessages()
                             err.error_msg = err.nagios_config_error
                             return err
-                    elif is_duplicate == 1:
+                    else:
                         err = ErrorMessages()
-                        err.error_msg = err.duplicate_name_error
-                        return err
-                    elif is_duplicate == 2:
-                        err = ErrorMessages()
-                        err.error_msg = err.duplicate_alias_error
+                        err.error_msg = err.duplicate_error
                         return err
                 else:
                     err = ErrorMessages()
@@ -567,23 +564,22 @@ class HostgroupBll(object):
         else:
             return False
 
-    def is_duplicate_hostgroup_for_add(self,hostgroup_name,hostgroup_alias):
-        Session = sessionmaker(bind=engine)     # making session of our current database
+    def is_duplicate_hostgroup_for_add(self, hostgroup_name, hostgroup_alias):
+        Session = sessionmaker(
+            bind=engine)     # making session of our current database
         try:
             session = Session()                 # creating new session object
-            hostgroup_name_count = session.query(Hostgroups).filter(Hostgroups.hostgroup_name == hostgroup_name).count()
-            if hostgroup_name_count == 0:
-                hostgroup_alias_count = session.query(Hostgroups).filter(Hostgroups.hostgroup_alias == hostgroup_alias).count()
-                if hostgroup_alias_count == 0:
-                    return 0
-                else:
-                    return 2
+            hostgroup_count = session.query(Hostgroups).filter(
+                or_(Hostgroups.hostgroup_name == hostgroup_name, Hostgroups.hostgroup_alias == hostgroup_alias)).count()
+            if hostgroup_count == 0:
+                return True
             else:
-                return 1
-        except Exception,e:
-            return 3
+                return False
+        except Exception, e:
+            return False
         finally:
-            session.close()
+            session.close()                     # close the session object
+
     def is_duplicate_hostgroup_for_edit(self, hostgroup_id, hostgroup_name, hostgroup_alias):
         Session = sessionmaker(
             bind=engine)     # making session of our current database
@@ -3760,7 +3756,7 @@ class ServiceBll(object):
         total = []
         try:
             session = Session()
-            nms_instance = __file__.split("/")[3]
+            # nms_instance = __file__.split("/")[3]
             for i in range(len(hosts_list)):                 # creating new session object
                 services = session.query(HostServices).filter(and_(HostServices.host_id == hosts_list[i], HostServices.service_description == service_name[i]
                                          .replace('_', ' '))).update({HostServices.normal_check_interval: service_time[i]})

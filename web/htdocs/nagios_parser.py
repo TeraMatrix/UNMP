@@ -3,21 +3,22 @@ import datetime
 import os
 import tarfile
 # NMS Instance
-nms_instance = __file__.split("/")[3]
+import defaults
+
+nms_instance = defaults.site #__file__.split("/")[3]
 # nms_instance = "nms"
 # Nagios path & path of shelve files
 nagios_path = "/omd/sites/%s/etc/nagios/conf.d/" % (nms_instance)
-db_path = "/omd/sites/%s/share/check_mk/web/htdocs/download/nag_db/" % (
-    nms_instance)
+db_path = defaults.get_config_path(configname="isfolder", folder="download/nag_db")
 # Path of .cfg files & tar files with log
 file_folder_to_be_backed = "/omd/sites/%s/etc/nagios/conf.d/" % (nms_instance)
-backup_store_path = "/omd/sites/%s/share/check_mk/web/htdocs/download/nag_db/" % (
-    nms_instance)
-backup_log = "/omd/sites/%s/share/check_mk/web/htdocs/download/nag_db/backup_log.log" % (
-    nms_instance)
+backup_store_path = defaults.get_config_path(configname="isfolder", folder="download/nag_db")
+
+backup_log = defaults.get_config_path(configname="backup_log", folder="download/nag_db")
+
 # Extraction path of tar files
-tarfile_path = "/omd/sites/%s/share/check_mk/web/htdocs/download/nag_db/" % (
-    nms_instance)
+tarfile_path = defaults.get_config_path(configname="isfolder", folder="download/nag_db")
+
 extract_here = "/omd/sites/%s/etc/nagios/conf.d/" % (nms_instance)
 
 

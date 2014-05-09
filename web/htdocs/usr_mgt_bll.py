@@ -15,14 +15,15 @@ global global_db
 
 def db_connect():
     """
-    Used to connect to the database  
-    returns database object ed in global_db variable
+    Used to connect to the database :: return database object ed in global_db variable
     """
     db = None
     global global_db
     try:
         db = MySQLdb.connect(*SystemConfig.get_mysql_credentials())
+#        db = MySQLdb.connect("localhost","root","root","nmsp")
         global_db = db
+        # print " $$$ $$$ Database Connect successful "
     except MySQLdb.Error as e:
         pass  # print "/*/*/* MYSQLdb Exception (db connect) : "+str(e)
     except Exception as e:
@@ -36,14 +37,18 @@ def db_close():
     global global_db
     try:
         global_db.close()
+        # print " db connection closed"
     except Exception as e:
         pass  # print "/*/*/* Database Exception ( db close ) : "+str(e)
+
 
 def getGroupsData():
     db_connect()
     global global_db
     db_close()
 
+
+# **** rajendra function
 def ap_add_default_data_new_user(user_id):
     try:
         global global_db
@@ -53,35 +58,13 @@ def ap_add_default_data_new_user(user_id):
         cursor = global_db.cursor()
 
         default_temp_list = [
-                ['apNWBandwidth', 
-                 'Network Bandwidth Statistics', 
-                 0, 'ap25', 1, 1, 0, 0, 0, 5, 
-                 180, 250, 1, 1, 1, 1, 1, 
-                 'Network Bandwidth Statistics',
-                 'Statistics', 600, 0
-                ],[
-                 'ap25outage', 
-                 'Device Reachability Statistics', 
-                 0, 'ap25', 2, 1, 0, 0, 0, 5,
-                 180, 250, 1, 1, 1, 1, 0, 
-                 'Reachability Statistics', 
-                 '', 600, 0
-                ],[
-                 'vapConnectedClient', 
-                 'Connected Client', 
-                 0, 'ap25', 1, 1, 0, 0, 0, 5,
-                 180, 250, 1, 1, 1, 1, 1, 
-                 'Connected Client', 
-                 '', 600, 0
-                ],[
-                 'totalConnectedClient', 
-                 'Total Connected Client', 
-                 0, 'ap25', 1, 1, 0, 0, 0, 5, 
-                 180, 250, 1, 1, 1, 1, 1, 
-                 'Total Connected Client', 
-                 '', 600, 0
-                ]
-            ]
+            ['apNWBandwidth', 'Network Bandwidth Statistics', 0, 'ap25', 1, 1, 0, 0, 0, 5, 180, 250, 1, 1, 1, 1, 1, 'Network Bandwidth Statistics',
+             'Statistics', 600, 0],
+            ['ap25outage', 'Device Reachability Statistics', 0, 'ap25', 2, 1, 0, 0, 0, 5,
+             180, 250, 1, 1, 1, 1, 0, 'Reachability Statistics', '', 600, 0],
+            ['vapConnectedClient', 'Connected Client', 0, 'ap25', 1, 1, 0, 0, 0, 5,
+             180, 250, 1, 1, 1, 1, 1, 'Connected Client', '', 600, 0],
+            ['totalConnectedClient', 'Total Connected Client', 0, 'ap25', 1, 1, 0, 0, 0, 5, 180, 250, 1, 1, 1, 1, 1, 'Total Connected Client', '', 600, 0]]
         for default_temp in default_temp_list:
             ins_temp_query = "INSERT INTO  `graph_templet_table` \
             (`graph_display_id` ,`graph_display_name` ,`user_id` ,`is_disabled` ,`device_type_id` ,`graph_id` ,`graph_tab_option` \
@@ -1411,7 +1394,6 @@ def add_user(u_dict, ul_dict, ug_dict):
                                             \"%(email_id)s\")
                     """%u_dict
         
-        ul_dict['password'] = global_db.escape_string(ul_dict['password'])
         insQuery2 = """INSERT INTO `user_login`(`user_login_id`, 
                                                 `user_id`, 
                                                 `user_name`, 
@@ -1421,8 +1403,7 @@ def add_user(u_dict, ul_dict, ug_dict):
                                                 `creation_time`, 
                                                 `is_deleted`, 
                                                 `updated_by`, 
-                                                `nms_id`,
-                                                `change_password_date`) 
+                                                `nms_id`) 
                                         VALUES (UUID(), 
                                                 \"%(user_id)s\", 
                                                 \"%(user_name)s\", 
@@ -1432,8 +1413,7 @@ def add_user(u_dict, ul_dict, ug_dict):
                                                 CURRENT_TIMESTAMP, 
                                                 '0', 
                                                 NULL, 
-                                                NULL,
-                                                NOW() )
+                                                NULL)
                     """%ul_dict
         
         insQuery3 = """INSERT INTO `users_groups` (`user_group_id`, 
@@ -1715,20 +1695,13 @@ def edit_user(u_dict, ug_dict, pwd_dict=None):
         if global_db.open != 1:
             return 1
         updateQuery1 = """UPDATE `users`
-                        set `first_name`= \"%(first_name)s\",`last_name`=\"%(last_name)s\",`designation`=\"%(designation)s\",
+        set `first_name`= \"%(first_name)s\",`last_name`=\"%(last_name)s\",`designation`=\"%(designation)s\",
         `company_name`=\"%(company)s\", `mobile_no`=\"%(mobile)s\", `address`=\"%(address)s\", `email_id`=\"%(email_id)s\"
         WHERE `user_id`=\"%(user_id)s\"""" % u_dict
 
-        updateQuery2 = """  UPDATE `users_groups` 
-                            SET `group_id` = \"%(groups)s\" 
-                            WHERE `user_id`=\"%(user_id)s\"
-                        """ % ug_dict
+        updateQuery2 = """UPDATE `users_groups` set `group_id`=\"%(groups)s\" WHERE `user_id`=\"%(user_id)s\"""" % ug_dict
         if pwd_dict:
-            pwd_dict['passwd'] = global_db.escape_string(pwd_dict['passwd'])
-            updateQuery3 = """UPDATE `user_login` 
-                              SET `old_password`= `password`, `password` =  SHA('%(passwd)s'), `change_password_date` = NOW() 
-                              WHERE `user_id` = \"%(user_id)s\"
-                           """ % pwd_dict
+            updateQuery3 = """UPDATE `user_login` set `password`= SHA('%(passwd)s') WHERE `user_id`=\"%(user_id)s\"""" % pwd_dict
         cursor = global_db.cursor()
 
         cursor.execute(updateQuery1)
@@ -1740,7 +1713,7 @@ def edit_user(u_dict, ug_dict, pwd_dict=None):
         db_close()
         return 0
     except Exception as e:
-        return 111 #str(e)
+        return 111  # str(e)
     finally:
         if isinstance(global_db, MySQLdb.connection):
             if global_db.open:

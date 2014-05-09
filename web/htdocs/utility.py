@@ -19,6 +19,9 @@ import threading
 import subprocess
 import urllib2
 import base64
+
+import defaults
+
 # GET Command Generator
 from pysnmp.entity.rfc3413.oneliner import cmdgen
 # for upnp discovery
@@ -540,9 +543,7 @@ class ErrorMessages(object):
     validation_error = "validationError"
     sys_error = "sysError"
     unknown_error = "unknownError"
-    #duplicate_error = "duplicateError"
-    duplicate_name_error = "duplicateNameError"
-    duplicate_alias_error = "duplicateAliasError"
+    duplicate_error = "duplicateError"
     no_record_error = "noRecordError"
     no_nms_instance_error = "noNmsInctanceError"
     nagios_config_error = "nagiosConfigError"
@@ -620,8 +621,8 @@ class SystemSetting(object):
                     reload_nagios_config()     return: True
                     reload_nagios_config()     return: False
         '''
-        nms_instance = __file__.split(
-            "/")[3]       # it gives instance name of nagios system
+
+        nms_instance = defaults.site
         try:
             os.system('kill -HUP `cat /omd/sites/%s/tmp/lock/nagios.lock`' %
                       nms_instance)      # execute os command which reloads nagios configuration

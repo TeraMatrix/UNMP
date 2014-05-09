@@ -22,6 +22,8 @@ import StringIO
 from datetime import datetime
 import time
 
+import defaults
+nms_instance = sitename = defaults.site
 
 def common_firrmware_controller(h):
     """
@@ -71,9 +73,9 @@ def firmware_listing(h):
     """
     global html
     html = h
-    sitename = __file__.split("/")[3]
-
-    sitename = __file__.split("/")[3]
+    # sitename = __file__.split("/")[3]
+    #
+    # sitename = __file__.split("/")[3]
     # This we import the stylesheet
     # This we import the javascript
 
@@ -476,10 +478,11 @@ def firmware_file_upload(h):
     html = h
 
     try:
-        nms_instance = __file__.split(
-            "/")[3]       # it gives instance name of nagios system
-        file_path = "/omd/sites/%s/share/check_mk/web/htdocs/download/image.img" % (
-            nms_instance)
+        nms_instance = defaults.site
+            # __file__.split(
+            # "/")[3]       # it gives instance name of nagios system
+        file_path = defaults.get_config_path(configname="isfolder", folder="download/firmware_downloads") + "image.img"
+        #"/omd/sites/%s/share/check_mk/web/htdocs/download/image.img" % (nms_instance)
         form = util.FieldStorage(h.req, keep_blank_values=1)
         upfile = form.getlist('file_uploader')[0]
         filename = upfile.filename
@@ -598,10 +601,10 @@ def odu_firmware_file_upload(h):
     html = h
 
     try:
-        nms_instance = __file__.split(
-            "/")[3]       # it gives instance name of nagios system
-        file_path = "/omd/sites/%s/share/check_mk/web/htdocs/download/image.img" % (
-            nms_instance)
+        nms_instance = defaults.site
+        # __file__.split(
+        # "/")[3]       # it gives instance name of nagios system
+        file_path = defaults.get_config_path(configname="isfolder", folder="download/firmware_downloads") + "image.img"
         form = util.FieldStorage(h.req, keep_blank_values=1)
         upfile = form.getlist('file_uploader')[0]
         filename = upfile.filename
@@ -696,8 +699,8 @@ def idu_firmware_file_upload(h):
     html = h
 
     try:
-        nms_instance = __file__.split(
-            "/")[3]       # it gives instance name of nagios system
+        # nms_instance = __file__.split(
+        #     "/")[3]       # it gives instance name of nagios system
         flag = 0
         activate = 0
         idu_reboot = 0
@@ -706,8 +709,7 @@ def idu_firmware_file_upload(h):
         upfile = form.getlist('fufile')[0]
         filename = upfile.filename
         filedata = upfile.value
-        file_path = "/omd/sites/%s/share/check_mk/web/htdocs/download/%s" % (
-            nms_instance, filename)
+        file_path = defaults.get_config_path(configname="isfolder", folder="download/firmware_downloads") + filename
         fobj = open(file_path, 'w')  # 'w' is for 'write'
         fobj.write(filedata)
         fobj.close()
@@ -718,7 +720,9 @@ def idu_firmware_file_upload(h):
         j = 0
         if filename == None or filename == "":
             html.write(
-                "<p style=\"font-size:10px;\">Please Choose the file for Upgrade<br/><br/><a href=\"javascript:history.go(-1)\">Back</a></p>")
+                "<p style=\"font-size:10px;\">"
+                "Please Choose the file for Upgrade<br/><br/>"
+                "<a href=\"javascript:history.go(-1)\">Back</a></p>")
             return
         else:
             db, cursor = mysql_connection('midnms')
@@ -726,7 +730,8 @@ def idu_firmware_file_upload(h):
                 raise SelfException(cursor)
 
         # get the ip address of ap correspondence
-        sel_query = "SELECT ip_address,http_username,http_password,http_port FROM hosts WHERE host_id='%s'" % (
+        sel_query = "SELECT ip_address,http_username,http_password,http_port" \
+                    " FROM hosts WHERE host_id='%s'" % (
             html.req.session["host_id_session"])
         cursor.execute(sel_query)
         result = cursor.fetchall()

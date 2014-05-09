@@ -38,14 +38,11 @@ class User(object):
             return str(e)
 
     @staticmethod
-    def change_password(is_first_login, is_password_expired):
+    def change_password():
         try:
-            div_id = "is_first_login"
-            if is_password_expired:
-                div_id = "is_password_expired"
             s = """
                 <div id=\"grid_view_div\">
-                    <div id=\"{0}\" class=\"yo-tabs\" >
+                    <div id=\"is_first_login\" class=\"yo-tabs\" >
                         <ul>
                             <li>
                                 <a class=\"active\"href=\"#content_1\" id=\"change_password_tab\">Change Password</a>
@@ -55,7 +52,7 @@ class User(object):
                             <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"display\" id=\"grid_view_personal_information_tab\"></table>
                         </div>
                     </div>
-                </div>""".format(div_id)
+                </div>"""
             return s
         except Exception, e:
             return str(e)

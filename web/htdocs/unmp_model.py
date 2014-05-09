@@ -14,8 +14,9 @@ from sqlalchemy.dialects.mysql import *
 # Import modules that contain the function and libraries
 import uuid
 from unmp_config import SystemConfig
-
-engine = create_engine('%s://%s:%s@%s/%s' % SystemConfig.get_sqlalchemy_credentials(
+#engine should consider the mysql socket
+#@TODO: engine shoudl also accept the mysql port
+engine = create_engine('%s://%s:%s@%s:%s/%s?unix_socket=%s' % SystemConfig.get_sqlalchemy_credentials(
 ), echo=False, pool_size=3, max_overflow=2, pool_timeout=30)
 Base = declarative_base()
 

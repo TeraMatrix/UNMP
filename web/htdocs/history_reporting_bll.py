@@ -27,7 +27,9 @@ import time
 import csv
 from common_bll import EventLog
 from operator import itemgetter
-from main_reporting_bll import MainOutage
+
+import defaults
+nms_instance = sitename =  defaults.site
 
 class HistoryReportBll(object):
     def restore_backup(self, month_var, db_backup):
@@ -37,8 +39,7 @@ class HistoryReportBll(object):
             month = month_var[1]
             cur_db = SystemConfig.get_mysql_credentials()[3]
 #            cur_db="nmsp"
-            nms_instance = __file__.split(
-                "/")[3]       # it gives instance name of nagios system
+            nms_instance = defaults.site
             path_backup = '/omd/daemon/mysql_backup/%s_%s.tar.bz2' % (
                 year, month)
             path_temp = '/omd/daemon/mysql_temp/'
@@ -64,9 +65,9 @@ class HistoryReportBll(object):
 
     def create_backup(self, month_var):
         try:
-            nms_instance = __file__.split(
-                "/")[3]       # it gives instance name of nagios system
-            month_var = month_var.split('_')
+            # nms_instance = __file__.split(
+            #     "/")[3]       # it gives instance name of nagios system
+            # month_var = month_var.split('_')
             year = month_var[0]
             month = month_var[1]
             cur_db = SystemConfig.get_mysql_credentials()[3]
@@ -699,8 +700,8 @@ class HistoryReportBll(object):
             date_temp_1 = str(d1)
             date_temp_2 = str(d2)
             aaData = []
-            nms_instance = __file__.split(
-                "/")[3]       # it gives instance name of nagios system
+            # nms_instance = __file__.split(
+            #     "/")[3]       # it gives instance name of nagios system
             # creating the object
             re = HistoryReportBll()
             #	   getting values column_selected,column_non_selected,mapping_selected,mapping_non_selected
@@ -758,11 +759,14 @@ class HistoryReportBll(object):
                         # 2 . get the data for the report
                         # res_sql=re.get_sql_data(query_dict["result"])
                         if(view_type == "data_table"):
-                            dict_shelve = shelve.open(
-                                '/omd/sites/%s/share/check_mk/web/htdocs/download/%s.db' % (nms_instance,
-                                                                                            new_user_report_dict["user_id"]))
-                            dict_shelve_data = shelve.open('/omd/sites/%s/share/check_mk/web/htdocs/download/%s_data.db' %
-                                                           (nms_instance, new_user_report_dict["user_id"]))
+                            #@TODO: this database file reading folder needs to be handeled
+                            # defaults.get_config_path(configname="isfolder", folder="images")+ theme + "/logo.png"
+                            dict_shelve = shelve.open(defaults.get_config_path(configname="isfolder",
+                                                                               folder="download") +
+                                                      new_user_report_dict["user_id"] + ".db")
+                            dict_shelve_data = shelve.open(defaults.get_config_path(configname="isfolder",
+                                                                                    folder="download") +
+                                                           new_user_report_dict["user_id"]+ "_data.db")
                             if("user_info_dict" in dict_shelve):
                                 user_report_dict = dict_shelve[
                                     "user_info_dict"]
@@ -922,7 +926,7 @@ class HistoryReportBll(object):
                         "main_title": result_columns["result"][5],
                         "second_title": result_columns["result"][6],
                         "headings": column_user,
-                        "path_report": '/omd/sites/%s/share/check_mk/web/htdocs/download/' % nms_instance,
+                        "path_report": defaults.get_config_path(configname="isfolder", folder="download"),
                         "name_report": result_columns["result"][7],
                         "data_report": report_data_list,
                         "date1": date1,
@@ -944,7 +948,7 @@ class HistoryReportBll(object):
                         "main_title": result_columns["result"][5],
                         "second_title": result_columns["result"][6],
                         "headings": column_user,
-                        "path_report": '/omd/sites/%s/share/check_mk/web/htdocs/download/' % nms_instance,
+                        "path_report": defaults.get_config_path(configname="isfolder", folder="download"),
                         "name_report": result_columns["result"][7],
                         "data_report": report_data_list,
                         "date1": date1,
@@ -1281,13 +1285,8 @@ def get_outage(no_of_devices, date1, date2, time1, time2, all_group, all_host, d
                 t_list = ((status_result[0][0], status_result[0][1], t_date, status_result[0][3], status_result[0][
                           4], status_result[0][5], status_result[0][6]),)
                 result = t_list + result
-
-            m = MainOutage(result, datetime.strptime(end_date, "%Y-%m-%d %H:%M:%S"), datetime.strptime(
-                    start_date, "%Y-%m-%d %H:%M:%S"))
-            temp_res = m.get_outage()
-
-            # temp_res = main_outage(
-            #     result, datetime.strptime(end_date, "%Y-%m-%d %H:%M:%S"))
+            temp_res = main_outage(
+                result, datetime.strptime(end_date, "%Y-%m-%d %H:%M:%S"))
             if str(temp_res['success']) == "0":
                 li_res = temp_res['result']
                 tr = []

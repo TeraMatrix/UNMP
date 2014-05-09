@@ -38,19 +38,9 @@ import os
 from unmp_config import SystemConfig
 import unmp_login
 from accessdict import page_access_rights
-from common_bll import DB
-from common_controller import logme
 
 __builtin__._ = lambda x: x
 
-
-# @TODO: try to initiate DB in handler
-#        handle error with try catch
-#        create db connection failed page
-db_obj = DB()
-
-TIMEOUT = 5*60 # in secs
-GRACE_PERIOD = 60 #secs
 
 DEBUG = True
 # DEBUG = False
@@ -63,13 +53,13 @@ if DEBUG:
 # logging.basicConfig(filename='/omd/daemon/index_unmp.log',format='%(levelname)s: %(asctime)s >> %(message)s', level=logging.DEBUG)
 # log = logging.getLogger('Index')
 
-
+from common_controller import logme
 
 pagehandlers = {}
-pagehandlers_dir = defaults.web_dir + "/plugins/pages"
-for fn in os.listdir(pagehandlers_dir):
-    if fn.endswith(".py"):
-        execfile(pagehandlers_dir + "/" + fn)
+# pagehandlers_dir = defaults.web_dir + "/plugins/pages"
+# for fn in os.listdir(pagehandlers_dir):
+#     if fn.endswith(".py"):
+#         execfile(pagehandlers_dir + "/" + fn)
 
 if defaults.omd_root:
     local_module_path = defaults.omd_root + "/local/share/check_mk/web/htdocs"
@@ -88,8 +78,8 @@ skip the pages / functions for a perticular role
 
 
 userRestrictPages = [
-                        "manage_user",
-                        "manage_group",
+                        "manage_user", 
+                        "manage_group", 
                         "manage_role"
                     ]
 guestRestrictPages = [
@@ -108,7 +98,7 @@ guestRestrictPages = [
                         "daemons_controller"
                     ]
 adminRestrictPages = []
-
+        
 li = pagehandlers.keys()
 di = {}
 for i in li:
@@ -256,42 +246,6 @@ def connect_to_livestatus(html):
     # authorization
     html.live.set_auth_domain('read')
 
-def logout_update(username):
-    """
-    NOT IN USE
-    created this function to use as a call back
-    with apache when a req session cleanup
-    ::
-    For this to work you should a modified session.py in mod_python
-    ::
-    how to use :
-    in handler() when creating session from request
-    do like this
-    req.cleanup_func = logout_update
-    sess = Session.FileSession(
-            req)  # ,fast_cleanup = True)  #  ,verify_cleanup=False)
-
-    """
-    try:
-        db = MySQLdb.connect(*SystemConfig.get_mysql_credentials())
-        cursor = db.cursor()
-
-        query=" UPDATE `login_info` \
-                SET `is_logged_in` = 0 \
-                WHERE `user_name` = '%s'" %(
-                        username)
-
-        cursor.execute(query)
-        #db.commit()
-        cursor.close()
-        db.close()
-    except Exception, e:
-        logme(" exception logout_update ", str(e))
-    finally:
-        pass
-        # html.req.session.delete()
-
-
 
 def handler(req, profiling=False):
 
@@ -302,14 +256,12 @@ def handler(req, profiling=False):
     try:
         sess = Session.FileSession(
             req)  # ,fast_cleanup = True)  #  ,verify_cleanup=False)
-
     except Exception, e:
         pass
         # log.info(" in except "+str(e))
 
     # log.info(" in 1 "+str(sess))
     sess.set_timeout(604800)        # set timeout for 7 days
-
     if sess.is_new():
         sess["username"] = ""
         sess["role"] = ""
@@ -334,10 +286,10 @@ def handler(req, profiling=False):
             read_get_vars(req)
         else:
             """
-            This handler is actually an alias to two different handlers.
-            When specified in the main config file outside any directory tags,
-            it is an alias to PostReadRequestHandler.
-            When specified inside directory (where PostReadRequestHandler is not allowed),
+            This handler is actually an alias to two different handlers. 
+            When specified in the main config file outside any directory tags, 
+            it is an alias to PostReadRequestHandler. 
+            When specified inside directory (where PostReadRequestHandler is not allowed), 
             it aliases to PythonHeaderParserHandler.
             """
             read_get_vars(req)
@@ -346,19 +298,12 @@ def handler(req, profiling=False):
         if html.var('another_debug') and DEBUG:
             internal_debug = True
 
-        not_ajax = 0
+        flag_ajax = 0
         if req.headers_in.get("X-Requested-With", "No Ajax") == "No Ajax":
             # user_trail(req.myfile,req.session["username"])
-            not_ajax = 1
+            flag_ajax = 1
 
-        if not_ajax and req.session["username"]:
-            check_all_timeouts(req.session["username"])
-
-        if req.myfile == 'server_time' and req.session["username"]:
-            check_for_timeout(int(html.var("idle_time")), req.session["username"])
-
-        if req.session["username"]:
-            is_delete, is_first_login = delete_sess(req.session["username"])  # delete_login_sess(req)
+        is_delete, is_first_login = delete_sess(req)  # delete_login_sess(req)
 
         # Prepare output format
         output_format = html.var("output_format", "html")
@@ -382,20 +327,10 @@ def handler(req, profiling=False):
             os.chmod(profilefile + ".py", 0755)
             return apache.OK
 
-
-
         if config.check_user(req.session["username"]) == 0:
-            #@TODO: do this when method is post for very req
-            # the one that include file type object in req
-            # should not used util.FieldStorage first
-            if req.myfile == 'unmp_login':
-                form = util.FieldStorage(html.req)
-                html.html_var = form.list.table_dict()
-            else:
-                html.html_var = {}
-            if "username" in html.html_var and "password" in html.html_var:
-                if unmp_login.unmp_login_verify(html.html_var["username"], html.html_var["password"]) == 0:
-                    req.session["username"] = html.html_var["username"]
+            if "username" in req.vars and "password" in req.vars:
+                if unmp_login.unmp_login_verify(html) == 0:
+                    req.session["username"] = req.vars["username"]
                     req.session.save()
                     if config.check_user(req.session["username"]) == 0:
                         temp_variable = -1
@@ -403,7 +338,8 @@ def handler(req, profiling=False):
                     else:
                         # log.info("  ok -1 ")
                         config.user = req.session["username"]
-                        check_sess(req)
+                        if not flag_ajax:
+                            check_sess(req)
                 else:
                     # raise MKConfigLoginBox("Incorrect login password")
                     pass
@@ -411,9 +347,6 @@ def handler(req, profiling=False):
                 temp_variable = -2
                 raise MKConfigLoginBox("You are not Logged in")
         else:
-            if req.myfile == 'unmp_login':
-                form = util.FieldStorage(html.req)
-                html.html_var = form.list.table_dict()
             config.user = req.session["username"]
             # log.info("  ok -2 req "+str(req.session))
 
@@ -421,7 +354,8 @@ def handler(req, profiling=False):
                 if req.session['role'] == '' and req.myfile != 'unmp_login':
                     # log.info("  not ok req login")
                     raise MKConfigLoginBox("You are not Logged in")
-            check_sess(req)
+            if not flag_ajax:
+                check_sess(req)
             # if len(req.session) > 2:
             #    check_sess(req)
             # else:
@@ -467,7 +401,7 @@ def handler(req, profiling=False):
         if (req.myfile in passReqs):
             pass
         else:
-            if not_ajax:
+            if not flag_ajax:
                 li_value = is_license_valid()
                 if li_value == 0:
                     pass
@@ -484,15 +418,12 @@ def handler(req, profiling=False):
             "help_change_password",
             "server_time",
         ]
-        # param:: passReqs- skip the check for first login/
-        #         or Password expired of users on these page lists
+        # param:: passReqs- skip the check for first login of users on these page lists
 
-        # @TODO: should be called when req.myfile is unmp_login
+        
         sess_username = req.session["username"]
-        is_password_expired = is_passwd_expired(sess_username)
-        if (is_first_login or is_password_expired) and (req.myfile not in passReqs):
+        if is_first_login and req.myfile not in passReqs:
             html.req.vars.update({"is_first_login" : is_first_login})
-            html.req.vars.update({"is_password_expired" : is_password_expired})
             if req.myfile != "index":
                 # If the request is for index.py file, skip this section and load index.py
                 req.myfile = "user_settings"
@@ -503,14 +434,10 @@ def handler(req, profiling=False):
         if is_delete == 0:
             req.myfile = 'unmp_logout'
 
-        # closed db connection as handler passing req to the perticular function now
-        # and ther is no need for db connection in index file
-        db_obj.close()
-
         handler = pagehandlers.get(req.myfile, page_not_found)
 
         handler(html)
-        user_trail(req.myfile, sess_username, not_ajax,
+        user_trail(req.myfile, sess_username, flag_ajax,
                    time1, datetime.now())
 
     except MKConfigLoginBox, e:
@@ -521,14 +448,6 @@ def handler(req, profiling=False):
             'login', page_not_found)  # first check 'login' is function or not
         handler(html)
         # unmp_login.login(html)
-
-    except MKLoggedOut, e:
-        handler = pagehandlers.get(
-            'unmp_logout', page_not_found)
-        handler(html)
-        handler = pagehandlers.get(
-            'login', page_not_found)  # first check 'login' is function or not
-        handler(html)
 
     except MKUserError, e:
         temp_variable = 2
@@ -590,11 +509,11 @@ setTimeout('location.reload(true)',3000);
         elif DEBUG:
             url = html.makeuri([("another_debug", "1")])
             html.show_error("Internal error: %s (<a href=\"%s\" target=\"_blank\">Click to open traceback in new window </a>)" % (e, url))
-            if not_ajax:
+            if flag_ajax:
                 html.new_footer()
         else:
             html.show_error("Internal error: %s " % (e))
-            if not_ajax:
+            if flag_ajax:
                 html.new_footer()
 
         apache.log_error("Internal error: %s" % (e,), apache.APLOG_ERR)
@@ -604,7 +523,6 @@ setTimeout('location.reload(true)',3000);
         # log.info("
         # =============================================================================
         # \n")
-        db_obj.close()
         html.live = None
         return apache.OK
 
@@ -615,60 +533,18 @@ def page_not_found(html):
     html.new_footer()
 
 
-def str2bool(v):
-    '''
-     return bool for string object
-     # a helper function for is_password_expired()
-    '''
-    return v.lower() in ("yes", "true", "t", "1")
-
-def is_passwd_expired(username):
-    '''
-        returns True on PASSWORD EXPIRED and
-        auto genrated password service is NOT enabled
-        else returns False
-
-        Password Expiry options are configurable in XML file
-    '''
-    enable = 0
-    expiry_age = 1
-    warning_time = 2
-    auto_password = 3
-    password_expiry = SystemConfig.get_config_attributes(
-                        "password_expiry",
-                        ["enable", "expiry_age", "warning_time", "auto_password"],
-                        False)[0]
-    enable = str2bool(password_expiry[enable])
-    auto_password = str2bool(password_expiry[auto_password])
-    expiry_age = int(password_expiry[expiry_age])
-
-    if( enable and not auto_password):
-        try:
-            db_obj.ready()
-            query = "SELECT DATEDIFF(CURDATE(), `change_password_date` ) \
-                     FROM  `user_login` \
-                     WHERE `user_name` = '%s'" %  (username)
-            rows, res = db_obj.execute(query)
-            if rows > 0:
-                pwd_age  = int(res[0][0])
-            if pwd_age >= expiry_age:
-                return True
-        except Exception, e:
-            return False
-        finally:
-            db_obj.done()
-    return False
-
 def check_sess(req):
     try:
-        db_obj.ready()
+        db = MySQLdb.connect(*SystemConfig.get_mysql_credentials())
+        cursor = db.cursor()
         # log.info("checksess")
         username = req.session["username"]
         query = "select session_id from login_info where user_name='%s' and is_logged_in=1" % (
             username)
-        rows, query_result = db_obj.execute(query)
-        if len(query_result) != 0:
-            ssid = query_result[0][0]
+        cursor.execute(query)
+        res = cursor.fetchall()
+        if len(res) != 0:
+            ssid = res[0][0]
         else:
             ssid = "0"
         cur_ssid = req.session.id()
@@ -692,33 +568,32 @@ def check_sess(req):
                         sess2.cleanup()
                         sess2.delete()
             except Exception, e:
-                import traceback
-                logme(" Exception first checkssess ", traceback.format_exc())
                 # log.error("config "+str(e))
             # session doesn't exists
                 pass
 
     except Exception, e:
-        import traceback
-        logme(" exception second checkssess ", traceback.format_exc())
+        pass
     finally:
-        db_obj.done()
+        db.close()
 
 
 def delete_login_sess(req):
     try:
         # log.info("delete")
-        db_obj.ready()
+        db = MySQLdb.connect(*SystemConfig.get_mysql_credentials())
+        cursor = db.cursor()
         query = "select session_id,user_name from login_info where next_time_delete=1 limit 1"
-        rows, query_result = db_obj.execute(query)
-        if len(query_result) != 0:
-            ssid = query_result[0][0]
+        cursor.execute(query)
+        res = cursor.fetchall()
+        if len(res) != 0:
+            ssid = res[0][0]
         else:
             return 1
         # query="insert into login_check values('%s')" %(ssid)
         # cursor.execute(query)
         # db.commit()
-        if(req.session["username"] != query_result[0][1]):
+        if(req.session["username"] != res[0][1]):
             try:
                 path = os.path.join("/tmp/mp_sess", ssid[0:2])
                 filename = os.path.join(path, ssid)
@@ -737,10 +612,12 @@ def delete_login_sess(req):
                     # cursor.execute(query)
                     # db.commit()
                         query = "update login_info set is_logged_in='0' where user_name='%s'" % (
-                            query_result[0][1])
-                        db_obj.execute_dui(query)
+                            res[0][1])
+                        cursor.execute(query)
+                        db.commit()
                         query = "update login_info set next_time_delete=0 where session_id='%s'" % (ssid)
-                        db_obj.execute_dui(query)
+                        cursor.execute(query)
+                        db.commit()
 
             except Exception, e:
                 pass
@@ -754,33 +631,29 @@ def delete_login_sess(req):
     except Exception, e:
         return 3
     finally:
-        db_obj.done()
+        db.close()
 
 
-def delete_sess(username):
+def delete_sess(req):
     try:
         # log.info("delete")
-        # db = MySQLdb.connect(*SystemConfig.get_mysql_credentials())
-        # cursor = db.cursor()
-        db_obj.ready()
+        db = MySQLdb.connect(*SystemConfig.get_mysql_credentials())
+        cursor = db.cursor()
         query = "SELECT `next_time_delete`, `is_first_login` \
         		 FROM `login_info` \
         		 WHERE `user_name` = '%s'" % (
-            username)
-        rows, query_result = db_obj.execute(query)
-
-        if rows == -1:
-            raise db_obj.error
-
-        is_first_login = query_result[0][1]
-        if len(query_result) != 0:
-            if query_result[0][0]:
+            req.session["username"])
+        cursor.execute(query)
+        res = cursor.fetchall()
+        is_first_login = res[0][1]
+        if len(res) != 0:
+            if res[0][0]:
                 up_query = "UPDATE `login_info` \
                             SET `next_time_delete` = 0 \
                             WHERE `user_name` = '%s'" % (
-                    username)
-                if db_obj.execute_dui(up_query) == -1:
-                    raise db.error
+                    req.session["username"])
+                cursor.execute(up_query)
+                db.commit()
                 return (0, is_first_login)
             else:
                 return (1, is_first_login)
@@ -789,17 +662,19 @@ def delete_sess(username):
     except Exception, e:
         return (3, 0)
     finally:
-        db_obj.done()
+        cursor.close()
+        db.close()
 
 
 def is_license_valid():
     try:
-        db_obj.ready()
+        db = MySQLdb.connect(*SystemConfig.get_mysql_credentials())
+        cursor = db.cursor()
         query = "select is_valid from license_info"
-        rows, query_result = db_obj.execute(query)
-
-        if len(query_result) != 0:
-            value = query_result[0][0]
+        cursor.execute(query)
+        res = cursor.fetchall()
+        if len(res) != 0:
+            value = res[0][0]
             if value == 0:
                 return 0
             else:
@@ -810,10 +685,10 @@ def is_license_valid():
     except Exception, e:
         return 1
     finally:
-        db_obj.done()
+        db.close()
 
 
-def user_trail(link, username, not_ajax=0, time1=0, time2=0):
+def user_trail(link, username, flag_ajax=0, time1=0, time2=0):
     val = 0
     time_taken = str(
         (time2 - time1).seconds) + "." + str((time2 - time1).microseconds)
@@ -834,68 +709,13 @@ def user_trail(link, username, not_ajax=0, time1=0, time2=0):
                 val = li[1].strip()
                 break
         if str(val) == "1":
-            db_obj.ready()
+            db = MySQLdb.connect(*SystemConfig.get_mysql_credentials())
+            cursor = db.cursor()
             query = "INSERT INTO `event_log` (`event_log_id`, `username`, `event_type_id`, `description`, `timestamp`,`level`,`time_taken`) VALUES \
-            (NULL,\"%s\",NULL,\"%s\",\"%s\",\"%s\",\"%s\")" % (username, "visited link %s.py %s" % (link, "" if not_ajax == 1 else "(AJAX Request)"), datetime.datetime.now(), 3, time_taken)
-
-            db_obj.execute_dui(query)
-
+            (NULL,\"%s\",NULL,\"%s\",\"%s\",\"%s\",\"%s\")" % (username, "visited link %s.py %s" % (link, "" if flag_ajax == 1 else "(AJAX Request)"), datetime.datetime.now(), 3, time_taken)
+            cursor.execute(query)
+            db.commit()
+            db.close()
         return 0
     except Exception, e:
         return 2
-    finally:
-        db_obj.done()
-
-def check_for_timeout(idle_time, username):
-
-    if idle_time > TIMEOUT:
-        raise MKLoggedOut('Session timeout')
-    elif idle_time < GRACE_PERIOD:
-        try:
-            db_obj.ready()
-            query = "UPDATE `login_info` \
-                    SET `last_accessed_time` = '%s' \
-                    WHERE `user_name` = '%s'" % (
-                        datetime.now(), username)
-            db_obj.execute_dui(query)
-        finally:
-            db_obj.done()
-
-
-
-def check_all_timeouts(username):
-    raise_logout = False
-    try:
-        db_obj.ready()
-        query = "SELECT last_accessed_time, user_name \
-                 FROM `login_info` \
-                 WHERE `is_logged_in` = 1"
-
-        rows, query_result = db_obj.execute(query)
-        if rows == -1:
-            raise db_obj.error
-
-        user_tobe_logout = []
-        for tup in query_result:
-            if tup[0] and (datetime.now() - tup[0]).seconds > TIMEOUT:
-                user_tobe_logout.append(tup[1])
-                if username == tup[1]:
-                    raise_logout = True
-
-        if user_tobe_logout:
-            query = "UPDATE `login_info` \
-                SET `is_logged_in` = 0, `next_time_delete` = 1 \
-                WHERE `user_name` in (%s) " % str(user_tobe_logout)[1:-1]
-            db_obj.execute_dui(query)
-    except Exception,e:
-        # Breaking the rule: Errors should never pass silently
-        # FIXME
-        import traceback
-        logme(" Exception check all timeouts ", traceback.format_exc())
-    finally:
-        db_obj.done()
-        if raise_logout:
-            raise MKLoggedOut('Session timeout')
-
-
-

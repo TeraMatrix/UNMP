@@ -205,11 +205,11 @@ class Filter:
 
 # Load all view plugins
 plugins_path = defaults.web_dir + "/plugins/views"
-fns = os.listdir(plugins_path)
-fns.sort()
-for fn in fns:
-    if fn.endswith(".py"):
-        execfile(plugins_path + "/" + fn)
+# fns = os.listdir(plugins_path)
+# fns.sort()
+# for fn in fns:
+#     if fn.endswith(".py"):
+#         execfile(plugins_path + "/" + fn)
 if defaults.omd_root:
     local_plugins_path = defaults.omd_root + \
         "/local/share/check_mk/web/plugins/views"

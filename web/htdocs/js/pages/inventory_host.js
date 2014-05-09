@@ -1429,9 +1429,6 @@ function showForm()
 {
 	$gridViewDiv.hide();
 	$formDiv.show();
-	$("img#add_host").hide();
-	$("img#del_host").hide();
-
 }
 
 // to hide form
@@ -1439,8 +1436,6 @@ function hideForm()
 {
 	$gridViewDiv.show();
 	$formDiv.hide();
-	$("img#add_host").show();
-	$("img#del_host").show();
 	/* this is bcoz when validation unsuccess and you click on cancel button then tooltip visible so this code will hide that. */
 	if($tooltip)
 	{
@@ -1808,7 +1803,7 @@ function valiateForm($formObj)
 			},
 			host_os:{
 				required: true
-			},
+			}
 		},
 		messages:{
 			host_name:{
@@ -1946,7 +1941,6 @@ function addForm()
 	$("#device_type").removeAttr('disabled');
 	$("#advanced_settings").hide();
 	getAllFirmwareDict();
-
 	if(currentTab == "discovered")
 	{
 		var selectedRow = new Array();

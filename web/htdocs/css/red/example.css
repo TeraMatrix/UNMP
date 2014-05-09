@@ -504,7 +504,6 @@ padding: 5px 0 5px 15px;*/
 	bottom: 0;
 	height: 245px;
 	overflow:hidden;
-	z-index:100;
 }
 #events_logs_box div#header
 {
@@ -3131,7 +3130,7 @@ div.multiSelectList img
 	line-height: 25px;
 	cursor: pointer;
 	border: 1px #111 solid;
-	z-index: 10;
+	z-index: 1000;
 }
 .home-button:hover{
 	background-color: #1B1B1C;

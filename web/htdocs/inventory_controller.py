@@ -33,6 +33,9 @@ from pysnmp_v1 import pysnmp_get_table as pysnmp_get_table_ccu
 from py_module import pysnmp_geter
 #
 
+import defaults
+
+nms_instance = defaults.site
 
 def server_time(h):
     global html
@@ -885,8 +888,8 @@ def add_host(h):
         device_type = html.var("device_type")
         lb_result = lb.check_license_for_host(device_type)
         if lb_result == True:
-            nms_instance = __file__.split(
-                "/")[3]       # it gives instance name of nagios system
+            # nms_instance = __file__.split(
+            #     "/")[3]       # it gives instance name of nagios system
             host_name = html.var("host_name")
             host_alias = html.var("host_alias")
             ip_address = html.var("ip_address")
@@ -943,21 +946,9 @@ def add_host(h):
             master_id = html.var("master_mac")
             firmware_version = html.var("firmware_version")
             # check the version only for odu
-            if device_type_id == "odu100" and (firmware_version is None or len(firmware_version) < 3):
-                html.req.content_type = 'application/json'
-                result = {
-                    "success": 1,
-                    "msg": "Firmware version is required for device type RM"
-                }
-                html.write(JSONEncoder().encode(result))
-                return
-
             if firmware_version != None and firmware_version != "":  # len(firmware_version)>1:
-                # below 2 lines not need after introducin object_model_di
-                # firmware_mapping_id = "7.2.20" if int(firmware_version.split(
-                #     ".")[-1]) < 25 and int(firmware_version.split(".")[-1]) >= 20 else "7.2.25"
-                firmware_mapping_id = firmware_version
-
+                firmware_mapping_id = "7.2.20" if int(firmware_version.split(
+                    ".")[-1]) < 25 and int(firmware_version.split(".")[-1]) >= 20 else "7.2.25"
             hst_bll = HostBll(
             )                             # creating the HostBll object
             host = hst_bll.add(
@@ -986,8 +977,8 @@ def add_host(h):
 def edit_host(h):
     global html
     html = h
-    nms_instance = __file__.split(
-        "/")[3]       # it gives instance name of nagios system
+    # nms_instance = __file__.split(
+    #     "/")[3]       # it gives instance name of nagios system
     lb = LicenseBll()
     host_id = html.var("host_id")
     device_type = html.var("device_type")
@@ -1041,15 +1032,6 @@ def edit_host(h):
         master_id = html.var("master_mac")
         ip_update = html.var("ip_update")
         firmware_version = html.var("firmware_version")
-        if device_type_id == "odu100" and (firmware_version is None or len(firmware_version) < 3):
-            html.req.content_type = 'application/json'
-            result = {
-                "success": 1,
-                "msg": "Firmware version is required for device type RM"
-            }
-            html.write(JSONEncoder().encode(result))
-            return
-
         es = Essential()
         circular_check_result = es.circular_check(host_id, parent_name)
         if circular_check_result['success'] == 0:
@@ -1111,8 +1093,8 @@ def edit_host(h):
 def del_host(h):
     global html
     html = h
-    nms_instance = __file__.split(
-        "/")[3]       # it gives instance name of nagios system
+    # nms_instance = __file__.split(
+    #     "/")[3]       # it gives instance name of nagios system
     host_ids = html.var("host_ids")
     host_ids = host_ids != None and host_ids or ""
     updated_by = html.req.session["username"]
@@ -1132,8 +1114,8 @@ def del_host(h):
 def del_deleted_host(h):
     global html
     html = h
-    nms_instance = __file__.split(
-        "/")[3]       # it gives instance name of nagios system
+    # nms_instance = __file__.split(
+    #     "/")[3]       # it gives instance name of nagios system
     host_ids = html.var("host_ids")
     host_ids = host_ids != None and host_ids or ""
     updated_by = html.req.session["username"]
@@ -1154,8 +1136,8 @@ def del_deleted_host(h):
 def add_deleted_host(h):
     global html
     html = h
-    nms_instance = __file__.split(
-        "/")[3]       # it gives instance name of nagios system
+    # nms_instance = __file__.split(
+    #     "/")[3]       # it gives instance name of nagios system
     host_ids = html.var("host_ids")
     host_ids = host_ids != None and host_ids or ""
     updated_by = html.req.session["username"]
@@ -1268,8 +1250,8 @@ def form_hostgroup(h):
 def add_hostgroup(h):
     global html
     html = h
-    nms_instance = __file__.split(
-        "/")[3]       # it gives instance name of nagios system
+    # nms_instance = __file__.split(
+    #     "/")[3]       # it gives instance name of nagios system
     hostgroup_name = html.var("hostgroup_name")
     hostgroup_alias = html.var("hostgroup_alias")
     timestamp = str(datetime.now())
@@ -1313,8 +1295,8 @@ def get_hostgroup_by_id(h):
 def edit_hostgroup(h):
     global html
     html = h
-    nms_instance = __file__.split(
-        "/")[3]       # it gives instance name of nagios system
+    # nms_instance = __file__.split(
+    #     "/")[3]       # it gives instance name of nagios system
     hostgroup_id = html.var("hostgroup_id")
     hostgroup_name = html.var("hostgroup_name")
     hostgroup_alias = html.var("hostgroup_alias")
@@ -1339,8 +1321,8 @@ def edit_hostgroup(h):
 def del_hostgroup(h):
     global html
     html = h
-    nms_instance = __file__.split(
-        "/")[3]       # it gives instance name of nagios system
+    # nms_instance = __file__.split(
+    #     "/")[3]       # it gives instance name of nagios system
     hostgroup_ids = html.var("hostgroup_ids")
     hostgroup_ids = hostgroup_ids != None and hostgroup_ids or ""
     updated_by = html.req.session["username"]
@@ -2137,8 +2119,8 @@ def page_tip_inventory_black_list_mac(h):
 
 # Misc
 def write_nagios_config(h):
-    nms_name = __file__.split(
-        "/")[3]       # it gives instance name of nagios system
+    # nms_name = __file__.split(
+    #     "/")[3]       # it gives instance name of nagios system
     global html
     html = h
     hst_bll = NagioConfigurationBll()

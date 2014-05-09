@@ -14,10 +14,10 @@ import subprocess
 import MySQLdb
 from lib import *
 from ap_service import *
-
+# import defaults
 ############################################ Network Overview ############
 
-
+site = defaults.site
 def network_overview(h):
     global hrml
     html = h
@@ -113,17 +113,17 @@ def list_search(list_, value):
 def discoveredHostDetailsForAll(h):
     global html
     html = h
-    site = __file__.split("/")[3]
+    site = defaults.site
     checkboxState = ""
     host_list = []
-    dom_sdm = xml.dom.minidom.parse(
-        "/omd/sites/%s/share/check_mk/web/htdocs/xml/sdmcDiscovery.xml" % site)
-    dom_snmp = xml.dom.minidom.parse(
-        "/omd/sites/%s/share/check_mk/web/htdocs/xml/snmpDiscovery.xml" % site)
-    dom_upnp = xml.dom.minidom.parse(
-        "/omd/sites/%s/share/check_mk/web/htdocs/xml/upnpDiscovery.xml" % site)
-    dom_ping = xml.dom.minidom.parse(
-        "/omd/sites/%s/share/check_mk/web/htdocs/xml/pingDiscovery.xml" % site)
+    dom_sdm = xml.dom.minidom.parse(defaults.get_config_path("sdmc","xml"))
+        # "/omd/sites/%s/share/check_mk/web/htdocs/xml/sdmcDiscovery.xml" % site)
+    dom_snmp = xml.dom.minidom.parse(defaults.get_config_path("snmp","xml"))
+        # "/omd/sites/%s/share/check_mk/web/htdocs/xml/snmpDiscovery.xml" % site)
+    dom_upnp = xml.dom.minidom.parse(defaults.get_config_path("upnp","xml"))
+        # "/omd/sites/%s/share/check_mk/web/htdocs/xml/upnpDiscovery.xml" % site)
+    dom_ping = xml.dom.minidom.parse(defaults.get_config_path("ping","xml"))
+        # "/omd/sites/%s/share/check_mk/web/htdocs/xml/pingDiscovery.xml" % site)
     discovery = dom_sdm.getElementsByTagName("discovery")
     for dis in discovery:
         if int(dis.getAttribute("active").strip()) == 1:
@@ -154,8 +154,7 @@ def discoveredHostDetailsForAll(h):
         else:
             dom_sdm.getElementsByTagName(
                 "discoveredHosts")[0].removeChild(host)
-            fwxml = open(
-                "/omd/sites/%s/share/check_mk/web/htdocs/xml/sdmcDiscovery.xml" % site, "w")
+            fwxml = open(defaults.get_config_path("sdmc","xml"), "w")
             fwxml.write(dom_sdm.toxml())
             fwxml.close()
 
@@ -169,8 +168,7 @@ def discoveredHostDetailsForAll(h):
         else:
             dom_snmp.getElementsByTagName(
                 "discoveredHosts")[0].removeChild(host)
-            fwxml = open(
-                "/omd/sites/%s/share/check_mk/web/htdocs/xml/snmpDiscovery.xml" % site, "w")
+            fwxml = open(defaults.get_config_path("snmp","xml"), "w")
             fwxml.write(dom_snmp.toxml())
             fwxml.close()
 
@@ -184,8 +182,7 @@ def discoveredHostDetailsForAll(h):
         else:
             dom_upnp.getElementsByTagName(
                 "discoveredHosts")[0].removeChild(host)
-            fwxml = open(
-                "/omd/sites/%s/share/check_mk/web/htdocs/xml/upnpDiscovery.xml" % site, "w")
+            fwxml = open(defaults.get_config_path("upnp","xml"), "w")
             fwxml.write(dom_upnp.toxml())
             fwxml.close()
 
@@ -199,8 +196,7 @@ def discoveredHostDetailsForAll(h):
         else:
             dom_ping.getElementsByTagName(
                 "discoveredHosts")[0].removeChild(host)
-            fwxml = open(
-                "/omd/sites/%s/share/check_mk/web/htdocs/xml/pingDiscovery.xml" % site, "w")
+            fwxml = open(defaults.get_config_path("ping","xml"), "w")
             fwxml.write(dom_ping.toxml())
             fwxml.close()
 
@@ -216,9 +212,8 @@ def discoveredHostDetailsForAll(h):
 def dicoveredHostDetailsForPing(h):
     global html
     html = h
-    site = __file__.split("/")[3]
-    dom = xml.dom.minidom.parse(
-        "/omd/sites/%s/share/check_mk/web/htdocs/xml/pingDiscovery.xml" % site)
+    # site = __file__.split("/")[3]
+    dom = xml.dom.minidom.parse(defaults.get_config_path("ping","xml"))
     discoveryString = "<div>"
     discovery = dom.getElementsByTagName("discovery")
     discoveredHosts = dom.getElementsByTagName("host")
@@ -244,9 +239,8 @@ def dicoveredHostDetailsForPing(h):
 def dicoveredHostDetailsForSnmp(h):
     global html
     html = h
-    site = __file__.split("/")[3]
-    dom = xml.dom.minidom.parse(
-        "/omd/sites/%s/share/check_mk/web/htdocs/xml/snmpDiscovery.xml" % site)
+    # site = __file__.split("/")[3]
+    dom = xml.dom.minidom.parse(defaults.get_config_path("snmp","xml"))
     discoveryString = "<div>"
     discovery = dom.getElementsByTagName("discovery")
     discoveredHosts = dom.getElementsByTagName("host")
@@ -272,9 +266,8 @@ def dicoveredHostDetailsForSnmp(h):
 def dicoveredHostDetailsForUPnP(h):
     global html
     html = h
-    site = __file__.split("/")[3]
-    dom = xml.dom.minidom.parse(
-        "/omd/sites/%s/share/check_mk/web/htdocs/xml/upnpDiscovery.xml" % site)
+    # site = __file__.split("/")[3]
+    dom = xml.dom.minidom.parse(defaults.get_config_path("snmp","xml"))
     discoveryString = "<div>"
     discovery = dom.getElementsByTagName("discovery")
     discoveredHosts = dom.getElementsByTagName("host")
@@ -300,9 +293,8 @@ def dicoveredHostDetailsForUPnP(h):
 def dicoveredHostDetailsForSDMC(h):
     global html
     html = h
-    site = __file__.split("/")[3]
-    dom = xml.dom.minidom.parse(
-        "/omd/sites/%s/share/check_mk/web/htdocs/xml/sdmcDiscovery.xml" % site)
+    # site = __file__.split("/")[3]
+    dom = xml.dom.minidom.parse(defaults.get_config_path("sdmc","xml"))
     discoveryString = "<div>"
     discovery = dom.getElementsByTagName("discovery")
     discoveredHosts = dom.getElementsByTagName("host")
@@ -326,9 +318,8 @@ def dicoveredHostDetailsForSDMC(h):
 def discoveryDetailsForPing(h):
     global html
     html = h
-    site = __file__.split("/")[3]
-    dom = xml.dom.minidom.parse(
-        "/omd/sites/%s/share/check_mk/web/htdocs/xml/pingDiscovery.xml" % site)
+    # site = __file__.split("/")[3]
+    dom = xml.dom.minidom.parse(defaults.get_config_path("ping","xml"))
     discoveryString = ""
     discoveryDetailString = ""
     discovery = dom.getElementsByTagName("discovery")
@@ -379,9 +370,8 @@ def discoveryDetailsForPing(h):
 def discoveryDetailsForSnmp(h):
     global html
     html = h
-    site = __file__.split("/")[3]
-    dom = xml.dom.minidom.parse(
-        "/omd/sites/%s/share/check_mk/web/htdocs/xml/snmpDiscovery.xml" % site)
+    # site = __file__.split("/")[3]
+    dom = xml.dom.minidom.parse(defaults.get_config_path("snmp","xml"))
     discoveryString = ""
     discoveryDetailString = ""
     discovery = dom.getElementsByTagName("discovery")
@@ -438,9 +428,8 @@ def discoveryDetailsForSnmp(h):
 def discoveryDetailsForUPnP(h):
     global html
     html = h
-    site = __file__.split("/")[3]
-    dom = xml.dom.minidom.parse(
-        "/omd/sites/%s/share/check_mk/web/htdocs/xml/upnpDiscovery.xml" % site)
+    # site = __file__.split("/")[3]
+    dom = xml.dom.minidom.parse(defaults.get_config_path("upnp","xml"))
     discoveryString = ""
     discoveryDetailString = ""
     discovery = dom.getElementsByTagName("discovery")
@@ -487,9 +476,8 @@ def discoveryDetailsForUPnP(h):
 def discoveryDetailsForSDMC(h):
     global html
     html = h
-    site = __file__.split("/")[3]
-    dom = xml.dom.minidom.parse(
-        "/omd/sites/%s/share/check_mk/web/htdocs/xml/sdmcDiscovery.xml" % site)
+    # site = __file__.split("/")[3]
+    dom = xml.dom.minidom.parse(defaults.get_config_path("sdmc","xml"))
     discoveryString = ""
     discoveryDetailString = ""
     discovery = dom.getElementsByTagName("discovery")
@@ -539,7 +527,7 @@ def startDiscovery(h):
     global html
     html = h
     discoveryType = html.var("type")
-    site = __file__.split("/")[3]
+    # site = __file__.split("/")[3]
     discoveryXmlFilePath = ""
     ipBase = ""
     ipRangeStart = ""
@@ -558,14 +546,14 @@ def startDiscovery(h):
     privProtocol = ""
 
     if discoveryType == "ping":
-        discoveryXmlFilePath = "/omd/sites/%s/share/check_mk/web/htdocs/xml/pingDiscovery.xml" % site
-        perlFile = "/omd/sites/%s/share/check_mk/web/htdocs/pingdiscoverycreatexml.pl" % site
+        discoveryXmlFilePath = defaults.get_config_path("ping","xml")
+        perlFile = defaults.get_config_path(configname="isfolder", folder="") + "pingdiscoverycreatexml.pl"
     elif discoveryType == "snmp":
-        discoveryXmlFilePath = "/omd/sites/%s/share/check_mk/web/htdocs/xml/snmpDiscovery.xml" % site
-        perlFile = "/omd/sites/%s/share/check_mk/web/htdocs/snmpdiscoverycreatexml.pl" % site
+        discoveryXmlFilePath =defaults.get_config_path("snmp","xml")
+        perlFile = defaults.get_config_path(configname="isfolder", folder="") + "snmpdiscoverycreatexml.pl"
     elif discoveryType == "upnp":
-        discoveryXmlFilePath = "/omd/sites/%s/share/check_mk/web/htdocs/xml/upnpDiscovery.xml" % site
-        perlFile = "/omd/sites/%s/share/check_mk/web/htdocs/upnpdiscoverycreatexml.pl" % site
+        discoveryXmlFilePath =defaults.get_config_path("upnp","xml")
+        perlFile = defaults.get_config_path(configname="isfolder", folder="") + "upnpdiscoverycreatexml.pl"
     if discoveryXmlFilePath != "":
         dom = xml.dom.minidom.parse(discoveryXmlFilePath)
         discovery = dom.getElementsByTagName("discovery")
@@ -631,15 +619,15 @@ def stopStartDiscovery(h):
     html = h
     action = html.var("action")
     discoveryType = html.var("type")
-    site = __file__.split("/")[3]
+    # site = __file__.split("/")[3]
     discoveryXmlFilePath = ""
 
     if discoveryType == "ping":
-        discoveryXmlFilePath = "/omd/sites/%s/share/check_mk/web/htdocs/xml/pingDiscovery.xml" % site
+        discoveryXmlFilePath = defaults.get_config_path("ping","xml")
     elif discoveryType == "snmp":
-        discoveryXmlFilePath = "/omd/sites/%s/share/check_mk/web/htdocs/xml/snmpDiscovery.xml" % site
+        discoveryXmlFilePath = defaults.get_config_path("snmp","xml")
     elif discoveryType == "upnp":
-        discoveryXmlFilePath = "/omd/sites/%s/share/check_mk/web/htdocs/xml/upnpDiscovery.xml" % site
+        discoveryXmlFilePath = defaults.get_config_path("upnp","xml")
     if discoveryXmlFilePath != "":
         dom = xml.dom.minidom.parse(discoveryXmlFilePath)
         discovery = dom.getElementsByTagName("discovery")
@@ -659,7 +647,7 @@ def stopStartDiscovery(h):
 def discoveryAndNetworkDetails(h):
     global html
     html = h
-    site = __file__.split("/")[3]
+    # site = __file__.split("/")[3]
     html.write("<div class=\"demo jstree jstree-0 jstree-default jstree-focused\" id=\"demo\"><ul><li id=\"node_2\" rel=\"drive\" class=\"jstree-last  jstree-open\"><ins class=\"jstree-icon\">&nbsp;</ins><a href=\"#\" class=\"jstree-clicked\"><ins class=\"jstree-icon\">&nbsp;</ins>NMS</a><ul style=\"\">")
 
     nmsTree = ""
@@ -705,16 +693,16 @@ def discoveryStatus(h):
     html = h
     status = "0"
     discoveryType = html.var("type")
-    site = __file__.split("/")[3]
+    # site = __file__.split("/")[3]
     discoveryXmlFilePath = ""
     if discoveryType == "ping":
-        discoveryXmlFilePath = "/omd/sites/%s/share/check_mk/web/htdocs/xml/pingDiscovery.xml" % site
+        discoveryXmlFilePath = defaults.get_config_path("ping","xml")
     elif discoveryType == "snmp":
-        discoveryXmlFilePath = "/omd/sites/%s/share/check_mk/web/htdocs/xml/snmpDiscovery.xml" % site
+        discoveryXmlFilePath = defaults.get_config_path("snmp","xml")
     elif discoveryType == "upnp":
-        discoveryXmlFilePath = "/omd/sites/%s/share/check_mk/web/htdocs/xml/upnpDiscovery.xml" % site
+        discoveryXmlFilePath = defaults.get_config_path("upnp","xml")
     elif discoveryType == "sdmc":
-        discoveryXmlFilePath = "/omd/sites/%s/share/check_mk/web/htdocs/xml/sdmcDiscovery.xml" % site
+        discoveryXmlFilePath = defaults.get_config_path("sdmc","xml")
     if discoveryXmlFilePath != "":
         dom = xml.dom.minidom.parse(discoveryXmlFilePath)
         discovery = dom.getElementsByTagName("discovery")
@@ -732,17 +720,17 @@ def discoveryStatus(h):
 def createHostConfiguration(h):
     global html
     html = h
-    site = __file__.split("/")[3]
+    # site = __file__.split("/")[3]
     discoveryType = html.var("type")
     discoveryXmlFilePath = ""
     if discoveryType == "ping":
-        discoveryXmlFilePath = "/omd/sites/%s/share/check_mk/web/htdocs/xml/pingDiscovery.xml" % site
+        discoveryXmlFilePath = defaults.get_config_path("ping","xml")
     elif discoveryType == "snmp":
-        discoveryXmlFilePath = "/omd/sites/%s/share/check_mk/web/htdocs/xml/snmpDiscovery.xml" % site
+        discoveryXmlFilePath = defaults.get_config_path("snmp","xml")
     elif discoveryType == "upnp":
-        discoveryXmlFilePath = "/omd/sites/%s/share/check_mk/web/htdocs/xml/upnpDiscovery.xml" % site
+        discoveryXmlFilePath = defaults.get_config_path("upnp","xml")
     elif discoveryType == "sdmc":
-        discoveryXmlFilePath = "/omd/sites/%s/share/check_mk/web/htdocs/xml/sdmcDiscovery.xml" % site
+        discoveryXmlFilePath = defaults.get_config_path("sdmc","xml")
     hostList = html.var("hostList")
     hosts = hostList.split(",")
     deviceType = html.var("deviceType").split(",")
@@ -826,7 +814,8 @@ def createHostConfiguration(h):
                 for col in result:
                     totalRow = col[0]
                 if totalRow == 0:
-                    sql = "INSERT INTO nms_devices (devicetype,ipaddress,username,password,port,hostname,created_by) VALUES ('%s','%s','%s','%s','%s','%s','%s')" % (
+                    sql = "INSERT INTO nms_devices (devicetype,ipaddress,username,password,port,hostname,created_by) " \
+                          "VALUES ('%s','%s','%s','%s','%s','%s','%s')" % (
                         deviceType[ind], address, "", "", "", host, config.user)
                     cursor.execute(sql)
                     db.commit()
@@ -849,17 +838,17 @@ def createHostConfiguration(h):
 def createSeviceConfiguration(h):
     global html
     html = h
-    site = __file__.split("/")[3]
+    # site = __file__.split("/")[3]
     discoveryType = html.var("type")
     discoveryXmlFilePath = ""
     if discoveryType == "ping":
-        discoveryXmlFilePath = "/omd/sites/%s/share/check_mk/web/htdocs/xml/pingDiscovery.xml" % site
+        discoveryXmlFilePath = defaults.get_config_path("ping","xml")
     elif discoveryType == "snmp":
-        discoveryXmlFilePath = "/omd/sites/%s/share/check_mk/web/htdocs/xml/snmpDiscovery.xml" % site
+        discoveryXmlFilePath = defaults.get_config_path("snmp","xml")
     elif discoveryType == "upnp":
-        discoveryXmlFilePath = "/omd/sites/%s/share/check_mk/web/htdocs/xml/upnpDiscovery.xml" % site
+        discoveryXmlFilePath = defaults.get_config_path("upnp","xml")
     elif discoveryType == "sdmc":
-        discoveryXmlFilePath = "/omd/sites/%s/share/check_mk/web/htdocs/xml/sdmcDiscovery.xml" % site
+        discoveryXmlFilePath = defaults.get_config_path("sdmc","xml")
     hostList = html.var("hostList")
     serviceManagement = html.var("service")
     serviceTemplate = "generic-service"
@@ -890,15 +879,13 @@ def createSeviceConfiguration(h):
             # create service template dom
             shyamDevicesDom = xml.dom.minidom.parseString(
                 "<shyamDevices></shyamDevices>")
-            if(os.path.isfile("/omd/sites/%s/share/check_mk/web/htdocs/xml/shyamdevices.xml" % site)):
-                shyamDevicesDom = xml.dom.minidom.parse(
-                    "/omd/sites/%s/share/check_mk/web/htdocs/xml/shyamdevices.xml" % site)
+            if(os.path.isfile(defaults.get_config_path("shyam","xml"))):
+                shyamDevicesDom = xml.dom.minidom.parse(defaults.get_config_path("shyam","xml"))
 
             # create service template dom
             templateDom = xml.dom.minidom.parseString("<hosts></hosts>")
-            if(os.path.isfile("/omd/sites/%s/share/check_mk/web/htdocs/xml/service_template.xml" % site)):
-                templateDom = xml.dom.minidom.parse(
-                    "/omd/sites/%s/share/check_mk/web/htdocs/xml/service_template.xml" % site)
+            if(os.path.isfile(defaults.get_config_path("service","xml"))):
+                templateDom = xml.dom.minidom.parse(defaults.get_config_path("service","xml"))
 
             for host in hosts:
                 countService = 0

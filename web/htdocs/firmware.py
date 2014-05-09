@@ -18,11 +18,15 @@ from xml.dom.minidom import parse, Node
 from lib import *
 import nms_config
 
+from mysql_collection import mysql_connection
 
+import defaults
+nms_instance = sitename = defaults.site
 def update(h):
     global html
-    sitename = __file__.split("/")[3]
-    path = "/omd/sites/%s/share/check_mk/web/htdocs/xml/shyamdevices.xml" % sitename
+    #sitename = __file__.split("/")[3]
+    path = defaults.get_config_path("shyam","xml")
+    #"/omd/sites/%s/share/check_mk/web/htdocs/xml/shyamdevices.xml" % sitename
     html = h
     i = 0
     css_list = []
@@ -30,7 +34,10 @@ def update(h):
     header_btn = ""
     html.new_header("Firmware Update", "", header_btn, css_list, js_list)
     html.write(
-        "<table class=\"addform\" style=\"border:0px none;\"><colgroup><col width=\"140px\"/><col width=\"auto\"/></colgroup>")
+        "<table class=\"addform\" style=\"border:0px none;\">"
+        "<colgroup>"
+        "<col width=\"140px\"/><col width=\"auto\"/>"
+        "</colgroup>")
     html.write(
         "<tr><td>Select Devices:</td><td><select name=\"select_devices\" id=\"select_devices\">")
     if(os.path.isfile(path)):
@@ -75,7 +82,13 @@ def device_table(h):
     data_str = ""
     device_type = html.var("device_type")
     data_str += "<div><table class=\"addform\">"
-    data_str += "<colgroup><col width=\"1%\"/><col width=\"20%\"/><col width=\"20%\"/><col width=\"20%\"/><col width=\"auto\"/></colgroup>"
+    data_str += "<colgroup>" \
+                "<col width=\"1%\"/>" \
+                "<col width=\"20%\"/>" \
+                "<col width=\"20%\"/>" \
+                "<col width=\"20%\"/>" \
+                "<col width=\"auto\"/>" \
+                "</colgroup>"
     data_str += "<tr>"
     data_str += "<th><input type=\"checkbox\" name=\"check_all\"/></th>"
     data_str += "<th>HostName</th>"
@@ -88,13 +101,16 @@ def device_table(h):
     # SQL Query for Fething data
     if device_type is not None:
         # Create MySQL Connection
-        db = nms_config.open_database_connection()
+        # db = nms_config.open_database_connection()
 
         # Create Cursor Object to Fetch Data
-        cursor = db.cursor()
+        # cursor = db.cursor()
 
-        sql = "SELECT hostname,ipaddress,devicetype FROM nms_devices where devicetype='%s';" % (
-            device_type)
+        db, cursor = mysql_connection('nms')
+
+        sql = "SELECT hostname,ipaddress,devicetype " \
+              "FROM nms_devices where devicetype='%s';" \
+              % (device_type)
 
         # Execute Query
         cursor.execute(sql)
@@ -128,6 +144,10 @@ def device_table(h):
     if i == 0:
         data_str += "<tr><td colspan=\"4\"> No Host Found</td></tr>"
     else:
-        data_str += "<tr><td colspan=\"4\"><input type=\"button\" id=\"update_btn\" name=\"update_btn\" value=\"Upload File\" /><input type=\"button\" id=\"active_btn\" name=\"active_btn\" value=\"Update & Activate\" style=\"display:none;\" /></td></tr>"
+        data_str += "<tr>" \
+                    "<td colspan=\"4\">" \
+                    "<input type=\"button\" id=\"update_btn\" name=\"update_btn\" value=\"Upload File\" />" \
+                    "<input type=\"button\" id=\"active_btn\" name=\"active_btn\" value=\"Update & Activate\" style=\"display:none;\" />" \
+                    "</td></tr>"
     data_str += "</table></div>"
     html.write(data_str)

@@ -46,10 +46,10 @@ sidebar_snapins = {}
 snapin_width = 230
 
 # Load all snapins
-snapins_dir = defaults.web_dir + "/plugins/sidebar"
-for fn in os.listdir(snapins_dir):
-    if fn.endswith(".py"):
-        execfile(snapins_dir + "/" + fn)
+# snapins_dir = defaults.web_dir + "/plugins/sidebar"
+# for fn in os.listdir(snapins_dir):
+#     if fn.endswith(".py"):
+#         execfile(snapins_dir + "/" + fn)
 if defaults.omd_root:
     local_snapins_dir = defaults.omd_root + \
         "/local/share/check_mk/web/plugins/sidebar"
@@ -76,7 +76,7 @@ def link(text, target):
     # [2] /absolute/link.py
     # [3] relative.py
     if not (":" in target[:10]) and target[0] != '/':
-        target = defaults.url_prefix + "check_mk/" + target
+        target = defaults.url_prefix + "UNMP/" + target
     return "<a target=\"main\" class=link href=\"%s\">%s</a>" % (target, htmllib.attrencode(text))
 
 

@@ -5150,7 +5150,7 @@ class MakeOdu100SelectListWithDic(object):
         firmware_result = sqlalche_obj.session.query(
             Hosts.firmware_mapping_id).filter(Hosts.host_id == host_id).all()
         if len(firmware_result):
-            firmware = object_model_di['odu100'].get(firmware_result[0].firmware_mapping_id)
+            firmware = firmware_result[0].firmware_mapping_id
             if firmware == "7.2.20":
                 acl_index_len = 200
             elif firmware == "7.2.25":
@@ -5309,7 +5309,7 @@ def get_firmware_version(host_id):
         firmware_result = sqlalche_obj.session.query(
             Hosts.firmware_mapping_id).filter(Hosts.host_id == host_id).all()
         if len(firmware_result):
-            output_dict['output'] = object_model_di['odu100'].get(firmware_result[0].firmware_mapping_id)
+            output_dict['output'] = firmware_result[0].firmware_mapping_id
     except:
         output_dict['success'] = 1
         output_dict['output'] = str(e[-1])
@@ -5339,7 +5339,7 @@ def odu100_set_config(host_id, device_type_id, dic_result):
         firmware_result = sqlalche_obj.session.query(
             Hosts.firmware_mapping_id).filter(Hosts.host_id == host_id).all()
         if len(firmware_result):
-            firmware = object_model_di['odu100'].get(firmware_result[0].firmware_mapping_id)
+            firmware = firmware_result[0].firmware_mapping_id
             if firmware == '7.2.29':
                 Oids = aliased(Odu1007_2_29_oids)
                 table_name = "odu100_7_2_29_oids"
@@ -5792,7 +5792,7 @@ def controller_validation(host_id, device_type_id, dic_result):
         firmware_result = sqlalche_obj.session.query(
             Hosts.firmware_mapping_id).filter(Hosts.host_id == host_id).all()
         if len(firmware_result):
-            firmware = object_model_di['odu100'].get(firmware_result[0].firmware_mapping_id)
+            firmware = firmware_result[0].firmware_mapping_id
             if firmware == '7.2.29':
                 Oids = aliased(Odu1007_2_29_oids)
                 table_name = "odu100_7_2_29_oids"
@@ -6545,7 +6545,7 @@ def odu100_common_cancel(host_id, device_type_id, dic_result):
         firmware_result = sqlalche_obj.session.query(
             Hosts.firmware_mapping_id).filter(Hosts.host_id == host_id).all()
         if len(firmware_result):
-            firmware = object_model_di['odu100'].get(firmware_result[0].firmware_mapping_id)
+            firmware = firmware_result[0].firmware_mapping_id
             if firmware == '7.2.29':
                 Oids = aliased(Odu1007_2_29_oids)
             elif firmware == '7.2.25':
@@ -6661,7 +6661,7 @@ def commit_reboot_flash(host_id, device_type_id, dic_result):
     firmware_result = sqlalche_obj.session.query(
         Hosts.firmware_mapping_id).filter(Hosts.host_id == host_id).all()
     if len(firmware_result):
-        firmware = object_model_di['odu100'].get(firmware_result[0].firmware_mapping_id)
+        firmware = firmware_result[0].firmware_mapping_id
         if firmware == '7.2.29':
             Oids = aliased(Odu1007_2_29_oids)
             table_name = "odu100_7_2_29_oids"
@@ -7584,11 +7584,8 @@ class OduReconcilation(object):
             firmware_result = sqlalche_obj.session.query(
                 Hosts.firmware_mapping_id).filter(Hosts.host_id == host_id).all()
             if len(firmware_result):
-                firmware = object_model_di['odu100'].get(firmware_result[0].firmware_mapping_id)
-                if firmware:
-                  table_name = "odu100_%s_oid_table" % (firmware.replace('.','_'))
-                else:
-                  raise Exception("Firmware version not specified for host, please edit host from inventory for more information")
+                firmware = firmware_result[0].firmware_mapping_id
+                table_name = "odu100_%s_oid_table" % (firmware.replace('.','_'))
             else:
                 table_name = "odu100_7_2_20_oid_table"
 
@@ -7646,9 +7643,7 @@ class OduReconcilation(object):
                                             database_name = obj_system_config.get_sqlalchemy_credentials(
                                                 )
                                             result_db = sqlalche_obj.db.execute(
-                                                "SELECT COLUMN_NAME \
-                                                FROM information_schema.COLUMNS \
-                                                WHERE table_name = '%s' and table_schema = '%s'" % (tablename, database_name[4]))
+                                                "SELECT COLUMN_NAME FROM information_schema.COLUMNS WHERE table_name = '%s' and table_schema = '%s'" % (tablename, database_name[4]))
                                             for columns in result_db:
                                                 column_list.append(
                                                     columns["column_name"])
@@ -7868,7 +7863,7 @@ class OduReconcilation(object):
             import traceback
             result = {"success": 1, "result":
                 "UNMP Server is busy.Please try after some time" + str(e)}
-            logme(traceback.format_exc())
+            print traceback.format_exc()
             return
         finally:
             #logme("result = "+str(result))
@@ -9687,7 +9682,7 @@ def acl_controller_add_edit(host_id, device_type_id, dic_result, raindex):
         firmware_result = sqlalche_obj.session.query(
             Hosts.firmware_mapping_id).filter(Hosts.host_id == host_id).all()
         if len(firmware_result):
-            firmware = object_model_di['odu100'].get(firmware_result[0].firmware_mapping_id)
+            firmware = firmware_result[0].firmware_mapping_id
             if firmware == '7.2.29':
                 Oids = aliased(Odu1007_2_29_oids)
                 table_name = "odu100_7_2_29_oids"
@@ -10202,7 +10197,7 @@ class OduStatus(object):
             firmware_result = sqlalche_obj.session.query(
                 Hosts.firmware_mapping_id).filter(Hosts.host_id == host_id).all()
             if len(firmware_result):
-                firmware = object_model_di['odu100'].get(firmware_result[0].firmware_mapping_id)
+                firmware = firmware_result[0].firmware_mapping_id
                 if firmware == '7.2.29':
                     Oids = aliased(Odu1007_2_29_oids)
                     table_name = "odu100_7_2_29_oids"
@@ -10359,7 +10354,7 @@ class OduStatus(object):
             firmware_result = sqlalche_obj.session.query(
                 Hosts.firmware_mapping_id).filter(Hosts.host_id == host_id).all()
             if len(firmware_result):
-                firmware = object_model_di['odu100'].get(firmware_result[0].firmware_mapping_id)
+                firmware = firmware_result[0].firmware_mapping_id
                 if firmware == '7.2.29':
                     Oids = aliased(Odu1007_2_29_oids)
                     table_name = "odu100_7_2_29_oids"

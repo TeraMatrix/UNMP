@@ -14,11 +14,11 @@ import re
 
 def is_valid_passwd(passwd):
     '''
-    Verifies password consist of 2 Num, 2 alpha, 2 special,
+    Verifies password consist of 2 Num, 2 alpha, 2 special, 
     and minmum 8 characters in length
     '''
-    regexp = re.compile('((?=(.*\d.*){2,})(?=(.*[a-zA-Z].*){2,})\
-(?=(.*[\\\@\#\$\(\)\{\;\_\&\}\[\]\!\~\,\.\!\*\^\?\/\|\<\:\>\+\=\-\_\%\"\'].*){2,}).{8,20})')
+    regexp = re.compile('((?=(.*\\d.*){2,})(?=(.*[a-zA-Z].*){2,})\
+(?=(.*[@#$(){}!~,.!^?/|<>+=-_%].*){2,}).{8,20})')
     return bool(regexp.match(passwd))
 
 special_check = lambda x: 1 if set(
@@ -219,7 +219,7 @@ def user_view(h):
                     <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"display\" id=\"user_table\" style=\"width:100%;\"></table>\
                 </div>\
                 <div id=\"user_form\" style=\"display:none;\">\
-                    <form action=\"add_user.py\" method=\"get\" id=\"add_user_form\" name=\"add_user_form\" autocomplete=\"off\" >\
+                    <form action=\"add_user.py\" method=\"get\" id=\"add_user_form\" name=\"add_user_form\">\
                         <div class=\"form-div\">\
 				    <table class=\"tt-table\" cellspacing=\"0\" cellpadding=\"0\" width=\"100%%\">\
 				        <tr>\
@@ -323,13 +323,13 @@ def add_user(h):
                     result_json['success'] = 1
                     result_json['result'] = " Password should consist of \
 2 Numeric, 2 alpha, 2 special"
-                    return
+                    return 
             else:
                 if special_check(html.var(i)):
                     flag = 1
                     break
-
-            if i == 'user_name' or i == 'password':
+                    
+            if i == 'user_name' or i == 'password': 
                 var_dict_ul[i] = html.var(i)
             elif i == 'groups':
                 var_dict_ug[i] = html.var(i)
@@ -342,7 +342,7 @@ def add_user(h):
         else:
 
             result = 1
-            if flag == 0:
+            if flag == 0:         
                 result = usr_mgt_bll.add_user(var_dict, var_dict_ul, var_dict_ug)
             else:
                 result_json['success'] = 1
@@ -359,7 +359,7 @@ def add_user(h):
         result_json['success'] = 1
         result_json['result'] = " UNMP server has encounterd an error. \
         Please REFRESH your page. still having problem contact support team. code "
-
+        
     elif lb_result == "groupFlase" :
         result_json['success'] = 1
         result_json[
@@ -1955,7 +1955,7 @@ def page_tip_change_password(h):
                     <li>Click <span style="font-weight: 700;">save</span> to submit\
                     your password changes</li>
                 </ol>
-
+                
             </div>
         </div>
         """

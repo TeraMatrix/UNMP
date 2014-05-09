@@ -73,14 +73,6 @@ class MKConfigLoginBox(Exception):
     def __init__(self, msg):
         Exception.__init__(self, msg)
 
-class MKLoggedOut(Exception):
-    """
-    @note: for redirect to unmp_logout
-    @author: RahulGautam
-    """
-    def __init__(self, msg):
-        Exception.__init__(self, msg)
-
 # Create directory owned by common group of Nagios and webserver,
 # and make it writable for the group
 

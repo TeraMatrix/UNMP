@@ -20,10 +20,12 @@ from specific_dashboard_bll import SPDashboardBll
 from device_status import DeviceStatus
 from specific_dashboard_bll import get_master_slave_value
 
+import defaults
 
 global err_obj
 err_obj = ErrorMessageClass()
 
+nms_instance = defaults.site
 
 class SelfException(Exception):
     """
@@ -429,8 +431,8 @@ class AdvancedStatusBll(object):
             import xlwt
             from xlwt import Workbook, easyxf
             xls_book = Workbook(encoding='ascii')
-            nms_instance = __file__.split(
-                "/")[3]       # it gives instance name of nagios system
+            # nms_instance = __file__.split(
+            #     "/")[3]       # it gives instance name of nagios system
             # Excel reproting Style part
             style = xlwt.XFStyle()
             borders = xlwt.Borders()
@@ -545,14 +547,15 @@ class AdvancedStatusBll(object):
                         xls_sheet.write(i, j, str(merge_result[k][j]), style1)
                         xls_sheet.col(j).width = width
                     i = i + 1
-                path = '/omd/sites/%s/share/check_mk/web/htdocs/download/%s' % (
-                    nms_instance, save_file_name)
+                path = defaults.get_config_path(configname="isfolder", folder="download")
+                path = path + save_file_name
+                #'/omd/sites/%s/share/check_mk/web/htdocs/download/%s' % (nms_instance, save_file_name)
                 xls_book.save(path)
             elif report_type == 'csvReport':
                 save_file_name = str(device_name_list[device_type_id]) + '_' + str(
                     login_user_name) + '_' + str(start_date) + '.csv'
-                path = '/omd/sites/%s/share/check_mk/web/htdocs/download/%s' % (
-                    nms_instance, save_file_name)
+                path = defaults.get_config_path(configname="isfolder", folder="download")
+                path = path + save_file_name
                 ofile = open(path, "wb")
                 writer = csv.writer(ofile, delimiter=',', quotechar='"')
                 blank_row = ["", "", ""]

@@ -19,13 +19,17 @@ import base64
 from lib import *
 from mod_python import apache, util
 
+# import defaults
 ############################################### Manage Template ##########
 
+sdmcFile = defaults.get_config_path(configname="isfolder", folder="") + "sdm"
+nms_instance = sitename =  site = defaults.site
 
 def manage_configuration_template(h):
     global html
     html = h
-    sitename = __file__.split("/")[3]
+    # sitename = defaults.site
+    #__file__.split("/")[3]
     html.new_header("Manage Configuration Profile")
     html.write(
         "<script type=\"text/javascript\" src=\"js/jquery-1.4.4.min.js\"></script>\n")
@@ -77,9 +81,10 @@ def manage_configuration_template(h):
 def view_configuration_template(h):
     global html
     html = h
-    site = __file__.split("/")[3]
-    configTemplateFile = "/omd/sites/%s/share/check_mk/web/htdocs/xml/configurationTemplate.xml" % (
-        site)
+    site = defaults.site
+    # configTemplateFile = "/omd/sites/%s/share/check_mk/web/htdocs/xml/configurationTemplate.xml" % (
+    #     site)
+    configTemplateFile = defaults.get_config_path(configname="configurationTemplate", folder="xml")
     dom = xml.dom.minidom.parseString(
         "<configurationTemplate></configurationTemplate>")
     if(os.path.isfile(configTemplateFile)):
@@ -105,10 +110,11 @@ def view_configuration_template(h):
 def addDeviceButtonHover(h):
     global html
     html = h
-    sitename = __file__.split("/")[3]
+    # sitename = __file__.split("/")[3]
     # load shyam device form syhamdevices.xml file
-    shyamDeviceFile = "/omd/sites/%s/share/check_mk/web/htdocs/xml/shyamdevices.xml" % (
-        sitename)
+    # shyamDeviceFile = "/omd/sites/%s/share/check_mk/web/htdocs/xml/shyamdevices.xml" % (
+    #     sitename)
+    shyamDeviceFile = defaults.get_config_path(configname="shyam", folder="xml")
     dom = xml.dom.minidom.parseString("<shyamDevices></shyamDevices>")
     if(os.path.isfile(shyamDeviceFile)):
         dom = xml.dom.minidom.parse(shyamDeviceFile)
@@ -119,7 +125,9 @@ def addDeviceButtonHover(h):
         if dev.getAttribute("hide") == "false":
             i += 1
             deviceListHoverMenu += "<a href=\"#\" id=\"" + dev.getAttribute(
-                "id") + "\" name=\"" + dev.getAttribute("sdmcDiscoveryId") + "\" sdmc=\"" + dev.getAttribute("sdmcDiscoveryValue") + "\">" + dev.getAttribute("name") + "</a>"
+                "id") + "\" name=\"" + dev.getAttribute("sdmcDiscoveryId") + "\" sdmc=\"" + \
+                                   dev.getAttribute("sdmcDiscoveryValue") + "\">" + \
+                                   dev.getAttribute("name") + "</a>"
 
     if i == 0:
         deviceListHoverMenu += "<div style=\"padding: 10px 20px 10px 20px;color:#FFF;\">No Shyam Device Exist</div></div>"
@@ -132,15 +140,16 @@ def addDeviceButtonHover(h):
 def add_configuration_template(h):
     global html
     html = h
-    sitename = __file__.split("/")[3]
+    # sitename = __file__.split("/")[3]
     deviceId = html.var("deviceId")
     deviceName = html.var("deviceName")
     templateString = ""
 
     # load device configuration template form configurationTemplateDefault.xml
     # file
-    deviceTemplateFile = "/omd/sites/%s/share/check_mk/web/htdocs/xml/configurationTemplateDefault.xml" % (
-        sitename)
+    # deviceTemplateFile = "/omd/sites/%s/share/check_mk/web/htdocs/xml/configurationTemplateDefault.xml" % (
+    #     sitename)
+    deviceTemplateFile = defaults.get_config_path(configname="configurationTemplateDefault", folder="xml")
     dom = xml.dom.minidom.parseString(
         "<configurationTemplate></configurationTemplate>")
     if(os.path.isfile(deviceTemplateFile)):
@@ -207,12 +216,13 @@ def add_configuration_template(h):
 def edit_configuration_template(h):
     global html
     html = h
-    sitename = __file__.split("/")[3]
+    # sitename = __file__.split("/")[3]
     templateId = html.var("templateId")
 
     # load device configuration template form configurationTemplate.xml file
-    deviceTemplateFile = "/omd/sites/%s/share/check_mk/web/htdocs/xml/configurationTemplate.xml" % (
-        sitename)
+    # deviceTemplateFile = "/omd/sites/%s/share/check_mk/web/htdocs/xml/configurationTemplate.xml" % (
+    #     sitename)
+    deviceTemplateFile = defaults.get_config_path(configname="configurationTemplate", folder="xml")
     dom = xml.dom.minidom.parseString(
         "<configurationTemplate></configurationTemplate>")
     if(os.path.isfile(deviceTemplateFile)):
@@ -275,12 +285,13 @@ def edit_configuration_template(h):
 def delete_configuration_template(h):
     global html
     html = h
-    sitename = __file__.split("/")[3]
+    # sitename = __file__.split("/")[3]
     templateId = html.var("templateId")
 
     # load device configuration template form configurationTemplate.xml file
-    deviceTemplateFile = "/omd/sites/%s/share/check_mk/web/htdocs/xml/configurationTemplate.xml" % (
-        sitename)
+    # deviceTemplateFile = "/omd/sites/%s/share/check_mk/web/htdocs/xml/configurationTemplate.xml" % (
+    #     sitename)
+    deviceTemplateFile = defaults.get_config_path(configname="configurationTemplate", folder="xml")
     dom = xml.dom.minidom.parseString(
         "<configurationTemplate></configurationTemplate>")
     if(os.path.isfile(deviceTemplateFile)):
@@ -2596,8 +2607,9 @@ def apServicesTab(servicesDom):
 def create_config_tamplate(h):
     global html
     html = h
-    site = __file__.split("/")[3]
-    configurationTemplateFile = "/omd/sites/%s/share/check_mk/web/htdocs/xml/configurationTemplate.xml" % site
+    # site = __file__.split("/")[3]
+    configurationTemplateFile = defaults.get_config_path(configname="configurationTemplate", folder="xml")
+    # "/omd/sites/%s/share/check_mk/web/htdocs/xml/configurationTemplate.xml" % site
     # create service template dom
     configTemplateDom = xml.dom.minidom.parseString(
         "<configurationTemplate></configurationTemplate>")
@@ -3402,7 +3414,7 @@ def create_config_tamplate(h):
 def manage_host_configuration(h):
     global html
     html = h
-    sitename = __file__.split("/")[3]
+    # sitename = __file__.split("/")[3]
     html.new_header("Manage Host Configuration")
     html.write(
         "<script type=\"text/javascript\" src=\"js/jquery-1.4.4.min.js\"></script>\n")
@@ -3458,12 +3470,13 @@ def manage_host_configuration(h):
 def discoverDevices(h):
     global html
     html = h
-    sitename = __file__.split("/")[3]
+    # sitename = __file__.split("/")[3]
     deviceType = html.var("deviceType")
     timeOut = "5"
     sdmcString = html.var("sdmcString")
 
-    sdmcFile = "/omd/sites/%s/share/check_mk/web/htdocs/sdm" % (sitename)
+    # sdmcFile = defaults.get_config_path(configname="isfolder", folder="") + "sdm"
+
     args = ["--discovery", "-l", deviceType, "-o", timeOut, "-P", "54321"]
     command = [sdmcFile]
     command.extend(args)
@@ -3572,10 +3585,10 @@ def discoverDevices(h):
 def addTemplateButtonHover(h):
     global html
     html = h
-    sitename = __file__.split("/")[3]
+    # sitename = __file__.split("/")[3]
     # load shyam device form syhamdevices.xml file
-    configTemplateFile = "/omd/sites/%s/share/check_mk/web/htdocs/xml/configurationTemplate.xml" % (
-        sitename)
+    configTemplateFile = defaults.get_config_path(configname="configurationTemplate", folder="xml")
+    #"/omd/sites/%s/share/check_mk/web/htdocs/xml/configurationTemplate.xml" % (sitename)
     dom = xml.dom.minidom.parseString(
         "<configurationTemplate><device/></configurationTemplate>")
     if(os.path.isfile(configTemplateFile)):
@@ -3598,12 +3611,12 @@ def addTemplateButtonHover(h):
 def apply_config_template(h):
     global html
     html = h
-    sitename = __file__.split("/")[3]
+    # sitename = __file__.split("/")[3]
     ipAddress = html.var("ipAddress").split(",")
     macAddress = html.var("macAddress").split(",")
     templateId = html.var("templateId")
     deviceType = html.var("deviceType").split(",")
-    sdmcFile = "/omd/sites/%s/share/check_mk/web/htdocs/sdm" % (sitename)
+    # sdmcFile = defaults.get_config_path(configname="isfolder", folder="") + "sdm"
     configString = ""
     aclVap1 = ""
     aclVap2 = ""
@@ -3615,18 +3628,29 @@ def apply_config_template(h):
     aclVap8 = ""
     if len(ipAddress) == len(macAddress) == len(deviceType):
         # create config file
-        configurationTemplateFile = "/omd/sites/%s/share/check_mk/web/htdocs/xml/configurationTemplate.xml" % sitename
-        configurationFile = "/omd/sites/%s/share/check_mk/web/htdocs/download/11nconfig/config" % sitename
-        acl1File = "/omd/sites/%s/share/check_mk/web/htdocs/download/11nconfig/acl/acl_ath0" % sitename
-        acl2File = "/omd/sites/%s/share/check_mk/web/htdocs/download/11nconfig/acl/acl_ath1" % sitename
-        acl3File = "/omd/sites/%s/share/check_mk/web/htdocs/download/11nconfig/acl/acl_ath2" % sitename
-        acl4File = "/omd/sites/%s/share/check_mk/web/htdocs/download/11nconfig/acl/acl_ath3" % sitename
-        acl5File = "/omd/sites/%s/share/check_mk/web/htdocs/download/11nconfig/acl/acl_ath4" % sitename
-        acl6File = "/omd/sites/%s/share/check_mk/web/htdocs/download/11nconfig/acl/acl_ath5" % sitename
-        acl7File = "/omd/sites/%s/share/check_mk/web/htdocs/download/11nconfig/acl/acl_ath6" % sitename
-        acl8File = "/omd/sites/%s/share/check_mk/web/htdocs/download/11nconfig/acl/acl_ath7" % sitename
+        configurationTemplateFile = defaults.get_config_path(configname="configurationTemplate", folder="xml")
+        #"/omd/sites/%s/share/check_mk/web/htdocs/xml/configurationTemplate.xml" % sitename
+        # configurationFile = "/omd/sites/%s/share/check_mk/web/htdocs/download/11nconfig/config" % sitename
+        # acl1File = "/omd/sites/%s/share/check_mk/web/htdocs/download/11nconfig/acl/acl_ath0" % sitename
+        # acl2File = "/omd/sites/%s/share/check_mk/web/htdocs/download/11nconfig/acl/acl_ath1" % sitename
+        # acl3File = "/omd/sites/%s/share/check_mk/web/htdocs/download/11nconfig/acl/acl_ath2" % sitename
+        # acl4File = "/omd/sites/%s/share/check_mk/web/htdocs/download/11nconfig/acl/acl_ath3" % sitename
+        # acl5File = "/omd/sites/%s/share/check_mk/web/htdocs/download/11nconfig/acl/acl_ath4" % sitename
+        # acl6File = "/omd/sites/%s/share/check_mk/web/htdocs/download/11nconfig/acl/acl_ath5" % sitename
+        # acl7File = "/omd/sites/%s/share/check_mk/web/htdocs/download/11nconfig/acl/acl_ath6" % sitename
+        # acl8File = "/omd/sites/%s/share/check_mk/web/htdocs/download/11nconfig/acl/acl_ath7" % sitename
+        configurationFile = defaults.get_config_path(configname="isfolder", folder="download/11nconfig") + "config"
+        acl1File = defaults.get_config_path(configname="isfolder", folder="download/11nconfig/acl") + "acl_ath0"
+        acl2File = defaults.get_config_path(configname="isfolder", folder="download/11nconfig/acl") + "acl_ath1"
+        acl3File = defaults.get_config_path(configname="isfolder", folder="download/11nconfig/acl") + "acl_ath2"
+        acl4File = defaults.get_config_path(configname="isfolder", folder="download/11nconfig/acl") + "acl_ath3"
+        acl5File = defaults.get_config_path(configname="isfolder", folder="download/11nconfig/acl") + "acl_ath4"
+        acl6File = defaults.get_config_path(configname="isfolder", folder="download/11nconfig/acl") + "acl_ath5"
+        acl7File = defaults.get_config_path(configname="isfolder", folder="download/11nconfig/acl") + "acl_ath6"
+        acl8File = defaults.get_config_path(configname="isfolder", folder="download/11nconfig/acl") + "acl_ath7"
 
-        apcfg = "/omd/sites/%s/share/check_mk/web/htdocs/download/apcfg" % sitename
+        apcfg =  defaults.get_config_path(configname="isfolder", folder="download") + "apcfg"
+        #"/omd/sites/%s/share/check_mk/web/htdocs/download/apcfg" % sitename
         configTemplateDom = xml.dom.minidom.parseString(
             "<configurationTemplate></configurationTemplate>")
         if(os.path.isfile(configurationTemplateFile)):
@@ -4196,8 +4220,7 @@ def apply_config_template(h):
             fobj.close()
 
             tar = tarfile.open(apcfg, "w")
-            tar.add("/omd/sites/%s/share/check_mk/web/htdocs/download/11nconfig" %
-                    sitename, arcname="11nconfig")
+            tar.add(defaults.get_config_path(configname="isfolder", folder="download/11nconfig"), arcname="11nconfig")
             tar.close()
             args = ["-l", deviceType[i], "-f", "2", "-a", "0",
                     "-m", macAddress[i], "-t", apcfg, "-P", "54321"]
@@ -4213,10 +4236,10 @@ def apply_config_template(h):
 def factory_reset(h):
     global html
     html = h
-    sitename = __file__.split("/")[3]
+    # sitename = __file__.split("/")[3]
     deviceType = html.var("deviceType")
     mac = html.var("mac")
-    sdmcFile = "/omd/sites/%s/share/check_mk/web/htdocs/sdm" % (sitename)
+    # sdmcFile = "/omd/sites/%s/share/check_mk/web/htdocs/sdm" % (sitename)
     args = ["-l", deviceType, "-r", "-m", mac, "-P", "54321"]
     command = [sdmcFile]
     command.extend(args)
@@ -4227,14 +4250,14 @@ def factory_reset(h):
 def set_ip(h):
     global html
     html = h
-    sitename = __file__.split("/")[3]
+    # sitename = __file__.split("/")[3]
     oldIpAddress = html.var("oldIpAddress").split(",")
     newIpAddress = html.var("newIpAddress").split(",")
     macAddress = html.var("macAddress").split(",")
     deviceType = html.var("deviceType").split(",")
     localNetmask = html.var("localNetmask")
     gatewayIp = html.var("gatewayIp")
-    sdmcFile = "/omd/sites/%s/share/check_mk/web/htdocs/sdm" % (sitename)
+    # sdmcFile = "/omd/sites/%s/share/check_mk/web/htdocs/sdm" % (sitename)
 
     if len(oldIpAddress) == len(newIpAddress) == len(macAddress) == len(deviceType):
         for i in range(0, len(oldIpAddress)):
@@ -4263,10 +4286,11 @@ def getText(nodelist):
 def image_upload(req):
     global html
     html = req
-    sitename = __file__.split("/")[3]
-    filePath = "/omd/sites/%s/share/check_mk/web/htdocs/download/image.img" % (
-        sitename)
-    sdmcFile = "/omd/sites/%s/share/check_mk/web/htdocs/sdm" % (sitename)
+    # sitename = __file__.split("/")[3]
+    # filePath = "/omd/sites/%s/share/check_mk/web/htdocs/download/image.img" % (
+    #     sitename)
+    filePath =  defaults.get_config_path(configname="isfolder", folder="download") + "image.img"
+    # sdmcFile = "/omd/sites/%s/share/check_mk/web/htdocs/sdm" % (sitename)
     form = util.FieldStorage(req.req, keep_blank_values=1)
     upfile = form.getlist('file')[0]
     filename = upfile.filename
@@ -4306,7 +4330,7 @@ def image_upload(req):
 def update_acl(h):
     global html
     html = h
-    sitename = __file__.split("/")[3]
+    # sitename = __file__.split("/")[3]
     html.new_header("Update ACL")
     html.write(
         "<script type=\"text/javascript\" src=\"js/jquery-1.4.4.min.js\"></script>\n")
@@ -4361,7 +4385,7 @@ def update_acl(h):
 def list_of_mac_address(h):
     global html
     html = h
-    sitename = __file__.split("/")[3]
+    # sitename = __file__.split("/")[3]
     i = 0
     # Open database connection
     db = MySQLdb.connect("localhost", "root", "root", "nms")
@@ -4392,7 +4416,7 @@ def list_of_mac_address(h):
 def delete_mac_address(h):
     global html
     html = h
-    sitename = __file__.split("/")[3]
+    # sitename = __file__.split("/")[3]
     mac = html.var("mac")
     # Open database connection
     db = MySQLdb.connect("localhost", "root", "root", "nms")
@@ -4413,7 +4437,7 @@ def delete_mac_address(h):
 def add_mac_address(h):
     global html
     html = h
-    sitename = __file__.split("/")[3]
+    # sitename = __file__.split("/")[3]
     macAdd = html.var("mac").strip()
     # Open database connection
     db = MySQLdb.connect("localhost", "root", "root", "nms")
@@ -4444,7 +4468,7 @@ def add_mac_address(h):
 
 
 def upload_mac_address_file(req):
-    sitename = __file__.split("/")[3]
+    # sitename = __file__.split("/")[3]
     # Open database connection
     db = MySQLdb.connect("localhost", "root", "root", "nms")
 
@@ -4501,12 +4525,12 @@ def validate_mac_address(mac):
 def select_ap_to_apply_mac(h):
     global html
     html = h
-    sitename = __file__.split("/")[3]
+    # sitename = __file__.split("/")[3]
     deviceType = "1"
     timeOut = "5"
     sdmcString = "AP"
 
-    sdmcFile = "/omd/sites/%s/share/check_mk/web/htdocs/sdm" % (sitename)
+    # sdmcFile = "/omd/sites/%s/share/check_mk/web/htdocs/sdm" % (sitename)
     args = ["--discovery", "-l", deviceType, "-o", timeOut, "-P", "54321"]
     command = [sdmcFile]
     command.extend(args)
@@ -4588,7 +4612,7 @@ def select_ap_to_apply_mac(h):
 def http_request_for_ap(h):
     global html
     html = h
-    sitename = __file__.split("/")[3]
+    # sitename = __file__.split("/")[3]
     username = html.var("username")
     password = html.var("password")
     url = html.var("url")
@@ -4622,8 +4646,8 @@ def http_request_for_ap(h):
             if int(arg[1]) > 1:
                 acl_vap += "_" + arg[1]
                 acl_type += "_" + arg[1]
-            sdmcFile = "/omd/sites/%s/share/check_mk/web/htdocs/sdm" % (
-                sitename)
+            # sdmcFile = "/omd/sites/%s/share/check_mk/web/htdocs/sdm" % (
+            #     sitename)
             args = ["-l", deviceType, "-e", "0", "-a", "1",
                     "-i", ap, "-N", acl_vap, "-V", "1"]
             command = [sdmcFile]

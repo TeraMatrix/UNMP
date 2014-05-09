@@ -19,11 +19,12 @@ from ap_service import *
 ###################################################################### AUTO DISCOVERY ########################################################################
 # function to perform auto discovery in the network
 
+sitename = site = defaults.site
 
 def page_auto_discovery(h):
     global html
     html = h
-    sitename = __file__.split("/")[3]
+    # sitename = __file__.split("/")[3]
     css_list = ["css/style.css"]
     js_list = ["js/autodiscovery.js"]
     html.new_header("Auto Discovery", "", "", css_list, js_list)
@@ -327,8 +328,9 @@ def shyamDevicesList(sitename):
     deviceList += "<ul>"
 
     # load shyam device form syhamdevices.xml file
-    shyamDeviceFile = "/omd/sites/%s/share/check_mk/web/htdocs/xml/shyamdevices.xml" % (
-        sitename)
+    # shyamDeviceFile = "/omd/sites/%s/share/check_mk/web/htdocs/xml/shyamdevices.xml" % (
+    #     sitename)
+    shyamDeviceFile = defaults.get_config_path("shyam","xml")
     dom = xml.dom.minidom.parseString("<shyamDevices><device/></shyamDevices>")
     if(os.path.isfile(shyamDeviceFile)):
         dom = xml.dom.minidom.parse(shyamDeviceFile)
@@ -350,7 +352,7 @@ def shyamDevicesList(sitename):
 def autodiscovery_ping(h):
     global html
     html = h
-    sitename = __file__.split("/")[3]
+    # sitename = __file__.split("/")[3]
 
     # varify the variables
     ipBase = html.var("ipBase1")
@@ -361,10 +363,12 @@ def autodiscovery_ping(h):
     serviceManagement = html.var("serviceManagement1")
     hostGroup = html.var("hdHostGroup1")
     userName = config.user
-    nmsXmlFile = "/omd/sites/%s/share/check_mk/web/htdocs/xml/pingDiscovery.xml" % (
-        sitename)
-    nmsSchedulingXmlFile = "/omd/sites/%s/share/check_mk/web/htdocs/xml/nmsScheduling.xml" % (
-        sitename)
+    # nmsXmlFile = "/omd/sites/%s/share/check_mk/web/htdocs/xml/pingDiscovery.xml" % (
+    #     sitename)
+    nmsXmlFile = defaults.get_config_path("ping","xml")
+    # nmsSchedulingXmlFile = "/omd/sites/%s/share/check_mk/web/htdocs/xml/nmsScheduling.xml" % (
+    #     sitename)
+    nmsSchedulingXmlFile = defaults.get_config_path("nmsScheduling","xml")
     checkAutoDiscovery = checkAutoDiscoveryActive(
         hostGroup, ipBase, ipRangeStart, ipRangeEnd, serviceManagement, timeOut, userName, nmsXmlFile, "ping", "", "", "", "", "", "", "", "", "", "")
     if checkAutoDiscovery == "1":
@@ -433,7 +437,7 @@ def autodiscovery_ping(h):
 def autodiscovery_snmp(h):
     global html
     html = h
-    sitename = __file__.split("/")[3]
+    # sitename = __file__.split("/")[3]
 
     # varify the variables
     ipBase = html.var("ipBase2")
@@ -454,10 +458,12 @@ def autodiscovery_snmp(h):
     privPassword = html.var("privPassword2")
     privKey = html.var("privKey2")
     privProtocol = html.var("privProtocol2")
-    nmsXmlFile = "/omd/sites/%s/share/check_mk/web/htdocs/xml/snmpDiscovery.xml" % (
-        sitename)
-    nmsSchedulingXmlFile = "/omd/sites/%s/share/check_mk/web/htdocs/xml/nmsScheduling.xml" % (
-        sitename)
+    # nmsXmlFile = "/omd/sites/%s/share/check_mk/web/htdocs/xml/snmpDiscovery.xml" % (
+    #     sitename)
+    # nmsSchedulingXmlFile = "/omd/sites/%s/share/check_mk/web/htdocs/xml/nmsScheduling.xml" % (
+    #     sitename)
+    nmsXmlFile = defaults.get_config_path("snmp","xml")
+    nmsSchedulingXmlFile = defaults.get_config_path("nmsScheduling","xml")
     checkAutoDiscovery = checkAutoDiscoveryActive(
         hostGroup, ipBase, ipRangeStart, ipRangeEnd, serviceManagement, timeOut, userName, nmsXmlFile, "snmp", community, port, version, snmpUserName,
         snmpPassword, authKey, authProtocol, privPassword, privKey, privProtocol)
@@ -537,7 +543,7 @@ def autodiscovery_snmp(h):
 def autodiscovery_upnp(h):
     global html
     html = h
-    sitename = __file__.split("/")[3]
+    # sitename = __file__.split("/")[3]
 
     # varify the variables
     timeOut = html.var("timeOut3")
@@ -545,10 +551,12 @@ def autodiscovery_upnp(h):
     serviceManagement = html.var("serviceManagement3")
     hostGroup = html.var("hdHostGroup3")
     userName = config.user
-    nmsXmlFile = "/omd/sites/%s/share/check_mk/web/htdocs/xml/upnpDiscovery.xml" % (
-        sitename)
-    nmsSchedulingXmlFile = "/omd/sites/%s/share/check_mk/web/htdocs/xml/nmsScheduling.xml" % (
-        sitename)
+    # nmsXmlFile = "/omd/sites/%s/share/check_mk/web/htdocs/xml/upnpDiscovery.xml" % (
+    #     sitename)
+    # nmsSchedulingXmlFile = "/omd/sites/%s/share/check_mk/web/htdocs/xml/nmsScheduling.xml" % (
+    #     sitename)
+    nmsXmlFile = defaults.get_config_path("upnp","xml")
+    nmsSchedulingXmlFile = defaults.get_config_path("nmsScheduling","xml")
     checkAutoDiscovery = checkAutoDiscoveryActive(
         hostGroup, "", "1", "100", serviceManagement, timeOut, userName, nmsXmlFile, "upnp", "", "", "", "", "", "", "", "", "", "")
     if checkAutoDiscovery == "1":
@@ -616,7 +624,7 @@ def autodiscovery_upnp(h):
 def autodiscovery_sdmc(h):
     global html
     html = h
-    sitename = __file__.split("/")[3]
+    # sitename = __file__.split("/")[3]
 
     # varify the variables
     timeOut = html.var("timeOut4")
@@ -625,10 +633,12 @@ def autodiscovery_sdmc(h):
     hostGroup = html.var("hdHostGroup4")
     selectedDeviceList = html.var("allDeviceList")
     userName = config.user
-    nmsXmlFile = "/omd/sites/%s/share/check_mk/web/htdocs/xml/sdmcDiscovery.xml" % (
-        sitename)
-    nmsSchedulingXmlFile = "/omd/sites/%s/share/check_mk/web/htdocs/xml/nmsScheduling.xml" % (
-        sitename)
+    # nmsXmlFile = "/omd/sites/%s/share/check_mk/web/htdocs/xml/sdmcDiscovery.xml" % (
+    #     sitename)
+    # nmsSchedulingXmlFile = "/omd/sites/%s/share/check_mk/web/htdocs/xml/nmsScheduling.xml" % (
+    #     sitename)
+    nmsXmlFile = defaults.get_config_path("sdmc","xml")
+    nmsSchedulingXmlFile = defaults.get_config_path("nmsScheduling","xml")
     checkAutoDiscovery = checkAutoDiscoveryActive(
         hostGroup, selectedDeviceList, "1", "100", serviceManagement, timeOut, userName, nmsXmlFile, "sdmc", "", "", "", "", "", "", "", "", "", "")
     if checkAutoDiscovery == "1":
@@ -791,7 +801,7 @@ def checkAutoDiscoveryActive(hostGroup, ipBase, start, end, service, timeout, us
 def start_autodiscovery_ping(h):
     global html
     html = h
-    sitename = __file__.split("/")[3]
+    # sitename = __file__.split("/")[3]
 
     # varify the variables
     ipBase = html.var("ipBase1")
@@ -807,10 +817,13 @@ def start_autodiscovery_ping(h):
     hostTemplate = "generic-host"
     serviceTemplate = "generic-service"
     hostCheckCommand = ""
-    nmsXmlFile = "/omd/sites/%s/share/check_mk/web/htdocs/xml/pingDiscovery.xml" % (
-        sitename)
-    perlFile = "/omd/sites/%s/share/check_mk/web/htdocs/pingdiscoverycreatexml.pl" % (
-        sitename)
+    # nmsXmlFile = "/omd/sites/%s/share/check_mk/web/htdocs/xml/pingDiscovery.xml" % (
+    #     sitename)
+    nmsXmlFile = defaults.get_config_path("ping","xml")
+
+    # perlFile = "/omd/sites/%s/share/check_mk/web/htdocs/pingdiscoverycreatexml.pl" % (
+    #     sitename)
+    perlFile = defaults.get_config_path(configname="isfolder", folder="") + "pingdiscoverycreatexml.pl"
     # nagiosFile = "/omd/sites/%s/share/check_mk/web/htdocs/nagiosfile.pl" %(sitename)
     # portscanFile = "/omd/sites/%s/share/check_mk/web/htdocs/portscan.pl"
     # %(sitename)
@@ -825,7 +838,7 @@ def start_autodiscovery_ping(h):
 def start_autodiscovery_snmp(h):
     global html
     html = h
-    sitename = __file__.split("/")[3]
+    # sitename = __file__.split("/")[3]
 
     # varify the variables
     ipBase = html.var("ipBase2")
@@ -846,10 +859,12 @@ def start_autodiscovery_snmp(h):
     privPassword = html.var("privPassword2")
     privKey = html.var("privKey2")
     privProtocol = html.var("privProtocol2")
-    nmsXmlFile = "/omd/sites/%s/share/check_mk/web/htdocs/xml/snmpDiscovery.xml" % (
-        sitename)
-    perlFile = "/omd/sites/%s/share/check_mk/web/htdocs/snmpdiscoverycreatexml.pl" % (
-        sitename)
+    # nmsXmlFile = "/omd/sites/%s/share/check_mk/web/htdocs/xml/snmpDiscovery.xml" % (
+    #     sitename)
+    nmsXmlFile = defaults.get_config_path("snmp","xml")
+    # perlFile = "/omd/sites/%s/share/check_mk/web/htdocs/snmpdiscoverycreatexml.pl" % (
+    #     sitename)
+    perlFile = defaults.get_config_path(configname="isfolder", folder="") + "pingdiscoverycreatexml.pl"
     args = [
         ipBase + "." + ipRangeStart, ipBase + "." +
         ipRangeEnd, community, timeOut, version, port,
@@ -863,14 +878,16 @@ def start_autodiscovery_snmp(h):
 def start_autodiscovery_upnp(h):
     global html
     html = h
-    sitename = __file__.split("/")[3]
+    # sitename = __file__.split("/")[3]
 
     # varify the variables
     timeOut = html.var("timeOut3")
-    nmsXmlFile = "/omd/sites/%s/share/check_mk/web/htdocs/xml/upnpDiscovery.xml" % (
-        sitename)
-    perlFile = "/omd/sites/%s/share/check_mk/web/htdocs/upnpdiscoverycreatexml.pl" % (
-        sitename)
+    # nmsXmlFile = "/omd/sites/%s/share/check_mk/web/htdocs/xml/upnpDiscovery.xml" % (
+    #     sitename)
+    # perlFile = "/omd/sites/%s/share/check_mk/web/htdocs/upnpdiscoverycreatexml.pl" % (
+    #     sitename)
+    nmsXmlFile = defaults.get_config_path("upnp","xml")
+    perlFile = defaults.get_config_path(configname="isfolder", folder="") + "pingdiscoverycreatexml.pl"
     args = [timeOut, nmsXmlFile]
     command = [perlFile]
     command.extend(args)
@@ -881,14 +898,18 @@ def start_autodiscovery_upnp(h):
 def start_autodiscovery_sdmc(h):
     global html
     html = h
-    sitename = __file__.split("/")[3]
+    # sitename = __file__.split("/")[3]
 
     # varify the variables
     timeOut = html.var("timeOut4")
     selectedDeviceList = html.var("allDeviceList")
-    nmsXmlFile = "/omd/sites/%s/share/check_mk/web/htdocs/xml/sdmcDiscovery.xml" % (
-        sitename)
-    sdmcFile = "/omd/sites/%s/share/check_mk/web/htdocs/sdm" % (sitename)
+    # nmsXmlFile = "/omd/sites/%s/share/check_mk/web/htdocs/xml/sdmcDiscovery.xml" % (
+    #     sitename)
+    nmsXmlFile = defaults.get_config_path("sdmc","xml")
+
+    # sdmcFile = "/omd/sites/%s/share/check_mk/web/htdocs/sdm" % (sitename)
+    sdmcFile = defaults.get_config_path(configname="isfolder", folder="") + "sdm"
+
     args = ["--discovery", "-l", selectedDeviceList, "-o ", timeOut,
             "-P", "54321"]
     command = [sdmcFile]
@@ -912,8 +933,9 @@ def start_autodiscovery_sdmc(h):
     # get the sdmc string form shyam devices xml file
     DeviceList = selectedDeviceList.split(",")  # [1,2,3,4,5]
     sdmcStringArray = []  # ["AP","CPE","POP"]
-    shyamDeviceFile = "/omd/sites/%s/share/check_mk/web/htdocs/xml/shyamdevices.xml" % (
-        sitename)
+    # shyamDeviceFile = "/omd/sites/%s/share/check_mk/web/htdocs/xml/shyamdevices.xml" % (
+    #     sitename)
+    shyamDeviceFile = defaults.get_config_path("shyam","xml")
     dom = xml.dom.minidom.parseString("<shyamDevices><device/></shyamDevices>")
     if(os.path.isfile(shyamDeviceFile)):
         dom = xml.dom.minidom.parse(shyamDeviceFile)
@@ -971,7 +993,7 @@ def start_autodiscovery_sdmc(h):
 def reload_nagios_configfile(h):
     global html
     html = h
-    sitename = __file__.split("/")[3]
+    # sitename = __file__.split("/")[3]
     os.system('kill -HUP `cat /omd/sites/%s/tmp/lock/nagios.lock`' % sitename)
     html.write("1")
 
@@ -1136,7 +1158,7 @@ def ajax_add_hostgroup(h):
         html.write(
             "2")  # retuen 2 if hostgroup name and alias both are null or empty
     else:
-        sitename = __file__.split("/")[3]
+        # sitename = __file__.split("/")[3]
         countHostGroup = 0
         checkfile = 0
 
@@ -1177,7 +1199,7 @@ def ajax_add_hostgroup(h):
 def ajax_delete_hostgroup(h):
     global html
     html = h
-    sitename = __file__.split("/")[3]
+    # sitename = __file__.split("/")[3]
     startCheckLine = "#hostgroup-" + html.var("hostGroupName").strip()
     endCheckLine = "#endhostgroup-" + html.var("hostGroupName").strip()
     checkfile = 0
@@ -1227,7 +1249,7 @@ def ajax_delete_hostgroup(h):
 
 def change_hostgroup_from_hosts(oldhostgroup, newhostgroup):
     global html
-    sitename = __file__.split("/")[3]
+    # sitename = __file__.split("/")[3]
 
     if oldhostgroup != newhostgroup:
         html.live.set_prepend_site(True)
@@ -1308,7 +1330,7 @@ def delete_hosts_of_hostgroup(hostgroup):
     hosts = html.live.query(query)
     html.live.set_prepend_site(False)
     hosts.sort()
-    sitename = __file__.split("/")[3]
+    # sitename = __file__.split("/")[3]
 
     if(os.path.isfile("/omd/sites/%s/etc/nagios/conf.d/hosts.cfg" % sitename)):
         for site, hostname in hosts:
@@ -1370,7 +1392,7 @@ def ajax_update_hostgroup(h):
         if(checkfile == 1 and countHostGroup > 0):
 
             # delete host group
-            sitename = __file__.split("/")[3]
+            # sitename = __file__.split("/")[3]
             startCheckLine = "#hostgroup-" + html.var(
                 "oldHostGroupName").strip()
             endCheckLine = "#endhostgroup-" + html.var(
@@ -1543,7 +1565,7 @@ def ajax_add_servicegroup(h):
         html.write(
             "2")  # retuen 2 if servicegroup name and alias both are null or empty
     else:
-        sitename = __file__.split("/")[3]
+        # sitename = __file__.split("/")[3]
         countServiceGroup = 0
         checkfile = 0
 
@@ -1586,7 +1608,7 @@ def ajax_add_servicegroup(h):
 def ajax_delete_servicegroup(h):
     global html
     html = h
-    sitename = __file__.split("/")[3]
+    # sitename = __file__.split("/")[3]
     startCheckLine = "#servicegroup-" + html.var("serviceGroupName").strip()
     endCheckLine = "#endservicegroup-" + html.var("serviceGroupName").strip()
     checkfile = 0
@@ -1635,7 +1657,7 @@ def ajax_delete_servicegroup(h):
 
 def change_servicegroup_from_services(oldservicegroup, newservicegroup):
     global html
-    sitename = __file__.split("/")[3]
+    # sitename = __file__.split("/")[3]
 
     if oldservicegroup != newservicegroup:
         html.live.set_prepend_site(True)
@@ -1742,7 +1764,7 @@ def delete_services_of_servicegroup(servicegroup):
     services = html.live.query(query)
     html.live.set_prepend_site(False)
     services.sort()
-    sitename = __file__.split("/")[3]
+    # sitename = __file__.split("/")[3]
 
     if(os.path.isfile("/omd/sites/%s/etc/nagios/conf.d/services.cfg" % sitename)):
         for site, command, hostname in services:
@@ -1802,7 +1824,7 @@ def ajax_update_servicegroup(h):
         if(checkfile == 1 and countServiceGroup > 0):
 
             # delete service group
-            sitename = __file__.split("/")[3]
+            # sitename = __file__.split("/")[3]
             startCheckLine = "#servicegroup-" + html.var(
                 "oldServiceGroupName").strip()
             endCheckLine = "#endservicegroup-" + html.var(
@@ -1887,7 +1909,7 @@ def page_manage_host(h):
 def grid_view_host(h):
     global html
     html = h
-    sitename = __file__.split("/")[3]
+    # sitename = __file__.split("/")[3]
     try:
         i = 0
         html.live.set_prepend_site(True)
@@ -1977,7 +1999,7 @@ def form_for_host(h):
         hosts = html.live.query(query)
         html.live.set_prepend_site(False)
         hosts.sort()
-        sitename = __file__.split("/")[3]
+        # sitename = __file__.split("/")[3]
 
         for site, host, alias, address, hostgroup, parent in hosts:
             # Prepare SQL query to INSERT a record into the database.
@@ -2010,11 +2032,12 @@ def service_management_option():
 
 
 def service_template_form():
-    site = __file__.split("/")[3]
+    # site = __file__.split("/")[3]
     dom = xml.dom.minidom.parseString("<hosts></hosts>")
-    if(os.path.isfile("/omd/sites/%s/share/check_mk/web/htdocs/xml/service_template.xml" % site)):
-        dom = xml.dom.minidom.parse(
-            "/omd/sites/%s/share/check_mk/web/htdocs/xml/service_template.xml" % site)
+    if(os.path.isfile(defaults.get_config_path("service","xml"))):
+        # dom = xml.dom.minidom.parse(
+        #     "/omd/sites/%s/share/check_mk/web/htdocs/xml/service_template.xml" % site)
+        dom = xml.dom.minidom.parse(defaults.get_config_path("service","xml"))
     liList = templateform = ""
     for host in dom.getElementsByTagName("host"):
         hostName = host.getAttribute("name")
@@ -2027,8 +2050,13 @@ def service_template_form():
             srvCount += 1
             for arg in srv.getElementsByTagName("ARG"):
                 argCount += 1
-                argList += "<div class=\"argInnerDiv\" style=\"width:70px;\">" + arg.getAttribute("name") + "</div><div class=\"argInnerDiv\" style=\"padding: 5px 3px 1px 3px;width:110px;\"><input type=\"text\" id=\"arg" + hostId + srv.getAttribute("id") + str(argCount) + "\" name=\"arg" + hostId + srv.getAttribute(
-                    "id") + str(argCount) + "\" value=\"\" /></div><div class=\"argInnerDiv\" style=\"color:#CD5728;width:130px;\">" + getText(arg.childNodes).strip() + "</div>"
+                argList += "<div class=\"argInnerDiv\" style=\"width:70px;\">" + arg.getAttribute("name") + \
+                           "</div><div class=\"argInnerDiv\" style=\"padding: 5px 3px 1px 3px;width:110px;\">" \
+                           "<input type=\"text\" id=\"arg" + hostId + srv.getAttribute("id") + str(argCount) + "\" name=\"arg" + \
+                           hostId + srv.getAttribute("id") + \
+                           str(argCount) + "\" value=\"\" />" \
+                                           "</div><div class=\"argInnerDiv\" style=\"color:#CD5728;width:130px;\">" + \
+                           getText(arg.childNodes).strip() + "</div>"
             argList += "</div>"
 
             srvList += "<div style=\"width:10%;float:left;overflow:hidden;height:20px;padding-left:30px;\"><input type=\"checkbox\" id=\"srv" + hostId + str(srvCount) + "\" name=\"srv" + hostId + str(srvCount) + "\" value=\"" + srv.getAttribute(
@@ -2061,7 +2089,7 @@ def ajax_add_host(h):
         html.write(
             "2")  # retuen 2 if host name and alias both are null or empty
     else:
-        sitename = __file__.split("/")[3]
+        # sitename = __file__.split("/")[3]
         countHost = 0
         checkfile = 0
 
@@ -2105,9 +2133,8 @@ def ajax_add_host(h):
                 if html.var("rdServiceTemplate") is not None:
                     templateDom = xml.dom.minidom.parseString(
                         "<hosts></hosts>")
-                    if(os.path.isfile("/omd/sites/%s/share/check_mk/web/htdocs/xml/service_template.xml" % sitename)):
-                        templateDom = xml.dom.minidom.parse(
-                            "/omd/sites/%s/share/check_mk/web/htdocs/xml/service_template.xml" % sitename)
+                    if(os.path.isfile(defaults.get_config_path("service","xml"))):
+                        templateDom = xml.dom.minidom.parse(defaults.get_config_path("service","xml"))
                     hostTemplateId = html.var("rdServiceTemplate").strip()
                     totalServices = html.var("totalService" + hostTemplateId)
 
@@ -2193,7 +2220,7 @@ def ajax_add_host(h):
 def ajax_delete_host(h):
     global html
     html = h
-    sitename = __file__.split("/")[3]
+    # sitename = __file__.split("/")[3]
     startCheckLine = "#host-" + html.var("hostName").strip()
     endCheckLine = "#endhost-" + html.var("hostName").strip()
     checkfile = 0
@@ -2284,7 +2311,7 @@ def delete_host_from_database(hostName):
 
 def change_host_from_childhosts(oldhost, newhost):
     global html
-    sitename = __file__.split("/")[3]
+    # sitename = __file__.split("/")[3]
 
     if oldhost != newhost:
         html.live.set_prepend_site(True)
@@ -2363,7 +2390,7 @@ def delete_childhosts_of_host(host):
     hosts = html.live.query(query)
     html.live.set_prepend_site(False)
     hosts.sort()
-    sitename = __file__.split("/")[3]
+    # sitename = __file__.split("/")[3]
 
     if(os.path.isfile("/omd/sites/%s/etc/nagios/conf.d/hosts.cfg" % sitename)):
         for site, hostname in hosts:
@@ -2406,7 +2433,7 @@ def delete_services_of_host(host_name):
     html.live.set_prepend_site(False)
     services.sort()
 
-    sitename = __file__.split("/")[3]
+    # sitename = __file__.split("/")[3]
 
     if(os.path.isfile("/omd/sites/%s/etc/nagios/conf.d/services.cfg" % sitename)):
         for site, check_command in services:
@@ -2465,7 +2492,7 @@ def ajax_update_host(h):
         if(checkfile == 1 or countHost == 0):
 
             # delete host
-            sitename = __file__.split("/")[3]
+            # sitename = __file__.split("/")[3]
             startCheckLine = "#host-" + html.var("oldHostName").strip()
             endCheckLine = "#endhost-" + html.var("oldHostName").strip()
             checkfile = 0
@@ -2902,9 +2929,8 @@ def form_for_service(h):
 
 
 def create_service_choose_option(act):
-    site = __file__.split("/")[3]
-    dom = xml.dom.minidom.parse(
-        "/omd/sites/%s/share/check_mk/web/htdocs/xml/service.xml" % site)
+    # site = __file__.split("/")[3]
+    dom = xml.dom.minidom.parse(defaults.get_config_path("svc","xml"))
     services = dom.getElementsByTagName("service")
     servicelist = "<tr class='serviceClass'><td style=\"padding: 0px;\" id=\"tdChooseServices\" colspan='3'>"
     servicelist += "<div class=\"multiSelectList\" style=\"width:100%; border:0 none;\" id=\"multiSelectListService\">"
@@ -2916,9 +2942,15 @@ def create_service_choose_option(act):
     servicelist += "</div>"
     servicelist += "</div>"
     if act == "edit":
-        servicelist += "</td></tr><tr class='even serviceClass'><td colspan='3'></td></tr><tr class='serviceClass'><td class=\"button\" colspan='3'><input id='btnChooseService' type='button' disabled='disabled' value='Continue' onclick=\"continueChooseService()\"/><input type='button' value='Cancel' onclick=\"cancelChooseHostForEditService()\"/></td></tr>"
+        servicelist += "</td></tr><tr class='even serviceClass'><td colspan='3'></td></tr>" \
+                       "<tr class='serviceClass'><td class=\"button\" colspan='3'>" \
+                       "<input id='btnChooseService' type='button' disabled='disabled' value='Continue' onclick=\"continueChooseService()\"/>" \
+                       "<input type='button' value='Cancel' onclick=\"cancelChooseHostForEditService()\"/></td></tr>"
     else:
-        servicelist += "</td></tr><tr class='even serviceClass'><td colspan='3'></td></tr><tr class='serviceClass'><td class=\"button\" colspan='3'><input id='btnChooseService' type='button' disabled='disabled' value='Continue' onclick=\"continueChooseService()\"/><input type='button' value='Back to choose Host' onclick=\"cancelChooseService()\"/><input type='button' value='Cancel' onclick=\"cancelAddService()\"/></td></tr>"
+        servicelist += "</td></tr><tr class='even serviceClass'><td colspan='3'></td></tr>" \
+                       "<tr class='serviceClass'><td class=\"button\" colspan='3'>" \
+                       "<input id='btnChooseService' type='button' disabled='disabled' value='Continue' onclick=\"continueChooseService()\"/>" \
+                       "<input type='button' value='Back to choose Host' onclick=\"cancelChooseService()\"/><input type='button' value='Cancel' onclick=\"cancelAddService()\"/></td></tr>"
 
     return servicelist
 
@@ -2951,9 +2983,8 @@ def getText(nodelist):
 def form_for_service_setting(h):
     global html
     html = h
-    site = __file__.split("/")[3]
-    dom = xml.dom.minidom.parse(
-        "/omd/sites/%s/share/check_mk/web/htdocs/xml/service.xml" % site)
+    # site = __file__.split("/")[3]
+    dom = xml.dom.minidom.parse(defaults.get_config_path("svc","xml"))
     services = dom.getElementsByTagName("service")
     for service in services:
         if(service.getAttribute('name').strip() == html.var("serviceName").strip()):
@@ -2967,7 +2998,9 @@ def form_for_service_setting(h):
 def create_form_for_basic_service_setting(argument, graph, name, action):
     paraBasic = 0
     paraAdvance = 0
-    serviceOptionTable = "<table class='addform'><colgroup><col width='20%'/><col width='20%'/><col width='60%'/></colgroup>"
+    serviceOptionTable = "<table class='addform'><colgroup>" \
+                         "<col width='20%'/><col width='20%'/>" \
+                         "<col width='60%'/></colgroup>"
     tableStringBasic = "<tr><th colspan='3'>Service Basic Settings</th></tr>"
     tableStringAdvance = "<tr><th colspan='3'>Service Advance Settings</th></tr>"
     for arg in argument:
@@ -2985,7 +3018,10 @@ def create_form_for_basic_service_setting(argument, graph, name, action):
             tableStringBasic += "<tr><td>" + getText(arg.getElementsByTagName(
                 "name")[0].childNodes).strip() + "</td>"
             tableStringBasic += "<td><input type='text' id='arg" + str(paraBasic) + "' name='arg" + str(
-                paraBasic) + "' para='$ARG" + arg.getAttribute('id').strip() + "$' value=''/><label generated=\"false\" for=\"arg" + str(paraBasic) + "\" style=\"display:none;color:red;\" id=\"error_arg" + str(paraBasic) + "\"> *</label></td>"
+                paraBasic) + "' para='$ARG" + arg.getAttribute('id').strip() + "$' value=''/>" \
+                                                                               "<label generated=\"false\" for=\"arg" +\
+                                str(paraBasic) + "\" style=\"display:none;color:red;\" id=\"error_arg" + str(paraBasic) +\
+                                "\"> *</label></td>"
             tableStringBasic += "<td class='desc'>" + getText(
                 arg.getElementsByTagName("description")[0].childNodes).strip() + "</td></tr>"
     if paraBasic > 0:
@@ -3060,7 +3096,8 @@ def ajax_add_service(h):
         html.write(
             "2")  # retuen 2 if service name and alias both are null or empty
     else:
-        sitename = __file__.split("/")[3]
+        # sitename = __file__.split("/")[3]
+        sitename = defaults.site
         countService = 0
         checkfile = 0
 
@@ -3142,7 +3179,7 @@ def ajax_add_service(h):
 def ajax_delete_service(h):
     global html
     html = h
-    sitename = __file__.split("/")[3]
+    # sitename = __file__.split("/")[3]
     startCheckLine = "#service-" + html.var("hostName").strip() + "-" + \
         html.var("checkCommand")
     endCheckLine = "#endservice-" + html.var("hostName").strip() + "-" + \
@@ -3194,7 +3231,7 @@ def ajax_update_service(h):
     if(html.var("serviceName").strip() == "" or html.var("hostName").strip() == "" or html.var("serviceDescription").strip() == "" or checkPara == 0):
         html.write("2")
     else:
-        sitename = __file__.split("/")[3]
+        # sitename = __file__.split("/")[3]
         countService = 0
         checkfile = 0
 

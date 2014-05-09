@@ -17,7 +17,9 @@ from utility import Validation
 from error_message import ErrorMessageClass
 import time
 from operator import itemgetter
-from odu100_common_dashboard import MainOutage
+
+import defaults
+nms_instance = defaults.site
 
 global err_obj
 err_obj = ErrorMessageClass()
@@ -376,6 +378,7 @@ class SPDashboardBll(object):
         calculation = ['normal', 'delta']
         output_dic = {}
         json_data = []
+
         try:
             conn, cursor = mysql_connection()
             if conn == 1:
@@ -456,12 +459,12 @@ class SPDashboardBll(object):
                     time_list = []
 
             elif table_name.strip() == 'outage':
-                # if (end_date - start_date).days < 5:
-                #     start_date = datetime.strptime(str(datetime.date(
-                #         datetime.now()) + timedelta(days=-4)) + ' ' + '00:00:00', "%Y-%m-%d %H:%M:%S")
-                # else:
-                #     start_date = datetime.strptime(str(datetime.date(
-                #         start_date)) + ' ' + '00:00:00', "%Y-%m-%d %H:%M:%S")
+                if (end_date - start_date).days < 5:
+                    start_date = datetime.strptime(str(datetime.date(
+                        datetime.now()) + timedelta(days=-4)) + ' ' + '00:00:00', "%Y-%m-%d %H:%M:%S")
+                else:
+                    start_date = datetime.strptime(str(datetime.date(
+                        start_date)) + ' ' + '00:00:00', "%Y-%m-%d %H:%M:%S")
                 outage_result = self.sp_advanced_outage_graph(
                     display_type, ip_address, start_date, end_date)
                 if int(outage_result['success']) != 0:
@@ -1127,7 +1130,7 @@ class SPDashboardBll(object):
                                        'status'] > 0 else '(Master)'
 
             table_output = []
-            nms_instance = __file__.split("/")[3]
+            # nms_instance = __file__.split("/")[3]
             import xlwt
             from xlwt import Workbook, easyxf
             # create the excel file
@@ -1565,8 +1568,7 @@ class SPDashboardBll(object):
                 i = i + 1
 
     #          # Event and Alarm report End Here. ---->
-            xls_book.save('/omd/sites/%s/share/check_mk/web/htdocs/download/%s' % (
-                nms_instance, save_file_name))
+            xls_book.save(defaults.get_config_path(configname="isfolder", folder="download") + save_file_name)
             output_dict = {'success': 0, 'output':
                 'report created successfully.', 'file_name': save_file_name}
             return output_dict
@@ -1614,7 +1616,7 @@ class SPDashboardBll(object):
                     device_postfix = '(Slave)' if master_slave_status[
                                        'status'] > 0 else '(Master)'
             table_output = []
-            nms_instance = __file__.split("/")[3]
+            # nms_instance = __file__.split("/")[3]
             import csv
 
             # create the connection with database
@@ -1843,8 +1845,7 @@ class SPDashboardBll(object):
                         hour) + "Hr " + str(minute) + "Min " + str(second) + "Sec"))])
 
             # create the csv file.
-            path = '/omd/sites/%s/share/check_mk/web/htdocs/download/%s' % (
-                nms_instance, save_file_name)
+            path = defaults.get_config_path(configname="isfolder", folder="download") +  save_file_name
             ofile = open(path, "wb")
             writer = csv.writer(ofile, delimiter=',', quotechar='"')
 
@@ -2095,9 +2096,8 @@ class SPDashboardBll(object):
             ubr_report = []
             MARGIN_SIZE = 14 * mm
             PAGE_SIZE = A4
-            nms_instance = __file__.split("/")[3]
-            pdfdoc = "/omd/sites/%s/share/check_mk/web/htdocs/download/%s" % (
-                nms_instance, save_file_name)
+            # nms_instance = __file__.split("/")[3]
+            pdfdoc = defaults.get_config_path(configname="isfolder", folder="download") + save_file_name
             pdf_doc = BaseDocTemplate(pdfdoc, pagesize=PAGE_SIZE,
                                       leftMargin=MARGIN_SIZE, rightMargin=MARGIN_SIZE,
                                       topMargin=MARGIN_SIZE, bottomMargin=MARGIN_SIZE)
@@ -2110,8 +2110,9 @@ class SPDashboardBll(object):
                 id='main_template', frames=[main_frame])
             pdf_doc.addPageTemplates([main_template])
             im = Image(
-                "/omd/sites/%s/share/check_mk/web/htdocs/images/%s/logo.png" % (nms_instance,
-                       theme), width=1.5 * inch, height=.5 * inch)
+                defaults.get_config_path(configname="isfolder", folder="images")+ theme + "/logo.png",
+                width=1.5 * inch, height=.5 * inch)
+
             im.hAlign = 'LEFT'
             ubr_report.append(im)
             ubr_report.append(Spacer(1, 1))
@@ -2399,7 +2400,7 @@ class SPDashboardBll(object):
                     merge_result = merge_list(d1_list)
                 if len(headings) < 2:
                     continue
-                if table_name.strip() == 'get_odu16_peer_node_status_table' or table_name.strip() == 'odu100_peerNodeStatusTable':
+                if table_name.strip() in ['get_odu16_peer_node_status_table', 'odu100_peerNodeStatusTable']:
                     table_output = []
                     table_output1 = []
                     if len(headings) > 9:
@@ -2433,14 +2434,14 @@ class SPDashboardBll(object):
                 # this is for permission to download folder
                 import os
                 os.system(
-                    'chmod 777 /omd/sites/UNMP/share/check_mk/htdocs/web/download/* -R')
+                    'chmod 777 '+ defaults.get_config_path(configname="isfolder", folder="download") +'* -R')
                 # this is for permission to download
 
                 ubr_report.append(Spacer(11, 11))
                 time.sleep(2)
                 im = Image(
-                    "/omd/sites/%s/share/check_mk/web/htdocs/download/%s.png" % (nms_instance,
-                           graph_id_list[i]), width=7.1 * inch, height=3 * inch)
+                    defaults.get_config_path(configname="isfolder", folder="download")+ graph_id_list[i] + ".png",
+                    width=7.1 * inch, height=3 * inch)
                 im.hAlign = 'LEFT'
                 ubr_report.append(im)
                 ubr_report.append(Spacer(11, 11))
@@ -2666,159 +2667,159 @@ def merge_list(arg):
         return []
 
 
-# def main_outage(result_tuple, end_date):
-#     try:
-#         count = 1
-#         is_date = 0
-#         main_date = ''
-#         main_ip = ''
-#         main_list = []
-#         uptime = None
-#         downtime = None
-#         prev_value = ''
-#         temp_temp = []
-#         for tpl in result_tuple:
-#             count += 1
-#             tpl_temp = tpl
-#             temp_ip = tpl[3]
-#             temp_date = tpl[2]
-#             temp_value = tpl[0]
-#             if temp_ip == main_ip:
-#                 if temp_date.month > main_date.month or temp_date.day > main_date.day:
-#                     count += 1
+def main_outage(result_tuple, end_date):
+    try:
+        count = 1
+        is_date = 0
+        main_date = ''
+        main_ip = ''
+        main_list = []
+        uptime = None
+        downtime = None
+        prev_value = ''
+        temp_temp = []
+        for tpl in result_tuple:
+            count += 1
+            tpl_temp = tpl
+            temp_ip = tpl[3]
+            temp_date = tpl[2]
+            temp_value = tpl[0]
+            if temp_ip == main_ip:
+                if temp_date.month > main_date.month or temp_date.day > main_date.day:
+                    count += 1
 
-#                     is_date = 1
-#                 else:
-#                     if prev_value == '50002':
-#                         if uptime == None:
-#                             uptime = (temp_date - main_date)
-#                         else:
-#                             uptime += (temp_date - main_date)
+                    is_date = 1
+                else:
+                    if prev_value == '50002':
+                        if uptime == None:
+                            uptime = (temp_date - main_date)
+                        else:
+                            uptime += (temp_date - main_date)
 
-#                     elif prev_value == '50001':
-#                         if downtime == None:
-#                             downtime = (temp_date - main_date)
-#                         else:
-#                             downtime += (temp_date - main_date)
-#                     count += 1
-#                     main_date = temp_date  # print "jump1"
+                    elif prev_value == '50001':
+                        if downtime == None:
+                            downtime = (temp_date - main_date)
+                        else:
+                            downtime += (temp_date - main_date)
+                    count += 1
+                    main_date = temp_date  # print "jump1"
 
-#             else:
-#                 is_new = 1
+            else:
+                is_new = 1
 
-#             if is_new:
-#                 if prev_value != '':
-#                     is_date = 1
-#                 else:
-#                     main_date = temp_date
-#                 main_ip = temp_ip
-#                 is_new = 0
+            if is_new:
+                if prev_value != '':
+                    is_date = 1
+                else:
+                    main_date = temp_date
+                main_ip = temp_ip
+                is_new = 0
 
-#             if is_date:
-#                 if uptime == None or downtime == None:
-#                     mid_date = datetime(main_date.year,
-#                                         main_date.month, main_date.day, 23, 59, 59)
-#                     delta = mid_date - main_date
-#                     if prev_value == '50002':
-#                         uptime = delta
-#                     elif prev_value == '50001':
-#                         downtime = delta
-#                     count += 1
-#                 else:
-#                     mid_date = datetime(main_date.year,
-#                                         main_date.month, main_date.day, 23, 59, 59)
-#                     delta = mid_date - main_date
-#                     if prev_value == '50002':
-#                         uptime += delta
-#                     elif prev_value == '50001':
-#                         downtime += delta
-#                     count += 1
+            if is_date:
+                if uptime == None or downtime == None:
+                    mid_date = datetime(main_date.year,
+                                        main_date.month, main_date.day, 23, 59, 59)
+                    delta = mid_date - main_date
+                    if prev_value == '50002':
+                        uptime = delta
+                    elif prev_value == '50001':
+                        downtime = delta
+                    count += 1
+                else:
+                    mid_date = datetime(main_date.year,
+                                        main_date.month, main_date.day, 23, 59, 59)
+                    delta = mid_date - main_date
+                    if prev_value == '50002':
+                        uptime += delta
+                    elif prev_value == '50001':
+                        downtime += delta
+                    count += 1
 
-#                 main_list.append([main_date, tpl_temp[3], uptime, downtime])
-#                 uptime = None
-#                 downtime = None
+                main_list.append([main_date, tpl_temp[3], uptime, downtime])
+                uptime = None
+                downtime = None
 
-# #                    day_diff=(temp_date-main_date).days
-#                 # day_diff = round(float(d.seconds + d.days *
-#                 # 86400)/float(86400))
-#                 day_diff = temp_date.day - main_date.day
-#                 if day_diff > 1:
-#                     for i in range(1, day_diff):
-#                         leftout_date = main_date + timedelta(days=i)
-#                         if prev_value == '50002':
-#                             main_list.append([leftout_date,
-#                                              tpl_temp[3], timedelta(0, 86399), None])
-#                         elif prev_value == '50001':
-#                             main_list.append([leftout_date,
-#                                              tpl_temp[3], None, timedelta(0, 86399)])
-#                     delta = temp_date - leftout_date
-#                     if prev_value == '50002':
-#                         if uptime == None:
-#                             uptime = delta
-#                         else:
-#                             uptime += delta
-#                     elif prev_value == '50001':
-#                         if downtime == None:
-#                             downtime = delta
-#                         else:
-#                             downtime += delta
-#                 else:
-#                     mid_date = datetime(temp_date.year,
-#                                         temp_date.month, temp_date.day, 00, 00, 00)
-#                     delta = temp_date - mid_date
-#                     if prev_value == '50002':
-#                         uptime = delta
-#                     elif prev_value == '50001':
-#                         downtime = delta
-#                     count += 1
+#                    day_diff=(temp_date-main_date).days
+                # day_diff = round(float(d.seconds + d.days *
+                # 86400)/float(86400))
+                day_diff = temp_date.day - main_date.day
+                if day_diff > 1:
+                    for i in range(1, day_diff):
+                        leftout_date = main_date + timedelta(days=i)
+                        if prev_value == '50002':
+                            main_list.append([leftout_date,
+                                             tpl_temp[3], timedelta(0, 86399), None])
+                        elif prev_value == '50001':
+                            main_list.append([leftout_date,
+                                             tpl_temp[3], None, timedelta(0, 86399)])
+                    delta = temp_date - leftout_date
+                    if prev_value == '50002':
+                        if uptime == None:
+                            uptime = delta
+                        else:
+                            uptime += delta
+                    elif prev_value == '50001':
+                        if downtime == None:
+                            downtime = delta
+                        else:
+                            downtime += delta
+                else:
+                    mid_date = datetime(temp_date.year,
+                                        temp_date.month, temp_date.day, 00, 00, 00)
+                    delta = temp_date - mid_date
+                    if prev_value == '50002':
+                        uptime = delta
+                    elif prev_value == '50001':
+                        downtime = delta
+                    count += 1
 
-#                 main_date = temp_date
-#                 is_date = 0
+                main_date = temp_date
+                is_date = 0
 
-#             prev_value = temp_value
-#         ############################# outside loop
-#         if uptime == None or downtime == None:
-#             mid_date = datetime(
-#                 main_date.year, main_date.month, main_date.day, 23, 59, 59)
-#             delta = mid_date - main_date
-#             if prev_value == '50002':
-#                 uptime = delta
-#             elif prev_value == '50001':
-#                 downtime = delta
-#         main_list.append([main_date, tpl_temp[3], uptime, downtime])
-#         day_diff = (end_date - main_date).days  # temp_date.day-main_date.day
-#         if day_diff > 1:
-#             for i in range(1, day_diff + 1):
-#                 leftout_date = main_date + timedelta(days=i)
-#                 if prev_value == '50002':
-#                     main_list.append([leftout_date,
-#                                      tpl_temp[3], timedelta(0, 86399), None])
-#                 elif prev_value == '50001':
-#                     main_list.append([leftout_date,
-#                                      tpl_temp[3], None, timedelta(0, 86399)])
-#             main_date = leftout_date
-#         day_diff = end_date.day - main_date.day
-#         # if day_diff > 1:
-#         if day_diff > 1 or end_date.month - main_date.month > 0:
-#             leftout_date = main_date + timedelta(days=1)
-#             if prev_value == '50002':
-#                 main_list.append(
-#                     [leftout_date, tpl_temp[3], timedelta(0, 86399), None])
-#             elif prev_value == '50001':
-#                 main_list.append(
-#                     [leftout_date, tpl_temp[3], None, timedelta(0, 86399)])
-#         main_dict = {}
-#         main_dict['success'] = 0
-#         main_dict['result'] = main_list
-#         main_dict['outage'] = "main_outage"
-#         # with open('/home/cscape/Desktop/ok.txt','w') as f:
-#         #    f.write(str(main_dict))
-#         return main_dict
-#     except Exception, e:
-#         main_dict = {}
-#         main_dict['success'] = 1
-#         main_dict['result'] = str(e)
-#         return main_dict
+            prev_value = temp_value
+        ############################# outside loop
+        if uptime == None or downtime == None:
+            mid_date = datetime(
+                main_date.year, main_date.month, main_date.day, 23, 59, 59)
+            delta = mid_date - main_date
+            if prev_value == '50002':
+                uptime = delta
+            elif prev_value == '50001':
+                downtime = delta
+        main_list.append([main_date, tpl_temp[3], uptime, downtime])
+        day_diff = (end_date - main_date).days  # temp_date.day-main_date.day
+        if day_diff > 1:
+            for i in range(1, day_diff + 1):
+                leftout_date = main_date + timedelta(days=i)
+                if prev_value == '50002':
+                    main_list.append([leftout_date,
+                                     tpl_temp[3], timedelta(0, 86399), None])
+                elif prev_value == '50001':
+                    main_list.append([leftout_date,
+                                     tpl_temp[3], None, timedelta(0, 86399)])
+            main_date = leftout_date
+        day_diff = end_date.day - main_date.day
+        # if day_diff > 1:
+        if day_diff > 1 or end_date.month - main_date.month > 0:
+            leftout_date = main_date + timedelta(days=1)
+            if prev_value == '50002':
+                main_list.append(
+                    [leftout_date, tpl_temp[3], timedelta(0, 86399), None])
+            elif prev_value == '50001':
+                main_list.append(
+                    [leftout_date, tpl_temp[3], None, timedelta(0, 86399)])
+        main_dict = {}
+        main_dict['success'] = 0
+        main_dict['result'] = main_list
+        main_dict['outage'] = "main_outage"
+        # with open('/home/cscape/Desktop/ok.txt','w') as f:
+        #    f.write(str(main_dict))
+        return main_dict
+    except Exception, e:
+        main_dict = {}
+        main_dict['success'] = 1
+        main_dict['result'] = str(e)
+        return main_dict
 
 
 def get_outage(d1, d2, ip_address):
@@ -2856,13 +2857,8 @@ def get_outage(d1, d2, ip_address):
                     t_list = ((status_result[0][0],
                               status_result[0][1], t_date, status_result[0][3]),)
                     result = t_list
-
-            m = MainOutage(result, datetime.strptime(end_date, "%Y-%m-%d %H:%M:%S"), datetime.strptime(
-                    start_date, "%Y-%m-%d %H:%M:%S"))
-            temp_res = m.get_outage()
-
-            # temp_res = main_outage(result, datetime.strptime(
-            #     end_date[:18], "%Y-%m-%d %H:%M:%S"))
+            temp_res = main_outage(result, datetime.strptime(
+                end_date[:18], "%Y-%m-%d %H:%M:%S"))
             if str(temp_res['success']) == "0":
                 li_res = temp_res['result']
                 tr = []
@@ -2894,7 +2890,6 @@ def get_outage(d1, d2, ip_address):
     except SelfException:
         output_dict = {'success': 1, 'error_msg': 'Error No : 104' +
             str(err_obj.get_error_msg(104)), 'main_msg': str(e[-1])}
-
         return output_dict
     except Exception, e:
         main_dict = {}

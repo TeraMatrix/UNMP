@@ -27,6 +27,9 @@
 # import modules
 from nms_config import *
 
+import defaults
+
+site_name = defaults.site
 # +---------------------------------------------------------------------------------------------+
 # | Funtion to delete service for graphs                                                        |
 # |                                                                                             |
@@ -40,7 +43,8 @@ from nms_config import *
 
 
 def delete_service_for_graph(host_name, service_name):
-    site_name = __file__.split("/")[3]
+    #@TODO: the defaults file should carry other folders too, other than just the "htdocs" folder
+    site_name = defaults.site # __file__.split("/")[3]
     check_command = "%s!%s" % (service_name, site_name)
     service_file_path = "/omd/sites/%s/etc/nagios/conf.d/services.cfg" % site_name
     temp_file_path = "/omd/sites/%s/tmp/temp.cfg" % site_name
@@ -85,7 +89,7 @@ def delete_service_for_graph(host_name, service_name):
 
 
 def create_service_for_graph(host_name, service_name):
-    site_name = __file__.split("/")[3]
+    # site_name = __file__.split("/")[3]
     refresh_time = get_refresh_time()
     check_command = "%s!%s" % (service_name, site_name)
     service_file_path = "/omd/sites/%s/etc/nagios/conf.d/services.cfg" % site_name

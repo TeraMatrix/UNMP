@@ -4,6 +4,7 @@ from license_bll import LicenseBll
 from license import License
 from mod_python import apache, util
 
+import defaults
 
 def manage_license(h):
     global html
@@ -29,10 +30,14 @@ def manage_license(h):
 
 
 def license_upload(h):
+
+    # same path has been used at nearly 10 places, needs to be
+    #replaced
     global html
     html = h
-    nms_instance = __file__.split(
-        "/")[3]       # it gives instance name of nagios system
+    nms_instance = defaults.site
+    # __file__.split(
+    #     "/")[3]       # it gives instance name of nagios system
     error_msg = {
         "expiredLicenseFile": "License has been expired, Please renew you License.",
         "invalidLicenseFile": "Invalid License : Please provide valid license.",
@@ -40,8 +45,11 @@ def license_upload(h):
     }
     license_msg = ""
     lic = LicenseBll()
-    file_path = "/omd/sites/%s/share/check_mk/web/htdocs/xml/license" % (
-        nms_instance)
+    #License upload file path
+
+    file_path = defaults.get_config_path(configname="license", folder="xml")
+
+    #"/omd/sites/%s/local/share/check_mk/web/htdocs/xml/license" % (nms_instance)
     form = util.FieldStorage(html.req, keep_blank_values=1)
     upfile = form.getlist('file_uploader')[0]
     filename = upfile.filename

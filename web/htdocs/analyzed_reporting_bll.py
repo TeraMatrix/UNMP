@@ -29,11 +29,12 @@ import csv
 from common_bll import EventLog
 # import analyzed_reporting_controller
 
-
+import defaults
+nms_instance = defaults.site
 def create_backup():
     try:
-        nms_instance = __file__.split(
-            "/")[3]       # it gives instance name of nagios system
+        # nms_instance = __file__.split(
+        #     "/")[3]       # it gives instance name of nagios system
         ye = datetime.now().year
         mon = datetime.now().month
         mon = mon - 1
@@ -46,8 +47,8 @@ def create_backup():
         print path_temp
         str_time = "timestamp between '%s-%s-01 00:00:00' and '%s-%s-31 23:59:59' " % (
             ye, mon, ye, mon)
-        path_sh = '/omd/sites/%s/share/check_mk/web/htdocs/mysql_backup.sh %s %s' % (
-            nms_instance, path_temp, str_time)
+        path_sh = defaults.get_config_path(configname="mysql_backup", folder="") + " %s %s " % (path_temp, str_time)
+        #'/omd/sites/%s/share/check_mk/web/htdocs/mysql_backup.sh %s %s' % (nms_instance, path_temp, str_time)
         subprocess.Popen("sh %s" % path_sh, shell=True)
         dstfolder = path_backup  # where backup will be stored
         fileorfolder = path_temp  # which file you want backup of
@@ -64,8 +65,8 @@ def create_backup():
 
 def restore_backup():
     try:
-        nms_instance = __file__.split(
-            "/")[3]       # it gives instance name of nagios system
+        # nms_instance = __file__.split(
+        #     "/")[3]       # it gives instance name of nagios system
         ye = datetime.now().year
         mon = datetime.now().month
         mon = mon - 1
@@ -84,8 +85,8 @@ def restore_backup():
         out.extractall(".")
         out.close()
         path_temp = '/omd/daemon/mysql_temp/%s_%s' % (ye, mon)
-        path_sh = '/omd/sites/%s/share/check_mk/web/htdocs/mysql_restore.sh %s' % (
-            nms_instance, path_temp)
+        path_sh = defaults.get_config_path(configname="mysql_restore", folder="") + " %s " % (path_temp)
+        #'/omd/sites/%s/share/check_mk/web/htdocs/mysql_restore.sh %s' % (nms_instance, path_temp)
         subprocess.Popen("sh %s" % path_sh, shell=True)
         return "done"
     except Exception, e:
@@ -483,8 +484,8 @@ class AnalyzedReportBll(object):
             date_temp_1 = str(d1)
             date_temp_2 = str(d2)
             aaData = []
-            nms_instance = __file__.split(
-                "/")[3]       # it gives instance name of nagios system
+            # nms_instance = __file__.split(
+            #     "/")[3]       # it gives instance name of nagios system
             # creating the object
             re = AnalyzedReportBll()
             #	   getting values column_selected,column_non_selected,mapping_selected,mapping_non_selected
@@ -571,7 +572,8 @@ class AnalyzedReportBll(object):
                     status = {"success": 0, "aaData": report_data_list,
                               #"datstart":i_display_start,"dataend":int(i_display_start)+int(i_display_length),
                               #"sEcho":int(sEcho),"iTotalRecords":len(report_data_list2),"iTotalDisplayRecords":len(report_data_list2)}
-                              "sEcho": int(sEcho), "iTotalRecords": int(iTotalRecords), "iTotalDisplayRecords": int(iTotalDisplayRecords)}
+                              "sEcho": int(sEcho), "iTotalRecords": int(iTotalRecords),
+                              "iTotalDisplayRecords": int(iTotalDisplayRecords)}
                     return status
                 if view_type == "excel":
                     sheet_dict = {
@@ -579,7 +581,8 @@ class AnalyzedReportBll(object):
                         "main_title": result_columns["result"][5],
                         "second_title": result_columns["result"][6],
                         "headings": column_user,
-                        "path_report": '/omd/sites/%s/share/check_mk/web/htdocs/download/' % nms_instance,
+                        "path_report": defaults.get_config_path(configname="isfolder", folder="download"),
+                        # '/omd/sites/%s/share/check_mk/web/htdocs/download/' % nms_instance,
                         "name_report": result_columns["result"][7],
                         "data_report": report_data_list,
                         "date1": date1,
@@ -601,7 +604,8 @@ class AnalyzedReportBll(object):
                         "main_title": result_columns["result"][5],
                         "second_title": result_columns["result"][6],
                         "headings": column_user,
-                        "path_report": '/omd/sites/%s/share/check_mk/web/htdocs/download/' % nms_instance,
+                        "path_report": defaults.get_config_path(configname="isfolder", folder="download"),
+                        #'/omd/sites/%s/share/check_mk/web/htdocs/download/' % nms_instance,
                         "name_report": result_columns["result"][7],
                         "data_report": report_data_list,
                         "date1": date1,
@@ -725,12 +729,14 @@ class AnalyzedReportBll(object):
         except Exception, e:
             result_dict = {"success": "1", "result": str(e)}
             return result_dict
-
+#@TODO: raise an error " local variable 'flag' referenced before assignment " in the CSV report generation commit
+# code twice - once for error and once for the refactoring of /omd/sites/ path string
     def get_csv_file(self, *params):
         try:
             for par in params:
                 sheet_dict = par
                 i = 4
+                flag = 0
                 sheet_name = sheet_dict["sheet_name"]
                 main_title = sheet_dict["main_title"]
                 second_title = sheet_dict["second_title"]

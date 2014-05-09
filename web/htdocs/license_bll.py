@@ -26,7 +26,10 @@ import datetime
 from datetime import datetime
 import logging
 import traceback
-# logging.basicConfig(filename='/omd/daemon/log/error_log',format='%(levelname)s: %(asctime)s : %(module)s >> %(message)s', level=logging.DEBUG)
+
+import defaults
+# logging.basicConfig(filename='/omd/daemon/log/error_log',
+# format='%(levelname)s: %(asctime)s : %(module)s >> %(message)s', level=logging.DEBUG)
 # log = logging.getLogger('License')
 
 from license import License
@@ -48,9 +51,11 @@ class LicenseBll(object):
     def get_license(self, salt_word):
         # nms_instance = __file__.split("/")[3]       # it gives instance name
         # of nagios system
-        nms_instance = 'UNMP'
+        nms_instance = defaults.site
         try:
-            license_file = "/omd/sites/%s/share/check_mk/web/htdocs/xml/license" % nms_instance
+            #license path on local site
+            license_file =  defaults.get_config_path(configname="license", folder="xml")
+            #"/omd/sites/%s/local/share/check_mk/web/htdocs/xml/license" % nms_instance
             if(os.path.isfile(license_file)):						# check config.xml file exist or not
                 license_text = self.decoder(license_file, "123456")
                 dom = xml.dom.minidom.parseString(
@@ -62,13 +67,15 @@ class LicenseBll(object):
             return str(e)
 
     def allowed_license(self):
-        nms_instance = __file__.split(
-            "/")[3]       # it gives instance name of nagios system
+        # nms_instance = __file__.split(
+        #     "/")[3]       # it gives instance name of nagios system
         try:
             Session = sessionmaker(
                 bind=engine)     # making session of our current database
             session = Session()                 # creating new session object
-            license_file = "/omd/sites/%s/share/check_mk/web/htdocs/xml/license" % nms_instance
+            #License file on local path
+            license_file = defaults.get_config_path(configname="license", folder="xml")
+            #"/omd/sites/%s/local/share/check_mk/web/htdocs/xml/license" % nms_instance
             if(os.path.isfile(license_file)):						# check config.xml file exist or not
                 license_text = self.decoder(license_file, "123456")
                 dom = xml.dom.minidom.parseString(
@@ -220,10 +227,12 @@ class LicenseBll(object):
         return atr_dict
 
     def get_allowed_host(self, device_type=None):
-        nms_instance = __file__.split(
-            "/")[3]       # it gives instance name of nagios system
+        # nms_instance = __file__.split(
+        #     "/")[3]       # it gives instance name of nagios system
         try:
-            license_file = "/omd/sites/%s/share/check_mk/web/htdocs/xml/license" % nms_instance
+            #license file path
+            license_file = defaults.get_config_path(configname="license", folder="xml")
+            # "/omd/sites/%s/local/share/check_mk/web/htdocs/xml/license" % nms_instance
             if(os.path.isfile(license_file)):						# check config.xml file exist or not
                 license_text = self.decoder(license_file, "123456")
                 dom = xml.dom.minidom.parseString(
@@ -258,10 +267,12 @@ class LicenseBll(object):
             session.close()                     # close the session object
 
     def get_allowed_hostgroup(self):
-        nms_instance = __file__.split(
-            "/")[3]       # it gives instance name of nagios system
+        # nms_instance = __file__.split(
+        #     "/")[3]       # it gives instance name of nagios system
         try:
-            license_file = "/omd/sites/%s/share/check_mk/web/htdocs/xml/license" % nms_instance
+            #license file path on local system
+            license_file = defaults.get_config_path(configname="license", folder="xml")
+            #"/omd/sites/%s/local/share/check_mk/web/htdocs/xml/license" % nms_instance
             if(os.path.isfile(license_file)):						# check config.xml file exist or not
                 license_text = self.decoder(license_file, "123456")
                 dom = xml.dom.minidom.parseString(
@@ -275,10 +286,12 @@ class LicenseBll(object):
             return e
 
     def get_allowed_user(self, user_group=None):
-        nms_instance = __file__.split(
-            "/")[3]       # it gives instance name of nagios system
+        # nms_instance = __file__.split(
+        #     "/")[3]       # it gives instance name of nagios system
         try:
-            license_file = "/omd/sites/%s/share/check_mk/web/htdocs/xml/license" % nms_instance
+            #license file path on local system
+            license_file = defaults.get_config_path(configname="license", folder="xml")
+            #"/omd/sites/%s/local/share/check_mk/web/htdocs/xml/license" % nms_instance
             if(os.path.isfile(license_file)):						# check config.xml file exist or not
                 license_text = self.decoder(license_file, "123456")
                 dom = xml.dom.minidom.parseString(
@@ -294,10 +307,12 @@ class LicenseBll(object):
             return e
 
     def get_allowed_usergroup(self):
-        nms_instance = __file__.split(
-            "/")[3]       # it gives instance name of nagios system
+        # nms_instance = __file__.split(
+        #     "/")[3]       # it gives instance name of nagios system
         try:
-            license_file = "/omd/sites/%s/share/check_mk/web/htdocs/xml/license" % nms_instance
+            #license file path on local system
+            license_file = defaults.get_config_path(configname="license", folder="xml")
+            #"/omd/sites/%s/local/share/check_mk/web/htdocs/xml/license" % nms_instance
             if(os.path.isfile(license_file)):						# check config.xml file exist or not
                 license_text = self.decoder(license_file, "123456")
                 dom = xml.dom.minidom.parseString(

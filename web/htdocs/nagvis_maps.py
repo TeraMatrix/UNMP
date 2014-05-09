@@ -5,12 +5,14 @@ import sys
 import htmllib
 import config
 from lib import *
+import defaults
 
+sitename = defaults.site
 
 def create_maps(h):
         global html
         html = h
-        sitename = __file__.split("/")[3]
+        # sitename = __file__.split("/")[3]
         html.new_header("Network Map")
         html.write(
             "<div class=\"loading\" style=\"display:block;\"><img src='images/loading.gif' alt='loading...'/></div>")

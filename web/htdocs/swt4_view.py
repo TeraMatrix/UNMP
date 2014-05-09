@@ -22,6 +22,8 @@ from mod_python import apache, util
 from utility import *
 from common_controller import *
 from swt4_controller import *
+
+sitename = defaults.site
 ###############################################################################
 
 #-------------------------Author and file Information--------------------------
@@ -49,6 +51,8 @@ Author : Anuj Samariya
 ###############################################################################
 
 ###############################################################################
+
+#@TODO : remove the file from the project - Switch 4 port no longer supported
 
 
 def form_box(filter_class, a_class, a_href, a_id, a_text, header_text, data_id):
@@ -91,9 +95,9 @@ def swt_profiling(h):
     """
     global html
     html = h
-    sitename = __file__.split("/")[3]
-
-    sitename = __file__.split("/")[3]
+    # sitename = __file__.split("/")[3]
+    #
+    # sitename = __file__.split("/")[3]
     # This we import the stylesheet
 
 ##    html.write("<link rel=\"stylesheet\" type=\"text/css\" href=\"css/custom.css\" />\n")

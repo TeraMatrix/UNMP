@@ -22,12 +22,14 @@ from json import JSONEncoder
 import traceback
 
 from common_bll import Essential
-from common_controller import page_header_search, logme, get_select_list, object_model_di
+from common_controller import page_header_search, logme, get_select_list
 from idu_profiling_bll import IduGetData
 from odu_controller import *
 from utility import Validation
 
 # import unmp_model
+import defaults
+sitename = defaults.site
 
 ###############################################################################
 obj_essential = Essential()
@@ -67,7 +69,7 @@ def odu_dashboard(h):
     """
     global html
     html = h
-    sitename = __file__.split("/")[3]
+    # sitename = __file__.split("/")[3]
     html.new_header("UBR Dashboard")
     html.new_footer()
 
@@ -102,7 +104,7 @@ def odu_listing(h):
     """
     global html
     html = h
-    sitename = __file__.split("/")[3]
+    # sitename = __file__.split("/")[3]
     css_list = ["css/demo_table_jui.css",
                 "css/jquery-ui-1.8.4.custom.css",
                 'css/ccpl_jquery_combobox.css'
@@ -948,7 +950,7 @@ def odu100_profiling_form(host_id, selected_device):
     """
     firmware_result = get_firmware_version(host_id)
     if firmware_result['success'] == 0:
-        firmware_version = object_model_di['odu100'].get(firmware_result['output'])
+        firmware_version = firmware_result['output']
     else:
         firmware_version = '7.2.20'
 
@@ -3890,10 +3892,9 @@ class OduConfiguration():
         ra_configuration = ra_config_table_data["result"]
         firmware_result = get_firmware_version(host_id)
         if firmware_result['success'] == 0:
-            firmware_version = object_model_di['odu100'].get(firmware_result['output'])
+            firmware_version = firmware_result['output']
         else:
             firmware_version = '7.2.20'
-
 
         odu100_ra_config_form, forcemimo_div, anc_div = '', '', ''
 
@@ -6534,10 +6535,10 @@ def odu100_peer_configuration(h):
                                 if int(html.var("acl_val")) == 1:
                                     mac_accept = mac_chk_accept(
                                         host_id, mac_list)
-                                    # logme(" result mac acc "+str(mac_accept))
+                                    logme(" result mac acc "+str(mac_accept))
                                 elif int(html.var("acl_val")) == 2:
                                     mac_deny = mac_chk_deny(host_id, mac_list)
-                                    # logme(" result mac "+str(mac_deny))
+                                    logme(" result mac "+str(mac_deny))
                                     # html.write(str(mac_deny))
                                 if mac_accept == 0 and mac_deny == 0 or mac_deny == 2:
                                     dic_result["success"] = 0

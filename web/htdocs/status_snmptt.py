@@ -28,9 +28,12 @@ from json import JSONEncoder
 from error_message import ErrorMessageClass
 from unmp_config import SystemConfig
 
+import defaults
+
 global err_obj
 err_obj = ErrorMessageClass()
 
+nms_instance = defaults.site
 
 # Exception class for own exception handling.
 class SelfException(Exception):
@@ -710,12 +713,8 @@ def trap_detail_information(h):
             primary_key_id = "system_alarm_id"
             table_name = "system_alarm_table"
 
-        if option == 4 or option == "4":
-            sql = "SELECT trap_id,agent_id,trap_date,trap_receive_date,serevity,trap_event_id,trap_event_type,manage_obj_id,manage_obj_name,component_id,\
-		      trap_ip,description FROM %s WHERE %s='%s'" % (table_name, primary_key_id, trap_id)
-        else:
-            sql = "SELECT trap_id,agent_id,trap_date,trap_receive_date,serevity,trap_event_id,trap_event_type,manage_obj_id,manage_obj_name,component_id,\
-              trap_ip,description,device_sent_date FROM %s WHERE %s='%s'" % (table_name, primary_key_id, trap_id)
+        sql = "SELECT trap_id,agent_id,trap_date,trap_receive_date,serevity,trap_event_id,trap_event_type,manage_obj_id,manage_obj_name,component_id,\
+		trap_ip,description FROM %s WHERE %s='%s'" % (table_name, primary_key_id, trap_id)
         # html.write(str(sql))
         cursor.execute(sql)
         result = cursor.fetchall()
@@ -761,16 +760,6 @@ def trap_detail_information(h):
                 str(result[0][3]), '%a %b %d %H:%M:%S %Y').strftime('%d %b %y %I:%M:%S %p')))
             html.write("</tr>")
 
-            if option == 4 or option == "4":
-                pass
-            else:
-                html.write("<tr>")
-                html.write("<td>")
-                html.write("<b>Device sent date</b>")
-                html.write("</td>")
-                html.write("<td>%s</td>" % (datetime.strptime(
-                    str(result[0][12]), '%Y-%m-%d %H:%M:%S').strftime('%d %b %Y %I:%M:%S %p')))
-                html.write("</tr>")
             html.write("<tr>")
             html.write("<td>")
             html.write("<b>Severity</b>")
@@ -873,7 +862,7 @@ def trap_search_elements(h):
         elif option == 3 or option == "3":
             table_name = "trap_alarms"
         elif option == 4 or option == "4":
-            table_name == "system_alarm_table"
+            table_name = "system_alarm_table"
         if search_element != None or option != None:
             sql = "SELECT DISTINCT(%s) FROM %s WHERE %s Like '%%%s%%' " % (
                 search_element, table_name, search_element, search_text)
@@ -966,8 +955,8 @@ def trap_report_creating(h):
             import xlwt
             from xlwt import Workbook, easyxf
             xls_book = Workbook(encoding='ascii')
-            nms_instance = __file__.split(
-                "/")[3]       # it gives instance name of nagios system
+            # nms_instance = __file__.split(
+            #     "/")[3]       # it gives instance name of nagios system
 
             # ----- Excel reproting Style part -----#
 
@@ -1004,8 +993,9 @@ def trap_report_creating(h):
 
             if report_type == 'csvReport':
                 save_file_name = str(start_date) + '_event_report.csv'
-                path = '/omd/sites/%s/share/check_mk/web/htdocs/download/%s' % (
-                    nms_instance, save_file_name)
+                # path = '/omd/sites/%s/share/check_mk/web/htdocs/download/%s' % (
+                #     nms_instance, save_file_name)
+                path = defaults.get_config_path(configname="isfolder", folder="download") + save_file_name
                 ofile = open(path, "wb")
                 writer = csv.writer(ofile, delimiter=',', quotechar='"')
 
@@ -1186,8 +1176,9 @@ def trap_report_creating(h):
 
             if report_type == 'excelReport':
                 save_file_name = str(start_date) + '_event_report.xls'
-                path = '/omd/sites/%s/share/check_mk/web/htdocs/download/%s' % (
-                    nms_instance, save_file_name)
+                # path = '/omd/sites/%s/share/check_mk/web/htdocs/download/%s' % (
+                #     nms_instance, save_file_name)
+                path = defaults.get_config_path(configname="isfolder", folder="download") + save_file_name
                 xls_book.save(path)
             elif report_type == 'csvReport':
                 ofile.close()

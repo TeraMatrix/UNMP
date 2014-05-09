@@ -39,6 +39,8 @@ from nagios_bll import NagiosBll
 # if set to 0 means call old nagios functions
 flag_nagios_call = 0
 
+import defaults
+nms_instance = sitename = defaults.site
 
 # Exception class for own exception handling.
 class SelfException(Exception):
@@ -319,20 +321,17 @@ def host_details_grid(host_id):
                 # create the list for
                 if device_type_id == "ap25":
                     host_valus_list = [
-                        'http_username', 'snmp_version', 'read_community', 'write_community', 'http_port',
-                        'gateway', 'trap_port', 'serial_number', 'dns_state', 'get_set_port', 'longitude', 'latitude',
-                        'netmask', 'host_os', 'host_vendor_name', 'primary_dns', 'secondary_dns', 'hardware_version']
+                        'http_username', 'snmp_version', 'read_community', 'write_community', 'http_password', 'http_port', 'gateway', 'trap_port', 'serial_number', 'dns_state',
+                        'get_set_port', 'longitude', 'latitude', 'netmask', 'host_os', 'host_vendor_name', 'primary_dns', 'secondary_dns', 'hardware_version']
                     host_name_list = [
-                        'HTTP Username', 'SNMP Version', 'Read Community', 'Write Community', 'HTTP Port', 'Gateway',
-                        'Trap Port', 'Serial Number', 'DHCP State', 'Get Set Port', 'Longitude', 'Latitude', 'Netmask',
-                        'Host OS', 'Host Vendor', 'Primary DNS', 'Secondary DNS', 'Hardware Version']
+                        'HTTP Username', 'SNMP Version', 'Read Community', 'Write Community', 'HTTP Port', 'Gateway', 'Trap Port', 'Serial Number', 'DNS State',
+                        'Get Set Port', 'Longitude', 'Latitude', 'Netmask', 'Host OS', 'Host Vendor', 'Primary DNS', 'Secondary DNS', 'Hardware Version']
                 else:
                     host_valus_list = [
-                        'http_username', 'snmp_version', 'read_community', 'write_community', 'http_port',
-                        'gateway', 'trap_port', 'serial_number', 'dns_state', 'get_set_port', 'longitude', 'latitude',
-                        'netmask', 'host_os', 'host_vendor_name', 'hardware_version']
+                        'http_username', 'snmp_version', 'read_community', 'write_community', 'http_password', 'http_port', 'gateway', 'trap_port', 'serial_number', 'dns_state',
+                        'get_set_port', 'longitude', 'latitude', 'netmask', 'host_os', 'host_vendor_name', 'hardware_version']
                     host_name_list = [
-                        'HTTP Username', 'SNMP Version', 'Read Community', 'Write Community', 'HTTP Port', 'Gateway', 'Trap Port', 'Serial Number', 'DHCP State',
+                        'HTTP Username', 'SNMP Version', 'Read Community', 'Write Community', 'HTTP Port', 'Gateway', 'Trap Port', 'Serial Number', 'DNS State',
                         'Get Set Port', 'Longitude', 'Latitude', 'Netmask', 'Host OS', 'Host Vendor', 'Hardware Version']
 
                 details_str = '\
@@ -1262,8 +1261,9 @@ def apply_nagios_hostgroup_changes(h):
         # nagios_config_obj=NagioConfigurationBll()
         # nagios_config_obj.write_nagios_config(nms_instance)
         if(flag_nagios_call == 0):
-            nms_instance = __file__.split(
-                "/")[3]       # it gives instance name of nagios system
+            # nms_instance = __file__.split(
+            #     "/")[3]       # it gives instance name of nagios system
+
             nagios_config_obj = NagioConfigurationBll()
             nagios_config_obj.write_nagios_config(nms_instance)
 
@@ -1290,8 +1290,8 @@ def apply_hostgroup_host_changes(h):
             conn.commit()
         conn.close()
 
-        nms_instance = __file__.split(
-            "/")[3]       # it gives instance name of nagios system
+        # nms_instance = __file__.split(
+        #     "/")[3]       # it gives instance name of nagios system
         # nagios_config_obj=NagioConfigurationBll()
         # nagios_config_obj.write_nagios_config(nms_instance)
         if(flag_nagios_call == 0):
