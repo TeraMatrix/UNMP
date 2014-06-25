@@ -224,13 +224,7 @@ def insert_values(device_type, format_line):
         "description": "",
     }
 
-    print ("="*20)
-    pprint.pprint(m2m)
-    print ("="*20)
-
-
     mapped_objects = nocout_machine_map
-    pprint.pprint(mapped_objects)
     
     fl = format_line.split("|")
 

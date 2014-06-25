@@ -120,7 +120,7 @@ def trap_daemon():
             for row in snmptt_trap_data:
                 if row[1] in ["storageTrap", "otafTrap"]:
                     for_str = insert_values(row[1], row[6])
-
+                    for_str = for_str.split("|")
                     sql="INSERT INTO trap_alarms (event_id, trap_id, agent_id, trap_date, trap_receive_date, serevity, trap_event_id, \
                     trap_event_type, manage_obj_id, manage_obj_name, component_id, trap_ip, description, device_sent_date, timestamp) \
                     values('%s', '%s', '%s', '%s', '%s', %s, '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', now())\
