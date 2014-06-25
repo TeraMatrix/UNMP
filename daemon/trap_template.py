@@ -175,6 +175,9 @@ for td in trap_devices:
 
 #read values from snmptt
 
+def lower(anystring):
+    return anystring.lower()
+
 def map_severity(severity):
     if lower(severity) == "clear":
         return "0"

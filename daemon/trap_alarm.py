@@ -111,26 +111,25 @@ def trap_daemon():
     device_date_format = '%a %b %d %H:%M:%S %Y'
     try:
         import trap_template
+        from trap_template import *
         device_date_format = '%a %b %d %H:%M:%S %Y'
         if len(snmptt_trap_data) > 0:
             db=MySQLdb.connect(hostname,username,password,schema)   # --- CREATE DATABASE CONNECTION  ---- #
             cursor = db.cursor()                                    # -- CREATE CURSOR-------#
             for_str=[]
             for row in snmptt_trap_data:
-                if row[1] in trap_template.trap_identification:
-                    
-                    for_str = trap_template.insert_values(row[1], row[6])
+                if row[1] in ["storageTrap", "otafTrap"]:
+                    for_str = insert_values(row[1], row[6])
 
                     sql="INSERT INTO trap_alarms (event_id, trap_id, agent_id, trap_date, trap_receive_date, serevity, trap_event_id, \
                     trap_event_type, manage_obj_id, manage_obj_name, component_id, trap_ip, description, device_sent_date, timestamp) \
                     values('%s', '%s', '%s', '%s', '%s', %s, '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', now())\
-                    "% (row[1],row[2],row[3],row[4],row[5],for_str[0],for_str[1],for_str[2],for_str[3],for_str[4],for_str[5], \
-                        for_str[6],for_str[7],device_date)
+                    "% (row[1],row[2],row[3],row[4],row[5],int(for_str[0]),for_str[1],for_str[2],for_str[3],for_str[4],for_str[5], \
+                        for_str[6],for_str[7],str(datetime.now()))
                     cursor.execute(sql)
                     db.commit()
-    except:
-        pass
-
+    except Exception as e:
+        logging.error(" Exception in trap daemon 2 inner loop:  "+traceback.format_exc())
     try:
         if len(snmptt_trap_data) > 0:
             trap_executed = 1
@@ -168,7 +167,7 @@ def trap_daemon():
                     sql="INSERT INTO trap_alarms (event_id, trap_id, agent_id, trap_date, trap_receive_date, serevity, trap_event_id, \
                     trap_event_type, manage_obj_id, manage_obj_name, component_id, trap_ip, description, device_sent_date, timestamp) \
                     values('%s', '%s', '%s', '%s', '%s', %s, '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', now())\
-                    "% (row[1],row[2],row[3],row[4],row[5],for_str[0],for_str[1],for_str[2],for_str[3],for_str[4],for_str[5], \
+                    "% (row[1],row[2],row[3],row[4],row[5],int(for_str[0]),for_str[1],for_str[2],for_str[3],for_str[4],for_str[5], \
                         for_str[6],for_str[7],device_date)
                     cursor.execute(sql)
                     db.commit()

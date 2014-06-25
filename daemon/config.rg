@@ -29,10 +29,10 @@ ccu_responce['2071'] = "public"
 
 ###### My SQL parameters #### used by all files that resides in /omd/daemon folder
 
-hostname = "@@HOSTNAME@@"
-username = "@@USERNAME@@"
-password = "@@PASSWORD@@"
-schema = "@@SCHEMA@@"
+hostname = "localhost"
+username = "root"
+password = "root"
+schema = "nms"
 
 ###############
 				
